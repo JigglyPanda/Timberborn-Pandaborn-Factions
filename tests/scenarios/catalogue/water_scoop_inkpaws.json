@@ -1,5 +1,5 @@
 {
- "faction": "Folktails",
+ "faction": "Inkpaws",
  "map": "Plains",
  "speed": 0,
  "batchControl": false,
@@ -159,17 +159,6 @@
     ],
     "orientation": "Cw0",
     "id": "scoop"
-   },
-   {
-    "op": "place",
-    "template": "PandabornTripHammerMill.Inkpaws",
-    "at": [
-     20,
-     5,
-     -2
-    ],
-    "orientation": "Cw0",
-    "id": "hammer"
    },
    {
     "op": "place",
@@ -363,7 +352,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop"
     ]
    },
@@ -420,7 +408,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -501,7 +488,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -582,7 +568,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -663,7 +648,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -744,7 +728,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -847,7 +830,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -910,7 +892,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -965,7 +946,6 @@
     ],
     "objects": [
      "scoop",
-     "hammer",
      "loopScoop",
      "loopGate",
      "loopOut",
@@ -1044,5 +1024,5 @@
    }
   ]
  },
- "note": "generated from proto/water/tests/scoop.json by the catalogue lane: the same steps on the catalogue templates"
+ "note": "generated from proto/water/tests/scoop.json by tests/scenarios/catalogue/make_water.py"
 }

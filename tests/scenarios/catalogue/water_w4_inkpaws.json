@@ -1276,5 +1276,5 @@
    }
   ]
  },
- "note": "generated from proto/water/tests/w4.json by the catalogue lane: the same steps on the catalogue templates"
+ "note": "generated from proto/water/tests/w4.json by tests/scenarios/catalogue/make_water.py"
 }
