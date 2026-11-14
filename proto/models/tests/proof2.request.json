@@ -1,0 +1,475 @@
+{
+ "run": {
+  "inGameHours": 16.0,
+  "realSeconds": 600
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  {
+   "template": "PandabornModelMoonLoft.PandabornProto",
+   "relativeTo": "districtEntrance",
+   "offset": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "template": "PandabornModelMoonLoft.PandabornProto",
+   "relativeTo": "districtEntrance",
+   "offset": [
+    -1,
+    -1,
+    0
+   ]
+  },
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelCourtyardHouse.PandabornProto",
+  "PandabornModelTerraceHouse.PandabornProto",
+  "PandabornModelFestivalSquare.PandabornProto",
+  "PandabornModelLanternWorkshop.PandabornProto",
+  "PandabornModelBambooPinwheel.PandabornProto"
+ ],
+ "screenshots": [
+  {
+   "name": "day_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "BambooPinwheel_turn_0",
+   "kind": "building",
+   "target": "PandabornModelBambooPinwheel.PandabornProto",
+   "at": "6.8",
+   "front": true,
+   "yaw": 20,
+   "pitch": 45,
+   "zoom": 1.0,
+   "minDistance": 3.0
+  },
+  {
+   "name": "BambooPinwheel_turn_1",
+   "kind": "building",
+   "target": "PandabornModelBambooPinwheel.PandabornProto",
+   "at": "9.5",
+   "front": true,
+   "yaw": 20,
+   "pitch": 45,
+   "zoom": 1.0,
+   "minDistance": 3.0
+  },
+  {
+   "name": "MoonLoft_walk_0",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "3.4",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_1",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "6.8",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_2",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "10.2",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_3",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "61.2",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_4",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "64.6",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_5",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "68.0",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_6",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "71.4",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_7",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "74.8",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_8",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "78.2",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "MoonLoft_walk_9",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "81.6",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "Hammock_leisure_00",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "54.4",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_01",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "57.8",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_02",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "61.2",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_03",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "64.6",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_04",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "68.0",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_05",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "71.4",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_06",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "74.8",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_07",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "78.2",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_08",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "81.6",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "Hammock_leisure_09",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "85.0",
+   "front": true,
+   "yaw": 30,
+   "pitch": 55,
+   "zoom": 1.0,
+   "minDistance": 3.5
+  },
+  {
+   "name": "night_overview",
+   "kind": "overview",
+   "at": "end"
+  },
+  {
+   "name": "Den_night",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "Den_night_lit",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "CourtyardHouse_night",
+   "kind": "building",
+   "target": "PandabornModelCourtyardHouse.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "CourtyardHouse_night_lit",
+   "kind": "building",
+   "target": "PandabornModelCourtyardHouse.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "TerraceHouse_night",
+   "kind": "building",
+   "target": "PandabornModelTerraceHouse.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "TerraceHouse_night_lit",
+   "kind": "building",
+   "target": "PandabornModelTerraceHouse.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "MoonLoft_night",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "MoonLoft_night_lit",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "FestivalSquare_night",
+   "kind": "building",
+   "target": "PandabornModelFestivalSquare.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "FestivalSquare_night_lit",
+   "kind": "building",
+   "target": "PandabornModelFestivalSquare.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "LanternWorkshop_night",
+   "kind": "building",
+   "target": "PandabornModelLanternWorkshop.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "LanternWorkshop_night_lit",
+   "kind": "building",
+   "target": "PandabornModelLanternWorkshop.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "Hammock_night",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.5,
+   "lit": false
+  },
+  {
+   "name": "Hammock_night_lit",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.5,
+   "lit": true
+  },
+  {
+   "name": "night_screen",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "PandabornModel"
+ ]
+}

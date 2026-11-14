@@ -569,6 +569,35 @@ calls `GetComponent<TemplateAttachments>().GetOrCreateAttachment("LanternRise")`
    animator (`IAnimator.Play("Default", looped: false)`, as the test harness's `animations` request does). Say if
    you want it as a fallback; it would sit under its own node `#LanternRiseMesh`.
 
+### Pass 4 in game
+
+* `models-pass3-3` (11:29): crashed at game start on the catalogue's adopted Ox Workshop (missing progress nodes, see
+  above).
+* `models-pass3-4` (12:02): crashed when the Smoke Kiln was finished (the Wood Workshop's WorkshopAnimationController
+  takes the model's IAnimator; the kiln had no animated node; fixed with an animated bellows handle) and the Cistern Tap
+  failed to place (the prototype had stripped the Discharge's togglable recipes; prototype generator fixed).
+* `models-pass3-6` (hidden desktop, Diorama, 58 of 59 placed, **0 errors from our mods**, 170 of 170 shots,
+  `E:\PandabornDev\build\test\models-pass3-6\`). Review sheets in `E:\PandabornDev\build\models\study\p6_*.png`.
+
+| Item | Result | Evidence |
+|---|---|---|
+| Every pass-4 model placed and finished in game | **proven** (only the Moon Loft's fallback copy did not place, by design) | `*_front.png`, `*_3q.png`; `p6_new.png` |
+| Sky Lantern `rise` | **proven**: the great lantern lifts off the tower and climbs away, frames 0 to 6 (played by the harness as WonderAnimationController does) | `SkyLantern_rise_0..6.png` |
+| Bamboo Fence variants merging | **proven**: a row of three and an L of two join with shared posts and continuous rails | `BambooFence_front.png`, `BambooFence_3q.png` |
+| Kite Windmill turning | **proven** again (sail positions differ a second apart) | `KiteWindmill_turn_0/1.png` |
+| Large Kite Windmill turning | likely (all-indigo sails make the two frames hard to compare) | `LargeKiteWindmill_turn_0/1.png` |
+| Bamboo Pinwheel turning | not shown: the camera sat inside the Large Kite Windmill's sails | `BambooPinwheel_turn_0/1.png` |
+| Lit windows and lanterns (`lit`) | **proven**: Courtyard House windows and the Moon Loft's moon window glow; every lantern of the Festival Square and Lantern Workshop glows, **yellow-white rather than red** (the glow ignores the vertex tint: look lane) | `*_night_lit.png` |
+| Lit windows with occupants, unforced | **not proven**: the "night" shots were taken at dawn (see below), unlit | `*_night.png` |
+| Colonists walking under the Moon Loft | **partly**: the loft stands over the district centre's door cell and the first path tile was laid under it (`paths.anchor` = the loft's origin, 31 tiles), and colonists stand at its foot by the ladder; no frame caught one mid-walk under it (the walk frames were blocked by the Large Kite Windmill) | `MoonLoft_night.png`, `result.json` |
+| Hammock with a sleeper | **not proven**: the frames show the Paddy House roof beside it, and most were after dark | `Hammock_evening_*.png` |
+
+What went wrong in the request: `PartialDayNumber`'s fraction 0 is morning, not midnight. The run starts at 1.176 in
+the late morning, dusk is about 1.66, it is dark from about 1.70, light again by 2.0; the 20-hour run ended at dawn.
+`proto/models/tools/gen_proof2_request.py` (`proto/models/tests/proof2.request.json`) is the corrected follow-up:
+only the proof subjects, a 16-hour run ending in the dark, the hammock from above in the leisure hours before dusk,
+the Moon Loft from the angle that worked.
+
 ### Catalogue adoption list for pass 4
 
 * Regenerate every adopted model: meshes changed (lantern paper region) and these model.json files changed:
