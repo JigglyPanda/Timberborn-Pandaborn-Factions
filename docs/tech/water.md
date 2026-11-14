@@ -1,7 +1,8 @@
 # Water toolkit: feasibility and technical design
 
-Status: research note, 2026-11-14. Game 1.1.2.8. Nothing here has been run in game yet; every "verdict" is read from
-the decompiled source and vanilla blueprints and still needs the prototype listed under it.
+Status: research note, 2026-11-14, game 1.1.2.8, followed by an in-game prototype the same day. The sections below
+the summary are the original study (read from the decompiled source); **"Prototype results" at the end records what
+the game actually did** and overrides the study where they differ.
 
 Paths: **DC** = `E:\PandabornDev\reference\decompiled\<Assembly>.dll\<Namespace>\`, **BP** =
 `E:\PandabornDev\reference\Blueprints\`. Third-party mods decompiled (read only, technique only) into

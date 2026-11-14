@@ -122,6 +122,11 @@
     "z": -1
    },
    {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
     "op": "place",
     "template": "PandabornPaddySpout.PandabornProto",
     "at": [
@@ -164,6 +169,26 @@
     ],
     "orientation": "Cw0",
     "id": "tap"
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.3
    },
    {
     "op": "water",

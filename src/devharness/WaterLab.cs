@@ -133,6 +133,7 @@ namespace PandabornDevHarness
             public string Id;
             public int Every;
             public List<Vector3Int> Cells = new List<Vector3Int>();
+            public List<Vector3Int> ContaminationCells = new List<Vector3Int>();
             public List<int[]> VolumeRects = new List<int[]>();
             public List<string> Objects = new List<string>();
             public JArray Rows = new JArray();
@@ -220,10 +221,20 @@ namespace PandabornDevHarness
                 }
                 else
                 {
-                    // drain: never ask for more than is there (the snapshot is one tick old)
+                    // drain: every third tick only, so each request sees a snapshot that already includes the last one
+                    // (removals are queued and applied a tick later); never ask for more than is there
+                    if (_ticks % 3 != 0) continue;
+                    amount *= 3f;
                     float available = _waterMap.WaterDepth(s.Cell) - Mathf.Max(0f, s.MaxDepth);   // maxDepth on a drain = level kept
                     float take = Mathf.Min(amount, available);
-                    if (take > 0f) { _waterService.RemoveCleanWater(s.Cell, take); s.Total -= take; }
+                    if (take > 0f)
+                    {
+                        // remove clean and contaminated parts in proportion, so draining does not concentrate badwater
+                        float c = Mathf.Clamp01(_waterMap.ColumnContamination(s.Cell));
+                        if (c < 1f) _waterService.RemoveCleanWater(s.Cell, take * (1f - c));
+                        if (c > 0f) _waterService.RemoveContaminatedWater(s.Cell, take * c);
+                        s.Total -= take;
+                    }
                 }
             }
             foreach (var series in _seriesById.Values)
@@ -498,11 +509,13 @@ namespace PandabornDevHarness
                 {
                     var s = new Series { Id = Request.Str(step, "id", "s" + _seriesById.Count), Every = (int)Request.Num(step, "every", 20f) };
                     if (step["cells"] is JArray cells) foreach (var c in cells) s.Cells.Add(Rel(c));
+                    if (step["contamination"] is JArray ccells) foreach (var c in ccells) s.ContaminationCells.Add(Rel(c));
                     if (step["volumes"] is JArray vols) foreach (JArray r in vols) s.VolumeRects.Add(new[] { (int)r[0], (int)r[1], (int)r[2], (int)r[3], r.Count > 4 ? (int)r[4] : 0 });
                     if (step["objects"] is JArray objs) foreach (var o in objs) s.Objects.Add((string)o);
                     _seriesById[s.Id] = s;
                     var header = new JArray("tick", "hours");
                     foreach (var c in s.Cells) header.Add("d" + Arr(c - _origin).ToString(Newtonsoft.Json.Formatting.None));
+                    foreach (var c in s.ContaminationCells) header.Add("c" + Arr(c - _origin).ToString(Newtonsoft.Json.Formatting.None));
                     foreach (var r in s.VolumeRects) header.Add("vol" + string.Join(",", r));
                     foreach (var o in s.Objects) header.Add("obj:" + o);
                     s.Rows.Add(header);
@@ -802,6 +815,7 @@ namespace PandabornDevHarness
         {
             var row = new JArray(_ticks, Math.Round(Hours(), 3));
             foreach (var c in s.Cells) row.Add(R(_waterMap.WaterDepth(c)));
+            foreach (var c in s.ContaminationCells) row.Add(R(_waterMap.ColumnContamination(c)));
             foreach (var r in s.VolumeRects) row.Add(R(Volume(r)));
             foreach (var id in s.Objects) row.Add(ObjectValue(id));
             return row;

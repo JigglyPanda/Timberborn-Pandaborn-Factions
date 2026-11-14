@@ -166,65 +166,64 @@ def longrun():
 
 # ---------------------------------------------------------------------------------------------------------------- parts
 def parts():
-    """Flume Corners, a covered segment under a path, a Flume Bridge over a contaminated puddle, the status icons, and
-    the badwater shut-off.
+    """Flume Corners, a covered segment under a path, a Flume Bridge, the status icons, and the badwater shut-off.
     Line 1: pond (1..4, 2..4) -> Flume Gate (5,3) -> east -> Corner (9,3) north -> (9,4..7) -> Corner (9,8) east ->
-    (10..12,8) -> covered (13,8) under a path -> (14,8) -> basin x15..18 y5..9 z-1 (paddy crops, level kept at 0.3).
-    Line 2: plateau pond (floor +1) -> valve gate (no shut-off: the control) at (5,13,+1) -> bridges (6..12,13) over a
-    contaminated puddle at (9,13) -> Drop (13..14,13) -> basin x15..18 y12..15 z-1 (paddy crops, level kept at 0.3).
+    (10..12,8) -> covered (13,8) under a path -> (14,8) -> Paddy Spout (15,8) -> paddy x16..19 y6..10 z-1.
+    Line 2 (the control: a valve gate without shut-off): plateau pond (floor +1) -> gate (5,13,+1) -> bridges
+    (6..12,13) -> Drop (13..14,13) -> Paddy Spout (15,13) -> paddy x16..19 y11..15 z-1.
     Status row y=18: misaligned pair at (2..3,18), blocked flume at (6,18) facing raised ground, dry intake at (10,18).
-    Phases: clean 700 ticks; puddle off; both ponds turn contaminated for 500 ticks; ponds drained and refilled clean.
+    Phases: clean 900 ticks; both ponds turn contaminated for 500 ticks; ponds drained and refilled clean for a day.
     """
     s = [flat(0, 1, 5, 5, 2), flat(1, 2, 4, 4, 0), flat(5, 3, 5, 3, 0),
          flat(0, 11, 5, 15, 3), flat(1, 12, 4, 14, 1), flat(5, 13, 5, 13, 1),
-         flat(15, 5, 18, 9, -1), flat(15, 12, 18, 15, -1), flat(7, 18, 7, 18, 1),
+         flat(16, 6, 19, 10, -1), flat(16, 11, 19, 15, -1), flat(16, 10, 19, 11, 0), flat(7, 18, 7, 18, 1),
+         wait(3),   # let the water map pick up the new terrain before anything reads column floors
          place("PandabornFlumeGate", [5, 3, 0], id="gate1"), line("PandabornFlume", [6, 3, 0], 3),
          place("PandabornFlumeCorner", [9, 3, 0], "Cw90", id="corner1"), line("PandabornFlume", [9, 4, 0], 4, (0, 1, 0), "Cw0"),
          place("PandabornFlumeCorner", [9, 8, 0], "Cw270", id="corner2"), line("PandabornFlume", [10, 8, 0], 3),
          place("PandabornFlumeLidded", [13, 8, 0], id="covered"), place("Path", [13, 8, 1], "Cw0", id="coveredPath"),
-         place("PandabornFlume", [14, 8, 0], id="end1"),
+         place("PandabornFlume", [14, 8, 0], id="end1"), place("PandabornPaddySpout", [15, 8, 0], "Cw90", id="spout1"),
          place("PandabornFlumeValveGate", [5, 13, 1], id="gate2"), line("PandabornFlumeBridge", [6, 13, 0], 7, prefix="br"),
-         place("PandabornFlumeDrop", [13, 13, 0], id="drop2"),
+         place("PandabornFlumeDrop", [13, 13, 0], id="drop2"), place("PandabornPaddySpout", [15, 13, 0], "Cw90", id="spout2"),
          place("PandabornFlume", [2, 18, 0], id="mis1"), place("PandabornFlume", [3, 18, 0], "Cw0", id="mis2"),
          place("PandabornFlume", [6, 18, 0], id="blocked"), place("PandabornFlumeGate", [10, 18, 0], id="dryIntake"),
          place("PandabornFlume", [11, 18, 0], id="dryEnd"),
-         {"op": "plant", "template": PADDY, "rect": [16, 6, 17, 8, -1]},
-         {"op": "plant", "template": PADDY, "rect": [16, 13, 17, 14, -1]},
-         water("pond1", [2, 3, 0], 2.0, 1.0), water("pond2", [2, 13, 1], 2.0, 1.0),
-         water("keep1", [15, 7, -1], -3.0, 0.3), water("keep2", [15, 13, -1], -3.0, 0.3),
-         water("puddle", [9, 13, 0], 0.15, 0.4, contaminated=True)]
-    cells = [[6, 3, 0], [8, 3, 0], [9, 3, 0], [10, 3, 0], [9, 2, 0], [9, 4, 0], [9, 6, 0], [8, 6, 0], [10, 6, 0], [9, 8, 0],
-             [8, 8, 0], [9, 9, 0], [10, 8, 0], [12, 8, 0], [13, 8, 0], [14, 8, 0], [12, 7, 0], [12, 9, 0], [16, 7, -1],
-             [3, 3, 0], [6, 13, 1], [9, 13, 1], [12, 13, 1], [13, 13, 1], [14, 13, 0], [9, 13, 0], [9, 12, 0], [9, 14, 0],
-             [16, 13, -1], [3, 13, 1]]
-    rows = [[y, 0, 19, 0] for y in range(0, 19)] + [[y, 4, 15, 1] for y in (12, 13, 14)]
-    objs = ["gate1", "gate2", "corner1", "corner2", "covered", "coveredPath", "end1", "drop2", "mis1", "mis2", "blocked",
-            "dryIntake", "dryEnd"]
+         {"op": "plant", "template": PADDY, "rect": [17, 7, 18, 9, -1]},
+         {"op": "plant", "template": PADDY, "rect": [17, 12, 18, 14, -1]},
+         wait(3), {"op": "set", "id": "spout1", "targetDepth": 0.3}, {"op": "set", "id": "spout2", "targetDepth": 0.3},
+         water("pond1", [2, 3, 0], 2.0, 1.0), water("pond2", [2, 13, 1], 2.0, 1.0)]
+    cells = [[6, 3, 0], [9, 3, 0], [10, 3, 0], [9, 2, 0], [9, 6, 0], [8, 6, 0], [10, 6, 0], [9, 8, 0], [8, 8, 0], [9, 9, 0],
+             [12, 8, 0], [13, 8, 0], [14, 8, 0], [12, 7, 0], [12, 9, 0], [17, 8, -1], [3, 3, 0],
+             [6, 13, 1], [9, 13, 1], [12, 13, 1], [13, 13, 1], [14, 13, 0], [9, 13, 0], [17, 13, -1], [3, 13, 1]]
+    rows = [[y, 0, 20, 0] for y in range(0, 19)] + [[y, 14, 20, -1] for y in range(5, 17)] + [[y, 4, 15, 1] for y in (12, 13, 14)]
+    objs = ["gate1", "gate2", "corner1", "corner2", "covered", "coveredPath", "end1", "drop2", "spout1", "spout2",
+            "mis1", "mis2", "blocked", "dryIntake", "dryEnd"]
     probe = {"op": "probe", "cells": cells, "rows": rows, "objects": objs}
-    plants = {"op": "plants", "rect": [15, 5, 18, 15, -1]}
-    s += [{"op": "series", "id": "parts", "every": 25, "cells": [[13, 8, 0], [16, 7, -1], [12, 13, 1], [16, 13, -1], [3, 3, 0], [3, 13, 1]],
-           "volumes": [[15, 5, 18, 9, -1], [15, 12, 18, 15, -1]]},
-          shot("parts_setup", [9, 9, 0], 28), wait(300), dict(probe, label="t300"), wait(400), dict(probe, label="t700"),
-          dict(plants, label="plants_t700"),
-          shot("parts_t700", [9, 9, 0], 28), shot("parts_corners", [9, 5, 0], 12, 55, 0), shot("parts_bridge", [9, 13, 0], 12, 35, 60),
+    plants = {"op": "plants", "rect": [16, 6, 19, 15, -1]}
+    s += [{"op": "series", "id": "parts", "every": 25, "cells": [[13, 8, 0], [17, 8, -1], [12, 13, 1], [17, 13, -1], [3, 3, 0], [3, 13, 1]],
+           "volumes": [[16, 6, 19, 10, -1], [16, 11, 19, 15, -1]]},
+          {"op": "series", "id": "badwater", "every": 5, "cells": [[5, 3, 0], [6, 3, 0], [14, 8, 0]],
+           "contamination": [[4, 3, 0], [5, 3, 0], [6, 3, 0], [14, 8, 0], [17, 8, -1], [12, 13, 1], [17, 13, -1]]},
+          shot("parts_setup", [10, 9, 0], 28), wait(300), dict(probe, label="t300"), wait(600), dict(probe, label="t900"),
+          dict(plants, label="plants_t900"),
+          shot("parts_t900", [10, 9, 0], 28), shot("parts_corners", [9, 5, 0], 12, 55, 0), shot("parts_bridge", [10, 13, 0], 12, 35, 60),
           shot("parts_status_row", [6, 18, 0], 12, 50, 0)]
     s += [expect("water turns twice", "depth", [12, 8, 0], 0.01),
           expect("corner post dry", "depth", [10, 3, 0], None, 0.001),
           expect("vertical run sides dry", "depth", [8, 6, 0], None, 0.001),
           expect("covered segment carries water", "depth", [13, 8, 0], 0.01),
           expect("bridge carries water", "depth", [12, 13, 1], 0.01),
-          expect("puddle under bridge", "depth", [9, 13, 0], 0.05)]
-    # badwater: both ponds now take contaminated water; gate1 has the shut-off, gate2 (valve) is the control
-    s += off("puddle", "pond1", "pond2") + [water("pond1bad", [2, 3, 0], 2.0, 1.0, True), water("pond2bad", [2, 13, 1], 2.0, 1.0, True),
-                                            wait(150), dict(probe, label="bad_t150"), wait(350), dict(probe, label="bad_t500"),
-                                            dict(plants, label="plants_bad_t500"), shot("parts_badwater", [12, 10, 0], 22)]
-    s += [expect("guarded basin stays clean", "contamination", [16, 7, -1], None, 0.02)]
-    # clear: drain the ponds, refill clean, gate1 should reopen
-    s += off("pond1bad", "pond2bad") + [water("empty1", [2, 3, 0], -3.0), water("empty2", [2, 13, 1], -3.0), wait(150)]
-    s += off("empty1", "empty2") + [water("pond1", [2, 3, 0], 2.0, 1.0), water("pond2", [2, 13, 1], 2.0, 1.0), wait(350),
-                                    dict(probe, label="clear_t350"), wait_hours(24), dict(plants, label="plants_end"),
+          expect("spout 1 holds the paddy", "depth", [17, 8, -1], 0.2, 0.45)]
+    s += off("pond1", "pond2") + [water("pond1bad", [2, 3, 0], 2.0, 1.0, True), water("pond2bad", [2, 13, 1], 2.0, 1.0, True),
+                                  wait(150), dict(probe, label="bad_t150"), wait(350), dict(probe, label="bad_t500"),
+                                  dict(plants, label="plants_bad_t500"), shot("parts_badwater", [12, 10, 0], 22)]
+    s += [expect("guarded paddy stays clean", "contamination", [17, 8, -1], None, 0.02)]
+    s += off("pond1bad", "pond2bad") + [water("empty1", [2, 3, 0], -3.0), water("empty2", [2, 13, 1], -3.0), wait(300)]
+    s += off("empty1", "empty2") + [dict(probe, label="emptied"), water("pond1", [2, 3, 0], 2.0, 1.0), water("pond2", [2, 13, 1], 2.0, 1.0),
+                                    wait(400), dict(probe, label="clear_t400"), wait_hours(24), dict(plants, label="plants_end"),
                                     dict(probe, label="end")]
-    request("parts", s, [20, 20], faction="Inkpaws")
+    s += [expect("guarded gate reopened", "depth", [12, 8, 0], 0.01)]
+    request("parts", s, [21, 20], faction="Inkpaws")
 
 
 # ---------------------------------------------------------------------------------------------------------------- scoop
@@ -284,11 +283,12 @@ def crops(days_wet=3, days_dry=2, days_rewet=1.5, days_tap=1.5):
     """
     s = [flat(1, -1, 11, 4, 2), flat(2, 0, 10, 3, 0), flat(6, 4, 6, 4, 0),
          flat(2, 5, 13, 8, -1), flat(6, 9, 6, 9, -1), flat(2, 10, 13, 13, -2), flat(6, 14, 6, 14, -2), flat(2, 15, 13, 17, -3),
-         flat(24, 22, 33, 22, -1),
+         flat(24, 22, 33, 22, -1), wait(3),
          place("PandabornPaddySpout", [6, 4, 0], "Cw0", id="spout1"),
          place("PandabornPaddySpout", [6, 9, -1], "Cw0", id="spout2"),
          place("PandabornPaddySpout", [6, 14, -2], "Cw0", id="spout3"),
          place("PandabornCisternTapAuto", [34, 16, 0], "Cw0", id="tap"),
+         wait(3)] + [{"op": "set", "id": f"spout{i}", "targetDepth": 0.3} for i in (1, 2, 3)] + [
          water("reservoir", [6, 1, 0], 2.0, 0.8), water("strip", [24, 22, -1], 0.5, 0.15)]
     for x0, crop in ((3, PADDY), (8, MOIST), (11, DRY)):
         s += [{"op": "plant", "template": crop, "rect": [x0, 6, x0 + 1, 7, -1]}]
