@@ -107,9 +107,12 @@ Rules that keep it pleasant:
 | Dry | Tea bushes, Sichuan pepper |
 
 * Dry-ground plants are luxuries and ingredients, never staple calories.
-* Tea and pepper want dry roots. Water reaches far through soil (six tiles from a flume, sixteen from a
-  paddy), so they go **a step above the water**: the top bench of a terrace. A dry-stone wall also keeps
-  moisture out of a slope.
+* Tea and pepper grow on **brown ground**: the dry land every other faction leaves empty. The rule a player
+  needs is the one the map already paints: green ground for bamboo and cabbage, brown ground for tea.
+  Water reaches far through soil (six tiles from a flume, sixteen from a paddy, and up a terrace step), so
+  a tea garden goes out past the green, not beside the paddies. A dry-stone wall keeps moisture out of a
+  slope where the player wants tea closer in.
+* Dry-ground plants need no water at all, so they are the one harvest a drought cannot touch.
 * Wet roots are a warning, not a sentence: a tea or pepper bush stops growing and says so, and dies only
   after about three wet days.
 * Foresters replant dead trees by default, so a grove that dies in a long drought comes back by itself.
@@ -353,7 +356,7 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Inkpaws' top walking speed is raised (the game stops everyone at twice normal) | In game, the rested bonus stopped helping walkers above wellbeing 52; with the limit raised a twelve-hour day matches a sixteen-hour one at every wellbeing level |
 | 2026-11-14 | In an Inkpaws game the interface says "Inkpaw", "cub" and "panda" where vanilla says "beaver" and "kit", by code that only acts while an Inkpaws game is loaded | A panda faction whose every tooltip says "beavers" feels like a reskin; a text override file would have renamed beavers in Folktails games too |
 | 2026-11-14 | A flume waters the ground beside it; "flume, spout, pool" is no longer the taught unit | The water prototype measured six moist tiles to each side of a one-wide flume. The pool is for rice only |
-| 2026-11-14 | Tea and pepper survive about three wet days; they belong on the top bench | In the prototype a dry-ground crop died within a day anywhere near water, and moisture reaches sixteen tiles from a paddy |
+| 2026-11-14 | Tea and pepper survive about three wet days; they belong on brown ground, out past the irrigated land (first written as "the top bench of a terrace"; a later run showed tea dying one level up and four to eight tiles from a paddy) | In the prototype a dry-ground crop died within a day anywhere near water, and moisture reaches sixteen tiles from a paddy |
 | 2026-11-14 | Inkpaw foresters replant dead trees by default | The vanilla default leaves a dead grove dead, which would end pole supply after one long drought |
 | 2026-11-14 | Night couriers restock workshops for the coming day; Inkpaw workplaces hold about a day's inputs and outputs | In the prototype the couriers made no hauls at all: builders, not haulers, supply sites, and nothing was left to carry at night. A day-sized shelf gives the night real work and takes carrying off the day crew, and changes nothing for a village without Ringtails |
 | 2026-11-14 | Ringtails walk at Inkpaw speed and keep it when loaded, by data alone | The game has a separate "carrying" speed per character; setting it equal to the walking speed is the whole feature |
