@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Pandaborn.Festival;
 using Pandaborn.Flowering;
@@ -8,6 +8,12 @@ using Timberborn.TimeSystem;
 
 namespace Pandaborn.Events.Dev
 {
+    // These two classes are the only probe code that names Festival or Flowering types. They are written WITHOUT lambdas,
+    // LINQ or closures: the compiler would put module types in the fields of generated classes, and the game's
+    // ModCodeStarter calls GetTypes() on this DLL at startup, which then fails (and stops every mod) when a module is forced
+    // off and its assembly is not loaded (run events-backon-1). Method bodies are only compiled when called, and they are
+    // only called when the module's assembly is loaded.
+
     /// <summary>Everything the probe does with the Festival module. Only called when Pandaborn.Festival is loaded.</summary>
     internal static class FestivalProbe
     {
@@ -15,9 +21,17 @@ namespace Pandaborn.Events.Dev
 
         public static void Features(JObject features)
         {
-            features["festivalActive"] = F != null;
-            features["fireworks"] = F?.FireworksStatus;
+            var f = F;
+            features["festivalActive"] = f != null;
+            features["fireworks"] = f != null ? f.FireworksStatus : null;
             features["dayOff"] = FestivalGoer.InsertionError ?? "ok";
+        }
+
+        private static FestivalSquare FirstSquare(FestivalService f, bool finished)
+        {
+            foreach (var s in f.Squares)
+                if (s && (!finished || s.IsFinished)) return s;
+            return null;
         }
 
         public static string Do(string what, JObject a, IDayNightCycle clock)
@@ -31,13 +45,15 @@ namespace Pandaborn.Events.Dev
                 case "callFestival":
                 {
                     if (f == null) return "festival off";
-                    var square = f.Squares.FirstOrDefault(s => s && s.IsFinished);
+                    var square = FirstSquare(f, true);
                     if (square == null) return "no finished square";
                     var stock = FestivalStock.Count(square.District, f.Spec);
                     string why = f.WhyNot(square, stock);
                     bool ok = f.Call(square, auto: false);
+                    var dishes = new List<string>();
+                    foreach (var d in stock.Dishes) dishes.Add(d.Key + "=" + d.Value);
                     return (ok ? "called at hour " + clock.HoursPassedToday.ToString("0.0") + " for day " + f.FestivalDay + (f.Grand ? " (grand)" : "") : "refused: " + why)
-                           + "; stock lanterns " + stock.Lanterns + ", dishes " + string.Join(" ", stock.Dishes.Select(d => d.Key + "=" + d.Value)) + ", fireworks " + stock.Fireworks;
+                           + "; stock lanterns " + stock.Lanterns + ", dishes " + string.Join(" ", dishes) + ", fireworks " + stock.Fireworks;
                 }
                 default: return null;
             }
@@ -47,15 +63,22 @@ namespace Pandaborn.Events.Dev
         {
             var f = F;
             if (f == null) { s["festival"] = "inactive"; return; }
-            var goers = f.Goers.Where(g => g).ToList();
             var doing = new JObject();
-            foreach (var g in goers)
+            int goers = 0, attended = 0, keep = 0, festiveN = 0, grandN = 0;
+            float festiveSum = 0f, festiveMin = 9f, grandSum = 0f;
+            foreach (var g in f.Goers)
             {
+                if (!g) continue;
+                goers++;
                 string d = f.IsHoliday && !string.IsNullOrEmpty(g.Doing) ? g.Doing : "-";
                 doing[d] = (doing[d]?.Value<int>() ?? 0) + 1;
+                if (f.HasAttended(g)) attended++;
+                if (g.KeepsWorking) keep++;
+                float p = g.NeedPoints(f.Spec.FestiveNeedId);
+                if (p >= 0f) { festiveN++; festiveSum += p; if (p < festiveMin) festiveMin = p; }
+                float q = g.NeedPoints(f.Spec.GrandNeedId);
+                if (q >= 0f) { grandN++; grandSum += q; }
             }
-            var festive = goers.Select(g => g.NeedPoints(f.Spec.FestiveNeedId)).Where(p => p >= 0f).ToList();
-            var grand = goers.Select(g => g.NeedPoints(f.Spec.GrandNeedId)).Where(p => p >= 0f).ToList();
             s["festival"] = new JObject
             {
                 ["phase"] = f.Phase.ToString(),
@@ -68,13 +91,13 @@ namespace Pandaborn.Events.Dev
                 ["lanterns"] = f.LanternsLaunched,
                 ["bursts"] = f.BurstsLaunched,
                 ["sounds"] = FestivalSounds.Played,
-                ["goers"] = goers.Count,
-                ["attended"] = goers.Count(g => f.HasAttended(g)),
-                ["festiveAvg"] = festive.Count > 0 ? Math.Round(festive.Average(), 3) : -1,
-                ["festiveMin"] = festive.Count > 0 ? Math.Round(festive.Min(), 3) : -1,
-                ["grandAvg"] = grand.Count > 0 ? Math.Round(grand.Average(), 3) : -1,
+                ["goers"] = goers,
+                ["attended"] = attended,
+                ["festiveAvg"] = festiveN > 0 ? Math.Round(festiveSum / festiveN, 3) : -1,
+                ["festiveMin"] = festiveN > 0 ? Math.Round(festiveMin, 3) : -1,
+                ["grandAvg"] = grandN > 0 ? Math.Round(grandSum / grandN, 3) : -1,
                 ["doing"] = doing,
-                ["keepWorking"] = goers.Count(g => g.KeepsWorking),
+                ["keepWorking"] = keep,
                 ["lockedByTradition"] = TraditionToolLocker.LockedCount,
                 ["panel"] = FestivalSquareFragment.ShownText
             };
@@ -86,9 +109,18 @@ namespace Pandaborn.Events.Dev
         {
             var f = F;
             if (f == null) return null;
-            if (what == "square") return f.Squares.FirstOrDefault(s => s);
+            if (what == "square") return FirstSquare(f, false);
             if (what == "colonist")
-                return (BaseComponent)f.Goers.FirstOrDefault(g => g && g.Doing.StartsWith("at the square", StringComparison.Ordinal)) ?? f.Goers.FirstOrDefault(g => g);
+            {
+                FestivalGoer any = null;
+                foreach (var g in f.Goers)
+                {
+                    if (!g) continue;
+                    if (any == null) any = g;
+                    if (g.Doing.StartsWith("at the square", StringComparison.Ordinal)) return g;
+                }
+                return any;
+            }
             return null;
         }
     }
@@ -120,21 +152,31 @@ namespace Pandaborn.Events.Dev
         {
             var f = F;
             if (f == null) { s["flowering"] = "inactive"; return; }
-            var plants = f.Plants.Where(p => p).ToList();
-            var twins = f.InFlower.Where(t => t).ToList();
+            int alive = 0, dead = 0, seed = 0;
+            foreach (var t in f.InFlower)
+            {
+                if (!t) continue;
+                if (t.IsDead) dead++; else alive++;
+                seed += t.SeedLeft;
+            }
+            var young = new JArray();
+            foreach (var p in f.Plants)
+            {
+                if (!p || p.IsGrown || p.IsDead || young.Count >= 8) continue;
+                young.Add(p.Species + " " + p.Growable.GrowthProgress.ToString("0.000"));
+            }
             s["flowering"] = new JObject
             {
                 ["setting"] = f.Setting,
                 ["phase"] = f.Phase.ToString(),
                 ["species"] = f.Species,
                 ["nextCycle"] = f.NextCycle,
-                ["twinsAlive"] = twins.Count(t => !t.IsDead),
-                ["twinsDead"] = twins.Count(t => t.IsDead),
-                ["seedOnPlants"] = twins.Sum(t => t.SeedLeft),
+                ["twinsAlive"] = alive,
+                ["twinsDead"] = dead,
+                ["seedOnPlants"] = seed,
                 ["seedCut"] = f.SeedCut,
                 ["held"] = f.HeldNow,
-                ["young"] = new JArray(plants.Where(p => !p.IsGrown && !p.IsDead).Take(8)
-                                             .Select(p => (object)(p.Species + " " + p.Growable.GrowthProgress.ToString("0.000"))).ToArray()),
+                ["young"] = young,
                 ["indicator"] = FloweringIndicator.ShownText,
                 ["plantPanel"] = FloweringPlantFragment.ShownText
             };
@@ -146,11 +188,22 @@ namespace Pandaborn.Events.Dev
         {
             var f = F;
             if (f == null) return null;
-            if (what == "inflower") return f.InFlower.FirstOrDefault(t => t && !t.IsDead);
+            if (what == "inflower")
+            {
+                foreach (var t in f.InFlower) if (t && !t.IsDead) return t;
+                return null;
+            }
             if (what.StartsWith("plant:", StringComparison.Ordinal))
             {
-                string t = what.Substring(6);
-                return f.Plants.Where(p => p && p.Species == t).OrderBy(p => p.IsGrown ? 1 : 0).FirstOrDefault();
+                string name = what.Substring(6);
+                FloweringPlant grown = null;
+                foreach (var p in f.Plants)
+                {
+                    if (!p || p.Species != name) continue;
+                    if (!p.IsGrown) return p;
+                    if (grown == null) grown = p;
+                }
+                return grown;
             }
             return null;
         }
