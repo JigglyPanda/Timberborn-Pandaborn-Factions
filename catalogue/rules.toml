@@ -37,8 +37,8 @@ Ringtails = true     # docs/tech/two-peoples.md 18.1: adopted 2026-11-14
 RingtailsFallback = true
 RingtailVenues = false
 Tutorial = true      # "have N of a good" tutorial steps (docs/tech/tutorial.md)   # Opera Stage and Star Tower: no module runs them yet (two-peoples.md has no venue behaviour)
-Festival = false     # docs/tech/events.md 8 (no Festival module in src/code yet)
-Flowering = false
+Festival = true      # switched on 2026-11-14: proven through the module path (docs/tech/events.md Results)
+Flowering = true     # switched on 2026-11-14 (docs/tech/events.md Results)
 
 [shelves]
 # Workplace stores sized in hours of work (docs/tech/two-peoples.md 18.3, measured): night couriers have something to

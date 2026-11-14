@@ -247,8 +247,7 @@
         "since": "2026-11-14"
       },
       "PandabornFestivalSquare.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Festival"
+        "since": "2026-11-14"
       },
       "PandabornFlume.Inkpaws": {
         "since": "2026-11-14"
@@ -360,8 +359,7 @@
         "since": "2026-11-14"
       },
       "PandabornShootBambooInFlower.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornSichuanPepper.Inkpaws": {
         "since": "2026-11-14"
@@ -404,8 +402,7 @@
         "since": "2026-11-14"
       },
       "PandabornTimberBambooInFlower.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornTreadwheelLift.Inkpaws": {
         "since": "2026-11-14"
@@ -606,12 +603,10 @@
         "since": "2026-11-14"
       },
       "PandabornBambooSeed": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornBambooShoots": {
         "since": "2026-11-14"
@@ -664,8 +659,7 @@
         "since": "2026-11-14"
       },
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornCabbage": {
         "since": "2026-11-14"
@@ -677,12 +671,10 @@
         "since": "2026-11-14"
       },
       "PandabornFestive": {
-        "since": "2026-11-14",
-        "gatedBy": "Festival"
+        "since": "2026-11-14"
       },
       "PandabornFestiveGrand": {
-        "since": "2026-11-14",
-        "gatedBy": "Festival"
+        "since": "2026-11-14"
       },
       "PandabornGardenMoonGate": {
         "since": "2026-11-14"
@@ -747,8 +739,7 @@
     "need_group": {},
     "recipe": {
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14",
-        "gatedBy": "Flowering"
+        "since": "2026-11-14"
       },
       "PandabornCuredPole": {
         "since": "2026-11-14"

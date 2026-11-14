@@ -621,28 +621,43 @@ for path in sys.argv[1:]:
 """
 
 
+def mod_bundle_assets(c):
+    """Asset paths inside the mod's own AssetBundles/*_win, as the game asks for them (the container path after
+    "/resources/", lower case, no extension), read with UnityPy from the art venv. None when they cannot be read."""
+    if hasattr(c, "bundle_assets"):
+        return c.bundle_assets
+    mod_bundle_sounds(c)
+    return c.bundle_assets
+
+
 def mod_bundle_sounds(c):
     """Clip names inside the mod's own AssetBundles/*_win (container paths .../resources/sounds/.../<clip>.wav), read
     with UnityPy from the art venv. None when they cannot be read (then such sounds are reported as unchecked)."""
     if hasattr(c, "bundle_sounds"):
         return c.bundle_sounds
     c.bundle_sounds = set()
+    c.bundle_assets = set()
     bundles = [c.files[r] for r in c.files if r.lower().startswith("assetbundles/") and r.lower().endswith("_win")]
     if not bundles:
         return c.bundle_sounds
     if not os.path.isfile(BUNDLE_PY):
         c.bundle_sounds = None
+        c.bundle_assets = None
         return None
     try:
         r = subprocess.run([BUNDLE_PY, "-I", "-c", BUNDLE_LIST] + bundles, capture_output=True, timeout=300)
     except (OSError, subprocess.TimeoutExpired):
         c.bundle_sounds = None
+        c.bundle_assets = None
         return None
     if r.returncode != 0:
         c.bundle_sounds = None
+        c.bundle_assets = None
         return None
     for line in r.stdout.decode("utf-8", "replace").splitlines():
         low = line.strip().lower()
+        if "/resources/" in low:
+            c.bundle_assets.add(low.split("/resources/", 1)[1].rsplit(".", 1)[0])
         if "/resources/sounds/" in low and low.endswith(".wav"):
             c.bundle_sounds.add(low.rsplit("/", 1)[-1][:-4])
     return c.bundle_sounds
@@ -1273,7 +1288,16 @@ def check_asset_refs(c):
         if c.res is None:
             R.unchecked.add("%s -> %s (no resource index)" % (where, value))
         elif kind is None and has_bundles:
-            R.unchecked.add("%s -> %s (%s, may be in one of the mod's asset bundles)" % (where, value, asset))
+            # a prefab, material or other bundle-only asset: it must be inside one of the staged bundles, or the game
+            # throws at load (a dev copy without pandabornattachments crashed every game, 2026-11-14)
+            inside = mod_bundle_assets(c)
+            if inside is None:
+                R.unchecked.add("%s -> %s (%s, may be in one of the mod's asset bundles)" % (where, value, asset))
+            elif k not in inside:
+                R.error("%s: %s (%s) is in none of the mod's asset bundles (%s): ship the bundle that holds it"
+                        % (where, value, asset, ", ".join(sorted(r.rsplit("/", 1)[-1] for r in c.files
+                                                                  if r.lower().startswith("assetbundles/")
+                                                                  and r.lower().endswith("_win"))) or "none"))
         else:
             R.error("%s: %s does not resolve to a mod file or a game asset" % (where, value))
 
