@@ -137,4 +137,87 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -NoBuild -Facti
     -RequestJson proto\plants\tests\states.request.json -TimeoutSeconds 2700 -WaitForGameSeconds 10800 -NoBatchControl
 ```
 
-(Results, per-plant notes and the catalogue hand-over follow below.)
+`src/pipeline/plants/preview_all.py` rebuilds everything and writes `E:\PandabornDev\build\plants\preview\sheet_fields.png`
+(each plant's field beside its vanilla neighbours), `lineup_mature.png` and `lineup_seedling.png` (every model: alive,
+dry, dead, ripe yield, stumps).
+
+## The seven plants
+
+| Plant (template) | Kind / basis | What it is | Triangles: seedling / mature / stump | Material wind |
+|---|---|---|---|---|
+| Timber bamboo (`PandabornTimberBamboo.Inkpaws`) | Trees / ChestnutTree, 1x1x3 | six tall green culms (2.35-2.95, 5-sided, nodes and waxy bands from the culm strip) leaning out, feathery leaf sprays in the upper half, arching tips; bamboo fungus (white lace veils) at the base while it has mushrooms; dry = straw culms and sprays; dead = grey culms, two snapped, a few dry twigs; stump = four hollow cut culms | 128 / 252 / 60 | strong slow sway, fluttering leaves |
+| Persimmon tree (`PandabornPersimmonTree.Inkpaws`) | Trees / ChestnutTree, 1x1x3 | dark blocky trunk forking into three limbs, a round crown of 54 shingled puffs of broad dark glossy leaves, 16 orange persimmons with green calyxes hanging outside the crown while it has fruit; sapling forks into three leafy twigs; dead = bare forked branches | 52 / 188 / 21 | as chestnut |
+| Tea bush (`PandabornTeaBush.Inkpaws`) | Bushes / BlueberryBush, 1x1x1 | clipped dome of small dark glossy leaves with a flat plucking table, filling the tile so planted rows join into hedgerows; bright yellow-green young tips across the top while there is tea to pick | 28 / 52 / - | almost still |
+| Shoot bamboo (`PandabornShootBamboo.Inkpaws`) | Crops / Carrot | four thin culms with small leaf fans and low ground fans on a tilled soil patch, three fat tan sheathed shoots with yellow-green tips around it at harvest | 97 / 138 / - | light |
+| Cabbage (`PandabornCabbage.Inkpaws`) | Crops / Carrot | four tall napa heads per tile: six pale crinkled leaves with white midribs wrapped into a barrel, four darker spreading outer leaves; seedlings are rosettes of young leaves | 40 / 264 / - | stiff |
+| Rice (`PandabornRice.Inkpaws`) | Crops / Cattail, 1x1x2, aquatic | 3x3 transplanted hills per tile on a grid that runs on across tiles; bright green upright tufts (0.55 high) when young, green-gold arching leaves under pale gold drooping panicles (0.87) at harvest; stands on the paddy floor | 126 / 180 / - | supple |
+| Sichuan pepper (`PandabornSichuanPepper.Inkpaws`) | Crops / Sunflower, 1x1x2, arid | open thorny shrub (0.84): four grey-brown stems, a crossed card of thorny twigs, twelve sprays of small pinnate leaves, six clusters of red berries at the tips (the only red) | 29 / 115 / - | light |
+
+All stay inside the budgets; every model is one node, one material, one submesh. Every plant reads differently from
+every vanilla plant in the field previews and in game (see Results): bamboo groves by their vertical culms and
+feathery tops, persimmons by dark round crowns dotted orange, tea by the joined dark hedgerows with bright tips,
+cabbage by pale barrels with white ribs, rice by hills in water, pepper by dark open shrubs with red specks.
+
+## What the catalogue lane must change to adopt the models
+
+Everything the blueprints need is in `art/plants/<Id>/model.json`; `proto/plants/tools/gen_mod.py` (`blueprint()`)
+shows the exact merge and is the reference implementation. The generator (`src/gen`) cannot do it yet:
+`apply_models` only sets direct children, and plant models sit three levels down.
+
+1. **Models into the build.** Copy `E:\PandabornDev\build\plants\<Id>\*.timbermesh` (built by `art/plants/<Id>/build.py`)
+   to `NaturalResources/Pandaborn/<Kind>/<Id>/` in the stage, as the panda meshes are copied (the models are build
+   artefacts on E:, never in git).
+2. **Blueprint fields per plant** (from `model.json`): `Children.#Models.Children.<Seedling|Mature>.Children.<#Alive|#Dying|#Dead>.TimbermeshSpec.Model`
+   (key `models`, e.g. `"Mature/#Dying"`), `Children.#Models.Children.#Leftover.TimbermeshSpec.Model` (trees),
+   `PlantablePreviewModelSpec.Model` (= Mature), `NaturalResourceModelRandomizerSpec` (key `randomizer`; **add** it to the
+   Carrot-based crops, which have none, and replace the Cattail one on rice with rotation by 90 degrees so the paddy
+   grid stays aligned), the `CollidersSpec` of each child (key `colliders`: capsules for trees sized to the crowns, boxes
+   for crops), `TreeCuttingRadiusSpec.Radius` 0.22 for timber bamboo. Suggested shorthand in `plants.toml`:
+   `models_from = "art/plants/PandabornTeaBush/model.json"` read by the generator; or the same paths through `set`
+   (dotted keys work: no key contains a dot).
+3. **Material collection.** `MaterialCollections/Pandaborn/MaterialCollection.PandabornPlants.Inkpaws.blueprint.json`
+   (`CollectionId` `PandabornPlants.Inkpaws`, the seven `Materials/Pandaborn/Plants/<name>` paths; copy of
+   `proto/plants/mod/MaterialCollections/...`) and `"PandabornPlants.Inkpaws"` added to the faction's
+   `MaterialCollectionIds` (`faction.toml`; the prototype appends it with `MaterialCollectionIds#append`).
+4. **Bundle.** `E:\PandabornDev\build\plants\AssetBundles\pandabornplants_win` into the mod's `AssetBundles/`, under
+   exactly that name (never renamed: docs/tech/look.md problem 10). **A `pandabornplants_mac` is required before
+   release** (see Weak spots).
+5. Then drop the "stand-in model" note in `gen_plants`.
+
+## Results
+
+| Run | What | Result |
+|---|---|---|
+| `plants-states-1` | Plains, Inkpaws, only the faction + the plants prototype. Every plant in every state, 2x2 blocks: seedling, seedling dry, seedling dead, mature, ripe (gatherables), mature dry, mature dead, cut (trees); a 0.3-deep paddy of rice seedlings and mature rice; day shots, then 12.5 in-game hours later | **PASS**, 0 errors, 0 exceptions. The plant lab's report (result.json `plantLab`) shows for all 47 blocks the expected node active (`Seedling/#Alive/PandabornRiceSeedling`, `Mature/#Dying/...Dry`, `#Leftover/...Stump`, ...), the material `Pandaborn<X> - Uncolored<n>` (our bundle material re-created by the game's optimizer), uv2 present, and `_EnableDetail` 1 exactly on the ripe blocks (bamboo fungus, persimmons and tea tips visible) |
+
+Screenshots in `E:\PandabornDev\build\test\plants-states-1\`: `matrix_{day,night}.png` (all states), `row_<Plant>_{day,night}.png`
+(one plant's row framed), `paddy_{day,night}.png`, `game_{day,night}.png`.
+
+What the game shots showed and what changed after them:
+
+* Timber bamboo reads instantly as a bamboo grove: green segmented culms under feathery tops, more saturated in game than
+  in the Blender previews; the fungus veils show as small white lace at the base. Dry groves turn straw-gold, dead ones
+  silver-grey snags, the stumps are hollow cut culms. No change needed.
+* Persimmon crowns showed holes (shingled cards with gaps between the leaf puffs): the leaf sprites were filled
+  (72 leaves in the big puff instead of 46), a sixth ring of cards added (188 triangles), fruit made larger.
+* Rice panicles read as orange curls and the ripe leaves as yellow: panicles repainted paler with grains tight along a
+  gentler droop, ripe leaves greener so the heads stand out. In the paddy, the rice outside the water turned to its dry
+  model on its own (real moisture), the rice in the water stayed alive.
+* Tea, cabbage, shoot bamboo and pepper worked as previewed. "Night" at +12.5 h was dusk (warm red light); the terrace
+  run waits 16 h.
+
+## Weak spots
+
+* **Mac.** The plants need their bundle on every platform: the faction lists `PandabornPlants.Inkpaws`, and a model
+  whose material is missing throws. Mac Build Support for Unity 6000.5.11f1 is not installed on this machine
+  (docs/tech/look.md, *Mac bundles*), so `pandabornplants_mac` cannot be built yet; `tools/build_plants.ps1 -Mac` is
+  ready. Until then the validator rightly reports the missing `_mac` pair. (Unlike the Look module there is no safe
+  fallback: the models would have to switch back to vanilla stand-ins per platform.)
+* The validator cannot resolve bundle material references statically and lists them as errors for the prototype mod.
+* Plants are filmed with forced states (plant lab): dry and dead are the real game models, but the dying was switched
+  on by reflection, not by soil. The paddy and the terrace use real water and moisture.
+* Seedlings are only one stage (the game has no more); the shoot-bamboo and cabbage seedlings are small on large soil
+  patches, as vanilla's are.
+* Colliders are per stage, the same for alive, dry and dead (vanilla narrows the dead tree's collider).
+* The painted atlas is procedural: leaves are clean and graphic next to vanilla's hand-painted clusters; at game zoom
+  it holds up, close up the bamboo leaf sprays and the persimmon puffs are the weakest sprites.
