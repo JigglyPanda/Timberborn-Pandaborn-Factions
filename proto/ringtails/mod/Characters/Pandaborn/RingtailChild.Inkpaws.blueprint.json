@@ -17,7 +17,7 @@
     "DiedTragicallyAlertLocKey": "Status.Beaver.DiedTragicallyShort"
   },
   "MovementAnimatorSpec": {
-    "AnimationSpeedScale": 1.0
+    "AnimationSpeedScale": 0.8
   },
   "TemplateSpec": {
     "TemplateName": "RingtailChild.Inkpaws",
@@ -26,8 +26,8 @@
     "DisablingFeatureToggle": ""
   },
   "WalkerSpeedManagerSpec": {
-    "BaseWalkingSpeed": 1.755,
-    "BaseSlowedSpeed": 0.845
+    "BaseWalkingSpeed": 1.35,
+    "BaseSlowedSpeed": 1.35
   },
   "SleeperSpec": {
     "SleepOutsideEffects": [
@@ -925,6 +925,8 @@
     "RestStartHours": 0.0,
     "RestEndHours": 8.0,
     "SleepBelow": 0.55,
-    "AppetiteFactor": 0.75
+    "RestEndsAtBell": true,
+    "RestMinEndHours": 4.0,
+    "RestMaxEndHours": 16.0
   }
 }

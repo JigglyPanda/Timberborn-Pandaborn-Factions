@@ -377,6 +377,7 @@ namespace Pandaborn.Ringtails.Dev
             {
                 o["restInserted"] = rest.Inserted;
                 o["inRestWindow"] = rest.InRestWindow;
+                o["restEnd"] = Math.Round(rest.RestEndHours, 2);
             }
             var coat = c.GetComponent<RingtailCoat>();
             if (coat != null) o["coat"] = coat.CoatName;

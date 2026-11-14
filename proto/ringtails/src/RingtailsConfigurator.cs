@@ -13,7 +13,6 @@ namespace Pandaborn.Ringtails
             Bind<RingtailRestRootBehavior>().AsTransient();
             Bind<RingtailCoat>().AsTransient();
             Bind<RingtailGrowth>().AsTransient();
-            Bind<RingtailAppetite>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
 
@@ -23,7 +22,6 @@ namespace Pandaborn.Ringtails
             builder.AddDecorator<PandabornRingtailSpec, RingtailRestRootBehavior>();
             builder.AddDecorator<PandabornRingtailSpec, RingtailCoat>();
             builder.AddDecorator<PandabornRingtailSpec, RingtailGrowth>();
-            builder.AddDecorator<PandabornRingtailSpec, RingtailAppetite>();
             return builder.Build();
         }
     }

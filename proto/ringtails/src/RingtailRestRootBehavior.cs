@@ -36,6 +36,7 @@ namespace Pandaborn.Ringtails
         public static string InsertionError { get; private set; }
 
         private readonly IDayNightCycle _dayNightCycle;
+        private readonly WorkingHoursManager _workingHoursManager;
 
         private PandabornRingtailSpec _spec;
         private BehaviorManager _behaviorManager;
@@ -46,9 +47,10 @@ namespace Pandaborn.Ringtails
 
         public bool Inserted { get; private set; }
 
-        public RingtailRestRootBehavior(IDayNightCycle dayNightCycle)
+        public RingtailRestRootBehavior(IDayNightCycle dayNightCycle, WorkingHoursManager workingHoursManager)
         {
             _dayNightCycle = dayNightCycle;
+            _workingHoursManager = workingHoursManager;
         }
 
         public void Awake()
@@ -108,12 +110,27 @@ namespace Pandaborn.Ringtails
             }
         }
 
+        /// <summary>
+        /// End of the rest window in hours after dawn: the bell (end of the Inkpaw working hours, read live so the slider
+        /// takes effect at once) clamped to [RestMinEndHours, RestMaxEndHours]; or the fixed RestEndHours.
+        /// </summary>
+        public float RestEndHours
+        {
+            get
+            {
+                if (!_spec.RestEndsAtBell) return _spec.RestEndHours;
+                float dawn = _dayNightCycle.BoundsInHours(TimeOfDay.Daytime).start;
+                float bell = _workingHoursManager.EndHours - dawn;
+                return Math.Min(Math.Max(bell, _spec.RestMinEndHours), _spec.RestMaxEndHours);
+            }
+        }
+
         public bool InRestWindow
         {
             get
             {
                 float h = HoursSinceDawn;
-                float start = _spec.RestStartHours, end = _spec.RestEndHours;
+                float start = _spec.RestStartHours, end = RestEndHours;
                 return start <= end ? h >= start && h < end : h >= start || h < end;
             }
         }

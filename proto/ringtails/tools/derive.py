@@ -19,8 +19,9 @@ MOD = os.path.abspath(os.path.join(HERE, "..", "mod"))
 WORKER_TYPE = "PandabornRingtail"
 
 # Ringtail stats relative to the vanilla beaver (Inkpaws use the vanilla values today)
-WALK_FACTOR = 1.3          # faster walkers
-ANIMATION_FACTOR = 1.25    # keep the legs roughly in step with the faster walk on a smaller body
+WALK_FACTOR = 1.0          # same unladen speed as Inkpaws (coordinator decision 2026-11-14)
+ANIMATION_FACTOR = 1.0
+NO_LOAD_SLOWDOWN = True    # shoulder poles: carrying does not slow them (BaseSlowedSpeed = BaseWalkingSpeed)
 BODY_SCALE = 0.82
 APPETITE_FACTOR = 0.75     # light eaters and drinkers: net Hunger/Thirst decay x0.75          # smaller body, applied to the Model_Preserved child (TransformSpec)
 
@@ -54,7 +55,7 @@ def derive_character(bp, src, dst, template, model, adult):
     model_child["TransformSpec"] = {"Position": scale(0.0), "Rotation": scale(0.0), "Scale": scale(BODY_SCALE)}
     walker = data["WalkerSpeedManagerSpec"]
     walker["BaseWalkingSpeed"] = round(walker["BaseWalkingSpeed"] * WALK_FACTOR, 3)
-    walker["BaseSlowedSpeed"] = round(walker["BaseSlowedSpeed"] * WALK_FACTOR, 3)
+    walker["BaseSlowedSpeed"] = walker["BaseWalkingSpeed"] if NO_LOAD_SLOWDOWN else round(walker["BaseSlowedSpeed"] * WALK_FACTOR, 3)
     data["MovementAnimatorSpec"]["AnimationSpeedScale"] = round(
         data["MovementAnimatorSpec"].get("AnimationSpeedScale", 1.0) * ANIMATION_FACTOR, 3)
     # keep the vanilla label key: CharacterBatchControlTab.GetSortingKey throws for any other key
@@ -68,7 +69,9 @@ def derive_character(bp, src, dst, template, model, adult):
         "RestStartHours": 0.0,
         "RestEndHours": 8.0,
         "SleepBelow": 0.55,
-        "AppetiteFactor": APPETITE_FACTOR,
+        "RestEndsAtBell": True,
+        "RestMinEndHours": 4.0,
+        "RestMaxEndHours": 16.0,
     }
     save(dst, data)
 

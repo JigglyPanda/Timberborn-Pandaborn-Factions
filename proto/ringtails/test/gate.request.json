@@ -84,24 +84,24 @@
     "place": [
       "RingtailHaulingPost.Inkpaws",
       "RingtailGathererFlag.Inkpaws",
-      "LumberjackFlag.Folktails",
-      "GathererFlag.Folktails",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
       "RingtailLoft.Inkpaws",
       "RingtailLoft.Inkpaws",
-      "Lodge.Folktails",
-      "Lodge.Folktails",
-      "Lodge.Folktails",
-      "Lodge.Folktails",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
       {
-        "template": "Lodge.Folktails",
+        "template": "PandabornDen.Inkpaws",
         "finished": false
       },
       {
-        "template": "Lodge.Folktails",
+        "template": "PandabornDen.Inkpaws",
         "finished": false
       },
       {
-        "template": "Lodge.Folktails",
+        "template": "PandabornDen.Inkpaws",
         "finished": false
       }
     ],

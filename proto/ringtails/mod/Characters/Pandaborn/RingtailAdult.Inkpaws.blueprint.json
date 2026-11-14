@@ -17,7 +17,7 @@
     "DiedTragicallyAlertLocKey": "Status.Beaver.DiedTragicallyShort"
   },
   "MovementAnimatorSpec": {
-    "AnimationSpeedScale": 1.25
+    "AnimationSpeedScale": 1.0
   },
   "WorkerSpec": {
     "WorkerType": "PandabornRingtail"
@@ -36,8 +36,8 @@
     "BackpackAttachmentName": "Backpack"
   },
   "WalkerSpeedManagerSpec": {
-    "BaseWalkingSpeed": 3.51,
-    "BaseSlowedSpeed": 1.755
+    "BaseWalkingSpeed": 2.7,
+    "BaseSlowedSpeed": 2.7
   },
   "TemporalSpec": {},
   "SleeperSpec": {
@@ -1938,6 +1938,8 @@
     "RestStartHours": 0.0,
     "RestEndHours": 8.0,
     "SleepBelow": 0.55,
-    "AppetiteFactor": 0.75
+    "RestEndsAtBell": true,
+    "RestMinEndHours": 4.0,
+    "RestMaxEndHours": 16.0
   }
 }

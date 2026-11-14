@@ -28,9 +28,21 @@ namespace Pandaborn.Ringtails
         [Serialize]
         public float SleepBelow { get; init; } = 0.55f;
 
-        /// <summary>Net Hunger and Thirst rate as a fraction of the vanilla rate (light eaters).</summary>
+        /// <summary>
+        /// When true the rest window ends at the bell (the end of the Inkpaw working hours, the working-hours slider),
+        /// clamped to [RestMinEndHours, RestMaxEndHours] after dawn; RestEndHours is then ignored. The handover at the bell
+        /// is the faction's pitch: Inkpaws stop, Ringtails start.
+        /// </summary>
         [Serialize]
-        public float AppetiteFactor { get; init; } = 1f;
+        public bool RestEndsAtBell { get; init; } = true;
+
+        /// <summary>Earliest shift start: time to sleep after the night shift.</summary>
+        [Serialize]
+        public float RestMinEndHours { get; init; } = 4f;
+
+        /// <summary>Latest shift start: nightfall, so Ringtails always hold the night.</summary>
+        [Serialize]
+        public float RestMaxEndHours { get; init; } = 16f;
     }
 
     /// <summary>Marks a workplace that only Ringtails staff (its WorkplaceSpec says so too; this is for our own code and the UI).</summary>
