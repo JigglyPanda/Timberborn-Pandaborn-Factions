@@ -615,3 +615,51 @@ the Moon Loft from the angle that worked.
 * FestivalSquare: basis now `DanceHall.Folktails` (5x5x2), blocks/entrance/access/slots from model.json; keep the
   `Light` attachment; add the `LanternRise` attachment above when the prefab exists.
 * Faction: `FactionSpec.WonderCompletionImage` = `Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws`.
+
+
+## Pass 5 (2026-11-14)
+
+### Lantern glow colour: request to the look lane
+
+Lit lanterns glow yellow-white in game (`models-pass3-6`, `*_night_lit.png`) and the risen Sky Lantern reads as a
+lemon ball. Why: the environment shader's emission is `clamp(_LightingMap x _LightingColor x lighting strength)`
+(EnvironmentURP shader graph), with no vertex colour in it, so a lantern glows the colour of the glow map under its
+UVs; and every glowing region of `PBLook_Windows_E` is the same pale amber (about 250, 212, 147). No region of any
+look sheet glows warmer, so this cannot be done on the model side alone.
+
+**Request** (WindowsAtlas, look-regions coordinates: pixels of the 1024 sheet, [x0, y0, x1, y1), y down). Two plain
+patches in the free strip of the background at the right edge (no window region uses x 960-1024, y 0-256; checked:
+`_E` is black there and `_D` is the plain wall):
+
+| Patch | Rect | `_E` (glow) | `_D` (paper by day) | For |
+|---|---|---|---|---|
+| lantern red-orange | [960, 16, 1024, 80] | (240, 70, 22), a little brighter in the middle row band, faint vertical ribs | (196, 52, 34) | every small lantern (kit `lantern`, strings, stall, gateway, Moon Loft) |
+| lantern amber | [960, 96, 1024, 160] | (255, 118, 36), same shading | (226, 146, 66) | the Sky Lantern's great lantern |
+
+`_N` flat, `_AO` white, `_M` as the wall around them. When the bundle has them, set `PB_LANTERN_WARM=1` for the model
+build (kit `core.LANTERN_RED` = [964, 20, 1020, 76], `LANTERN_AMBER` = [964, 100, 1020, 156], inset 4 px): lanterns
+map onto the patches and drop their red vertex tint. Until then the switch stays off (a lantern on a blank patch
+would not glow at all). Before and after, rendered with a trial texture set
+(`E:\PandabornDev\build\models\study\look_after`) and trial meshes (`E:\PandabornDev\build\models_warm`):
+`E:\PandabornDev\build\models\preview\lantern_glow_before_after.png`.
+
+### Other changes
+
+* **Flume Gate:** a tall post at the back of the cell and a long bamboo sweep with a net of river stones as the
+  counterweight, its high end on a rope to the sluice board; the hood lowered under it.
+* **Paddy Spout:** a low, wide fan of five water-worn culms over the field cell (dark and mossy where the water
+  runs) on a lashed cross bar; the hood lowered (1.12-1.3). At game zoom the gate is tall and the spout low and wide.
+* **Large Kite Windmill:** one pale hemp sail among the indigo ones, so its turning shows.
+* **Wonder picture** (`mod/PandabornFactions/Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws.png`,
+  1514 x 348 RGB, `isSprite`): a sky ramp from deep blue overhead to a faint warm glow at the horizon, stars, three
+  layers of misty hills (each paler and bluer with distance, mist at their feet), 46 drifting lanterns of three sizes
+  at all depths, a brighter village (warm lamp fill, a cool sky fill), and the lanterns already in the warm patches
+  above (the picture need not wait for the sheet).
+* Kit: `blender_preview` gains `skyRamp`, `stars`, area lights and an `Unlit` preview material; `preview.render(look=)`
+  renders with another texture set; `building.OUT_ROOT` honours `PB_MODELS_OUT` (trial builds elsewhere).
+
+### Adoption list for pass 5
+
+* Regenerate FlumeGate, PaddySpout (meshes; blocks unchanged), LargeKiteWindmill (mesh).
+* After the look lane adds the two patches: rebuild every model with `PB_LANTERN_WARM=1` and regenerate.
+* The wonder picture replaces the pass-4 one in place (same path).
