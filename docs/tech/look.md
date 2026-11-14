@@ -213,6 +213,24 @@ Judged harshly against the hand-painted vanilla look:
   makes of mossy planks become woven mats, which are not Sichuan (they would be tile); vanilla's painted outlines and
   colour shifts inside one board are richer than our noise-based detail. Domes stay domes.
 
+### Pass 3 (palette)
+
+Shot with the installed faction build, which now ships the code modules and `pandabornlook_win`
+(`look-close-inkpaws-6`, request `proto/look/tests/closeups_inkpaws.request.json`: the 11 adopted kit models plus
+the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\look\preview\p3_day1.png`,
+`p3_day2.png` (Folktails left), `p3_kit.png` (kit models).
+
+* Which material dominates (vanilla models): `BaseWood_LightBrown` is the district center's walls (972 triangles) and
+  the tank's hoops/staves (566); `PlasteredWood_White` is the lodges' walls (493-695); `BaseWood_Brown` frames
+  everything. So the calm colours went where the area is: LightBrown is now weathered honey-tan bamboo, the lodge walls
+  aged lime with rising damp, and the woven panels muted tan / grey-brown / grey-olive with one straw panel in eight.
+* Result: the village reads dark timber, grey tile and lime plaster, with bamboo as the warm note; no lemon-yellow
+  surfaces remain. Flat roofs (`IrregularPlanks_Mossy`: lodges, warehouses, mine, Roof3x2) are mossy grey tile laid
+  flat. Plaster is a warm off-white with damp at the foot; it no longer reads as blank white.
+* Still to watch: the tile is a light silver-grey with bright highlights under strong sun; a little darker would sit
+  better next to the dark timber. Close-ups of the Steamer, Pickle Yard and Kitchen framed the whole map (their smoke
+  particles inflated the bounds; harness fixed in `a6f6299`, not re-shot).
+
 ## Pandaborn.Look module
 
 The swap variant is now the faction's base layer: `src/code/Pandaborn.Look` (see its `FEATURE.md` and
@@ -372,8 +390,8 @@ still keeps a small Bee cache in `%LOCALAPPDATA%\Unity\Caches` (43 MB in total, 
    lodges are beaver-dome shaped whatever the material. See the recommendation.
 5. **Vertex colours baked into vanilla models** darken some areas (they were tuned for brown wood). On pale bamboo
    and white plaster this reads as dirt patches in places. Mostly fine at game zoom.
-6. **Woven bamboo reads strongly yellow** at a distance on the large flat walls (district center, warehouses); tints
-   were muted once, could go further toward grey-gold.
+6. **Woven bamboo read strongly yellow** at a distance on the large flat walls. Fixed in pass 3 (muted panels,
+   weathered bamboo, see *Pass 3*).
 7. **The bundle ships a second copy of the `Shader Graphs/EnvironmentURP` shader** (as every mod with building
    materials does). In the names variant it renders until the vertex-colour optimizer swaps in `Shader.Find`'s
    copy; in the swap variant it is never used. No visual difference was seen in either the Inkpaws or the Folktails
