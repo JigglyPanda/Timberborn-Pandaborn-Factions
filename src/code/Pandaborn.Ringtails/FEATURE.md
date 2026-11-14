@@ -1,49 +1,33 @@
 # Pandaborn.Ringtails - the second people
 
-DESIGN.md Pillar 1, "The gate". Ported from the go/no-go prototype `proto/ringtails` (results:
-`docs/tech/two-peoples.md` section 17). **Status: not wired yet** — not in `Pandaborn.Code.sln` or `modules.txt` until
-the spec records in `proposed/RingtailSpecs.cs` are added to `Pandaborn.Specs` by its owner. Compile check meanwhile:
-`dotnet build -c Release -p:RingtailsProposedSpecs=true -p:ModOut=<scratch>`.
+DESIGN.md Pillar 4. Results and the catalogue hand-over: `docs/tech/two-peoples.md` sections 17 and 18.
 
-**What it does.** Ringtails are a hidden second adult/kit template pair (in no template collection, so the vanilla
-`BeaverFactory` still sees exactly one adult) with their own worker type `PandabornRingtail` (ignores working hours).
-They staff only buildings typed for them (`WorkplaceSpec.DefaultWorkerType: PandabornRingtail`,
-`DisallowOtherWorkerTypes: true`). Each day they rest from dawn until the bell — the end of the Inkpaw working hours
-(the working-hours slider, read live), clamped to 4–16 h after dawn — sleeping at home first, then eating, drinking and
-taking leisure; then they work until the next dawn.
+**What it does.** Ringtails are a hidden adult/kit template pair (in no template collection, so the vanilla
+`BeaverFactory` still finds one adult) with the worker type `PandabornRingtail` (ignores working hours).
 
 | Class | Job |
 |---|---|
-| `RingtailService` | Switch (a game is a Ringtails game when the faction adult template carries `PandabornRingtailsSpec`), load-time compatibility check, factory (adult, kit, grown kit), save registration |
-| `RingtailRestRootBehavior` | The rest window: a root behaviour inserted just above `WorkerRootBehavior`; runs the game's `SleepNeedBehavior`, `NeederRootBehavior`, `WanderRootBehavior` |
-| `RingtailCoat` | Red panda coat from `PandabornRingtailSpec.Textures` in `PostInitializeEntity` |
-| `RingtailGrowth` | A kit becomes a Ringtail adult at growth 0.995 (vanilla would make an Inkpaw at 1.0) |
-| `LoftHousingRule` | Lofts belong to Ringtails: swap an Inkpaw out of a loft for a Ringtail; a homeless Ringtail takes a loft bed |
+| `RingtailService` | The switch (a Ringtails game: the faction adult template carries `PandabornRingtailsSpec`), the load-time check of the two private members, the factory, save registration, the arrival (first finished Moon Loft: 2 adults and 1 kit move in, the night posts unlock for free, one message). Saved: `PandabornStore` "Ringtails" v1 `arrived=0|1` |
+| `RingtailWorkday` | The bell in hours after dawn: Bell's day locked at dawn when Bell is on (read by name, no reference), else the live slider |
+| `RingtailRestRootBehavior` | Rest from dawn to the bell (clamped 4–16 h): to bed first thing unless nearly rested, then needs and leisure; a root behaviour inserted above `WorkerRootBehavior` |
+| `NightPost` | On `PandabornNightPostSpec`: switches the post to the Ringtail worker type when finished or loaded, keeps it there, shows "Closed for the day" by day |
+| `MoonLoft`, `LoftNursery` | On `PandabornMoonLoftSpec`: triggers the arrival; at each dawn raises at most one kit per loft while the district has open night jobs (desired workers of Ringtail-typed posts minus Ringtail adults and kits) and nobody is critically hungry or thirsty |
+| `LoftHousingRule` | Lofts are Ringtail homes: swaps an Inkpaw out for a Ringtail; a homeless Ringtail takes a loft bed |
+| `RingtailCoat`, `RingtailGrowth`, `RingtailBadge` | Coat; kit grows into a Ringtail; portrait and "Ringtail, age N" |
+| `RingtailsPopulationRow`, `RingtailsBuildingFragment` | The second population row (Ringtails, working, idle) and the moon line on night posts and lofts, behind `SafeUi` |
 
-**Data it needs** (main mod / catalogue): `PandabornRingtailsSpec` on the Inkpaw adult template;
-`RingtailAdult|RingtailChild.Inkpaws` templates with `PandabornRingtailSpec` (generator: `proto/ringtails/tools/derive.py`;
-walking speed equal to Inkpaws, `BaseSlowedSpeed = BaseWalkingSpeed` so loads never slow them, lifting 14); the
-worker type blueprint; Ringtail workplaces with `PandabornRingtailWorkplaceSpec`; lofts with `PandabornLoftSpec`; the
-alias `BackwardCompatibleTemplateNames: [RingtailAdult.Inkpaws]` (and the kit) on the Inkpaw templates, permanently;
-worker outfits for the Ringtail worker type.
+**Data it needs**: see two-peoples.md §18.1 (templates, worker type, outfits, specs on the posts, loft and Inkpaw adult,
+the permanent alias).
 
-**Saved**: nothing of its own. Ringtails are ordinary entities saved under their template name; the game reloads them
-because `RingtailService` registers the hidden templates in `TemplateNameMapper`.
+**Saved**: the arrival flag in `PandabornStore`. Ringtails are ordinary entities saved under their template name.
 
-**Fails safely** (each checked once at load, before any Ringtail exists):
+**Fails safely**: module off (API check, forced off) or degraded (private member gone, or the dev switch
+`simulate-missing-member: Ringtails`): saved Ringtails load as Inkpaws through the alias, no new Ringtails, and
+`Pandaborn.RingtailsFallback` turns night posts back into Inkpaw workplaces. Moon Lofts are plain homes.
 
-| Private member | If missing |
-|---|---|
-| `TemplateNameMapper._templates` | Feature off. Saved Ringtails load as Inkpaws (alias) with name, age, needs, home; their Ringtail jobs drop. One notice. Verified in game (`rt-fallback1`) |
-| `BehaviorManager._rootBehaviors` | No new Ringtails; existing Ringtails work round the clock (vanilla critical sleep keeps them alive). One notice |
-
-Implicit (public) dependencies: the behaviour order (Worker root before Needer root); vanilla growth at 1.0;
-`BeaverTextureSetter` in `InitializeEntity`. If the module itself is off (API check), nothing registers the hidden
-templates, so saved Ringtails load as Inkpaws through the alias, exactly as in the first row: the save stays loadable
-and keeps every colonist.
-
-**Open item for the owner of Bell**: `Pandaborn.Bell` locks the day length at dawn; the rest window here reads the
-slider live. Ideally both read the same value (`BellService.Current` locked hours when Bell is on).
+**Wanted from Core** (proposal): `public interface IWorkdayClock { bool HasLockedDay { get; } int LockedWorkdayHours { get; } }`
+in `Pandaborn.Core`, bound by Bell (`MultiBind<IWorkdayClock>().To<BellService>()`); Ringtails would take
+`IEnumerable<IWorkdayClock>` and drop the by-name bridge in `RingtailWorkday`.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->

@@ -67,9 +67,9 @@ namespace Pandaborn.Ringtails
         public void TakeIn(Character character)
         {
             var dweller = character.GetComponent<Dweller>();
+            // only the total is checked: the arrival runs inside the loft's own "finished" step, before the dwelling has
+            // worked out its child slots (the nursery checks HasFreeChildSlots itself)
             if (dweller == null || _dwelling == null || !_dwelling.HasFreeSlots) return;
-            bool child = character.GetComponent<Child>() != null;
-            if (child && !_dwelling.HasFreeChildSlots) return;
             _dwelling.AssignDweller(dweller);
         }
     }

@@ -223,6 +223,11 @@ namespace Pandaborn.Ringtails.Dev
                 }
                 Event("stock", string.Join(", ", given));
             }
+            if (!HarnessBridge.LoadSave && _config["workingHours"] != null)
+            {
+                _workingHoursManager.WorkedPartOfDay = _config["workingHours"].Value<float>() / 24f;
+                Event("workingHours", "slider set to " + _config["workingHours"] + " h");
+            }
             int adults = _config["spawn"]?.Value<int>() ?? 0;
             int kits = _config["spawnKits"]?.Value<int>() ?? 0;
             if (HarnessBridge.LoadSave) { adults = 0; kits = 0; }
@@ -359,7 +364,8 @@ namespace Pandaborn.Ringtails.Dev
                 ["hour"] = Math.Round(sinceDawn, 2),
                 ["runHour"] = Math.Round(hours - _firstSampleHours, 2),
                 ["daytime"] = _dayNightCycle.IsDaytime,
-                ["inkpawWorkingHours"] = _workingHoursManager.AreWorkingHours
+                ["inkpawWorkingHours"] = _workingHoursManager.AreWorkingHours,
+                ["sliderHours"] = Math.Round(_workingHoursManager.WorkedPartOfDay * 24f, 2)
             };
             var colonists = new JArray();
             foreach (var c in _characterPopulation.Characters.ToList())

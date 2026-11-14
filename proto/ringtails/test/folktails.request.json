@@ -1,4 +1,11 @@
 {
-  "buildings": [ "Lodge.Folktails", "HaulingPost.Folktails", "RingtailHaulingPost.Inkpaws" ],
-  "ringtails": { "spawn": 2, "spawnKits": 1 }
+  "buildings": [],
+  "ringtails": {
+    "spawn": 2,
+    "spawnKits": 1,
+    "place": [
+      "Lodge.Folktails",
+      "HaulingPost.Folktails"
+    ]
+  }
 }

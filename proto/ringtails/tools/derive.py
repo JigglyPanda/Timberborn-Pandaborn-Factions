@@ -95,7 +95,12 @@ def main():
         "PandabornRingtailsSpec": {
             "AdultBlueprint": "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint",
             "ChildBlueprint": "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint",
-            "WorkerType": WORKER_TYPE, "ArrivalAdults": 2, "ArrivalKits": 1}})
+            "WorkerType": WORKER_TYPE, "ArrivalAdults": 2, "ArrivalKits": 1},
+        # test only: the Bell's stage-0 numbers, so the Ringtails' shift start can be checked against Bell's locked day
+        # (the generated build does not carry PandabornBellSpec yet; the Bell lane owns it)
+        "PandabornBellSpec": {"WorkingSpeedCurve": [{"Hours": 12, "Bonus": 0.33}, {"Hours": 16, "Bonus": 0.0}],
+                              "MovementSpeedCurve": [{"Hours": 12, "Bonus": 0.33}, {"Hours": 16, "Bonus": 0.0}],
+                              "SuggestionDay": 4, "SuggestionLocKey": "Pandaborn.Bell.Suggestion"}})
     save("Characters/Pandaborn/InkpawChild.Inkpaws.blueprint.json", {
         "TemplateSpec": {"BackwardCompatibleTemplateNames#append": ["RingtailChild.Inkpaws"]}})
     for path, science in POSTS.items():

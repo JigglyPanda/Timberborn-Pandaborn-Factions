@@ -1,0 +1,43 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 0,
+    "place": [
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornNightBuildersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws"
+    ],
+    "stock": {
+      "Water": 300,
+      "Log": 100
+    },
+    "devSwitchNextLaunch": "force-off: Ringtails",
+    "shots": [
+      {
+        "name": "f_d0_h20_post",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtailWorkplace"
+      }
+    ],
+    "reload": {
+      "shots": [
+        {
+          "name": "f_reload_post",
+          "atRunHour": 1,
+          "select": "ringtailWorkplace"
+        },
+        {
+          "name": "f_reload_loft",
+          "atRunHour": 2,
+          "select": "loft"
+        }
+      ]
+    }
+  }
+}

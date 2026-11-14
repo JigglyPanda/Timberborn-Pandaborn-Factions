@@ -1,0 +1,193 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 0,
+    "place": [
+      "PandabornNightBuildersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "PaperMill.Inkpaws",
+      "PandabornPickleYard.Inkpaws",
+      "LargePile.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws"
+    ],
+    "storage": [
+      {
+        "good": "Plank",
+        "stock": 200
+      },
+      {
+        "good": "PandabornCabbage",
+        "stock": 200
+      },
+      {
+        "good": "Paper",
+        "stock": 0
+      },
+      {
+        "good": "PandabornPickles",
+        "stock": 0
+      }
+    ],
+    "stock": {
+      "Water": 500,
+      "Log": 150
+    },
+    "laterPlace": [
+      {
+        "day": 0,
+        "hour": 15.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      },
+      {
+        "day": 1,
+        "hour": 15.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      },
+      {
+        "day": 2,
+        "hour": 15.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      },
+      {
+        "day": 3,
+        "hour": 15.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      },
+      {
+        "day": 4,
+        "hour": 15.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      }
+    ],
+    "shots": [
+      {
+        "name": "s_d0_h10_loft",
+        "day": 0,
+        "hour": 10,
+        "select": "loft"
+      },
+      {
+        "name": "s_d0_h11_post_day",
+        "day": 0,
+        "hour": 11,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "s_d0_h12_ringtail",
+        "day": 0,
+        "hour": 12,
+        "select": "ringtail"
+      },
+      {
+        "name": "s_d0_h13_districtCenter",
+        "day": 0,
+        "hour": 13,
+        "select": "districtCenter"
+      },
+      {
+        "name": "s_d0_h20_post_night",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "s_d1_h21_ringtail_night",
+        "day": 1,
+        "hour": 21,
+        "select": "ringtail"
+      },
+      {
+        "name": "s_d1_h22_overview_night",
+        "day": 1,
+        "hour": 22,
+        "select": "none"
+      },
+      {
+        "name": "s_d2_h6_loft",
+        "day": 2,
+        "hour": 6,
+        "select": "loft"
+      }
+    ],
+    "reload": {
+      "shots": [
+        {
+          "name": "s_reload_h2_ringtail",
+          "atRunHour": 2,
+          "select": "ringtail"
+        },
+        {
+          "name": "s_reload_h30_loft",
+          "atRunHour": 30,
+          "select": "loft"
+        }
+      ]
+    },
+    "workingHours": 12
+  }
+}

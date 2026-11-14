@@ -69,10 +69,11 @@ namespace Pandaborn.Ringtails
                 int n = System.Math.Min(ringtailsOutside.Count, inkpawsInLofts.Count);
                 for (int i = 0; i < n; i++) Swap(ringtailsOutside[i], inkpawsInLofts[i]);
             }
-            if (homelessRingtails == null) return;
             var registry = population.GetComponent<DistrictBuildingRegistry>();
             if (registry == null) return;
             var dwellings = registry.GetEnabledBuildingsInstant<Dwelling>().ToList();
+            SortKits(population, dwellings);
+            if (homelessRingtails == null) return;
             int next = 0;
             foreach (var dweller in homelessRingtails)
             {
@@ -92,6 +93,38 @@ namespace Pandaborn.Ringtails
                 MovesIntoLofts++;
             }
         }
+
+        /// <summary>
+        /// The young: a loft's kit slot is where its nursery raises the next kit, so an Inkpaw cub in a loft moves to a free
+        /// cub slot in another home (never to nowhere), and a Ringtail kit without a loft home takes a free loft kit slot.
+        /// </summary>
+        private void SortKits(DistrictPopulation population, List<Dwelling> dwellings)
+        {
+            foreach (Beaver child in population.Children.ToList())
+            {
+                var dweller = child.GetComponent<Dweller>();
+                if (dweller == null) continue;
+                bool ringtail = RingtailService.IsRingtail(child);
+                if (!ringtail && dweller.HasHome && IsLoft(dweller.Home))
+                {
+                    var den = dwellings.FirstOrDefault(d => !IsLoft(d) && d.HasFreeSlots && d.HasFreeChildSlots);
+                    if (den == null) continue;
+                    dweller.Home.UnassignDweller(dweller);
+                    den.AssignDweller(dweller);
+                    CubsMovedOut++;
+                }
+                else if (ringtail && (!dweller.HasHome || !IsLoft(dweller.Home)))
+                {
+                    var loft = dwellings.FirstOrDefault(d => IsLoft(d) && d.HasFreeSlots && d.HasFreeChildSlots);
+                    if (loft == null) continue;
+                    if (dweller.HasHome) dweller.Home.UnassignDweller(dweller);
+                    loft.AssignDweller(dweller);
+                    MovesIntoLofts++;
+                }
+            }
+        }
+
+        public int CubsMovedOut { get; private set; }
 
         private void Swap(Dweller ringtail, Dweller inkpaw)
         {
