@@ -336,8 +336,11 @@ def write(path, root_name, parts, animated=None, slots=None):
             anims.append((len(nodes) - 1, a))
     for sl in (slots or []):
         if isinstance(sl, dict):
-            nodes.append(ts.StaticNode("#Slot#" + sl["name"], index[sl["parent"]], position=tuple(sl["local_pos"]),
-                                       rotation=tuple(sl["local_rot"]), meshes=[]))
+            # raw: an empty marker node named exactly (e.g. the Lido's '#MiscStart1' patrol ends), under the root
+            name = sl["name"] if sl.get("raw") else "#Slot#" + sl["name"]
+            parent = index[sl["parent"]] if sl.get("parent") else 0
+            nodes.append(ts.StaticNode(name, parent, position=tuple(sl["local_pos"]),
+                                       rotation=tuple(sl.get("local_rot", (0.0, 0.0, 0.0, 1.0))), meshes=[]))
         else:
             sname, pos, yaw = sl
             q = quat_axis((0, 1, 0), math.radians(yaw))

@@ -21,6 +21,7 @@
   "PandabornModelFestivalSquare.PandabornProto",
   "PandabornModelHotSpringBath.PandabornProto",
   "PandabornModelInkStudio.PandabornProto",
+  "PandabornModelOperaStage.PandabornProto",
   "PandabornModelCisternLarge.PandabornProto",
   "PandabornModelCisternMedium.PandabornProto",
   "PandabornModelCistern.PandabornProto",
@@ -372,6 +373,28 @@
    "pitch": 30,
    "zoom": 1.25,
    "minDistance": 2.4000000000000004
+  },
+  {
+   "name": "OperaStage_front",
+   "kind": "building",
+   "target": "PandabornModelOperaStage.PandabornProto",
+   "at": "3",
+   "front": true,
+   "yaw": 0,
+   "pitch": 42,
+   "zoom": 1.0,
+   "minDistance": 6.0
+  },
+  {
+   "name": "OperaStage_3q",
+   "kind": "building",
+   "target": "PandabornModelOperaStage.PandabornProto",
+   "at": "4",
+   "front": true,
+   "yaw": 35,
+   "pitch": 30,
+   "zoom": 1.25,
+   "minDistance": 4.800000000000001
   },
   {
    "name": "CisternLarge_front",

@@ -201,8 +201,8 @@ class Model:
             "blocks": self.blocks,
             "entrance": None if self.entrance_cell is None else dict(zip("XYZ", self.entrance_cell)),
             "slots": [{"node": "#Slot#" + s[0], "position": dict(zip("XYZ", s[1])), "yaw": s[2]} if not isinstance(s, dict)
-                      else {"node": "#Slot#" + s["name"], "parent": s["parent"], "localPosition": s["local_pos"],
-                            "localRotation": s["local_rot"]} for s in self.slots],
+                      else {"node": (s["name"] if s.get("raw") else "#Slot#" + s["name"]), "parent": s.get("parent"),
+                            "localPosition": s["local_pos"], "localRotation": s.get("local_rot")} for s in self.slots],
             "animatedNodes": [{"node": k, "driver": _spec_name(v["driver"]),
                                "pivot": dict(zip("XYZ", v["pivot"])), "axis": dict(zip("XYZ", v["axis"])),
                                "animation": "Default", "kind": v["kind"], "frames": v["frames"], "fps": v["fps"],

@@ -1,0 +1,378 @@
+{
+ "id": "SlideAndSwing",
+ "standIn": "Lido.Folktails",
+ "generatedBy": "art/models/SlideAndSwing/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "SlideAndSwing.Model",
+  "constructionStage0": "SlideAndSwing.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 4,
+  "Y": 3,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 1
+ },
+ "slots": [
+  {
+   "node": "#Slot#Seat1",
+   "position": {
+    "X": 3.35,
+    "Y": 0.03,
+    "Z": 0.55
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat2",
+   "position": {
+    "X": 2.51,
+    "Y": 0.03,
+    "Z": 0.5
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat3",
+   "position": {
+    "X": 1.6,
+    "Y": 0.03,
+    "Z": 0.5
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat4",
+   "position": {
+    "X": 1.0,
+    "Y": 0.03,
+    "Z": 0.55
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Floating1",
+   "position": {
+    "X": 2.53,
+    "Y": -0.5,
+    "Z": 1.33
+   },
+   "yaw": 0.0
+  },
+  {
+   "node": "#Slot#Floating2",
+   "position": {
+    "X": 0.73,
+    "Y": -0.5,
+    "Z": 2.01
+   },
+   "yaw": 60.0
+  },
+  {
+   "node": "#Slot#Floating3",
+   "position": {
+    "X": 3.34,
+    "Y": -0.5,
+    "Z": 2.55
+   },
+   "yaw": 120.0
+  },
+  {
+   "node": "#Slot#Swimming1",
+   "parent": null,
+   "localPosition": [
+    0.82,
+    -0.5,
+    1.52
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#MiscStart1",
+   "parent": null,
+   "localPosition": [
+    0.82,
+    -0.5,
+    1.52
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#MiscEnd1",
+   "parent": null,
+   "localPosition": [
+    3.19,
+    -0.5,
+    1.7
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#Slot#Swimming2",
+   "parent": null,
+   "localPosition": [
+    3.15,
+    -0.5,
+    2.13
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#MiscStart2",
+   "parent": null,
+   "localPosition": [
+    3.15,
+    -0.5,
+    2.13
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#MiscEnd2",
+   "parent": null,
+   "localPosition": [
+    0.78,
+    -0.5,
+    2.44
+   ],
+   "localRotation": null
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 2.0,
+    "Y": -0.1,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 4.0,
+    "Y": 0.2,
+    "Z": 1.0
+   }
+  },
+  {
+   "Center": {
+    "X": 0.42,
+    "Y": 0.6,
+    "Z": 0.42
+   },
+   "Size": {
+    "X": 0.7,
+    "Y": 1.2,
+    "Z": 0.7
+   }
+  },
+  {
+   "Center": {
+    "X": 3.5,
+    "Y": 0.3,
+    "Z": 2.05
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 2.4,
+    "Z": 1.5
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1428,
+  "constructionStage0": 618,
+  "vanillaMedianForFootprint": 1900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, BaseZ 1, entrance (1, -1, 1), water cell and slots as the vanilla Lido; the swimming patrols run between #MiscStart/#MiscEnd markers named as vanilla's."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.0,
+  "Z": 0.3
+ },
+ "baseZ": 1
+}

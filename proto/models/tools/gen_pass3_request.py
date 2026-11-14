@@ -7,7 +7,7 @@ import os
 T = lambda i: f"PandabornModel{i}.PandabornProto"  # noqa: E731
 ids = ["Den", "MoonLoft", "Hammock", "Teahouse", "Kindergarten", "CourtyardHouse", "TerraceHouse", "PaddyHouse",
        "NightBuildersPost", "NightCourierPost", "NightForagersPost", "StarTower", "FestivalSquare", "HotSpringBath",
-       "InkStudio", "CisternLarge", "CisternMedium", "Cistern", "StandingLantern", "HangingLantern", "StringLanterns",
+       "InkStudio", "OperaStage", "CisternLarge", "CisternMedium", "Cistern", "StandingLantern", "HangingLantern", "StringLanterns",
        "Flume", "FlumeGate", "FlumeBridge", "FlumeDrop", "FlumeCorner", "GreatSittingPanda", "SkyLantern"]
 small = {"Hammock", "InkStudio", "Cistern", "StandingLantern", "HangingLantern", "StringLanterns", "Flume",
          "FlumeGate", "FlumeBridge", "NightForagersPost"}
