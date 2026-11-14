@@ -323,3 +323,24 @@ files). The forecast line and the panel text already carry the warning for timbe
 Previews (Blender, game camera height): `E:\PandabornDev\build\plants\preview\flowering_shoot_field.png` (shoot
 bamboo, flowering, dying, dead fields), `flowering_timber_grove.png` (grove, flowering, dying, dead), `shoot_buds.png`
 (shoot bamboo with the buds on).
+
+#### Pass 3 in game: `plants-flowering-1` (PASS, 0 errors)
+
+Run on the hidden desktop after a plain Inkpaws load check (`plants-p3-plaincheck`, PASS). The installed faction still
+shipped the pre-flowering `pandabornplants` bundle, so the test used a **dev bundle**
+(`proto/plants/tools/build_dev_bundle.py`: the same atlas with materials renamed `<name>Dev`, bundle
+`pandabornplantsdev_win`, collection `PandabornPlantsDev.Inkpaws`; `gen_mod.py --dev-materials` rewrites the material
+names in copies of the models), which cannot collide with the shipped bundle. Twin templates came from the events
+prototype (`-ExtraMods ...\proto\events,...\proto\plants`); twins were spawned grown and forced dying, dead and cut by
+the plant lab (the events lane proves the Flowering itself).
+
+* All forced states show the right nodes with the Dev materials (result.json `plantLab`): twin `#Alive`, `#Dying`, `#Dead`,
+  the timber twin's stump.
+* `fl_overview.png`, `fl_timber_grove.png`, `fl_shoot_field.png`, `fl_low.png`, `fl_timber_close.png`
+  (`E:\PandabornDev\build\test\plants-flowering-1\`): from the game camera a flowering grove is pale straw-green with
+  hanging plumes beside a green grove, the dying grove gold, the dead grove bleached white culms standing; flowering
+  shoot-bamboo fields are pale straw tufts, dying ones gold, dead ones grey-brown slumps. Unmistakable across a field.
+* **Buds not seen in game.** The plant lab's `buds` rule switched nothing on (0 changes, `_EnableDetail` stayed 0; cause not
+  found in this run), so the buds are proven in the preview only (`shoot_buds.png`): uv2 and the sprite are in the
+  model and the shipped atlas, and the same switch (`_EnableDetail` from game code) is proven in game for ripe tea,
+  persimmons and bamboo fungus. The real proof is the events lane's Flowering announcement once `BudsUseDetail = true`.
