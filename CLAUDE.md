@@ -222,7 +222,7 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   `E:\PandabornDev\unity`.
 * Dev mode in game is Shift+Alt+Z; `-skipModManager` skips the launch dialog.
 * **One command:** `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage>`; `all` = `pin`, `models`,
-  `generate` (`-DryRun`, `-Lock`), `code`, `bundles`, `assemble`, `validate`, `install`; also `test` (grid scenario)
+  `generate` (`-DryRun`, `-Lock`), `code`, `bundles`, `assemble`, `validate`, `gate`, `install`; also `test` (grid scenario)
   and `package` (release rules). `tools/build.ps1` runs models, generate, code, bundles, assemble, validate, install.
   The build refuses to run if the vanilla dump differs from `catalogue/vanilla.pin.json` until you review
   `tools/game_diff.py` and `pin -Accept`; `pin` also runs the Words table check
@@ -249,6 +249,13 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   * **Install discipline:** run `install` only when no Timberborn process runs (other lanes queue game tests all
     day); take the test mutex `Global\PandabornGameTest` for it, and never leave the tree in a state where `all`
     fails.
+  * **THE INSTALL GATE** (2026-11-14, after two adopted-model crashes that only showed once a building existed or was
+    finished): the shared install only receives a staging folder whose dev copy has passed the GRID run. `gate`
+    builds the copy (`proto/foundation/build.ps1 -Name pbgate -Source <StageDir>`), runs `<gen>.grid.json` on it with
+    the installed faction switched off (every placeable template placed AND finished, then recipes on, a speed
+    ladder 1-3-0-2-3 and three in-game hours, zero errors from our mods), and writes `<StageDir>.gate.json` with
+    the folder's content hash. `install` refuses a folder without a matching gate; `-GateOverride "<reason>"` (only
+    on the coordinator's word) is logged in `<StageDir>.gate-overrides.log`. Loading a new game is not enough.
 * **Hidden until wired** (DESIGN.md 2026-11-14): a catalogue item with `waits_for = "<Module>"` is left out of the
   build (templates, goods, needs, recipes, plants, tutorial stages, tool groups) unless that module ships and its
   switch in `rules.toml [modules]` is on; its ids stay in the lock marked `gatedBy`. `module_specs = { <Module> = {
