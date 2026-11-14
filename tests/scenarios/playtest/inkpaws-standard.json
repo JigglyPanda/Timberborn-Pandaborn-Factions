@@ -35,6 +35,7 @@
       "cookRecipe": "PandabornSteamedShoots",
       "cooked": "PandabornSteamedShoots",
       "pickler": "PandabornPickleYard.Inkpaws",
+      "logTree": "Birch",
       "pickles": "PandabornPickles",
       "hammock": "PandabornHammock.Inkpaws",
       "teahouse": "PandabornTeahouse.Inkpaws"
@@ -72,8 +73,8 @@
         "id": "cut1",
         "op": "cut",
         "target": "lumber1",
-        "count": 40,
-        "radius": 14,
+        "count": 60,
+        "radius": 20,
         "when": {
           "after": [
             "lumber1"
@@ -149,8 +150,8 @@
         "id": "cut2",
         "op": "cut",
         "target": "lumber2",
-        "count": 40,
-        "radius": 14,
+        "count": 60,
+        "radius": 20,
         "when": {
           "after": [
             "lumber2"
@@ -171,7 +172,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         },
@@ -191,7 +193,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         },
@@ -229,7 +232,7 @@
         "op": "build",
         "template": "@lumber",
         "rule": "trees",
-        "maxDistance": 45,
+        "maxDistance": 35,
         "min": 15,
         "radius": 9,
         "repeat": 4,
@@ -241,10 +244,12 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
-        }
+        },
+        "pathThroughTrees": true
       },
       {
         "id": "cutNew",
@@ -263,7 +268,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         }
@@ -340,7 +346,8 @@
         "min": 25,
         "when": {
           "day": 1.5
-        }
+        },
+        "priority": "High"
       },
       {
         "id": "pilePoles2",
@@ -361,7 +368,7 @@
         "op": "plant",
         "target": "forester1",
         "plant": "@tree1",
-        "count": 30,
+        "count": 40,
         "when": {
           "after": [
             "forester1"
@@ -375,6 +382,43 @@
         "when": {
           "after": [
             "grove1"
+          ]
+        }
+      },
+      {
+        "id": "forester2",
+        "op": "build",
+        "template": "@forester",
+        "near": "lumber2",
+        "rule": "moist",
+        "maxDistance": 18,
+        "min": 25,
+        "when": {
+          "day": 6,
+          "after": [
+            "forester1"
+          ]
+        }
+      },
+      {
+        "id": "grove2",
+        "op": "plant",
+        "target": "forester2",
+        "plant": "@logTree",
+        "count": 40,
+        "when": {
+          "after": [
+            "forester2"
+          ]
+        }
+      },
+      {
+        "id": "grove2Cut",
+        "op": "cut",
+        "field": "grove2",
+        "when": {
+          "after": [
+            "grove2"
           ]
         }
       },

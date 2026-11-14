@@ -4,7 +4,7 @@
   "speed": 30,
   "playtest": {
     "name": "folktails-baseline",
-    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6. Homes keep at least four free beds (a full home has no child slot, so no births). When the marked wild trees run low a new lumberjack goes to the nearest uncut forest (up to four).",
+    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6. Homes keep at least four free beds (a full home has no child slot, so no births). When the marked wild trees run low a new lumberjack goes to the nearest uncut forest (up to four). Foresters: the first replants (Birch, seven days), a second one plants a log grove from day 6.",
     "shotsEveryDays": 4,
     "names": {
       "lumber": "LumberjackFlag.Folktails",
@@ -28,12 +28,13 @@
       "contemplation": "ContemplationSpot.Folktails",
       "staple": "Carrot",
       "crop2": "Potato",
-      "tree1": "Pine",
+      "tree1": "Birch",
       "tree2": "Birch",
       "cook": "Grill.Folktails",
       "cookRecipe": "GrilledPotato",
       "cooked": "GrilledPotato",
-      "shrub": "Shrub.Folktails"
+      "shrub": "Shrub.Folktails",
+      "logTree": "Birch"
     },
     "steps": [
       {
@@ -68,8 +69,8 @@
         "id": "cut1",
         "op": "cut",
         "target": "lumber1",
-        "count": 40,
-        "radius": 14,
+        "count": 60,
+        "radius": 20,
         "when": {
           "after": [
             "lumber1"
@@ -133,8 +134,8 @@
         "id": "cut2",
         "op": "cut",
         "target": "lumber2",
-        "count": 40,
-        "radius": 14,
+        "count": 60,
+        "radius": 20,
         "when": {
           "after": [
             "lumber2"
@@ -155,7 +156,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         },
@@ -175,7 +177,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         },
@@ -213,7 +216,7 @@
         "op": "build",
         "template": "@lumber",
         "rule": "trees",
-        "maxDistance": 45,
+        "maxDistance": 35,
         "min": 15,
         "radius": 9,
         "repeat": 4,
@@ -225,10 +228,12 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
-        }
+        },
+        "pathThroughTrees": true
       },
       {
         "id": "cutNew",
@@ -247,7 +252,8 @@
           "markedTreesBelow": {
             "count": 15,
             "except": [
-              "@tree1"
+              "@tree1",
+              "@logTree"
             ]
           }
         }
@@ -309,7 +315,7 @@
         "template": "@mill",
         "maxDistance": 15,
         "when": {
-          "day": 3
+          "day": 2
         }
       },
       {
@@ -345,16 +351,16 @@
         "maxDistance": 15,
         "min": 25,
         "when": {
-          "day": 4,
           "science": 30
-        }
+        },
+        "priority": "High"
       },
       {
         "id": "grove1",
         "op": "plant",
         "target": "forester1",
         "plant": "@tree1",
-        "count": 30,
+        "count": 40,
         "when": {
           "after": [
             "forester1"
@@ -368,6 +374,43 @@
         "when": {
           "after": [
             "grove1"
+          ]
+        }
+      },
+      {
+        "id": "forester2",
+        "op": "build",
+        "template": "@forester",
+        "near": "lumber2",
+        "rule": "moist",
+        "maxDistance": 18,
+        "min": 25,
+        "when": {
+          "day": 6,
+          "after": [
+            "forester1"
+          ]
+        }
+      },
+      {
+        "id": "grove2",
+        "op": "plant",
+        "target": "forester2",
+        "plant": "@logTree",
+        "count": 40,
+        "when": {
+          "after": [
+            "forester2"
+          ]
+        }
+      },
+      {
+        "id": "grove2Cut",
+        "op": "cut",
+        "field": "grove2",
+        "when": {
+          "after": [
+            "grove2"
           ]
         }
       },

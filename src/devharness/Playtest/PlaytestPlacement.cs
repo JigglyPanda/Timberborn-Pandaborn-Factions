@@ -73,7 +73,7 @@ namespace PandabornDevHarness
             if (result == null)
             {
                 step.Error = "no spot: " + why + " (" + tried + " candidates, " + sw.ElapsedMilliseconds + " ms)";
-                Event("placeFailed", step.Id, new JObject { ["template"] = template, ["why"] = step.Error, ["rejects"] = JObject.FromObject(_rejects) });
+                Event("noSpot", step.Id, new JObject { ["template"] = template, ["why"] = step.Error, ["rejects"] = JObject.FromObject(_rejects) });
                 return false;
             }
             string id = step.Max > 1 || step.Instances.Count > 0 ? step.Id + "." + (step.Instances.Count + 1) : step.Id;
@@ -703,7 +703,7 @@ namespace PandabornDevHarness
             if (marked == 0)
             {
                 step.Error = "no " + soil + " plantable cell for " + plant + " within " + radius + " of " + Request.Str(o, "target", "dc");
-                Event("plantFailed", step.Id, new JObject { ["plant"] = plant, ["why"] = step.Error });
+                Event("noPlantSpot", step.Id, new JObject { ["plant"] = plant, ["why"] = step.Error });
                 return false;
             }
             Event("plant", step.Id, new JObject { ["plant"] = plant, ["cells"] = marked, ["wanted"] = count, ["candidates"] = cells.Count });
@@ -760,7 +760,7 @@ namespace PandabornDevHarness
                 trees.Sort((a, b) => a.d.CompareTo(b.d));
                 foreach (var (c, _) in trees.Take(count)) list.Add(c);
             }
-            if (list.Count == 0) { step.Error = "no trees to mark"; Event("cutFailed", step.Id, null); return false; }
+            if (list.Count == 0) { step.Error = "no trees to mark"; Event("noTreesToMark", step.Id, null); return false; }
             _treeCuttingArea.AddCoordinates(list);
             step.Cells.AddRange(list);
             Event("cut", step.Id, new JObject { ["cells"] = list.Count, ["field"] = field });

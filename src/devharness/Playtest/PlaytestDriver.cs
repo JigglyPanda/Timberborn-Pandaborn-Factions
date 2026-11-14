@@ -339,8 +339,8 @@ namespace PandabornDevHarness
                     if (step.Attempts >= maxAttempts)
                     {
                         step.Failed = true;
-                        Event("stepFailed", step.Id, new JObject { ["error"] = step.Error, ["attempts"] = step.Attempts });
-                        Harness.Warn("playtest: step " + step.Id + " gave up: " + step.Error);
+                        Event("stepGaveUp", step.Id, new JObject { ["why"] = step.Error, ["attempts"] = step.Attempts });
+                        Harness.Info("playtest: step " + step.Id + " gave up: " + step.Error);
                     }
                     else step.NextTry = now + Request.Num(step.Raw, "retryHours", 3f);
                 }

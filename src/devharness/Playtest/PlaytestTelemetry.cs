@@ -364,7 +364,7 @@ namespace PandabornDevHarness
                 if (!entity) continue;
                 invs.Clear();
                 entity.GetComponents(invs);   // never GetComponent<Inventory>: it throws on a building with two inventories
-                if (invs.Count == 0) continue;
+                if (invs.Count == 0 || entity.GetComponent<LivingNaturalResource>() != null) continue;   // not the trees' log stacks
                 string t = entity.GetComponent<TemplateSpec>()?.TemplateName ?? "?";
                 foreach (var good in holderGoods.Split(','))
                     foreach (var inv in invs)

@@ -17,7 +17,7 @@ INK_NAMES = {
     "shrub": "Shrub.Inkpaws", "staple": "PandabornShootBamboo.Inkpaws", "staple2": "PandabornCabbage.Inkpaws",
     "shoots": "PandabornBambooShoots", "cabbage": "PandabornCabbage", "tree1": "PandabornTimberBamboo.Inkpaws",
     "cook": "PandabornSteamer.Inkpaws", "cookRecipe": "PandabornSteamedShoots", "cooked": "PandabornSteamedShoots",
-    "pickler": "PandabornPickleYard.Inkpaws", "pickles": "PandabornPickles", "hammock": "PandabornHammock.Inkpaws", "teahouse": "PandabornTeahouse.Inkpaws",
+    "pickler": "PandabornPickleYard.Inkpaws", "logTree": "Birch", "pickles": "PandabornPickles", "hammock": "PandabornHammock.Inkpaws", "teahouse": "PandabornTeahouse.Inkpaws",
 }
 
 def step(**kw): return kw
