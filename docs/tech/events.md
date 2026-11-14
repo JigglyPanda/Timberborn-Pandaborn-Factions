@@ -2,10 +2,11 @@
 
 Status: 2026-11-14, game 1.1.2.8. Design of record for DESIGN.md Pillar 5, built as two code modules
 (`src/code/Pandaborn.Festival`, `src/code/Pandaborn.Flowering`, spec records in `src/code/Pandaborn.Specs/EventSpecs.cs`)
-and proven through the dev mod `proto/events` (README there). Every mechanism below was read from the decompiled game
-first; the [Results](#results) section says what was then seen in game. The modules are **not yet wired** into
-`Pandaborn.Code.sln`/`modules.txt`: they do nothing without the catalogue data requested at the end, and should be wired
-in together with it.
+and tested in game on dev copies of the faction built by `proto/events/build.ps1` (README there). Every mechanism below was
+read from the decompiled game first; the [Results](#results) section says what was then seen in game. Both modules are in
+`Pandaborn.Code.sln` and `modules.txt` and load through the bootstrap's API check; they ship when the content lane switches
+`catalogue/rules.toml [modules] Festival` / `Flowering` on (the catalogue already carries the data of section 8 behind
+those switches). The design changes of section 7 were accepted (DESIGN.md, 2decaec).
 
 ## Contents
 

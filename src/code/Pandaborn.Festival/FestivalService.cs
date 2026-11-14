@@ -368,8 +368,8 @@ namespace Pandaborn.Festival
             foreach (var square in _squares)
             {
                 if (!square || !square.IsFinished) continue;
-                if (on) _sounds.Play3D(square.GameObject, FestivalSounds.Firecrackers);
-                _sounds.Loop(square.GameObject, FestivalSounds.Drum, on);
+                if (on) _sounds.Play3D(square.SoundEmitter, FestivalSounds.Firecrackers);
+                _sounds.Loop(square.SoundEmitter, FestivalSounds.Drum, on);
             }
         }
 

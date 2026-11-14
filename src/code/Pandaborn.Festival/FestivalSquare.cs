@@ -78,6 +78,25 @@ namespace Pandaborn.Festival
             catch (Exception e) { Debug.LogError("[Pandaborn.Festival] festival lights failed: " + e.Message); }
         }
 
+        private GameObject _soundEmitter;
+
+        /// <summary>A child object of the square for the festival's sounds. The building's own sound system loops its sound
+        /// on the square's object when visitors enter, and a sound emitter loops only one sound at a time (it throws on a
+        /// second), so the festival never plays on the building's own object.</summary>
+        public GameObject SoundEmitter
+        {
+            get
+            {
+                if (!_soundEmitter)
+                {
+                    _soundEmitter = new GameObject("PandabornFestivalSounds");
+                    _soundEmitter.transform.SetParent(Transform, false);
+                    _soundEmitter.transform.position = Center + Vector3.up * 1.5f;
+                }
+                return _soundEmitter;
+            }
+        }
+
         internal bool Launch(FestivalFireworks fireworks, string fireworkId, bool lantern)
         {
             FindNodes();
