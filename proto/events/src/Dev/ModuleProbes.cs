@@ -177,9 +177,44 @@ namespace Pandaborn.Events.Dev
                 ["seedCut"] = f.SeedCut,
                 ["held"] = f.HeldNow,
                 ["young"] = young,
+                ["buds"] = Buds(f),
                 ["indicator"] = FloweringIndicator.ShownText,
                 ["plantPanel"] = FloweringPlantFragment.ShownText
             };
+        }
+
+        /// <summary>What the bud switch sees on the first grown plant that paints buds: each renderer under Mature, its
+        /// material and shader, _EnableDetail, and the detail textures the material carries.</summary>
+        private static JArray Buds(FloweringService f)
+        {
+            var list = new JArray();
+            foreach (var p in f.Plants)
+            {
+                if (!p || p.Spec == null || !p.Spec.BudsUseDetail || !p.IsGrown || p.IsDead) continue;
+                foreach (var t in p.GameObject.GetComponentsInChildren<UnityEngine.Transform>(true))
+                {
+                    if (t.name != "Mature") continue;
+                    foreach (var r in t.GetComponentsInChildren<UnityEngine.Renderer>(true))
+                    {
+                        var m = r.sharedMaterial;
+                        if (m == null) { list.Add(r.name + ": no material"); continue; }
+                        string line = r.name + (r.gameObject.activeInHierarchy ? " (active)" : " (inactive)") + ": " + m.name + " / " + (m.shader != null ? m.shader.name : "-");
+                        line += "; _EnableDetail " + (m.HasProperty("_EnableDetail") ? m.GetFloat("_EnableDetail").ToString("0") : "absent");
+                        string[] props = { "_DetailAlbedoMap", "_DetailMap", "_DetailAlbedoMap2", "_DetailAlbedoMap3" };
+                        for (int i = 0; i < props.Length; i++)
+                        {
+                            if (!m.HasProperty(props[i])) continue;
+                            var tex = m.GetTexture(props[i]);
+                            line += "; " + props[i] + " " + (tex != null ? tex.name : "none");
+                        }
+                        string[] kws = m.shaderKeywords;
+                        if (kws != null && kws.Length > 0) line += "; keywords " + string.Join(" ", kws);
+                        list.Add(line);
+                    }
+                }
+                break;
+            }
+            return list;
         }
 
         public static void Panels(JObject entry) => entry["plantPanel"] = FloweringPlantFragment.ShownText;

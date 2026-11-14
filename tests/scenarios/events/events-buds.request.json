@@ -1,0 +1,64 @@
+{
+  "speed": 3,
+  "run": {
+    "inGameHours": 4
+  },
+  "buildings": [
+    "EfficientFarmHouse.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
+  "events": {
+    "fields": [
+      {
+        "template": "PandabornShootBamboo.Inkpaws",
+        "count": 16,
+        "near": "EfficientFarmHouse.Inkpaws",
+        "grown": true,
+        "mark": true,
+        "radius": 5
+      }
+    ],
+    "actions": [
+      {
+        "atRunHour": 0.5,
+        "do": "announce"
+      }
+    ],
+    "shots": [
+      {
+        "name": "b_before",
+        "atRunHour": 0.3,
+        "select": "plant:PandabornShootBamboo.Inkpaws"
+      },
+      {
+        "name": "b_after",
+        "atRunHour": 1.0,
+        "select": "plant:PandabornShootBamboo.Inkpaws"
+      },
+      {
+        "name": "b_after_field",
+        "atRunHour": 1.5,
+        "select": "none"
+      }
+    ]
+  }
+}

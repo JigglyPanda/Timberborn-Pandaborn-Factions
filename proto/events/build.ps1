@@ -79,6 +79,14 @@ foreach ($f in Get-ChildItem -LiteralPath (Join-Path $genDir 'Characters\Pandabo
         if (-not (Test-Path $to) -and (Test-Path $from)) { Copy-Item -LiteralPath $from -Destination $to; $meshes++ }
     }
 }
+# asset bundles the generated data needs but the copy lacks (e.g. pandabornattachments: the characters' hats and baskets),
+# from the last full build, never renamed
+$bundleSrc = 'E:\PandabornDev\build\PandabornFactions\AssetBundles'
+foreach ($b in Get-ChildItem -LiteralPath $bundleSrc -File -Filter 'pandaborn*' -ErrorAction SilentlyContinue) {
+    if ($b.Extension) { continue }
+    $to = Join-Path $out "AssetBundles\$($b.Name)"
+    if (-not (Test-Path -LiteralPath $to)) { Copy-Item -LiteralPath $b.FullName -Destination $to; Write-Host "bundle $($b.Name) from the last full build" }
+}
 foreach ($frag in $Variant) {
     $frag = (Resolve-Path $frag).Path
     foreach ($f in Get-ChildItem -LiteralPath $frag -Recurse -File) {

@@ -101,8 +101,9 @@ the festival can claim it. On the festival day:
 
 1. a worker at a `KeepWorkingTemplates` workplace releases to the Worker root and works its normal hours;
 2. by day, the game's `NeederRootBehavior` decides first (eat, drink, attractions, decorations, sleep near dawn);
-3. otherwise, and first of all during the show (`ShowStartHours`..`ShowEndHours`), walk to a random spot near the district's
-   square (`IDistrictService.GetRandomDestinationInDistrict` around the square's centre), then wait there 0.3–0.8 h;
+3. otherwise, and first of all during the show (`ShowStartHours`..`ShowEndHours`), walk to a spot near the district's
+   square (the nearest of five `IDistrictService.GetRandomDestinationInDistrict` picks around the square's centre, so the
+   crowd stands on and beside it rather than scattered), then wait there 0.3–0.8 h;
 4. with no square in the district: needs, then the game's wander behaviour.
 
 **What keeps running** (so a festival never strands a colony): critical needs (above us), all eating and drinking from
@@ -136,8 +137,16 @@ short flight) until the art lane provides lantern particles; bursts use `KamuroO
 flying fireworks themselves are saved by the game.
 
 Hooks for the art lane on the square's model (section 9): `#FestivalLights` is shown from the call to the end of the
-festival and hidden otherwise; `#LanternRise` (a particle system) is played instead of each comet when it exists;
-`#FireworkMount` is the launch point.
+festival and hidden otherwise; `#FireworkMount` is the launch point. Each lantern first asks the square's
+`TemplateAttachments.GetOrCreateAttachment("LanternRise")` (a blueprint attachment `{AttachmentId "LanternRise", Prefab,
+Parent "#LanternRise", CreateInstantly false}`) and plays its `ParticleSystem`; no attachment (`KeyNotFoundException`,
+caught) means a `ParticleSystem` under a `#LanternRise` node, and neither means the comet. Every missing node or particle
+system degrades to nothing.
+
+Sounds: `pandabornsounds` clips `Environment.Pandaborn.FestivalDrum` (looped on a child emitter of the square during
+the show; the square's own emitter already loops the visitors' sound, and one emitter loops one sound) and
+`Environment.Pandaborn.Firecrackers` (2D at the start of the festival day, 3D at the square when the show starts). A clip
+the game does not know (`AudioClipService.GetAudioClipNames`) is skipped silently.
 
 ### Festive spirit and Tradition
 
@@ -272,6 +281,12 @@ the Flowering. A future Hard tuning could shorten `DormantDays` per game mode; n
 
 ## 8. Requests to the catalogue lane
 
+**Status (phase 2):** the catalogue has applied all of these behind `rules.toml [modules] Festival` / `Flowering`
+(square on `DanceHall.Folktails`, the three module specs on the characters, `PandabornFestiveGrand`, Tradition levels, the
+twins on the plant lane's flowering models, `BudsUseDetail = true` on shoot bamboo and `false` on timber bamboo). Still
+open: the square's `LanternRise` attachment and its own lantern particle (section 9). The dev
+copies generate exactly this data, with the switches flipped in a scratch copy of the catalogue.
+
 All ids below are new and must be locked (`generate -Lock`). Custom specs go only on Inkpaws-only templates.
 
 1. **Festival Square** (`buildings.toml`, replacing the storage stand-in):
@@ -342,30 +357,62 @@ module never ships materials).
 
 ## Results
 
-Runs in `E:\PandabornDevuild	est\<run>` (events probe output `events.json` / `reload\events_reload.json`, shots `ev_*.png`).
+All runs on the hidden desktop, map Plains (paths connect there) unless noted, with only the dev copy, the events probe
+and the harness enabled (`-OnlyMods JigglyPanda.PandabornFactionsDev`). Both modules load through the bootstrap's API
+check like any shipped module (`features`: `Festival: On; Flowering: On`). Folders `E:\PandabornDev\build\test\<run>`; the
+probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
+
+### Phase 2 (real module path)
 
 | Run | What | Result |
 |---|---|---|
-| `events-main-1` | Inkpaws, Diorama, only the faction + the events dev mod; Flowering forced, festival called, save and reload, 4 in-game days | **PASS, 0 errors**, both launches. **Flowering proven**: 12 grown shoot bamboo turned into Flowering Shoot Bamboo bearing 36 seed (notice "12 plants bear 36 bamboo seed: harvest it within 3 days"); the twins died over the last seed day (12 → 7 → 3 → 0 alive between day 2 h6 and day 3 h2) and the phase went to Resting; young shoot bamboo held at growth 0.000 for 4 days while control cabbage grew 0.019 → 0.319, **and still held after the reload** (panel "Resting after the Flowering: it grows again in 8 days", top bar "Shoot Bamboo grows again in 6 days"); announcement, in-flower and rest texts correct on the top-bar line, the plant panel and the log. **Festival not exercised**: the harness found no path route for any building on Diorama, so the square had no district and the call was refused with the correct panel text ("The square must be connected to a district by a path."); the square panel renders correctly (status, store lines, rule, Call button, toggle; `ev_r_d2_h1_square_after.png`). Nobody worked (unconnected), so no seed was harvested |
-| `events-folktails-1` | Folktails + the events dev mod | **PASS, 0 errors**; both modules inactive (`festivalActive`/`floweringActive` false), the probe's festival call and Flowering answered "modules off" |
-| `events-main-2`, `events-fallback-2` | the same on Plains (paths connect there in other lanes' runs), and the fallback run (`simulate-missing-member` for all three private members, then a reload with both modules forced off) | **could not test (exit 2)**: every new Inkpaws game crashed at load on the shared install of 11:25, in another lane's adopted Ox Workshop model (`NullReferenceException: Child #BotAssembler.Folktails.Progress0 not found in PandabornOxWorkshop.Inkpaws`; also in `models-pass3-3`). Not in this lane's code |
+| `events-main-3` | copy `pbevents` (catalogue data, test timings); auto-call, Grand Festival, festival day, mid-show save and reload, drought, Flowering with seed cakes | **PASS, 0 own errors**, both launches. **Auto-call** fired in fair weather at h5.2 ("The Grand Lantern Festival is called"). **Festival day:** nobody worked (`working` empty, Ringtails included), 16/16 attended, festive average 0.97; 11 at the square at h10, 16 at h19. **Show:** 24 lanterns from h15.75, bursts from h19 (the reflected `Firework.Launch`), 3 sounds. **Mid-show reload:** the reload launched only the 7 bursts still due and 0 lanterns (no replay). **End at dawn:** Tradition 1, Tradition-locked decorations 4 → 2 (level 1 unlocked), festive 1.0 and grand 1.0 on everyone. **Drought:** auto-call (on, stocked) did not fire in the drought; a manual call at hour 23.0 held the festival next day in the drought, nobody working; Tradition 2. **Flowering:** farmers harvested the seed (store 3 → 24), the Kitchen cooked seed cakes (4, 8, 12 ...), young bamboo held at 0.000, growth resumed on time. Gaps fixed later: replanting failed (below), the lumberjack had no worker. Shots `ev_d1_h15_gathering.png`, `ev_d1_h16b_lanterns.png`, `ev_d1_h20_fireworks.png`, `reload\ev_r_*.png` |
+| `events-fallback-4` | copy `pbevents-fb`: `simulate-missing-member` for `Festival.DayOff`, `Festival.Fireworks`, `Flowering.GrowthHold`; then a reload with `force-off: Festival, Flowering` written by the probe | **PASS.** `Degraded` reported with all three reasons and the notice "runs in a reduced mode"; colonists worked on the festival day, no fireworks, young bamboo grew; replanting worked (11 young). Reload forced off: `ForcedOff` notices, colonists worked normally, store entries kept, 0 errors |
+| `events-backon-2` | copy `pbevents-on`: a mid-festival and mid-flowering state saved with both modules forced off, reloaded with them on | **PASS.** The overdue festival ended at load (Tradition 1, festive and grand 1.0, locks 4 → 2); the Flowering resumed ("in flower, 2 days left"). With the module off, farmers still harvested the twins (plain data plants) |
+| `events-crews-3` | copy `pbevents2` (keep-working Efficient Farmhouse as a stand-in pump crew, the plant lane's flowering bundle) | **PASS.** The farmhouse crew (3) worked through the festival day; 48 seed harvested ("Bamboo seed harvested: 48"); all 16 tiles replanted, held, and grew after the rest; twins render with the flowering models (`ev_c_d0_h10_twins.png`). Buds not seen at camera distance (`ev_c_d0_buds_plant.png`). Dusk: `ev_c_d1_h16_dusk_a.png` (comet sparks, read as rockets), `ev_c_d1_h16_dusk_b.png` |
+| `events-rtoff-3` | copy `pbevents-rt`: a Ringtail family moves in, festival called, then a reload with `force-off: Ringtails` mid-call | **PASS**, both launches. First launch: 3 Ringtails on the night post. Reload: 0 Ringtails, 16 Inkpaws (the saved Ringtails loaded as Inkpaws), the festival ran: 15/16 attended, festive 0.9; the lumberjack (a keep-working template in this variant) stayed at its flag all day; 24 lanterns. Shots `reload\ev_rt_off_gathering.png`, `reload\ev_rt_off_lumberjack.png`, `reload\ev_rt_off_square.png` |
+| `events-final-1` | copy `pbevents3` | **could not test**: crashed at load on another lane's new character attachment (`Characters/Pandaborn/Attachments/ConicalHat`, bundle `pandabornattachments`, which the copy lacked). `build.ps1` now copies every `pandaborn*` bundle the copy lacks from the last full build |
+| `events-final-2` | copy `pbevents3`: the square's `LanternRise` attachment (`Fireworks/Content/Sparks_Trail` on `#Finished`, until the model lane's node exists), crowd nearer, the panel layout fix, `BudsUseDetail` | **PASS, 0 own errors.** The farmhouse crew of 3 kept working; the 10 others all attended and spent the day at or walking to the square. **LanternRise:** the attachment played for each of the 24 lanterns (no comets in the sky); it shows as small pink sparks halfway up the pole (`ev_f_d1_h16_dusk_c.png`, `ev_f_d1_h17_dusk_d.png`). **Panel:** the bamboo line and its setting button no longer overlap (`ev_f_d0_inflower_panel.png`, `ev_f_d0_buds_plant.png`). **Buds:** not visible (`ev_f_d0_buds_plant.png`); see `events-buds-1` |
+| `events-buds-1` | copy `pbevents3`, short: a grown shoot-bamboo field, announcement, close-ups before and after; the probe lists each renderer under `Mature` with its material, `_EnableDetail` and detail textures | queued |
 
-Fixed after the runs: the bamboo panel's line and its setting button overlapped (`ev_d0_inflower.png`; now a column).
-Since the phase-5 build, the installed faction hides the Festival Square and `PandabornBambooSeed` while Festival and
-Flowering are off; the dev mod now carries its own square (on the vanilla Dance Hall, as requested in 8.1) and the seed
-good. Re-run, once the Ox Workshop is fixed:
-`tests/scenarios/events/events-main.request.json` and `events-fallback.request.json` on `-Map Plains` (commands in
-`proto/events/README.md`).
+### Phase 1
+
+| Run | What | Result |
+|---|---|---|
+| `events-main-1` | Diorama, the phase-1 dev mod | **PASS.** The Flowering proven end to end (twins, seed, deaths, rest held across a reload); the festival refused correctly ("The square must be connected to a district by a path"): no path routes on Diorama |
+| `events-folktails-1` | Folktails + the events dev mod | **PASS.** Both modules inactive; Folktails untouched |
+
+### Bugs found in game and fixed
+
+* Replanting marks were lost under the twins: the game's `PlantingCoordinatesUnsetter` clears a planting mark when a
+  block of another template is placed on it. The Flowering now puts the mark back after placing a twin (proven in
+  `events-fallback-4` and `events-crews-3`).
+* "Seed harvested: 0": the count is now seed borne minus seed lost, both saved.
+* Crash when visitors entered the square during the show (`SoundEmitter is currently playing another sound in a loop`):
+  the drum loops on its own child emitter.
+* Startup crash with Festival forced off (`TypeLoadException` from a compiler-generated lambda class in the probe):
+  the probe's module code has no lambdas. A rule worth keeping for any DLL that names an optional module's types.
+* The bamboo panel's text and its setting button overlapped: the fragment uses the vanilla wonder fragment's layout.
+
+### The look of the festival (honest)
+
+Functional, not yet beautiful. At night the square itself looks good: its lantern strings glow red-orange over the
+pale paving, with a few pandas on it and the rest of the crowd around its edges (`ev_f_d1_h16_dusk_b.png`). The sky is the weak part. The vanilla comets read as
+rockets, gone in seconds; the `Sparks_Trail` stand-in on the attachment is a small pink sparkle at the pole, invisible
+from the normal camera. **Rising lanterns need their own art**: a small bundle prefab with one `ParticleSystem`
+(a warm, softly glowing paper-lantern quad, emission rate 0, played once per lantern; rises 1–1.5 m/s with a slow
+sideways drift and a gentle sway; 10–16 s life; fades in over 0.5 s and out over the last 3 s; additive or emissive
+warm orange, about 0.3 m), referenced by the square blueprint's `LanternRise` attachment on `#LanternRise`. Burst
+fireworks (Grand only) are the game's own and look right.
 
 ## Unproven
 
-* **The festival day in game**: colonists leaving work, gathering at the square, the show (comets and bursts through the
-  reflected `Firework.Launch`), festive spirit, Tradition unlocking tools, the mid-show reload without repeats, the call at
-  hour 23, and the keep-working crew. Code is built and compiles against the running game; none of it has run yet.
-* **The fallbacks and the forced-off reload** (the `events-fallback` scenario is ready).
-* **Ringtails at the festival**: the ordering argument (rest inserted in `InitializeEntity`, the festival in
-  `PostInitializeEntity`) is read from code; no Ringtail data was available in the installed faction to test.
-* **Seed harvest by farmers and lumberjacks**: the inventories should accept seed (it is a yield of their group); not seen
-  (the colony in `events-main-1` was unconnected).
-* Two districts, game speed 7 with many colonists, a drought festival: defined above, not run.
-* Buds and lantern particles wait for the plant and model lanes.
+* **Buds** (see `events-buds-1`).
+* **A real pump crew**: keep-working is proven with the Efficient Farmhouse and the lumberjack as stand-ins (the same
+  template check); no pump or lift stood in a test district.
+* **The festival with Ringtails on, through their morning rest**: in `events-main-3` the 3 Ringtails did not work on the
+  festival day and all 16 were at the square at h19, but no sample caught a Ringtail asleep in its rest window on that
+  day (the order rest-then-festival is read from code).
+* **Sounds by ear**: the probe counts 3 plays (drum loop start, firecrackers 2D and 3D) and the clips exist in
+  `pandabornsounds`; nobody listened.
+* Two districts, game speed 7 with many colonists over many cycles: defined above, not run.
