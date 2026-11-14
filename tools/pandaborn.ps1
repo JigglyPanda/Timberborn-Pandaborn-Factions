@@ -326,12 +326,17 @@ foreach ($s in $stages) {
             $copy = 'pbgate-' + $hash.Substring(0, 8)   # one copy per staging content: two gates never share a folder
             & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'proto\foundation\build.ps1') -Name $copy -Source $StageDir | Out-Host
             if ($LASTEXITCODE -ne 0) { Say 'gate: the dev copy did not build' 'Red'; $failed += $s; break }
-            $runId = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
             $grid = "$GenDir.grid.json"
-            & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'tools\run_game_test.ps1') -Faction Inkpaws -Map Plains `
-                -DisableMods JigglyPanda.PandabornFactions -ExtraMods "E:\PandabornDev\build\proto\$copy" -RequestJson $grid `
-                -RunSeconds 2400 -TimeoutSeconds 4200 -WaitForGameSeconds 10800 -RunId $runId | Out-Host
-            $code = $LASTEXITCODE
+            # exit 2 = could not test (no verdict, e.g. the game was closed from outside): one more try, then it fails
+            foreach ($try in 1, 2) {
+                $runId = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+                & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'tools\run_game_test.ps1') -Faction Inkpaws -Map Plains `
+                    -DisableMods JigglyPanda.PandabornFactions -ExtraMods "E:\PandabornDev\build\proto\$copy" -RequestJson $grid `
+                    -RunSeconds 2400 -TimeoutSeconds 4200 -WaitForGameSeconds 10800 -RunId $runId | Out-Host
+                $code = $LASTEXITCODE
+                if ($code -ne 2) { break }
+                Say "gate: run $runId could not test (exit 2); trying again" 'DarkYellow'
+            }
             if ($code -ne 0) { Say "gate: FAILED (run $runId, exit $code): this staging folder must not be installed" 'Red'; $failed += $s; break }
             if ((Get-StageHash $StageDir) -ne $hash) { Say 'gate: the staging folder changed during the run; run the gate again' 'Red'; $failed += $s; break }
             $gate = [ordered]@{ hash = $hash; run = $runId; passedUtc = (Get-Date).ToUniversalTime().ToString('o'); stage = $StageDir }

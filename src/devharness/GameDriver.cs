@@ -371,12 +371,16 @@ namespace PandabornDevHarness
         private bool RunIsOver(Request request, float now)
         {
             float real = now - _runStartedAt;
-            // a grid request with "exercise" keeps the run going until GridLab has finished it (within the real cap)
-            if (Harness.Request.Raw?["grid"]?["exercise"] != null && real < request.RunRealSeconds
-                && !((bool?)Harness.Result["grid"]?["exercise"]?["done"] ?? false)
-                && !(((string)Harness.Result["grid"]?["status"])?.StartsWith("incomplete") ?? false)
-                && !(((string)Harness.Result["grid"]?["status"])?.StartsWith("error") ?? false))
-                return false;
+            // a grid request with "exercise": the run lasts exactly until GridLab has finished it (or failed), within
+            // the real cap
+            if (Harness.Request.Raw?["grid"]?["exercise"] != null)
+            {
+                string status = (string)Harness.Result["grid"]?["status"] ?? "";
+                if (((bool?)Harness.Result["grid"]?["exercise"]?["done"] ?? false) || status.StartsWith("incomplete")
+                    || status.StartsWith("error"))
+                    return true;
+                return real >= request.RunRealSeconds;
+            }
             if (request.RunInGameHours > 0f)
                 return _dayNightCycle.PartialDayNumber * 24f - _runStartHours >= request.RunInGameHours || real >= request.RunRealSeconds;
             return real >= request.RunRealSeconds;
