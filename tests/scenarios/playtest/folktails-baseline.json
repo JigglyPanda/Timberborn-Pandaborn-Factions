@@ -4,7 +4,7 @@
   "speed": 30,
   "playtest": {
     "name": "folktails-baseline",
-    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting.",
+    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6.",
     "shotsEveryDays": 4,
     "names": {
       "lumber": "LumberjackFlag.Folktails",
@@ -143,6 +143,56 @@
         }
       },
       {
+        "id": "cutMore1",
+        "op": "cut",
+        "target": "lumber1",
+        "count": 30,
+        "radius": 18,
+        "repeat": 30,
+        "everyHours": 4,
+        "when": {
+          "day": 3,
+          "markedTreesBelow": 15
+        }
+      },
+      {
+        "id": "cutMore2",
+        "op": "cut",
+        "target": "lumber2",
+        "count": 30,
+        "radius": 18,
+        "repeat": 30,
+        "everyHours": 4,
+        "when": {
+          "day": 3,
+          "markedTreesBelow": 15
+        }
+      },
+      {
+        "id": "lumber3",
+        "op": "build",
+        "template": "@lumber",
+        "rule": "trees",
+        "near": "lumber1",
+        "minDistance": 6,
+        "maxDistance": 25,
+        "when": {
+          "day": 6
+        }
+      },
+      {
+        "id": "cut3",
+        "op": "cut",
+        "target": "lumber3",
+        "count": 40,
+        "radius": 14,
+        "when": {
+          "after": [
+            "lumber3"
+          ]
+        }
+      },
+      {
         "id": "home",
         "op": "build",
         "template": "@home",
@@ -199,10 +249,7 @@
         "template": "@mill",
         "maxDistance": 15,
         "when": {
-          "day": 3,
-          "stock": {
-            "Log": 20
-          }
+          "day": 3
         }
       },
       {
@@ -239,10 +286,7 @@
         "min": 25,
         "when": {
           "day": 4,
-          "science": 30,
-          "stock": {
-            "Plank": 7
-          }
+          "science": 30
         }
       },
       {

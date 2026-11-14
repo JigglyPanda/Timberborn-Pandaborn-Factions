@@ -562,6 +562,9 @@ namespace PandabornDevHarness
                         if (_weatherService.IsHazardousWeather || _weatherService.HazardousWeatherStartCycleDay - _gameCycleService.PartialCycleDay > (float)v)
                         { waiting = "hazard within " + v + " days"; return false; }
                         break;
+                    case "markedTreesBelow":
+                        if (MarkedTrees() >= (int)v) { waiting = "marked trees below " + v; return false; }
+                        break;
                     case "pathsClear":
                         // pending tiles whose tree can no longer be cut (it died empty, or a sapling took its place) do not count
                         if (_pendingPath.Any(c => TreeAt(c).HasValue)) { waiting = "path tiles waiting for trees: " + _pendingPath.Count; return false; }

@@ -117,7 +117,8 @@ def analyse(run):
     a["deaths"] = len(deaths)
     causes = {}
     for x in deaths:
-        cause = ",".join(x.get("needsAtMinimum") or []) or (x.get("message") or "?")
+        msg = x.get("message") or ""
+        cause = "old age" if "old age" in msg else ("thirst" if "thirst" in msg else ("hunger" if "hunger" in msg or "starv" in msg else (msg or ",".join(x.get("needsAtMinimum") or []) or "?")))
         causes[cause] = causes.get(cause, 0) + 1
     a["deathCauses"] = causes
     a["firstDeathDay"] = deaths[0]["day"] if deaths else None
@@ -298,7 +299,7 @@ def verdict(a):
         return "No telemetry."
     lines = []
     deaths = a["deaths"]
-    starving = sum(n for c, n in a["deathCauses"].items() if "Hunger" in c or "Thirst" in c)
+    starving = sum(n for c, n in a["deathCauses"].items() if c in ("thirst", "hunger"))
     if a["popEnd"] == 0:
         lines.append("**Colony died out** by day %s" % a["lastDay"])
     elif starving:

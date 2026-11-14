@@ -705,6 +705,14 @@ namespace PandabornDevHarness
             return true;
         }
 
+        /// <summary>Trees in the cutting area that a lumberjack can still cut (grown and standing, or dead with logs).</summary>
+        private int MarkedTrees()
+        {
+            int n = 0;
+            foreach (var c in _treeCuttingArea.CuttingArea) if (TreeAt(c).HasValue) n++;
+            return n;
+        }
+
         private bool Cut(Step step)
         {
             var o = step.Raw;
@@ -729,6 +737,7 @@ namespace PandabornDevHarness
                 {
                     if (!kv.Value.StartsWith("tree:", StringComparison.Ordinal)) continue;
                     if (only != null && !only.Contains(kv.Value.Substring(5))) continue;
+                    if (_treeCuttingArea.IsInCuttingArea(_resourceCoords[kv.Key])) continue;   // already marked
                     float d = Vector2Int.Distance(kv.Key, new Vector2Int(origin.Value.x, origin.Value.y));
                     if (d > radius) continue;
                     // the cutting area is keyed by the tree's own block coordinates
