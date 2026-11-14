@@ -10,8 +10,7 @@ import numpy as np
 from core import (Part, fix_winding, frame_from, quad_part, rot_axis, TEXEL, TIMBER, BAMBOO_GOLD, BAMBOO_GREEN,
                   PLASTER, PLASTER_LATH, TILE, WINDOWS, DETAILS, EARTH, WEAVE, IRON,
                   WOOD_STRIPS, WOOD_SHORT, WOOD_BLOCK, WOOD_DISCS, WIN_LATTICE, WIN_DARK, WIN_PANES, WIN_ROUND,
-                  DET_ROPE, DET_RED, DET_CLOTH, TILE_COURSES, TILE_COLS, WEAVE_GOLD, WEAVE_DARK, MOSS, LANTERN_GLOW, LANTERN_RED,
-                  WARM_LANTERNS)
+                  DET_ROPE, DET_RED, DET_CLOTH, TILE_COURSES, TILE_COLS, WEAVE_GOLD, WEAVE_DARK, MOSS, LANTERN_GLOW, LANTERN_RED)
 
 V = np.asarray
 
@@ -685,14 +684,13 @@ def basket(geo, base, h=0.22, r=0.16, material="IrregularPlanks_LightBrown.Folkt
 
 
 def lantern(geo, at, r=0.09, h=0.2, hanging=True, tags=()):
-    """A red paper lantern: glowing round body (window paper glows at night), red caps, a tassel."""
+    """A red paper lantern: its body on the LanternPaperRed patch (glows red-orange at night), red caps."""
     at = V(at, float)
     body = [(r * 0.62, 0.0), (r, h * 0.3), (r, h * 0.7), (r * 0.62, h)]
-    lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS,
-          uv_region=LANTERN_RED if WARM_LANTERNS else LANTERN_GLOW, tags=set(tags) | {"glow"}, cap_top=False)
-    # red paper: by day the vertex tint reddens the pale paper; the glow ignores it (see core.LANTERN_RED), so with the
-    # warm patches the paper patch itself is red and the tint goes white
-    geo.parts[-1].C = np.tile([1.0, 1.0, 1.0, 1.0] if WARM_LANTERNS else [0.95, 0.42, 0.3, 1.0], (len(geo.parts[-1].P), 1))
+    # red paper on the look sheet's LanternPaperRed patch: red by day, a red-orange glow at night (the glow is the
+    # patch's own colour; vertex colour stays white)
+    lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS, uv_region=LANTERN_RED,
+          tags=set(tags) | {"glow"}, cap_top=False)
     for k, y in enumerate(((0.03, -0.0), (h - 0.03, h + 0.005))):
         base = (at - V([0, h, 0]) if hanging else at) + V([0, y[0], 0])
         # red rings capping the body; closed on the outside so neither end shows a hole

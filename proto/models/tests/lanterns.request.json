@@ -1,0 +1,257 @@
+{
+ "run": {
+  "inGameHours": 16.0,
+  "realSeconds": 600
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  "PandabornModelSkyLantern.PandabornProto",
+  "PandabornModelFestivalSquare.PandabornProto",
+  "PandabornModelLanternWorkshop.PandabornProto",
+  "PandabornModelStandingLantern.PandabornProto",
+  "PandabornModelHangingLantern.PandabornProto",
+  "PandabornModelStringLanterns.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelDen.PandabornProto"
+ ],
+ "animations": [
+  {
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": 99.8,
+   "name": "Default",
+   "speed": 0.2,
+   "looped": false
+  }
+ ],
+ "screenshots": [
+  {
+   "name": "day_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "SkyLantern_rise_night_0",
+   "kind": "building",
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": "103.8",
+   "front": true,
+   "yaw": 25,
+   "pitch": 18,
+   "zoom": 0.55,
+   "minDistance": 9.0
+  },
+  {
+   "name": "SkyLantern_rise_night_1",
+   "kind": "building",
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": "105.8",
+   "front": true,
+   "yaw": 25,
+   "pitch": 18,
+   "zoom": 0.55,
+   "minDistance": 9.0
+  },
+  {
+   "name": "SkyLantern_rise_night_2",
+   "kind": "building",
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": "107.8",
+   "front": true,
+   "yaw": 25,
+   "pitch": 18,
+   "zoom": 0.55,
+   "minDistance": 9.0
+  },
+  {
+   "name": "night_overview",
+   "kind": "overview",
+   "at": "end"
+  },
+  {
+   "name": "FestivalSquare_night",
+   "kind": "building",
+   "target": "PandabornModelFestivalSquare.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "FestivalSquare_night_lit",
+   "kind": "building",
+   "target": "PandabornModelFestivalSquare.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "LanternWorkshop_night",
+   "kind": "building",
+   "target": "PandabornModelLanternWorkshop.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "LanternWorkshop_night_lit",
+   "kind": "building",
+   "target": "PandabornModelLanternWorkshop.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "StandingLantern_night",
+   "kind": "building",
+   "target": "PandabornModelStandingLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": false
+  },
+  {
+   "name": "StandingLantern_night_lit",
+   "kind": "building",
+   "target": "PandabornModelStandingLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": true
+  },
+  {
+   "name": "HangingLantern_night",
+   "kind": "building",
+   "target": "PandabornModelHangingLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": false
+  },
+  {
+   "name": "HangingLantern_night_lit",
+   "kind": "building",
+   "target": "PandabornModelHangingLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": true
+  },
+  {
+   "name": "StringLanterns_night",
+   "kind": "building",
+   "target": "PandabornModelStringLanterns.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": false
+  },
+  {
+   "name": "StringLanterns_night_lit",
+   "kind": "building",
+   "target": "PandabornModelStringLanterns.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 3.0,
+   "lit": true
+  },
+  {
+   "name": "Den_night",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "Den_night_lit",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "SkyLantern_night",
+   "kind": "building",
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": false
+  },
+  {
+   "name": "SkyLantern_night_lit",
+   "kind": "building",
+   "target": "PandabornModelSkyLantern.PandabornProto",
+   "at": "end",
+   "front": true,
+   "yaw": 25,
+   "pitch": 35,
+   "zoom": 1.1,
+   "minDistance": 5.0,
+   "lit": true
+  },
+  {
+   "name": "night_screen",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "PandabornModel"
+ ]
+}

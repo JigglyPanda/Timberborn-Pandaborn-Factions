@@ -27,8 +27,6 @@ MODELS = r"E:\PandabornDev\build\models"
 DEFAULT_OUT = os.path.join(ROOT, "mod", "PandabornFactions", "Sprites", "Pandaborn", "WonderCompletion",
                            "wonder-completion-inkpaws.png")
 SIZE = (1514, 348)
-WARM_MODELS = r"E:\PandabornDev\build\models_warm"
-WARM_IDS = ("SkyLantern", "StringLanterns", "StandingLantern", "HangingLantern")
 
 
 def drifting_lanterns():
@@ -94,29 +92,16 @@ def main():
     ap.add_argument("--out", default=DEFAULT_OUT)
     ap.add_argument("--samples", type=int, default=160)
     ap.add_argument("--preview", action="store_true", help="write to the build folder instead of the mod")
-    ap.add_argument("--warm-look", default=r"E:\PandabornDev\build\models\study\look_after",
-                    help="texture set with the warm lantern patches (models.md, 'Lantern glow colour'); '' = the look "
-                         "lane's current textures")
     a = ap.parse_args()
     out = os.path.join(MODELS, "preview", "wonder-completion-inkpaws.png") if a.preview else a.out
     os.makedirs(preview.TMP, exist_ok=True)
     work = tempfile.mkdtemp(dir=preview.TMP)
-    warm = bool(a.warm_look) and os.path.isdir(a.warm_look)
-    if warm:
-        # the lanterns in their warm patches (a picture need not wait for the sheet): trial builds of the lantern-heavy
-        # models into models_warm, and the drifting lanterns built warm as well
-        os.environ["PB_LANTERN_WARM"] = "1"
-        os.environ["PB_MODELS_OUT"] = WARM_MODELS
-        for mid in WARM_IDS:
-            subprocess.run([sys.executable, "-I", os.path.join(ROOT, "art", "models", mid, "build.py")], check=True,
-                           capture_output=True, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
     items = []
     for i, (mid, x, z, t) in enumerate(LAYOUT):
-        base = WARM_MODELS if warm and mid in WARM_IDS else MODELS
-        path = os.path.join(base, mid, f"{mid}.Model.timbermesh")
+        path = os.path.join(MODELS, mid, f"{mid}.Model.timbermesh")
         items.append({"npz": tmio.to_npz(path, os.path.join(work, f"m{i}.npz"), offset=(x, 0.0, z), frame=t)})
     # the great lantern's position at that moment (for the warm light it throws on the village)
-    lantern = [n for n in tmio.load(os.path.join(WARM_MODELS if warm else MODELS, "SkyLantern", "SkyLantern.Model.timbermesh"), 0.2)
+    lantern = [n for n in tmio.load(os.path.join(MODELS, "SkyLantern", "SkyLantern.Model.timbermesh"), 0.2)
                if n["name"] == "#SkyLanternAnimated"][0]["world"][:3, 3] + np.array([-3.6, 1.8, 6.0])
     items.append({"npz": tmio.to_npz(hills(), os.path.join(work, "hills.npz"))})
     small = drifting_lanterns()
@@ -131,7 +116,7 @@ def main():
         items.append({"npz": tmio.to_npz(small[size], os.path.join(work, f"s{k}.npz"), offset=(x, y, z))})
         k += 1
     L = [-float(lantern[0]), -float(lantern[2]), float(lantern[1])]   # Blender coordinates
-    look = a.warm_look if warm else preview.LOOK
+    look = preview.LOOK     # the look lane's textures, lantern patches included (2ea9691)
     job = {"items": items, "textures": os.path.join(look, "Textures"),
            "spec": os.path.join(look, "look_spec.json"), "out": {"night": out}, "size": list(SIZE),
            "samples": a.samples, "grid": [-600, -600, 600, 600], "groundColor": (0.065, 0.075, 0.08),

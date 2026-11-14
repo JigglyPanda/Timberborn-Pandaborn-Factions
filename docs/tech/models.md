@@ -683,3 +683,29 @@ Treadwheel Lift's axle, the Festival Square's `#FestivalLights` switching (needs
 * Regenerate FlumeGate, PaddySpout (meshes; blocks unchanged), LargeKiteWindmill (mesh).
 * After the look lane adds the two patches: rebuild every model with `PB_LANTERN_WARM=1` and regenerate.
 * The wonder picture replaces the pass-4 one in place (same path).
+
+
+## Pass 6 (2026-11-14): warm lanterns
+
+The look lane added the two patches (look 2ea9691), 4 px right of the request because vanilla Folktails window UVs
+touch x 960-961: `LanternPaperRed` [964, 16, 1024, 80) and `LanternPaperAmber` [964, 96, 1024, 160), 60 x 64 with
+horizontal ribs every 10 px. The kit reads both rects from `src/pipeline/sheet_regions.json` (`core._load_lanterns`,
+2 px inside each edge so filtering never samples the wall) and every lantern now maps onto them by default: the kit's
+`lantern` (and so every string, stall, gateway, post and decoration lantern) on LanternPaperRed, the Sky Lantern's
+great lantern on LanternPaperAmber. The old path (pale paper reddened by vertex colour, and the `PB_LANTERN_WARM`
+switch) is gone; lantern vertex colour is white. All 58 models rebuilt; `check_nodes.py` exits 0.
+
+* Before / after with the real sheet: `E:\PandabornDev\build\models\preview\lantern_glow_before_after.png`.
+* Game-zoom sheet re-rendered: `E:\PandabornDev\build\models\preview\sheet_gamezoom.png`.
+* The wonder picture re-rendered on the real sheet (same path, same format).
+* In-game check `models-lanterns-1` (`proto/models/tools/gen_look_request.py`): a dev copy of the faction with the new
+  bundle (`proto/foundation/build.ps1 -Name models-look`), `-DisableMods JigglyPanda.PandabornFactions -ExtraMods
+  models-look,models`; night shots of the Festival Square, Lantern Workshop, the three lantern decorations, a Den and
+  the Sky Lantern mid-rise.
+
+### Adoption list for pass 6
+
+* **Regenerate every model: lantern UVs** (all meshes in `E:\PandabornDev\build\models` were rebuilt on 2026-11-14
+  after look 2ea9691). The new meshes need the bundle with the lantern patches: install them together with that
+  bundle, never one without the other (old bundle + new meshes = lanterns on blank wall, no glow; new bundle + old
+  meshes = the pale lanterns of before).
