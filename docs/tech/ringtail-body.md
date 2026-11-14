@@ -269,8 +269,16 @@ the asset: `Prefab` is an `AssetRef<GameObject>`, and a loose `.timbermesh` in a
   with `{"AttachmentId": "PandabornConicalHat", "Prefab": "Characters/Pandaborn/Attachments/ConicalHat", "Parent": "#Head"}`
   and `{"AttachmentId": "PandabornBackBasket", "Prefab": "Characters/Pandaborn/Attachments/BackBasket", "Parent": "#Backpack"}`,
   and the outfit's `"Attachments": ["PandabornConicalHat"]`. The basket must hide while goods ride on `#Backpack` (or
-  become the courier's backpack); `WorkerOutfitAnimationAttachmentVisibilitySpec` hides per animation. **Not proven in
-  game in this pass**: it needs its own Unity project and a modelled hat and basket; that is the next art task.
+  become the courier's backpack); `WorkerOutfitAnimationAttachmentVisibilitySpec` hides per animation.
+  **Proven in game (rb-5, §7.6):** `src/unity/PandabornAttachments/Editor/PandabornAttachmentsBuilder.cs` builds a
+  procedural conical straw hat and an open back-basket as prefabs (URP Lit material, two-sided) into
+  `pandabornattachments_win` (58 KB; project `E:\PandabornDev\unity\PandabornAttachments`, made like the look
+  project; bundle in `E:\PandabornDev\build\characters\attachments`). With only blueprint merges in the test mod
+  (`TemplateAttachmentsSpec.Attachments#append` on both adult templates, `"Attachments": ["GathererBackpack",
+  "PandabornConicalHat"]` on the Inkpaw `Gatherer` outfit), an Inkpaw gatherer wore the hat in game
+  (`E:\PandabornDev\build\test\rb-5\reload\rb_reload_lineup_front.png`). The geometry is placeholder (a plain cone and
+  a plain cylinder, flat straw colour); a modelled hat and basket and a Mac bundle are still to do. The back-basket on
+  the Ringtail forager was loaded but no forager was in frame in any picture, so it is unverified.
 * **Code route (only if bundles are unwanted):** a small component that, on an outfit change, instantiates a mesh
   decoded from a loose `.timbermesh` under `#Head`/`#Backpack`. More code and risk than a bundle; not recommended.
 
@@ -293,4 +301,41 @@ committed, 1024x1024 RGBA, no meta file needed):
 They would replace the copied Folktails emblems (a gold emblem on top of the rings reads as a sticker). Offline:
 `prev/decals.png`. Not seen in game (needs a tail-painting building and a visit).
 
-<!-- PASS2RUN -->
+### 7.5 With the Reskin enabled (what it does to both peoples)
+
+Read from the Reskin source (`..\Timberborn-Pandaborn-Reskin\src\scripts\PandaColonistsFur.cs`) and confirmed in
+rb-5 (mods loaded: Pandaborn (Reskin) 7.0.0, Pandaborn - Factions, the Ringtail prototype, this test mod, the harness):
+* **Inkpaws lose their own coats and avatars.** `PandabornFactionSkins` rewrites every non-vanilla `FactionSpec`'s
+  `Textures`, `ChildTextures` and avatars to the Folktails ones (giant panda by default), so Inkpaws wear the Reskin's
+  `BeaverAdultN.Folktails` / `BeaverChildN.Folktails` coats (rb-5: `BeaverAdult4.Folktails`, `BeaverChild2.Folktails`)
+  instead of `InkpawAdultN`. They still look like giant pandas, but the Inkpaws' own coat variants and avatars are gone.
+* **Ringtails keep their coats** (`RingtailAdultCoatN`, `RingtailChildCoatN` in every sample), because the Ringtail coat
+  is set later, from `PandabornRingtailSpec`, not from the faction. Their avatar is not touched either (badge code).
+* **Fur shells on everyone.** `PandaFurAttacher` decorates every `BeaverSpec` character, Ringtails included, and builds
+  shells from that character's own mesh with the giant panda's UV fur mask. Up close the Ringtail looks furry and the
+  tail (the paddle's UV region, "longest fur" in the mask) bushier. One artefact: from above, a pale patch with a blue
+  rim shows on the Ringtail's crown in the game-camera shots with the Reskin on (`rb-5\reload\rb_reload_game_d3.png`,
+  `rb-5\rb_carry_night_d3.png`); it is absent without the Reskin and in offline renders of the outfits. Not traced.
+* **Meshes untouched.** The Reskin overrides only `Characters/Beaver/...`; Ringtails and Inkpaws use
+  `Characters/Pandaborn/...` (1,951 and 1,716 vertices in every sample).
+* Suggested Reskin update (for the coordinator): skip `PandabornFactionSkins` for the `Inkpaws` faction (it already has
+  panda coats and avatars), and either skip fur on characters whose mesh is not one of the Reskin's or ship a Ringtail
+  fur mask.
+
+### 7.6 The combined game run (rb-5)
+
+`tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -InGameDays 1.0 -Speed 3 -ExtraMods <ringtails>,<ringtail-body>
+-OnlyMods JigglyPanda.PandabornFactions,JigglyPanda.Pandaborn -RequestJson proto\ringtail-body\test\combined.request.json
+-SaveAndReload -ReloadSeconds 200` (output `E:\PandabornDev\build\test\rb-5\`, reload in `rb-5\reload\`). Exit 0,
+both launches PASS, 0 errors and 0 log issues from any mod, all batch-control tabs opened, mod flags restored.
+* **Save and reload with the new body:** all 4 Ringtail adults and 2 kits came back as `RingtailAdult/RingtailChild`
+  on `RingtailAdult.Model` (1,951 v) / `RingtailChild.Model` (1,778 v) with Ringtail coats (re-rolled on load, as every
+  coat is). `rb-5\reload\rb_reload_lineup_front.png`, `rb_reload_group_d3.png`, `rb_reload_game_d3.png` (carrying a log).
+* **Reskin alongside:** §7.5.
+* **New outfits:** the Ringtail builder, courier and gatherer outfits were pointed at the NightBuilder, NightCourier
+  and NightForager overlays; no texture or normal-map error was logged, and the head-wrap reads as a ring from the side
+  (`rb-5\rb_lineup1_front.png`). The per-outfit hat from the attachments bundle: §7.3(c).
+* **Zipline:** not exercised in game (no zipline in the test colony); offline the bushy tail swings cleanly
+  (`E:\PandabornDev\build\characters\prev\zip_side_pass2.png`).
+* Other pictures: `rb-5\rb_lineup1_front/back.png` (Reskin fur on both peoples), `rb_group_day_d3.png` (Ringtail with
+  poles on its back-frame, a kit, two Inkpaws, two cubs), `rb_carry_night_d3.png` (night, with the crown artefact).
