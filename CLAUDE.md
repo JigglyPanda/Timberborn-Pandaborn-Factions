@@ -187,8 +187,10 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   `Player.log`, PNGs (`overview` = off-screen render of the game view, `screen` = real screen with UI,
   `adult`/`child`/`bot` = studio close-up, front and back, `batch_population` = Population tab open,
   `factionPanel_<Id>` = new-game faction panel). Look at the PNGs.
-* Placed buildings are joined to the district center doorstep with finished `Path` tiles (`connectPaths`, default on;
-  report in `result.json` `paths`); without paths they stay "Unconnected" and nobody works there. Starting goods are
+* Placed buildings are joined to the district center with finished `Path` tiles (`connectPaths`, default on; shortest
+  route over level ground; report in `result.json` `paths`); without paths they stay "Unconnected" and nobody works
+  there. The path goes on `BlockObject.PositionedEntrance.Coordinates` (the cell in front of the door);
+  `DoorstepCoordinates`, despite its name, is the building's own block behind the door. Starting goods are
   only berries and water, so unfinished buildings need a working `LumberjackFlag` first. `result.json` `activity`
   counts each character's running behavior/executor every 2 real seconds (work, eat, sleep, wander), and each sample
   lists its need points.

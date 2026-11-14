@@ -440,7 +440,14 @@ namespace PandabornDevHarness
                 }
             }
             Harness.Info("placed " + results.Count(t => (bool)t["placed"]) + " of " + requests.Count + " building(s)");
-            if (Harness.Request.ConnectPaths) ConnectWithPaths(anchor, created, specs);
+            if (Harness.Request.ConnectPaths)
+            {
+                // PositionedEntrance.Coordinates is the cell in front of the door (where the path goes);
+                // DoorstepCoordinates, despite its name, is the building's own block behind it
+                var centerBlock = center.GetComponent<BlockObject>();
+                var start = centerBlock != null && centerBlock.HasEntrance ? centerBlock.PositionedEntrance.Coordinates : anchor;
+                ConnectWithPaths(start, created, specs);
+            }
         }
 
         /// <summary>
@@ -488,7 +495,7 @@ namespace PandabornDevHarness
         }
 
         /// <summary>
-        /// Lays finished Path tiles from the district center doorstep to each placed building's doorstep along the shortest
+        /// Lays finished Path tiles from the district center's entrance cell to each placed building's entrance cell along the shortest
         /// route (breadth-first search over level ground where a path is valid or already exists), so placed buildings are
         /// connected and get workers. Routes never change level, so buildings on another level stay unconnected.
         /// </summary>
@@ -507,7 +514,7 @@ namespace PandabornDevHarness
                 foreach (var building in buildings)
                 {
                     if (!building || !building.HasEntrance) continue;
-                    var door = building.PositionedEntrance.DoorstepCoordinates;
+                    var door = building.PositionedEntrance.Coordinates;
                     var route = FindRoute(anchor, door, placer, passable);
                     int laid = 0;
                     if (route != null)
@@ -525,7 +532,7 @@ namespace PandabornDevHarness
                     connections.Add(new JObject
                     {
                         ["building"] = building.GetComponent<TemplateSpec>()?.TemplateName ?? "?",
-                        ["doorstep"] = new JArray(door.x, door.y, door.z),
+                        ["entrance"] = new JArray(door.x, door.y, door.z),
                         ["routeFound"] = route != null,
                         ["routeLength"] = route?.Count ?? 0,
                         ["tilesLaid"] = laid
