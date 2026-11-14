@@ -26,7 +26,7 @@ param(
     [switch]$NoVariant,
     # keep the existing probe mod (when another copy is built while a run may be using the probe)
     [switch]$NoProbe,
-    # replace the copy's pandabornplants bundle with a newer plant-lane build (e.g. E:\PandabornDevuild\plants\AssetBundles)
+    # replace the copy's pandabornplants bundle with a newer plant-lane build (e.g. E:\PandabornDev\build\plants\AssetBundles)
     [string]$PlantBundles = '',
     [string]$Python = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     # the generator needs Python 3.11+ (tomllib), as tools\pandaborn.ps1 finds it
@@ -70,6 +70,14 @@ foreach ($p in $mm.files.PSObject.Properties) {
     if (-not (Test-Path -LiteralPath $p.Value)) { throw "model mesh missing (run the models stage): $($p.Value)" }
     New-Item -ItemType Directory -Force (Split-Path $to -Parent) | Out-Null
     Copy-Item -LiteralPath $p.Value -Destination $to; $meshes++
+}
+# character meshes the generated data names but the installed copy lacks (assemble copies them from the characters build)
+foreach ($f in Get-ChildItem -LiteralPath (Join-Path $genDir 'Characters\Pandaborn') -Filter '*.blueprint.json' -ErrorAction SilentlyContinue) {
+    foreach ($m in [regex]::Matches([IO.File]::ReadAllText($f.FullName), '"Model":\s*"(Characters/Pandaborn/[^"]+)"')) {
+        $to = Join-Path $out ($m.Groups[1].Value.Replace('/', '\') + '.timbermesh')
+        $from = Join-Path 'E:\PandabornDev\build\characters\out' ((Split-Path $to -Leaf))
+        if (-not (Test-Path $to) -and (Test-Path $from)) { Copy-Item -LiteralPath $from -Destination $to; $meshes++ }
+    }
 }
 foreach ($frag in $Variant) {
     $frag = (Resolve-Path $frag).Path

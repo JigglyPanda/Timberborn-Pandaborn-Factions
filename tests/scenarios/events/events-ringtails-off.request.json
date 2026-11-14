@@ -1,20 +1,94 @@
 {
   "speed": 7,
-  "run": { "inGameHours": 16 },
-  "buildings": [ "PandabornFestivalSquare.Inkpaws", "PandabornMoonLoft.Inkpaws", "PandabornNightBuildersPost.Inkpaws", "LumberjackFlag.Inkpaws" ],
-  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
-  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events", "pbevents" ],
-  "checks": { "noOwnErrors": true },
+  "run": {
+    "inGameHours": 16
+  },
+  "buildings": [
+    "PandabornFestivalSquare.Inkpaws",
+    "PandabornMoonLoft.Inkpaws",
+    "PandabornNightBuildersPost.Inkpaws",
+    "LumberjackFlag.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
   "events": {
-    "stock": { "Water": 300, "Log": 40, "PandabornPaperLantern": 40, "PandabornSteamedShoots": 25, "PandabornPickles": 22, "PandabornSteamedRice": 30 },
+    "stock": {
+      "Water": 300,
+      "Log": 40,
+      "PandabornPaperLantern": 40,
+      "PandabornSteamedShoots": 45,
+      "PandabornPickles": 45,
+      "PandabornSteamedRice": 45
+    },
     "actions": [
-      { "atRunHour": 1.0, "do": "callFestival" },
-      { "atRunHour": 15.0, "do": "writeDevSwitch", "value": "force-off: Ringtails" }
+      {
+        "atRunHour": 3.0,
+        "do": "callFestival"
+      },
+      {
+        "atRunHour": 15.0,
+        "do": "writeDevSwitch",
+        "value": "force-off: Ringtails"
+      }
     ],
-    "shots": [ { "name": "rt_d0_ringtail", "atRunHour": 10, "select": "ringtail" } ],
+    "shots": [
+      {
+        "name": "rt_d0_ringtail",
+        "atRunHour": 10,
+        "select": "ringtail"
+      },
+      {
+        "name": "rt_d0_square_called",
+        "atRunHour": 4,
+        "select": "square"
+      }
+    ],
     "reload": {
       "actions": [],
-      "shots": [ { "name": "rt_off_square", "day": 1, "hour": 11, "select": "square" }, { "name": "rt_off_gathering", "day": 1, "hour": 16.3, "select": "square" } ]
+      "shots": [
+        {
+          "name": "rt_off_square",
+          "day": 1,
+          "hour": 11,
+          "select": "square"
+        },
+        {
+          "name": "rt_off_colonist",
+          "day": 1,
+          "hour": 12,
+          "select": "colonist"
+        },
+        {
+          "name": "rt_off_gathering",
+          "day": 1,
+          "hour": 16.3,
+          "select": "square"
+        },
+        {
+          "name": "rt_off_lumberjack",
+          "day": 1,
+          "hour": 13,
+          "select": "building:LumberjackFlag.Inkpaws"
+        }
+      ]
     }
   }
 }

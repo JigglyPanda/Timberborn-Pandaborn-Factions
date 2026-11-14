@@ -1,0 +1,119 @@
+{
+  "speed": 7,
+  "run": {
+    "inGameHours": 42
+  },
+  "buildings": [
+    "PandabornFestivalSquare.Inkpaws",
+    "EfficientFarmHouse.Inkpaws",
+    "PandabornKitchen.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
+  "events": {
+    "stock": {
+      "Water": 300,
+      "Log": 60,
+      "PandabornPaperLantern": 40,
+      "PandabornSteamedShoots": 25,
+      "PandabornPickles": 22,
+      "PandabornSteamedRice": 30,
+      "PandabornRiceFlour": 30
+    },
+    "fields": [
+      {
+        "template": "PandabornShootBamboo.Inkpaws",
+        "count": 16,
+        "near": "EfficientFarmHouse.Inkpaws",
+        "grown": true,
+        "mark": true,
+        "radius": 5
+      }
+    ],
+    "actions": [
+      {
+        "atRunHour": 0.1,
+        "do": "setRecipe",
+        "building": "PandabornKitchen.Inkpaws",
+        "recipe": "PandabornBambooSeedCakes"
+      },
+      {
+        "atRunHour": 0.2,
+        "do": "announce"
+      },
+      {
+        "atRunHour": 1.4,
+        "do": "flowerNow"
+      },
+      {
+        "atRunHour": 3.0,
+        "do": "callFestival"
+      }
+    ],
+    "shots": [
+      {
+        "name": "f_d0_buds_plant",
+        "atRunHour": 0.4,
+        "select": "plant:PandabornShootBamboo.Inkpaws"
+      },
+      {
+        "name": "f_d0_buds_field",
+        "atRunHour": 0.8,
+        "select": "none"
+      },
+      {
+        "name": "f_d0_inflower_panel",
+        "atRunHour": 2.0,
+        "select": "inflower"
+      },
+      {
+        "name": "f_d1_h11_crowd",
+        "day": 1,
+        "hour": 11,
+        "select": "square"
+      },
+      {
+        "name": "f_d1_h16_dusk_a",
+        "day": 1,
+        "hour": 15.9,
+        "select": "square"
+      },
+      {
+        "name": "f_d1_h16_dusk_b",
+        "day": 1,
+        "hour": 16.2,
+        "select": "none"
+      },
+      {
+        "name": "f_d1_h16_dusk_c",
+        "day": 1,
+        "hour": 16.6,
+        "select": "none"
+      },
+      {
+        "name": "f_d1_h17_dusk_d",
+        "day": 1,
+        "hour": 17.0,
+        "select": "none"
+      }
+    ]
+  }
+}

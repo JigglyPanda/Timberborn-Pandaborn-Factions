@@ -157,7 +157,7 @@ namespace Pandaborn.Flowering
 
     /// <summary>
     /// A line on a bamboo's panel: how often bamboo flowers, or that this one is budding, in flower or resting; and a
-    /// button with the setting. Reuses the vanilla carried-goods line's layout plus a vanilla entity-panel button.
+    /// button with the setting. Built on the vanilla wonder fragment's layout (content root and a button underneath).
     /// </summary>
     public class FloweringPlantFragment : IEntityPanelFragment
     {
@@ -186,20 +186,15 @@ namespace Pandaborn.Flowering
         {
             _root = SafeUi.Get(Piece, () =>
             {
-                var root = _visualElementLoader.LoadVisualElement("Game/EntityPanel/GoodCarrierFragment");
-                _label = root.Q<Label>("GoodCarrierFragment");
+                // the wonder fragment's layout: a box with a content root and a button underneath (as the Festival Square's)
+                var root = _visualElementLoader.LoadVisualElement("Game/EntityPanel/WonderFragment");
+                root.name = "PandabornFloweringFragment";
+                _label = new Label();
+                _label.AddToClassList("entity-panel__text");
                 _label.style.whiteSpace = WhiteSpace.Normal;
-                root.style.flexDirection = FlexDirection.Column;
-                var wrapper = new VisualElement();
-                wrapper.AddToClassList("entity-panel__button-wrapper");
-                wrapper.style.marginTop = 4;
-                _button = new Button();
-                _button.AddToClassList("entity-panel__text");
-                _button.AddToClassList("entity-fragment__button");
-                _button.AddToClassList("entity-fragment__button--red");
+                root.Q<VisualElement>("InventoryRoot").Add(_label);
+                _button = root.Q<Button>("ActivateButton");
                 _button.clicked += () => _settingDialog.Show();
-                wrapper.Add(_button);
-                root.Add(wrapper);
                 root.ToggleDisplayStyle(false);
                 return root;
             }, null) ?? new VisualElement();

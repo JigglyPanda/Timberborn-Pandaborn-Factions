@@ -291,18 +291,13 @@ are not saved: the game saves growth progress as always, and the service holds t
 * type `UnityEngine.UIElements.DisplayStyle`
 * type `UnityEngine.UIElements.EventCallback`1`
   * method `.ctor(System.Object, System.IntPtr)`
-* type `UnityEngine.UIElements.FlexDirection`
 * type `UnityEngine.UIElements.IStyle`
   * method `set_display(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.DisplayStyle>)`
-  * method `set_flexDirection(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.FlexDirection>)`
-  * method `set_marginTop(UnityEngine.UIElements.StyleLength)`
   * method `set_whiteSpace(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.WhiteSpace>)`
 * type `UnityEngine.UIElements.Label`
   * method `.ctor()`
 * type `UnityEngine.UIElements.StyleEnum`1`
   * method `op_Implicit(!0)`
-* type `UnityEngine.UIElements.StyleLength`
-  * method `op_Implicit(System.Single)`
 * type `UnityEngine.UIElements.TextElement`
   * method `set_text(System.String)`
 * type `UnityEngine.UIElements.TrickleDown`

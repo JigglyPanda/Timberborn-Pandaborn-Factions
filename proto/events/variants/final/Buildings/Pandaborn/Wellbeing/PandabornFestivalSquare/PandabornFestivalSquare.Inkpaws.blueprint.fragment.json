@@ -1,0 +1,15 @@
+{
+  "TemplateAttachmentsSpec": {
+    "Attachments#append": [
+      {
+        "AttachmentId": "LanternRise",
+        "Prefab": "Fireworks/Content/Sparks_Trail",
+        "Parent": "#Finished",
+        "Position": { "X": 2.5, "Y": 2.0, "Z": 2.5 },
+        "Rotation": { "X": -90.0, "Y": 0.0, "Z": 0.0 },
+        "Scale": { "X": 1.0, "Y": 1.0, "Z": 1.0 },
+        "CreateInstantly": false
+      }
+    ]
+  }
+}

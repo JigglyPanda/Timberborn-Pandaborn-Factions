@@ -402,9 +402,11 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `set_position(UnityEngine.Vector3)`
 * type `UnityEngine.Vector3`
   * method `.ctor(System.Single, System.Single, System.Single)`
+  * method `get_sqrMagnitude()`
   * method `get_up()`
   * method `op_Addition(UnityEngine.Vector3, UnityEngine.Vector3)`
   * method `op_Multiply(UnityEngine.Vector3, System.Single)`
+  * method `op_Subtraction(UnityEngine.Vector3, UnityEngine.Vector3)`
 
 **UnityEngine.ParticleSystemModule**
 

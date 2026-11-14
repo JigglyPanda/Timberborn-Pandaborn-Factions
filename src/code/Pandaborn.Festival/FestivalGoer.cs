@@ -165,7 +165,13 @@ namespace Pandaborn.Festival
             if (!_walked)
             {
                 _walked = true;
+                // the nearest of a few random spots around the square, so the crowd gathers on and beside it
                 var target = _districtService.GetRandomDestinationInDistrict(district.District, square.Center);
+                for (int i = 0; i < 4; i++)
+                {
+                    var other = _districtService.GetRandomDestinationInDistrict(district.District, square.Center);
+                    if ((other - square.Center).sqrMagnitude < (target - square.Center).sqrMagnitude) target = other;
+                }
                 switch (_walkToPositionExecutor.Launch(target))
                 {
                     case ExecutorStatus.Running:
