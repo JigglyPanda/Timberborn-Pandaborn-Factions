@@ -585,7 +585,7 @@ hours after dawn; `rt-gate3` shows the same pattern for all 4 couriers):
   from builder-hub restocking. A run to measure exactly that (`rt-throughput2`: Inkpaw lumberjacks and gatherer
   filling their flags by day, 5 Ringtail couriers emptying them at night, construction queued after the bell) was
   queued but had not got the game by the time of writing (the shared test queue was saturated); analyse it with
-  `python proto/ringtails/test/analyze.py E:\PandabornDevuild	estt-throughput2` (`pickupsByKindWorkplacePhase`).
+  `python proto/ringtails/test/analyze.py E:/PandabornDev/build/test/rt-throughput2` (`pickupsByKindWorkplacePhase`).
   Design consequence: the "Inkpaw workshops get roomier output and input shelves" change is not optional, and the
   Courier Loft should be pitched as "clears the flags and restocks the workshops overnight", not as construction
   delivery (unless a Ringtail builder hub is added, which is data: a Ringtail-typed builders' workplace).
