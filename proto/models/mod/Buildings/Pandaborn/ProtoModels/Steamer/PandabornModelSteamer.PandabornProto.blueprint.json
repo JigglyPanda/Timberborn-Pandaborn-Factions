@@ -29,11 +29,7 @@
     ]
   },
   "ManufactorySpec": {
-    "ProductionRecipeIds": [
-      "GrilledPotato",
-      "GrilledChestnut",
-      "GrilledSpadderdock"
-    ]
+    "ProductionRecipeIds": []
   },
   "WorkshopSpec": {},
   "EnterableSpec": {

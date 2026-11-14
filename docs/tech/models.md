@@ -160,4 +160,27 @@ powershell -File tools\run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods "E
 
 ## Results
 
-See the end of this file (filled in from the in-game runs).
+All runs: `tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods look-swap,models` (the faction's swapped
+materials active), screenshots in `E:\PandabornDevuild	est\<run>\`. Previews (Blender, faction textures, beside
+the vanilla stand-in, day / night / construction stage) in `E:\PandabornDevuild\models\preview\<Id>_{day,night,stage}.png`
+and contact sheets `sheet_day.png`, `sheet_night.png`, `sheet_stage.png`.
+
+| Run | What | Result |
+|---|---|---|
+| `models-den-1` | first load | **crash on every game load**: the Scoop Wheel blueprint had no `ConstructionBase` child (fixed; rule above) |
+| `models-all-2` | 21 buildings | **crash**: Village Hall placed as a second district centre and joined by a path to the first (rule above) |
+| `models-all-3` | 18 models + 4 unfinished + 3 vanilla, Diorama, 13.5 h to night | **pass**, 25/25 placed, 0 errors; day and night close-ups of every model |
+| `models-water-1` | flume line, drop, spout, Scoop Wheel and Bamboo Water Wheel in rivers, Moon Loft with paths under it, Village Hall (WaterLab, Plains) | all 19 placements valid; **Path tiles placed in the cells under the Moon Loft: walk-under works by the block rules**; Scoop Wheel turning (generator rotation 0.26, animator enabled); flume water only a thin film (pond too low); the scoop's lift moved no water (`canMove` false: the outlet, a mechanics question for the water lane) |
+| `models-stages-1`, `models-water-2` | | nothing placed: the faction had switched to `Buildings.Inkpaws` (fixed: both collections) |
+| `models-stages-2` | unfinished buildings filmed during construction, Kite Windmill filmed 2 s apart | pass; Kite Windmill rotor visibly turned between frames; every unfinished building was built by the builders within 45 s (cost removed for tests) |
+| `models-water-3` | | **crash**: the Steamer's stand-in Grill recipes name Folktails goods the Inkpaws no longer have (fixed: recipes stripped in the prototype) |
+
+Lessons that bind the catalogue lane (who turns `model.json` into blueprints):
+
+* `#Unfinished` children: exactly one `ConstructionBase…` **first**, then `ConstructionStage0…` in order. The progress
+  visualiser shows child 0 until construction starts and the stages after; reversed children show the stage before
+  work starts and the bare pad during construction.
+* Never let a recipe, need or good id in a stand-in blueprint point at something the faction does not have: the
+  building throws when it is created (here, in the placement preview).
+* Workshop smoke (`TemplateAttachmentsSpec` particles) makes the harness's framed close-up see the whole map; use the
+  overview or a fixed camera for those buildings.

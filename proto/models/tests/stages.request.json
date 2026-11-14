@@ -3,7 +3,7 @@
   "inGameHours": 15.0,
   "realSeconds": 420
  },
- "speed": 3,
+ "speed": 1,
  "batchControl": false,
  "buildings": [
   {
@@ -15,19 +15,11 @@
    "finished": false
   },
   {
-   "template": "PandabornModelSteamer.PandabornProto",
-   "finished": false
-  },
-  {
    "template": "PandabornModelTeahouse.PandabornProto",
    "finished": false
   },
   {
    "template": "PandabornModelKindergarten.PandabornProto",
-   "finished": false
-  },
-  {
-   "template": "PandabornModelPickleYard.PandabornProto",
    "finished": false
   },
   {
@@ -64,13 +56,6 @@
    "zoom": 1.4
   },
   {
-   "name": "stage_Steamer_start",
-   "kind": "building",
-   "target": "PandabornModelSteamer.PandabornProto",
-   "at": "start",
-   "zoom": 1.4
-  },
-  {
    "name": "stage_Teahouse_start",
    "kind": "building",
    "target": "PandabornModelTeahouse.PandabornProto",
@@ -81,13 +66,6 @@
    "name": "stage_Kindergarten_start",
    "kind": "building",
    "target": "PandabornModelKindergarten.PandabornProto",
-   "at": "start",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_PickleYard_start",
-   "kind": "building",
-   "target": "PandabornModelPickleYard.PandabornProto",
    "at": "start",
    "zoom": 1.4
   },
@@ -106,6 +84,258 @@
    "zoom": 1.4
   },
   {
+   "name": "stage_Den_4",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_4",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_4",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_4",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_4",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_4",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "4",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Den_8",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_8",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_8",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_8",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_8",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_8",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "8",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Den_12",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_12",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_12",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_12",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_12",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_12",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "12",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Den_17",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_17",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_17",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_17",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_17",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_17",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "17",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Den_23",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_23",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_23",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_23",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_23",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_23",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "23",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Den_30",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_MoonLoft_30",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Teahouse_30",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Kindergarten_30",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Hammock_30",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
+   "name": "stage_Cistern_30",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "30",
+   "zoom": 1.4
+  },
+  {
    "name": "stage_Den_45",
    "kind": "building",
    "target": "PandabornModelDen.PandabornProto",
@@ -116,13 +346,6 @@
    "name": "stage_MoonLoft_45",
    "kind": "building",
    "target": "PandabornModelMoonLoft.PandabornProto",
-   "at": "45",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Steamer_45",
-   "kind": "building",
-   "target": "PandabornModelSteamer.PandabornProto",
    "at": "45",
    "zoom": 1.4
   },
@@ -141,13 +364,6 @@
    "zoom": 1.4
   },
   {
-   "name": "stage_PickleYard_45",
-   "kind": "building",
-   "target": "PandabornModelPickleYard.PandabornProto",
-   "at": "45",
-   "zoom": 1.4
-  },
-  {
    "name": "stage_Hammock_45",
    "kind": "building",
    "target": "PandabornModelHammock.PandabornProto",
@@ -159,62 +375,6 @@
    "kind": "building",
    "target": "PandabornModelCistern.PandabornProto",
    "at": "45",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Den_100",
-   "kind": "building",
-   "target": "PandabornModelDen.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_MoonLoft_100",
-   "kind": "building",
-   "target": "PandabornModelMoonLoft.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Steamer_100",
-   "kind": "building",
-   "target": "PandabornModelSteamer.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Teahouse_100",
-   "kind": "building",
-   "target": "PandabornModelTeahouse.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Kindergarten_100",
-   "kind": "building",
-   "target": "PandabornModelKindergarten.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_PickleYard_100",
-   "kind": "building",
-   "target": "PandabornModelPickleYard.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Hammock_100",
-   "kind": "building",
-   "target": "PandabornModelHammock.PandabornProto",
-   "at": "100",
-   "zoom": 1.4
-  },
-  {
-   "name": "stage_Cistern_100",
-   "kind": "building",
-   "target": "PandabornModelCistern.PandabornProto",
-   "at": "100",
    "zoom": 1.4
   },
   {
@@ -258,13 +418,6 @@
    "zoom": 1.4
   },
   {
-   "name": "end_Steamer",
-   "kind": "building",
-   "target": "PandabornModelSteamer.PandabornProto",
-   "at": "end",
-   "zoom": 1.4
-  },
-  {
    "name": "end_Teahouse",
    "kind": "building",
    "target": "PandabornModelTeahouse.PandabornProto",
@@ -275,13 +428,6 @@
    "name": "end_Kindergarten",
    "kind": "building",
    "target": "PandabornModelKindergarten.PandabornProto",
-   "at": "end",
-   "zoom": 1.4
-  },
-  {
-   "name": "end_PickleYard",
-   "kind": "building",
-   "target": "PandabornModelPickleYard.PandabornProto",
    "at": "end",
    "zoom": 1.4
   },

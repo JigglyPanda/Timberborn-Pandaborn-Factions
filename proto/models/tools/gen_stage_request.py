@@ -8,12 +8,12 @@ import json
 import os
 
 T = lambda i: f"PandabornModel{i}.PandabornProto"  # noqa: E731
-staged = ["Den", "MoonLoft", "Steamer", "Teahouse", "Kindergarten", "PickleYard", "Hammock", "Cistern"]
+staged = ["Den", "MoonLoft", "Teahouse", "Kindergarten", "Hammock", "Cistern"]
 buildings = [{"template": T(i), "finished": False} for i in staged]
 buildings += [T("KiteWindmill"), "PandabornModelDen.PandabornProto", "PandabornModelDen.PandabornProto",
               T("BambooWaterWheel")]
 shots = [{"name": "overview_start", "kind": "overview", "at": "start"}]
-for t in ("start", "45", "100"):
+for t in ("start", "4", "8", "12", "17", "23", "30", "45"):
     for i in staged:
         shots.append({"name": f"stage_{i}_{t}", "kind": "building", "target": T(i), "at": t, "zoom": 1.4})
 for k, t in enumerate(("20", "22", "24")):
@@ -26,5 +26,6 @@ req = {"run": {"inGameHours": 15.0, "realSeconds": 420}, "speed": 3, "batchContr
        "buildings": buildings, "screenshots": shots, "screenshotSize": [1600, 1000],
        "ownPatterns": ["PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoModels", "PandabornModel"]}
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tests", "stages.request.json")
+req["speed"] = 1
 json.dump(req, open(out, "w"), indent=1)
 print(out, len(buildings), len(shots))

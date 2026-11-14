@@ -186,6 +186,10 @@ def main():
         bp = copy.deepcopy(bp)
         if mid in EDITS:
             EDITS[mid](bp, mj)
+        if "ManufactorySpec" in bp:
+            # the stand-in's recipes name Folktails goods, which the Inkpaws faction does not have (a missing good
+            # throws when the building is created); the model check needs no production
+            bp["ManufactorySpec"]["ProductionRecipeIds"] = []
         for k in mj.get("removeSpecs", []):
             bp.pop(k, None)
         for k, v in mj.get("addSpecs", {}).items():

@@ -29,11 +29,7 @@
     ]
   },
   "ManufactorySpec": {
-    "ProductionRecipeIds": [
-      "Bread",
-      "CattailCracker",
-      "MaplePastry"
-    ]
+    "ProductionRecipeIds": []
   },
   "WorkshopSpec": {},
   "WorkplaceSlotManagerSpec": {},
