@@ -1,13 +1,15 @@
-﻿{
+{
   "buildings": [
     "LumberjackFlag.Folktails",
     "SmallPile.Folktails",
     "BuildersHut.Folktails",
     "PandabornStage0Teahouse.Inkpaws",
-    { "template": "LumberMill.Folktails", "finished": false }
+    { "template": "LumberMill.Folktails", "finished": false },
+    { "template": "Campfire.Folktails", "finished": false }
   ],
   "stage0": {
     "devSwitchNext": "force-off: Bell, Names",
+    "showTutorialPanelUntilRunHour": 2.0,
     "bamboo": 8,
     "pileGood": "Plank",
     "bell": [
@@ -28,7 +30,7 @@
       { "name": "teahouse", "atRunHour": 6.6, "select": "teahouse" },
       { "name": "slider16_before_dawn", "atRunHour": 9.0, "select": "none" },
       { "name": "lumberjack", "atRunHour": 12.0, "select": "lumberjack" },
-      { "name": "lumbermill_site", "atRunHour": 18.0, "select": "lumbermill" },
+      { "name": "campfire_site", "atRunHour": 18.0, "select": "campfire" },
       { "name": "hint_tomorrow", "atRunHour": 21.5, "select": "inkpaw" }
     ],
     "reload": {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -118,6 +118,10 @@ namespace Pandaborn.Stage0
         private float _shotWait;
         private readonly Queue<JObject> _shotQueue = new Queue<JObject>();
         private string _emulation = "none";
+        private string _resaveFile;
+        private float _resaveCopyAt;
+        private int _resaveTries;
+        private bool? _tutorialSettingBefore;
 
         public Stage0Probe(EventBus eventBus, IDayNightCycle dayNightCycle, CharacterPopulation characterPopulation, EntityRegistry entityRegistry,
                            EntitySelectionService entitySelectionService, WorkingHoursManager workingHoursManager, IGoodService goodService,
@@ -208,12 +212,15 @@ namespace Pandaborn.Stage0
                     Do(p, runHour);
                 }
                 StepShots();
+                CopyResave();
+                if (_tutorialSettingBefore.HasValue && runHour >= (_config["showTutorialPanelUntilRunHour"]?.Value<float>() ?? 0f)) RestoreTutorialSetting();
                 if (Time.unscaledTime - _lastWrite > 10f) Write();
             }
             catch (Exception e)
             {
                 Debug.LogError("[Pandaborn.Stage0] probe failed: " + e);
                 Event("probeError", e.ToString());
+                RestoreTutorialSetting();
                 _primaryUi = false;
                 Write();
             }
@@ -222,6 +229,7 @@ namespace Pandaborn.Stage0
         private void OnStart()
         {
             _out["data"] = Data("start");
+            ShowTutorialPanelBriefly();
             int n = _config["bamboo"]?.Value<int>() ?? 0;
             if (n > 0 && !HarnessBridge.LoadSave) SpawnBamboo(n);
             else foreach (var c in Entities<Cuttable>().Where(c => Template(c) == Bamboo)) Watch(c);
@@ -301,7 +309,7 @@ namespace Pandaborn.Stage0
             }
             catch (Exception e) { d["needError"] = e.Message; }
             d["buildings"] = new JObject();
-            foreach (var name in new[] { "LumberMill.Folktails", "Grill.Folktails", "PandabornStage0Teahouse.Inkpaws", "Stairs.Folktails" })
+            foreach (var name in new[] { "LumberMill.Folktails", "Campfire.Folktails", "Grill.Folktails", "PandabornStage0Teahouse.Inkpaws", "Stairs.Folktails" })
             {
                 var spec = _templateService.GetAll<TemplateSpec>().FirstOrDefault(t => t.TemplateName == name);
                 if (spec == null) { d["buildings"][name] = "not in this faction"; continue; }
@@ -659,17 +667,47 @@ namespace Pandaborn.Stage0
                 string dir = Path.Combine(UserDataFolder.Folder, "Saves");
                 var reference = new SaveReference("PB_AutoTest_resave", new SettlementReference(settlement, dir));
                 string file = Path.Combine(dir, settlement, "PB_AutoTest_resave.timber");
-                _gameSaver.QueueSaveSkippingNameValidation(reference, () =>
-                {
-                    try
-                    {
-                        File.Copy(file, Path.Combine(HarnessBridge.OutputDir, "resave.timber"), true);
-                        Event("resaved", file);
-                    }
-                    catch (Exception e) { Event("resaveCopyError", e.Message); }
-                });
+                _gameSaver.QueueSaveSkippingNameValidation(reference, () => { _resaveFile = file; _resaveCopyAt = Time.unscaledTime + 2f; });
             }
             catch (Exception e) { Event("resaveError", e.Message); }
+        }
+
+        private void CopyResave()
+        {
+            if (_resaveFile == null || Time.unscaledTime < _resaveCopyAt) return;
+            try
+            {
+                File.Copy(_resaveFile, Path.Combine(HarnessBridge.OutputDir, "resave.timber"), true);
+                Event("resaved", _resaveFile);
+                _resaveFile = null;
+            }
+            catch (Exception e)
+            {
+                _resaveCopyAt = Time.unscaledTime + 2f;
+                if (++_resaveTries >= 10) { Event("resaveCopyError", e.Message); _resaveFile = null; }
+            }
+        }
+
+        /// <summary>The player's "disable tutorial" setting hides the tutorial panel. For screenshots only, it is switched
+        /// off briefly and put back (showTutorialPanelUntilRunHour); the restore also runs when the probe stops.</summary>
+        private void ShowTutorialPanelBriefly()
+        {
+            if (_config["showTutorialPanelUntilRunHour"] == null || HarnessBridge.LoadSave) return;
+            _tutorialSettingBefore = _tutorialSettings.DisableTutorial;
+            if (_tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = false;
+            Event("tutorialSetting", "DisableTutorial was " + _tutorialSettingBefore.Value + "; panel shown for screenshots");
+        }
+
+        private void RestoreTutorialSetting()
+        {
+            if (!_tutorialSettingBefore.HasValue) return;
+            try
+            {
+                if (_tutorialSettings.DisableTutorial != _tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = _tutorialSettingBefore.Value;
+                Event("tutorialSetting", "DisableTutorial restored to " + _tutorialSettings.DisableTutorial);
+            }
+            catch (Exception e) { Event("tutorialSettingError", e.Message); }
+            _tutorialSettingBefore = null;
         }
 
         private void WriteDevSwitch()
@@ -801,6 +839,7 @@ namespace Pandaborn.Stage0
                         case "bamboo": target = _bamboo.FirstOrDefault(b => b); break;
                         case "lumberjack": target = Entities<BlockObject>().FirstOrDefault(b => Template(b).StartsWith("LumberjackFlag")); break;
                         case "teahouse": target = Entities<BlockObject>().FirstOrDefault(b => Template(b).StartsWith("PandabornStage0Teahouse")); break;
+                        case "campfire": target = Entities<BlockObject>().FirstOrDefault(b => Template(b) == "Campfire.Folktails"); break;
                         case "lumbermill": target = Entities<BlockObject>().FirstOrDefault(b => Template(b).StartsWith("LumberMill")); break;
                     }
                     if (target) _entitySelectionService.SelectAndFocusOn(target);

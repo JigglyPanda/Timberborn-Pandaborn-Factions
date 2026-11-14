@@ -1,6 +1,13 @@
-# Pandaborn.Names
+# Pandaborn.Names - faction colonist names
 
-(What this module does, its data, and how it fails safely. Hand-written; the section below is generated.)
+`PandabornNamePoolSpec { NamePoolLocKey }` on the faction's adult and child templates gives their colonists names from that
+localisation entry (one name per line, like the vanilla `Beaver.NamePool`; a gloss such as "Le Le (Joy)" is shown
+verbatim). `FactionNamer` is an `IEntityNamer` with priority 30, above the vanilla `BeaverEntityNamer` (20); the game's
+`NamedEntity` asks the highest-priority namer once, when a colonist first gets a name, and saves the name per colonist.
+A kit keeps its name when it grows up. Names are drawn without repeats until the pool is used up; what is left is kept in
+`PandabornStore` entry `Names` v1.
+
+**Fails safely**: module off means vanilla names for new colonists; existing names are saved by the game and stay.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->

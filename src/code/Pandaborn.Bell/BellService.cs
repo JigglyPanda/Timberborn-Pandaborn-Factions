@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -67,9 +67,9 @@ namespace Pandaborn.Bell
         /// <summary>The slider right now (whole hours, as the vanilla panel shows it).</summary>
         public int SliderHours => Mathf.CeilToInt(_workingHoursManager.WorkedPartOfDay * 24f - 0.001f);
 
-        public float WorkingBonus => Active ? Curve(Spec.WorkingSpeedCurve, _lockedHours) : 0f;
+        public float WorkingBonus => Active && _lockedHours >= 0 ? Curve(Spec.WorkingSpeedCurve, _lockedHours) : 0f;
 
-        public float MovementBonus => Active ? Curve(Spec.MovementSpeedCurve, _lockedHours) : 0f;
+        public float MovementBonus => Active && _lockedHours >= 0 ? Curve(Spec.MovementSpeedCurve, _lockedHours) : 0f;
 
         public float WorkingBonusAt(int hours) => Active ? Curve(Spec.WorkingSpeedCurve, hours) : 0f;
 
@@ -98,13 +98,15 @@ namespace Pandaborn.Bell
                     && h >= 0 && h <= 24) _lockedHours = h;
                 _suggested = values.TryGetValue("suggested", out var s) && s == "1";
             }
+            // WorkingHoursManager (a dependency) has loaded, so the slider is known: lock now, before any colonist
+            // applies its bonus (a new game, or a save made before the bell existed or with the module off).
+            if (_lockedHours < 0) Lock(SliderHours, "start");
             _eventBus.Register(this);
         }
 
         public void PostLoad()
         {
             if (!Active) return;
-            if (_lockedHours < 0) Lock(SliderHours, "start");
             Debug.Log("[Pandaborn.Bell] active; working day locked at " + _lockedHours + " h: working +" + Pct(WorkingBonus) + ", walking +" + Pct(MovementBonus));
         }
 

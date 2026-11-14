@@ -8,6 +8,7 @@
       { "Original": "Goods/Good.Plank.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/Good.Plank.optional.blueprint" },
       { "Original": "Needs/Need.Beaver.Campfire.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/Need.Beaver.Campfire.optional.blueprint" },
       { "Original": "Buildings/Wood/LumberMill/LumberMill.Folktails.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/LumberMill.Folktails.optional.blueprint" },
+      { "Original": "Buildings/Wellbeing/Campfire/Campfire.Folktails.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/Campfire.Folktails.optional.blueprint" },
       { "Original": "Buildings/Food/Grill/Grill.Folktails.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/Grill.Folktails.optional.blueprint" },
       { "Original": "BonusTypes/BonusType.MovementSpeed.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/BonusType.MovementSpeed.optional.blueprint" },
       { "Original": "Tutorials/Pandaborn/Tutorials.PandabornStage0.blueprint", "Modifier": "Modifiers/Pandaborn/Stage0/Tutorials.PandabornStage0.optional.blueprint" },

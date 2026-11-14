@@ -1,6 +1,11 @@
-# Pandaborn.Core
+# Pandaborn.Core - always-loaded services
 
-(What this module does, its data, and how it fails safely. Hand-written; the section below is generated.)
+* `FeatureRegistry`: which units the bootstrap loaded and why the others are off (read from AppDomain data).
+* `PandabornStore`: the save carrier, one saved singleton `Pandaborn.Store` with a versioned text entry per feature;
+  entries of features that are off are carried through saves unchanged.
+* `FeatureNotices`, `Messenger`: the player is told once per save when a feature is off or the mod is enabled twice
+  (toast plus notification log).
+* `SafeUi`: guard for interface code.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->

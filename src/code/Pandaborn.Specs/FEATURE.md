@@ -1,6 +1,8 @@
-# Pandaborn.Specs
+# Pandaborn.Specs - every spec record
 
-(What this module does, its data, and how it fails safely. Hand-written; the section below is generated.)
+Always loaded, so blueprint data that names our specs always deserialises, whatever features are on. Spec class names are
+global across all mods: `Pandaborn...Spec`, frozen once shipped. Before loading, the bootstrap checks that no other assembly
+already defines one of these names.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->

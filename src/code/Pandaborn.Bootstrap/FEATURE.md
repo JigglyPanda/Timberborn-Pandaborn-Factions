@@ -1,6 +1,8 @@
-# Pandaborn.Bootstrap
+# Pandaborn.Bootstrap - the mod starter
 
-(What this module does, its data, and how it fails safely. Hand-written; the section below is generated.)
+The only assembly the game loads by itself. Its references are limited to `IModStarter`/`IModEnvironment` and `Debug`, so
+it can never fail to load. See src/code/README.md for what it does at start. Its list below is for diffing only; nothing
+checks it at runtime.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->

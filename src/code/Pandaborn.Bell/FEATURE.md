@@ -1,6 +1,31 @@
-# Pandaborn.Bell
+# Pandaborn.Bell - the afternoon bell
 
-(What this module does, its data, and how it fails safely. Hand-written; the section below is generated.)
+DESIGN.md Pillar 3. The working-hours slider is vanilla and a new game starts where vanilla does. Inkpaws that work a
+short day are rested: they work **and walk** faster. The bonus depends on the length of the working day, read from the
+slider **at dawn** (moving the slider during the day changes nothing until the next morning), through
+`PandabornBellSpec` on the faction's adult character template:
+
+* `WorkingSpeedCurve`, `MovementSpeedCurve`: points `{Hours, Bonus}`, piecewise linear, flat beyond the ends. Default
+  +0.33 at 12 h or fewer, 0 at 16 h, 0 above.
+* `SuggestionDay` (4) and `SuggestionLocKey`: the one-time message, posted at that dawn or when the first building with
+  `PandabornBellSettledMarkerSpec` (hammock, teahouse) is finished, whichever comes first.
+
+**The bonus multiplies.** Game bonuses add (one sum per bonus id in `BonusManager`), so a flat +0.33 would be worth less
+and less as wellbeing bonuses grow. `BellRestedBonus` adds `d = m x b`, where `m` is the colonist's multiplier without the
+bell, and recomputes `d` whenever any other bonus of that id changes (`BonusValueChanged`): it removes its own share,
+reads the multiplier, and puts the new share back. The result is `m x (1 + b)` exactly, unless `m` is clamped by the
+bonus type's limits. The vanilla `MovementSpeed` cap is 2.0 (`BonusTypes/BonusType.MovementSpeed`), so above about
+wellbeing 50 the walking half would be cut; Inkpaws games raise the cap with a faction blueprint modifier (verified in
+stage 0, see docs/tech/stage0.md).
+
+**Shown** as a line under the working-hours panel ("Rested +33%", or "Rested +33%; tomorrow +0%" after the slider has
+moved), with a tooltip; as a line on an Inkpaw's panel; and inside the vanilla wellbeing bonus totals.
+
+**Saved**: `PandabornStore` entry `Bell` v1, `locked=<hours>;suggested=<0|1>`. Bonuses are not saved (the game rebuilds
+them), so with the module off colonists have vanilla speeds and the entry is carried through saves unchanged.
+
+**Fails safely**: module off means vanilla speeds and no panel line, and `Pandaborn.Core` posts a notice. The teahouse
+marker is inert. Interface pieces sit behind `SafeUi`.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->
