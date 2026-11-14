@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Kept for existing callers; the build is now tools/pandaborn.ps1. This runs its stages
-  models, generate, assemble, validate, install (models: art/models/*/build.py into E:PandabornDevbuildmodels):
+  models, generate, assemble, validate, install (models: every art/models/*/build.py into the models build folder):
     1. catalogue/ -> E:\PandabornDev\build\gen\PandabornFactions (generated blueprints, collections, loc).
     2. mod/PandabornFactions (hand-written files) + generated data + the two panda body meshes (from the Reskin release
        on E:, not in git) -> staging folder E:\PandabornDev\build\stage\PandabornFactions.
