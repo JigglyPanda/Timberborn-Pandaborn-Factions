@@ -1,0 +1,54 @@
+{
+ "id": "DewCollector",
+ "standIn": "SmallTank.Folktails",
+ "generatedBy": "art/models/DewCollector/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "DewCollector.Model",
+  "constructionStage0": "DewCollector.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.95,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 1.9,
+    "Z": 0.9
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 677,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_Yellow.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": [
+  "Stand-in Small Tank for the model check only; the dew mechanic (water prototype) is a workshop."
+ ],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": 0.1
+ }
+}

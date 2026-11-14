@@ -37,6 +37,7 @@ STAND_IN = {   # stand-in vanilla template -> blueprint path under BP
     "Hammock.Folktails": "Buildings/Decoration/Hammock/Hammock.Folktails.blueprint.json",
     "Campfire.Folktails": "Buildings/Wellbeing/Campfire/Campfire.Folktails.blueprint.json",
     "Grill.Folktails": "Buildings/Food/Grill/Grill.Folktails.blueprint.json",
+    "Bakery.Folktails": "Buildings/Food/Bakery/Bakery.Folktails.blueprint.json",
     "WindTurbine.Folktails": "Buildings/Power/WindTurbine/WindTurbine.Folktails.blueprint.json",
     "WaterPump.Folktails": "Buildings/Water/WaterPump/WaterPump.Folktails.blueprint.json",
 }
@@ -66,7 +67,7 @@ def apply_model(bp, mj):
     lab["DescriptionLocKey"] = key + ".Description"
     lab["FlavorDescriptionLocKey"] = ""
     if "BuildingSpec" in bp:
-        bp["BuildingSpec"]["BuildingCost"] = [{"Id": "Log", "Amount": 1}]
+        bp["BuildingSpec"]["BuildingCost"] = []          # builders only: finishes in tests without logs
         bp["BuildingSpec"]["ScienceCost"] = 0
     bos = bp["BlockObjectSpec"]
     s = mj["size"]
@@ -152,6 +153,7 @@ EDITS = {
     "FlumeCorner": lambda bp, mj: (edit_flume(bp, mj, lid=True), bp.pop("ThrottlingValveSpec")),  # unlimited cell: water turns
     "FlumeGate": lambda bp, mj: edit_flume(bp, mj, lid=True, limit=0.3),
     "ScoopWheel": edit_scoop,
+    "KiteWindmill": lambda bp, mj: bp.__setitem__("WindRotationAnimatorSpec", mj["windRotationAnimator"]),
     "PaddySpout": edit_spout,
 }
 

@@ -76,14 +76,14 @@ class Model:
         self.slots.append((name, tuple(float(v) for v in pos), yaw))
 
     def animate(self, node, pivot, axis, frames=100, fps=24.0, turns=1, driver="", direction=1, kind="turn",
-                amplitude=0.25, pivot_rot=None):
+                amplitude=0.25, pivot_rot=None, parent=None):
         """Parts added inside `with geo.node(node):` become a child node animated about pivot: kind 'turn' (wheels:
         `turns` full turns per loop) or 'swing' (+-amplitude radians). pivot_rot puts the node under a rotated
         'Pivot' node so `axis` is in that local frame (as the vanilla hammock does)."""
         self.animated[node] = {"pivot": tuple(float(v) for v in pivot), "axis": tuple(float(v) for v in axis),
                                "frames": frames, "fps": fps, "turns": turns, "driver": driver,
                                "direction": direction, "kind": kind, "amplitude": amplitude,
-                               "pivot_rot": pivot_rot}
+                               "pivot_rot": pivot_rot, "parent": parent}
 
     def collider(self, center, size):
         self.colliders.append({"Center": dict(zip("XYZ", map(float, center))),

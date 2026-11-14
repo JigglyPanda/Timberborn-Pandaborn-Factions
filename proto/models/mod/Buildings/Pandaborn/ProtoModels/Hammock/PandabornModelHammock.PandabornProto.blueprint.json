@@ -2,12 +2,7 @@
   "BuildingSpec": {
     "SelectionSoundName": "Default",
     "LoopingSoundName": "",
-    "BuildingCost": [
-      {
-        "Id": "Log",
-        "Amount": 1
-      }
-    ],
+    "BuildingCost": [],
     "ScienceCost": 0,
     "PlaceFinished": false,
     "FinishableWithBeaversOnSite": false,

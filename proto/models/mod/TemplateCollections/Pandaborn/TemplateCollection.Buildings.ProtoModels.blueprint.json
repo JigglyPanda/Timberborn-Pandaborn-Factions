@@ -2,6 +2,7 @@
   "TemplateCollectionSpec": {
     "CollectionId": "Buildings.Folktails",
     "Blueprints": [
+      "Buildings/Pandaborn/ProtoModels/BambooWaterWheel/PandabornModelBambooWaterWheel.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoModels/Cistern/PandabornModelCistern.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoModels/Den/PandabornModelDen.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoModels/FlumeBridge/PandabornModelFlumeBridge.PandabornProto.blueprint",

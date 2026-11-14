@@ -1,0 +1,113 @@
+{
+ "id": "KiteWindmill",
+ "standIn": "WindTurbine.Folktails",
+ "generatedBy": "art/models/KiteWindmill/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "KiteWindmill.Model",
+  "constructionStage0": "KiteWindmill.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 4
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [
+  {
+   "node": "#KiteTower",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.0,
+    "Z": 1.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.Tower (yaws to the wind)"
+  },
+  {
+   "node": "#KiteRotor",
+   "pivot": {
+    "X": 1.5,
+    "Y": 1.0,
+    "Z": 1.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.WindRotators (turns about y)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 1.8,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 2.6,
+    "Y": 3.0,
+    "Z": 2.6
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1360,
+  "constructionStage0": 946,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "PaintedMetal.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails"
+ ],
+ "notes": [
+  "Blocks, transput and wind specs as the vanilla Wind Turbine (3x3x4).",
+  "A vertical-axis sail windmill: it turns the same whichever way the wind blows."
+ ],
+ "windRotationAnimator": {
+  "WindRotators": [
+   {
+    "TransformName": "#KiteRotor",
+    "RotationAxis": {
+     "X": 0.0,
+     "Y": 1.0,
+     "Z": 0.0
+    },
+    "RotationSpeed": 70.0
+   }
+  ],
+  "Tower": {
+   "TransformName": "#KiteTower",
+   "RotationAxis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "RotationSpeed": 75.0
+  }
+ }
+}

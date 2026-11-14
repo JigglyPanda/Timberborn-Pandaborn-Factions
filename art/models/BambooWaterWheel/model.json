@@ -1,0 +1,71 @@
+{
+ "id": "BambooWaterWheel",
+ "standIn": "WaterWheel.Folktails",
+ "generatedBy": "art/models/BambooWaterWheel/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "BambooWaterWheel.Model",
+  "constructionStage0": "BambooWaterWheel.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 2,
+  "Z": 3
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [
+  {
+   "node": "#WheelAnimated",
+   "pivot": {
+    "X": 1.5,
+    "Y": 1.5,
+    "Z": 1.0
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 1.0
+   },
+   "animation": "Default",
+   "kind": "turn",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WaterPoweredGeneratorAnimator (WaterPoweredGeneratorSpec)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 1.2,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 2.2,
+    "Y": 2.4,
+    "Z": 1.4
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1300,
+  "constructionStage0": 730,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "PaintedMetal.Folktails",
+  "Plaster_White.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, generator cells, transputs and the water object as the vanilla Water Wheel (3x2x3)."
+ ]
+}

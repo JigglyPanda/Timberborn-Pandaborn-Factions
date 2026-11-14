@@ -1,4 +1,6 @@
 ID,Text,Comment
+Building.PandabornModelBambooWaterWheel.DisplayName,"[Model] BambooWaterWheel",
+Building.PandabornModelBambooWaterWheel.Description,"Model prototype of the BambooWaterWheel, on the WaterWheel.Folktails blueprint.",
 Building.PandabornModelCistern.DisplayName,"[Model] Cistern",
 Building.PandabornModelCistern.Description,"Model prototype of the Cistern, on the SmallTank.Folktails blueprint.",
 Building.PandabornModelDen.DisplayName,"[Model] Den",

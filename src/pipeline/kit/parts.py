@@ -839,7 +839,7 @@ def wheel(geo, center, axis, radius, width=0.3, spokes=8, rim_r=0.035, material=
         radial = s * math.cos(a) + u * math.sin(a)
         p = c + radial * radius
         beam(geo, p - ax * width / 2, p + ax * width / 2, w=0.04, h=0.04, material=TIMBER, tags=tags)
-        if paddles and k % max(1, (spokes * 2) // paddles) == 1:
+        if paddles and k % max(1, (spokes * 2) // paddles) == (1 if (spokes * 2) // paddles > 1 else 0):
             a_ = c + radial * (radius + 0.04)
             b_ = c + radial * (radius - paddle_depth)
             panel(geo, [b_ - ax * width * 0.55, b_ + ax * width * 0.55, a_ + ax * width * 0.55, a_ - ax * width * 0.55],

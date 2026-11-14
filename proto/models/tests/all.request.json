@@ -6,13 +6,13 @@
  "speed": 3,
  "batchControl": false,
  "buildings": [
-  "PandabornModelDen.PandabornProto",
-  "PandabornModelVillageHall.PandabornProto",
   "PandabornModelTeahouse.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelDen.PandabornProto",
   "PandabornModelSteamer.PandabornProto",
   "PandabornModelMoonLoft.PandabornProto",
-  "PandabornModelHammock.PandabornProto",
   "PandabornModelCistern.PandabornProto",
+  "PandabornModelBambooWaterWheel.PandabornProto",
   "PandabornModelScoopWheel.PandabornProto",
   "PandabornModelPaddySpout.PandabornProto",
   "PandabornModelFlumeGate.PandabornProto",
@@ -47,23 +47,23 @@
    "at": "start"
   },
   {
-   "name": "Den_day",
-   "kind": "building",
-   "target": "PandabornModelDen.PandabornProto",
-   "at": "start",
-   "zoom": 1.5
-  },
-  {
-   "name": "VillageHall_day",
-   "kind": "building",
-   "target": "PandabornModelVillageHall.PandabornProto",
-   "at": "start",
-   "zoom": 1.5
-  },
-  {
    "name": "Teahouse_day",
    "kind": "building",
    "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_day",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Den_day",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
    "at": "start",
    "zoom": 1.5
   },
@@ -82,16 +82,16 @@
    "zoom": 1.5
   },
   {
-   "name": "Hammock_day",
+   "name": "Cistern_day",
    "kind": "building",
-   "target": "PandabornModelHammock.PandabornProto",
+   "target": "PandabornModelCistern.PandabornProto",
    "at": "start",
    "zoom": 1.5
   },
   {
-   "name": "Cistern_day",
+   "name": "BambooWaterWheel_day",
    "kind": "building",
-   "target": "PandabornModelCistern.PandabornProto",
+   "target": "PandabornModelBambooWaterWheel.PandabornProto",
    "at": "start",
    "zoom": 1.5
   },
@@ -145,28 +145,33 @@
    "zoom": 1.5
   },
   {
+   "name": "mid_overview",
+   "kind": "overview",
+   "at": "200"
+  },
+  {
    "name": "night_overview",
    "kind": "overview",
    "at": "end"
   },
   {
-   "name": "Den_night",
-   "kind": "building",
-   "target": "PandabornModelDen.PandabornProto",
-   "at": "end",
-   "zoom": 1.5
-  },
-  {
-   "name": "VillageHall_night",
-   "kind": "building",
-   "target": "PandabornModelVillageHall.PandabornProto",
-   "at": "end",
-   "zoom": 1.5
-  },
-  {
    "name": "Teahouse_night",
    "kind": "building",
    "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_night",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Den_night",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
    "at": "end",
    "zoom": 1.5
   },
@@ -185,16 +190,16 @@
    "zoom": 1.5
   },
   {
-   "name": "Hammock_night",
+   "name": "Cistern_night",
    "kind": "building",
-   "target": "PandabornModelHammock.PandabornProto",
+   "target": "PandabornModelCistern.PandabornProto",
    "at": "end",
    "zoom": 1.5
   },
   {
-   "name": "Cistern_night",
+   "name": "BambooWaterWheel_night",
    "kind": "building",
-   "target": "PandabornModelCistern.PandabornProto",
+   "target": "PandabornModelBambooWaterWheel.PandabornProto",
    "at": "end",
    "zoom": 1.5
   },
@@ -246,6 +251,18 @@
    "target": "PandabornModelFlumeCorner.PandabornProto",
    "at": "end",
    "zoom": 1.5
+  },
+  {
+   "name": "lodge_night",
+   "kind": "building",
+   "target": "Lodge.Folktails",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "night_screen",
+   "kind": "screen",
+   "at": "end"
   }
  ],
  "screenshotSize": [

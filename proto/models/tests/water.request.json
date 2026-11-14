@@ -90,6 +90,27 @@
     "op": "flatten",
     "rect": [
      0,
+     0,
+     27,
+     1
+    ],
+    "z": -2
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelBambooWaterWheel.PandabornProto",
+    "at": [
+     16,
+     0,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "wheel"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
      14,
      27,
      26
@@ -247,6 +268,17 @@
     "id": "spout"
    },
    {
+    "op": "place",
+    "template": "PandabornModelVillageHall.PandabornProto",
+    "at": [
+     22,
+     23,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "hall"
+   },
+   {
     "op": "shot",
     "name": "line_setup",
     "focus": [
@@ -318,6 +350,48 @@
     "at": [
      26,
      5,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "water",
+    "id": "in2",
+    "at": [
+     1,
+     0,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "in3",
+    "at": [
+     1,
+     1,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out2",
+    "at": [
+     26,
+     0,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "water",
+    "id": "out3",
+    "at": [
+     26,
+     1,
      -2
     ],
     "rate": -2.4
@@ -428,7 +502,9 @@
      "gate",
      "drop",
      "spout",
-     "b1"
+     "b1",
+     "wheel",
+     "hall"
     ]
    },
    {
@@ -536,6 +612,59 @@
     "distance": 11,
     "pitch": 30,
     "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "wheel_a",
+    "focus": [
+     17,
+     1,
+     -1
+    ],
+    "distance": 11,
+    "pitch": 30,
+    "yaw": 20
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 60
+   },
+   {
+    "op": "shot",
+    "name": "wheel_b",
+    "focus": [
+     17,
+     1,
+     -1
+    ],
+    "distance": 11,
+    "pitch": 30,
+    "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "hall_day",
+    "focus": [
+     23,
+     24,
+     1
+    ],
+    "distance": 10,
+    "pitch": 45,
+    "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "overview_all",
+    "focus": [
+     13,
+     13,
+     0
+    ],
+    "distance": 34,
+    "pitch": 55,
+    "yaw": 15
    },
    {
     "op": "expect",

@@ -319,11 +319,19 @@ def write(path, root_name, parts, animated=None, slots=None):
             nd = _node_from_parts(name, len(nodes) - 1, local)
             nodes.append(nd)
             a = dict(a, _pos=(0.0, 0.0, 0.0))
+        elif a.get("parent"):
+            # child of another (non-rotated-pivot) node: local position relative to the parent's pivot
+            pp = np.asarray(animated[a["parent"]]["pivot"], float)
+            loc = [p.transformed(None, -pp) for p in mine]
+            nodes.append(_node_from_parts(name, index[a["parent"]], loc,
+                                          position=tuple(np.asarray(a["pivot"], float) - pp)))
+            a = dict(a, _pos=tuple(np.asarray(a["pivot"], float) - pp))
         else:
             nodes.append(_node_from_parts(name, 0, mine, position=a["pivot"]))
             a = dict(a, _pos=tuple(a["pivot"]))
         index[name] = len(nodes) - 1
-        anims.append((len(nodes) - 1, a))
+        if a.get("kind") != "static":     # static: turned by game code by name (wind rotators), no animation
+            anims.append((len(nodes) - 1, a))
     for sl in (slots or []):
         if isinstance(sl, dict):
             nodes.append(ts.StaticNode("#Slot#" + sl["name"], index[sl["parent"]], position=tuple(sl["local_pos"]),
