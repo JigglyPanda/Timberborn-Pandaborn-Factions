@@ -175,6 +175,11 @@
     "id": "forester"
    },
    {
+    "op": "set",
+    "id": "forester",
+    "replantDeadTrees": true
+   },
+   {
     "op": "plant",
     "template": "PandabornBamboo.PandabornProto",
     "cells": [

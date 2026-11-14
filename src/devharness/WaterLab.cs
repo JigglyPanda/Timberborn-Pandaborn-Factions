@@ -770,6 +770,8 @@ namespace PandabornDevHarness
                 if (step["limitEnabled"] != null) valve.SetOutflowLimitEnabled((bool)step["limitEnabled"]);
                 if (step["limit"] != null) valve.SetOutflowLimit((float)step["limit"]);
             }
+            var forester = bo.GetComponent<Forester>();
+            if (forester != null && step["replantDeadTrees"] != null) forester.SetReplantDeadTrees((bool)step["replantDeadTrees"]);
             var fill = bo.GetComponent<FillValve>();
             if (fill != null)
             {

@@ -234,21 +234,21 @@ def scoop():
     water by flume and a Flume Corner into the channel upstream at (4,14): is it self-sustaining after a kick?
     Then a Dew Collector over a temperate day and a drought day.
     """
-    s = [flat(0, 3, 27, 7, 1), flat(0, 5, 27, 5, -2), flat(9, 6, 15, 11, 1), flat(10, 7, 14, 10, 0),
+    s = [flat(0, 3, 27, 7, 1), flat(0, 5, 27, 5, -2), flat(9, 6, 15, 11, 1), flat(10, 7, 14, 10, -1),
+         flat(0, 13, 27, 15, 1), flat(0, 14, 27, 14, -2), flat(9, 15, 15, 19, 1), flat(10, 16, 14, 18, -1),
+         flat(3, 15, 8, 17, 0), flat(5, 16, 9, 16, -1), flat(3, 16, 4, 17, -1), flat(4, 15, 4, 15, -1), wait(3),
          place("PandabornScoopWheel", [12, 5, -2], "Cw0", id="scoop"),
          place("PandabornTripHammer", [20, 5, -2], "Cw0", id="hammer"),
-         flat(0, 13, 27, 15, 1), flat(0, 14, 27, 14, -2), flat(9, 15, 15, 19, 1), flat(10, 16, 14, 18, 0),
-         flat(3, 15, 8, 17, 0), flat(9, 16, 9, 16, 0),
          place("PandabornScoopWheel", [12, 14, -2], "Cw0", id="loopScoop"),
-         place("PandabornFlumeGate", [9, 16, 0], "Cw270", id="loopGate"), line("PandabornFlume", [8, 16, 0], 4, (-1, 0, 0), "Cw270"),
-         place("PandabornFlumeCorner", [4, 16, 0], "Cw270", id="loopCorner"), place("PandabornFlume", [4, 15, 0], "Cw180", id="loopOut"),
+         place("PandabornFlumeGate", [9, 16, -1], "Cw270", id="loopGate"), line("PandabornFlume", [8, 16, -1], 4, (-1, 0, 0), "Cw270"),
+         place("PandabornFlumeCorner", [4, 16, -1], "Cw270", id="loopCorner"), place("PandabornFlume", [4, 15, -1], "Cw180", id="loopOut"),
          place("PandabornDewCollector", [22, 9, 0], "Cw0", id="dew"),
          shot("scoop_setup", [12, 10, 0], 28)]
     s += [water("fill", [6, 5, -2], 2.0, 0.8), water("fillB", [20, 14, -2], 2.0, 0.8), wait(150)] + off("fill", "fillB") + [wait(100)]
-    cells = [[12, 5, -2], [6, 5, -2], [20, 5, -2], [12, 7, 0], [12, 9, 0]]
-    loop_cells = [[12, 14, -2], [4, 14, -2], [6, 16, 0], [12, 16, 0]]
+    cells = [[12, 5, -2], [6, 5, -2], [20, 5, -2], [12, 7, -1], [12, 9, -1]]
+    loop_cells = [[12, 14, -2], [4, 14, -2], [6, 16, -1], [12, 16, -1]]
     objs = ["scoop", "hammer", "loopScoop", "loopGate", "loopOut", "dew"]
-    vols = [[10, 7, 14, 10, 0], [10, 16, 14, 18, 0]]
+    vols = [[10, 7, 14, 10, -1], [10, 16, 14, 18, -1]]
     s += [{"op": "series", "id": "scoop", "every": 20, "cells": cells + loop_cells, "volumes": vols,
            "objects": ["scoop", "hammer", "loopScoop"]}]
     s += [wait(200), {"op": "probe", "label": "flow0", "cells": cells, "volumes": vols, "objects": objs}]
@@ -356,6 +356,7 @@ def district():
          place("GathererFlag.Folktails", [13, 2, 0], "Cw0", id="gatherer"),
          place("EfficientFarmHouse.Folktails", [16, 2, 0], "Cw0", id="farm"),
          place("Forester.Folktails", [22, 2, 0], "Cw0", id="forester"),
+         {"op": "set", "id": "forester", "replantDeadTrees": True},
          {"op": "plant", "template": BAMBOO, "cells": [[11, 7, 0], [13, 7, 0]]},
          {"op": "markCut", "rect": [10, 7, 14, 9, 0]},
          {"op": "markPlant", "template": SHOOT, "rect": [16, 7, 19, 8, 0]},
