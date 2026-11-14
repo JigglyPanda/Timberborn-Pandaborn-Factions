@@ -137,6 +137,8 @@ function Add-Tree($map, [string]$root, [string]$origin, $origins) {
     $root = (Resolve-Path $root).Path
     foreach ($f in Get-ChildItem -LiteralPath $root -Recurse -File) {
         $rel = $f.FullName.Substring($root.Length + 1)
+        # a second enabled copy parks its own bundles in AssetBundles.parked (docs/tech/stage0.md): never content
+        if ($rel -match '(^|\\)AssetBundles\.parked(\\|$)') { continue }
         $k = $rel.ToLowerInvariant()
         if ($origins.ContainsKey($k)) { throw "assemble: $rel comes from both $($origins[$k]) and $origin. Generated files must not be hand-written too." }
         $origins[$k] = $origin
@@ -156,6 +158,11 @@ foreach ($s in $stages) {
             $a = @((Join-Path $repo 'src\gen\generate.py'), 'pin'); if ($Accept) { $a += '--accept' }
             $code = Invoke-Py $a
             if ($code -ne 0) { $failed += $s; if (-not $AcceptPin) { break } }
+            # the Words table (src/code/Pandaborn.Words) against the game's current texts: a game update that changes a
+            # reviewed text or adds a new beaver line shows here (a hard failure for package)
+            $words = @((Join-Path $repo 'src\code\Pandaborn.Words\tools\candidates.py'), '--check',
+                       (Join-Path $repo 'src\code\Pandaborn.Words\mod\Pandaborn\Words\words.enUS.txt'))
+            if ((Invoke-Py $words) -ne 0) { Say 'pin: the Words table needs a review (candidates.py --check above)' 'DarkYellow' }
         }
         'generate' {
             $a = @((Join-Path $repo 'src\gen\generate.py'), '--out', $GenDir)
@@ -217,6 +224,11 @@ foreach ($s in $stages) {
             $log = & dotnet run --project (Join-Path $repo 'tools\schema') -c Release -- --include $dlls --out $modSchema 2>&1
             if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Say "  $_" 'Red' }; $failed += $s; break }
             Say "code: spec schema with the mod's own classes in $modSchema"
+            # game-update alarm: each module's game-API list (FEATURE.md) against the committed one; a warning here,
+            # a hard failure for package (tools/check_api_lists.py)
+            if ((Invoke-Py @((Join-Path $repo 'tools\check_api_lists.py'), '--repo', $repo, '--warn-only')) -ne 0) {
+                Say 'code: tools/check_api_lists.py could not run' 'DarkYellow'
+            }
         }
         'bundles' {
             if (Test-Path $bundleOut) { Remove-Item -Recurse -Force $bundleOut }
@@ -329,6 +341,12 @@ foreach ($s in $stages) {
             $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
             if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
             if ((Invoke-Py $a) -ne 0) { Say 'package: refused, the staging folder fails the release rules' 'Red'; $failed += $s; break }
+            if (-not $NoCode -and (Invoke-Py @((Join-Path $repo 'tools\check_api_lists.py'), '--repo', $repo)) -ne 0) {
+                Say 'package: refused, a module''s game-API list changed and is not committed (tools/check_api_lists.py)' 'Red'; $failed += $s; break
+            }
+            $words = @((Join-Path $repo 'src\code\Pandaborn.Words\tools\candidates.py'), '--check',
+                       (Join-Path $repo 'src\code\Pandaborn.Words\mod\Pandaborn\Words\words.enUS.txt'))
+            if (-not $NoCode -and (Invoke-Py $words) -ne 0) { Say 'package: refused, the Words table needs a review' 'Red'; $failed += $s; break }
             $out = Join-Path $PackageDir 'PandabornFactions'
             $map = [ordered]@{}; $origins = @{}
             Add-Tree $map $StageDir 'stage' $origins

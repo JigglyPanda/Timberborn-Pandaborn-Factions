@@ -427,6 +427,14 @@ def check_paths(c):
             R.error("file sits on a vanilla asset path (would override vanilla): " + ", ".join(rels))
     for rel in c.files:
         low = rel.lower()
+        if low.startswith("assetbundles.parked/"):
+            # a second enabled copy of the mod parks its own bundles here (docs/tech/stage0.md); never content
+            msg = "%s: a parked bundle folder (left by a second enabled copy of the mod) must not ship" % rel
+            if c.args.release:
+                R.error(msg)
+            else:
+                R.warn(msg)
+            continue
         if "/" not in low and low in ROOT_FILES_ALLOWED:
             continue
         if low.startswith("localizations/") and "pandaborn" in low.rsplit("/", 1)[-1]:
