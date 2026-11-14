@@ -29,9 +29,12 @@ function Put([string]$from, [string]$rel) {
 }
 foreach ($f in Get-ChildItem -LiteralPath $source -Recurse -File) { Put $f.FullName $f.FullName.Substring($source.Length + 1) }
 foreach ($m in 'RingtailAdult.Model.timbermesh', 'RingtailChild.Model.timbermesh') { Put (Join-Path $MeshDir $m) "Characters\Pandaborn\$m" }
-$coats = Join-Path $repo 'mod\PandabornFactions\Materials\Pandaborn\Ringtails'
-foreach ($f in Get-ChildItem -LiteralPath $coats -Recurse -File -Filter *.png) {
-    Put $f.FullName ('Materials\Pandaborn\Ringtails\' + $f.FullName.Substring($coats.Length + 1))
+foreach ($sub in 'Ringtails', 'Outfits\Ringtail') {
+    $dir = Join-Path $repo "mod\PandabornFactions\Materials\Pandaborn\$sub"
+    if (-not (Test-Path -LiteralPath $dir)) { continue }
+    foreach ($f in Get-ChildItem -LiteralPath $dir -Recurse -File | Where-Object { $_.Name -like '*.png' -or $_.Name -like '*.meta.json' }) {
+        Put $f.FullName ("Materials\Pandaborn\$sub\" + $f.FullName.Substring($dir.Length + 1))
+    }
 }
 $project = Join-Path $here 'src\PandabornProtoRingtailBody.csproj'
 $log = & dotnet build $project -c Release -v q --nologo "-p:ModOut=$BuildDir" 2>&1

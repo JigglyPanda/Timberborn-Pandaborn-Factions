@@ -70,7 +70,33 @@ def main():
     sc = json.load(open(sys.argv[1], encoding='utf-8'))
     out = {}
     meta = []
+    world_nodes = {}
     for k, it in enumerate(sc['items']):
+        if it.get('parent') is not None:
+            # an attachment (hat, tool, pack): every mesh node of `model`, placed on node `node` of item `parent`
+            pk = it['parent']
+            m = tmesh.load(it['model'])
+            verts, tris, uvs = [], [], []
+            for nd in m.nodes:
+                pp = tmesh.prop_array(nd.vertexProperties, 'position')
+                if pp is None or not len(pp) or not len(nd.meshes):
+                    continue
+                q = np.array([nd.rotation.x, nd.rotation.y, nd.rotation.z, nd.rotation.w])
+                v = tmesh.quat_rotate(np.broadcast_to(q, (len(pp), 4)), pp * np.array([nd.scale.x, nd.scale.y, nd.scale.z])) \
+                    + np.array([nd.position.x, nd.position.y, nd.position.z])
+                uvv = tmesh.prop_array(nd.vertexProperties, 'uv0')
+                for me in nd.meshes:
+                    tris.append(np.array(me.indices).reshape(-1, 3) + sum(len(x) for x in verts))
+                verts.append(v); uvs.append(uvv if uvv is not None else np.zeros((len(v), 2)))
+            V_ = np.vstack(verts)
+            pos, rot, scl, Rm, s, off = world_nodes[pk][it['node']]
+            V_ = tmesh.quat_rotate(np.broadcast_to(rot, (len(V_), 4)), V_ * scl) + pos
+            p = (V_ * s) @ Rm.T + off
+            out[f'P{k}'] = p.astype(np.float32); out[f'T{k}'] = np.vstack(tris).astype(np.int32)
+            out[f'UV{k}'] = np.vstack(uvs).astype(np.float32); out[f'UVB{k}'] = np.zeros((len(p), 2), np.float32)
+            out[f'N{k}'] = np.zeros((0, 3), np.float32)
+            meta.append(dict(texture=it.get('texture', ''), decal='', label=it.get('label', ''), nodes=[], markers=False))
+            continue
         p, nodes = posed(it['model'], it.get('anim', 'rest'), it.get('frame', 0))
         _, _, uv, uv1, tri = load(it['model'])
         s = it.get('scale', 1.0)
@@ -78,6 +104,7 @@ def main():
         c, si = np.cos(yaw), np.sin(yaw)
         Rm = np.array([[c, 0, si], [0, 1, 0], [-si, 0, c]])
         off = np.array([it.get('offset', [0, 0])[0], it.get('lift', 0.0), it.get('offset', [0, 0])[1]])
+        world_nodes[k] = {name: (pos, rot, scl, Rm, s, off) for name, (pos, rot, scl) in nodes.items()}
         p = (p * s) @ Rm.T + off
         out[f'P{k}'] = p.astype(np.float32)
         out[f'T{k}'] = tri.astype(np.int32)

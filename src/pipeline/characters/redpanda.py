@@ -33,10 +33,11 @@ class RedPandaBuilder(panda.PandaBuilder):
 
     # ------------------------------------------------------------ tail geometry helpers
     def tail_radius(self, t):
+        """Bushy profile: slim where it leaves the body, fullest in the last third, a soft round tip (0 at t=1)."""
         tc = self.cfg['tail']
-        r = tc['r_root'] + (tc['r_max'] - tc['r_root']) * smoothstep(0.0, tc['t_max'], t)
+        r = tc['r_root'] + (tc['r_max'] - tc['r_root']) * smoothstep(0.0, tc['t_max'], t) ** tc.get('swell', 1.0)
         q = np.clip((t - tc['t_cap']) / (1 - tc['t_cap']), 0, 1)
-        return r * np.sqrt(np.clip(1 - q * q, 0.03, 1))
+        return r * np.sqrt(np.clip(1 - q * q, 0.0, 1))
 
     def tail_centre(self, t):
         """Rest centreline (x=0): from the hip down to rest just above the ground, then a small upward curl."""
@@ -221,6 +222,21 @@ class RedPandaBuilder(panda.PandaBuilder):
         # weld consistency: every copy of a welded vertex takes the body-side copy's position
         X = self.weld_fix(X, winv, tail)
 
+        if tc.get('sides'):
+            A = dict(P=P, X=X, teeth=teeth, tail=tail, arm=arm, sole=sole, w_head=w_head, darm=self.geo['darm'],
+                     dsole=self.geo['dsole'], ear_rho=ear_rho, ear_front=ear_front, ear_cos=ear_cos,
+                     ear_mask=self.ear_mask, tail_t=tail_t, tail_phi=tail_phi, tail_blend=self.tail_blend)
+            for k in at:
+                A['at_' + k] = at[k]
+            A, tri, winv, parents = self.rebuild_tail(A, tri, winv, parents)
+            P, X, teeth, tail, arm, sole, w_head = A['P'], A['X'], A['teeth'], A['tail'], A['arm'], A['sole'], A['w_head']
+            self.geo = dict(darm=A['darm'], dsole=A['dsole'])
+            ear_rho, ear_front, ear_cos, self.ear_mask = A['ear_rho'], A['ear_front'], A['ear_cos'], A['ear_mask']
+            tail_t, tail_phi, self.tail_blend = A['tail_t'], A['tail_phi'], A['tail_blend']
+            at = {k: A['at_' + k] for k in at}
+            self.parents = parents
+            V = len(P)
+
         self.P0, self.P1, self.tri, self.winv, self.at = P, X, tri, winv, at
         self.flags = dict(teeth=teeth, tail=tail, arm=arm, sole=sole, head=w_head > 0.5,
                           tail_t=tail_t, tail_phi=tail_phi, ear_rho=ear_rho, ear_front=ear_front, ear_cos=ear_cos,
@@ -228,6 +244,172 @@ class RedPandaBuilder(panda.PandaBuilder):
         self.w_head = w_head
         self.sg = self.smoothing_ids(P, at['N'], winv)
         return X
+
+    def rebuild_tail(self, A, tri, winv, parents):
+        """Replace the paddle-derived tail with a clean tube: `sides` around (16), rings dense toward a round pole tip.
+
+        The beaver's tail UV islands are kept (top/bottom, and left/right on the adult): every new vertex takes its uv0,
+        tangent sign, colour and parentage by barycentric lookup in its island's (t, angle) parameter space, built
+        from the old paddle-tube vertices, so the coat painter, the fixed AO/normal maps and the bind all still work.
+        The vertices welded to the body (the root hole) are kept and zipped to the first ring per island.
+        """
+        tc = self.cfg['tail']
+        nside = tc['sides']
+        step = 360.0 / nside
+        V = len(A['X'])
+        tail = A['tail'].astype(bool)
+        tt, tp = A['tail_t'], A['tail_phi']
+        isl = panda.uv_islands(tri, V)
+        shared_w = np.zeros(winv.max() + 1, bool)
+        shared_w[np.intersect1d(winv[tail], winv[~tail])] = True
+        hole = tail & shared_w[winv]
+        t_ring = tt[hole].max()
+        tail_tri = tail[tri].all(1)
+        phd = np.degrees(tp)
+        islands = {}
+        for I in np.unique(isl[tail]):
+            m = (isl == I) & tail & (tt > t_ring + 0.12)      # the root region's angles are unreliable
+            top = np.mean(np.cos(tp[m])) > 0
+            ph = phd[m] if top else np.mod(phd[m], 360.0)
+            ph = np.where(top, ph, np.where(ph < 89.0, ph + 360.0, ph))
+            ph = np.clip(ph, -90, 90) if top else np.clip(ph, 90, 270)
+            lo, hi = step * np.round(np.percentile(ph, 4) / step), step * np.round(np.percentile(ph, 96) / step)
+            islands[I] = dict(top=top, lo=lo, hi=hi)
+            self.log(f"  tail island {I}: {'top' if top else 'bottom'} {lo:.1f}..{hi:.1f} ({m.sum()} verts)")
+
+        def phid_of(i, I):   # vertex angle in its island's continuous range ([-90,90] top, [90,270] bottom)
+            p = phd[i]
+            inf = islands[I]
+            if not inf['top']:
+                p = np.mod(p, 360.0)
+                p = p + 360.0 if p < 89.0 else p
+            return float(np.clip(p, inf['lo'], inf['hi']))
+
+        # parameter-space triangles per island: (t, angle/180)
+        ptri = {}
+        for I in islands:
+            ts = tri[tail_tri & (isl[tri[:, 0]] == I)]
+            q = np.array([[[tt[v], phid_of(v, I) / 180.0] for v in t3] for t3 in ts])
+            ptri[I] = (ts, q)
+
+        def lookup(I, t, ph):
+            ts, q = ptri[I]
+            p = np.array([t, ph / 180.0])
+            a, b, c = q[:, 0], q[:, 1], q[:, 2]
+            v0, v1, v2 = b - a, c - a, p - a
+            den = v0[:, 0] * v1[:, 1] - v1[:, 0] * v0[:, 1]
+            den = np.where(np.abs(den) < 1e-12, 1e-12, den)
+            w1 = (v2[:, 0] * v1[:, 1] - v1[:, 0] * v2[:, 1]) / den
+            w2 = (v0[:, 0] * v2[:, 1] - v2[:, 0] * v0[:, 1]) / den
+            w = np.stack([1 - w1 - w2, w1, w2], 1)
+            k = np.argmax(w.min(1))
+            ww = np.clip(w[k], 0, None); ww /= ww.sum()
+            return ts[k], ww
+
+        K = tc.get('rings', 14)
+        t0 = t_ring + tc.get('first_ring', 0.05)
+        s = np.linspace(0, 1, K)
+        ring_t = t0 + (0.975 - t0) * (1 - (1 - s) ** tc.get('ring_bias', 1.35))
+        new = {k: [] for k in A}
+        new_par, new_w = [], []
+        wkey = {}
+        next_w = winv.max() + 1
+
+        def add(I, t, ph, pole=False):
+            nonlocal next_w
+            tri3, ww = lookup(I, min(t, 0.999), ph)
+            r = self.tail_radius(np.array([t]))[0]
+            X_, U_, T_ = self.tail_frame(np.array([t]))
+            rad = np.radians(ph)
+            nrm = np.sin(rad) * X_[0] + np.cos(rad) * U_[0]
+            pos = self.tail_centre(np.array([t]))[0] + r * nrm
+            if pole:
+                nrm = T_[0]
+            for k in A:
+                if k in ('X', 'P'):
+                    new[k].append(pos)
+                elif k == 'at_N':
+                    new[k].append(nrm)
+                elif k in ('teeth', 'arm', 'sole', 'ear_mask'):
+                    new[k].append(False)
+                elif k == 'tail':
+                    new[k].append(True)
+                elif k == 'w_head':
+                    new[k].append(0.0)
+                elif k == 'ear_rho':
+                    new[k].append(1.0)
+                elif k in ('ear_front', 'ear_cos'):
+                    new[k].append(0.0)
+                elif k == 'tail_t':
+                    new[k].append(t)
+                elif k == 'tail_phi':
+                    new[k].append(np.radians(((ph + 180.0) % 360.0) - 180.0))
+                elif k == 'tail_blend':
+                    new[k].append(float(smoothstep(t_ring * 0.5, t_ring + tc['root_blend'], np.array(t))))
+                else:
+                    new[k].append(np.einsum('k,k...->...', ww, A[k][tri3]))
+            d = {}
+            for wgt, v in zip(ww, tri3):
+                for kk, vv in parents[v].items():
+                    d[kk] = d.get(kk, 0) + wgt * vv
+            new_par.append(d)
+            key = ('pole',) if pole else (round(t, 6), round(ph % 360.0, 3))
+            if key not in wkey:
+                wkey[key] = next_w; next_w += 1
+            new_w.append(wkey[key])
+            return V + len(new_par) - 1
+
+        faces = []
+        for I, inf in islands.items():
+            phs = np.arange(inf['lo'], inf['hi'] + 1e-6, step)
+            rings = [[add(I, t, ph) for ph in phs] for t in ring_t]
+            pole = add(I, 1.0, 0.5 * (inf['lo'] + inf['hi']), pole=True)
+            for a, b in zip(rings[:-1], rings[1:]):
+                for j in range(len(phs) - 1):
+                    faces += [[a[j], a[j + 1], b[j + 1]], [a[j], b[j + 1], b[j]]]
+            for j in range(len(phs) - 1):
+                faces.append([rings[-1][j], rings[-1][j + 1], pole])
+            # zipper: the island's part of the root hole to the first ring
+            hv = np.unique(tri[tail_tri & (isl[tri[:, 0]] == I)].ravel())
+            hv = hv[hole[hv]]
+            if len(hv) >= 1:
+                fa = np.array([(phid_of(v, I) - inf['lo']) / max(inf['hi'] - inf['lo'], 1e-6) for v in hv])
+                Al = list(hv[np.argsort(fa)]); fa = np.sort(fa)
+                Bl = rings[0]; fb = (phs - inf['lo']) / max(inf['hi'] - inf['lo'], 1e-6)
+                i = j = 0
+                while i < len(Al) - 1 or j < len(Bl) - 1:
+                    if j == len(Bl) - 1 or (i < len(Al) - 1 and fa[i + 1] <= fb[j + 1]):
+                        faces.append([Al[i], Bl[j], Al[i + 1]]); i += 1
+                    else:
+                        faces.append([Al[i], Bl[j], Bl[j + 1]]); j += 1
+        # assemble, drop the old paddle vertices (all tail vertices but the hole)
+        for k in A:
+            A[k] = np.concatenate([A[k], np.array(new[k]).reshape((len(new[k]),) + A[k].shape[1:]).astype(A[k].dtype)])
+        parents = list(parents) + new_par
+        winv = np.r_[winv, new_w]
+        keep = np.ones(len(A['X']), bool)
+        keep[np.nonzero(tail & ~hole)[0]] = False
+        faces = np.array(faces)
+        tri2 = np.vstack([tri[keep[tri].all(1)], faces])
+        # outward winding (cross(p1-p0, p2-p0) points away from the tail axis)
+        Xa = A['X']
+        fc = Xa[faces].mean(1)
+        tf = np.clip((self.cfg['tail_root'][2] - fc[:, 2]) / tc['length'], 0, 1)
+        out = fc - self.tail_centre(tf)
+        nrm = np.cross(Xa[faces[:, 1]] - Xa[faces[:, 0]], Xa[faces[:, 2]] - Xa[faces[:, 0]])
+        flip = np.sum(nrm * out, 1) < 0
+        faces[flip] = faces[flip][:, [0, 2, 1]]
+        tri2 = np.vstack([tri[keep[tri].all(1)], faces])
+        used = np.zeros(len(Xa), bool); used[tri2.ravel()] = True
+        sel = np.nonzero(used)[0]
+        remap = -np.ones(len(Xa), int); remap[sel] = np.arange(len(sel))
+        for k in A:
+            A[k] = A[k][sel]
+        parents = [parents[i] for i in sel]
+        winv = np.unique(winv[sel], return_inverse=True)[1]
+        self.log(f"tail rebuilt: {nside} sides x {K} rings + pole, {int(A['tail'].sum())} tail verts "
+                 f"(hole {int(hole.sum())}), {flip.sum()} faces flipped; verts {V} -> {len(sel)}")
+        return A, remap[tri2], winv, parents
 
     def weld_fix(self, X, winv, tail):
         order = np.argsort(winv, kind='stable')

@@ -195,7 +195,12 @@ class RingtailPainter(paint.Painter):
         col = over(np.array(var.get('ring_col', (0.80, 0.52, 0.26))) * (1 + 0.05 * tone), rm['rings'] * var.get('ring_contrast', 0.9), 1.2)
         col = over(np.array(var.get('tip_col', (0.30, 0.10, 0.04))), rm['tip'], 2.0)
         col = col * (1 - 0.18 * rm['under_tail'][..., None])
-        col = over(dark * (1 + 0.1 * tone), rm['dark'], 2.5)
+        # dark parts: blackish on the legs and belly, warming to deep chestnut on the chest and forelegs (adults),
+        # so russet head, shoulders and dark front read as one animal rather than "orange head on a black body"
+        warm = np.array(var.get('dark_warm', var['dark']))
+        upper = smoothstep(var.get('warm_from', 0.10), var.get('warm_to', 0.30), P[..., 1])[..., None] * (1 - r['sole'][..., :1])
+        dark_col = dark * (1 - upper) + warm * upper
+        col = over(dark_col * (1 + 0.1 * tone), rm['dark'], 2.5)
         col = over(np.array(var.get('track_col', (0.47, 0.17, 0.065))), rm['band'], 2.5)
         col = over(np.array(var.get('tear_col', (0.30, 0.095, 0.045))), rm['tear'], 2.5)
         col = over(white * (1 + 0.03 * tone), rm['white'])
@@ -254,7 +259,7 @@ class RingtailPainter(paint.Painter):
 REAL = dict(eye_r=0.0080, eye_rim_w=0.0014, hi_r=0.0026, sparkle2=True, eye_squash=1.0,
             iris=(0.07, 0.045, 0.035), iris_low=(0.10, 0.06, 0.04), eye_rim=(0.12, 0.08, 0.06),
             ring_rx=0.0140, ring_ry=0.0125, nose_w=0.022, nose_h=0.0135, fluff=0.06, wobble=0.008,
-            fine_jag=0.004, fur_detail=0.24)
+            fine_jag=0.004, fur_detail=0.24, arm_reach=0.055, arm_back_trim=0.03)
 CUTE = dict(eye_r=0.0165, eye_rim_w=0.0014, eye_squash=1.0, eye_dy=0.0, iris=(0.05, 0.035, 0.03),
             iris_low=(0.13, 0.09, 0.06), eye_rim=(0.16, 0.12, 0.09), hi_r=0.0050, sparkle2=True,
             blush=0.75, blush_dx=0.010, blush_dy=0.042, blush_rx=0.024, blush_ry=0.014,
@@ -262,24 +267,24 @@ CUTE = dict(eye_r=0.0165, eye_rim_w=0.0014, eye_squash=1.0, eye_dy=0.0, iris=(0.
 
 ADULT_COATS = [
     # classic: bright rufous, clean white mask, seven rings
-    dict(name=1, seed=41, red=(0.64, 0.25, 0.075), dark=(0.075, 0.042, 0.032), white=(0.93, 0.90, 0.84),
+    dict(name=1, seed=41, red=(0.64, 0.25, 0.075), dark=(0.085, 0.045, 0.032), dark_warm=(0.21, 0.085, 0.045), white=(0.93, 0.90, 0.84),
          ring_col=(0.84, 0.58, 0.30), rings=6),
     # Chinese type: deep chestnut, smaller cheek patches, bold rings, dark tip
-    dict(name=2, seed=42, red=(0.50, 0.17, 0.060), dark=(0.055, 0.032, 0.028), white=(0.90, 0.87, 0.80),
+    dict(name=2, seed=42, red=(0.50, 0.17, 0.060), dark=(0.065, 0.035, 0.028), dark_warm=(0.16, 0.06, 0.035), white=(0.90, 0.87, 0.80),
          ring_col=(0.80, 0.50, 0.24), ring_contrast=1.0, rings=7, ring_width=0.42, tip_dark=0.9,
          cheek=(1.50, -0.04, 0.70, 0.52), brow=(0.90, 1.55, 0.30, 0.14), muzzle=(0.0, -0.20, 0.86, 0.64),
          tear_col=(0.26, 0.08, 0.04), tear_w=0.24),
     # Himalayan type: paler golden coat, big white face, soft rings
-    dict(name=3, seed=43, red=(0.72, 0.36, 0.12), dark=(0.12, 0.07, 0.045), white=(0.95, 0.93, 0.87),
+    dict(name=3, seed=43, red=(0.72, 0.36, 0.12), dark=(0.12, 0.07, 0.045), dark_warm=(0.25, 0.115, 0.06), white=(0.95, 0.93, 0.87),
          ginger=(0.08, 0.05, 0.0), ring_col=(0.88, 0.66, 0.38), ring_contrast=0.75, rings=5, ring_width=0.50,
          cheek=(1.58, 0.00, 0.88, 0.70), brow=(0.88, 1.58, 0.42, 0.20), muzzle=(0.0, -0.14, 0.98, 0.76),
          tear_col=(0.42, 0.16, 0.06), tear_w=0.17, tip_dark=0.45, ear_tuft=0.8),
     # an older individual: frosted muzzle, dusky back, nine fine rings
-    dict(name=4, seed=44, red=(0.55, 0.22, 0.085), dark=(0.07, 0.05, 0.045), white=(0.86, 0.84, 0.79),
+    dict(name=4, seed=44, red=(0.55, 0.22, 0.085), dark=(0.08, 0.055, 0.045), dark_warm=(0.18, 0.085, 0.055), white=(0.86, 0.84, 0.79),
          ring_col=(0.76, 0.52, 0.30), rings=8, ring_width=0.40, ring_contrast=0.85, back_deep=0.26, frost=0.10,
          cheek=(1.52, -0.02, 0.76, 0.60), tear_w=0.22),
     # rare cinnamon: light, sandy-red with brown (not black) legs
-    dict(name=5, seed=45, red=(0.76, 0.46, 0.24), dark=(0.30, 0.17, 0.10), white=(0.95, 0.93, 0.88),
+    dict(name=5, seed=45, red=(0.76, 0.46, 0.24), dark=(0.30, 0.17, 0.10), dark_warm=(0.38, 0.20, 0.11), white=(0.95, 0.93, 0.88),
          ring_col=(0.90, 0.72, 0.48), ring_contrast=0.8, rings=7, tear_col=(0.55, 0.28, 0.12),
          track_col=(0.62, 0.34, 0.16), tip_col=(0.45, 0.22, 0.10), iris=(0.24, 0.15, 0.08)),
 ]

@@ -37,7 +37,7 @@ ADULT = dict(
                paw_short=0.85, paw_wide=1.06, paw_puff=1.15, paw_anchor_dz=-0.015),
     tail_root=(0, 0.095, -0.205), tail_bind_zone=0.03,
     # the long bushy ringed tail, built on the beaver's paddle (which drives it in every animation)
-    tail=dict(length=0.46, r_root=0.047, r_max=0.060, t_max=0.35, t_cap=0.78, root_y=0.104,
+    tail=dict(length=0.46, r_root=0.046, r_max=0.070, t_max=0.70, t_cap=0.80, root_y=0.104, sides=16, rings=14,
               rest_clear=0.006, settle_t=0.50, curl=0.022, curl_t=0.70, slices=10, root_blend=0.16),
     teeth_hide=(0, 0.405, 0.125),
     bind_radius=0.03,
@@ -67,7 +67,7 @@ CHILD = dict(
                leg_reach=0.10, leg_scale=1.25, foot_y=0.022,
                paw_short=0.82, paw_wide=1.08, paw_puff=1.2, paw_anchor_dz=-0.010),
     tail_root=(0, 0.048, -0.118), tail_bind_zone=0.02,
-    tail=dict(length=0.22, r_root=0.026, r_max=0.044, t_max=0.40, t_cap=0.78, root_y=0.050,
+    tail=dict(length=0.22, r_root=0.026, r_max=0.050, t_max=0.70, t_cap=0.80, root_y=0.050, sides=16, rings=12,
               rest_clear=0.004, settle_t=0.40, curl=0.020, curl_t=0.70, slices=8, root_blend=0.18),
     teeth_hide=(0, 0.250, 0.072),
     bind_radius=0.02,

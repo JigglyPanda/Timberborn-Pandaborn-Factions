@@ -1,0 +1,6 @@
+{
+  "WorkerOutfitSpec": {
+    "DiffuseTexture": "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_D",
+    "NormalTexture": "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_N"
+  }
+}
