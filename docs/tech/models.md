@@ -179,7 +179,7 @@ and contact sheets `sheet_day.png`, `sheet_night.png`, `sheet_stage.png`.
 
 Lessons that bind the catalogue lane (who turns `model.json` into blueprints):
 
-* `#Unfinished` children: exactly one `ConstructionBase…` **first**, then `ConstructionStage0…` in order. The progress
+* `#Unfinished` children: exactly one `ConstructionBase...` **first**, then `ConstructionStage0...` in order. The progress
   visualiser shows child 0 until construction starts and the stages after; reversed children show the stage before
   work starts and the bare pad during construction.
 * Never let a recipe, need or good id in a stand-in blueprint point at something the faction does not have: the
@@ -400,3 +400,30 @@ Garden Moon Gate, Bamboo Pinwheel (Weathervane; wind-turned rotor), Hot Pot Hall
 * Bamboo Pinwheel: `WindRotationAnimatorSpec` from `windRotationAnimator`.
 * Lantern Workshop: `removeSpecs` drops the Bakery's smoke.
 * Opera Stage: its 20 slots all use the Dance Hall's `Spot` keyword (Dancing).
+* Memorial Arch: basis BrazierOfBonding, one stage, thresholds `[0.0]`; keep the `Fire` attachment at `attachments`
+  (it burns in the lantern cage under the roof).
+* Smoke Kiln: basis WoodWorkshop (2x4x4); `Smoke` attachment at the chimney if the blueprint gives it one.
+* Tea Roastery: basis Bakery (2x3x4); the Bakery smoke comes out of the stove flue (`Smoke` attachment).
+* Hot Pot Hall: basis Bakery; smoke from the pot's flue.
+* Paddy House: the generator must **not** carry a second `PlanterBuildingSpec` for `AquaticFarmhouse` into a game
+  that also has the vanilla or re-themed Aquatic Farmhouse (fields tool `.Single` crash, `models-pass3-2`); the
+  prototype strips every Planter spec.
+
+### Pass 3 verdicts (from previews; the in-game proof run did not happen)
+
+| Verdict | Models |
+|---|---|
+| Good | Sky Lantern (the great lantern on its tower reads at once and glows), Great Sitting Panda (charming, readable), Opera Stage |
+| Good / fair | Festival Square (reads as a square only with its gateway; empty in the middle by design), Terrace House pass 3 (deck and parapet fixed the flat box) |
+| Fair | Paddy House, Hot Spring Bath, Ink Studio, Slide and Swing, Bamboo Fence, the five decorations, Lantern Workshop, Smoke Kiln (the vault reads; the firing shed is plain), Memorial Arch (no longer torii-like, but a little boxy) |
+| Weak / fair | Tea Roastery (the drying trays read as drums from the game camera), Hot Pot Hall (the roof hides the pot and most chillies) |
+
+**Not proven in game, still:** lit windows with occupants at close range, the hammock swinging with a sleeper,
+colonists walking under the Moon Loft. The proof request is ready (`proto/models/tests/pass3.request.json`; run with
+`tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods E:\PandabornDev\build\proto\models -RequestJson
+proto/models/tests/pass3.request.json -WaitForGameSeconds 10800 -TimeoutSeconds 1500`) but the run (`models-pass3-3`) was cancelled unstarted: the
+shared game queue was twelve runs deep. Pass-3 game runs that did happen: `models-pass3-1` (bundle loaded twice,
+setup error) and `models-pass3-2` (Paddy House planter crash, fixed).
+
+**Not built yet:** Trip-Hammer Mill, Kitchen, Ox Workshop, Treadwheel Lift, Cistern Tap, Dry-Stone Wall, Large Kite
+Windmill, Flume Bridge Span, and the water lane's two-block caps on the Flume Gate, Flume Corner and Paddy Spout.
