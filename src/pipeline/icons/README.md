@@ -16,7 +16,14 @@ Writes shipped icons and their `.png.meta.json` to `mod/PandabornFactions/Sprite
 `<group>_sheet.png` (vanilla reference, ours at texture size, then 1/2 and ~1/3 size on UI colours),
 `<group>_large.png` (3x) and `<group>_blind.png` (ours and vanilla shuffled). Takes a few seconds.
 
-Needs the venv (numpy, Pillow, scipy for measuring; UnityPy for extraction). No Blender.
+Needs the venv (numpy, Pillow, scipy for measuring; UnityPy for extraction). No Blender, except `ox_avatar.py`.
+
+```
+E:\PandabornDev\tools\venv\Scripts\python.exe -I src/pipeline/icons/toolbar_sheet.py    # the toolbar, after generate
+E:\PandabornDev\tools\venv\Scripts\python.exe -I src/pipeline/icons/model_compare.py    # models beside icons
+E:\PandabornDev\tools\venv\Scripts\python.exe -I src/pipeline/icons/banners.py          # banner decals (~30 s)
+E:\PandabornDev\tools\venv\Scripts\python.exe -I src/pipeline/icons/ox_avatar.py        # bot avatar (Blender, ~1 min)
+```
 
 ## Files
 
@@ -29,6 +36,10 @@ Needs the venv (numpy, Pillow, scipy for measuring; UnityPy for extraction). No 
 | `logo.py` | Inkpaws logo: three candidates and the pick |
 | `build_icons.py` | Renders everything, writes sprites + meta, calls the contact sheets |
 | `contact_sheet.py` | Review sheets beside vanilla |
+| `toolbar_sheet.py` | The whole Inkpaws building toolbar (ours and the kept vanilla icons) by tool group, at 56 and 40 px, from the generated mod: `toolbar_sheet.png`, coverage printed |
+| `model_compare.py` | Each building's model preview beside its icon: `models_<n>.png` |
+| `banners.py` | The ten banner decals (`Materials/Pandaborn/Decals/Banners/PandabornBanner*.png`) and `banners_sheet.png` |
+| `ox_avatar.py`, `bl_ox_avatar.py` | The Wooden Ox bot avatar (`Sprites/Pandaborn/Avatars/InkpawsBot.png`): a plank ox built and rendered in Blender, on the shared avatar plate |
 | `extract_vanilla_icons.py` | Pulls vanilla icons out of the game for reference (full sprite rect restored) |
 | `measure_style.py` | Stroke width, extent, coverage, centroid and shadow fit of a folder of icons |
 

@@ -258,6 +258,7 @@ class Icon:
     ops: list = field(default_factory=list)
     extent: float | None = None    # override the style's ink extent (px)
     nudge: tuple = (0.0, 0.0)      # optical-centre correction, px
+    marks: tuple = ()              # corner marks drawn at a fixed pixel size and place (see MARKS)
     _m: np.ndarray = field(default_factory=lambda: np.eye(3))
 
     # -- transforms ------------------------------------------------------------------------------------------
@@ -314,6 +315,15 @@ class Icon:
 # ------------------------------------------------------------------------------------------------------ render
 
 SS = 8  # supersampling factor
+
+# Corner marks, in px of a 112 px canvas (scaled for other canvases): centre `dx` from the right edge and `dy` from
+# the top, radius `r`, a clear ring `clear` px wide erased around it first, and the `cut` circle (centre offset and
+# radius as multiples of r) that is erased from the disc.
+#   moon: the Ringtail mark, a solid crescent in the top-right corner (vanilla puts its corner signs there too: the
+#         Discharge arrow, the Observatory's moon). 11 px radius: a crescent still at the ~39 px toolbar size.
+MARKS = {
+    "moon": dict(dx=17, dy=17, r=11.0, clear=3.0, cut=(0.48, -0.34, 0.80)),
+}
 
 
 def _resample(pts, closed, step):
@@ -450,6 +460,17 @@ def render(icon: Icon, style: Style, seed_name: str | None = None) -> Image.Imag
         elif op.kind == "erase_stroke":
             pen_line(op, 0)
 
+    # corner marks: same pixel size and place on every icon of a family, whatever the drawing's scale
+    for mk in icon.marks:
+        m = MARKS[mk]
+        k = style.canvas / 112.0 * SS
+        cx, cy, r = (style.canvas - m["dx"]) * SS, m["dy"] * SS, m["r"] * k
+        clear = r + m["clear"] * k
+        draw.ellipse([cx - clear, cy - clear, cx + clear, cy + clear], fill=0)
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=255)
+        ox, oy, rr = cx + r * m["cut"][0], cy + r * m["cut"][1], r * m["cut"][2]
+        draw.ellipse([ox - rr, oy - rr, ox + rr, oy + rr], fill=0)
+
     # shadow: the ink grown a little, moved straight down, black
     sh = ink
     grow = int(round(style.shadow_grow * SS))
@@ -485,13 +506,14 @@ class IconDef:
     note: str = ""       # what it shows; goes into the review sheet
     ship: bool = True    # False: render to the build dir only (proposals not yet wired into the mod)
     suffix: str = "Icon"  # file name = id + suffix + ".png" (vanilla: BerriesIcon; avatars have none)
+    marks: tuple = ()     # corner marks (MARKS keys)
 
     @property
     def filename(self) -> str:
         return f"{self.id}{self.suffix}.png"
 
     def build(self) -> Icon:
-        ic = Icon(name=self.id, extent=self.extent, nudge=self.nudge)
+        ic = Icon(name=self.id, extent=self.extent, nudge=self.nudge, marks=self.marks)
         self.draw(ic)
         return ic
 
@@ -502,11 +524,11 @@ class IconDef:
 REGISTRY: dict[str, IconDef] = {}
 
 
-def icon(id, group="Goods", style=GOODS, extent=None, nudge=(0.0, 0.0), note="", ship=True, suffix="Icon"):
+def icon(id, group="Goods", style=GOODS, extent=None, nudge=(0.0, 0.0), note="", ship=True, suffix="Icon", marks=()):
     """Decorator: register a drawing function as an icon."""
     def deco(fn):
         REGISTRY[f"{group}/{id}"] = IconDef(id, group, style, fn, extent, nudge,
-                                            note or (fn.__doc__ or "").strip(), ship, suffix)
+                                            note or (fn.__doc__ or "").strip(), ship, suffix, tuple(marks))
         return fn
     return deco
 

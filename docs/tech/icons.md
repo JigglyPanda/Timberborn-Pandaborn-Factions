@@ -1,7 +1,8 @@
 # Icons
 
 How the game draws its UI icons, the rules we copy, how our icons are made, and what is still weak.
-Pipeline code: [src/pipeline/icons/](../../src/pipeline/icons/README.md). Measured 2026-11-14 on game 1.1.2.8.
+Pipeline code: [src/pipeline/icons/](../../src/pipeline/icons/README.md). Measured 2026-11-14 on game 1.1.2.8;
+pass 3 (icons matched to the models, the two families, banners, the Wooden Ox avatar) 2026-11-14.
 
 ## Finding: vanilla icons are drawings, not renders
 
@@ -85,8 +86,9 @@ function (a tent, a clock, a bell), not a picture of its model.
    `E:\PandabornDev\build\icons\preview\<Id>Icon.png` (4x) and `goods_sheet.png` (beside vanilla, three sizes).
 4. Judge at 40 px and 28 px, not only enlarged. Keep parallel lines 9+ units apart (the pen is ~6 units wide).
 5. Rules from the design review: no writing or characters on anything; nothing Japanese-coded (no shoji grids;
-   drying persimmons sit on round bamboo trays, not on strings); no religious imagery; roofs are farmhouse roofs
-   with a gentle sag (the `roof()` motif), never upturned palace eaves.
+   drying persimmons sit on round bamboo trays, not on strings); no religious imagery; roofs are the mod's low tiled
+   gables (`roof34`, `roof_side`, `roof_hip`, `roof` in buildings.py), never stacked in tiers or upturned like palace
+   eaves. Ringtail buildings take `@b(..., moon=True)` and keep the top-right corner empty.
 6. An icon that is not (or no longer) in the catalogue gets `ship=False`: it still renders to
    `rendered/<Group>/unshipped/` but is not written to the mod and not shown on the review sheets. Remove its old
    PNG and meta from the mod by hand (`git rm`).
@@ -128,46 +130,157 @@ tofu, lacquer, lacquered poles, persimmon cakes, lotus root, ox parts, bamboo ch
 | PandabornBambooSeedCakes | two scalloped pressed cakes, one standing, one lying, dotted flower pattern | fair |
 | PandabornPaperLanterns | round ribbed lantern, caps, tassel | good |
 
-## Building icons (46, `buildings_sheet.png`)
+**Pass 3 (2026-11-14):** `PandabornPoles` redrawn: two long slim jointed poles laid on the vanilla plank's diagonal,
+hollow ends towards you (pass 2's three short fat poles read as sausages or logs at the 28 px inventory size).
+`PandabornCuredPoles` follows it: the same two poles with solid ends, a lashing and the vanilla sparkles. At 28 px
+Poles reads as a jointed slanted bar beside the vanilla plank's plain board; the sparkles separate the cured ones.
 
-Every building marked *new* in CONTENT.md draft 2: Village Hall, Festival Square; Den, Courtyard House, Terrace
-House, Moon Loft; Steamer, Pickle Yard, Paddy House, Tea Roastery, Trip-Hammer Mill, Kitchen, Hot Pot Hall;
-Lantern Workshop, Smoke Kiln; Cistern Small/Medium/Large; Flume, Flume Corner, Flume Drop, Flume Bridge, Flume
-Gate, Scoop Wheel, Paddy Spout, Dew Collector, Treadwheel Lift, Dry-Stone Wall; Bamboo Water Wheel, Kite Windmill
-Small/Large; Star Tower; Hammock, Nap Platform, Teahouse, Slide and Swing, Panda Kindergarten, Ink Studio, Hot
-Spring Bath, Opera Stage; Night Builders' Post, Night Courier Post, Night Forager's Post; Memorial Arch, Great
-Sitting Panda, Sky Lantern. Decorations (lanterns, fence, pinwheel...) are not drawn yet. The catalogue speaks of
-"the four night posts" but lists three; three are drawn.
+## Coverage (pass 3, 2026-11-14)
 
-Drawn from the descriptions, not from models (none exist yet). Each shows what the building does, standing on a
-ground line, in the `BUILDING` pen style; small buildings are drawn small (the `size` argument of `@b`), as vanilla
-does for tanks and lodges. Measured against 213 vanilla building icons: median ink extent 78 px (vanilla 79),
-coverage 11 % (vanilla 8 %), pen width 3.3 px (vanilla 3.2).
+Every sprite reference on what this mod adds, from the generated mod (`E:\PandabornDev\build\gen\PandabornFactions`)
+and `mod/PandabornFactions`. "Own" = drawn by this pipeline (or the characters lane for portraits).
 
-Shared motifs in `buildings.py`: `roof` (gable end of a grey tile roof, gently sagging slopes, a short ridge cap,
-eaves lifting only slightly), `frame_wall` (timber frame, plaster panels), `house`, `door`, `round_window`,
-`lantern`, `bamboo_post`, `wheel` (paddles or tube buckets), `flume_run`, `trestle`, `cistern`, `pao_jar`,
-`water`, `ground`, `moon`.
+| What | Count | Own | Still vanilla | Missing | Notes |
+|---|---|---|---|---|---|
+| New buildings `Pandaborn*.Inkpaws` | 57 | 57 | 0 | 0 | 46 before this pass + 11 new (Cistern Tap, Ox Workshop, Standing/Hanging/String lanterns, Bamboo Fence, Potted Pine, Panda Statue, Bamboo Pinwheel, Goldfish Bowl, Garden Moon Gate). The generated data still names the stand-in's icon for the 11 until `generate` runs again; the file names match `find_icon`'s convention |
+| Pole Mill (`LumberMill.Inkpaws`, coming) | 1 | 1 | | | `PandabornPoleMillIcon`: the vanilla lumber mill shows a plank; ours is the vanilla Wood-workshop house outline with a lashed pole bundle. Needs the catalogue's `icon` field (below) |
+| Re-themed vanilla buildings `<Name>.Inkpaws` | 110 | | 110 | | All fine as they are: same name, same model under the material swap. None shows a beaver except the Beaver Statue, which the faction replaces with the Panda Statue |
+| Goods `Pandaborn*` | 17 + 2 renamed | 19 | | | Poles and Cured poles are the vanilla Plank and TreatedPlank renamed and re-iconed by faction modifiers |
+| Vanilla goods kept | 4 | | Paper, Antidote, Dandelion, Water | | Same goods, right icons |
+| Recipes | 13 | 11 | 2 | | Recipe icons come from the product. `PandabornCuredPole` still shows `Sprites/Goods/TreatedPlankIcon` (generator: the renamed good's icon is not used for recipes); Paper and Dew water show the vanilla good, which is right |
+| Plants | 7 | 7 | | | |
+| Faction logo, new-game art, adult/child/contaminated avatars | 6 | 6 | | | |
+| Bot avatar | 1 | 1 | | | New `Sprites/Pandaborn/Avatars/InkpawsBot.png` (Wooden Ox); the faction still names `Sprites/Avatars/FolktailsBot` until the catalogue changes |
+| Banner decals | 4 | 10 drawn | 4 in use | | New set under `Materials/Pandaborn/Decals/Banners/`; the generated faction still uses the four Folktails banners |
+| Tail decals | 4 | 4 exist (characters lane) | 4 in use | | `Materials/Pandaborn/Decals/Tails/PandabornTail*.png` exist; the generated DecalSpecs still point at the Folktails tails |
+| Needs, need groups | | | | | No icon field (`NeedSpec` has none) |
+| Tool groups, bottom bar, bonuses, wellbeing | | | | | The faction adds none |
 
-**The Ringtail moon.** Moon Loft, the three night posts, Star Tower and Opera Stage carry a solid crescent in the
-top-right corner (radius 11 units, ~9 px at 112). At 56 px (toolbar button size) it reads clearly as a moon on
-every one of them. At ~39 px it is still a visible crescent but small, and on the busiest icons (Opera Stage) it
-competes with the roof line. It works as the "Ringtail building" rule; if the toolbar shows these smaller than
-56 px, enlarge it to radius 13 and keep that corner clear of other lines.
+Review sheets: `E:\PandabornDev\build\icons\buildings_sheet.png` (beside vanilla, three sizes),
+`toolbar_sheet.png` (the whole Inkpaws toolbar, below), `goods_sheet.png`, `banners_sheet.png`,
+`E:\PandabornDev\build\icons\ox\` (avatar work files), model-against-icon sheets in
+`E:\PandabornDev\build\icons\models_*.png` (`model_compare.py`: each model preview, then its icon at 224, 56 and
+39 px).
 
-Verdicts:
-* good: Village Hall, Den, Moon Loft, Steamer, Tea Roastery, Teahouse, Hot Pot Hall, Kitchen, Lantern Workshop,
-  Smoke Kiln, the three cisterns, Flume, Flume Bridge, Flume Drop, Flume Gate, Dew Collector, Dry-Stone Wall,
-  Bamboo Water Wheel, Star Tower, Hammock, Nap Platform, Slide and Swing, Panda Kindergarten, Ink Studio, Hot Spring
-  Bath, Opera Stage, Memorial Arch, Paddy House.
-* fair: Festival Square, Terrace House, Paddy Spout, Great Sitting Panda (reads as a seated panda in a rock niche;
-  can look like a teddy bear), Night Courier Post, Night Builders' Post, Kite Windmill Small/Large (the kite sails
-  read as pinwheel petals).
-* weak, redo: **Sky Lantern** (reads as a bell jar or balloon; needs a taller paper-bag shape and a lighter
-  cradle), **Courtyard House** (too many small parts at 56 px), **Pickle Yard** (jars under the lean-to merge),
-  **Flume Corner** (the turn is hard to read in a side view; try a top-down L), **Treadwheel Lift** and
-  **Trip-Hammer Mill** (both mechanisms read only enlarged), **Scoop Wheel** (busy rim), **Night Forager's Post**
-  (mushrooms look like lollipops).
+## Building icons (58, `buildings_sheet.png`)
+
+Pass 3 matched the icons to the models (`E:\PandabornDev\build\models\preview\<Id>_day.png`; pass-2 and pass-3
+model work). Measured against 213 vanilla building icons: median ink extent 79 px (vanilla 79), pen 3.3 px
+(vanilla 3.2), coverage 11.6 % (vanilla ~8-11 %).
+
+**Roofs.** The pass-2 `roof()` (gable end with a sag and lifted eaves) read as a pagoda when stacked. Pass 3 adds the
+mod's own roof as the game camera sees it: `roof34` (three-quarter view: the gable end on the left, the long slope
+with cover-tile ribs, a ridge roll), `roof_side` (the long side only, for gateways and stages) and `roof_hip`
+(pavilions: Teahouse, Star Tower, the Village Hall's bell tower). `roof()` lost most of its sag. Nothing is stacked
+in tiers any more.
+
+**Redrawn to match the model** (pass 3):
+| Icon | Was | Now (the model's recognisable feature) |
+|---|---|---|
+| Village Hall | two-tier hall, pagoda-like | the long tiled hall and its open **bell tower** at the front-left, bell inside, signal mast |
+| Den | low woven hut, round door | a small house under a **big steep tiled roof**, chimney, porch posts, stone footing |
+| Courtyard House | five small parts | two tiled wings at a right angle (one in three-quarter view, one gable-on), yard wall and gate |
+| Terrace House | two houses stepped up a slope | a two-storey house on a stone base, railed **gallery**, flat roof deck with **drying trays** |
+| Moon Loft | house on stilts, cross brace | tiled house high on bamboo stilts with its **ladder** |
+| Pickle Yard | three jars merging under a lean-to | rows of glazed jars in front of the tiled shed |
+| Hot Pot Hall | hot pot under a curly eave | the same pot under the model's raised vent roof |
+| Cisterns (3) | straight hooped tubs (read as the steamer's baskets) | **glazed stoneware vats**: full belly, rolled lip, planked lid, stone plinth; medium with a ladder, large wide with a stair |
+| Dew Collector | flat net between poles | the **woven funnel** on four bamboo posts over a vat |
+| Flume set, Gate, Spout, Scoop Wheel | flat bars on X legs | the split-bamboo **half-pipe** with its U end (below) |
+| Treadwheel Lift | small hub on a long box | a big treadle wheel with pedals at the top of a sloping half-pipe with pallets |
+| Kite Windmill small / large | kite-tailed rotor (read as a pinwheel) | the model's **upright sails round a mast** on a square deck, wind lines; large has four sails |
+| Star Tower | armillary sphere on a tower | lattice tower rising from a **hipped pavilion**, a **telescope** on the railed top |
+| Hammock | hammock between two posts | the model's striped **sling hung from one tall mast** down to a front bar, a panda dozing in it |
+| Nap Platform | roofed deck with cushions (read like the Teahouse) | a slatted **ground deck** under a flat canopy with two **sleeping pandas** |
+| Teahouse | gable pavilion | **hipped** pavilion roof with the awning, the big teapot and a cup |
+| Memorial Arch | three-bay gate (read as a temple front) | one **timber gateway** on drum-stone feet under a broad tiled roof, blank panel, **lantern cage with its flame** |
+| Great Sitting Panda | panda in a rock niche (could be a teddy bear) | the same, **holding bamboo** with a leaf |
+| Sky Lantern | bell jar in a cradle | the **great round lantern** on its lashed launch tower over a stepped terrace, tethers |
+| Festival Square | lanterns between two poles over crates | a paved square, the tall centre pole with lantern strings to the corner poles, goods and the drum |
+| Trip-Hammer Mill | busy cam and shaft | wheel in the stream, one big beam rocking on a post, head over the mortar |
+| Night Gatherers' Post | mushrooms like lollipops | bamboo mushrooms with netted veils, as on the goods icon |
+
+**New** (pass 3): Cistern Tap (vat, bamboo tap, pouring into a half-pipe), Ox Workshop (the Wooden Ox: box body, block
+head, horns, one wheel under the belly, carrying handles, a mallet), Standing Lantern (post, arm, hatted paper
+lantern), Hanging Lantern (big lantern under a bar on two splayed bamboo posts), String Lanterns (four small lanterns on
+a sagging cord), Bamboo Fence (jointed posts, rails, lashed lattice), Potted Pine (three cloud pads in a hexagonal
+pot), Panda Statue (seated panda with bamboo on a plinth), Bamboo Pinwheel (four curled blades and a tail vane),
+Goldfish Bowl (basin on a stand, lily pads, a goldfish leaping), Garden Moon Gate (white wall, round opening, tiled
+coping, potted bamboo), Pole Mill (above).
+
+Kept as they were (they match their model or have none): Steamer, Paddy House, Tea Roastery, Kitchen, Lantern
+Workshop, Smoke Kiln, Dry-Stone Wall, Bamboo Water Wheel, Slide and Swing, Kindergarten, Ink Studio, Hot Spring Bath
+(water and steam), Opera Stage, Night Builders' and Night Couriers' posts.
+
+### The two families
+
+**Night folk: the moon mark.** Every Ringtail building (Moon Loft, Night Builders' Post, Night Couriers' Post, Night
+Gatherers' Post, Star Tower, Opera Stage: the catalogue's `waits_for = "Ringtails"`) carries one solid crescent,
+**drawn by the renderer at a fixed pixel size and place**, not by the drawing: `ink.MARKS["moon"]`, centre 17 px from
+the top-right corner of the 112 px icon, radius 11 px, a 3 px clear ring erased round it (`@b(..., moon=True)`). It is
+therefore identical on all six whatever each drawing's scale (pass 2 drew it in drawing units, so it changed size
+with the drawing). Vanilla puts its corner signs in the same place (Discharge's arrow, the Observatory's own moon). At
+56 px it is a 5.5 px crescent; at 39 px a 4 px crescent that still shows its notch. Each night post is also its day
+counterpart's job (builders: mallet and pole; couriers: back-basket; gatherers: mushroom basket) plus a lantern.
+Drawings must leave that corner empty.
+
+**Water: the half-pipe.** The flume, its corner, drop and bridge, the flume gate, the paddy spout, the scoop wheel's
+chute, the cistern tap and the treadwheel lift are all drawn round one motif, `half_pipe()`: the split-bamboo trough
+seen a little from above, its **U-shaped cut end towards the viewer** at the left, a culm-node rib across the inside,
+water along the bottom. The flume stands low on short X stakes, the bridge high on tall X trestles, the corner turns
+the run towards you at a stone basin, the drop pours from one run into a lower one off a dry-stone step, the gate
+puts a sluice frame and lever over it, the spout pours onto a rice field. The glazed vat (`vat()`) is the second
+water motif: the three cisterns, the cistern tap and the dew collector's catch jar.
+
+### Distinguishability (the whole toolbar, `toolbar_sheet.png`)
+
+`src/pipeline/icons/toolbar_sheet.py` lays out every Inkpaws building (ours and the 110 vanilla icons kept by
+re-themed buildings) by the bottom bar's tool group and order, at 56 and 40 px. Pairs found and fixed:
+* Cisterns against the Steamer (pass 2: all stacked hooped cylinders): cisterns are now bellied vats.
+* Teahouse against Nap Platform (both "roof on posts with things on a counter"): hipped roof and teapot against a flat
+  canopy and sleeping pandas on a ground deck.
+* Memorial Arch against Village Hall (both columns under tiered roofs): one gateway against a hall with a bell tower.
+* Kite Windmill against the Bamboo Pinwheel (pass 2 kites read as pinwheel blades): upright sails on a deck.
+* Hanging Lantern against Garden Moon Gate (both a rectangle at 39 px): the lantern now hangs from a bar running past
+  two splayed posts, no closed frame.
+* String Lanterns against Festival Square (both lanterns on a string): the square has its paving, centre pole,
+  goods and drum.
+Remaining near pairs, accepted: Den / Courtyard House at 39 px (one roof against two); Cistern Small (Storage) and
+Cistern Tap (Water) share the vat but sit in different groups; the flume pieces share their trough on purpose.
+
+### Verdicts (pass 3)
+
+* good: Village Hall, Den, Courtyard House, Moon Loft, Pickle Yard, the three cisterns, Cistern Tap, Dew Collector,
+  Flume, Flume Corner, Flume Bridge, Scoop Wheel, Memorial Arch, Great Sitting Panda, Sky Lantern, Star Tower,
+  Teahouse, Garden Moon Gate, Goldfish Bowl, Potted Pine, Panda Statue, Bamboo Fence, Bamboo Pinwheel, Hanging and
+  Standing Lantern, Pole Mill, and the pass-2 icons kept.
+* fair: Terrace House (reads as a building with balconies; the trays are small), Festival Square, Flume Drop, Flume
+  Gate, Paddy Spout, Nap Platform, Ox Workshop (an ox, but toy-like), Treadwheel Lift, Trip-Hammer Mill, Night
+  Gatherers' Post.
+* weak: **Kite Windmill small/large** (an upright-axis sail windmill is hard to draw flat: at 39 px it reads as a
+  barrel or a cage; the wind lines help a little), **Hammock** (the sling-on-a-mast reads as a deck chair).
+
+## Banner decals (10, `banners_sheet.png`)
+
+`src/pipeline/icons/banners.py`. Vanilla banners (`Materials/Banners/<Faction>/BannerN.<Faction>`, 512 x 512, opaque,
+extracted to `E:\PandabornDev\reference\vanilla-banners` for reference) are worn cloth in one faction colour with
+one solid emblem in a second colour and a dark rough halo. Ours: a cream emblem on lacquer red (Folktails are yellow
+on teal, Iron Teeth pink on navy), drawn with the icon engine as a fill mask, cloth, halo and wear painted in numpy.
+Files `mod/PandabornFactions/Materials/Pandaborn/Decals/Banners/PandabornBanner<Name>.png`, no meta (sRGB, mipmapped,
+like the coats and tail decals): Paw (the logo: paw print in the rounded diamond), Bamboo (jointed culm, leaf spray),
+Moon (crescent and two stars: the Ringtails), Lantern, TeaLeaf (bud and two leaves), Rice (drooping ear), Flume (the
+half-pipe end-on with water, on X stakes), Bell, Panda (face; patches cut so the cloth shows through), RingTail (the
+red panda's ringed tail). No script, no religious signs. Verdicts: good except RingTail (fair: reads as a ringed tail,
+could be a raccoon's) and Rice (fair at 32 px).
+
+## Wooden Ox avatar (`InkpawsBot.png`)
+
+`src/pipeline/icons/ox_avatar.py` (driver) and `bl_ox_avatar.py` (Blender): a generic wooden ox built from planks in
+code (plank body with pegs, block head and snout, horns, ears, a rope collar, halter and rein, plank legs, one iron-shod
+wheel under the chest, a red paper lantern glowing on a string from the right horn), Cycles, three-quarter bust, on
+the same painted teal plate with the torn edge as the Inkpaw and Ringtail avatars (`characters/make_portraits.plate`).
+512 x 512, `{"isSprite": true}`. Generic on purpose: the ox's game body is not built; when it is, render that instead.
+Verdict: fair (clearly a wooden ox with a lantern, toy-like; the halter reads a little like a smile).
 
 ## Plant icons (7, `plants_sheet.png`)
 
@@ -190,35 +303,45 @@ Three candidates in the vanilla form (rounded diamond, one flat colour, solid em
 **Picked: B, the paw print.** It replaces `Sprites/Pandaborn/Avatars/InkpawsLogo.png` (was a 256 px cartoon panda
 face in a green disc); the meta stays `{"isSprite": true}`.
 
+## For the catalogue lane
+
+1. **Banners:** replace the four Folktails banner DecalSpecs (`Decals/Pandaborn/Decal.Banner1..4.Inkpaws`, texture
+   `Materials/Banners/Folktails/BannerN.Folktails`) with ten, category `Banners`, `FactionId` Inkpaws, textures
+   `Materials/Pandaborn/Decals/Banners/PandabornBanner{Paw,Bamboo,Moon,Lantern,TeaLeaf,Rice,Flume,Bell,Panda,RingTail}`.
+2. **Tails** (characters lane's files, noticed here): the four tail DecalSpecs still use the Folktails tails although
+   `Materials/Pandaborn/Decals/Tails/PandabornTail{BeadCord,Ribbon,TipCream,TwinBands}.png` exist.
+3. **Bot avatar:** `catalogue/faction.toml` `bot_avatar = "Sprites/Pandaborn/Avatars/InkpawsBot"` (now
+   `Sprites/Avatars/FolktailsBot`).
+4. **Pole Mill:** when `LumberMill` joins `buildings.toml`, give it
+   `icon = "Sprites/Pandaborn/Buildings/PandabornPoleMillIcon"` (a re-themed building does not take the naming rule).
+5. **Recipe icon of a renamed good:** `Recipe.PandabornCuredPole` shows `Sprites/Goods/TreatedPlankIcon`. In poles mode
+   "rename" the generator should give recipes producing Plank / TreatedPlank the renamed icon
+   (`Sprites/Pandaborn/Goods/PandabornPolesIcon`, `PandabornCuredPolesIcon`).
+6. **Tool groups:** the flume set (Flume, Corner, Drop, Bridge) sits in **Decoration** (its PoleBanner basis) between
+   the stream gauge and the banners, while the Flume Gate and Paddy Spout are in Landscaping and the Scoop Wheel,
+   Cistern Tap and Treadwheel Lift in Water. Suggest `tool_group = "Water"` (or Landscaping, beside the gate) for the
+   four flume pieces so the water family sits together. The **Lantern Workshop** is in **Food** (archetype workshop);
+   it makes paper lanterns from paper, so Wood (beside the Smoke Kiln and Paper Mill) fits better.
+7. Run `generate` again: the 11 new building icons follow the naming rule (`Pandaborn<Name>Icon`, checked against
+   the report's "no icon" notes and `find_icon`) and are picked up without a catalogue change.
+
 ## Open quality issues
 
-* **Goods are still denser than vanilla**: median coverage 19 % against 15 % (was 21 %). The rest of the gap is
-  the subjects: bowls, jars and steamers are closed shapes with rims. Further cuts would cost recognisability.
-* **Sichuan pepper** is better (open husks with seeds plus the pinnate leaf) but still reads as "seed pods on a
-  sprig" rather than unmistakably Sichuan pepper; colour (reddish husks) would settle it, and the style has none.
-* **Persimmons** now have the wide flat cap, which separates them from tomatoes at 40 px; at 28 px the cap
-  shrinks to a lid line.
-* **Bowl family**: steamed rice, sweet rice balls, hot pot, tea and the steamer are all round vessels. They
-  separate by what sits on top (steam, balls and spoon, divider and handles, lid and saucer, woven lid). Fine at
-  40 px, close at 28 px.
-* The building icons marked weak above.
-* Not checked in game: no blueprint references these sprites yet. The loader path is verified in the decompiled
-  code (`ModSpriteConverter`, `ModTextureSettingLoader`); `tools/validate.py` passes.
+* **Kite Windmill** and **Hammock** icons (see verdicts). A Kite Windmill with its model in game may make a
+  different drawing obvious; the Hammock may be better as the sleeper alone.
+* **Goods are still denser than vanilla**: median coverage 19 % against 15 %. The gap is the subjects: bowls, jars
+  and steamers are closed shapes with rims.
+* **Sichuan pepper** reads as "seed pods on a sprig"; colour would settle it and the style has none.
+* **Persimmons** at 28 px: the cap shrinks to a lid line.
+* **Bowl family**: steamed rice, sweet rice balls, hot pot, tea and the steamer are all round vessels; fine at 40 px,
+  close at 28 px.
+* Not checked in game: no game run in pass 3 (the queue was deep). The loader path is verified in the decompiled code.
 
 ## Still to do
 
-**Need icons: none needed.** `NeedSpec` has no icon field; the needs panel is text and bars. Only critical needs
-(hunger, thirst, ...) show a status badge, and the Inkpaws reuse the vanilla ones. A new critical need would need a
-512 px coloured badge in `Sprites/StatusIcons`, a different style with its own `Style` preset.
+**Need icons: none needed.** `NeedSpec` has no icon field; only critical needs show a status badge, and the
+Inkpaws reuse the vanilla ones.
 
-**Decoration icons** (lanterns, fence, hedge, pinwheel, scarecrow, bench, banners, goldfish bowl, moon gate, tile
-roofs): same `BUILDING` style, small sizes.
-
-**From models later.** When the building models exist, Blender can render each `.blend` with Freestyle
-(silhouette and crease lines, orthographic 3/4 camera) to `E:\PandabornDev\build\icons\ref\` as a reference to
-check the icon against the model. Do not ship that output: it is uniform and mechanical next to the hand-sketched
-vanilla set.
-
-**New-game art and avatars.** `NewGameFullAvatar` (420 x 560) and the 512 px avatars are painted 3D character
-renders in vanilla, not line art. They belong to the character pipeline (render the panda `.timbermesh` in Blender
-with the game's lighting), not to this one.
+**When new models land:** Trip-Hammer Mill, Kitchen, Ox Workshop, Treadwheel Lift, Cistern Tap, Dry-Stone Wall and
+the Large Kite Windmill have no model yet; their icons are drawn from the design and should be checked against the
+model when it exists (`model_compare.py` puts each model preview beside its icon).

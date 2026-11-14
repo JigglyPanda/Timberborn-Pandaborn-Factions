@@ -1,27 +1,35 @@
-"""Building icons (LabeledEntitySpec.Icon) for every new Inkpaws building in docs/CONTENT.md.
+"""Building icons (LabeledEntitySpec.Icon) for every new Inkpaws building in the catalogue.
 
 Vanilla building icons are pen sketches of what the building *does* (a bell, a grill, a lodge), 112 px, drawn
 small for small buildings and large for big ones, usually standing on a short ground line. Ours follow the same
-rules in the BUILDING style, with the Sichuan farmstead look: timber frame and plaster, grey tile roofs with a
-gentle curve (no sharply upturned palace eaves), bamboo and woven panels, lanterns as accents. No writing,
-nothing Japanese-coded, no religious imagery.
+rules in the BUILDING style. Where a building has a model (E:\\PandabornDev\\build\\models\\preview), the icon shows
+the model's most recognisable feature, because the player learns the icon and then looks for that shape on the
+map: the Village Hall's bell tower, the cisterns' glazed vats, the Dew Collector's funnel, the Kite Windmill's
+upright sails. Roofs are this mod's low tiled gables (`roof_side`, `roof`, `roof_hip`), never stacked or upturned.
+No writing, nothing Japanese-coded, no religious imagery.
 
-Ringtail buildings carry a small solid crescent moon in the top-right corner (`moon()`).
+Two families share a mark so they are learnt once:
+* Ringtail (night folk) buildings carry the moon mark: a solid crescent at a fixed pixel size and place in the
+  top-right corner (`ink.MARKS["moon"]`, `@b(..., moon=True)`). Keep that corner of the drawing empty.
+* Water pieces (flume set, gate, spout, scoop wheel, cistern tap, treadwheel lift) are all built around the same
+  split-bamboo half-pipe (`half_pipe`): its U-shaped open end faces the viewer, with water inside. The cisterns,
+  the tap and the dew collector share the glazed vat (`vat`).
 """
 import math
 
 import numpy as np
 
-from ink import BUILDING, Path, arc, circle, ellipse, hatch, icon, line, rrect, spline
+from ink import BUILDING, Path, arc, circle, ellipse, hatch, icon, line, poly, rrect, spline
 
 G = "Buildings"
 
 
-def b(id, extent=None, note=""):
+def b(id, extent=None, note="", moon=False):
     """Register a building icon: file Pandaborn<Name>Icon.png under Sprites/Pandaborn/Buildings."""
     # `extent` is the building's relative size (small buildings are drawn small, as in vanilla); 0.92 brings the
     # set's median ink extent to vanilla's (~79 px of 112)
-    return icon(id, group=G, style=BUILDING, extent=extent * 0.92 if extent else None, note=note)
+    return icon(id, group=G, style=BUILDING, extent=extent * 0.92 if extent else None, note=note,
+                marks=("moon",) if moon else ())
 
 
 # ------------------------------------------------------------------------------------------------ motifs
@@ -36,29 +44,96 @@ def water(c, y=90, x0=6, x1=94, rows=2):
         c.stroke(Path(np.stack([xs, y + r * 8 + np.sin(xs / 6 + r) * 1.8], 1)))
 
 
-def moon(c, x=90, y=10, r=11):
-    """The Ringtail mark: a solid crescent."""
-    c.fill(circle(x, y, r))
-    c.erase(circle(x + r * 0.5, y - r * 0.32, r * 0.82))
-
-
 def steam(c, x, y, h=16, w=0.9):
     c.stroke(spline((x, y), (x + 3, y - h * 0.33), (x - 3, y - h * 0.66), (x + 1, y - h)), w)
 
 
 def roof(c, cx, y, w, h, tiles=3):
-    """A grey tile roof seen at the gable end: gently sagging slopes from a short ridge cap, eaves reaching a
-    little past the walls and lifting only slightly; an inner line along the slopes for the tile course."""
+    """A grey tile roof seen at the gable end: straight, very slightly sagging slopes from a short ridge cap, eaves
+    reaching a little past the walls; an inner line along the slopes for the tile course."""
     hw = w / 2
-    sag = h * 0.12
-    left = spline((cx - hw - 1, y + h - 2.5), (cx - hw * 0.5, y + h * 0.5 + sag), (cx - 3, y))
-    right = spline((cx + 3, y), (cx + hw * 0.5, y + h * 0.5 + sag), (cx + hw + 1, y + h - 2.5))
-    c.shape((left + line((cx - 3, y), (cx + 3, y)) + right + line((cx + hw + 1, y + h - 2.5), (cx + hw - 2, y + h))
-             + line((cx + hw - 2, y + h), (cx - hw + 2, y + h)) + line((cx - hw + 2, y + h), (cx - hw - 1, y + h - 2.5))
+    sag = h * 0.05
+    left = spline((cx - hw - 1, y + h - 2), (cx - hw * 0.5, y + h * 0.5 + sag), (cx - 3, y))
+    right = spline((cx + 3, y), (cx + hw * 0.5, y + h * 0.5 + sag), (cx + hw + 1, y + h - 2))
+    c.shape((left + line((cx - 3, y), (cx + 3, y)) + right + line((cx + hw + 1, y + h - 2), (cx + hw - 2, y + h))
+             + line((cx + hw - 2, y + h), (cx - hw + 2, y + h)) + line((cx - hw + 2, y + h), (cx - hw - 1, y + h - 2))
              ).close())
     if tiles:
         c.stroke(spline((cx - hw + 7, y + h - 4), (cx - hw * 0.45, y + h * 0.5 + sag + 3), (cx, y + 7),
                         (cx + hw * 0.45, y + h * 0.5 + sag + 3), (cx + hw - 7, y + h - 4)), 0.55)
+
+
+def roof_side(c, x0, x1, y_ridge, y_eave, ribs=11.0, inset=None, over=3.0):
+    """The long side of a tiled gable roof, the view the game camera gives: a wide sloping plane with cover-tile
+    ribs running down it, a ridge roll on top, the eave line sagging very slightly. This is the mod's roof."""
+    h = y_eave - y_ridge
+    ins = h * 0.22 if inset is None else inset
+    xl, xr = x0 - over, x1 + over
+    outline = (line((x0 + ins, y_ridge), (x1 - ins, y_ridge))
+               + spline((x1 - ins, y_ridge), (x1 - ins * 0.4 + 0.6, y_ridge + h * 0.55), (xr, y_eave - 1.5))
+               + spline((xr, y_eave - 1.5), ((x0 + x1) / 2, y_eave + 0.6), (xl, y_eave - 1.5))
+               + spline((xl, y_eave - 1.5), (x0 + ins * 0.4 - 0.6, y_ridge + h * 0.55), (x0 + ins, y_ridge)))
+    c.shape(outline.close())
+    if ribs:
+        n = max(1, int((x1 - x0 - 2 * ins) / ribs))
+        for k in range(1, n):
+            t = k / n
+            xa = x0 + ins + (x1 - x0 - 2 * ins) * t
+            xb = xl + (xr - xl) * t
+            c.stroke(line((xa, y_ridge + 2.5), (xb, y_eave - 3.5)), 0.42, taper=0.3)
+    c.stroke(line((x0 + ins - 2.5, y_ridge - 0.5), (x1 - ins + 2.5, y_ridge - 0.5)), 1.35, taper=0.2)
+
+
+def roof34(c, x0, x1, y_ridge, y_eave, gw, ribs=10.0, over=3.0, chimney=None):
+    """A tiled gable roof in three-quarter view, as the game camera sees the models: the gable end (width `gw`) at
+    the left, the long slope running right to x1, cover-tile ribs down the slope, a ridge roll. Returns the
+    gable's apex x. `chimney` = x of a chimney standing on the slope."""
+    ax = x0 + gw / 2
+    g1, g2 = (x0 - over, y_eave), (x0 + gw + over * 0.4, y_eave)
+    dx = x1 - (x0 + gw)
+    r2, e2 = (ax + dx, y_ridge), (g2[0] + dx + over * 0.6, y_eave)
+    if chimney is not None:
+        t = 0.45
+        cy = y_ridge + (y_eave - y_ridge) * t
+        c.shape(rrect(chimney - 4, y_ridge - 12, 8, cy - y_ridge + 12, 1), 0.85)
+    sag = 0.8
+    c.shape((line(g1, (ax, y_ridge), r2, e2) + spline(e2, ((g2[0] + e2[0]) / 2, y_eave + sag), g2)
+             + line(g2, g1)).close())
+    c.stroke(line((ax, y_ridge), g2), 0.8)                               # the barge edge between gable and slope
+    n = max(1, int(dx / ribs))
+    for k in range(1, n + 1):
+        t = k / (n + 1)
+        c.stroke(line((ax + dx * t + 1.5, y_ridge + 2.5), (g2[0] + (e2[0] - g2[0]) * t, y_eave - 2.5)), 0.42,
+                 taper=0.3)
+    c.stroke(line((ax - 1, y_ridge - 0.5), (r2[0] + 2.5, y_ridge - 0.5)), 1.35, taper=0.2)
+    return ax
+
+
+def walls34(c, x0, x1, y_top, y_bot, gw, posts=2):
+    """The walls under roof34: the gable-end wall (left, width gw) and the long side, timber frame."""
+    c.shape(rrect(x0, y_top, gw, y_bot - y_top, 1))
+    c.shape(rrect(x0 + gw, y_top, x1 - x0 - gw, y_bot - y_top, 1))
+    for k in range(1, posts + 1):
+        x = x0 + gw + (x1 - x0 - gw) * k / (posts + 1)
+        c.stroke(line((x, y_top + 1), (x, y_bot - 1)), 0.65)
+
+
+def roof_hip(c, cx, y_top, w_top, w_bot, h, ribs=9.0):
+    """A hipped (pavilion) roof: short ridge, four slopes, ribs fanning out to the eave."""
+    xl, xr = cx - w_bot / 2, cx + w_bot / 2
+    tl, tr = cx - w_top / 2, cx + w_top / 2
+    yb = y_top + h
+    outline = (line((tl, y_top), (tr, y_top)) + spline((tr, y_top), (cx + w_bot * 0.3, y_top + h * 0.6), (xr, yb - 2))
+               + spline((xr, yb - 2), (cx, yb + 0.6), (xl, yb - 2))
+               + spline((xl, yb - 2), (cx - w_bot * 0.3, y_top + h * 0.6), (tl, y_top)))
+    c.shape(outline.close())
+    n = max(2, int(w_bot / ribs))
+    for k in range(1, n):
+        t = k / n
+        xa = tl + (tr - tl) * t
+        xb = xl + (xr - xl) * t
+        c.stroke(line((xa, y_top + 2.5), (xb, yb - 3.5)), 0.42, taper=0.3)
+    c.stroke(line((tl - 2, y_top - 0.5), (tr + 2, y_top - 0.5)), 1.3, taper=0.2)
 
 
 def frame_wall(c, x, y, w, h, posts=2, beam=True):
@@ -80,6 +155,15 @@ def round_window(c, x, y, r):
     c.stroke(line((x, y - r + 1), (x, y + r - 1)), 0.55)
 
 
+def stones(c, x0, x1, y, h=7):
+    """A footing of dressed stones."""
+    c.shape(rrect(x0, y, x1 - x0, h, 1.5), 0.85)
+    n = max(2, int((x1 - x0) / 14))
+    for k in range(1, n):
+        x = x0 + (x1 - x0) * k / n + (2 if k % 2 else -2)
+        c.stroke(line((x, y + 1.5), (x, y + h - 1.5)), 0.5)
+
+
 def lantern(c, x, y, s=1.0, string=6):
     """A small round hanging lantern, top of the string at (x, y)."""
     with c.at(x, y, s):
@@ -88,8 +172,19 @@ def lantern(c, x, y, s=1.0, string=6):
         c.stroke(line((0, string + 14), (0, string + 19)), 0.6)
 
 
+def box_lantern(c, x, y, s=1.0, string=5):
+    """A hexagonal paper lantern under a small hat (the decorations' lantern), top of the string at (x, y)."""
+    with c.at(x, y, s):
+        c.stroke(line((0, 0), (0, string)), 0.6)
+        c.shape(spline((-9, string + 6), (0, string), (9, string + 6), closed=True), 0.8)       # hat
+        c.shape(poly((-7, string + 6), (7, string + 6), (8, string + 20), (5, string + 24), (-5, string + 24),
+                     (-8, string + 20)), 0.85)
+        c.stroke(line((0, string + 8), (0, string + 22)), 0.5)
+        c.stroke(line((0, string + 24), (0, string + 29)), 0.6)
+
+
 def house(c, cx, base, w, wall_h, roof_h, door_w=None, windows=0, tiles=3):
-    """Timber-frame house with a tile roof, front view, standing on `base`."""
+    """Timber-frame house with a tile roof, gable-end view, standing on `base`."""
     top = base - wall_h
     frame_wall(c, cx - w / 2, top, w, wall_h, posts=2)
     dw = door_w or w * 0.24
@@ -134,117 +229,199 @@ def pao_jar(c, x, y, s=1.0):
         c.shape(spline((-12, -31), (-8, -39), (8, -39), (12, -31), closed=True), 0.85)
 
 
+def vat(c, cx, base, w, h, lid=True, plinth=True, band=True):
+    """A glazed stoneware water vat (the cisterns): a full belly, rounded shoulder, rolled lip, a planked lid over
+    the back of the mouth, a glaze band at the shoulder, on a stone plinth. Base centre (cx, base); returns the
+    y of the mouth."""
+    if plinth:
+        stones(c, cx - w * 0.5, cx + w * 0.5, base - 7, 7)
+        base -= 7
+    top = base - h
+    mx, my = w * 0.27, w * 0.07
+    c.shape(spline((cx - mx, top), (cx - w * 0.42, top + h * 0.16), (cx - w * 0.5, top + h * 0.48),
+                   (cx - w * 0.42, top + h * 0.82), (cx - w * 0.3, base), (cx + w * 0.3, base),
+                   (cx + w * 0.42, top + h * 0.82), (cx + w * 0.5, top + h * 0.48),
+                   (cx + w * 0.42, top + h * 0.16), (cx + mx, top), closed=True))
+    c.shape(ellipse(cx, top, mx + 2, my + 1.5))                    # rolled lip
+    c.stroke(arc(cx, top, mx - 2, 180, 360, ry=my * 0.6), 0.5)     # inner lip edge (water side)
+    if lid:                                                        # planks over the back half of the mouth
+        c.shape((arc(cx, top - 1, mx + 3, 0, 180, ry=my + 3) + line((cx - mx - 3, top - 1), (cx + mx + 3, top - 1))
+                 ).close(), 0.8)
+        for k in (-1, 0, 1):
+            c.stroke(line((cx + k * mx * 0.48, top - 2), (cx + k * mx * 0.5, top - my - 1.5)), 0.45)
+    if band:
+        c.stroke(arc(cx, top + h * 0.2, w * 0.45, 200, 340, ry=my * 1.3), 0.6)
+    return top
+
+
+def half_pipe(c, x, y, d, L, ang, water_line=True, end=True):
+    """The split-bamboo flume: a half-pipe seen from a little above, its U-shaped cut end towards the viewer at
+    (x, y) (the middle of the rim chord), radius d, running back `L` units in screen direction `ang` degrees
+    (0 = right, 90 = up). You look into it: the far end shows as a shallow arc, a culm node rib crosses the inside,
+    water runs along the bottom."""
+    a = math.radians(ang)
+    v = np.array([math.cos(a) * L, -math.sin(a) * L])
+    A, B = np.array([x - d, y], float), np.array([x + d, y], float)
+    A2, B2 = A + v, B + v
+    sag_far = d * 0.55
+
+    def inner_arc(p, q, sag):
+        m = (p + q) / 2 + np.array([0, sag])
+        return spline(tuple(p), tuple((p + m) / 2 + np.array([0, sag * 0.35])), tuple(m),
+                      tuple((q + m) / 2 + np.array([0, sag * 0.35])), tuple(q))
+
+    outline = line(tuple(A), tuple(A2)) + inner_arc(A2, B2, sag_far) + line(tuple(B2), tuple(B)) \
+        + arc(x, y, d, 360, 180)
+    c.shape(outline.close())
+    t = 0.5                                                          # a culm node rib across the inside
+    c.stroke(inner_arc(A + v * t, B + v * t, d * (1 - 0.45 * t)), 0.5)
+    if water_line:
+        wy = d * 0.62
+        c.stroke(spline((x - d * 0.3, y + wy), (x + v[0] * 0.5, y + v[1] * 0.5 + d * 0.78),
+                        (x + v[0] * 0.92, y + v[1] * 0.92 + sag_far * 0.8)), 0.5)
+    if end:
+        c.shape((arc(x, y, d, 180, 360) + arc(x, y, d * 0.72, 360, 180)).close(), 0.75)   # the cut culm wall
+
+
 def trestle(c, x, y_top, y_bot, spread=8):
-    """An X-legged bamboo trestle under a flume."""
+    """An X-legged bamboo trestle."""
     c.stroke(line((x - spread, y_bot), (x + spread * 0.4, y_top)), 0.85)
     c.stroke(line((x + spread, y_bot), (x - spread * 0.4, y_top)), 0.85)
+    c.dot(x, y_top + (y_bot - y_top) * 0.29, 0.85)
 
 
-def flume_run(c, x0, x1, y, depth=8):
-    """An open split-bamboo channel seen from the side and a little above: rim ellipse ends, water line."""
-    c.shape((line((x0, y), (x1, y)) + arc(x1, y + depth / 2, 3, 90, -90, ry=depth / 2)
-             + line((x1, y + depth), (x0, y + depth)) + arc(x0, y + depth / 2, 3, 270, 90, ry=depth / 2)).close())
-    c.stroke(line((x0 + 3, y + 3), (x1 - 3, y + 3)), 0.55)
-    for x in np.arange(x0 + 18, x1 - 6, 24):
-        c.stroke(line((x, y + 1), (x, y + depth - 1)), 0.55)
+def napper(c, x, y, s=1.0, flip=False):
+    """A panda lying asleep on its side: a long body, the head at one end with ears and a dark eye patch."""
+    k = -1 if flip else 1
+    with c.at(x, y, s, sx=k * s):
+        c.shape(spline((-14, 0), (-12, -7), (4, -9), (14, -6), (16, 0), closed=True), 0.8)       # body
+        c.shape(circle(19, -6, 7), 0.85)                                                         # head
+        c.shape(circle(16, -13, 2.6), 0.7, filled=True)                                          # ears
+        c.shape(circle(23, -12.5, 2.6), 0.7, filled=True)
+        c.stroke(arc(21, -6, 2.2, 200, 340, ry=1.2), 0.55)                                       # closed eye
 
 
-def cistern(c, cx, base, w, h, hoops=2):
-    """An open hooped wooden water tub: water surface showing at the top, bamboo hoops, a bamboo tap."""
-    rx, ry = w / 2, w * 0.14
-    with c.at(cx + rx * 0.9, base - h * 0.25, 1, -10):            # tap pipe, behind the tub wall
-        c.shape(rrect(-4, -3.5, 20, 7, 3.5), 0.75)
-    c.shape((arc(cx, base - h, rx, 180, 360, ry=ry) + line((cx + rx, base - h), (cx + rx * 0.94, base))
-             + arc(cx, base, rx * 0.94, 0, -180, ry=ry) + line((cx - rx * 0.94, base), (cx - rx, base - h))).close())
-    c.shape(ellipse(cx, base - h, rx, ry))
-    c.stroke(spline((cx - rx * 0.55, base - h + 1), (cx - rx * 0.2, base - h - 1.5), (cx + rx * 0.15, base - h + 1.5),
-                    (cx + rx * 0.5, base - h)), 0.55)                 # water ripple
-    for k in range(hoops):
-        y = base - h * (k + 1) / (hoops + 1)
-        c.stroke(arc(cx, y, rx * 0.97, 190, 350, ry=ry), 0.75)
+def mushroom(c, x, base, h, s=1.0):
+    """A bamboo mushroom (zhusun) as in the goods icon: conical cap, a netted veil skirt, a stem."""
+    with c.at(x, base, s):
+        c.shape(spline((-9, 0), (-6, -h * 0.5), (6, -h * 0.5), (9, 0), closed=True), 0.7)          # veil
+        for seg in hatch(poly((-9, 0), (-6, -h * 0.5), (6, -h * 0.5), (9, 0)), 4.5, 60, margin=1.2):
+            c.stroke(seg, 0.4)
+        c.shape(spline((-7, -h * 0.5), (-5, -h * 0.8), (0, -h), (5, -h * 0.8), (7, -h * 0.5), closed=True), 0.8)
 
 
 # ------------------------------------------------------------------------------------------- village
 
-@b("PandabornVillageHall", 96, "District centre: a two-tier hall with lanterns either side of the door")
+@b("PandabornVillageHall", 98, "District centre: a long tiled hall with a lower eave, and its open bell tower at "
+                               "the front-left with the bell hanging inside")
 def village_hall(c):
+
     ground(c, 2, 98)
-    frame_wall(c, 14, 58, 72, 38, posts=4)
-    door(c, 42, 72, 16, 24)
-    roof(c, 50, 42, 92, 20, tiles=5)
-    frame_wall(c, 30, 30, 40, 13, posts=2, beam=False)
-    roof(c, 50, 10, 56, 22, tiles=3)
-    lantern(c, 30, 60, 0.9)
-    lantern(c, 70, 60, 0.9)
+    c.stroke(line((90, 26), (90, 4)), 0.7)                          # signal mast at the back
+    c.shape(rrect(86, 1, 8, 4, 1.5), 0.6)
+    walls34(c, 38, 96, 62, 97, 26, posts=2)
+    door(c, 70, 74, 14, 23)
+    roof34(c, 38, 96, 20, 62, 26, ribs=9)
+    # the bell tower: open timber legs, braces, a small pyramid roof, the bell inside
+    for x in (6, 30):
+        c.stroke(line((x, 97), (x, 26)), 1.0)
+    c.stroke(line((6, 60), (30, 60)), 0.7)
+    c.stroke(line((6, 62), (30, 84)), 0.55)
+    c.stroke(line((30, 62), (6, 84)), 0.55)
+    c.stroke(line((6, 48), (30, 48)), 0.8)
+    c.shape(spline((11, 32), (12, 42), (10, 46), (26, 46), (24, 42), (25, 32), (18, 28), closed=True), 0.85)
+    c.stroke(line((18, 26), (18, 28)), 0.6)
+    roof_hip(c, 18, 6, 2, 38, 20, ribs=8)
 
 
-@b("PandabornFestivalSquare", 90, "Festival square: lanterns strung between two poles over a paved square")
+@b("PandabornFestivalSquare", 92, "Festival square: a tall lantern pole with lantern strings to the corner poles, "
+                                  "a tiled gateway in front, paving")
 def festival_square(c):
-    ground(c, 2, 98)
-    c.stroke(line((10, 92), (90, 92)), 0.6)
-    bamboo_post(c, 8, 18, 97, 1.1)
-    bamboo_post(c, 92, 18, 97, 1.1)
-    string = spline((8, 22), (30, 38), (50, 42), (70, 38), (92, 22))
-    c.stroke(string, 0.7)
-    for x in (24, 40, 58, 76):
-        y = float(np.interp(x, string.pts[:, 0], string.pts[:, 1]))
-        lantern(c, x, y, 1.0, string=4)
-    for x in (34, 50, 66):                                      # stacked festival goods
-        c.shape(rrect(x - 7, 80, 14, 12, 2), 0.8)
+    c.shape(poly((2, 97), (98, 97), (84, 78), (16, 78)), 0.9)        # the paved square
+    for x0, x1 in ((34, 30), (66, 70)):
+        c.stroke(line((x0, 79), (x1, 96)), 0.45)
+    c.stroke(line((10, 87), (90, 87)), 0.45)
+    for x, y0 in ((12, 30), (88, 30)):
+        bamboo_post(c, x, y0, 86, 0.9, nodes=1)
+    c.stroke(line((50, 12), (50, 86)), 1.1)                          # centre pole and its lantern
+    lantern(c, 50, 4, 0.8, string=2)
+    for sgn in (-1, 1):
+        sp = spline((50, 20), (50 + sgn * 20, 30), (50 + sgn * 38, 32))
+        c.stroke(sp, 0.55)
+        for t in (0.35, 0.75):
+            px, py = sp.pts[int(t * (len(sp.pts) - 1))]
+            c.shape(ellipse(px, py + 4.5, 3.6, 4.2), 0.6)
+    for x, w in ((26, 14), (40, 10)):                                 # festival goods on the square
+        c.shape(rrect(x - w / 2, 74 - w * 0.8, w, w * 0.8, 1), 0.7)
+    c.shape(rrect(64, 62, 16, 12, 5), 0.8)                            # the drum on its stand
+    c.shape(ellipse(64, 68, 3, 6), 0.6)
 
 
 # ------------------------------------------------------------------------------------------------ homes
 
-@b("PandabornDen", 66, "Den: a small low bamboo hut with woven walls and a round door")
+@b("PandabornDen", 70, "Den: a small house under a big steep tiled roof, chimney at the ridge, open porch posts")
 def den(c):
-    ground(c, 8, 92)
-    wall = rrect(20, 60, 60, 36, 2)
-    c.shape(wall)
-    for seg in hatch(wall, 9, 90, margin=3):
-        c.stroke(seg, 0.5)
-    c.shape(arc(50, 96, 11, 0, 180, ry=16).close(), 0.9)
-    roof(c, 50, 34, 76, 30, tiles=3)
+
+    ground(c, 6, 94)
+    stones(c, 10, 90, 89, 8)
+    walls34(c, 16, 84, 60, 89, 28, posts=1)
+    door(c, 58, 68, 12, 21)
+    c.stroke(line((48, 60), (48, 89)), 0.9)                          # porch posts
+    c.stroke(line((82, 60), (82, 89)), 0.9)
+    roof34(c, 14, 86, 12, 60, 30, ribs=10, chimney=72)
 
 
-@b("PandabornCourtyardHouse", 94, "Courtyard house: a main hall behind a walled yard with a gate, two side wings")
+@b("PandabornCourtyardHouse", 94, "Courtyard house: two tiled wings at a right angle round a walled yard, the "
+                                  "front wing showing its gable")
 def courtyard_house(c):
+
     ground(c, 2, 98)
-    house(c, 50, 70, 46, 24, 18, windows=2)
-    for cx in (14, 86):
-        frame_wall(c, cx - 12, 64, 24, 33, posts=1)
-        roof(c, cx, 50, 26, 16, tiles=2)
-    c.shape(rrect(24, 78, 52, 19, 1))                             # courtyard wall
-    c.shape(rrect(43, 82, 14, 15, 1), 0.9)                        # gate
-    roof(c, 50, 72, 22, 9, tiles=1)
+    walls34(c, 34, 96, 50, 90, 22, posts=2)                         # back wing, three-quarter view
+    roof34(c, 34, 96, 18, 50, 22, ribs=10)
+    frame_wall(c, 4, 60, 36, 37, posts=1)                           # front wing, its gable towards you
+    door(c, 16, 76, 12, 21)
+    roof(c, 22, 34, 46, 28, tiles=2)
+    c.shape(rrect(44, 80, 52, 17, 1), 0.85)                         # yard wall with its gate
+    c.shape(rrect(64, 84, 14, 13, 1), 0.8)
 
 
-@b("PandabornTerraceHouse", 92, "Terrace house: two homes stepped up a hillside on stone terrace walls")
+@b("PandabornTerraceHouse", 94, "Terrace house: a two-storey house on a stone base, a railed gallery, and a flat "
+                                "roof deck with drying trays")
 def terrace_house(c):
-    c.stroke(line((2, 97), (98, 97)))
-    c.shape(rrect(52, 58, 44, 39, 1), 0.9)                        # upper terrace wall
-    for y in (68, 80):
-        c.stroke(line((54, y), (94, y)), 0.5)
-    house(c, 74, 58, 34, 22, 16)
-    c.shape(rrect(4, 80, 52, 17, 1), 0.9)                         # lower terrace wall
-    house(c, 30, 80, 38, 24, 16, windows=1)
-    for k in range(3):                                            # steps
-        c.stroke(line((56 + k * 0, 92 - k * 6), (62 - k * 2 + 6, 92 - k * 6)), 0.7)
+    ground(c, 2, 98)
+    stones(c, 6, 94, 88, 9)
+    frame_wall(c, 10, 64, 80, 24, posts=3, beam=False)              # ground floor
+    door(c, 44, 70, 12, 18)
+    roof_side(c, 8, 92, 54, 66, ribs=9, inset=2, over=3)            # the eave over the ground floor
+    c.stroke(line((10, 54), (90, 54)), 0.8)                          # gallery rail
+    for x in range(16, 90, 8):
+        c.stroke(line((x, 46), (x, 54)), 0.45)
+    c.stroke(line((10, 46), (90, 46)), 0.7)
+    frame_wall(c, 12, 28, 76, 18, posts=3, beam=False)              # upper floor
+    c.shape(rrect(8, 22, 84, 6, 1), 0.85)                            # parapet with tile coping
+    for x, r in ((32, 9), (60, 8)):                                  # drying trays on the deck
+        c.shape(ellipse(x, 20, r, 3.2), 0.75)
+        c.stroke(line((x - r * 0.5, 20), (x + r * 0.5, 20)), 0.4)
 
 
-@b("PandabornMoonLoft", 86, "Moon Loft (Ringtails): a small house on stilts over a path, a lantern lit in its window")
+@b("PandabornMoonLoft", 88, "Moon Loft (Ringtails): a tiled house high on bamboo stilts with a ladder up to it",
+   moon=True)
 def moon_loft(c):
-    moon(c, 92, 8)
-    c.stroke(line((2, 97), (98, 97)))
-    c.stroke(line((32, 92), (68, 92)), 0.5)
-    for x in (24, 76):
-        bamboo_post(c, x, 56, 97, 1.0, nodes=1)
-    c.stroke(line((24, 72), (76, 86)), 0.6)                       # cross brace
-    c.stroke(line((76, 72), (24, 86)), 0.6)
-    c.shape(rrect(16, 54, 68, 5, 1), 0.8)                         # floor
-    frame_wall(c, 22, 30, 56, 25, posts=1, beam=False)
-    c.shape(rrect(40, 36, 18, 14, 1), 0.85)                       # window
-    lantern(c, 49, 36, 0.7, string=2)
-    roof(c, 50, 12, 72, 20, tiles=3)
+
+    ground(c, 2, 92)
+    for x in (16, 70):
+        bamboo_post(c, x, 50, 97, 1.0, nodes=1)
+    c.shape(rrect(8, 48, 72, 5, 1), 0.85)                            # floor
+    walls34(c, 12, 74, 30, 48, 22, posts=1)
+    round_window(c, 23, 39, 5)
+    door(c, 52, 34, 10, 14)
+    roof34(c, 12, 74, 4, 30, 22, ribs=10)
+    c.stroke(line((38, 97), (46, 53)), 0.75)                         # ladder
+    c.stroke(line((48, 97), (56, 53)), 0.75)
+    for k in range(1, 5):
+        y = 97 - k * 9
+        t = (97 - y) / 44
+        c.stroke(line((38 + 8 * t, y), (48 + 8 * t, y)), 0.55)
 
 
 # ------------------------------------------------------------------------------------------------- food
@@ -263,15 +440,15 @@ def steamer(c):
     steam(c, 70, 18)
 
 
-@b("PandabornPickleYard", 84, "Pickle yard: a row of water-sealed pickle jars under a small lean-to")
+@b("PandabornPickleYard", 86, "Pickle yard: rows of glazed pickle jars in a railed yard, the tiled shed behind")
 def pickle_yard(c):
     ground(c, 2, 98)
-    c.stroke(line((10, 38), (10, 97)), 0.9)
-    c.stroke(line((90, 30), (90, 97)), 0.9)
-    c.shape(spline((2, 40), (50, 30), (98, 22), (98, 28), (50, 37), (2, 46), closed=True))   # lean-to roof
-    pao_jar(c, 28, 97, 0.9)
-    pao_jar(c, 72, 97, 0.9)
-    pao_jar(c, 50, 97, 1.05)
+    walls34(c, 30, 96, 30, 70, 20, posts=1)                          # the shed behind
+    roof34(c, 30, 96, 4, 30, 20, ribs=10)
+    for x in (28, 54, 80):                                           # back row, peeking
+        pao_jar(c, x, 80, 0.7)
+    for x in (16, 44, 72):                                           # front row
+        pao_jar(c, x, 97, 0.9)
 
 
 @b("PandabornPaddyHouse", 86, "Paddy house: a farmhouse beside a flooded terrace of rice")
@@ -285,7 +462,7 @@ def paddy_house(c):
         c.stroke(spline((x, 84), (x + 2, 62), (x + 8, 58), (x + 10, 66)), 0.7)
 
 
-@b("PandabornTeaRoastery", 80, "Tea roastery: tea leaves turning in a big wok on a brick stove, a hand in the leaves, heat")
+@b("PandabornTeaRoastery", 80, "Tea roastery: tea leaves turning in a big wok on a brick stove, a paddle, heat")
 def tea_roastery(c):
     c.shape(rrect(12, 66, 76, 31, 2))
     for y in (76, 86):
@@ -302,18 +479,20 @@ def tea_roastery(c):
     steam(c, 46, 34)
 
 
-@b("PandabornTripHammerMill", 94, "Trip-hammer mill: a water wheel turns a shaft whose cam tips a hammer beam over a mortar")
+@b("PandabornTripHammerMill", 94, "Trip-hammer mill: a water wheel in the stream, a long hammer beam rocking on a "
+                                  "post, its head over a stone mortar")
 def trip_hammer_mill(c):
-    water(c, 90, 2, 46)
-    wheel(c, 24, 64, 22, 8)
-    c.stroke(line((24, 64), (60, 64)), 1.0)                      # shaft
-    c.shape(rrect(58, 58, 8, 12, 2), 0.8)                         # cam
-    c.stroke(line((50, 97), (64, 76)), 0.9)                       # pivot post
-    c.stroke(line((78, 97), (64, 76)), 0.9)
-    c.stroke(line((60, 60), (96, 84)), 1.2)                       # hammer beam, raised end over the cam
-    c.shape(rrect(86, 78, 9, 14, 2), 0.9)                         # hammer head
-    c.shape(spline((80, 97), (82, 90), (98, 90), (100, 97), closed=True), 0.9)     # mortar
-    ground(c, 46, 100)
+    wheel(c, 24, 60, 22, 8)
+    c.erase(rrect(-4, 82, 52, 20, 0))
+    water(c, 86, 0, 46, rows=2)
+    c.stroke(line((24, 60), (54, 60)), 1.0)                          # axle, its cam lifting the beam's tail
+    c.shape(rrect(50, 52, 9, 13, 2), 0.8)
+    c.stroke(line((60, 97), (68, 64)), 1.0)                          # pivot post
+    c.stroke(line((76, 97), (68, 64)), 1.0)
+    c.stroke(line((54, 50), (98, 74)), 1.4)                          # the beam
+    c.shape(rrect(86, 70, 12, 16, 2))                                # hammer head
+    c.shape(spline((78, 97), (80, 89), (102, 89), (104, 97), closed=True), 0.9)   # mortar
+    ground(c, 50, 104)
 
 
 @b("PandabornKitchen", 82, "Kitchen: a work table with a bowl of rice balls, a round seed cake and a rolling pin")
@@ -334,21 +513,22 @@ def kitchen(c):
         c.stroke(line((14, 0), (20, 0)), 1.0)
 
 
-@b("PandabornHotPotHall", 92, "Hot pot hall: a divided hot pot steaming on a round table under a tile eave")
+@b("PandabornHotPotHall", 92, "Hot pot hall: a divided hot pot steaming on a round table under a raised tiled roof")
 def hot_pot_hall(c):
-    roof(c, 50, 2, 100, 18, tiles=5)
+    roof_side(c, 26, 74, 0, 12, ribs=8, inset=3, over=2)             # the raised vent roof
+    c.stroke(line((30, 12), (30, 18)), 0.6)
+    c.stroke(line((70, 12), (70, 18)), 0.6)
+    roof_side(c, 6, 94, 16, 34, ribs=10, inset=6)
     for x in (10, 90):
-        c.stroke(line((x, 18), (x, 97)), 0.9)
-    lantern(c, 26, 18, 0.8)
-    lantern(c, 74, 18, 0.8)
-    c.shape(ellipse(50, 76, 36, 8))                               # table
-    c.stroke(line((50, 84), (50, 97)), 1.2)
+        c.stroke(line((x, 34), (x, 97)), 0.9)
+    c.shape(ellipse(50, 78, 36, 8))                               # table
+    c.stroke(line((50, 86), (50, 97)), 1.2)
     c.stroke(line((40, 97), (60, 97)), 0.9)
-    c.shape((arc(50, 62, 18, 180, 360, ry=6) + spline((68, 62), (66, 72), (50, 75), (34, 72), (32, 62))).close())
-    c.shape(ellipse(50, 62, 18, 6))
-    c.stroke(spline((34, 60), (46, 60), (54, 64), (66, 64)), 0.7)
-    steam(c, 42, 50)
-    steam(c, 58, 50)
+    c.shape((arc(50, 64, 18, 180, 360, ry=6) + spline((68, 64), (66, 74), (50, 77), (34, 74), (32, 64))).close())
+    c.shape(ellipse(50, 64, 18, 6))
+    c.stroke(spline((34, 62), (46, 62), (54, 66), (66, 66)), 0.7)
+    steam(c, 42, 54, 14)
+    steam(c, 58, 54, 14)
 
 
 # --------------------------------------------------------------------------------------- wood, materials
@@ -391,148 +571,196 @@ def smoke_kiln(c):
     c.stroke(spline((76, 12), (72, 6), (80, 0), (74, -6)), 0.8)
 
 
+@b("PandabornOxWorkshop", 84, "Ox workshop: a Wooden Ox, the legendary wheeled wooden ox with its carrying handles, "
+                              "and a mallet")
+def ox_workshop(c):
+    ground(c, 2, 98)
+    # the ox: a box body, a blocky head with horns, plank legs, one wheel under the belly, handles behind
+    c.stroke(line((70, 52), (98, 40)), 1.0)                          # carrying handles
+    c.stroke(line((70, 60), (98, 50)), 1.0)
+    for x in (26, 34, 62, 70):
+        c.stroke(line((x, 70), (x - 2 if x < 50 else x + 2, 97)), 1.0)
+    c.shape(circle(48, 84, 13))
+    c.shape(circle(48, 84, 3), 0.7)
+    for k in range(4):
+        a = math.radians(k * 45 + 20)
+        c.stroke(line((48 + math.cos(a) * 3, 84 - math.sin(a) * 3), (48 + math.cos(a) * 12, 84 - math.sin(a) * 12)),
+                 0.5)
+        c.stroke(line((48 - math.cos(a) * 3, 84 + math.sin(a) * 3), (48 - math.cos(a) * 12, 84 + math.sin(a) * 12)),
+                 0.5)
+    c.shape(rrect(22, 44, 52, 28, 3))                                 # body
+    c.stroke(line((24, 54), (72, 54)), 0.5)
+    c.stroke(line((48, 46), (48, 54)), 0.5)
+    c.shape(poly((4, 34), (22, 30), (24, 52), (8, 54)), 0.9)          # head
+    c.stroke(spline((10, 33), (6, 24), (10, 18)), 0.8)                # horns
+    c.stroke(spline((18, 31), (20, 22), (26, 18)), 0.8)
+    c.dot(13, 40, 0.7)
+    with c.at(84, 72, 1, 35):                                         # mallet resting against it
+        c.stroke(line((0, 0), (0, 24)), 0.9)
+        c.shape(rrect(-8, -8, 16, 9, 2), 0.85)
+
+
 # ------------------------------------------------------------------------------------------------- water
 
-@b("PandabornCisternSmall", 56, "Small cistern: one hooped tub")
+@b("PandabornCisternSmall", 58, "Small cistern: a squat glazed stoneware vat on its stone plinth, planked lid")
 def cistern_small(c):
-    cistern(c, 50, 92, 46, 40, hoops=2)
-    ground(c, 20, 80)
+    vat(c, 50, 97, 56, 34)
 
 
-@b("PandabornCisternMedium", 74, "Medium cistern: a tall hooped tub")
+@b("PandabornCisternMedium", 76, "Medium cistern: a tall glazed vat with a ladder against it")
 def cistern_medium(c):
-    cistern(c, 50, 92, 52, 62, hoops=3)
-    ground(c, 16, 84)
+    vat(c, 54, 97, 60, 62)
+    c.stroke(line((14, 97), (22, 28)), 0.75)                         # ladder
+    c.stroke(line((24, 97), (31, 30)), 0.75)
+    for k in range(1, 7):
+        y = 97 - k * 10
+        t = (97 - y) / 69
+        c.stroke(line((14 + 8 * t, y), (24 + 7.5 * t, y)), 0.5)
 
 
-@b("PandabornCisternLarge", 92, "Large cistern: a wide hooped vat on a stone base with a ladder")
+@b("PandabornCisternLarge", 94, "Large cistern: a wide glazed vat with a stair up to a small tiled windlass shelter")
 def cistern_large(c):
-    c.shape(rrect(8, 86, 84, 11, 1), 0.9)
-    cistern(c, 50, 86, 76, 56, hoops=3)
-    c.stroke(line((86, 86), (94, 30)), 0.7)
-    c.stroke(line((96, 86), (100, 32)), 0.7)
-    for y in (76, 62, 48):
-        c.stroke(line((88 + (86 - y) * 0.08, y), (97 + (86 - y) * 0.05, y)), 0.6)
+    vat(c, 46, 97, 84, 54)
+    for k in range(5):                                               # stair up the side
+        y = 88 - k * 10
+        c.shape(rrect(86 - k * 2, y, 14, 4, 1), 0.65)
+    c.stroke(line((98, 90), (90, 46)), 0.6)
 
 
-@b("PandabornFlume", 90, "Flume: an open bamboo channel on X trestles, water running in it")
+@b("PandabornDewCollector", 84, "Dew collector: a wide woven funnel on four bamboo posts, drops falling into a vat")
+def dew_collector(c):
+    for x in (14, 86):
+        bamboo_post(c, x, 18, 92, 0.9, nodes=1)
+    cone = (arc(50, 16, 40, 180, 360, ry=8) + line((90, 16), (54, 50)) + line((54, 50), (46, 50))
+            + line((46, 50), (10, 16))).close()
+    c.shape(cone)
+    for seg in hatch(cone, 8, 62, margin=2) + hatch(cone, 8, -62, margin=2):
+        c.stroke(seg, 0.42)
+    c.shape(ellipse(50, 16, 40, 8))
+    c.stroke(arc(50, 16, 34, 200, 340, ry=5.5), 0.45)
+    for y in (56, 62):
+        c.fill(spline((50, y - 3), (52, y + 1), (50, y + 2.5), (48, y + 1), closed=True))
+    vat(c, 50, 97, 34, 22, lid=False, band=False)
+
+
+@b("PandabornFlume", 90, "Flume: the split-bamboo half-pipe, open U end towards you, water inside, on lashed stakes")
 def flume(c):
     ground(c, 2, 98)
-    flume_run(c, 4, 96, 40, 10)
-    for x in (22, 78):
-        trestle(c, x, 52, 97, 12)
+    trestle(c, 32, 80, 97, 12)
+    trestle(c, 78, 77, 97, 12)
+    half_pipe(c, 18, 68, 14, 70, 5)
 
 
-@b("PandabornFlumeCorner", 86, "Flume corner: two channels meeting at a right angle on a trestle")
+@b("PandabornFlumeCorner", 90, "Flume corner: two half-pipes meeting at a stone basin, both open ends towards you")
 def flume_corner(c):
     ground(c, 2, 98)
-    flume_run(c, 4, 60, 50, 10)
-    with c.at(60, 55, 1, 60):
-        flume_run(c, 0, 50, -5, 10)
-    c.shape(rrect(52, 44, 14, 16, 3), 0.9)                        # joint box
-    trestle(c, 30, 62, 97, 10)
-    trestle(c, 62, 62, 97, 10)
+    c.shape(poly((66, 30), (96, 30), (96, 50), (66, 50)), 0.9)        # stone basin at the corner
+    c.stroke(line((70, 40), (92, 40)), 0.5)
+    half_pipe(c, 18, 40, 13, 50, 4)                                  # the run coming in from the left
+    half_pipe(c, 80, 78, 15, 30, 92)                                 # the run turning towards you
 
 
-@b("PandabornFlumeDrop", 86, "Flume drop: a channel stepping down, water falling to the lower channel")
+@b("PandabornFlumeDrop", 90, "Flume drop: the upper half-pipe on a dry-stone step pours from its lip into the "
+                             "lower one")
 def flume_drop(c):
     ground(c, 2, 98)
-    flume_run(c, 4, 52, 24, 9)
-    flume_run(c, 48, 96, 58, 9)
-    for x in (44, 49):
-        c.stroke(spline((x + 6, 34), (x + 10, 44), (x + 10, 56)), 0.7)
-    trestle(c, 22, 35, 97, 10)
-    trestle(c, 80, 69, 97, 8)
+    for x, y, w in ((20, 46, 24), (12, 58, 18), (30, 58, 18), (8, 70, 14), (22, 70, 14), (36, 70, 14),
+                    (10, 82, 18), (28, 82, 18), (44, 82, 14)):
+        c.shape(rrect(x - w / 2, y, w, 11, 4), 0.75)                  # the dry-stone step
+    half_pipe(c, 14, 32, 12, 46, 4)                                  # upper run, pouring off its far end
+    for x in (64, 69):
+        c.stroke(spline((x, 36), (x + 3, 50), (x + 2, 62)), 0.65)
+    half_pipe(c, 52, 72, 12, 40, 4)                                  # lower run, receiving
+    trestle(c, 78, 84, 97, 8)
 
 
-@b("PandabornFlumeBridge", 94, "Flume bridge: a channel carried high on tall trestles over a gap")
+@b("PandabornFlumeBridge", 96, "Flume bridge: the half-pipe carried high on two lashed bamboo X-trestles over a gap")
 def flume_bridge(c):
-    c.stroke(line((2, 97), (24, 97)))
-    c.stroke(line((76, 97), (98, 97)))
-    water(c, 90, 28, 72, rows=1)
-    flume_run(c, 2, 98, 20, 10)
-    for x in (16, 84):
-        trestle(c, x, 32, 97, 12)
-    c.stroke(line((16, 60), (84, 60)), 0.6)
-    c.stroke(line((24, 32), (50, 58)), 0.5)
-    c.stroke(line((76, 32), (50, 58)), 0.5)
+    c.stroke(line((2, 97), (22, 97)))
+    c.stroke(line((78, 97), (98, 97)))
+    water(c, 92, 26, 74, rows=1)
+    for x in (24, 74):
+        trestle(c, x, 40, 97, 14)
+    c.stroke(line((14, 40), (84, 40)), 0.8)                          # head beam
+    half_pipe(c, 22, 30, 13, 66, 12)
 
 
-@b("PandabornFlumeGate", 84, "Flume gate: a sliding board in a frame across the channel, with a handle")
+@b("PandabornFlumeGate", 88, "Flume gate: a sluice board in a timber frame across the half-pipe, raised by a rope "
+                             "from a bamboo lever with a stone counterweight")
 def flume_gate(c):
     ground(c, 2, 98)
-    flume_run(c, 4, 96, 56, 10)
-    for x in (36, 64):
-        c.stroke(line((x, 18), (x, 97)), 1.0)
-    c.stroke(line((32, 18), (68, 18)), 1.0)
-    c.shape(rrect(40, 34, 20, 30, 1), 0.9)                        # gate board, raised a little
-    c.stroke(line((44, 44), (56, 44)), 0.55)
-    c.stroke(line((50, 34), (50, 10)), 0.9)                       # rod and handle
-    c.stroke(line((42, 8), (58, 8)), 1.1)
-    trestle(c, 16, 68, 97, 8)
-    trestle(c, 84, 68, 97, 8)
+    for x in (30, 66):
+        c.stroke(line((x, 30), (x, 97)), 1.1)
+    c.stroke(line((26, 30), (70, 30)), 1.1)
+    c.shape(rrect(34, 44, 28, 26, 1), 0.9)                           # sluice board, raised
+    c.stroke(line((38, 57), (58, 57)), 0.5)
+    c.stroke(line((48, 44), (48, 18)), 0.6)                          # rope to the lever
+    c.stroke(line((10, 26), (96, 8)), 1.0)                           # lever across the frame top
+    c.shape(rrect(84, 4, 14, 12, 3), 0.85)                           # counterweight stone
+    half_pipe(c, 22, 74, 13, 66, 10)
 
 
-@b("PandabornScoopWheel", 96, "Scoop wheel: a tall bamboo wheel with tube buckets, lifting water from the current into a trough")
+@b("PandabornScoopWheel", 96, "Scoop wheel: a tall bamboo wheel with tube buckets on an A-frame, lifting water from "
+                              "the current into a half-pipe chute")
 def scoop_wheel(c):
-    water(c, 88, 2, 98)
-    c.stroke(line((36, 97), (50, 52)), 0.8)
-    c.stroke(line((64, 97), (50, 52)), 0.8)
-    wheel(c, 50, 48, 40, 12, kind="tube")
-    c.shape(rrect(74, 4, 26, 8, 2), 0.9)                          # trough at the top
-    c.stroke(spline((80, 12), (82, 18)), 0.6)
+    c.stroke(line((22, 97), (42, 46)), 0.9)
+    c.stroke(line((62, 97), (42, 46)), 0.9)
+    wheel(c, 42, 46, 34, 8, kind="tube")
+    c.erase(rrect(-2, 86, 100, 20, 0))
+    water(c, 90, 0, 84, rows=2)
+    half_pipe(c, 66, 22, 9, 30, 28)                                  # the chute the buckets tip into
 
 
-@b("PandabornPaddySpout", 76, "Paddy spout: a bamboo spout pouring into a shallow field with a rice tuft")
+@b("PandabornPaddySpout", 80, "Paddy spout: the half-pipe ends at a small stone-lined gate and pours into a shallow "
+                              "rice field")
 def paddy_spout(c):
-    c.shape(rrect(4, 40, 22, 57, 1))                              # earth bank with the pipe through it
-    with c.at(20, 48, 1, -12):
-        c.shape(rrect(0, -5, 40, 10, 5))
-        c.shape(ellipse(40, 0, 3, 5), 0.8)
-    c.stroke(spline((60, 58), (62, 68), (62, 80)), 0.7)
-    c.stroke(spline((56, 58), (56, 70), (58, 80)), 0.7)
-    water(c, 84, 28, 98)
-    for a in (100, 78, 122):
-        c.stroke(line((86, 84), (86 + math.cos(math.radians(a)) * 12, 84 - math.sin(math.radians(a)) * 22)), 0.7)
+    stones(c, 4, 56, 60, 12)                                         # the stone lip of the field
+    half_pipe(c, 14, 46, 12, 42, 4)
+    for x in (62, 67):
+        c.stroke(spline((x, 52), (x + 5, 62), (x + 7, 78)), 0.6)
+    water(c, 86, 30, 98)
+    for x0 in (70, 90):
+        for a in (100, 78, 122):
+            c.stroke(line((x0, 84), (x0 + math.cos(math.radians(a)) * 10, 84 - math.sin(math.radians(a)) * 20)), 0.7)
 
 
-@b("PandabornDewCollector", 82, "Dew collector: a fine net between two bamboo poles, drops running into a jar")
-def dew_collector(c):
-    ground(c, 2, 98)
-    bamboo_post(c, 12, 6, 97, 1.0)
-    bamboo_post(c, 88, 6, 97, 1.0)
-    net = rrect(14, 10, 72, 46, 1)
-    c.shape(net, 0.7)
-    for seg in hatch(net, 10, 45, margin=1.5) + hatch(net, 10, -45, margin=1.5):
-        c.stroke(seg, 0.45)
-    c.stroke(spline((14, 58), (50, 66), (86, 58)), 0.7)           # gutter
-    for y in (70, 76):
-        c.fill(spline((50, y - 3), (52, y + 1), (50, y + 2.5), (48, y + 1), closed=True))
-    pao_jar(c, 50, 97, 0.6)
+@b("PandabornCisternTap", 80, "Cistern tap: a glazed vat with a bamboo tap low on its side, pouring into a half-pipe")
+def cistern_tap(c):
+    vat(c, 34, 97, 52, 48)
+    c.shape(rrect(52, 64, 22, 6, 3), 0.8)                            # tap pipe
+    c.stroke(line((62, 64), (62, 56)), 0.8)                          # valve handle
+    c.stroke(line((57, 56), (67, 56)), 0.9)
+    for x in (72, 75):
+        c.stroke(spline((x, 70), (x + 2, 76), (x + 2, 80)), 0.6)
+    half_pipe(c, 70, 86, 10, 26, 4)
 
 
-@b("PandabornTreadwheelLift", 94, "Treadwheel lift: a square-pallet chain pump in a sloping trough, worked by a treadle wheel")
+@b("PandabornTreadwheelLift", 94, "Treadwheel lift: a chain of pallets in a sloping half-pipe, worked by a treadle "
+                                  "wheel at the top")
 def treadwheel_lift(c):
-    water(c, 90, 2, 40, rows=1)
-    with c.at(14, 92, 1, 32):                                     # the sloping trough with its chain
-        c.shape(rrect(0, -10, 92, 10, 1))
-        for x in range(8, 88, 12):
-            c.stroke(line((x, -9), (x, -1)), 0.6)
-    c.shape(circle(86, 40, 15))                                   # treadle wheel at the top
+    water(c, 90, 0, 40, rows=1)
+    for x in (60, 98):                                               # frame and hand rail at the top
+        c.stroke(line((x, 97), (x + (78 - x) * 0.45, 40)), 0.8)
+    c.stroke(line((54, 4), (100, 4)), 0.9)
+    c.stroke(line((58, 4), (62, 18)), 0.6)
+    c.stroke(line((98, 4), (96, 18)), 0.6)
+    c.shape(circle(78, 34, 8), 0.85)                                 # treadle hub
     for k in range(6):
-        a = math.radians(k * 60)
-        c.stroke(line((86, 40), (86 + math.cos(a) * 22, 40 - math.sin(a) * 22)), 0.8)
-        c.shape(rrect(86 + math.cos(a) * 22 - 3, 40 - math.sin(a) * 22 - 2, 6, 4, 1.5), 0.6)
-    c.stroke(line((70, 97), (86, 40)), 0.8)
-    c.stroke(line((100, 97), (86, 40)), 0.8)
-    c.stroke(line((60, 97), (100, 97)))
+        a = math.radians(k * 60 + 15)
+        c.stroke(line((78 + math.cos(a) * 8, 34 - math.sin(a) * 8), (78 + math.cos(a) * 24, 34 - math.sin(a) * 24)),
+                 0.9)
+        c.shape(rrect(78 + math.cos(a) * 24 - 5, 34 - math.sin(a) * 24 - 3, 10, 6, 2.5), 0.7)
+    half_pipe(c, 16, 80, 12, 54, 36, water_line=False)
+    for t in np.linspace(0.25, 0.85, 4):                             # pallets on the chain
+        x, y = 16 + math.cos(math.radians(36)) * 54 * t, 80 - math.sin(math.radians(36)) * 54 * t
+        c.stroke(line((x - 7, y + 4), (x + 4, y - 4)), 0.7)
 
 
 @b("PandabornDryStoneWall", 80, "Dry-stone wall: fitted stones holding up a tea terrace, a tea bush on top")
 def dry_stone_wall(c):
-    stones = [(4, 66, 26, 14), (32, 64, 30, 16), (64, 66, 32, 14), (4, 82, 34, 15), (40, 82, 22, 15),
-              (64, 82, 32, 15)]
-    for x, y, w, h in stones:
+    stns = [(4, 66, 26, 14), (32, 64, 30, 16), (64, 66, 32, 14), (4, 82, 34, 15), (40, 82, 22, 15),
+            (64, 82, 32, 15)]
+    for x, y, w, h in stns:
         c.shape(rrect(x, y, w, h, 5), 0.9)
     c.stroke(line((2, 62), (98, 62)), 0.8)
     bumps = []
@@ -554,99 +782,126 @@ def bamboo_water_wheel(c):
     water(c, 80, 2, 98, rows=2)
 
 
-def kite_rotor(c, cx, cy, r, n):
-    for k in range(n):
-        a = math.radians(k * 360 / n + 15)
-        with c.at(cx, cy, 1, math.degrees(a)):
-            c.shape(spline((4, 0), (r * 0.45, -r * 0.2), (r, 0), (r * 0.45, r * 0.2), closed=True), 0.85)
-            c.stroke(line((6, 0), (r * 0.95, 0)), 0.45)
-            c.stroke(spline((r, 0), (r + 5, 4), (r + 9, 0), (r + 13, 4)), 0.55)       # kite tail
-    c.shape(circle(cx, cy, 4), 0.8)
+def sail_carousel(c, cx, top, bot, n, sail_w, sail_h, mast_top):
+    """The vertical-axis sail windmill of the model: tall sails bellied by the wind, standing on top and bottom
+    arms round an upright mast on a square deck; wind lines blow in from the left."""
+    c.shape(poly((cx - 34, bot - 3), (cx + 34, bot - 3), (cx + 28, bot - 12), (cx - 28, bot - 12)), 0.85)   # deck
+    yb = top + sail_h
+    c.stroke(line((cx, bot - 10), (cx, mast_top)), 1.1)
+    c.shape(spline((cx - 3, mast_top + 2), (cx, mast_top - 6), (cx + 3, mast_top + 2), closed=True), 0.7)
+    reach = 24 if n <= 3 else 30
+    for y in (top, yb):                                                     # top and bottom arms
+        c.stroke(line((cx - reach, y), (cx + reach, y)), 0.8)
+
+    def sail(x_in, x_out, belly):
+        # a sail between the arms: straight inner edge, the outer edge bellied out by the wind
+        mid = (top + yb) / 2
+        q = (line((x_in, top), (x_out, top)) + spline((x_out, top), (x_out + belly, mid), (x_out, yb))
+             + line((x_out, yb), (x_in, yb))).close()
+        c.shape(q, 0.8)
+        for f in (0.33, 0.66):
+            y = top + (yb - top) * f
+            c.stroke(line((x_in + 1, y), (x_out + belly * 0.85 * (1 - abs(f - 0.5) * 1.2), y)), 0.42)
+    if n <= 3:
+        sail(cx - 6, cx - reach, -7)
+        sail(cx + 6, cx + reach, 7)
+    else:
+        sail(cx - 4, cx - 14, -4)
+        sail(cx + 4, cx + 14, 4)
+        sail(cx - 17, cx - reach, -6)
+        sail(cx + 17, cx + reach, 6)
+    for k, y in enumerate((top + 6, top + 20)):                            # the wind
+        x0 = cx - reach - 22
+        c.stroke(spline((x0, y), (x0 + 8, y - 2), (x0 + 14, y + 1)), 0.6)
 
 
-@b("PandabornKiteWindmillSmall", 72, "Small kite windmill: four kite-shaped sails with tails on a bamboo mast")
+@b("PandabornKiteWindmillSmall", 76, "Kite windmill: tall batten sails standing round an upright mast on a square "
+                                     "deck (a vertical-axis sail windmill)")
 def kite_windmill_small(c):
-    ground(c, 20, 80)
-    c.stroke(line((44, 97), (50, 44)), 1.0)
-    c.stroke(line((56, 97), (50, 44)), 1.0)
-    kite_rotor(c, 50, 38, 32, 4)
+    ground(c, 6, 94)
+    sail_carousel(c, 50, 16, 97, 3, 18, 62, 2)
 
 
-@b("PandabornKiteWindmillLarge", 98, "Large kite windmill: six kite sails on a tall braced bamboo tower")
+@b("PandabornKiteWindmillLarge", 98, "Large kite windmill: the same sail carousel, taller and with more sails")
 def kite_windmill_large(c):
-    ground(c, 14, 86)
-    c.stroke(line((36, 97), (50, 40)), 1.1)
-    c.stroke(line((64, 97), (50, 40)), 1.1)
-    c.stroke(line((40, 82), (60, 82)), 0.7)
-    c.stroke(line((44, 64), (56, 64)), 0.7)
-    kite_rotor(c, 50, 36, 40, 6)
+    ground(c, 2, 98)
+    sail_carousel(c, 50, 10, 97, 5, 16, 72, -4)
 
 
 # ---------------------------------------------------------------------------------------------- science
 
-@b("PandabornStarTower", 96, "Star Tower (Ringtails): a slim wooden tower with an armillary sphere on top")
+@b("PandabornStarTower", 96, "Star Tower (Ringtails): a lattice tower rising out of a tiled pavilion, a telescope "
+                             "on its railed top", moon=True)
 def star_tower(c):
-    moon(c, 92, 8)
-    ground(c, 18, 82)
-    c.stroke(line((34, 97), (44, 44)), 1.0)
-    c.stroke(line((66, 97), (56, 44)), 1.0)
-    for y in (84, 70, 56):
-        k = (97 - y) / 53
-        c.stroke(line((34 + 10 * k, y), (66 - 10 * k, y)), 0.7)
-    c.shape(rrect(38, 40, 24, 5, 1), 0.85)                        # platform
-    c.stroke(circle(50, 22, 16), 0.85)                            # armillary sphere: rings
-    c.stroke(ellipse(50, 22, 16, 5, rot=20), 0.7)
-    c.stroke(ellipse(50, 22, 5, 16, rot=20), 0.7)
-    c.stroke(line((50, 40), (50, 4)), 0.6)
+    ground(c, 2, 92)
+    frame_wall(c, 14, 72, 64, 25, posts=2, beam=False)               # the pavilion
+    roof_hip(c, 46, 54, 16, 84, 20)
+    c.erase(rrect(30, 20, 32, 30, 0))
+    for x0, x1 in ((34, 38), (58, 54)):                              # lattice tower through the roof
+        c.stroke(line((x0, 56), (x1, 22)), 0.9)
+    for y in (48, 36):
+        k = (56 - y) / 34
+        c.stroke(line((34 + 4 * k, y), (58 - 4 * k, y)), 0.6)
+        c.stroke(line((34 + 4 * k, y), (58 - 4 * (k + 0.35), y - 12)), 0.45)
+    c.shape(rrect(30, 18, 32, 5, 1), 0.85)                           # railed top
+    for x in (32, 46, 60):
+        c.stroke(line((x, 18), (x, 12)), 0.5)
+    c.stroke(line((30, 12), (62, 12)), 0.6)
+    with c.at(46, 12, 1, 35):                                        # telescope, aimed up at the sky
+        c.shape(rrect(-6, -4, 34, 8, 3), 0.85)
+        c.shape(rrect(26, -5, 6, 10, 2), 0.7)
 
 
 # ---------------------------------------------------------------------------------------------- leisure
 
-@b("PandabornHammock", 72, "Hammock: a woven hammock slung between two bamboo posts, a leaf canopy")
+@b("PandabornHammock", 74, "Hammock: a striped cloth sling hung from a tall bamboo mast, sloping down to a low "
+                           "front bar")
 def hammock(c):
-    ground(c, 4, 96)
-    bamboo_post(c, 10, 30, 97, 1.0, nodes=1)
-    bamboo_post(c, 90, 30, 97, 1.0, nodes=1)
-    sling = spline((12, 44), (30, 66), (50, 72), (70, 66), (88, 44))
-    c.stroke(sling, 1.1)
-    c.stroke(spline((20, 56), (36, 72), (50, 76), (64, 72), (80, 56)), 0.7)
-    for x in (30, 50, 70):
-        y = float(np.interp(x, sling.pts[:, 0], sling.pts[:, 1]))
-        c.stroke(line((x, y), (x, y + 6)), 0.5)
-    for x, a in ((10, 140), (10, 100), (90, 40), (90, 80)):
-        with c.at(x, 30, 1, a):
-            c.shape(spline((0, 0), (8, -4), (20, 0), (8, 4), closed=True), 0.7)
+    ground(c, 6, 94)
+    bamboo_post(c, 24, 6, 97, 1.1, nodes=2)
+    c.stroke(line((12, 10), (38, 10)), 0.9)                          # cross-arm at the top
+    for x in (64, 92):                                               # the front bar on its legs
+        c.stroke(line((x, 80), (x, 97)), 0.9)
+    c.stroke(line((58, 80), (98, 80)), 1.0)
+    sling = spline((14, 12), (34, 50), (52, 74), (60, 80)) + spline((96, 80), (82, 62), (58, 32), (36, 10))
+    c.shape(sling.close())
+    for t in (0.30, 0.58):                                           # the stripes
+        ya = 12 + (80 - 12) * t
+        xa = 14 + (60 - 14) * t ** 0.85
+        xb = 36 + (96 - 36) * t ** 0.85
+        c.stroke(spline((xa + 2, ya), ((xa + xb) / 2, ya + 2), (xb - 2, ya - 2)), 0.6)
+    napper(c, 56, 52, 1.0)
 
 
-@b("PandabornNapPlatform", 84, "Nap platform: a raised shaded deck with round cushions")
+@b("PandabornNapPlatform", 86, "Nap platform: a slatted deck under a flat sloping canopy, round cushions to doze on")
 def nap_platform(c):
     ground(c, 2, 98)
-    roof(c, 50, 12, 92, 18, tiles=4)
-    for x in (12, 88):
-        c.stroke(line((x, 28), (x, 97)), 0.9)
-    c.shape(rrect(6, 70, 88, 7, 2))                               # deck
-    for x in (26, 50, 74):
-        c.shape(ellipse(x, 64, 11, 6), 0.85)
-    c.stroke(line((20, 77), (20, 97)), 0.7)
-    c.stroke(line((80, 77), (80, 97)), 0.7)
+    c.shape(poly((4, 24), (96, 14), (98, 20), (6, 31)), 0.9)         # the flat canopy
+    for x, y in ((10, 30), (90, 21)):
+        c.stroke(line((x, y), (x, 88)), 0.9)
+    c.shape(rrect(2, 86, 96, 9, 1))                                  # slatted deck on the ground
+    for x in range(10, 94, 8):
+        c.stroke(line((x, 87.5), (x, 93.5)), 0.42)
+    napper(c, 18, 86, 1.25)
+    napper(c, 62, 86, 1.25)
 
 
-@b("PandabornTeahouse", 88, "Teahouse: an open pavilion with a big teapot and cups on the counter")
+@b("PandabornTeahouse", 90, "Teahouse: a pavilion under a broad hipped roof with an awning, a big teapot and a cup "
+                            "on the counter")
 def teahouse(c):
     ground(c, 2, 98)
-    roof(c, 50, 4, 100, 20, tiles=5)
+    roof_hip(c, 50, 4, 24, 100, 22)
     for x in (8, 92):
-        c.stroke(line((x, 22), (x, 97)), 0.9)
-    lantern(c, 20, 22, 0.75)
-    c.shape(rrect(18, 74, 64, 6, 2))                              # counter
-    c.stroke(line((24, 80), (24, 97)), 0.7)
-    c.stroke(line((76, 80), (76, 97)), 0.7)
-    c.shape(spline((34, 72), (32, 56), (40, 48), (56, 48), (64, 56), (62, 72), closed=True))   # teapot
-    c.shape(rrect(44, 42, 8, 6, 2), 0.8)
-    c.stroke(spline((34, 60), (24, 56), (20, 48)), 1.0)           # spout
-    c.stroke(spline((62, 54), (72, 54), (70, 66), (62, 68)), 0.9)  # handle
-    c.shape(spline((70, 74), (70, 66), (80, 66), (80, 74), closed=True), 0.7)
-    steam(c, 20, 44, 12, 0.7)
+        c.stroke(line((x, 26), (x, 97)), 0.9)
+    c.stroke(spline((8, 28), (20, 34), (32, 28), (44, 34), (56, 28), (68, 34), (80, 28), (92, 34)), 0.6)   # awning
+    c.shape(rrect(18, 76, 64, 6, 2))                              # counter
+    c.stroke(line((24, 82), (24, 97)), 0.7)
+    c.stroke(line((76, 82), (76, 97)), 0.7)
+    c.shape(spline((34, 74), (32, 58), (40, 50), (56, 50), (64, 58), (62, 74), closed=True))   # teapot
+    c.shape(rrect(44, 44, 8, 6, 2), 0.8)
+    c.stroke(spline((34, 62), (24, 58), (20, 50)), 1.0)           # spout
+    c.stroke(spline((62, 56), (72, 56), (70, 68), (62, 70)), 0.9)  # handle
+    c.shape(spline((70, 76), (70, 68), (80, 68), (80, 76), closed=True), 0.7)
 
 
 @b("PandabornSlideAndSwing", 86, "Slide and swing: a curved bamboo slide beside a rope swing")
@@ -667,7 +922,8 @@ def slide_and_swing(c):
     c.shape(rrect(70, 72, 20, 5, 2), 0.85)
 
 
-@b("PandabornPandaKindergarten", 86, "Panda kindergarten: a little house with panda ears on its roof, a ball in the fenced yard")
+@b("PandabornPandaKindergarten", 86, "Kindergarten: a little house with panda ears on its roof, a ball in the "
+                                     "fenced yard")
 def panda_kindergarten(c):
     ground(c, 2, 98)
     for x in (54, 64, 74, 84, 94):                                 # yard fence
@@ -716,73 +972,71 @@ def hot_spring_bath(c):
     steam(c, 64, 62, 18)
 
 
-@b("PandabornOperaStage", 96, "Opera stage (Ringtails): a raised pavilion stage, curtains drawn back, an opera mask")
+@b("PandabornOperaStage", 96, "Opera stage (Ringtails): a raised roofed stage, curtains drawn back, an opera mask",
+   moon=True)
 def opera_stage(c):
-    moon(c, 92, 8)
-    roof(c, 50, 8, 92, 20, tiles=4)
-    for x in (12, 88):
-        c.stroke(line((x, 26), (x, 72)), 1.0)
-    c.stroke(spline((14, 28), (22, 44), (16, 60)), 0.8)            # curtains
-    c.stroke(spline((86, 28), (78, 44), (84, 60)), 0.8)
-    c.stroke(line((12, 30), (88, 30)), 0.7)
+    roof_side(c, 8, 80, 10, 28, ribs=10)
+    for x in (10, 82):
+        c.stroke(line((x, 28), (x, 72)), 1.0)
+    c.stroke(spline((12, 30), (20, 44), (14, 60)), 0.8)            # curtains
+    c.stroke(spline((80, 30), (72, 44), (78, 60)), 0.8)
     # mask: an opera face with bold brows and eye patches (plain pattern)
-    c.shape(spline((36, 36), (50, 32), (64, 36), (64, 50), (58, 62), (50, 66), (42, 62), (36, 50), closed=True))
-    c.fill(spline((40, 44), (44, 40), (48, 46), (44, 48), closed=True))
-    c.fill(spline((60, 44), (56, 40), (52, 46), (56, 48), closed=True))
-    c.stroke(spline((40, 38), (50, 42), (60, 38)), 0.6)
-    c.stroke(spline((46, 56), (50, 58), (54, 56)), 0.6)
-    c.shape(rrect(4, 72, 92, 8, 1))                               # stage floor
-    c.shape(rrect(8, 80, 84, 17, 1), 0.9)
-    for x in (30, 50, 70):
+    c.shape(spline((32, 36), (46, 32), (60, 36), (60, 50), (54, 62), (46, 66), (38, 62), (32, 50), closed=True))
+    c.fill(spline((36, 44), (40, 40), (44, 46), (40, 48), closed=True))
+    c.fill(spline((56, 44), (52, 40), (48, 46), (52, 48), closed=True))
+    c.stroke(spline((36, 38), (46, 42), (56, 38)), 0.6)
+    c.stroke(spline((42, 56), (46, 58), (50, 56)), 0.6)
+    c.shape(rrect(2, 72, 96, 8, 1))                               # stage floor
+    c.shape(rrect(6, 80, 88, 17, 1), 0.9)
+    for x in (28, 50, 72):
         c.stroke(line((x, 82), (x, 95)), 0.5)
 
 
 # ------------------------------------------------------------------------------------- Ringtail posts
+# Each night post is its daytime counterpart's job plus the moon: builders (mallet and pole), couriers (the
+# back-basket), gatherers (bamboo mushrooms in a basket). A lantern on each: they work after dark.
 
-@b("PandabornNightBuildersPost", 80, "Night builders' post (Ringtails): a lantern on a post, a mallet and a pole crossed")
+@b("PandabornNightBuildersPost", 82, "Night builders' post (Ringtails): a lantern on a post, a mallet and a pole "
+                                     "crossed", moon=True)
 def night_builders_post(c):
-    moon(c, 92, 8)
     ground(c, 6, 94)
-    bamboo_post(c, 30, 14, 97, 1.0)
-    c.stroke(line((30, 16), (44, 16)), 0.8)
-    lantern(c, 42, 16, 0.9)
-    with c.at(66, 70, 1, 40):                                      # mallet
+    bamboo_post(c, 22, 14, 97, 1.0)
+    c.stroke(line((22, 16), (38, 16)), 0.8)
+    lantern(c, 36, 16, 0.9)
+    with c.at(60, 70, 1, 40):                                      # mallet
         c.stroke(line((-24, 0), (14, 0)), 1.0)
         c.shape(rrect(14, -8, 12, 16, 3), 0.9)
-    with c.at(66, 70, 1, -40):                                     # bamboo pole
+    with c.at(60, 70, 1, -40):                                     # bamboo pole
         c.stroke(line((-26, 0), (26, 0)), 1.1, taper=0)
         c.stroke(line((0, -3), (0, 3)), 0.6, taper=0)
 
 
-@b("PandabornNightCourierPost", 80, "Night courier post (Ringtails): a woven back-basket with a lantern hung on it")
+@b("PandabornNightCourierPost", 82, "Night courier post (Ringtails): a woven back-basket with a lantern hung on it",
+   moon=True)
 def night_courier_post(c):
-    moon(c, 92, 8)
     ground(c, 6, 94)
-    basket = spline((24, 40), (20, 70), (30, 94), (70, 94), (80, 70), (76, 40), closed=False)
-    region = (basket + line((76, 40), (24, 40))).close()
+    basket = spline((20, 40), (16, 70), (26, 94), (66, 94), (76, 70), (72, 40), closed=False)
+    region = (basket + line((72, 40), (20, 40))).close()
     c.shape(region)
     for seg in hatch(region, 10, 90, margin=3) + hatch(region, 12, 0, margin=3):
         c.stroke(seg, 0.45)
-    c.shape(ellipse(50, 40, 26, 6))
-    c.stroke(spline((28, 40), (24, 20), (34, 12)), 0.8)            # straps
-    c.stroke(spline((72, 40), (76, 20), (66, 12)), 0.8)
-    c.stroke(line((76, 44), (90, 40)), 0.7)
-    lantern(c, 88, 40, 0.75)
+    c.shape(ellipse(46, 40, 26, 6))
+    c.stroke(spline((24, 40), (20, 20), (30, 12)), 0.8)            # straps
+    c.stroke(spline((68, 40), (72, 20), (62, 12)), 0.8)
+    c.stroke(line((72, 46), (86, 46)), 0.7)
+    lantern(c, 86, 46, 0.75)
 
 
-@b("PandabornNightForagersPost", 80, "Night forager's post (Ringtails): a basket of bamboo mushrooms and a lantern")
+@b("PandabornNightForagersPost", 82, "Night gatherers' post (Ringtails): a basket of bamboo mushrooms and a lantern "
+                                     "on a bamboo pole", moon=True)
 def night_foragers_post(c):
-    moon(c, 92, 8)
     ground(c, 6, 94)
-    bamboo_post(c, 84, 24, 97, 0.9, nodes=1)
-    c.stroke(line((84, 26), (72, 26)), 0.7)
-    lantern(c, 72, 26, 0.75)
-    for x, h in ((34, 34), (50, 40)):                              # netted mushrooms in the basket
-        c.shape(spline((x - 4, 74), (x - 4, 74 - h * 0.5), (x + 4, 74 - h * 0.5), (x + 4, 74), closed=True), 0.7)
-        c.shape(spline((x - 9, 74 - h * 0.5), (x - 6, 74 - h), (x, 74 - h - 4), (x + 6, 74 - h),
-                       (x + 9, 74 - h * 0.5), closed=True), 0.8)
-        c.stroke(line((x - 6, 74 - h * 0.6), (x + 6, 74 - h * 0.6)), 0.5)
-    basket = (spline((18, 70), (22, 92), (40, 96), (58, 92), (62, 70))).close()
+    bamboo_post(c, 80, 28, 97, 0.9, nodes=1)
+    c.stroke(line((80, 30), (68, 30)), 0.7)
+    lantern(c, 68, 30, 0.75)
+    mushroom(c, 30, 70, 34, 1.15)
+    mushroom(c, 48, 72, 40, 1.15)
+    basket = (spline((12, 66), (16, 90), (36, 96), (56, 90), (60, 66))).close()
     c.shape(basket)
     for seg in hatch(basket, 9, 90, margin=3):
         c.stroke(seg, 0.45)
@@ -790,26 +1044,29 @@ def night_foragers_post(c):
 
 # -------------------------------------------------------------------------------------- monuments
 
-@b("PandabornMemorialArch", 92, "Memorial arch: a three-bay stone and timber arch with gentle tile roofs and a blank panel")
+@b("PandabornMemorialArch", 92, "Memorial arch: a timber gateway on drum-stone feet under one broad tiled roof, a "
+                                "blank panel, a lantern cage with its flame hanging in the opening")
 def memorial_arch(c):
     ground(c, 2, 98)
-    for x in (12, 36, 64, 88):
-        c.shape(rrect(x - 4, 36, 8, 61, 1), 0.9)
-        c.shape(rrect(x - 7, 90, 14, 7, 1), 0.8)
-    c.shape(rrect(8, 36, 84, 8, 1), 0.9)
-    c.shape(rrect(40, 22, 20, 12, 1), 0.85)                       # blank panel, no writing
-    roof(c, 50, 6, 46, 16, tiles=3)
-    roof(c, 16, 24, 26, 12, tiles=1)
-    roof(c, 84, 24, 26, 12, tiles=1)
+    for x in (20, 80):
+        c.stroke(line((x, 30), (x, 88)), 1.4)
+        c.shape(ellipse(x, 90, 9, 7), 0.85)                          # drum stones
+        c.shape(ellipse(x, 84, 6, 3), 0.6)
+    c.stroke(line((12, 36), (88, 36)), 1.1)                          # lintel
+    c.shape(rrect(28, 38, 44, 14, 1), 0.85)                          # blank panel, no writing
+    roof_side(c, 6, 94, 8, 30, ribs=10)
+    c.stroke(line((50, 52), (50, 58)), 0.6)                          # lantern cage and flame
+    c.shape(rrect(42, 58, 16, 18, 2), 0.8)
+    c.fill(spline((50, 61), (54, 68), (50, 73), (46, 68), closed=True))
 
 
-@b("PandabornGreatSittingPanda", 98, "Great sitting panda: a big seated panda carved into a rock outcrop, water at its feet")
+@b("PandabornGreatSittingPanda", 98, "Great sitting panda: a big seated panda holding bamboo, carved into a rock "
+                                     "outcrop, water at its feet")
 def great_sitting_panda(c):
     c.shape(spline((2, 86), (6, 50), (14, 24), (30, 8), (50, 2), (72, 8), (88, 26), (96, 52), (98, 86),
                    closed=True), 0.9)                              # rock outcrop
     c.stroke(spline((8, 60), (14, 48)), 0.5)
     c.stroke(spline((92, 62), (88, 48)), 0.5)
-    # the seated panda, relaxed: round head, ears, body, arms resting, feet forward
     c.shape(spline((24, 84), (22, 60), (32, 44), (50, 40), (68, 44), (78, 60), (76, 84), closed=True))
     c.shape(circle(37, 18, 6), 0.9)
     c.shape(circle(63, 18, 6), 0.9)
@@ -817,26 +1074,176 @@ def great_sitting_panda(c):
     c.fill(ellipse(44, 29, 3.5, 4.5, rot=-30))
     c.fill(ellipse(56, 29, 3.5, 4.5, rot=30))
     c.fill(ellipse(50, 36, 2.5, 1.8))
-    c.stroke(spline((30, 52), (36, 66), (46, 68)), 0.8)            # arms resting on the belly
-    c.stroke(spline((70, 52), (64, 66), (54, 68)), 0.8)
+    with c.at(58, 58, 1, 62):                                       # the bamboo it holds
+        c.stroke(line((-24, 0), (30, 0)), 1.1, taper=0, halo=0.8)
+        c.stroke(line((6, -3), (6, 3)), 0.6, taper=0)
+    c.shape(spline((60, 22), (72, 14), (80, 18), (70, 24), closed=True), 0.7)   # its leaf
+    c.stroke(spline((30, 52), (40, 62), (54, 62)), 0.8)            # paws round it
     c.shape(ellipse(34, 84, 10, 6), 0.9)                           # feet
     c.shape(ellipse(66, 84, 10, 6), 0.9)
     c.erase(rrect(0, 89, 100, 14, 0))                              # water at its feet, in front
     water(c, 92, 0, 100)
 
 
-@b("PandabornSkyLantern", 98, "Sky Lantern (wonder): a huge paper lantern in its launch cradle, a flame glowing inside")
+@b("PandabornSkyLantern", 100, "Sky Lantern (wonder): a great round paper lantern on a lashed bamboo launch tower "
+                               "over a stepped stone terrace")
 def sky_lantern(c):
+    c.shape(rrect(2, 90, 96, 8, 1), 0.85)                            # stepped terrace
+    c.shape(rrect(14, 82, 72, 8, 1), 0.85)
+    for x in (6, 94):                                                # tethers to the terrace corners
+        c.stroke(line((50 + (x - 50) * 0.42, 34), (x, 90)), 0.5)
+    for x in (26, 74):                                               # the launch tower
+        c.stroke(line((x, 82), (x + (50 - x) * 0.4, 50)), 1.0)
+    c.stroke(line((30, 72), (70, 72)), 0.7)
+    c.stroke(line((30, 72), (68, 60)), 0.5)
+    c.shape(rrect(32, 48, 36, 5, 1), 0.85)                           # tower head
+    c.shape(spline((50, 2), (70, 8), (76, 24), (70, 40), (58, 46), (42, 46), (30, 40), (24, 24), (30, 8),
+                   closed=True))                                     # the great paper lantern
+    for k in (0.38, 0.75):
+        c.stroke(spline((50 - 26 * k, 5), (50 - 30 * k, 24), (50 - 22 * k, 45)), 0.55)
+        c.stroke(spline((50 + 26 * k, 5), (50 + 30 * k, 24), (50 + 22 * k, 45)), 0.55)
+    c.shape(rrect(42, 0, 16, 4, 1.5), 0.7)                            # top ring
+    c.fill(spline((50, 36), (53, 42), (50, 46), (47, 42), closed=True))   # the flame showing below
+
+
+# ------------------------------------------------------------------------------------------- decoration
+# Small things, drawn small as vanilla draws its lantern, shrub and fence.
+
+@b("PandabornStandingLantern", 64, "Standing lantern: a wooden post on a stone foot, a hatted paper lantern on its arm")
+def standing_lantern(c):
+    c.shape(rrect(20, 88, 24, 9, 2), 0.85)
+    c.stroke(line((30, 88), (30, 8)), 1.2)
+    c.stroke(line((30, 12), (64, 12)), 1.0)
+    c.stroke(line((34, 12), (30, 22)), 0.6)
+    box_lantern(c, 60, 12, 1.0, 5)
+
+
+@b("PandabornHangingLantern", 64, "Hanging lantern: a paper lantern hung from a bar between two bamboo posts")
+def hanging_lantern(c):
+    for x0, x1 in ((24, 14), (76, 86)):                              # two splayed bamboo posts
+        c.stroke(line((x0, 12), (x1, 97)), 0.85, taper=0)
+        c.stroke(line((x0 + (x1 - x0) * 0.5 - 3, 54), (x0 + (x1 - x0) * 0.5 + 3, 54)), 0.55, taper=0)
+    c.stroke(spline((2, 8), (50, 12), (98, 8)), 1.0)                 # the bar, reaching past them
+    box_lantern(c, 50, 11, 2.2, 2)
+
+
+@b("PandabornStringLanterns", 70, "String of lanterns: small round lanterns along a sagging cord between two poles")
+def string_lanterns(c):
     ground(c, 2, 98)
-    c.shape(spline((24, 70), (18, 40), (24, 14), (50, 4), (76, 14), (82, 40), (76, 70), closed=True))
-    for k in (0.4, 0.8):
-        c.stroke(spline((50 - 30 * k, 68), (50 - 34 * k, 40), (50 - 26 * k, 12)), 0.6)
-        c.stroke(spline((50 + 30 * k, 68), (50 + 34 * k, 40), (50 + 26 * k, 12)), 0.6)
-    c.shape(ellipse(50, 70, 26, 5), 0.9)                           # open bottom ring
-    c.fill(spline((50, 62), (54, 70), (50, 74), (46, 70), closed=True))     # the flame
-    for x0, x1 in ((6, 26), (94, 74)):                             # launch cradle and ropes
-        c.stroke(line((x0, 97), (x1, 72)), 1.0)
-    c.stroke(line((14, 86), (86, 86)), 0.9)
-    c.stroke(line((26, 72), (74, 72)), 0.9)
-    c.stroke(line((10, 92), (22, 40)), 0.5)
-    c.stroke(line((90, 92), (78, 40)), 0.5)
+    bamboo_post(c, 6, 14, 97, 0.9, nodes=2)
+    bamboo_post(c, 94, 14, 97, 0.9, nodes=2)
+    cord = spline((6, 18), (30, 30), (50, 33), (70, 30), (94, 18))
+    c.stroke(cord, 0.6)
+    for x in (22, 40, 58, 76):
+        y = float(np.interp(x, cord.pts[:, 0], cord.pts[:, 1]))
+        c.shape(ellipse(x, y + 7, 5.5, 6.5), 0.75)
+        c.stroke(line((x, y + 13.5), (x, y + 17)), 0.5)
+
+
+@b("PandabornBambooFence", 66, "Bamboo fence: jointed posts, two rails and a lashed lattice")
+def bamboo_fence(c):
+    ground(c, 2, 98)
+    for x in (8, 50, 92):
+        bamboo_post(c, x, 26, 97, 1.1, nodes=1)
+        c.shape(ellipse(x, 26, 3.5, 1.5), 0.6)
+    for y in (40, 78):
+        c.stroke(line((4, y), (96, y)), 0.9, taper=0)
+    for x0 in (8, 50):
+        c.stroke(line((x0 + 4, 76), (x0 + 38, 42)), 0.6)
+        c.stroke(line((x0 + 38, 76), (x0 + 4, 42)), 0.6)
+
+
+@b("PandabornPottedPine", 62, "Potted pine: a crooked pine with three cloud-shaped pads in a hexagonal pot")
+def potted_pine(c):
+    c.shape(poly((20, 70), (80, 70), (74, 97), (26, 97)), 0.9)        # pot
+    c.shape(rrect(16, 66, 68, 6, 1.5), 0.85)
+    c.stroke(line((40, 72), (40, 96)), 0.5)
+    c.stroke(line((60, 72), (60, 96)), 0.5)
+    c.stroke(spline((48, 66), (54, 54), (42, 42), (52, 28), (46, 16)), 1.4)   # trunk
+    c.stroke(spline((44, 42), (30, 40)), 0.8)
+    c.stroke(spline((50, 32), (64, 30)), 0.8)
+
+    def pad(x, y, w):
+        c.shape(spline((x - w, y + 2), (x - w * 0.6, y - 5), (x - w * 0.15, y - 3), (x + w * 0.2, y - 7),
+                       (x + w * 0.65, y - 4), (x + w, y + 2), closed=True), 0.85)
+    pad(28, 40, 18)
+    pad(66, 30, 18)
+    pad(46, 14, 16)
+
+
+@b("PandabornPandaStatue", 66, "Panda statue: a seated panda munching bamboo on a square stone plinth")
+def panda_statue(c):
+    c.shape(rrect(16, 72, 68, 25, 2))                                 # plinth
+    c.stroke(line((18, 78), (82, 78)), 0.5)
+    c.shape(spline((26, 72), (24, 50), (36, 36), (64, 36), (76, 50), (74, 72), closed=True))   # body
+    c.shape(circle(37, 12, 5.5), 0.9)
+    c.shape(circle(63, 12, 5.5), 0.9)
+    c.shape(circle(50, 24, 14))
+    c.fill(ellipse(44, 23, 3.2, 4.2, rot=-30))
+    c.fill(ellipse(56, 23, 3.2, 4.2, rot=30))
+    c.fill(ellipse(50, 30, 2.3, 1.6))
+    with c.at(60, 50, 1, 70):                                        # bamboo in its paws
+        c.stroke(line((-16, 0), (26, 0)), 1.0, taper=0, halo=0.8)
+    c.stroke(spline((32, 48), (42, 56), (56, 54)), 0.8)
+
+
+@b("PandabornBambooPinwheel", 66, "Bamboo pinwheel: a four-bladed paper pinwheel and a tail vane on a bamboo pole")
+def bamboo_pinwheel(c):
+    c.shape(rrect(36, 90, 28, 7, 2), 0.85)
+    bamboo_post(c, 50, 36, 90, 1.1, nodes=2)
+    c.stroke(line((50, 36), (90, 36)), 0.8)                          # tail arm and vane
+    c.shape(poly((80, 28), (94, 30), (94, 42), (80, 44)), 0.8)
+    for k in range(4):                                               # the blades, curled
+        with c.at(42, 30, 1, k * 90 + 20):
+            c.shape(spline((0, 0), (20, -2), (16, 10), (4, 4), closed=True), 0.8)
+    c.shape(circle(42, 30, 3), 0.8, filled=True)
+
+
+@b("PandabornGoldfishBowl", 66, "Goldfish bowl: a wide glazed basin on a wooden stand, lily pads, a goldfish leaping")
+def goldfish_bowl(c):
+    for x0, x1 in ((24, 18), (76, 82), (50, 50)):                    # stand legs
+        c.stroke(line((x0, 72), (x1, 97)), 1.0)
+    c.stroke(line((22, 88), (78, 88)), 0.6)
+    c.shape(spline((8, 40), (12, 62), (30, 76), (70, 76), (88, 62), (92, 40), closed=True))     # basin
+    c.shape(ellipse(50, 40, 42, 9))
+    c.shape(ellipse(50, 40, 36, 6.5), 0.6)
+    for x, y in ((36, 41), (60, 39)):                                # lily pads
+        c.shape((arc(x, y, 7, 30, 330, ry=2.6) + line((x + 6, y - 1.3), (x, y))).close(), 0.55)
+    with c.at(62, 22, 1, -25):                                       # the goldfish
+        c.shape(spline((-10, 0), (0, -5), (10, 0), (0, 5), closed=True), 0.8)
+        c.shape(poly((-9, 0), (-17, -6), (-15, 0), (-17, 6)), 0.7)
+        c.dot(5, -1, 0.5)
+
+
+@b("PandabornGardenMoonGate", 72, "Garden moon gate: a white wall with a round opening, a tiled coping, a potted "
+                                  "bamboo at its foot")
+def garden_moon_gate(c):
+    ground(c, 2, 98)
+    wall = rrect(10, 22, 80, 75, 1)
+    c.shape(wall)
+    c.shape(circle(50, 58, 25), 0.95)
+    c.erase(circle(50, 58, 23))
+    c.shape(circle(50, 58, 21), 0.6, occlude=False)
+    c.stroke(line((10, 97), (90, 97)))
+    roof_side(c, 8, 92, 10, 24, ribs=8, inset=3, over=3)
+    c.shape(poly((70, 84), (88, 84), (85, 97), (73, 97)), 0.8)        # pot of bamboo
+    for x, top in ((76, 52), (81, 60)):
+        c.stroke(line((x, 84), (x, top)), 0.7, taper=0)
+    c.shape(spline((76, 56), (66, 50), (72, 58), closed=True), 0.55)
+
+
+@b("PandabornPoleMill", 90, "Pole mill (the Inkpaws' lumber mill): a saw bench splitting a log, a lashed bundle of "
+                            "hollow bamboo-like poles beside it")
+def pole_mill(c):
+    # the vanilla Wood workshops are a plain house outline with their product inside (gear, paper, plank); the
+    # Inkpaws' mill shows a lashed bundle of poles instead of the plank
+    c.stroke(line((10, 96), (90, 96)), 1.0)
+    c.stroke(line((16, 92), (16, 50)), 1.0)
+    c.stroke(line((84, 92), (84, 50)), 1.0)
+    c.stroke(line((6, 56), (50, 14), (94, 56)), 1.0)
+    for k in range(3):                                               # the bundle of poles, ends towards you
+        with c.at(30 + k * 5, 84 - k * 9, 1, 32):
+            c.shape(rrect(0, -4.5, 46, 9, 4.5), 0.85)
+            c.stroke(line((24, -4.5), (24, 4.5)), 0.55)
+            c.shape(ellipse(0, 0, 3, 4.5), 0.7)
+    c.stroke(spline((52, 76), (56, 66), (58, 58)), 1.1, halo=0.6)    # the lashing

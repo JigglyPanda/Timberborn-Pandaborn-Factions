@@ -368,32 +368,30 @@ def bamboo_seed_cakes(c):
 
 # --------------------------------------------------------------------------------------------- materials
 
-@icon("PandabornPoles", note="A bundle of three hollow bamboo poles with a leafy twig")
+POLE_ANG = 38        # laid like the vanilla plank and log: lower left to upper right
+
+
+@icon("PandabornPoles", note="Poles: two long slim bamboo poles laid side by side like the vanilla plank, jointed, "
+                             "hollow ends towards you")
 def bamboo_poles(c):
-    ang = 26
-    with c.at(26, 50, 1, ang):
-        pole(c, 82, 11, nodes=(0.42,))
-        c.stroke(spline((34, -12), (40, -24), (50, -30)), 0.7)
-        leaf(c, 50, -30, 24, 8, 30, 0.75)
-        leaf(c, 44, -26, 22, 7, 100, 0.75)
-    for dx, dy in ((0, 0), (25, 6)):
-        with c.at(12 + dx, 72 + dy, 1, ang):
-            pole(c, 84, 11, nodes=(0.32, 0.74))
+    # pass 3: long and slim (pass 2's three short fat poles read as sausages or logs at inventory size); the open
+    # ring ends and the joints are the bamboo cue, the diagonal is the vanilla building-material pose
+    for (dx, dy), nodes in (((0, 0), (0.44,)), ((4.5, 16.8), (0.70,))):
+        with c.at(8 + dx, 78 + dy, 1, POLE_ANG):
+            pole(c, 100, 7.5, nodes=nodes)
 
 
-@icon("PandabornCuredPoles", note="Cured poles: a lashed bundle of jointed poles with dark ends and the vanilla 'treated' sparkles")
+@icon("PandabornCuredPoles", note="Cured poles: the same two poles with solid dark ends, lashed, and the vanilla "
+                                  "'treated' sparkles")
 def cured_poles(c):
-    ang = 26
-    for dx, dy in ((14, -20), (0, 0), (25, 6)):
-        with c.at(12 + dx, 72 + dy, 1, ang):
-            pole(c, 84, 11, nodes=(0.28, 0.82), face="fill")
-    # lashing: two wraps of cord around the middle of the bundle, and the loose end
-    with c.at(12, 72, 1, ang):
-        c.stroke(spline((48, -36), (52, -12), (52, 12), (48, 22)), 1.3, halo=0.8)
-        c.stroke(spline((50, 22), (58, 30), (54, 38)), 0.7)
-    sparkle(c, 14, 34, 10)
-    sparkle(c, 30, 18, 6)
-    sparkle(c, 90, 94, 7)
+    for (dx, dy), nodes in (((0, 0), (0.30,)), ((4.5, 16.8), (0.78,))):
+        with c.at(8 + dx, 78 + dy, 1, POLE_ANG):
+            pole(c, 100, 7.5, nodes=nodes, face="fill")
+    with c.at(8, 78, 1, POLE_ANG):                                   # lashing round both poles
+        c.stroke(line((56, -10), (56, 26)), 1.3, halo=0.8)
+    sparkle(c, 14, 30, 10)
+    sparkle(c, 32, 14, 6)
+    sparkle(c, 96, 98, 7)
 
 
 @icon("PandabornBambooCharcoal", ship=False, note="Bamboo charcoal: a pile of short black hollow pieces")
