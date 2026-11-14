@@ -1,0 +1,43 @@
+{
+ "id": "GoldfishBowl",
+ "standIn": "Shrub.Folktails",
+ "generatedBy": "art/models/GoldfishBowl/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "GoldfishBowl.Model",
+  "constructionStage0": "GoldfishBowl.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.4,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.85,
+    "Y": 0.8,
+    "Z": 0.85
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 558,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": []
+}

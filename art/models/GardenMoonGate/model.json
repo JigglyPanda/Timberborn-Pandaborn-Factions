@@ -1,0 +1,46 @@
+{
+ "id": "GardenMoonGate",
+ "standIn": "Shrub.Folktails",
+ "generatedBy": "art/models/GardenMoonGate/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "GardenMoonGate.Model",
+  "constructionStage0": "GardenMoonGate.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.75,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 1.5,
+    "Z": 0.2
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 404,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails"
+ ],
+ "notes": []
+}

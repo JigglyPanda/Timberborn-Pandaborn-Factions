@@ -1,0 +1,43 @@
+{
+ "id": "PandaStatue",
+ "standIn": "BeaverStatue.Folktails",
+ "generatedBy": "art/models/PandaStatue/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "PandaStatue.Model",
+  "constructionStage0": "PandaStatue.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.65,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.7,
+    "Y": 1.3,
+    "Z": 0.7
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1232,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Yellow.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": []
+}

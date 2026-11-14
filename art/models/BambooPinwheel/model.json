@@ -1,0 +1,109 @@
+{
+ "id": "BambooPinwheel",
+ "standIn": "Weathervane.Folktails",
+ "generatedBy": "art/models/BambooPinwheel/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "BambooPinwheel.Model",
+  "constructionStage0": "BambooPinwheel.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [
+  {
+   "node": "#PinHead",
+   "driver": "WindRotationAnimatorSpec",
+   "pivot": {
+    "X": 0.5,
+    "Y": 1.15,
+    "Z": 0.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.Tower"
+  },
+  {
+   "node": "#PinRotor",
+   "driver": "WindRotationAnimatorSpec",
+   "pivot": {
+    "X": 0.5,
+    "Y": 1.15,
+    "Z": 0.33999999999999997
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 1.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.WindRotators"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.65,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.3,
+    "Y": 1.3,
+    "Z": 0.3
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 76,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "Paper.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": [],
+ "windRotationAnimator": {
+  "WindRotators": [
+   {
+    "TransformName": "#PinRotor",
+    "RotationAxis": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 1.0
+    },
+    "RotationSpeed": 400.0
+   }
+  ],
+  "Tower": {
+   "TransformName": "#PinHead",
+   "RotationAxis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "RotationSpeed": 200.0
+  }
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "id": "PottedPine",
+ "standIn": "Shrub.Folktails",
+ "generatedBy": "art/models/PottedPine/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "PottedPine.Model",
+  "constructionStage0": "PottedPine.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.7,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.6,
+    "Y": 1.4,
+    "Z": 0.6
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 527,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "Moss.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": []
+}
