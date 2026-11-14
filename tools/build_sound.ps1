@@ -107,5 +107,9 @@ Write-Host "Unity exit $($p.ExitCode) after $([int]$sw.Elapsed.TotalSeconds) s; 
 if ($p.ExitCode -ne 0 -or -not $ok) { exit 1 }
 if ($Mac) { Copy-Item -Force "$unityOut\$($BundleName)_mac", "$unityOut\$($BundleName)_mac.manifest" $Out }
 Get-ChildItem $Out | Select-Object Name, Length | Format-Table -AutoSize | Out-String | Write-Host
+# decode what the game will decode and compare it with the WAVs (import settings, length, loudness, loop seams)
+$built = Join-Path $Out ($BundleName + $(if ($Mac) { '_mac' } else { '_win' }))
+& $Python -I "$repo\src\pipeline\sound\bundle_check.py" $built | Select-Object -Last 3 | ForEach-Object { Write-Host $_ }
+if ($LASTEXITCODE -ne 0) { Write-Host "bundle check failed: $logDir\bundle_check_$(Split-Path -Leaf $built).json"; exit 1 }
 "bundle $BundleName in $Out (copy it unrenamed into exactly one mod's AssetBundles folder; proto/sound/build.ps1 does)"
 exit 0

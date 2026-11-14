@@ -32,6 +32,9 @@ import sounds as SND  # noqa: E402
 import synth as S  # noqa: E402
 
 
+ADPCM_BLOCK = 64
+
+
 def clip_names(entry):
     if entry["variants"] <= 1:
         return [entry["id"]]
@@ -49,6 +52,13 @@ def render(job):
     if not loop:
         y = S.remove_dc(y)
     y = S.normalize_lufs(y, e["lufs"], A.integrated_lufs, ceiling_db=e["ceiling"], loop=loop)
+    # Unity's ADPCM works in blocks of 64 samples and pads the last one (bundle_check.py measured it): a loop must be a
+    # whole number of blocks or it would gap at the seam; a one-shot is padded with silence here so nothing changes
+    if loop and len(y) % ADPCM_BLOCK:
+        raise ValueError("%s: loop length %d samples is not a multiple of %d" % (name, len(y), ADPCM_BLOCK))
+    if not loop and len(y) % ADPCM_BLOCK:
+        pad = ADPCM_BLOCK - len(y) % ADPCM_BLOCK
+        y = np.concatenate([y, np.zeros((pad,) + y.shape[1:])])
     path = os.path.join(out_dir, "wav", name + ".wav")
     A.write_wav(path, y, S.SR)
     x, sr = A.read_wav(path)  # measure what was written (after dither and quantisation)
@@ -142,6 +152,7 @@ def main():
     with open(rpath, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=1)
     write_md(report, os.path.join(a.out, "report.md"))
+    write_listening_page(report, os.path.join(a.out, "index.html"))
     print("checks failed: %d (report %s)" % (failed, rpath))
     for name, r in sorted(report.items()):
         for c in r["checks"]:
@@ -169,6 +180,28 @@ def write_md(report, path):
             "ok" if ok else "FAIL: " + ", ".join(c["check"] for c in r["checks"] if not c["ok"])))
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+
+
+def write_listening_page(report, path):
+    """A local page to audition every clip (players loop the loops) next to its spectrogram and numbers."""
+    import html
+    rows = []
+    for name, r in sorted(report.items(), key=lambda kv: (kv[1]["priority"], kv[0])):
+        m = r["measure"]
+        loop = " loop" if r["kind"] == "loop" else ""
+        rows.append(
+            "<tr><td><b>%s</b><br><small>%s</small><br><audio controls preload=none%s src='wav/%s.wav'></audio></td>"
+            "<td><small>%s, %.2f s<br>%.1f LUFS, peak %.1f dBTP<br>centroid %d Hz</small></td>"
+            "<td><a href='png/%s.png'><img src='png/%s.png' width=420></a></td></tr>" % (
+                html.escape(name), html.escape(r["slot"]), loop, name, r["kind"], m["seconds"], m["lufs_integrated"],
+                m["true_peak_db"], m["centroid_hz"], name, name))
+    page = ("<!DOCTYPE html><html><head><meta charset='utf-8'><title>Pandaborn sounds</title>"
+            "<style>body{font-family:sans-serif;margin:16px}td{vertical-align:top;padding:6px;border-bottom:1px solid #ccc}"
+            "</style></head><body><h1>Pandaborn sounds</h1><p>Synthesized by src/pipeline/sound (AI-generated code); "
+            "loops repeat in the player so the seam can be heard. Vanilla references: "
+            "E:/PandabornDev/reference/vanilla-sounds.</p><table>%s</table></body></html>" % "".join(rows))
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(page)
 
 
 def sync_unity(out, project, report):
