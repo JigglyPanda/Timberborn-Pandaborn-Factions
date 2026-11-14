@@ -39,7 +39,7 @@ S = 1024
 INK = np.array([34, 31, 30])
 INK_GREY = np.array([66, 63, 60])
 TIMBER = np.array([72, 54, 40])               # dark, oiled and smoke-darkened fir
-LIME = np.array([222, 217, 204])              # white lime plaster, aged (pure white reads as plastic in game)
+LIME = np.array([208, 202, 188])              # white lime plaster, aged (pure white reads as plastic in game)
 PAPER = np.array([232, 222, 198])             # window paper (unbleached)
 PAPER_WARM = np.array([240, 220, 180])
 LACQUER = np.array([150, 44, 36])             # accents only
@@ -657,7 +657,7 @@ def make_windows():
     e = np.zeros((S, S, 3), np.float32)
     # warm lamplight through paper: flat and strong across the panes (the vanilla map falls off toward the frame),
     # cut by the lattice; the doorway keeps the vanilla soft gradient
-    e[:] = (np.array([255, 234, 188]) / 255.0)[None, None, :]
+    e[:] = (np.array([255, 216, 150]) / 255.0)[None, None, :]
     pane = np.where(glass, np.clip(0.92 + 0.1 * glow_soft, 0, 1), glow_soft)
     e *= (pane * (~(lattice & glass)))[..., None]
     st.e = e
