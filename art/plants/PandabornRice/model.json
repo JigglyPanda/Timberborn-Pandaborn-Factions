@@ -61,31 +61,31 @@
    ]
   },
   "PandabornRiceMature": {
-   "triangles": 180,
-   "vertices": 360,
+   "triangles": 162,
+   "vertices": 324,
    "bboxMin": [
-    -0.217,
+    -0.22,
     0.0,
-    -0.232
+    -0.23
    ],
    "bboxMax": [
-    1.215,
+    1.213,
     0.865,
-    1.2
+    1.21
    ]
   },
   "PandabornRiceMatureDry": {
-   "triangles": 180,
-   "vertices": 360,
+   "triangles": 162,
+   "vertices": 324,
    "bboxMin": [
-    -0.217,
+    -0.22,
     0.0,
-    -0.232
+    -0.23
    ],
    "bboxMax": [
-    1.215,
+    1.213,
     0.865,
-    1.2
+    1.21
    ]
   },
   "PandabornRiceMatureDead": {

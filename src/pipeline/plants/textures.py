@@ -497,35 +497,45 @@ def rice_tuft(cv, name, seed, n, spread, droop, value=0.8, width=7.0, heights=(0
 
 
 def rice_panicle(cv, name, seed, n=3):
-    """Drooping golden panicles: arching stems from the lower left, grains hanging along their side branches."""
+    """Ripe rice heads: a stem arches over and the panicle hangs from it as a dense, drooping golden cluster (a
+    tapering tassel of short branchlets packed with grains), several heads bunched together."""
     rng = np.random.default_rng(seed)
     x0, y0, W, H = region_origin(name)
-    gold = np.array([0.86, 0.78, 0.46])
-    husk = np.array([0.72, 0.62, 0.34])
+    golds = [np.array([0.90, 0.78, 0.42]), np.array([0.84, 0.70, 0.36]), np.array([0.94, 0.84, 0.52])]
+    husk = np.array([0.66, 0.54, 0.28])
     for k in range(n):
-        p = np.array([x0 + W * rng.uniform(0.15, 0.35), y0 + H * rng.uniform(0.85, 0.95)])
-        a = -math.pi / 2 + rng.uniform(0.15, 0.45)
-        pts = [p.copy()]
-        for i in range(9):
-            a += 0.15 + rng.uniform(-0.02, 0.03)
-            p = p + np.array([math.cos(a), math.sin(a)]) * H * 0.11
-            pts.append(p.copy())
-        pts = np.array(pts)
-        stroke(cv, pts, 4, 1.5, value=0.62, color=np.array([0.62, 0.58, 0.32]), shadow=0.1)
-        for i in range(3, len(pts)):
+        # stem from the bottom-left rising to an apex, then the head hanging down and to the right
+        base = np.array([x0 + W * rng.uniform(0.12, 0.3), y0 + H * 0.97])
+        apex = np.array([x0 + W * rng.uniform(0.38, 0.55), y0 + H * rng.uniform(0.12, 0.22)])
+        mid = (base + apex) / 2 + np.array([-W * 0.08, 0])
+        stroke(cv, [base, mid, apex], 4.5, 2.5, value=0.6, color=np.array([0.62, 0.6, 0.32]), shadow=0.1)
+        # the head's axis: from the apex curving down to the lower right
+        L = H * rng.uniform(0.62, 0.78)
+        axis = [apex]
+        ang = rng.uniform(0.05, 0.35)                     # just right of straight down... measured from +x
+        ang = math.pi / 2 - ang
+        for i in range(12):
+            ang -= 0.035
+            axis.append(axis[-1] + np.array([math.cos(ang), math.sin(ang)]) * L / 12)
+        axis = np.array(axis)
+        stroke(cv, axis, 2.6, 1.2, value=0.6, color=np.array([0.66, 0.6, 0.3]), shadow=0.0)
+        gold = golds[k % len(golds)]
+        for i in range(1, len(axis)):
+            f = i / (len(axis) - 1)
+            width = W * 0.11 * (1 - 0.65 * f) + 3      # tassel tapers toward the tip
+            tdir = axis[i] - axis[i - 1]
+            tdir /= np.linalg.norm(tdir)
+            nrm = np.array([-tdir[1], tdir[0]])
             for side in (-1, 1):
-                if rng.random() < 0.25:
-                    continue
-                tdir = pts[i] - pts[i - 1]
-                tdir = tdir / np.linalg.norm(tdir)
-                nrm = np.array([-tdir[1], tdir[0]]) * side
-                q = pts[i] + (nrm * 0.5 + np.array([0, 1.0])) * rng.uniform(10, 18)
-                stroke(cv, [pts[i], q], 1.6, 1.0, value=0.6, color=np.array([0.6, 0.55, 0.3]), shadow=0.0)
-                for g in range(int(rng.integers(4, 7))):
-                    gp = pts[i] + (q - pts[i]) * (0.2 + 0.15 * g) + rng.uniform(-2.5, 2.5, 2)
-                    col = gold * rng.uniform(0.88, 1.08) if rng.random() > 0.2 else husk
-                    blob(cv, gp, 6.5, 3.6, col, angle=math.atan2(q[1] - pts[i][1], q[0] - pts[i][0]) + 0.2, spec=0.15,
-                         shadow=0.25, h=0.8)
+                for g in range(int(rng.integers(2, 4))):
+                    off = rng.uniform(0.15, 1.0) * width
+                    gp = axis[i] + nrm * side * off + tdir * (off * 0.55) + rng.uniform(-2, 2, 2)
+                    col = gold * rng.uniform(0.9, 1.08) if rng.random() > 0.15 else husk
+                    blob(cv, gp, 6.0, 3.4, col, angle=math.atan2(tdir[1], tdir[0]) + side * 0.35, spec=0.18,
+                         shadow=0.3, h=0.8)
+            if rng.random() < 0.8:
+                blob(cv, axis[i] + rng.uniform(-2, 2, 2), 6.0, 3.4, gold, angle=math.atan2(tdir[1], tdir[0]), spec=0.18,
+                     shadow=0.3, h=0.8)
 
 
 def pepper_cluster(cv, name, seed, n):

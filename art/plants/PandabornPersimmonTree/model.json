@@ -62,45 +62,45 @@
    ]
   },
   "PandabornPersimmonTreeMature": {
-   "triangles": 188,
-   "vertices": 331,
+   "triangles": 212,
+   "vertices": 373,
    "bboxMin": [
-    -0.385,
-    -0.007,
-    -0.325
+    -0.202,
+    -0.006,
+    -0.363
    ],
    "bboxMax": [
-    1.425,
-    2.075,
-    1.407
+    1.404,
+    1.933,
+    1.235
    ]
   },
   "PandabornPersimmonTreeMatureDry": {
-   "triangles": 156,
-   "vertices": 267,
+   "triangles": 164,
+   "vertices": 277,
    "bboxMin": [
-    -0.385,
-    -0.007,
-    -0.325
+    -0.166,
+    -0.006,
+    -0.308
    ],
    "bboxMax": [
-    1.425,
-    2.075,
-    1.407
+    1.404,
+    1.933,
+    1.167
    ]
   },
   "PandabornPersimmonTreeMatureDead": {
-   "triangles": 60,
-   "vertices": 75,
+   "triangles": 72,
+   "vertices": 93,
    "bboxMin": [
-    0.1,
-    -0.007,
-    0.037
+    0.194,
+    -0.006,
+    -0.026
    ],
    "bboxMax": [
-    0.871,
-    1.738,
-    0.887
+    1.038,
+    1.905,
+    0.85
    ]
   },
   "PandabornPersimmonTreeMatureStump": {
@@ -120,7 +120,7 @@
  },
  "budgetFlags": [],
  "basis": "ChestnutTree",
- "gatherableDetail": "16 persimmon cards around the crown (detail sheet persimmon_fruit_*), shown while the tree has fruit",
+ "gatherableDetail": "24 persimmon cards on the tops of the four leaf lobes (detail sheet persimmon_fruit_*), shown while the tree has fruit",
  "blockHeight": 3,
  "treeCuttingRadius": 0.145,
  "randomizer": {
@@ -149,10 +149,21 @@
    "capsule": {
     "center": [
      0.5,
-     1.45,
+     1.4,
      0.5
     ],
-    "radius": 0.62,
+    "radius": 0.6,
+    "height": 1.4
+   }
+  },
+  "Mature/#Dead": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.75,
+     0.5
+    ],
+    "radius": 0.22,
     "height": 1.6
    }
   },

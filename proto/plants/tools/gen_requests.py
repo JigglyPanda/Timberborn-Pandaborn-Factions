@@ -146,9 +146,71 @@ def terrace():
     }
 
 
+def pass2():
+    """Second pass: the reworked persimmon (ripe and unripe orchards), rice heads, the tea's third ring, taller rice
+    seedlings in deeper water, the dead trees' narrower colliders (blueprints load), and a REAL dry/dead sequence:
+    a paddy drained at high speed (rice: dying at once, dead after the flood rule's 1.5 days) and tea planted on wet soil
+    beside the water (arid rule: dying, dead after 2 days)."""
+    I = ".Inkpaws"
+    steps = [
+        {"op": "flatten", "rect": [0, 0, 7, 4], "z": -1},           # paddy A: will be drained
+        {"op": "flatten", "rect": [9, 0, 15, 4], "z": -1},          # paddy B: kept at 0.45
+        {"op": "flatten", "rect": [0, 8, 12, 12], "z": 1},          # dry bench for tea
+        {"op": "wait", "ticks": 3, "capSeconds": 300},
+        {"op": "water", "id": "A", "at": [3, 2, -1], "rate": 3.0, "maxDepth": 0.3},
+        {"op": "water", "id": "B1", "at": [10, 2, -1], "rate": 3.0, "maxDepth": 0.45},
+        {"op": "water", "id": "B2", "at": [14, 2, -1], "rate": 3.0, "maxDepth": 0.45},
+        {"op": "wait", "hours": 3.0, "speed": 7, "capSeconds": 400},
+    ]
+    plantings = [("PandabornRice", [1, 1, 6, 3], -1, True), ("PandabornRice", [10, 1, 14, 3], -1, False),
+                 ("PandabornTeaBush", [0, 5, 7, 5], 0, True),                         # wet roots: will die
+                 ("PandabornTeaBush", [1, 9, 11, 9], 1, True), ("PandabornTeaBush", [1, 11, 11, 11], 1, True),
+                 ("PandabornPersimmonTree", [17, 0, 19, 2], 0, True), ("PandabornPersimmonTree", [21, 0, 23, 2], 0, True),
+                 ("PandabornPersimmonTree", [17, 4, 19, 4], 0, True), ("PandabornTimberBamboo", [21, 4, 23, 4], 0, True)]
+    for t, rect, z, grow in plantings:
+        steps.append({"op": "plant", "template": t + I, "rect": rect, "z": z})
+        if grow:
+            steps.append({"op": "grow", "template": t + I, "rect": rect, "z": z, "progress": 1.0})
+    rules = [{"template": "PandabornPersimmonTree" + I, "rect": [17, 0, 19, 2], "state": "ripe"},
+             {"template": "PandabornTeaBush" + I, "rect": [1, 9, 11, 9], "state": "ripe"},
+             {"template": "PandabornPersimmonTree" + I, "rect": [17, 4, 19, 4], "state": "dead"},
+             {"template": "PandabornTimberBamboo" + I, "rect": [21, 4, 23, 4], "state": "dead"}]
+    steps.append({"op": "wait", "hours": 0.5, "speed": 3, "capSeconds": 300})
+    probes = lambda tag: [{"op": "plants", "label": "%s_%s" % (tag, n), "template": t + I, "rect": r, "z": z, "detail": False}
+                          for n, t, r, z in (("drainedRice", "PandabornRice", [1, 1, 6, 3], -1),
+                                             ("wetTea", "PandabornTeaBush", [0, 5, 7, 5], 0),
+                                             ("deepSeedlings", "PandabornRice", [10, 1, 14, 3], -1),
+                                             ("dryTea", "PandabornTeaBush", [1, 9, 11, 11], 1))]
+    steps += probes("start")
+    steps += [{"op": "probe", "label": "depthB", "at": [12, 2, -1]},
+              shot("p2_overview_day", [12, 6, 0], 30, pitch=55),
+              shot("p2_persimmon_day", [20, 2, 0], 22, pitch=55),       # the default camera's distance and pitch
+              shot("p2_persimmon_close", [20, 2, 0], 11, pitch=45, yaw=20),
+              shot("p2_rice_day", [8, 2, -1], 12, pitch=50),
+              shot("p2_rice_close", [3.5, 2, -1], 5, pitch=45, yaw=15),
+              shot("p2_tea_day", [6, 9, 1], 11, pitch=50)]
+    # cut paddy A off and drain it at high speed
+    steps += [{"op": "waterOff", "id": "A"}, {"op": "water", "id": "drainA", "at": [3, 2, -1], "rate": -6.0, "maxDepth": 0.0},
+              {"op": "wait", "hours": 6.0, "speed": 7, "capSeconds": 600}]
+    steps += probes("after6h")
+    steps += [shot("p2_drying", [6, 3, 0], 13, pitch=50)]
+    steps += [{"op": "wait", "hours": 42.0, "speed": 7, "capSeconds": 1500}]
+    steps += probes("after48h")
+    steps += [shot("p2_dead", [6, 3, 0], 13, pitch=50), shot("p2_overview_end", [12, 6, 0], 30, pitch=55)]
+    return {
+        "faction": "Inkpaws", "map": "Plains", "speed": 0, "batchControl": False,
+        "run": {"realSeconds": 3000, "settleSeconds": 2},
+        "screenshots": [{"name": "screen_end", "kind": "screen", "at": "end"}],
+        "ownPatterns": OWN,
+        "water": {"name": "plants-pass2", "speed": 7, "area": [26, 14], "origin": "auto", "flattenMargin": 2,
+                  "steps": steps},
+        "plantLab": {"rules": rules},
+    }
+
+
 def main():
     os.makedirs(TESTS, exist_ok=True)
-    for name, fn in (("states", states), ("terrace", terrace)):
+    for name, fn in (("states", states), ("terrace", terrace), ("pass2", pass2)):
         p = os.path.join(TESTS, name + ".request.json")
         json.dump(fn(), open(p, "w"), indent=1)
         print(p)

@@ -1,0 +1,673 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 3000,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoPlants",
+  "PandabornPlants"
+ ],
+ "water": {
+  "name": "plants-pass2",
+  "speed": 7,
+  "area": [
+   26,
+   14
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     0,
+     7,
+     4
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     0,
+     15,
+     4
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     8,
+     12,
+     12
+    ],
+    "z": 1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "water",
+    "id": "A",
+    "at": [
+     3,
+     2,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "B1",
+    "at": [
+     10,
+     2,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.45
+   },
+   {
+    "op": "water",
+    "id": "B2",
+    "at": [
+     14,
+     2,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.45
+   },
+   {
+    "op": "wait",
+    "hours": 3.0,
+    "speed": 7,
+    "capSeconds": 400
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     1,
+     1,
+     6,
+     3
+    ],
+    "z": -1
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     1,
+     1,
+     6,
+     3
+    ],
+    "z": -1,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     10,
+     1,
+     14,
+     3
+    ],
+    "z": -1
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     5,
+     7,
+     5
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     5,
+     7,
+     5
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     9
+    ],
+    "z": 1
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     9
+    ],
+    "z": 1,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     11,
+     11,
+     11
+    ],
+    "z": 1
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     11,
+     11,
+     11
+    ],
+    "z": 1,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     0,
+     19,
+     2
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     0,
+     19,
+     2
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     21,
+     0,
+     23,
+     2
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     21,
+     0,
+     23,
+     2
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     4,
+     19,
+     4
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     4,
+     19,
+     4
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     4,
+     23,
+     4
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     4,
+     23,
+     4
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "wait",
+    "hours": 0.5,
+    "speed": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "plants",
+    "label": "start_drainedRice",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     1,
+     1,
+     6,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "start_wetTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     5,
+     7,
+     5
+    ],
+    "z": 0,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "start_deepSeedlings",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     10,
+     1,
+     14,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "start_dryTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     11
+    ],
+    "z": 1,
+    "detail": false
+   },
+   {
+    "op": "probe",
+    "label": "depthB",
+    "at": [
+     12,
+     2,
+     -1
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "p2_overview_day",
+    "focus": [
+     12,
+     6,
+     0
+    ],
+    "distance": 30,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_persimmon_day",
+    "focus": [
+     20,
+     2,
+     0
+    ],
+    "distance": 22,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_persimmon_close",
+    "focus": [
+     20,
+     2,
+     0
+    ],
+    "distance": 11,
+    "pitch": 45,
+    "yaw": 20,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_rice_day",
+    "focus": [
+     8,
+     2,
+     -1
+    ],
+    "distance": 12,
+    "pitch": 50,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_rice_close",
+    "focus": [
+     3.5,
+     2,
+     -1
+    ],
+    "distance": 5,
+    "pitch": 45,
+    "yaw": 15,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_tea_day",
+    "focus": [
+     6,
+     9,
+     1
+    ],
+    "distance": 11,
+    "pitch": 50,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "waterOff",
+    "id": "A"
+   },
+   {
+    "op": "water",
+    "id": "drainA",
+    "at": [
+     3,
+     2,
+     -1
+    ],
+    "rate": -6.0,
+    "maxDepth": 0.0
+   },
+   {
+    "op": "wait",
+    "hours": 6.0,
+    "speed": 7,
+    "capSeconds": 600
+   },
+   {
+    "op": "plants",
+    "label": "after6h_drainedRice",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     1,
+     1,
+     6,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after6h_wetTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     5,
+     7,
+     5
+    ],
+    "z": 0,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after6h_deepSeedlings",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     10,
+     1,
+     14,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after6h_dryTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     11
+    ],
+    "z": 1,
+    "detail": false
+   },
+   {
+    "op": "shot",
+    "name": "p2_drying",
+    "focus": [
+     6,
+     3,
+     0
+    ],
+    "distance": 13,
+    "pitch": 50,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "wait",
+    "hours": 42.0,
+    "speed": 7,
+    "capSeconds": 1500
+   },
+   {
+    "op": "plants",
+    "label": "after48h_drainedRice",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     1,
+     1,
+     6,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after48h_wetTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     5,
+     7,
+     5
+    ],
+    "z": 0,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after48h_deepSeedlings",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     10,
+     1,
+     14,
+     3
+    ],
+    "z": -1,
+    "detail": false
+   },
+   {
+    "op": "plants",
+    "label": "after48h_dryTea",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     11
+    ],
+    "z": 1,
+    "detail": false
+   },
+   {
+    "op": "shot",
+    "name": "p2_dead",
+    "focus": [
+     6,
+     3,
+     0
+    ],
+    "distance": 13,
+    "pitch": 50,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "p2_overview_end",
+    "focus": [
+     12,
+     6,
+     0
+    ],
+    "distance": 30,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   }
+  ]
+ },
+ "plantLab": {
+  "rules": [
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     0,
+     19,
+     2
+    ],
+    "state": "ripe"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     1,
+     9,
+     11,
+     9
+    ],
+    "state": "ripe"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     17,
+     4,
+     19,
+     4
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     4,
+     23,
+     4
+    ],
+    "state": "dead"
+   }
+  ]
+ }
+}

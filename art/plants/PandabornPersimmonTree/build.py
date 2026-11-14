@@ -32,54 +32,62 @@ def leaf_colour(rng, state, light=False):
 
 
 def trunk(m, rng, state, H, r, limbs):
+    """A short dark trunk forking into limbs that spread wide and up at different heights: the open, irregular frame
+    that stays visible between the leaf lobes."""
     bark = state_tint(BARK, state, dry_to=[0.95, 0.9, 0.85], dead_to=[0.85, 0.82, 0.8])
     top = C + np.array([0.04, H, -0.03])
-    stem(m, C, top, r, r * 0.7, A.uv("bark"), bark, sides=6, segments=2, bend=(0.015, 0, 0.01), v_range=(0.0, H / 1.4))
+    stem(m, C, top, r, r * 0.75, A.uv("bark"), bark, sides=6, segments=2, bend=(0.015, 0, 0.01), v_range=(0.0, H / 1.4))
     ends = []
     for k in range(limbs):
-        a = 2 * math.pi * k / limbs + rng.uniform(-0.3, 0.3)
-        L = rng.uniform(0.45, 0.6) * H
-        end = top + np.array([math.cos(a) * L * 0.55, L * 0.8, math.sin(a) * L * 0.55])
-        stem(m, top, end, r * 0.62, r * 0.3, A.uv("bark"), bark, sides=4, segments=1, v_range=(0.3, 0.6))
+        a = 2 * math.pi * (k + rng.uniform(-0.2, 0.2)) / limbs
+        reach = rng.uniform(0.32, 0.48)
+        rise = rng.uniform(0.38, 0.72)
+        end = top + np.array([math.cos(a) * reach, rise, math.sin(a) * reach])
+        stem(m, top, end, r * 0.6, r * 0.28, A.uv("bark"), bark, sides=4, segments=1,
+             bend=(0, 0.06, 0), v_range=(0.3, 0.6))
         ends.append((end, a))
     return top, ends
 
 
-def crown(m, rng, state, centre, R, Hc, n, fruit):
-    """Leaf puffs laid like tiles over an ellipsoid crown, top down, as vanilla canopies are built; then fruit."""
+def lobe(m, rng, state, centre, radii, fruit, light):
+    """One leaf lobe at a limb end: shingled puffs over a small ellipsoid; fruit cards on its top and upper outer side
+    (where the game camera sees them), lying nearly flat so the persimmons face up."""
     cards = []
-    rings = [(0.1, 3), (0.45, 7), (0.8, 10), (1.12, 12), (1.45, 12), (1.8, 10)]
-    for phi, k in rings:
+    for phi, k in ((0.12, 2), (0.65, 5), (1.2, 6)):
         for j in range(k):
-            cards.append((phi + rng.uniform(-0.1, 0.1), 2 * math.pi * (j + rng.uniform(-0.25, 0.25)) / k + phi))
-    cards.sort(key=lambda c: -c[0])          # lowest first; upper cards overlap them
+            cards.append((phi + rng.uniform(-0.12, 0.12), 2 * math.pi * (j + rng.uniform(-0.3, 0.3)) / k + phi * 2))
+    cards.sort(key=lambda c: -c[0])
     for phi, th in cards:
-        size = R * rng.uniform(0.78, 0.95) * (1.12 if phi > 1.2 else 1.0)
-        spr = LEAVES[0] if rng.random() < 0.65 else LEAVES[int(rng.integers(1, 3))]
-        shingle(m, centre, (R, Hc * 0.5, R), phi, th, size, size, A.uv(spr), leaf_colour(rng, state, light=phi < 0.7),
+        size = radii[0] * rng.uniform(1.05, 1.3)
+        spr = LEAVES[0] if rng.random() < 0.6 else LEAVES[int(rng.integers(1, 3))]
+        shingle(m, centre, radii, phi, th, size, size, A.uv(spr), leaf_colour(rng, state, light=light and phi < 0.7),
                 inset=0.45, sway=(0.6, 1.0))
     if fruit:
-        for k in range(16):
-            phi = rng.uniform(0.55, 1.65)
-            th = 2 * math.pi * k / 16 + rng.uniform(-0.2, 0.2)
+        for k in range(6):
+            phi = rng.uniform(0.15, 1.05)
+            th = 2 * math.pi * (k + rng.uniform(-0.25, 0.25)) / 6
             spr = ["persimmon_fruit_a", "persimmon_fruit_b", "persimmon_fruit_c"][k % 3]
-            s = rng.uniform(0.32, 0.4) * (0.65 if spr == "persimmon_fruit_c" else 1.0)
-            # hanging just outside the leaves, stalk up (the card runs down from its hinge, sprite flipped)
-            shingle(m, centre, (R * 1.04, Hc * 0.53, R * 1.04), phi, th, s, s, BLANK, [1, 1, 1], uv2=A.duv(spr),
-                    inset=0.0, droop=0.5, lift_normal=0.5, sway=(0.7, 0.9))
+            s = rng.uniform(0.34, 0.42) * (0.75 if spr == "persimmon_fruit_c" else 1.0)
+            shingle(m, centre, (radii[0] * 1.06, radii[1] * 1.12, radii[2] * 1.06), phi, th, s, s, BLANK, [1, 1, 1],
+                    uv2=A.duv(spr), inset=0.2, droop=0.15, lift_normal=0.6, sway=(0.7, 0.9))
 
 
 def mature(m, state):
     rng = np.random.default_rng(5)
-    top, ends = trunk(m, rng, state, 0.85, 0.085, 3)
+    top, ends = trunk(m, rng, state, 1.0, 0.09, 4)
     if state == "dead":
         for end, a in ends:
-            upright(m, end - np.array([0, 0.25, 0]), a + math.pi / 2, 0.75, 0.75, A.uv("persimmon_branch"),
+            upright(m, end - np.array([0, 0.25, 0]), a + math.pi / 2, 0.6, 0.6, A.uv("persimmon_branch"),
                     [0.9, 0.88, 0.85], two_sided=True)
     else:
-        crown(m, rng, state, C + np.array([0.02, 1.45, 0.0]), 0.62, 1.15, 42, fruit=state == "alive")
+        # dark twigs showing through the gaps between the lobes
+        upright(m, top + np.array([0, 0.05, 0]), rng.uniform(0, 3), 0.85, 0.8, A.uv("persimmon_branch"),
+                [0.9, 0.88, 0.85], two_sided=True)
+        for i, (end, a) in enumerate(ends):
+            rr = rng.uniform(0.27, 0.33)
+            lobe(m, rng, state, end + np.array([0, 0.1, 0]), (rr, rr * 0.72, rr), fruit=state == "alive", light=i % 2 == 0)
     ambient(m, 1.5, floor=0.5)
-    auto_sway(m, 2.3, seed=1)
+    auto_sway(m, 2.1, seed=1)
 
 
 def seedling(m, state):
@@ -119,14 +127,15 @@ p.stage("Mature", mature)
 p.stump(stump)
 p.extra = {
     "basis": "ChestnutTree",
-    "gatherableDetail": "16 persimmon cards around the crown (detail sheet persimmon_fruit_*), shown while the tree has fruit",
+    "gatherableDetail": "24 persimmon cards on the tops of the four leaf lobes (detail sheet persimmon_fruit_*), shown while the tree has fruit",
     "blockHeight": 3,
     "treeCuttingRadius": 0.145,
     "randomizer": {"ConstrainProportion": True, "MinHeightScaleFactor": 0.9, "MaxHeightScaleFactor": 1.1,
                    "MinWidthScaleFactor": 0.9, "MaxWidthScaleFactor": 1.1, "RandomizedRotation": "BetweenMinAndMax",
                    "MinRotation": 0.0, "MaxRotation": 360.0},
     "colliders": {"Seedling": {"capsule": {"center": [0.5, 0.3, 0.5], "radius": 0.2, "height": 0.7}},
-                  "Mature": {"capsule": {"center": [0.5, 1.45, 0.5], "radius": 0.62, "height": 1.6}},
+                  "Mature": {"capsule": {"center": [0.5, 1.4, 0.5], "radius": 0.6, "height": 1.4}},
+                  "Mature/#Dead": {"capsule": {"center": [0.5, 0.75, 0.5], "radius": 0.22, "height": 1.6}},
                   "#Leftover": {"capsule": {"center": [0.5, 0.12, 0.5], "radius": 0.12, "height": 0.3}}},
 }
 if __name__ == "__main__":

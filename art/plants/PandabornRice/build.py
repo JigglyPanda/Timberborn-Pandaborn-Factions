@@ -52,9 +52,9 @@ def mature(m, state):
         yaw = rng.uniform(0, math.pi)
         hill(m, rng, p, H, 0.42, tuft, col(rng, RIPE, state), yaw)
         if state != "dead":     # drooping golden panicles over the hill, seen from above
-            for k in range(3):
-                a = yaw + 2 * math.pi * k / 3 + rng.uniform(-0.4, 0.4)
-                s = rng.uniform(0.3, 0.36)
+            for k in range(2):
+                a = yaw + math.pi * k + rng.uniform(-0.5, 0.5)
+                s = rng.uniform(0.27, 0.31)
                 card(m, p + np.array([0, H * 0.72, 0]), a, math.radians(rng.uniform(15, 35)), s, s,
                      A.uv("rice_panicle_a" if k != 1 else "rice_panicle_b"),
                      state_tint(GOLD, state, dry_to=[0.95, 0.85, 0.6], dead_to=[0.7, 0.62, 0.5]),

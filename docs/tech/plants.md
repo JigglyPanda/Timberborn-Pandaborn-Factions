@@ -238,3 +238,17 @@ What the game shots showed and what changed after them:
   small at full zoom-out.
 * The painted atlas is procedural: leaves are clean and graphic next to vanilla's hand-painted clusters; at game zoom
   it holds up, close up the bamboo leaf sprays and the persimmon puffs are the weakest sprites.
+
+## Changes
+
+### 2026-11-14, pass 2
+
+* **model.json `colliders`**: besides the stage keys (`"Seedling"`, `"Mature"`, `"#Leftover"`), a key may now name one
+  state, `"<Stage>/<#State>"`, which wins over its stage for that child. Used for `"Mature/#Dead"` on the two trees
+  (narrow trunk capsules, as vanilla's dead trees have). Nothing else in the schema changed; adopters that only read the
+  stage keys keep working (the dead trees then get the wide crown collider). Reference: `proto/plants/tools/gen_mod.py`.
+* Persimmon rebuilt as an open, irregular crown: a taller dark trunk forking into four limbs at different heights, a
+  leaf lobe at each limb end with gaps between (dark twigs show through), 24 persimmons lying nearly flat on the lobe
+  tops where the game camera sees them (212 triangles). Unripe: open green lobes on dark limbs; ripe: orange-topped.
+* Rice heads repainted as drooping golden clusters (a stem arching over, a dense tapering tassel of grains); two
+  heads per hill instead of three so the paddy stays green-gold (162 triangles).

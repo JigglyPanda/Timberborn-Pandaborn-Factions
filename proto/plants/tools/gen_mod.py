@@ -47,7 +47,9 @@ def blueprint(info):
             continue
         stage, state = key.split("/")
         node = {"TimbermeshSpec": {"Model": path}}
-        if stage in col:
+        if key in col:               # a state of its own ("Mature/#Dead": narrower, as vanilla's dead trees)
+            node["CollidersSpec"] = colliders(col[key])
+        elif stage in col:
             node["CollidersSpec"] = colliders(col[stage])
         models.setdefault(stage, {"Children": {}})["Children"][state] = node
     bp = {"PlantablePreviewModelSpec": {"Model": info["PlantablePreviewModelSpec.Model"]},
