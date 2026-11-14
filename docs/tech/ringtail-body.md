@@ -562,3 +562,26 @@ All shapes below were proven in rb-p3a/rb-p3b as merges in the dev mod `proto/ri
    `src\unity\PandabornAttachments\build.ps1` and `... build.ps1 -Mac`.
 5. **Fur masks:** nothing to do; `mod/PandabornFactions/Characters/Pandaborn/RingtailAdult|RingtailChild.Model.FurMask.png`
    (+ meta) are hand-written mod files and already assembled. They only matter with a Reskin that has the compat change.
+
+### 8.7 The Festival's rising sky lanterns
+
+`Effects/Pandaborn/LanternRise` (in `pandabornattachments_win|_mac`, built by `src/unity/PandabornAttachments/build.ps1`):
+one `ParticleSystem`, no Play on Awake, emission rate 0, non-looping 9 s with 9 single-lantern bursts (a `Play()` that
+finds it idle sends up a flight of 9; `Emit(1)` sends one), box release 2.6 x 2.6 m at hand height, world-space rise
+1.0-1.5 m/s easing in, sideways drift +-0.16 m/s, noise sway, slight rock, life 10-16 s, fade in 0.5 s and out over the
+last ~3 s, size 0.44-0.58 m quad (the paper ~0.3 m plus a halo), max 64. Sprite painted by `make_attachments.py`
+(`paint_sky_lantern`: red-orange paper, LanternPaperRed (240,70,22) shoulders, yellow-orange core, flame bead, four
+struts, hoop, soft halo; no writing). Material: `Universal Render Pipeline/Particles/Unlit`, transparent alpha blend,
+`_EMISSION`, queue 3035: the shader and settings of the game's own firework trails (`CometRed_Trail`, `Sparks`, read
+from `resources.assets`); keywords checked in both bundles with UnityPy.
+
+**Catalogue entry** (Festival Square `PandabornFestivalSquare.Inkpaws`, `TemplateAttachmentsSpec.Attachments`, append):
+`{"AttachmentId": "LanternRise", "Prefab": "Effects/Pandaborn/LanternRise", "Parent": "#LanternRise", "Position": {0,0,0},
+"Rotation": {0,0,0}, "Scale": {1,1,1}, "CreateInstantly": false}` (the adopted square model has `#LanternRise`).
+For the events lane: `FestivalSquare.Launch` calls `Play()`, which does nothing while lanterns are still aloft, so
+today each idle call sends a flight of 9; for exactly one lantern per call use `_lanternRise.Emit(1)`.
+
+**In game: not yet proven.** Run `lanterns-1` is queued (hidden desktop): dev copy `E:\PandabornDev\build\proto\pblanterns`
+(`proto/events/build.ps1 -Name pblanterns -Variant proto\ringtail-body\variants\lanterns -NoProbe`, with the new bundles),
+request `proto/ringtail-body/test/lanterns.request.json` (festival called at once, dusk shots every 0.2 h from 15.9 h,
+one at 19 h), output `E:\PandabornDev\build\test\lanterns-1\ev_l_*.png`.
