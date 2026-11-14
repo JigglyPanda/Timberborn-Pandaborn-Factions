@@ -120,7 +120,10 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   `BeaverAdult`/`BeaverChild` (only the Folktails-only tutorial stage `Wellbeing.SelectBeaver` lists them).
   The mesh is imported per path (no cache by node or animation name). Verified in game 2026-11-14 (Reskin off):
   Inkpaws colonists use `Characters/Pandaborn/InkpawAdult|InkpawChild.Model` with coats
-  `Materials/Pandaborn/Inkpaws/...` (adult body 1,716 vertices, kit 1,608).
+  `Materials/Pandaborn/Inkpaws/...` (adult body 1,716 vertices, kit 1,608), while with this mod on, Folktails and
+  Iron Teeth keep `BeaverAdult`/`BeaverChild` on `Characters/Beaver/...` (877 / 874 vertices) served only by the game's
+  own `ResourceAssetProvider`, with their vanilla coats. A coat is picked at random on every load
+  (`BeaverTextureSetter`), so it changes after save/load for every faction.
 * Character templates must keep the vanilla label keys in `SimpleLabeledEntitySpec.EntityNameLocKey`
   (`Beaver.Adult.TemplateName`, `Beaver.Child.TemplateName`, `Bot.TemplateName`): the Population tab of the
   batch-control window (`CharacterBatchControlTab.GetSortingKey`) throws `ArgumentOutOfRangeException` on any other
@@ -184,6 +187,11 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   `Player.log`, PNGs (`overview` = off-screen render of the game view, `screen` = real screen with UI,
   `adult`/`child`/`bot` = studio close-up, front and back, `batch_population` = Population tab open,
   `factionPanel_<Id>` = new-game faction panel). Look at the PNGs.
+* Placed buildings are joined to the district center doorstep with finished `Path` tiles (`connectPaths`, default on;
+  report in `result.json` `paths`); without paths they stay "Unconnected" and nobody works there. Starting goods are
+  only berries and water, so unfinished buildings need a working `LumberjackFlag` first. `result.json` `activity`
+  counts each character's running behavior/executor every 2 real seconds (work, eat, sleep, wander), and each sample
+  lists its need points.
 * At the end of every run the harness opens each batch-control tab (Population last) and fails `batchControlTabs` if
   one throws. `-SaveAndReload` saves as `PB_AutoTest` in `Saves\PB_AutoTest_<run>\`, relaunches with
   `-saveName/-settlementName`, re-checks faction and characters in `<run>\reload\`, then deletes that settlement only.

@@ -6,6 +6,7 @@ using Bindito.Core;
 using Newtonsoft.Json.Linq;
 using Timberborn.AssetSystem;
 using Timberborn.BatchControl;
+using Timberborn.BehaviorSystem;
 using Timberborn.Beavers;
 using Timberborn.BlockObjectTools;
 using Timberborn.BlockSystem;
@@ -23,6 +24,7 @@ using Timberborn.GameDistricts;
 using Timberborn.GameFactionSystem;
 using Timberborn.GameSaveRepositorySystem;
 using Timberborn.GameSaveRuntimeSystem;
+using Timberborn.NeedSystem;
 using Timberborn.PlatformUtilities;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
@@ -64,6 +66,7 @@ namespace PandabornDevHarness
         private readonly PreviewPlacerFactory _previewPlacerFactory;
         private readonly BlockObjectPlacerService _blockObjectPlacerService;
         private readonly ConstructionFactory _constructionFactory;
+        private readonly IBlockService _blockService;
         private readonly IBatchControlBox _batchControlBox;
         private readonly List<BatchControlModule> _batchControlModules;
         private readonly GameSaver _gameSaver;
@@ -81,6 +84,10 @@ namespace PandabornDevHarness
         private JArray _batchResults;
         private bool _saveCompleted;
         private Dictionary<Texture, string> _coatPaths;
+        private readonly Dictionary<string, int> _activity = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> _executors = new Dictionary<string, int>();
+        private float _nextActivitySample;
+        private int _activitySamples;
 
         public GameDriver(EventBus eventBus, SpeedManager speedManager, IDayNightCycle dayNightCycle, DevModeManager devModeManager,
                           FactionService factionService, CharacterPopulation characterPopulation, BeaverPopulation beaverPopulation,
@@ -89,12 +96,17 @@ namespace PandabornDevHarness
                           PreviewPlacerFactory previewPlacerFactory, BlockObjectPlacerService blockObjectPlacerService,
                           ConstructionFactory constructionFactory, IBatchControlBox batchControlBox,
                           IEnumerable<BatchControlModule> batchControlModules, GameSaver gameSaver,
-                          IEnumerable<IAssetProvider> assetProviders)
+                          IAssetLoader assetLoader, IBlockService blockService)
         {
+            _blockService = blockService;
             _batchControlBox = batchControlBox;
             _batchControlModules = batchControlModules.ToList();
             _gameSaver = gameSaver;
-            _assetProviders = assetProviders.ToList();
+            // the providers the game's AssetLoader really uses (an injected IEnumerable<IAssetProvider> comes back empty here)
+            _assetProviders = new List<IAssetProvider>();
+            var field = assetLoader.GetType().GetField("_assetProviders", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (field?.GetValue(assetLoader) is IEnumerable<IAssetProvider> providers) _assetProviders.AddRange(providers);
+            else Harness.Warn("could not read AssetLoader._assetProviders; asset provenance will be empty");
             _eventBus = eventBus;
             _speedManager = speedManager;
             _dayNightCycle = dayNightCycle;
@@ -187,6 +199,7 @@ namespace PandabornDevHarness
                     return;
 
                 case Phase.Running:
+                    if (now >= _nextActivitySample) { SampleActivity(); _nextActivitySample = now + 2f; }
                     for (int i = _timedShots.Count - 1; i >= 0; i--)
                         if (_timedShots[i].IsTimed(out float at) && now - _runStartedAt >= at)
                         {
@@ -232,6 +245,25 @@ namespace PandabornDevHarness
                     _phase = Phase.Done;
                     Harness.Finish("completed");
                     return;
+            }
+        }
+
+        /// <summary>Counts what every character is doing (running root behavior and executor), every 2 real seconds of the run.</summary>
+        private void SampleActivity()
+        {
+            _activitySamples++;
+            foreach (var character in _characterPopulation.Characters)
+            {
+                if (!character) continue;
+                var behaviors = character.GetComponent<BehaviorManager>();
+                if (behaviors == null) continue;
+                string kind = Kind(character);
+                string behavior = kind + ":" + (behaviors.RunningBehavior.Name ?? "none");
+                _activity.TryGetValue(behavior, out int n);
+                _activity[behavior] = n + 1;
+                string executor = kind + ":" + (behaviors.RunningExecutor.Name ?? "none");
+                _executors.TryGetValue(executor, out int m);
+                _executors[executor] = m + 1;
             }
         }
 
@@ -372,6 +404,7 @@ namespace PandabornDevHarness
             var anchor = center.CenterCoordinates;
             var specs = _templateService.GetAll<PlaceableBlockObjectSpec>().ToList();
             var used = new List<Vector3Int>();
+            var created = new List<BlockObject>();
             foreach (var r in requests)
             {
                 var entry = new JObject { ["template"] = r.Template, ["finished"] = r.Finished, ["placed"] = false };
@@ -386,8 +419,9 @@ namespace PandabornDevHarness
                     var builder = new EntitySetup.Builder(spec.Blueprint);
                     if (spec.HasSpec<BuildingSpec>())
                     {
-                        if (r.Finished) _constructionFactory.CreateAsFinished(builder, placement.Value);
-                        else _constructionFactory.CreateAsUnfinished(builder, placement.Value);
+                        var blockObject = r.Finished ? _constructionFactory.CreateAsFinished(builder, placement.Value)
+                                                     : _constructionFactory.CreateAsUnfinished(builder, placement.Value);
+                        if (blockObject) created.Add(blockObject);
                     }
                     else
                     {
@@ -406,6 +440,7 @@ namespace PandabornDevHarness
                 }
             }
             Harness.Info("placed " + results.Count(t => (bool)t["placed"]) + " of " + requests.Count + " building(s)");
+            if (Harness.Request.ConnectPaths) ConnectWithPaths(anchor, created, specs);
         }
 
         /// <summary>
@@ -450,6 +485,116 @@ namespace PandabornDevHarness
             {
                 placer.HideAllPreviews();
             }
+        }
+
+        /// <summary>
+        /// Lays finished Path tiles from the district center doorstep to each placed building's doorstep along the shortest
+        /// route (breadth-first search over level ground where a path is valid or already exists), so placed buildings are
+        /// connected and get workers. Routes never change level, so buildings on another level stay unconnected.
+        /// </summary>
+        private void ConnectWithPaths(Vector3Int anchor, List<BlockObject> buildings, List<PlaceableBlockObjectSpec> specs)
+        {
+            var pathSpec = specs.FirstOrDefault(sp => TemplateName(sp.Blueprint) == "Path");
+            var report = new JObject();
+            Harness.Result["paths"] = report;
+            if (pathSpec == null) { report["error"] = "no Path template"; return; }
+            var placer = _previewPlacerFactory.Create(pathSpec);
+            var passable = new Dictionary<Vector2Int, Placement?>();   // null value = already a path (or a doorstep)
+            int placedTiles = 0;
+            var connections = new JArray();
+            try
+            {
+                foreach (var building in buildings)
+                {
+                    if (!building || !building.HasEntrance) continue;
+                    var door = building.PositionedEntrance.DoorstepCoordinates;
+                    var route = FindRoute(anchor, door, placer, passable);
+                    int laid = 0;
+                    if (route != null)
+                        foreach (var cell in route)
+                        {
+                            if (IsPath(cell)) continue;
+                            var placement = Valid(placer, cell, Orientation.Cw0);
+                            if (!placement.HasValue) continue;
+                            var builder = new EntitySetup.Builder(pathSpec.Blueprint);
+                            if (pathSpec.HasSpec<BuildingSpec>()) _constructionFactory.CreateAsFinished(builder, placement.Value);
+                            else _blockObjectPlacerService.GetMatchingPlacer(pathSpec.GetSpec<BlockObjectSpec>()).Place(builder, placement.Value);
+                            laid++;
+                        }
+                    placedTiles += laid;
+                    connections.Add(new JObject
+                    {
+                        ["building"] = building.GetComponent<TemplateSpec>()?.TemplateName ?? "?",
+                        ["doorstep"] = new JArray(door.x, door.y, door.z),
+                        ["routeFound"] = route != null,
+                        ["routeLength"] = route?.Count ?? 0,
+                        ["tilesLaid"] = laid
+                    });
+                }
+            }
+            catch (Exception e) { Harness.Error("laying paths failed", e); report["error"] = e.GetType().Name + ": " + e.Message; }
+            finally { placer.HideAllPreviews(); }
+            report["anchor"] = new JArray(anchor.x, anchor.y, anchor.z);
+            report["tiles"] = placedTiles;
+            report["connections"] = connections;
+            Harness.Info("laid " + placedTiles + " path tile(s)");
+        }
+
+        private List<Vector3Int> FindRoute(Vector3Int from, Vector3Int to, PreviewPlacer placer, Dictionary<Vector2Int, Placement?> cache)
+        {
+            const int margin = 12;
+            int minX = Math.Min(from.x, to.x) - margin, maxX = Math.Max(from.x, to.x) + margin;
+            int minY = Math.Min(from.y, to.y) - margin, maxY = Math.Max(from.y, to.y) + margin;
+            var start = new Vector2Int(from.x, from.y);
+            var goal = new Vector2Int(to.x, to.y);
+            bool Open(Vector2Int c)
+            {
+                if (c == start || c == goal) return true;
+                if (c.x < minX || c.x > maxX || c.y < minY || c.y > maxY) return false;
+                if (!_terrainService.Contains(c)) return false;
+                var cell = new Vector3Int(c.x, c.y, from.z);
+                if (Ground(cell).z != from.z) return false;
+                if (cache.TryGetValue(c, out var known)) return known.HasValue || IsPath(cell);
+                if (IsPath(cell)) { cache[c] = null; return true; }
+                var p = Valid(placer, cell, Orientation.Cw0);
+                cache[c] = p;
+                return p.HasValue;
+            }
+            if (to.z != from.z) return null;
+            var previous = new Dictionary<Vector2Int, Vector2Int> { [start] = start };
+            var queue = new Queue<Vector2Int>();
+            queue.Enqueue(start);
+            var steps = new[] { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
+            while (queue.Count > 0)
+            {
+                var c = queue.Dequeue();
+                if (c == goal)
+                {
+                    var route = new List<Vector3Int>();
+                    for (var at = goal; ; at = previous[at])
+                    {
+                        route.Add(new Vector3Int(at.x, at.y, from.z));
+                        if (at == start) break;
+                    }
+                    route.Reverse();
+                    return route;
+                }
+                foreach (var step in steps)
+                {
+                    var n = c + step;
+                    if (previous.ContainsKey(n) || !Open(n)) continue;
+                    previous[n] = c;
+                    queue.Enqueue(n);
+                }
+            }
+            return null;
+        }
+
+        private bool IsPath(Vector3Int cell)
+        {
+            foreach (var o in _blockService.GetObjectsAt(cell))
+                if (o && o.GetComponent<TemplateSpec>()?.TemplateName == "Path") return true;
+            return false;
         }
 
         private Vector3Int Ground(Vector3Int c)
@@ -591,6 +736,13 @@ namespace PandabornDevHarness
                 samples.Add(Describe(character));
             }
             result["characterSamples"] = samples;
+            if (_activitySamples > 0)
+                result["activity"] = new JObject
+                {
+                    ["samples"] = _activitySamples,
+                    ["behaviors"] = JObject.FromObject(_activity.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value)),
+                    ["executors"] = JObject.FromObject(_executors.OrderByDescending(kv => kv.Value).Take(40).ToDictionary(kv => kv.Key, kv => kv.Value))
+                };
             var templateCounts = new JObject();
             foreach (var character in _characterPopulation.Characters)
             {
@@ -687,6 +839,20 @@ namespace PandabornDevHarness
                 b["modelAsset"] = description ? description.ModelName : null;
                 b["baseMapAsset"] = CoatPath(body);
                 o["body"] = b;
+            }
+            var needManager = character.GetComponent<NeedManager>();
+            if (needManager != null)
+            {
+                var needs = new JObject();
+                foreach (var need in needManager.NeedSpecs)
+                    if (needManager.NeedIsActive(need.Id)) needs[need.Id] = Math.Round(needManager.GetNeedPoints(need.Id), 2);
+                o["needs"] = needs;
+            }
+            var behaviorManager = character.GetComponent<BehaviorManager>();
+            if (behaviorManager != null)
+            {
+                o["behavior"] = behaviorManager.RunningBehavior.Name;
+                o["executor"] = behaviorManager.RunningExecutor.Name;
             }
             var models = new JArray();
             foreach (var d in character.GameObject.GetComponentsInChildren<TimbermeshDescription>(true))

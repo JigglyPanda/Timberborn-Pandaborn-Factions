@@ -85,12 +85,12 @@ param(
 $ErrorActionPreference = 'Stop'
 # powershell -File passes "a,b" as one string: split list parameters on commas
 function Split-List([string[]]$items) { @($items | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
-$DisableMods = Split-List $DisableMods
-$OnlyMods = Split-List $OnlyMods
-$ExtraMods = Split-List $ExtraMods
-$Buildings = Split-List $Buildings
-$Screenshots = Split-List $Screenshots
-$OwnPatterns = Split-List $OwnPatterns
+$DisableMods = @(Split-List $DisableMods)
+$OnlyMods = @(Split-List $OnlyMods)
+$ExtraMods = @(Split-List $ExtraMods)
+$Buildings = @(Split-List $Buildings)
+$Screenshots = @(Split-List $Screenshots)
+$OwnPatterns = @(Split-List $OwnPatterns)
 $repo = Split-Path -Parent $PSScriptRoot
 $documents = [Environment]::GetFolderPath('MyDocuments')
 $modsDir = Join-Path $documents 'Timberborn\Mods'
@@ -139,12 +139,17 @@ function Get-PrefValueName([string]$prefKey) {
     return "$($prefKey)_h$h"
 }
 
+# The game reads manifests with a lenient JSON reader (trailing commas are common); ConvertFrom-Json is strict, so
+# trailing commas and // comments are stripped first. Returns $null if it still cannot be read.
 function Read-Manifest([string]$path) {
     try {
         $text = [IO.File]::ReadAllText($path)
+        $text = [regex]::Replace($text, '(?m)^\s*//.*$', '')
+        $text = [regex]::Replace($text, ',(\s*[}\]])', '$1')
         return ($text | ConvertFrom-Json)
     } catch { return $null }
 }
+$script:manifestProblems = @()
 
 # Every mod folder the game can see, as Timberborn.Modding builds its key: "ModEnabled.<DisplaySource>.<OriginName>.<Id>".
 # OriginName is the top folder even when a version-* subfolder is loaded; all Ids found in the folder are listed.
@@ -167,7 +172,7 @@ function Get-InstalledMods {
             $ids = @(); $names = @(); $required = @()
             foreach ($mf in $manifestFiles) {
                 $m = Read-Manifest $mf
-                if ($null -eq $m -or -not $m.Id) { continue }
+                if ($null -eq $m -or -not $m.Id) { $script:manifestProblems += $mf; continue }
                 if ($ids -cnotcontains $m.Id) { $ids += [string]$m.Id }   # the pref key is case-sensitive
                 if ($m.Name -and $names -notcontains $m.Name) { $names += [string]$m.Name }
                 foreach ($r in @($m.RequiredMods)) { if ($r -and $r.Id -and $required -notcontains $r.Id) { $required += [string]$r.Id } }
@@ -452,6 +457,9 @@ function Get-RunVerdict($run, [string]$label) {
     if ($null -ne $modPlan -and $null -ne $result) {
         $offIds = @($modPlan.entries | ForEach-Object { if ($_.mod -match '\((.*)\)$') { $Matches[1] -split ', ' } }) | Select-Object -Unique
         $disabledButLoaded = @($offIds | Where-Object { $loadedMods -contains $_ })
+        if ($modPlan.mode -eq 'OnlyMods') {
+            $disabledButLoaded += @($loadedMods | Where-Object { $modPlan.keptIds -notcontains $_ })
+        }
         if ($disabledButLoaded.Count) { $problems += "mods that should be off were loaded: $($disabledButLoaded -join ', ')"; if ($exitCode -eq 0) { $exitCode = 2 } }
     }
     $verdict = if ($exitCode -eq 0) { 'PASS' } elseif ($exitCode -eq 1) { 'FAIL' } else { 'ERROR' }
@@ -636,13 +644,16 @@ try {
         $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($prefsKey)
         if ($null -eq $key) { Say "HKCU\$prefsKey not found; refusing to guess." 'Red'; exit 2 }
         try {
-            $toDisable = @(); $keptForDeps = @(); $notes = @()
+            $toDisable = @(); $keptForDeps = @(); $notes = @(); $keptIds = @()
             $extraTokens = @($extra | ForEach-Object { $_.Id })
             if ($DisableMods.Count -gt 0) {
                 $f = Find-Mods $installed $DisableMods
                 if ($f.Missing.Count) { Say "Not installed (by Id, folder or name): $($f.Missing -join ', ')" 'Red'; exit 2 }
                 $toDisable = @($f.Found | Where-Object { $_.Ids -notcontains $harnessId -and -not ($_.Source -eq 'Local' -and ($extra.Folder -contains $_.Origin)) })
             } elseif ($OnlyMods.Count -gt 0) {
+                if ($script:manifestProblems.Count) {
+                    Say "Cannot read these manifests, so -OnlyMods cannot switch every mod off reliably: $($script:manifestProblems -join '; ')" 'Red'; exit 2
+                }
                 $f = Find-Mods $installed ($OnlyMods + $harnessId + $extraTokens)
                 if ($f.Missing.Count) { Say "Not installed (by Id, folder or name): $($f.Missing -join ', ')" 'Red'; exit 2 }
                 $keep = @{}
@@ -662,6 +673,7 @@ try {
                     }
                 } while ($added)
                 $toDisable = @($installed | Where-Object { -not $keep.ContainsKey("$($_.Source)|$($_.Origin)") })
+                $keptIds = @($keep.Values | ForEach-Object { $_.Ids })
             }
             $entries = @(); $alreadyOff = @()
             foreach ($m in $toDisable) {
@@ -690,7 +702,8 @@ try {
             $modPlan = [ordered]@{
                 runId = $RunId; createdUtc = (Get-Date).ToUniversalTime().ToString('o'); registryKey = "HKCU\$prefsKey"
                 mode = $(if ($OnlyMods.Count) { 'OnlyMods' } elseif ($DisableMods.Count) { 'DisableMods' } else { 'ExtraMods' })
-                requested = @($DisableMods + $OnlyMods + @($extra | ForEach-Object { "+$($_.Id)" }))
+                requested = @(@($DisableMods) + @($OnlyMods) + @($extra | ForEach-Object { "+$($_.Id)" }) | Where-Object { $_ })
+                keptIds = @($keptIds)
                 restoreHint = "powershell -ExecutionPolicy Bypass -File `"$PSCommandPath`" -RestoreModState `"$(Join-Path $runDir 'modstate.json')`""
                 entries = $entries
                 alreadyDisabled = @($alreadyOff | ForEach-Object { "$($_.Source)/$($_.Origin)" })

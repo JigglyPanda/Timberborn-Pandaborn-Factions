@@ -41,6 +41,7 @@ namespace PandabornDevHarness
     ///   "screenshotSize": [1280, 720], "closeupSize": 640, "samplePerKind": 3,
     ///   "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws" ],
     ///   "batchControl": true (open every batch-control tab at the end; a throwing tab fails the run),
+    ///   "connectPaths": true (lay Path tiles from the district center doorstep to each placed building),
     ///   "factionPanelShots": false (screen captures of the main menu's new-game faction panel, one per faction),
     ///   "save": "PB_AutoTest" (save name; the game is saved to Saves/&lt;settlementName&gt;/ at the end),
     ///   "loadSave": false (the game was launched with -saveName/-settlementName: do not start a new game),
@@ -88,6 +89,7 @@ namespace PandabornDevHarness
         public bool Quit = true;
 
         public bool BatchControl = true;
+        public bool ConnectPaths = true;
         public bool FactionPanelShots;
         public string SaveName;
         public bool LoadSave;
@@ -113,6 +115,7 @@ namespace PandabornDevHarness
             r.Mute = Bool(raw, "mute", r.Mute);
             r.Quit = Bool(raw, "quit", r.Quit);
             r.BatchControl = Bool(raw, "batchControl", r.BatchControl);
+            r.ConnectPaths = Bool(raw, "connectPaths", r.ConnectPaths);
             r.FactionPanelShots = Bool(raw, "factionPanelShots", r.FactionPanelShots);
             r.SaveName = Str(raw, "save", null);
             if (string.IsNullOrWhiteSpace(r.SaveName)) r.SaveName = null;
