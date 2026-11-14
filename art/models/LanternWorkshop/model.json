@@ -1,0 +1,246 @@
+{
+ "id": "LanternWorkshop",
+ "standIn": "Bakery.Folktails",
+ "generatedBy": "art/models/LanternWorkshop/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "LanternWorkshop.Model",
+  "constructionStage0": "LanternWorkshop.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 3,
+  "Z": 4
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.0,
+    "Y": 0.1,
+    "Z": 1.4
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 0.7,
+    "Z": 2.0
+   },
+   "Size": {
+    "X": 1.9,
+    "Y": 1.4,
+    "Z": 1.7
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1856,
+  "constructionStage0": 1012,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Paper.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "On the Bakery footprint (2x3x4) without its oven smoke (removeSpecs). The rack's lanterns glow with the workplace lit (WorkplaceIlluminatorSpec)."
+ ],
+ "access": {
+  "X": 1.0,
+  "Y": 0.1,
+  "Z": 1.3
+ },
+ "removeSpecs": [
+  "TemplateAttachmentsSpec",
+  "WorkshopParticleControllerSpec",
+  "WindParticleControllerSpec"
+ ]
+}

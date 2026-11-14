@@ -1,0 +1,252 @@
+{
+ "id": "HotPotHall",
+ "standIn": "Bakery.Folktails",
+ "generatedBy": "art/models/HotPotHall/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "HotPotHall.Model",
+  "constructionStage0": "HotPotHall.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 3,
+  "Z": 4
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.0,
+    "Y": 0.12,
+    "Z": 0.7
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 1.0,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 1.9,
+    "Y": 2.0,
+    "Z": 2.8
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Smoke",
+   "Position": {
+    "X": 1.4,
+    "Y": 2.47,
+    "Z": 1.5499999999999998
+   },
+   "note": "the vanilla bakery smoke from the stove flue"
+  }
+ ],
+ "triangles": {
+  "finished": 2272,
+  "constructionStage0": 1000,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Moss.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Bakery (2x3x4) though the model only rises to about 2.4."
+ ],
+ "access": {
+  "X": 1.0,
+  "Y": 0.12,
+  "Z": 0.6
+ }
+}
