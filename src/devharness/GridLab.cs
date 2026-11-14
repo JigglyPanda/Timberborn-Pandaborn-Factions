@@ -62,7 +62,14 @@ namespace PandabornDevHarness
     ///   "startDelaySeconds": 2,                       // after the primary UI is shown
     ///   "finishWaitSeconds": 10,                      // real seconds a blocked site may take to report finished
     ///   "searchSeconds": 4,                           // per template and pass: real-time budget of the map-wide search
-    ///   "areaTries": 400                              // per template: game validity checks tried inside the area
+    ///   "areaTries": 400,                             // per template: game validity checks tried inside the area
+    ///   "exercise": {                                 // after every template is done: run the finished-state and
+    ///     "recipes": true,                            // working-state code (animation controllers, sound emitters,
+    ///     "speeds": [1, 3, 0, 2, 3],                  // particles, progress visualisers): give every manufactory with
+    ///     "everySeconds": 4,                          // no recipe its first one, then change the game speed through
+    ///     "holdHours": 3                              // the list, one step every N real seconds, then let N in-game
+    ///   }                                             // hours pass at the last speed (result "grid.exercise"); the run
+    ///                                                 // does not end before (GameDriver waits for "exercise.done")
     /// }
     /// </code>
     /// Placement: candidates come from the test area first (rows, deterministic: largest footprint first, then name without
@@ -92,8 +99,14 @@ namespace PandabornDevHarness
         private readonly DistrictCenterRegistry _districtCenterRegistry;
         private readonly EntitySelectionService _entitySelectionService;
         private readonly IBlockOccupancyService _blockOccupancyService;
+        private readonly Timberborn.TimeSystem.SpeedManager _speedManager;
+        private readonly EntityRegistry _entityRegistry;
 
         private JObject _spec, _out, _summary;
+        private JObject _exercise;
+        private int _exerciseStep = -1;
+        private float _exerciseAt, _holdFromHours = -1f;
+        private readonly Timberborn.TimeSystem.IDayNightCycle _dayNightCycle;
         private JArray _items;
         private Phase _phase = Phase.Waiting;
         private float _primaryUiAt = -1f, _lastWrite;
@@ -150,8 +163,12 @@ namespace PandabornDevHarness
                        ConstructionFactory constructionFactory, BlockObjectPlacerService blockObjectPlacerService, IBlockService blockService,
                        ITerrainService terrainService, IThreadSafeWaterMap waterMap, MapIndexService mapIndexService, EntityService entityService,
                        DistrictCenterRegistry districtCenterRegistry, EntitySelectionService entitySelectionService,
-                       IBlockOccupancyService blockOccupancyService)
+                       IBlockOccupancyService blockOccupancyService, Timberborn.TimeSystem.SpeedManager speedManager,
+                       EntityRegistry entityRegistry, Timberborn.TimeSystem.IDayNightCycle dayNightCycle)
         {
+            _dayNightCycle = dayNightCycle;
+            _speedManager = speedManager;
+            _entityRegistry = entityRegistry;
             _eventBus = eventBus;
             _templateService = templateService;
             _previewPlacerFactory = previewPlacerFactory;
@@ -214,6 +231,8 @@ namespace PandabornDevHarness
             }
             if (_phase == Phase.Done)
             {
+                try { Exercise(); }
+                catch (Exception e) { Harness.Error("grid exercise failed", e); _exerciseStep = int.MaxValue; }
                 RefreshSummary();   // keeps "alive" current until the harness ends
                 if (Time.unscaledTime - _lastWrite > 2f) WriteGridJson();
                 return;
@@ -925,6 +944,59 @@ namespace PandabornDevHarness
             RefreshSummary();
             WriteGridJson();
             Harness.Info("grid complete: " + _summary.ToString(Formatting.None));
+        }
+
+        // ------------------------------------------------------------------ exercise
+        /// <summary>After the grid: recipes on, then a speed ladder, so code that only runs on finished, working buildings
+        /// runs (both crashes of 2026-11-14 were there). Errors land in the harness log and fail the run.</summary>
+        private void Exercise()
+        {
+            if (!(_spec["exercise"] is JObject ex) || (string)_out["status"] != "completed" || _exerciseStep == int.MaxValue) return;
+            var speeds = (ex["speeds"] as JArray)?.Select(t => (float)t).ToList() ?? new List<float> { 1f, 3f, 0f, 2f, 3f };
+            float every = Request.Num(ex, "everySeconds", 4f);
+            if (_exerciseStep < 0)
+            {
+                _exercise = new JObject { ["recipesSet"] = 0, ["speeds"] = new JArray() };
+                _out["exercise"] = _exercise;
+                if (Request.Bool(ex, "recipes", true))
+                {
+                    int n = 0;
+                    foreach (var entity in _entityRegistry.Entities)
+                    {
+                        if (!entity) continue;
+                        var m = entity.GetComponent<Timberborn.Workshops.Manufactory>();
+                        if (m == null || m.HasCurrentRecipe || m.ProductionRecipes.Length == 0) continue;
+                        m.SetRecipe(m.ProductionRecipes[0]);
+                        n++;
+                    }
+                    _exercise["recipesSet"] = n;
+                    Harness.Info("grid exercise: recipes set on " + n + " manufactories");
+                }
+                _exerciseStep = 0;
+                _exerciseAt = Time.unscaledTime;
+                return;
+            }
+            if (_exerciseStep >= speeds.Count)
+            {
+                if ((bool?)_exercise["done"] == true) return;
+                float hours = _dayNightCycle.PartialDayNumber * 24f;
+                if (_holdFromHours < 0f) _holdFromHours = hours;
+                float hold = Request.Num(ex, "holdHours", 3f);
+                if (speeds.Count == 0 || speeds[speeds.Count - 1] <= 0f) _speedManager.ChangeSpeed(3f);
+                if (hours - _holdFromHours >= hold)
+                {
+                    _exercise["done"] = true;
+                    _exercise["heldHours"] = Math.Round(hours - _holdFromHours, 2);
+                    Harness.Info("grid exercise done after " + Math.Round(hours - _holdFromHours, 2) + " in-game hours");
+                }
+                return;
+            }
+            if (Time.unscaledTime - _exerciseAt < every) return;
+            _speedManager.ChangeSpeed(speeds[_exerciseStep]);
+            ((JArray)_exercise["speeds"]).Add(speeds[_exerciseStep]);
+            Harness.Info("grid exercise: speed " + speeds[_exerciseStep]);
+            _exerciseStep++;
+            _exerciseAt = Time.unscaledTime;
         }
 
         // ------------------------------------------------------------------ errors

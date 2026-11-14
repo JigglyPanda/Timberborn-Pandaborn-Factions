@@ -24,6 +24,11 @@
             git) and the code/bundle outputs into the staging folder E:\PandabornDev\build\stage\PandabornFactions.
             A generated file landing on a hand-written one is an error. Nothing installed is touched.
   validate  tools/validate.py on the staging folder (schema, ids, lock, needs, assets...).
+  gate      THE INSTALL GATE: builds a dev copy of the staging folder (proto/foundation/build.ps1 -Name pbgate) and runs
+            the generated grid request on it with the installed faction switched off (every placeable template placed
+            and finished, recipes on, a speed ladder, three in-game hours). On a pass it writes <StageDir>.gate.json
+            with the staging folder's content hash; install refuses a staging folder without a matching gate.
+            Queues behind other game tests (-WaitForGameSeconds 10800).
   install   Mirrors the validated staging folder into E:\PandabornDev\build\PandabornFactions (the folder the game's Mods
             junction points at) and makes the junction, exactly as tools/build.ps1 always did. Refuses if validation
             failed in this run. Never touches any other Mods entry and never replaces a real folder.
@@ -64,15 +69,17 @@ param(
     [string]$RingtailMeshSource = 'E:\PandabornDev\build\characters\out',
     [string]$ModsDir = 'C:\Users\Israel Gonzalez\Documents\Timberborn\Mods',
     [string]$LinkName = 'PandabornFactions',
-    [string[]]$TestArgs = @()
+    [string[]]$TestArgs = @(),
+    # install without a passing gate: only on the coordinator's word, with the reason (written to the gate log)
+    [string]$GateOverride = ''
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $source = Join-Path $repo 'mod\PandabornFactions'
 $env:PYTHONDONTWRITEBYTECODE = '1'
 $stages = @($Stage | ForEach-Object { $_ -split ',' } | Where-Object { $_ } | ForEach-Object { $_.Trim().ToLowerInvariant() })
-if ($stages -contains 'all') { $stages = @('pin', 'models', 'generate', 'code', 'bundles', 'assemble', 'validate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
-$known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'install', 'test', 'package'
+if ($stages -contains 'all') { $stages = @('pin', 'models', 'generate', 'code', 'bundles', 'assemble', 'validate', 'gate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
+$known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'gate', 'install', 'test', 'package'
 foreach ($s in $stages) { if ($known -notcontains $s) { throw "unknown stage '$s' (stages: $($known -join ', '), all)" } }
 
 # large binaries that live outside git: staging-relative path -> source file
@@ -147,6 +154,19 @@ function Add-Tree($map, [string]$root, [string]$origin, $origins) {
         $origins[$k] = $origin
         $map[$rel] = $f.FullName
     }
+}
+
+function Get-StageHash([string]$dir) {
+    # content hash of a staging folder: every file's relative path and SHA-256 (the parked-bundle folder is not content)
+    $root = (Resolve-Path -LiteralPath $dir).Path
+    $lines = foreach ($f in Get-ChildItem -LiteralPath $root -Recurse -File | Sort-Object FullName) {
+        $rel = $f.FullName.Substring($root.Length + 1)
+        if ($rel -match '(^|\\)AssetBundles\.parked(\\|$)') { continue }
+        $rel.ToLowerInvariant() + ':' + (Get-FileHash -LiteralPath $f.FullName -Algorithm SHA256).Hash
+    }
+    $bytes = [Text.Encoding]::UTF8.GetBytes(($lines -join "`n"))
+    $sha = [Security.Cryptography.SHA256]::Create()
+    return ([BitConverter]::ToString($sha.ComputeHash($bytes)) -replace '-', '')
 }
 
 $failed = @()
@@ -297,8 +317,41 @@ foreach ($s in $stages) {
             # report only: numbers in the balance model's stat sheet the catalogue has not carried over
             $null = Invoke-Py @((Join-Path $repo 'src\gen\import_statsheet.py'), '--check')
         }
+        'gate' {
+            if ($failed.Count -gt 0) { Say "gate: not run, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
+            $hash = Get-StageHash $StageDir
+            $copy = 'pbgate'
+            & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'proto\foundation\build.ps1') -Name $copy -Source $StageDir | Out-Host
+            if ($LASTEXITCODE -ne 0) { Say 'gate: the dev copy did not build' 'Red'; $failed += $s; break }
+            $runId = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+            $grid = "$GenDir.grid.json"
+            & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'tools\run_game_test.ps1') -Faction Inkpaws -Map Plains `
+                -DisableMods JigglyPanda.PandabornFactions -ExtraMods "E:\PandabornDev\build\proto\$copy" -RequestJson $grid `
+                -RunSeconds 2400 -TimeoutSeconds 4200 -WaitForGameSeconds 10800 -RunId $runId | Out-Host
+            $code = $LASTEXITCODE
+            if ($code -ne 0) { Say "gate: FAILED (run $runId, exit $code): this staging folder must not be installed" 'Red'; $failed += $s; break }
+            if ((Get-StageHash $StageDir) -ne $hash) { Say 'gate: the staging folder changed during the run; run the gate again' 'Red'; $failed += $s; break }
+            $gate = [ordered]@{ hash = $hash; run = $runId; passedUtc = (Get-Date).ToUniversalTime().ToString('o'); stage = $StageDir }
+            [IO.File]::WriteAllText("$StageDir.gate.json", ($gate | ConvertTo-Json))
+            Say "gate: passed (run $runId); $StageDir may be installed"
+        }
         'install' {
             if ($failed.Count -gt 0) { Say "install: refused, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
+            $gateFile = "$StageDir.gate.json"
+            $gateOk = $false
+            if (Test-Path -LiteralPath $gateFile) {
+                $g = Get-Content -LiteralPath $gateFile -Raw | ConvertFrom-Json
+                $gateOk = ($g.hash -eq (Get-StageHash $StageDir))
+            }
+            if (-not $gateOk) {
+                if (-not $GateOverride) {
+                    Say 'install: refused, this staging folder has not passed the gate (pandaborn.ps1 gate: a dev copy loaded with every template placed, finished and working)' 'Red'
+                    $failed += $s; break
+                }
+                $log = "$StageDir.gate-overrides.log"
+                Add-Content -LiteralPath $log -Value ("{0} override: {1}" -f (Get-Date).ToString('o'), $GateOverride)
+                Say "install: GATE OVERRIDDEN ($GateOverride), logged in $log" 'Yellow'
+            }
             if (-not $validated) {
                 $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
                 $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'

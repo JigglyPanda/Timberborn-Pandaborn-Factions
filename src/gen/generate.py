@@ -113,7 +113,11 @@ def generate(a, v):
         if o.kind == "building" and "PlaceableBlockObjectSpec" in o.data and not o.data[
                 "PlaceableBlockObjectSpec"].get("DevModeTool"):
             placeable.append(o.data["TemplateSpec"]["TemplateName"])
-    grid = {"grid": {"templates": placeable}}
+    # every placeable template placed and finished, then recipes on, a speed ladder and a few in-game hours, so
+    # finished-state and working-state code runs (the install gate, CLAUDE.md)
+    grid = {"speed": 3, "grid": {"templates": placeable,
+                                 "exercise": {"recipes": True, "speeds": [1, 3, 0, 2, 3], "everySeconds": 4,
+                                              "holdHours": 3}}}
 
     existing = {}
     if os.path.isdir(a.out):
