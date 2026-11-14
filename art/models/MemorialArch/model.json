@@ -1,0 +1,61 @@
+{
+ "id": "MemorialArch",
+ "standIn": "BrazierOfBonding.Folktails",
+ "generatedBy": "art/models/MemorialArch/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "MemorialArch.Model",
+  "constructionStage0": "MemorialArch.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 2,
+  "Z": 5
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 1.9,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 2.3,
+    "Y": 3.8,
+    "Z": 0.5
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Fire",
+   "Position": {
+    "X": 1.0,
+    "Y": 1.81,
+    "Z": 1.0
+   },
+   "note": "the vanilla brazier flame burns in the lantern cage under the arch"
+  }
+ ],
+ "triangles": {
+  "finished": 1406,
+  "constructionStage0": 624,
+  "vanillaMedianForFootprint": 900
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks and effects as the vanilla Brazier of Bonding; one construction stage (thresholds [0.0])."
+ ]
+}
