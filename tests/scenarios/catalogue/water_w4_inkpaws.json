@@ -1,0 +1,1280 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 1500,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "water": {
+  "name": "w4",
+  "speed": 3,
+  "area": [
+   26,
+   20
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     5,
+     6,
+     11
+    ],
+    "z": 3
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     6,
+     5,
+     10
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     8,
+     6,
+     8
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     21,
+     6,
+     24,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     2,
+     14,
+     6
+    ],
+    "z": 3
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     11,
+     3,
+     13,
+     5
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     12,
+     6,
+     12,
+     6
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     14,
+     14,
+     17
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.Inkpaws",
+    "at": [
+     6,
+     8,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "g2"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlumeBridge.Inkpaws",
+    "from": [
+     7,
+     8,
+     0
+    ],
+    "count": 5,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "br"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeBridgeSpan.Inkpaws",
+    "at": [
+     12,
+     8,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "span"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlumeBridge.Inkpaws",
+    "from": [
+     13,
+     8,
+     0
+    ],
+    "count": 8,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "bs"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.Inkpaws",
+    "at": [
+     12,
+     6,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "g1"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.Inkpaws",
+    "from": [
+     12,
+     7,
+     0
+    ],
+    "count": 6,
+    "step": [
+     0,
+     1,
+     0
+    ],
+    "orientation": "Cw0",
+    "idPrefix": "f"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.Inkpaws",
+    "at": [
+     12,
+     13,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "sp"
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "set",
+    "id": "sp",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "p1",
+    "at": [
+     12,
+     4,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "p2",
+    "at": [
+     3,
+     8,
+     1
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "keepB2",
+    "at": [
+     23,
+     8,
+     -1
+    ],
+    "rate": -3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "wait",
+    "ticks": 600,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "t600"
+   },
+   {
+    "op": "shot",
+    "name": "w4_before",
+    "focus": [
+     12,
+     10,
+     0
+    ],
+    "distance": 14,
+    "pitch": 45,
+    "yaw": 30
+   },
+   {
+    "op": "expect",
+    "label": "line A backed up",
+    "what": "depth",
+    "at": [
+     12,
+     10,
+     0
+    ],
+    "min": 0.5
+   },
+   {
+    "op": "expect",
+    "label": "line A sides dry",
+    "what": "depth",
+    "at": [
+     11,
+     10,
+     0
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "expect",
+    "label": "crossing carries line B",
+    "what": "depth",
+    "at": [
+     12,
+     8,
+     1
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "paddy at the spout depth",
+    "what": "depth",
+    "at": [
+     12,
+     15,
+     -1
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "wait",
+    "ticks": 30,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "before_save"
+   }
+  ],
+  "reloadSteps": [
+   {
+    "op": "bind",
+    "id": "g1",
+    "at": [
+     12,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "g2",
+    "at": [
+     6,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "span",
+    "at": [
+     12,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "f0",
+    "at": [
+     12,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "f3",
+    "at": [
+     12,
+     10,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "f5",
+    "at": [
+     12,
+     12,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "sp",
+    "at": [
+     12,
+     13,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "br4",
+    "at": [
+     11,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "bs0",
+    "at": [
+     13,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "reload_t0"
+   },
+   {
+    "op": "water",
+    "id": "p1",
+    "at": [
+     12,
+     4,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "p2",
+    "at": [
+     3,
+     8,
+     1
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "keepB2",
+    "at": [
+     23,
+     8,
+     -1
+    ],
+    "rate": -3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "wait",
+    "ticks": 1,
+    "capSeconds": 60
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "reload_t1"
+   },
+   {
+    "op": "wait",
+    "ticks": 2,
+    "capSeconds": 60
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "reload_t3"
+   },
+   {
+    "op": "wait",
+    "ticks": 30,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "reload_t33"
+   },
+   {
+    "op": "expect",
+    "label": "after reload: water back in the flume at once",
+    "what": "depth",
+    "at": [
+     12,
+     10,
+     0
+    ],
+    "min": 0.5
+   },
+   {
+    "op": "expect",
+    "label": "after reload: sides dry",
+    "what": "depth",
+    "at": [
+     11,
+     10,
+     0
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "expect",
+    "label": "after reload: nothing on top beside",
+    "what": "depth",
+    "at": [
+     11,
+     10,
+     1
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      12,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      12,
+      0
+     ],
+     [
+      12,
+      10,
+      1
+     ],
+     [
+      11,
+      10,
+      1
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      12,
+      13,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f3",
+     "f5",
+     "sp",
+     "br4",
+     "bs0"
+    ],
+    "volumes": [
+     [
+      10,
+      14,
+      14,
+      17,
+      -1
+     ],
+     [
+      12,
+      7,
+      12,
+      12,
+      0
+     ]
+    ],
+    "label": "reload_t333"
+   },
+   {
+    "op": "expect",
+    "label": "after reload: paddy not over-filled",
+    "what": "depth",
+    "at": [
+     12,
+     15,
+     -1
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "after reload: crossing carries line B",
+    "what": "depth",
+    "at": [
+     12,
+     8,
+     1
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "shot",
+    "name": "w4_reload",
+    "focus": [
+     12,
+     10,
+     0
+    ],
+    "distance": 14,
+    "pitch": 45,
+    "yaw": 30
+   }
+  ]
+ },
+ "note": "generated from proto/water/tests/w4.json by the catalogue lane: the same steps on the catalogue templates"
+}

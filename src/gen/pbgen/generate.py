@@ -720,6 +720,9 @@ class Generator:
             parts = path.split(".")
             node = data
             for i, p in enumerate(parts[:-1]):
+                if isinstance(node, list) and p.isdigit() and int(p) < len(node):
+                    node = node[int(p)]   # a list element ("BlockObjectSpec.Blocks.0.Occupations")
+                    continue
                 if not isinstance(node, dict) or p not in node:
                     raise GenError("%s: set %s: %s does not exist on the basis" % (item, path, ".".join(parts[:i + 1])))
                 node = node[p]

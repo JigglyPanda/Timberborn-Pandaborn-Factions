@@ -232,8 +232,7 @@
         "since": "2026-11-14"
       },
       "PandabornCisternTap.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornCourtyardHouse.Inkpaws": {
         "since": "2026-11-14"
@@ -242,8 +241,7 @@
         "since": "2026-11-14"
       },
       "PandabornDewCollector.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornDryStoneWall.Inkpaws": {
         "since": "2026-11-14"
@@ -253,28 +251,22 @@
         "gatedBy": "Festival"
       },
       "PandabornFlume.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornFlumeBridge.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornFlumeBridgeSpan.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornFlumeCorner.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornFlumeDrop.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornFlumeGate.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornGardenMoonGate.Inkpaws": {
         "since": "2026-11-14"
@@ -304,8 +296,7 @@
         "since": "2026-11-14"
       },
       "PandabornKitchen.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornKiteWindmill.Inkpaws": {
         "since": "2026-11-14"
@@ -345,8 +336,7 @@
         "since": "2026-11-14"
       },
       "PandabornPaddySpout.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornPandaStatue.Inkpaws": {
         "since": "2026-11-14"
@@ -364,8 +354,7 @@
         "since": "2026-11-14"
       },
       "PandabornScoopWheel.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornShootBamboo.Inkpaws": {
         "since": "2026-11-14"
@@ -419,12 +408,10 @@
         "gatedBy": "Flowering"
       },
       "PandabornTreadwheelLift.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTripHammerMill.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornVillageHall.Inkpaws": {
         "since": "2026-11-14"
@@ -648,8 +635,7 @@
         "since": "2026-11-14"
       },
       "PandabornRiceFlour": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornSichuanPepper": {
         "since": "2026-11-14"
@@ -661,8 +647,7 @@
         "since": "2026-11-14"
       },
       "PandabornSweetRiceBalls": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -749,8 +734,7 @@
         "since": "2026-11-14"
       },
       "PandabornSweetRiceBalls": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -785,8 +769,7 @@
         "since": "2026-11-14"
       },
       "PandabornRiceFlour": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornSteamedRice": {
         "since": "2026-11-14"
@@ -795,8 +778,7 @@
         "since": "2026-11-14"
       },
       "PandabornSweetRiceBalls": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -829,8 +811,7 @@
         "since": "2026-11-14"
       },
       "PandabornFlumes": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornHomes": {
         "since": "2026-11-14"
@@ -857,8 +838,7 @@
         "since": "2026-11-14"
       },
       "PandabornTutorial.Flume": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTutorial.Gatherer": {
         "since": "2026-11-14"
@@ -879,8 +859,7 @@
         "since": "2026-11-14"
       },
       "PandabornTutorial.ScoopWheel": {
-        "since": "2026-11-14",
-        "gatedBy": "Water"
+        "since": "2026-11-14"
       },
       "PandabornTutorial.ShootBamboo": {
         "since": "2026-11-14"

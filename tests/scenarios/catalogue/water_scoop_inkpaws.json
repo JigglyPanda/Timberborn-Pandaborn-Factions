@@ -1,0 +1,1048 @@
+{
+ "faction": "Folktails",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 1500,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "water": {
+  "name": "scoop",
+  "speed": 7,
+  "area": [
+   28,
+   21
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     3,
+     27,
+     7
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     5,
+     27,
+     5
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     6,
+     15,
+     11
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     7,
+     14,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     13,
+     27,
+     15
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     14,
+     27,
+     14
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     15,
+     15,
+     19
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     16,
+     14,
+     18
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     3,
+     15,
+     8,
+     17
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     5,
+     16,
+     9,
+     16
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     3,
+     16,
+     4,
+     17
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     4,
+     15,
+     4,
+     15
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.Inkpaws",
+    "at": [
+     12,
+     5,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "scoop"
+   },
+   {
+    "op": "place",
+    "template": "PandabornTripHammerMill.Inkpaws",
+    "at": [
+     20,
+     5,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "hammer"
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.Inkpaws",
+    "at": [
+     12,
+     14,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "loopScoop"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.Inkpaws",
+    "at": [
+     9,
+     16,
+     -1
+    ],
+    "orientation": "Cw270",
+    "id": "loopGate"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.Inkpaws",
+    "from": [
+     8,
+     16,
+     -1
+    ],
+    "count": 4,
+    "step": [
+     -1,
+     0,
+     0
+    ],
+    "orientation": "Cw270"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeCorner.Inkpaws",
+    "at": [
+     4,
+     16,
+     -1
+    ],
+    "orientation": "Cw270",
+    "id": "loopCorner"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlume.Inkpaws",
+    "at": [
+     4,
+     15,
+     -1
+    ],
+    "orientation": "Cw180",
+    "id": "loopOut"
+   },
+   {
+    "op": "place",
+    "template": "PandabornDewCollector.Inkpaws",
+    "at": [
+     22,
+     9,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "dew"
+   },
+   {
+    "op": "shot",
+    "name": "scoop_setup",
+    "focus": [
+     12,
+     10,
+     0
+    ],
+    "distance": 28,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "water",
+    "id": "fill",
+    "at": [
+     6,
+     5,
+     -2
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "fillB",
+    "at": [
+     20,
+     14,
+     -2
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "wait",
+    "ticks": 150,
+    "capSeconds": 900
+   },
+   {
+    "op": "waterOff",
+    "id": "fill"
+   },
+   {
+    "op": "waterOff",
+    "id": "fillB"
+   },
+   {
+    "op": "wait",
+    "ticks": 100,
+    "capSeconds": 900
+   },
+   {
+    "op": "series",
+    "id": "scoop",
+    "every": 20,
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ],
+     [
+      12,
+      14,
+      -2
+     ],
+     [
+      4,
+      14,
+      -2
+     ],
+     [
+      6,
+      16,
+      -1
+     ],
+     [
+      12,
+      16,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop"
+    ]
+   },
+   {
+    "op": "wait",
+    "ticks": 200,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0",
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     5,
+     -2
+    ],
+    "rate": 0.3,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     5,
+     -2
+    ],
+    "rate": -0.44999999999999996
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0.3",
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     5,
+     -2
+    ],
+    "rate": 0.8,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     5,
+     -2
+    ],
+    "rate": -1.2000000000000002
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0.8",
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     5,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     5,
+     -2
+    ],
+    "rate": -2.4000000000000004
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow1.6",
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     5,
+     -2
+    ],
+    "rate": 3.0,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     5,
+     -2
+    ],
+    "rate": -4.5
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow3.0",
+    "cells": [
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      6,
+      5,
+      -2
+     ],
+     [
+      20,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      -1
+     ],
+     [
+      12,
+      9,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "scoop_running",
+    "focus": [
+     12,
+     6,
+     -1
+    ],
+    "distance": 16,
+    "pitch": 45,
+    "yaw": 60
+   },
+   {
+    "op": "expect",
+    "label": "scoop wheel lifts in a strong current",
+    "what": "flowRate",
+    "min": 0.01,
+    "id": "scoop"
+   },
+   {
+    "op": "waterOff",
+    "id": "in"
+   },
+   {
+    "op": "waterOff",
+    "id": "out"
+   },
+   {
+    "op": "water",
+    "id": "kickIn",
+    "at": [
+     1,
+     14,
+     -2
+    ],
+    "rate": 1.5,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "kickOut",
+    "at": [
+     26,
+     14,
+     -2
+    ],
+    "rate": -2.0
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_kicked",
+    "cells": [
+     [
+      12,
+      14,
+      -2
+     ],
+     [
+      4,
+      14,
+      -2
+     ],
+     [
+      6,
+      16,
+      -1
+     ],
+     [
+      12,
+      16,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "waterOff",
+    "id": "kickIn"
+   },
+   {
+    "op": "waterOff",
+    "id": "kickOut"
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_t300",
+    "cells": [
+     [
+      12,
+      14,
+      -2
+     ],
+     [
+      4,
+      14,
+      -2
+     ],
+     [
+      6,
+      16,
+      -1
+     ],
+     [
+      12,
+      16,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "ticks": 500,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_t800",
+    "cells": [
+     [
+      12,
+      14,
+      -2
+     ],
+     [
+      4,
+      14,
+      -2
+     ],
+     [
+      6,
+      16,
+      -1
+     ],
+     [
+      12,
+      16,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "scoop_loop",
+    "focus": [
+     8,
+     15,
+     0
+    ],
+    "distance": 18,
+    "pitch": 50,
+    "yaw": 20
+   },
+   {
+    "op": "probe",
+    "label": "dew_t0",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "days": 1,
+    "capSeconds": 400
+   },
+   {
+    "op": "probe",
+    "label": "dew_temperate_day",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "drought"
+   },
+   {
+    "op": "probe",
+    "label": "dew_drought_start",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "days": 1,
+    "capSeconds": 400
+   },
+   {
+    "op": "probe",
+    "label": "dew_drought_day",
+    "objects": [
+     "dew",
+     "loopScoop"
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      -1
+     ],
+     [
+      10,
+      16,
+      14,
+      18,
+      -1
+     ]
+    ]
+   }
+  ]
+ },
+ "note": "generated from proto/water/tests/scoop.json by the catalogue lane: the same steps on the catalogue templates"
+}

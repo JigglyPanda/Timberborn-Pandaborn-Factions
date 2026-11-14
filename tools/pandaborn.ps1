@@ -338,7 +338,34 @@ foreach ($s in $stages) {
                 Say "gate: run $runId could not test (exit 2); trying again" 'DarkYellow'
             }
             if ($code -ne 0) { Say "gate: FAILED (run $runId, exit $code): this staging folder must not be installed" 'Red'; $failed += $s; break }
+            # with the Water module shipped, the water lane's line (crossing, spout, save and reload) and its scoop-wheel /
+            # trip-hammer scenario also run on the catalogue's own templates (docs/tech/water.md, before Water is on)
+            $extra = @()
+            $mt = Join-Path $StageDir 'Modules\modules.txt'
+            if ((Test-Path -LiteralPath $mt) -and (Select-String -LiteralPath $mt -Pattern '^Water\s' -Quiet)) {
+                $extra += @(@{ file = 'tests\scenarios\catalogue\water_w4_inkpaws.json'; reload = $true },
+                            @{ file = 'tests\scenarios\catalogue\water_scoop_inkpaws.json'; reload = $false })
+            }
+            $runs = @($runId)
+            foreach ($x in $extra) {
+                foreach ($try in 1, 2) {
+                    $xid = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [IO.Path]::GetFileNameWithoutExtension($x.file)
+                    $args2 = @('-ExecutionPolicy', 'Bypass', '-File', (Join-Path $repo 'tools\run_game_test.ps1'), '-Faction', 'Inkpaws',
+                               '-Map', 'Plains', '-DisableMods', 'JigglyPanda.PandabornFactions', '-ExtraMods', "E:\PandabornDev\build\proto\$copy",
+                               '-RequestJson', (Join-Path $repo $x.file), '-RunSeconds', '1500', '-TimeoutSeconds', '3600',
+                               '-WaitForGameSeconds', '10800', '-RunId', $xid)
+                    if ($x.reload) { $args2 += '-SaveAndReload' }
+                    & powershell @args2 | Out-Host
+                    $code = $LASTEXITCODE
+                    if ($code -ne 2) { break }
+                    Say "gate: run $xid could not test (exit 2); trying again" 'DarkYellow'
+                }
+                $runs += $xid
+                if ($code -ne 0) { break }
+            }
+            if ($code -ne 0) { Say "gate: FAILED (run $xid, exit $code): this staging folder must not be installed" 'Red'; $failed += $s; break }
             if ((Get-StageHash $StageDir) -ne $hash) { Say 'gate: the staging folder changed during the run; run the gate again' 'Red'; $failed += $s; break }
+            $runId = $runs -join ', '
             $gate = [ordered]@{ hash = $hash; run = $runId; passedUtc = (Get-Date).ToUniversalTime().ToString('o'); stage = $StageDir }
             [IO.File]::WriteAllText("$StageDir.gate.json", ($gate | ConvertTo-Json))
             Say "gate: passed (run $runId); $StageDir may be installed"
