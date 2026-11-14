@@ -139,7 +139,12 @@
         "everyHours": 4,
         "when": {
           "day": 3,
-          "markedTreesBelow": 15
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {
@@ -152,7 +157,12 @@
         "everyHours": 4,
         "when": {
           "day": 3,
-          "markedTreesBelow": 15
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {
@@ -187,7 +197,7 @@
         "everyHours": 3,
         "maxDistance": 18,
         "when": {
-          "freeBedsBelow": 2
+          "freeBedsBelow": 4
         }
       },
       {

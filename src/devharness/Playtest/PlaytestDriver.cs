@@ -563,7 +563,13 @@ namespace PandabornDevHarness
                         { waiting = "hazard within " + v + " days"; return false; }
                         break;
                     case "markedTreesBelow":
-                        if (MarkedTrees() >= (int)v) { waiting = "marked trees below " + v; return false; }
+                    {
+                        // a number, or { "count": 15, "except": ["@grove tree"] } so a planted grove does not hide that the
+                        // wild trees are running out
+                        int limit = v is JObject mo ? (int)Request.Num(mo, "count", 15f) : (int)v;
+                        var except = v is JObject mo2 && mo2["except"] is JArray ex ? new HashSet<string>(ex.Select(t => Resolve((string)t))) : null;
+                        if (MarkedTrees(except) >= limit) { waiting = "marked trees below " + limit; return false; }
+                    }
                         break;
                     case "pathsClear":
                         // pending tiles whose tree can no longer be cut (it died empty, or a sapling took its place) do not count

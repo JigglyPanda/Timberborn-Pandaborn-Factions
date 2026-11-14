@@ -706,10 +706,19 @@ namespace PandabornDevHarness
         }
 
         /// <summary>Trees in the cutting area that a lumberjack can still cut (grown and standing, or dead with logs).</summary>
-        private int MarkedTrees()
+        private int MarkedTrees(HashSet<string> except)
         {
             int n = 0;
-            foreach (var c in _treeCuttingArea.CuttingArea) if (TreeAt(c).HasValue) n++;
+            foreach (var c in _treeCuttingArea.CuttingArea)
+            {
+                if (!TreeAt(c).HasValue) continue;
+                if (except != null && except.Count > 0)
+                {
+                    var tree = _blockService.GetBottomObjectAt(c);
+                    if (tree && except.Contains(tree.GetComponent<TemplateSpec>()?.TemplateName ?? "")) continue;
+                }
+                n++;
+            }
             return n;
         }
 

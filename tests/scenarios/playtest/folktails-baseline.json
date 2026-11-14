@@ -4,7 +4,7 @@
   "speed": 30,
   "playtest": {
     "name": "folktails-baseline",
-    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6.",
+    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6. Homes keep at least four free beds (a full home has no child slot, so no births).",
     "shotsEveryDays": 4,
     "names": {
       "lumber": "LumberjackFlag.Folktails",
@@ -152,7 +152,12 @@
         "everyHours": 4,
         "when": {
           "day": 3,
-          "markedTreesBelow": 15
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {
@@ -165,7 +170,12 @@
         "everyHours": 4,
         "when": {
           "day": 3,
-          "markedTreesBelow": 15
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {
@@ -196,11 +206,11 @@
         "id": "home",
         "op": "build",
         "template": "@home",
-        "repeat": 14,
+        "repeat": 20,
         "everyHours": 3,
         "maxDistance": 18,
         "when": {
-          "freeBedsBelow": 2
+          "freeBedsBelow": 4
         }
       },
       {
