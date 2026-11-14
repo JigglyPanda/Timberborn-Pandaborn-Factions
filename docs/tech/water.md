@@ -695,3 +695,24 @@ then dry for 3 days, then wet again.
 * Workers: the treadwheel got its worker and the walker generator gave output multiplier 1.0 (one Folktails worker at
   normal speed), but it lifted nothing: its outlet sat on the ledge floor (no space, see Scoop Wheel). Fixed geometry is in
   `district2`.
+
+### Scoop Wheel (current-driven lift): works with caveats (runs `water-scoop-0247`, `water-combo-0609`)
+
+* Pure data: one mechanical node, generator 100 + consumer 100, no transputs, `WaterPoweredGeneratorSpec` reading the
+  current in the wheel cell, vanilla `WaterMoverSpec` 0.1 m³/s, fixed intake in the wheel cell, outlet two rows behind
+  over a bank lip. Lift rate = 0.1 × (current × 100 / 100), capped at 0.1.
+* Measured in a 1-wide channel with through-flows stepped from 0 to 3.0 m³/s: current at the wheel 0 (still water),
+  then 0.25–0.37; **lift 0 in still water, 0.025–0.038 m³/s in a current** (basin gained 3.1, 4.4, 4.3, 4.3 m³ per 150 s
+  step); water raised from the channel surface (≈ −0.6) into a basin with floor −1 + outlet at 0, i.e. 1–1.6 levels.
+* **Outlet geometry matters.** With the outlet cell on the basin floor the wheel turned but lifted nothing: vanilla
+  `WaterOutput` needs space between the water and the outlet cell top, and this machine's TimberCommons replaces every
+  water output with one that ignores `DistanceToGroundOffset`. Rule for the model: the outlet hangs one block above the
+  basin floor, as on vanilla pumps.
+* The power panel shows its private graph ("25 / 100 hp", 25 %); same relabelling need as the trip-hammer.
+* **Exploit check: a scoop wheel feeding a flume back into its own channel does not run itself.** After a kick the
+  wheel lifted 0.028 m³/s; the moment the external current stopped, the current at the wheel fell to 0.001 (the
+  returning 0.028 m³/s is far too little to make a current of 0.15 in the channel) and it stopped; the basin drained back.
+  Also in drought: a scoop wheel only turns where something else drives the river.
+* Design rules: needs current ≥ 0.15 at the wheel; in a 1-wide channel expect 0.25–0.4, so rate it so that 0.3 is a
+  good site (e.g. consumer 30 instead of 100 → full 0.1 m³/s at current 0.3). Lifts 2 levels by model height; a taller
+  model lifts more at the same rate.
