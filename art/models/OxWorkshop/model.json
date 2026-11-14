@@ -94,7 +94,7 @@
  ],
  "animatedNodes": [
   {
-   "node": "#OxTurntable",
+   "node": "#BotAssembler.Folktails.RingMisc",
    "driver": "BotManufactoryAnimationControllerSpec",
    "pivot": {
     "X": 1.5,
@@ -114,7 +114,87 @@
    "drivenBy": "BotManufactoryAnimationControllerSpec.RingName (turns about its up axis)"
   },
   {
-   "node": "#OxAuger",
+   "node": "#BotAssembler.Folktails.Progress0",
+   "driver": "ManufactoryProgressVisualizerSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.11,
+    "Z": 1.35
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ManufactoryProgressVisualizerSpec (one stage shown at a time)"
+  },
+  {
+   "node": "#BotAssembler.Folktails.Progress1Of3",
+   "driver": "ManufactoryProgressVisualizerSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.11,
+    "Z": 1.35
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ManufactoryProgressVisualizerSpec (one stage shown at a time)"
+  },
+  {
+   "node": "#BotAssembler.Folktails.Progress2Of3",
+   "driver": "ManufactoryProgressVisualizerSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.11,
+    "Z": 1.35
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ManufactoryProgressVisualizerSpec (one stage shown at a time)"
+  },
+  {
+   "node": "#BotAssembler.Folktails.Progress3Of3",
+   "driver": "ManufactoryProgressVisualizerSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.11,
+    "Z": 1.35
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ManufactoryProgressVisualizerSpec (one stage shown at a time)"
+  },
+  {
+   "node": "#DrillMisc",
    "driver": "BotManufactoryAnimationControllerSpec",
    "pivot": {
     "X": 2.26,
@@ -172,13 +252,14 @@
   }
  ],
  "triangles": {
-  "finished": 2204,
+  "finished": 3006,
   "constructionStage0": 840,
   "vanillaMedianForFootprint": 1600
  },
  "materials": [
   "BaseMetal.Folktails",
   "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
   "Details.Folktails",
   "Plaster_White.Folktails",
   "PlasteredWood_White.Folktails",
@@ -195,7 +276,7 @@
   "Z": 0.1
  },
  "botManufactoryAnimation": {
-  "RingName": "#OxTurntable",
-  "DrillName": "#OxAuger"
+  "RingName": "#BotAssembler.Folktails.RingMisc",
+  "DrillName": "#DrillMisc"
  }
 }

@@ -1,0 +1,6 @@
+<Project>
+  <!-- Intermediates on E:, never in the repo (dev only). -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\proto-events\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

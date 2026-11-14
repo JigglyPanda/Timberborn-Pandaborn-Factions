@@ -109,4 +109,7 @@ m.notes += ["Blocks, entrance and wonder specs as the vanilla Earth Recultivator
             "(thresholds 0.25/0.5/0.75); this model ships one stage carrying the builder slots (Working, Building, "
             "Cutting, Digging): set ConstructionSiteProgressVisualizerSpec.ProgressThresholds to [0.0].",
             "WonderAnimationController plays '#SkyLanternAnimated' once (rise, 10 s) and it snaps home on the last frame."]
+# the Earth Recultivator cuts its screw off at the ground by node name (FindChild(...).GetComponent<MeshRenderer>(): a
+# missing node throws); the Sky Lantern has no screw, so the spec goes
+m.extra["removeSpecs"] = ["BuildingModelGroundCutoffSpec"]
 m.build()

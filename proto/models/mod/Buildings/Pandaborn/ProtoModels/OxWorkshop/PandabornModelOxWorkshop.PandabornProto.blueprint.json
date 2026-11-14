@@ -192,8 +192,8 @@
     "AssemblyDuration": 2.0,
     "RingRotationSpeed": 80.0,
     "DrillRotationSpeed": 500.0,
-    "RingName": "#OxTurntable",
-    "DrillName": "#OxAuger",
+    "RingName": "#BotAssembler.Folktails.RingMisc",
+    "DrillName": "#DrillMisc",
     "AttachmentIds": [
       "Smoke"
     ]

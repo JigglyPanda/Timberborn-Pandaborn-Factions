@@ -1,0 +1,11 @@
+{
+  "Name": "Pandaborn - Events prototype (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoEvents",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only test mod for the Lantern Festival and the Great Flowering of Pandaborn - Factions: the two code modules, their data merged onto the faction's templates, and a test probe. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [
+    { "Id": "JigglyPanda.PandabornFactions" }
+  ],
+  "OptionalMods": []
+}

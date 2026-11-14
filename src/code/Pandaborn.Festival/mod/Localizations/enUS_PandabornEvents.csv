@@ -1,0 +1,53 @@
+ID,Text,Comment
+Pandaborn.Feature.Festival,The Lantern Festival,Feature name used in notices
+Pandaborn.Feature.Flowering,The Great Flowering,Feature name used in notices
+Pandaborn.Festival.Off,The Lantern Festival is not available in this game.,Festival Square panel status
+Pandaborn.Festival.Call,Call the festival,Button on the Festival Square panel
+Pandaborn.Festival.AutoCall,Call it by itself when ready,Toggle on the Festival Square panel
+Pandaborn.Festival.Status.Ready,Ready: the festival can be called.,Festival Square panel status
+Pandaborn.Festival.Status.ReadyGrand,Ready: with the fireworks this is a Grand Festival.,Festival Square panel status
+Pandaborn.Festival.Status.NotStocked,Not ready: this district needs more in store.,Festival Square panel status
+Pandaborn.Festival.Status.Called,The festival begins at dawn (in {0} h).,Festival Square panel status; {0} = hours
+Pandaborn.Festival.Status.Running,The Lantern Festival is today.,Festival Square panel status
+Pandaborn.Festival.Status.NextCycle,The next festival can be called in cycle {0}.,Festival Square panel status; {0} = cycle number
+Pandaborn.Festival.Status.Unfinished,The square must be finished first.,Festival Square panel status
+Pandaborn.Festival.Status.NoDistrict,The square must be connected to a district by a path.,Festival Square panel status
+Pandaborn.Festival.Lanterns,Paper lanterns in store: {0}/{1},Festival Square panel; stock in the square's district
+Pandaborn.Festival.Dishes,Dishes with {2} or more in store: {0} of {1} kinds,Festival Square panel; {2} = amount of each dish
+Pandaborn.Festival.NoDishes,No cooked dishes in store.,Festival Square panel
+Pandaborn.Festival.Fireworks,Fireworks for a Grand Festival: {0}/{1},Festival Square panel
+Pandaborn.Festival.TraditionLine,Tradition: {0},Festival Square panel; one step per festival
+Pandaborn.Festival.Rule,"Once a cycle, the whole village takes a day and a night off. Afterwards everyone is festive for about 20 days and Tradition rises by one.",Festival Square panel; the one-sentence rule
+Pandaborn.Festival.RuleNoDayOff,"Once a cycle, the village celebrates in the evening. Afterwards everyone is festive for about 20 days and Tradition rises by one. (This game version does not allow the day off.)",Festival Square panel when the day off is unavailable
+Pandaborn.Festival.Message.Called,The Lantern Festival is called. It begins at dawn.,Notification
+Pandaborn.Festival.Message.CalledGrand,The Grand Lantern Festival is called. It begins at dawn.,Notification
+Pandaborn.Festival.Message.Started,The Lantern Festival has begun. Only the pump crews work today.,Notification
+Pandaborn.Festival.Message.StartedGrand,The Grand Lantern Festival has begun. Only the pump crews work today.,Notification
+Pandaborn.Festival.Message.Ended,The Lantern Festival is over. Everyone is festive. Tradition: {0},Notification
+Pandaborn.Festival.Tradition.Locked,"{0} is earned with Tradition {1}. Each Lantern Festival raises Tradition by one. Tradition now: {2}",Dialog when a locked decoration is clicked
+Pandaborn.Flowering.Setting.Title,"How often should the bamboo flower? Now: {0}. A Flowering is announced a full cycle ahead.",Setting dialog
+Pandaborn.Flowering.Setting.normal,Normal,Setting value: every 5 to 7 cycles
+Pandaborn.Flowering.Setting.rare,Rare,Setting value: every 9 to 11 cycles
+Pandaborn.Flowering.Setting.off,Off,Setting value: never
+Pandaborn.Flowering.Setting.Button,Flowering: {0},Button on a bamboo's panel
+Pandaborn.Flowering.Plant.Idle,"Bamboo flowers once in a long while: about every {0} to {1} cycles, never before cycle {2}.",Bamboo panel
+Pandaborn.Flowering.Plant.IdleOff,The Great Flowering is switched off in this game.,Bamboo panel
+Pandaborn.Flowering.Plant.Announced,"Budding: it will flower at the start of cycle {0}, bear seed for {1} days, then die.",Bamboo panel
+Pandaborn.Flowering.Plant.InFlower,In flower: harvest it for bamboo seed. It dies in {0} days.,Panel of a flowering bamboo
+Pandaborn.Flowering.Plant.Dormant,Resting after the Flowering: it grows again in {0} days.,Bamboo panel of a young plant
+Pandaborn.Flowering.Indicator.Announced,{0} flowers at the start of cycle {1},Line under the top bar
+Pandaborn.Flowering.Indicator.InFlower,"{0} in flower: harvest the seed, {1} days left",Line under the top bar
+Pandaborn.Flowering.Indicator.Dormant,{0} grows again in {1} days,Line under the top bar
+Pandaborn.Flowering.Tooltip.Shoot,"The Great Flowering: every Shoot Bamboo bears seed for {0} days and then dies. Its new plants do not grow for {1} days. Store about 11 food for each panda, or grow other food. Set the farmhouses to harvest first and keep storage free for bamboo seed. Click to change how often bamboo flowers.",Tooltip of the line under the top bar
+Pandaborn.Flowering.Tooltip.Timber,"The Great Flowering: every Timber Bamboo bears seed for {0} days and then dies. Its new plants do not grow for {1} days. Store about 5 poles for each panda. Mark the groves for cutting to take the seed, and keep storage free for bamboo seed. Click to change how often bamboo flowers.",Tooltip of the line under the top bar
+Pandaborn.Flowering.Message.Announced,"The {0} is budding. It will flower at the start of cycle {1}, bear seed for a few days and die.",Notification
+Pandaborn.Flowering.Message.Flowered,"The {0} is in flower. {1} plants bear {2} bamboo seed: harvest it within {3} days.",Notification
+Pandaborn.Flowering.Message.SeedOver,"The flowered {0} has died. Bamboo seed harvested: {1}. Its young plants grow again in {2} days.",Notification
+Pandaborn.Flowering.Message.Regrows,The {0} grows again.,Notification
+Pandaborn.Flowering.Message.Cancelled,The Great Flowering is switched off. The {0} will not flower.,Notification
+Pandaborn.NaturalResource.ShootBambooInFlower.DisplayName,Flowering Shoot Bamboo,Plant name of a shoot bamboo in flower
+Pandaborn.NaturalResource.ShootBambooInFlower.Description,Bears bamboo seed for a few days and then dies.,Plant description
+Pandaborn.NaturalResource.ShootBambooInFlower.FlavorDescription,It flowers once in many years. Every plant in the land flowers with it.,Plant flavor
+Pandaborn.NaturalResource.TimberBambooInFlower.DisplayName,Flowering Timber Bamboo,Plant name of a timber bamboo in flower
+Pandaborn.NaturalResource.TimberBambooInFlower.Description,Bears bamboo seed for a few days and then dies.,Plant description
+Pandaborn.NaturalResource.TimberBambooInFlower.FlavorDescription,"The grove flowers all at once, as it has for longer than anyone remembers.",Plant flavor

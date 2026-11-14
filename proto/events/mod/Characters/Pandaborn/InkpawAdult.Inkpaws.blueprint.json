@@ -1,0 +1,34 @@
+{
+  "PandabornFestivalGoerSpec": {},
+  "PandabornFestivalSpec": {
+    "LanternGoodId": "PandabornPaperLantern",
+    "Lanterns": 40,
+    "Dishes": [ "PandabornSteamedShoots", "PandabornPickles", "PandabornSteamedRice", "PandabornSweetRiceBalls", "PandabornHotPot", "PandabornBambooSeedCakes" ],
+    "DishKinds": 3,
+    "DishAmount": 20,
+    "FireworksGoodId": "Fireworks",
+    "Fireworks": 20,
+    "FestiveNeedId": "PandabornFestive",
+    "GrandNeedId": "",
+    "KeepWorkingTemplates": [ "WaterPump.Inkpaws", "LargeWaterPump.Inkpaws", "MechanicalPump.Inkpaws", "CompactMechanicalPump.Inkpaws", "AquiferDrill.Inkpaws", "PandabornTreadwheelLift.Inkpaws", "PandabornScoopWheel.Inkpaws", "PandabornDewCollector.Inkpaws", "LumberjackFlag.Inkpaws" ],
+    "ShowStartHours": 15.5,
+    "ShowEndHours": 22,
+    "FireworksStartHours": 19,
+    "LanternRises": 24,
+    "LanternFireworkIds": [ "Firework.CometRed", "Firework.CometWhite" ],
+    "BurstFireworkIds": [ "Firework.KamuroOrange", "Firework.PalmGold", "Firework.KamuroRed", "Firework.Willow", "Firework.PeonyYellowGreen" ],
+    "Bursts": 20
+  },
+  "PandabornFloweringSpec": {
+    "Species": [ "PandabornShootBamboo.Inkpaws", "PandabornTimberBamboo.Inkpaws" ],
+    "FirstCycle": 6,
+    "NormalMinCycles": 5,
+    "NormalMaxCycles": 7,
+    "RareMinCycles": 9,
+    "RareMaxCycles": 11,
+    "RareDelayCycles": 3,
+    "SeedDays": 3,
+    "DormantDays": 9,
+    "DefaultSetting": "normal"
+  }
+}

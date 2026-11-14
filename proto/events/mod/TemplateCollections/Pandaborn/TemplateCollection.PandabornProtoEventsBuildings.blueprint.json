@@ -1,0 +1,8 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.Inkpaws",
+    "Blueprints": [
+      "Buildings/Pandaborn/Wellbeing/PandabornFestivalSquare/PandabornFestivalSquare.Inkpaws.blueprint"
+    ]
+  }
+}

@@ -2904,12 +2904,6 @@
       }
     ]
   },
-  "BuildingModelGroundCutoffSpec": {
-    "Targets": [
-      "#Screw_Animated"
-    ],
-    "Offset": 0.0
-  },
   "RangedEffectBuildingSpec": {
     "EffectRadius": 40
   },

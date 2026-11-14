@@ -1,0 +1,40 @@
+{
+  "speed": 7,
+  "run": { "inGameHours": 37 },
+  "buildings": [
+    "PandabornFestivalSquare.Inkpaws",
+    "EfficientFarmHouse.Inkpaws",
+    "LumberjackFlag.Inkpaws"
+  ],
+  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
+  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events" ],
+  "checks": { "noOwnErrors": true },
+  "events": {
+    "stock": {
+      "Water": 300,
+      "PandabornPaperLantern": 40,
+      "PandabornSteamedShoots": 25,
+      "PandabornPickles": 22,
+      "PandabornSteamedRice": 30,
+      "Fireworks": 20
+    },
+    "fields": [
+      { "template": "PandabornShootBamboo.Inkpaws", "count": 8, "near": "EfficientFarmHouse.Inkpaws", "grown": true, "mark": true, "radius": 5 }
+    ],
+    "actions": [
+      { "atRunHour": 0.5, "do": "flowerNow" },
+      { "atRunHour": 0.8, "do": "seedlings", "template": "PandabornShootBamboo.Inkpaws", "count": 3, "near": "EfficientFarmHouse.Inkpaws", "radius": 8 },
+      { "atRunHour": 1.0, "do": "callFestival" },
+      { "atRunHour": 1.3, "do": "jumpToHour", "hour": 23.8 },
+      { "atRunHour": 36.0, "do": "writeDevSwitch", "value": "force-off: Festival, Flowering" }
+    ],
+    "shots": [
+      { "name": "fb_d1_h10_square", "day": 1, "hour": 10, "select": "square" },
+      { "name": "fb_d1_h16_square", "day": 1, "hour": 16.4, "select": "square" }
+    ],
+    "reload": {
+      "actions": [],
+      "shots": [ { "name": "fb_reload_overview", "atRunHour": 2, "select": "none" } ]
+    }
+  }
+}

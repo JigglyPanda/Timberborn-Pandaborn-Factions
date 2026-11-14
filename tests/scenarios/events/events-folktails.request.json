@@ -1,0 +1,8 @@
+{
+  "speed": 3,
+  "buildings": [ "Lodge.Folktails", "EfficientFarmHouse.Folktails" ],
+  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
+  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events" ],
+  "checks": { "noOwnErrors": true },
+  "events": { "actions": [ { "atRunHour": 0.5, "do": "callFestival" }, { "atRunHour": 0.6, "do": "flowerNow" } ] }
+}

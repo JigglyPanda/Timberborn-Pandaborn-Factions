@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Events dev mod (dev only, never shipped): the Festival and Flowering modules' sources from src/code, compiled together
+       with a test probe into one DLL the game loads by itself, riding on the installed faction mod's Pandaborn.Core (and
+       Pandaborn.Specs once the shared build carries the event specs). Build with proto/events/build.ps1, which decides
+       -p:EventsSpecsInShared and copies the installed Core/Specs to $(RefDir) to compile against exactly what runs. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>PandabornProtoEvents</AssemblyName>
+    <RootNamespace>Pandaborn.Events</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\proto\events</ModOut>
+    <RefDir Condition="'$(RefDir)' == ''">E:\PandabornDev\build\obj\proto-events-ref</RefDir>
+    <OutputPath>$(ModOut)\Scripts\</OutputPath>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
+    <NoWarn>CS1701;CS1702;MSB3277;NU1701</NoWarn>
+    <CodeRoot>$(MSBuildThisFileDirectory)..\..\..\src\code\</CodeRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(CodeRoot)Pandaborn.Festival\*.cs" Link="Festival\%(Filename)%(Extension)" />
+    <Compile Include="$(CodeRoot)Pandaborn.Flowering\*.cs" Link="Flowering\%(Filename)%(Extension)" />
+    <Compile Include="$(CodeRoot)Pandaborn.Specs\EventSpecs.cs" Link="Specs\EventSpecs.cs" Condition="'$(EventsSpecsInShared)' != 'true'" />
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.UIElementsModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.ParticleSystemModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.ScreenCaptureModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+    <Reference Include="$(RefDir)\Pandaborn.Core.dll" Private="false" />
+    <Reference Include="$(RefDir)\Pandaborn.Specs.dll" Private="false" Condition="'$(EventsSpecsInShared)' == 'true'" />
+  </ItemGroup>
+</Project>
