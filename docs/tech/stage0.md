@@ -170,3 +170,20 @@ output.) **Remedy, verified:** an Inkpaws-only faction modifier on `BonusTypes/B
 Inkpaws games (and 2.0 in Folktails games), and the wellbeing-80 colonist reached 2.261. This needs no code and leaves
 other factions alone; it also lets very happy Inkpaws on long days walk past 2.0 only if other bonuses push them there
 (rare: walking tiers top out at +0.8, so 1.8 plus hauling bonuses).
+
+## What this decides
+
+* **Poles are the vanilla `Plank`, renamed for Inkpaws** (name, plural, icon, weight by faction modifier). No new good,
+  no recost of every building, and third-party buildings that cost planks keep working in Inkpaws games. The same
+  route is open for `TreatedPlank` and `PineResin`. Timber bamboo is a fast tree whose cut yield is `Plank`, so the
+  Inkpaws need no mill for poles. If a "poles" model is wanted on carried and piled goods, that is the one thing a
+  modifier cannot add (it can only pick another vanilla container).
+* **Per-faction tuning of global data is data, not code**: need rates, building costs and recipe lists of reused
+  vanilla buildings, bonus-type caps, wellbeing tiers. Always through `.optional` modifier files.
+* **The tutorial is in reach for 1.0**: a short Inkpaws checklist built from vanilla step types, in data, with the
+  vanilla Folktails tutorial switched off for Inkpaws only. A "have N of a good" step would need one small step type
+  in code. Players with tutorials disabled in settings will not see it (vanilla behaviour).
+* **Names with a gloss are a small, safe module** (`Pandaborn.Names`), off = vanilla names.
+* **The bell**: the code is done and multiplies as the balance model requires; raise the walking cap for Inkpaws
+  with the `BonusType.MovementSpeed` modifier so long-game short days do not lose on walking jobs.
+* **Code architecture**: as ENGINEERING.md describes, verified; other agents can add modules now (src/code/README.md).
