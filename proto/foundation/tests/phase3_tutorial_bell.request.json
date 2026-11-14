@@ -1,0 +1,21 @@
+{
+  "speed": 3,
+  "buildings": [ "PandabornTeahouse.Inkpaws" ],
+  "foundation": {
+    "tutorialId": "PandabornDevGoods",
+    "showTutorialPanelUntilRunHour": 3.0,
+    "tutorialNextAtRunHour": 1.2,
+    "dataAtRunHour": 2.0,
+    "shots": [
+      { "name": "tutorial_stage1", "atRunHour": 0.6, "what": "none" },
+      { "name": "tutorial_stage2", "atRunHour": 1.8, "what": "none" },
+      { "name": "day3_suggestion", "atRunHour": 44.5, "what": "none" }
+    ],
+    "reload": {
+      "tutorialNextAtRunHour": null,
+      "showTutorialPanelUntilRunHour": 2.5,
+      "dataAtRunHour": 1.0,
+      "shots": [ { "name": "reload_tutorial", "atRunHour": 0.8, "what": "none" } ]
+    }
+  }
+}

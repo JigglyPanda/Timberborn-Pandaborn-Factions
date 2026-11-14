@@ -1,0 +1,4 @@
+ID,Text,Comment
+Pandaborn.Dev.Tutorial.Name,Dev test: goods in stock,Dev-only test tutorial (never shipped)
+Pandaborn.Dev.Tutorial.Berries,Stage 1 of the dev test: berries are already in stock.,Dev-only test tutorial stage
+Pandaborn.Dev.Tutorial.Logs,Stage 2 of the dev test: gather logs.,Dev-only test tutorial stage

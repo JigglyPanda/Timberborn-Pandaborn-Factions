@@ -24,6 +24,19 @@ namespace Pandaborn.Specs
         [Serialize]
         public int SuggestionDay { get; init; } = 4;
 
+        /// <summary>The suggestion is never posted before the dawn of this day (the first days are busy), whatever else
+        /// happens.</summary>
+        [Serialize]
+        public int SuggestionMinimumDay { get; init; } = 3;
+
+        /// <summary>Sound ids rung at the end of the Inkpaw working day and at its start (from the Village Hall, 3D),
+        /// at most twice a day; empty = no bell sound. Silent when the clip is not loaded.</summary>
+        [Serialize]
+        public string EndBellSoundId { get; init; } = "Environment.Pandaborn.ShiftBell.End";
+
+        [Serialize]
+        public string DawnBellSoundId { get; init; } = "Environment.Pandaborn.ShiftBell.Dawn";
+
         /// <summary>Loc key of the one-time suggestion.</summary>
         [Serialize]
         public string SuggestionLocKey { get; init; }

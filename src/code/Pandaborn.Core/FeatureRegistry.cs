@@ -71,6 +71,22 @@ namespace Pandaborn.Core
         /// Listed in the feature report and announced once per save.</summary>
         public static IReadOnlyDictionary<string, string> Degraded => DegradedStates;
 
+        private static readonly Dictionary<string, string> NoDataStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Features that are loaded but found no data in this game of our faction (a build whose catalogue does not
+        /// switch them on yet), with what is missing. The feature report lists them as off with that reason.</summary>
+        public static IReadOnlyDictionary<string, string> NoData => NoDataStates;
+
+        /// <summary>A loaded feature found no data in a game of our faction: it does nothing, and the report says why. Call it
+        /// once per game, in Load; it is cleared for the next game by FeatureNotices.</summary>
+        public static void ReportNoData(string id, string what)
+        {
+            NoDataStates[id] = what ?? "";
+            UnityEngine.Debug.LogWarning("[Pandaborn] " + id + " has no data in this game: " + what);
+        }
+
+        internal static void ClearNoData() => NoDataStates.Clear();
+
         /// <summary>A loaded feature reports that it runs in its written fallback mode (vanilla behaviour) and why.</summary>
         public static void ReportDegraded(string id, string reason)
         {

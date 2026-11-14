@@ -10,7 +10,7 @@ page is how they are built and how to add a feature.
 | `Pandaborn.Bootstrap` | `Scripts/Pandaborn.Bootstrap.dll` | by the game | Only the mod starter. References nothing but `IModStarter` and `Debug.Log`, so it can always load |
 | `Pandaborn.Specs` | `Scripts/Pandaborn.Specs.bin` | always, first | Every spec record (`Pandaborn…Spec`). Only references the blueprint system |
 | `Pandaborn.Core` | `Scripts/Pandaborn.Core.bin` | always, second | Feature registry, save carriers (`PandabornStore` per game, `PandabornEntityState` per entity), notices and the feature report (`FeatureNotices`, `Messenger`), interface guard (`SafeUi`) |
-| `Pandaborn.<Feature>` | `Modules/Pandaborn.<Feature>.bin` | only if its game-API check passes | One feature each: `Bell` (the afternoon bell), `Names` (faction colonist names), `Look` (the Inkpaws building look), `Words` (Inkpaw words in the interface) |
+| `Pandaborn.<Feature>` | `Modules/Pandaborn.<Feature>.bin` | only if its game-API check passes | One feature each: `Bell` (the afternoon bell), `Names` (faction colonist names), `Look` (the Inkpaws building look), `Words` (Inkpaw words in the interface), `Tutorial` (tutorial step types) |
 | `tools/Pandaborn.ApiScan` | not shipped | build only | Extracts a module's required-API list from the compiled assembly |
 
 Every `.bin` ships with `<name>.api.txt`, the list of game types, methods and fields it references (generated on every
@@ -113,6 +113,15 @@ simulate-missing-member: Words  # a module's private-member reflection takes its
 7. **Degradation rule**: with the module off, every building and character must still be a sensible vanilla thing. Never
    write saved vanilla state for a temporary effect; use bonuses (not saved: `BonusManager` rebuilds from whoever adds
    them), behaviours or effects.
+7a. **Say when there is no data.** A module that ships but finds none of its data in a game of our faction (its spec is not
+   on any template, its table file is missing) calls `FeatureRegistry.ReportNoData("<Id>", "<what is missing>")` in its
+   Load; the feature report then lists it as "off (no data in this game: ...)" instead of the module silently doing
+   nothing. A module that runs but with part of its data missing calls `FeatureRegistry.ReportDegraded` ("on, reduced
+   (...)", plus one notice). Bell, Names and Words do this; `FeatureNotices.FactionId` is the faction to check.
+7b. **Sounds** go through `Pandaborn.Core.PandabornSounds` (inject it): `Has(id)`, `Play2D(id)`,
+   `Play3D(gameObject, id)`. It never throws and returns false when the clip is not loaded (no bundle, old copy). Ids
+   and where each belongs: docs/tech/sound.md section 8 (the night clapper is the Ringtails module's: `Play2D` when the
+   Ringtail shift starts, about 2.5 s after the shift bell when they coincide).
 8. **Interface code** runs inside `SafeUi.Run/Get("<Feature>.<Piece>", ...)`: an exception switches that piece off for
    the session and is logged once.
 9. **Reflection on private members** only with a written fallback, and a test that simulates the member being gone.

@@ -14,6 +14,7 @@ namespace Pandaborn.Core
         {
             Bind<PandabornStore>().AsSingleton();
             Bind<Messenger>().AsSingleton();
+            Bind<PandabornSounds>().AsSingleton();
             Bind<FeatureNotices>().AsSingleton();
             Bind<PandabornEntityState>().AsTransient();
             MultiBind<IWorkdayClock>().To<NoWorkdayClock>().AsSingleton();

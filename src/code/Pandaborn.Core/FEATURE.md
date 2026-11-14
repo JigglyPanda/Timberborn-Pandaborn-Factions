@@ -84,6 +84,11 @@
   * method `SendNotification(System.String)`
   * method `SendWarningNotification(System.String)`
 
+**Timberborn.RootProviders**
+
+* type `Timberborn.RootProviders.RootObjectProvider`
+  * method `CreateRootObject(System.String)`
+
 **Timberborn.SingletonSystem**
 
 * type `Timberborn.SingletonSystem.EventBus`
@@ -91,6 +96,14 @@
 * type `Timberborn.SingletonSystem.ILoadableSingleton`
 * type `Timberborn.SingletonSystem.OnEventAttribute`
   * method `.ctor()`
+
+**Timberborn.SoundSystem**
+
+* type `Timberborn.SoundSystem.AudioClipService`
+  * method `GetAudioClipNames(System.String)`
+* type `Timberborn.SoundSystem.ISoundSystem`
+  * method `PlaySound2D(UnityEngine.GameObject, System.String, System.Int32)`
+  * method `PlaySound3D(UnityEngine.GameObject, System.String, System.Int32)`
 
 **Timberborn.TemplateInstantiation**
 
@@ -128,5 +141,8 @@
   * method `Log(System.Object)`
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
+* type `UnityEngine.GameObject`
+* type `UnityEngine.Object`
+  * method `op_Implicit(UnityEngine.Object)`
 
 <!-- api:end -->

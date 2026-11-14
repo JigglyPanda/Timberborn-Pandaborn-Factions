@@ -7,10 +7,14 @@ using Pandaborn.Core;
 using Pandaborn.Specs;
 using Timberborn.Beavers;
 using Timberborn.BlueprintSystem;
+using Timberborn.BonusSystem;
+using Timberborn.GameDistricts;
+using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.TimeSystem;
+using Timberborn.WeatherSystem;
 using Timberborn.WorkSystem;
 using UnityEngine;
 
@@ -21,7 +25,8 @@ namespace Pandaborn.Bell
     /// length, so moving the slider during the day changes nothing until the next morning (no toggling exploits). The
     /// locked length gives the rested bonus through PandabornBellSpec's curves. The game is a bell game when the
     /// faction's adult template carries PandabornBellSpec (only Inkpaws templates do), so no faction id is hard-coded.
-    /// Saved state (Pandaborn store, feature "Bell", version 1): the locked hours and whether the suggestion was shown.
+    /// Saved state (Pandaborn store, feature "Bell", version 1): the locked hours, whether the village counts as settled and
+    /// whether the suggestion was shown.
     /// </summary>
     public class BellService : ILoadableSingleton, IPostLoadableSingleton, IWorkdayClock
     {
@@ -35,13 +40,31 @@ namespace Pandaborn.Bell
         private readonly PandabornStore _store;
         private readonly Messenger _messenger;
         private readonly ILoc _loc;
+        private readonly FactionService _factionService;
+        private readonly WeatherService _weatherService;
+        private readonly PandabornSounds _sounds;
+        private readonly DistrictCenterRegistry _districtCenterRegistry;
+        private readonly BonusTypeSpecService _bonusTypeSpecService;
 
         private int _lockedHours = -1;
         private bool _suggested;
+        private bool _settled;
+        private int _ringDay = -1;
+        private int _ringsToday;
+
+        /// <summary>Every bell ring attempt this session (day, sound id, played), for tests.</summary>
+        public static readonly List<string> Rings = new List<string>();
 
         public BellService(TemplateService templateService, WorkingHoursManager workingHoursManager, EventBus eventBus,
-                           IDayNightCycle dayNightCycle, PandabornStore store, Messenger messenger, ILoc loc)
+                           IDayNightCycle dayNightCycle, PandabornStore store, Messenger messenger, ILoc loc, FactionService factionService,
+                           WeatherService weatherService, PandabornSounds sounds, DistrictCenterRegistry districtCenterRegistry,
+                           BonusTypeSpecService bonusTypeSpecService)
         {
+            _factionService = factionService;
+            _weatherService = weatherService;
+            _sounds = sounds;
+            _districtCenterRegistry = districtCenterRegistry;
+            _bonusTypeSpecService = bonusTypeSpecService;
             _templateService = templateService;
             _workingHoursManager = workingHoursManager;
             _eventBus = eventBus;
@@ -82,6 +105,8 @@ namespace Pandaborn.Bell
 
         public bool Suggested => _suggested;
 
+        public bool Settled => _settled;
+
         public void Load()
         {
             Current = this;
@@ -95,13 +120,21 @@ namespace Pandaborn.Bell
                 Debug.LogError("[Pandaborn.Bell] reading the adult template failed; the bell is off: " + e);
                 Spec = null;
             }
-            if (!Active) return;
+            if (!Active)
+            {
+                // shipped but not switched on by data: say so in the feature report (only in games of our faction)
+                if (_factionService.Current?.Id == FeatureNotices.FactionId)
+                    FeatureRegistry.ReportNoData("Bell", "the faction's adult template has no PandabornBellSpec");
+                return;
+            }
+            CheckWalkingCap();
             if (_store.TryGet(StoreFeature, out int version, out string payload) && version == StoreVersion)
             {
                 var values = Payload.Parse(payload);
                 if (values.TryGetValue("locked", out var locked) && int.TryParse(locked, NumberStyles.Integer, CultureInfo.InvariantCulture, out int h)
                     && h >= 0 && h <= 24) _lockedHours = h;
                 _suggested = values.TryGetValue("suggested", out var s) && s == "1";
+                _settled = values.TryGetValue("settled", out var st) && st == "1";
             }
             // WorkingHoursManager (a dependency) has loaded, so the slider is known: lock now, before any colonist
             // applies its bonus (a new game, or a save made before the bell existed or with the module off).
@@ -121,15 +154,75 @@ namespace Pandaborn.Bell
             try
             {
                 Lock(SliderHours, "dawn of day " + _dayNightCycle.DayNumber);
-                if (!_suggested && Spec.SuggestionDay > 0 && _dayNightCycle.DayNumber >= Spec.SuggestionDay) Suggest("day " + _dayNightCycle.DayNumber);
+                if (!_settled && Spec.SuggestionDay > 0 && _dayNightCycle.DayNumber >= Spec.SuggestionDay)
+                {
+                    _settled = true;
+                    Persist();
+                }
+                TrySuggest("dawn of day " + _dayNightCycle.DayNumber);
             }
             catch (Exception ex) { Debug.LogError("[Pandaborn.Bell] dawn update failed: " + ex); }
         }
 
-        /// <summary>Called by BellSettledMarker when a leisure building that marks a settled village is finished.</summary>
+        /// <summary>Called by BellSettledMarker when a leisure building that marks a settled village is finished (also when
+        /// one is loaded already finished). The village counts as settled from then on; the suggestion follows as soon as
+        /// the day and the weather allow.</summary>
         public void OnSettledBuildingFinished(string what)
         {
-            if (Active && !_suggested) Suggest(what);
+            if (!Active || _settled) return;
+            _settled = true;
+            Persist();
+            Debug.Log("[Pandaborn.Bell] village settled (" + what + ")");
+            TrySuggest(what);
+        }
+
+        /// <summary>The one-time suggestion, once per settlement: only when the village is settled (a Hammock or Teahouse
+        /// finished, or the dawn of SuggestionDay), never before the dawn of SuggestionMinimumDay, never during a drought or
+        /// badtide (it waits for the next dawn).</summary>
+        private void TrySuggest(string why)
+        {
+            if (!Active || _suggested || !_settled) return;
+            int day = _dayNightCycle.DayNumber;
+            if (day < Math.Max(1, Spec.SuggestionMinimumDay)) { Debug.Log("[Pandaborn.Bell] suggestion waits: day " + day + " < " + Spec.SuggestionMinimumDay); return; }
+            bool hazard;
+            try { hazard = _weatherService.IsHazardousWeather; }
+            catch (Exception) { hazard = false; }
+            if (hazard) { Debug.Log("[Pandaborn.Bell] suggestion waits: hazardous weather"); return; }
+            Suggest(why);
+        }
+
+        /// <summary>The shift bell: rung from the Village Hall (first finished district center, 3D) when the Inkpaw working day
+        /// ends and when it starts, at most twice a game day, silent when the clip is not loaded.</summary>
+        [OnEvent]
+        public void OnWorkingHoursTransitioned(WorkingHoursTransitionedEvent e)
+        {
+            try
+            {
+                int day = _dayNightCycle.DayNumber;
+                if (day != _ringDay) { _ringDay = day; _ringsToday = 0; }
+                if (_ringsToday >= 2) return;
+                _ringsToday++;
+                string id = _workingHoursManager.AreWorkingHours ? Spec.DawnBellSoundId : Spec.EndBellSoundId;
+                if (string.IsNullOrEmpty(id)) return;
+                var hall = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
+                bool played = hall != null && _sounds.Play3D(hall.GameObject, id);
+                Rings.Add("day " + day + " " + id + (played ? " played" : hall == null ? " silent (no village hall)" : " silent (no clip)"));
+            }
+            catch (Exception ex) { Debug.LogWarning("[Pandaborn.Bell] bell sound failed: " + ex.Message); }
+        }
+
+        /// <summary>The walking half of the bonus needs the Inkpaws-only MovementSpeed cap modifier (vanilla caps at 2.0).</summary>
+        private void CheckWalkingCap()
+        {
+            try
+            {
+                float max = _bonusTypeSpecService.GetSpec("MovementSpeed").MaximumValue;
+                float best = Spec.MovementSpeedCurve.IsDefaultOrEmpty ? 0f : Spec.MovementSpeedCurve.Max(p => p.Bonus);
+                if (best > 0f && max < 2f * (1f + best) - 0.01f)
+                    FeatureRegistry.ReportDegraded("Bell", "walking-speed cap " + max.ToString("0.##", CultureInfo.InvariantCulture)
+                        + ": the faction's BonusType.MovementSpeed modifier is missing, so happy Inkpaws lose part of the walking bonus");
+            }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Bell] walking-cap check failed: " + e.Message); }
         }
 
         /// <summary>Locks the bonus to a day length now. The game calls it at dawn; tests may call it to skip the wait.</summary>
@@ -159,7 +252,8 @@ namespace Pandaborn.Bell
             _store.Set(StoreFeature, StoreVersion, Payload.Write(new[]
             {
                 new KeyValuePair<string, string>("locked", _lockedHours.ToString(CultureInfo.InvariantCulture)),
-                new KeyValuePair<string, string>("suggested", _suggested ? "1" : "0")
+                new KeyValuePair<string, string>("suggested", _suggested ? "1" : "0"),
+                new KeyValuePair<string, string>("settled", _settled ? "1" : "0")
             }));
         }
 

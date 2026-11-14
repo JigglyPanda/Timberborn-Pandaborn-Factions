@@ -42,6 +42,7 @@ namespace Pandaborn.Core
             _messenger = messenger;
             _store = store;
             _factionService = factionService;
+            FeatureRegistry.ClearNoData();   // constructed before any module's Load in this game
         }
 
         public void Load()
@@ -105,7 +106,7 @@ namespace Pandaborn.Core
         }
 
         private static string Signature() =>
-            string.Join("/", FeatureRegistry.All.Select(s => s.Id + "=" + s.Status)) + (FeatureRegistry.Degraded.Count > 0 ? "/degraded" : "")
+            string.Join("/", FeatureRegistry.All.Select(s => s.Id + "=" + s.Status)) + (FeatureRegistry.Degraded.Count > 0 ? "/degraded" : "") + (FeatureRegistry.NoData.Count > 0 ? "/nodata:" + string.Join(",", FeatureRegistry.NoData.Keys) : "")
             + (FeatureRegistry.DuplicateCopies.Count > 0 ? "/duplicate" : "");
 
         /// <summary>"Pandaborn - Factions features: The afternoon bell: on; Inkpaw names: off (reason); ..."</summary>
@@ -114,7 +115,9 @@ namespace Pandaborn.Core
             var parts = new List<string>();
             foreach (var s in FeatureRegistry.All.Where(s => s.Id != "Specs" && s.Id != "Core"))
             {
-                string state = s.Status == FeatureStatus.On
+                string state = s.Status == FeatureStatus.On && FeatureRegistry.NoData.TryGetValue(s.Id, out var missing)
+                    ? _loc.T("Pandaborn.Core.Report.NoData", missing)
+                    : s.Status == FeatureStatus.On
                     ? (FeatureRegistry.Degraded.TryGetValue(s.Id, out var why) ? _loc.T("Pandaborn.Core.Report.Degraded", why) : _loc.T("Pandaborn.Core.Report.On"))
                     : s.Status == FeatureStatus.ForcedOff ? _loc.T("Pandaborn.Core.Report.ForcedOff") : _loc.T("Pandaborn.Core.Report.Off", s.Reason);
                 parts.Add(FeatureName(s.Id) + ": " + state);

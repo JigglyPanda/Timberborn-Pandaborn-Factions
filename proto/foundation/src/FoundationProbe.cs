@@ -19,6 +19,8 @@ using Timberborn.Localization;
 using Timberborn.SelectionSystem;
 using Timberborn.SingletonSystem;
 using Timberborn.TimeSystem;
+using Timberborn.TutorialSettingsSystem;
+using Timberborn.TutorialSystem;
 using Timberborn.UILayoutSystem;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -64,6 +66,9 @@ namespace Pandaborn.Foundation
         private readonly UILayout _uiLayout;
         private readonly FactionService _factionService;
         private readonly ILoc _loc;
+        private readonly ITutorialService _tutorialService;
+        private readonly TutorialSettings _tutorialSettings;
+        private bool? _tutorialSettingBefore;
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
         private readonly JArray _events = new JArray();
@@ -80,7 +85,7 @@ namespace Pandaborn.Foundation
 
         public FoundationProbe(EventBus eventBus, IDayNightCycle dayNightCycle, CharacterPopulation characterPopulation, EntityRegistry entityRegistry,
                                EntitySelectionService entitySelectionService, DistrictCenterRegistry districtCenterRegistry, IBatchControlBox batchControlBox,
-                               UILayout uiLayout, FactionService factionService, ILoc loc)
+                               UILayout uiLayout, FactionService factionService, ILoc loc, ITutorialService tutorialService, TutorialSettings tutorialSettings)
         {
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
@@ -92,6 +97,8 @@ namespace Pandaborn.Foundation
             _uiLayout = uiLayout;
             _factionService = factionService;
             _loc = loc;
+            _tutorialService = tutorialService;
+            _tutorialSettings = tutorialSettings;
             _config = HarnessBridge.Config;
         }
 
@@ -102,7 +109,7 @@ namespace Pandaborn.Foundation
             _out["loadSave"] = HarnessBridge.LoadSave;
             _out["events"] = _events;
             if (_config["shots"] is JArray a) foreach (var s in a.OfType<JObject>()) _pending.Add(new JObject { ["kind"] = "shot", ["step"] = s.DeepClone() });
-            foreach (var key in new[] { "carrierWriteAtRunHour", "dataAtRunHour" })
+            foreach (var key in new[] { "carrierWriteAtRunHour", "dataAtRunHour", "tutorialNextAtRunHour" })
                 if (_config[key] != null && _config[key].Type != JTokenType.Null) _pending.Add(new JObject { ["kind"] = key, ["step"] = new JObject { ["atRunHour"] = _config[key] } });
             WriteDevSwitch();
             _out["atLoad"] = Data("load");
@@ -135,15 +142,22 @@ namespace Pandaborn.Foundation
                         case "shot": _shots.Enqueue((JObject)p["step"]); break;
                         case "carrierWriteAtRunHour": WriteCarriers(); break;
                         case "dataAtRunHour": _out["data"] = Data("run hour " + Math.Round(runHour, 2)); break;
+                        case "tutorialNextAtRunHour":
+                            try { _tutorialService.StartNextStage((string)_config["tutorialId"] ?? "PandabornDevGoods"); _events.Add(new JObject { ["kind"] = "tutorialNext", ["data"] = "called" }); }
+                            catch (Exception e) { _events.Add(new JObject { ["kind"] = "tutorialNextError", ["data"] = e.Message }); }
+                            break;
                     }
                 }
                 StepShots();
+                if (_started && _tutorialSettingBefore == null && _config["showTutorialPanelUntilRunHour"] != null && !_tutorialShown) ShowTutorialPanel();
+                if (_tutorialSettingBefore != null && runHour >= (_config["showTutorialPanelUntilRunHour"]?.Value<float>() ?? 0f)) RestoreTutorialSetting();
                 if (Time.unscaledTime - _lastWrite > 5f) Write();
             }
             catch (Exception e)
             {
                 Debug.LogError("[Pandaborn.Foundation] probe failed: " + e);
                 _events.Add(new JObject { ["kind"] = "probeError", ["data"] = e.ToString() });
+                RestoreTutorialSetting();
                 _primaryUi = false;
                 Write();
             }
@@ -174,8 +188,90 @@ namespace Pandaborn.Foundation
             };
             d["carrierReports"] = new JArray(((Static("Pandaborn.DevCarrier.DevCarrierComponent, Pandaborn.DevCarrier", "Reports") as IEnumerable<string>) ?? new string[0]).ToArray());
             d["carriers"] = Carriers();
+            d["noData"] = JToken.FromObject(Static("Pandaborn.Core.FeatureRegistry, Pandaborn.Core", "NoData") ?? new Dictionary<string, string>());
+            d["tutorial"] = Tutorial();
+            d["bell"] = Bell();
             d["colonists"] = new JArray(_characterPopulation.Characters.Where(c => c).Take(6).Select(c => c.FirstName));
             return d;
+        }
+
+        private bool _tutorialShown;
+
+        /// <summary>The owner's "disable tutorial" setting hides the panel: switched off for the shots only, recorded in the run
+        /// folder before the change and verified after the restore (like mod states).</summary>
+        private void ShowTutorialPanel()
+        {
+            _tutorialShown = true;
+            try
+            {
+                _tutorialSettingBefore = _tutorialSettings.DisableTutorial;
+                File.WriteAllText(Path.Combine(HarnessBridge.OutputDir, "settings.before.json"),
+                    new JObject { ["setting"] = "TutorialSettings.DisableTutorial", ["value"] = _tutorialSettingBefore.Value }.ToString());
+                if (_tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = false;
+                _events.Add(new JObject { ["kind"] = "tutorialSetting", ["data"] = "was " + _tutorialSettingBefore.Value + "; panel shown" });
+            }
+            catch (Exception e) { _events.Add(new JObject { ["kind"] = "tutorialSettingError", ["data"] = e.Message }); }
+        }
+
+        private void RestoreTutorialSetting()
+        {
+            if (_tutorialSettingBefore == null) return;
+            try
+            {
+                if (_tutorialSettings.DisableTutorial != _tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = _tutorialSettingBefore.Value;
+                bool ok = _tutorialSettings.DisableTutorial == _tutorialSettingBefore.Value;
+                File.WriteAllText(Path.Combine(HarnessBridge.OutputDir, "settings.restore.json"),
+                    new JObject { ["setting"] = "TutorialSettings.DisableTutorial", ["expected"] = _tutorialSettingBefore.Value,
+                                  ["actual"] = _tutorialSettings.DisableTutorial, ["verified"] = ok }.ToString());
+                if (!ok) Debug.LogError("[Pandaborn.Foundation] could not restore the owner's DisableTutorial setting; restore it by hand");
+                _events.Add(new JObject { ["kind"] = "tutorialSetting", ["data"] = "restored to " + _tutorialSettings.DisableTutorial + (ok ? " (verified)" : " (NOT VERIFIED)") });
+            }
+            catch (Exception e) { _events.Add(new JObject { ["kind"] = "tutorialSettingError", ["data"] = e.Message }); }
+            _tutorialSettingBefore = null;
+        }
+
+        private JObject Tutorial()
+        {
+            var t = new JObject();
+            try
+            {
+                var type = _tutorialService.GetType();
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                if (type.GetField("_tutorialConfigurations", flags)?.GetValue(_tutorialService) is IEnumerable configs)
+                    t["configurations"] = new JArray(configs.Cast<TutorialConfiguration>().Select(c =>
+                        c.TutorialId + " stages=" + c.TutorialStages.Length + " steps=" + c.TutorialStages.Sum(s => s.TutorialSteps.Length)
+                        + " requires=[" + string.Join(",", c.RequiredTutorialIds) + "]"));
+                if (type.GetField("_activeTutorialStages", flags)?.GetValue(_tutorialService) is IDictionary active)
+                {
+                    var a = new JObject();
+                    foreach (DictionaryEntry kv in active)
+                    {
+                        var stage = kv.Value as TutorialStage;
+                        a[(string)kv.Key] = stage == null ? null : new JObject
+                        {
+                            ["stage"] = stage.Id, ["achieved"] = stage.AllStepsAchieved,
+                            ["steps"] = new JArray(stage.TutorialSteps.Select(s => { try { return s.Step.Description() + (s.Step.Achieved() ? " [achieved]" : ""); } catch (Exception e) { return "error " + e.Message; } }))
+                        };
+                    }
+                    t["active"] = a;
+                }
+                if (type.GetField("_finishedTutorials", flags)?.GetValue(_tutorialService) is IEnumerable<string> finished) t["finished"] = new JArray(finished);
+            }
+            catch (Exception e) { t["error"] = e.Message; }
+            return t;
+        }
+
+        private static JObject Bell()
+        {
+            var j = new JObject();
+            var type = Type.GetType("Pandaborn.Bell.BellService, Pandaborn.Bell");
+            var s = type?.GetProperty("Current")?.GetValue(null);
+            j["module"] = type != null;
+            if (s != null)
+                foreach (var p in new[] { "Active", "LockedHours", "Suggested", "Settled", "HasLockedDay" })
+                    j[p] = JToken.FromObject(type.GetProperty(p)?.GetValue(s) ?? "n/a");
+            j["rings"] = new JArray(((type?.GetField("Rings")?.GetValue(null) as IEnumerable<string>) ?? new string[0]).ToArray());
+            return j;
         }
 
         private JArray Carriers()

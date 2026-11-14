@@ -1,0 +1,2 @@
+ID,Text,Comment
+Pandaborn.Tutorial.HaveGoods,Have {0} {1} ({2}/{0}),"Tutorial step: {0} amount, {1} good name (plural), {2} amount in stock now"

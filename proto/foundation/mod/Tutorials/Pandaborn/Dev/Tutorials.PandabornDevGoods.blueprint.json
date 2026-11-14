@@ -1,0 +1,10 @@
+{
+  "TutorialSpec": {
+    "Id": "PandabornDevGoods",
+    "NameLocKey": "Pandaborn.Dev.Tutorial.Name",
+    "RequiredTutorialIds": [ "PandabornNever" ],
+    "SkipIfTutorialFinished": "",
+    "SortOrder": 0,
+    "Stages": []
+  }
+}

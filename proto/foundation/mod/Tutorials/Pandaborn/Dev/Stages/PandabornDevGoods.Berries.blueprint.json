@@ -1,0 +1,6 @@
+{
+  "TutorialStageSpec": { "Id": "PandabornDevGoods.Berries", "IntroLocKey": "Pandaborn.Dev.Tutorial.Berries" },
+  "Children": {
+    "Step1": { "PandabornGoodAmountStepSpec": { "GoodId": "Berries", "Amount": 1 } }
+  }
+}

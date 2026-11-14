@@ -1,0 +1,6 @@
+{
+  "TutorialSpec": {
+    "RequiredTutorialIds": [],
+    "Stages": [ "PandabornDevGoods.Berries", "PandabornDevGoods.Logs" ]
+  }
+}

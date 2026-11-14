@@ -20,6 +20,7 @@ namespace Pandaborn.Names
         protected override void Configure()
         {
             Bind<NamePoolService>().AsSingleton();
+            Bind<NamesDataCheck>().AsSingleton();
             Bind<FactionNamer>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
@@ -120,6 +121,32 @@ namespace Pandaborn.Names
         {
             foreach (var kv in _remaining) _saved[kv.Key] = string.Join("\n", kv.Value);
             _store.Set(StoreFeature, 1, Payload.Write(_saved));
+        }
+    }
+
+    /// <summary>Shipped but not switched on by data: in a game of our faction whose adult template has no
+    /// PandabornNamePoolSpec, the feature report says so (colonists then get vanilla names).</summary>
+    public class NamesDataCheck : ILoadableSingleton
+    {
+        private readonly Timberborn.TemplateSystem.TemplateService _templateService;
+        private readonly Timberborn.GameFactionSystem.FactionService _factionService;
+
+        public NamesDataCheck(Timberborn.TemplateSystem.TemplateService templateService, Timberborn.GameFactionSystem.FactionService factionService)
+        {
+            _templateService = templateService;
+            _factionService = factionService;
+        }
+
+        public void Load()
+        {
+            try
+            {
+                if (_factionService.Current?.Id != FeatureNotices.FactionId) return;
+                var adult = _templateService.GetAll<Timberborn.Beavers.AdultSpec>().FirstOrDefault();
+                if (adult?.Blueprint?.GetSpec<PandabornNamePoolSpec>() == null)
+                    FeatureRegistry.ReportNoData("Names", "the faction's adult template has no PandabornNamePoolSpec");
+            }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Names] data check failed: " + e.Message); }
         }
     }
 }

@@ -72,3 +72,41 @@ shoots"). It is about 60 lines in a module (say `Pandaborn.Tutorial`), all publi
   unmatched steps are dropped), so the stage simply has one step fewer. That makes it safe to ship.
 
 Recommendation: build it with the tutorial, not before; the table above works without it.
+
+## For the catalogue lane: the "have N of a good" step (built, module `Pandaborn.Tutorial`)
+
+The step type exists in code (`src/code/Pandaborn.Tutorial`, spec in `Pandaborn.Specs`). Use it like any vanilla step
+type in `catalogue/tutorial.toml`:
+
+```toml
+[stages."PandabornTutorial.FirstPoles"]
+waits_for = "Tutorial"          # the module id in modules.txt; leave the stage out of a -NoCode build
+steps = [{ PandabornGoodAmountStepSpec = { GoodId = "Plank", Amount = 20 } }]
+```
+
+which the generator writes into the stage blueprint exactly as a vanilla step:
+
+```json
+{
+  "TutorialStageSpec": { "Id": "PandabornTutorial.FirstPoles", "IntroLocKey": "Pandaborn.Tutorial.PandabornTutorial.FirstPoles" },
+  "Children": {
+    "Step1": { "PandabornGoodAmountStepSpec": { "GoodId": "Plank", "Amount": 20 } }
+  }
+}
+```
+
+* Fields: `GoodId` (string, a good id in the faction's goods collections: `Plank` shows as Poles for Inkpaws) and
+  `Amount` (int, at least 1, default 1). Nothing else.
+* Achieved while the settlement's **available stock** of the good (all finished districts: stockpiled, in output
+  buffers, on the way to storage; `ResourceCountingService.GetGlobalResourceCount(..).AvailableStock`) is at least
+  `Amount`. It is re-read every frame, so it can become un-achieved if the stock is spent before the player continues
+  (as vanilla building steps do when a building is demolished).
+* The step text is ours: `Pandaborn.Tutorial.HaveGoods` = "Have {0} {1} ({2}/{0})" (amount, the good's plural name,
+  stock now, capped at the amount), shipped by the module (`Localizations/enUS_PandabornTutorialSteps.csv`).
+* **Safe to generate even when the module is off**: the game offers each step to every step reader and silently drops
+  one nobody reads (`TutorialStageService.GetSteps`), so the stage keeps its other steps; a stage whose only step is
+  this one becomes intro text plus Continue. `waits_for = "Tutorial"` is still cleaner.
+* **It never throws**: a `GoodId` the faction lacks reads as its id and is never achieved (logged once). The validator
+  should still check `GoodId` against the faction's goods, as it checks building steps' templates.
+* Unlike building steps it names no template and has no toolbar button, so the two crash rules above do not apply to it.
+* Proven in game: run `p3-bell-tutorial-1` (docs/tech/stage0.md, "Code phase 3").

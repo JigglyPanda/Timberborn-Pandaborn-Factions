@@ -5,8 +5,8 @@
   The installed mod (E:\PandabornDev\build\PandabornFactions) now ships its own bootstrap, and a second bootstrap in a
   layered dev mod would only be reported as a duplicate. So foundation tests run on a full copy instead:
     1. src/code is built into a scratch folder (that file list = everything the code contributes);
-    2. the installed mod is mirrored into E:\PandabornDev\build\proto\<Name> without those files (files of 1 MB or more
-       are hard links, never written to; everything else is copied);
+    2. the installed mod is mirrored into E:\PandabornDev\build\proto\<Name> without those files (everything is copied
+       (-HardLinks links files of 1 MB or more instead));
     3. the fresh code, proto/foundation/mod fragments, the dev test module Pandaborn.DevCarrier and the probe are added;
     4. manifest Id JigglyPanda.PandabornFactionsDev (same faction, Inkpaws), name "<Name>".
   Run with: tools\run_game_test.ps1 -DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\<Name>
@@ -18,7 +18,14 @@ param(
     [string]$Source = 'E:\PandabornDev\build\PandabornFactions',
     [string]$Id = 'JigglyPanda.PandabornFactionsDev',
     # lines for pandaborn.dev.txt, ';' separated, e.g. 'force-off: DevCarrier;simulate-missing-member: Words'
-    [string]$DevSwitch = ''
+    [string]$DevSwitch = '',
+    # extra fragment folders (same layout as mod/), applied after mod/, e.g. proto\foundation\variants\nodata
+    [string[]]$Variant = @(),
+    # the sound lane's bundle (copied, not linked); '' skips it
+    [string]$Sounds = 'E:\PandabornDev\build\sound\AssetBundles',
+    # hard-link big files instead of copying them: faster, but the content lane's next install rewrites linked files in
+    # place, so a copy built earlier ends up with new meshes under old blueprints (a crash seen in p3-bell-tutorial-1)
+    [switch]$HardLinks
 )
 $ErrorActionPreference = 'Stop'
 $here = $PSScriptRoot
@@ -51,13 +58,13 @@ foreach ($f in Get-ChildItem -LiteralPath $Source -Recurse -File) {
     if ($codeFiles.ContainsKey($low) -or $low.StartsWith('scripts\') -or $low.StartsWith('modules\') -or $low -eq 'manifest.json' -or $low -eq 'pandaborn.dev.txt') { continue }
     $to = Join-Path $out $rel
     New-Item -ItemType Directory -Force (Split-Path $to -Parent) | Out-Null
-    if ($f.Length -ge 1MB) { New-Item -ItemType HardLink -Path $to -Target $f.FullName | Out-Null; $linked++ }
+    if ($HardLinks -and $f.Length -ge 1MB) { New-Item -ItemType HardLink -Path $to -Target $f.FullName | Out-Null; $linked++ }
     else { Copy-Item -LiteralPath $f.FullName -Destination $to; $copied++ }
 }
 
 # 3. code, fragments, probe
 Copy-Item -Path (Join-Path $scratch '*') -Destination $out -Recurse -Force
-$frag = Join-Path $here 'mod'
+foreach ($frag in @((Join-Path $here 'mod')) + @($Variant | ForEach-Object { (Resolve-Path $_).Path })) {
 foreach ($f in Get-ChildItem -LiteralPath $frag -Recurse -File) {
     $rel = $f.FullName.Substring($frag.Length + 1)
     $to = Join-Path $out ($rel -replace '\.fragment\.json$', '.json')
@@ -67,6 +74,10 @@ foreach ($f in Get-ChildItem -LiteralPath $frag -Recurse -File) {
         & E:\PandabornDev\tools\venv\Scripts\python.exe -I (Join-Path $here 'tools\merge.py') $to $f.FullName
         if ($LASTEXITCODE -ne 0) { throw "merging $rel failed" }
     } else { Copy-Item -LiteralPath $f.FullName -Destination $to -Force }
+}
+}
+if ($Sounds -and (Test-Path (Join-Path $Sounds 'pandabornsounds_win'))) {
+    foreach ($b in 'pandabornsounds_win', 'pandabornsounds_mac') { if (Test-Path (Join-Path $Sounds $b)) { Copy-Item (Join-Path $Sounds $b) (Join-Path $out "AssetBundles\$b") -Force } }
 }
 $log = & dotnet build (Join-Path $here 'src\PandabornFoundationProbe.csproj') -c Release -v q --nologo "-p:ModOut=$out" 2>&1
 if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Write-Host $_ -ForegroundColor Red }; throw 'probe build failed' }

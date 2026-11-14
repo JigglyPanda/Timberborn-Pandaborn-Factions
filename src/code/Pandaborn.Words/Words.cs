@@ -129,7 +129,13 @@ namespace Pandaborn.Words
             AppliedCount = 0;
             string language = SafeLanguage();
             var table = WordsTable.Load(FeatureRegistry.Owner, language);
-            if (table == null) { State = "no table for " + language; return; }
+            if (table == null)
+            {
+                State = "no table for " + language;
+                // other languages have no table by design; a missing enUS table is a build without the module's data
+                if (language == "enUS" && FactionId() == "Inkpaws") FeatureRegistry.ReportNoData("Words", "no Pandaborn/Words/words.enUS.txt in the mod");
+                return;
+            }
             if (factionId == null || !string.Equals(factionId, table.Faction, StringComparison.Ordinal)) { State = "not our faction"; return; }
             if (FeatureRegistry.DevFlag("simulate-missing-member", "Words")) { Degrade("simulated: Loc._localization missing", null); return; }
             _field = FindField(_loc);
@@ -171,7 +177,7 @@ namespace Pandaborn.Words
         private void Degrade(string why, Exception e)
         {
             State = "degraded: " + why;
-            FeatureRegistry.ReportDegraded("Words", why);
+            FeatureRegistry.ReportDegraded("Words", "vanilla words shown: " + why);
             if (e != null) Debug.LogError("[Pandaborn.Words] " + e);
         }
 

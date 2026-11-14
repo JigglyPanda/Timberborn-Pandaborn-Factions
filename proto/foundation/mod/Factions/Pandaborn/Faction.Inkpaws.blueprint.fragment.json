@@ -1,0 +1,7 @@
+{
+  "FactionSpec": {
+    "BlueprintModifiers#append": [
+      { "Original": "Tutorials/Pandaborn/Dev/Tutorials.PandabornDevGoods.blueprint", "Modifier": "Modifiers/Pandaborn/Dev/Tutorials.PandabornDevGoods.optional.blueprint" }
+    ]
+  }
+}

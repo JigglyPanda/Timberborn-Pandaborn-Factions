@@ -38,6 +38,17 @@ A kit keeps its name when it grows up. Names are drawn without repeats until the
   * method `GetComponent<1>()`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
+**Timberborn.Beavers**
+
+* type `Timberborn.Beavers.AdultSpec`
+
+**Timberborn.BlueprintSystem**
+
+* type `Timberborn.BlueprintSystem.Blueprint`
+  * method `GetSpec<1>()`
+* type `Timberborn.BlueprintSystem.ComponentSpec`
+  * method `get_Blueprint()`
+
 **Timberborn.Common**
 
 * type `Timberborn.Common.IRandomNumberGenerator`
@@ -46,6 +57,16 @@ A kit keeps its name when it grows up. Names are drawn without repeats until the
 **Timberborn.EntityNaming**
 
 * type `Timberborn.EntityNaming.IEntityNamer`
+
+**Timberborn.FactionSystem**
+
+* type `Timberborn.FactionSystem.FactionSpec`
+  * method `get_Id()`
+
+**Timberborn.GameFactionSystem**
+
+* type `Timberborn.GameFactionSystem.FactionService`
+  * method `get_Current()`
 
 **Timberborn.Localization**
 
@@ -64,9 +85,15 @@ A kit keeps its name when it grows up. Names are drawn without repeats until the
   * method `AddDecorator<2>()`
   * method `Build()`
 
+**Timberborn.TemplateSystem**
+
+* type `Timberborn.TemplateSystem.TemplateService`
+  * method `GetAll<1>()`
+
 **UnityEngine.CoreModule**
 
 * type `UnityEngine.Debug`
   * method `LogError(System.Object)`
+  * method `LogWarning(System.Object)`
 
 <!-- api:end -->

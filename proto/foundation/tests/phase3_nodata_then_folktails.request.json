@@ -1,0 +1,10 @@
+{
+  "speed": 3,
+  "run": { "inGameHours": 2 },
+  "foundation": { "dataAtRunHour": 1.0 },
+  "then": {
+    "name": "folktails",
+    "faction": "Folktails",
+    "foundation": { "dataAtRunHour": 1.0 }
+  }
+}
