@@ -287,7 +287,6 @@ def crops(days_wet=3, days_dry=2, days_rewet=1.5, days_tap=1.5):
          place("PandabornPaddySpout", [6, 4, 0], "Cw0", id="spout1"),
          place("PandabornPaddySpout", [6, 9, -1], "Cw0", id="spout2"),
          place("PandabornPaddySpout", [6, 14, -2], "Cw0", id="spout3"),
-         place("PandabornCisternTapAuto", [34, 16, 0], "Cw0", id="tap"),
          wait(3)] + [{"op": "set", "id": f"spout{i}", "targetDepth": 0.3} for i in (1, 2, 3)] + [
          water("reservoir", [6, 1, 0], 2.0, 0.8), water("strip", [24, 22, -1], 0.5, 0.15)]
     for x0, crop in ((3, PADDY), (8, MOIST), (11, DRY)):
@@ -330,7 +329,6 @@ def crops(days_wet=3, days_dry=2, days_rewet=1.5, days_tap=1.5):
     s += [wait_hours(days_rewet * 24)] + snapshot("rewet")
     s += off("reservoir") + [{"op": "set", "id": f"spout{i}", "targetDepth": 0.0} for i in (1, 2, 3)] + drains
     s += [wait_hours(8)] + snapshot("redry_h8")
-    s += [{"op": "giveGoods", "id": "tap", "good": "Water", "amount": 120}, wait_hours(days_tap * 24)] + snapshot("tap")
     s += [shot("crops_end", [16, 10, 0], 36), shot("crops_end_dry", [35, 19, 0], 14, 50, 0)]
     request("crops", s, [40, 24], real_seconds=3000)
 

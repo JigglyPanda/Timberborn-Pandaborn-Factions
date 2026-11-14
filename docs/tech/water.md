@@ -716,3 +716,45 @@ then dry for 3 days, then wet again.
 * Design rules: needs current ≥ 0.15 at the wheel; in a 1-wide channel expect 0.25–0.4, so rate it so that 0.3 is a
   good site (e.g. consumer 30 instead of 100 → full 0.1 m³/s at current 0.3). Lifts 2 levels by model height; a taller
   model lifts more at the same rate.
+
+### Paddy Spout cascade, crop zones, moisture reach, cistern tap (run `water-crops-0648`)
+
+Layout: reservoir → Paddy Spout → paddy 1 (12 x 4, floor −1) → Spout 2 standing *inside* paddy 1 at its lower edge →
+paddy 2 (floor −2) → Spout 3 → paddy 3 (floor −3). Test crops: **paddy crop** (wheat model; `FloodableNaturalResourceSpec`
+1/1, `DaysToDie` 2, `DaysToDieDry` 1, growth 3 d), **moist crop** (potato model; `WateredNaturalResourceSpec`
+`DaysToDieDry` 30, Floodable 0/0, growth 3 d), **dry crop** (sunflower model; `AridNaturalResourceSpec` `DaysToDieWet` 1,
+no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and 8 tiles beside it, and in a "far" zone.
+
+* **Spouts chain down a staircase: works.** Each spout takes water from the paddy behind it and holds the next one.
+  Depths after 3 days: 0.28 / 0.33 / 0.32 (targets 0.30). Rule: a staircase of paddies needs one spout per step, set
+  inside the upper paddy at its lower edge; the top one is fed by a flume or pond.
+* **Paddy crop:** healthy and fully grown (growth 0.99 in 3 days) in 0.28–0.37 of standing water; on dry or merely
+  moist ground it died within about a day (it is "flooded-type": needs 0 < depth ≤ 1 block). When the paddy was drained
+  it went dying (0.4–0.5 days left after 2 dry days), and recovered fully when the water came back. Deeper than 1.0 it
+  dies too (seen at 1.05–1.09 in `water-parts-0255`).
+* **Moist crop:** grew fully on moist ground at 1, 3, 5 and 8 tiles from the paddy; **died in the paddy water** (Floodable
+  0/0). In a 2-day drain it stayed healthy where the soil stayed moist and went dying (26.9 days left of 30) at 8 tiles,
+  then healthy again on rewetting.
+* **Dry crop:** died within a day everywhere in this run, because every test spot was moist (the "far" zone sat 2 tiles
+  from a test water strip, a layout mistake). So "dies when irrigated" is proven; "thrives on dry ground" is not yet shown
+  in game (vanilla Succulent is the same mechanism and works).
+* **Moisture reach (the most important number for the design):** soil moisture falls by 1 per tile from the water's
+  edge, starting from a level that depends on the water body's size:
+
+  | Water body | Level at the edge | Moist out to |
+  |---|---|---|
+  | 1-wide flume or strip (kept 0.12–0.15 deep) | 6 | **6 tiles each side** (a 13-tile band) |
+  | Spout-held paddy, 12 x 4, 0.3 deep | 16 | **16 tiles** from its edge |
+
+  Moisture decays about 5–6 levels per day after the water goes: two days after draining the paddy, only 5 tiles beside
+  it were still moist. The study's "a flume moistens about 1–2 tiles" was wrong: a flume moistens 6 tiles each side,
+  and a paddy turns a whole hillside moist. Dry-ground crops need distance (≥ 7 tiles from a flume, ≥ 17 from a paddy) or
+  an Irrigation Barrier.
+* **What a moist strip costs:** a 10-tile, 1-wide strip kept 0.15 deep took 2.09 m³ per day (0.21 m³ per tile per day,
+  ≈ 1 Water good per tile per day at the vanilla 0.2 m³ per good) and kept a 13 x 10 area moist. Large pools lose much
+  less per tile: the three paddies (132 tiles at 0.3 deep) took 6.2 m³ per day together (0.047 m³ per tile per day).
+* **Cistern Tap:** data only as a restyled Water Dump (`Discharge`) with only the `FlowingWater` recipe: 3 Water goods
+  per hour of work → 0.6 m³ of clean water. It **must keep its worker**: a workerless test variant crashed the game
+  (vanilla `WaterOutputManufactoryLimiter` reads the `Workshop` component without a null check). So one worker running
+  a tap 4 hours a day (12 Water goods) keeps a 10-tile strip, i.e. about 130 tiles of moist farmland, alive through a
+  drought. A workerless tap would need our own small water-producer component. The worked tap was not run in game.

@@ -298,12 +298,8 @@ def cistern_tap():
     name_building(bp, "CisternTap", "Cistern Tap",
                   "A worker pours stored Water into the basin or flume in front: 3 Water per hour becomes 0.6 cubic "
                   "metres of clean water.", "Water", 63)
-    # test variant without a worker (the harness puts Water goods into it)
-    for k in ("WorkplaceSpec", "EnterableSpec", "TransformSlotInitializerSpec", "WorkplaceSlotManagerSpec",
-              "WorkshopSpec", "WorkplaceIlluminatorSpec", "WorkshopWorkerHiderSpec", "WorkshopParticleControllerSpec"):
-        base.pop(k, None)
-    base["ProductionIncreaserSpec"] = {}
-    name_building(base, "CisternTapAuto", "Cistern Tap (no worker, test)", "Test variant of the Cistern Tap.", "Water", 64)
+    # No workerless variant: vanilla WaterOutputManufactoryLimiter (decorates ManufactoryWaterProducer) reads the
+    # Workshop component and throws a NullReferenceException every tick without one (crashed run water-crops-0648).
 
 
 def trip_hammer():
