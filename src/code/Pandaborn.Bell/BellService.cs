@@ -191,7 +191,8 @@ namespace Pandaborn.Bell
             Suggest(why);
         }
 
-        /// <summary>The shift bell: rung from the Village Hall (first finished district center, 3D) when the Inkpaw working day
+        /// <summary>The shift bell: heard everywhere (2D; a 3D sound is silent ten units from the camera, and this is the day's
+        /// signal, not a building's noise), rung only once a Village Hall stands, when the Inkpaw working day
         /// ends and when it starts, at most twice a game day, silent when the clip is not loaded.</summary>
         [OnEvent]
         public void OnWorkingHoursTransitioned(WorkingHoursTransitionedEvent e)
@@ -205,7 +206,7 @@ namespace Pandaborn.Bell
                 string id = _workingHoursManager.AreWorkingHours ? Spec.DawnBellSoundId : Spec.EndBellSoundId;
                 if (string.IsNullOrEmpty(id)) return;
                 var hall = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
-                bool played = hall != null && _sounds.Play3D(hall.GameObject, id);
+                bool played = hall != null && _sounds.Play2D(id);
                 Rings.Add("day " + day + " " + id + (played ? " played" : hall == null ? " silent (no village hall)" : " silent (no clip)"));
             }
             catch (Exception ex) { Debug.LogWarning("[Pandaborn.Bell] bell sound failed: " + ex.Message); }
