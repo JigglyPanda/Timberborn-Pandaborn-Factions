@@ -693,8 +693,25 @@ then dry for 3 days, then wet again.
   component (on `WasCut`: `ReverseDeath`, `Yielder.ResetYield`, own regrow timer). A gatherable on the same plant stops
   yielding once it is cut. This is why splitting shoots (crop) from poles (tree) is right.
 * Workers: the treadwheel got its worker and the walker generator gave output multiplier 1.0 (one Folktails worker at
-  normal speed), but it lifted nothing: its outlet sat on the ledge floor (no space, see Scoop Wheel). Fixed geometry is in
-  `district2`.
+  normal speed), but it lifted nothing: its outlet sat on the ledge floor (no space, see Scoop Wheel). Fixed in
+  `district2` (below).
+
+### District, second run (`water-district2-0639`: storages for the goods, fields reachable, outlet fixed)
+
+* **Treadwheel lift works.** One Folktails worker (walker multiplier 1.0) lifted **0.098 m³/s** from a pit (surface
+  −0.5) into a ledge basin (floor 0, outlet at +1): the 12-tile basin filled to 0.9 in about 200 ticks, then the wheel
+  idled because the outlet had no space. It stops at night when the worker goes home (status "needs power"). Rule: a
+  treadwheel lifts ~0.1 m³/s while staffed, i.e. it fills a 12-tile basin in 2 minutes and is idle the rest of the time
+  unless the basin drains; worth pairing with a flume gate.
+* **Lumberjack vs gatherable on one plant:** with a log store present, the lumberjack cut both combined-bamboo plants
+  within the first 4 hours (2 Logs), before their berries had grown; both died and stood as stumps for the rest of the
+  run, so the gatherer never had anything to pick. Confirms the split into a shoot crop and a timber tree.
+* **Shoot Bamboo as a farm crop works end to end:** farmers harvested the grown crop (Carrot stand-in, 3 per tile),
+  replanted all 8 marked tiles, and harvested again 4.5 days later (Carrot stock 20 at h108).
+* **Forester replanting confirmed again:** Timber Bamboo that died when its soil dried was replanted by the forester
+  (toggle on) within 12 h of rewetting, on all 3 dead marked tiles outside the cutting area; the dead wild tree and its
+  dead wild seedling stayed. The wild tree also spread once before dying (chance 0.1).
+* Both district runs ran out of food after about 5 days (no food production in the test), which ends worker activity.
 
 ### Scoop Wheel (current-driven lift): works with caveats (runs `water-scoop-0247`, `water-combo-0609`)
 
@@ -772,7 +789,7 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
 | Flume status icons | **Works** | blocked / misaligned / intake dry / end dry / closed by badwater |
 | Paddy Spout | **Works** (with cap) | holds 0.30–0.33; cascades down a staircase |
 | Scoop Wheel | **Works with caveats** | 0 in still water; 0.025–0.038 m³/s in currents of 0.25–0.37; outlet must hang above the basin |
-| Treadwheel lift | **Not proven** | worker walks it (multiplier 1.0, efficiency 1.0) but the first layout had no outlet space; rerun pending/`district2` |
+| Treadwheel lift | **Works** | one Folktails worker: 0.098 m³/s up ~1.5 levels; stops when the basin is full and when the worker goes home |
 | Water Trip-Hammer | **Works** | speed = current at its wheel (36–52 % in a 1-wide channel) |
 | Dew Collector | **Works** | 6.0 Water per temperate day, 2.1 per drought day |
 | Cistern Tap | **Data only, with a worker**; workerless crashes | 3 Water/h → 0.6 m³/h |
@@ -821,9 +838,10 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
 
 ### Not proven yet
 
-* Treadwheel actually lifting water (pending `district2`); with a Ringtail worker (no Ringtail exists yet).
-* Lumberjack and gatherer working the same bamboo; farmers clearing and replanting dead crops (needs storages in the
-  district: `district2`).
+* Treadwheel with a Ringtail (or any faster/slower) worker: no Ringtail exists yet; the lift scales with the worker's
+  `MovementSpeed` bonus multiplier (code).
+* Farmers clearing and replanting *dead* crops (in `district2` the shoot field never dried out: a full 12-tile basin
+  9 tiles away kept it moist). The code says dead crops become overridable and are replanted over.
 * A dry-ground crop thriving on truly dry soil next to a wet zone.
 * Cistern Tap run in game with a worker and hauled Water goods.
 * Raised/trestle step-down from a Bridge straight onto ground (only Drop from ground level tested), splitters, and a
