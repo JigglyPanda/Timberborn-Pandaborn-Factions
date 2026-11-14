@@ -1,0 +1,843 @@
+{
+  "_meta": {
+    "kind": "buildings",
+    "source": "docs/CONTENT.md draft 2, docs/DESIGN.md revision 4, docs/tech/balance.md stat sheet",
+    "language": "enUS",
+    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "keyed_by": "The building's English name. Where CONTENT.md lists a set on one line (for example 'Cistern (small, medium, large)') each building has its own entry and 'content_md' gives the CONTENT.md label.",
+    "vanilla_loc_pattern": {
+      "name": "Building.<Id>.DisplayName",
+      "description": "Building.<Id>.Description",
+      "flavor": "Building.<Id>.FlavorDescription",
+      "blueprint_fields": "LabeledEntitySpec.DisplayNameLocKey / DescriptionLocKey / FlavorDescriptionLocKey"
+    },
+    "suggested_mod_key_pattern": {
+      "name": "Pandaborn.Building.<Id>.DisplayName",
+      "description": "Pandaborn.Building.<Id>.Description",
+      "flavor": "Pandaborn.Building.<Id>.FlavorDescription",
+      "note": "<Id> is the 'id' field without its Pandaborn prefix. Loc keys must begin with Pandaborn (docs/ENGINEERING.md). A mod key equal to a vanilla key replaces the vanilla text for every faction, so a re-themed building that needs different words must point its Inkpaws template at a new key."
+    },
+    "field_rules": {
+      "basis": "'new' = an Inkpaws building with its own name. 'rethemed' = a vanilla building in Inkpaw materials that keeps its vanilla name.",
+      "name": "A string is new text. null means: keep the vanilla key named in 'vanilla_id'.",
+      "description": "A string is new text. null means: keep the vanilla description key. Vanilla text is already translated into every language the game ships, so null is preferred wherever the vanilla words are true and do not mention beavers.",
+      "flavor": "Same rule as description. At most one short line.",
+      "reuse": "Optional. Names a vanilla loc key to point at instead of writing new text, when a new building does exactly what a vanilla one does.",
+      "why": "For re-themed buildings: why the vanilla text was replaced.",
+      "status_and_tooltip_lines": "Live in messages.json. 'see' lists the message ids that belong on this building's panel."
+    },
+    "icons_in_text": "[sun] and [moon] stand for the day and night icons. The importer replaces them with the sprite tag the interface uses.",
+    "highlight_tags": "<YellowHighlight>…</YellowHighlight> is the vanilla keyword tag and is used the same way here."
+  },
+  "items": {
+
+    "Village Hall": {
+      "id": "PandabornVillageHall", "basis": "new", "vanilla_basis": "DistrictCenter", "who": "I",
+      "name": "Village Hall",
+      "description": "The heart of a district, with its own population, goods and path network. Employs builders.",
+      "flavor": "\"Work well, rest well.\" —Village motto",
+      "note": "The flavor line is the motto, as on the vanilla District Center. It must match 'motto' in faction.json."
+    },
+    "Builders' Hut": {
+      "id": "BuildersHut", "basis": "rethemed", "vanilla_id": "BuildersHut", "who": "I",
+      "name": null, "description": null,
+      "flavor": "When the bell rings, the hammer goes down. The nail can wait until morning.",
+      "why": "Vanilla flavor names 'Beaverome'."
+    },
+    "Hauling Post": {
+      "id": "HaulingPost", "basis": "rethemed", "vanilla_id": "HaulingPost", "who": "I",
+      "name": null, "description": null,
+      "flavor": "An Inkpaw hauler carries more on every trip and sees no reason to hurry.",
+      "why": "Vanilla flavor mentions beavers and tails."
+    },
+    "District Crossing": {
+      "id": "DistrictCrossing", "basis": "rethemed", "vanilla_id": "DistrictCrossing", "who": "I",
+      "name": null, "description": null,
+      "flavor": "Goods cross here every day. News crosses faster.",
+      "why": "Vanilla flavor is a beaver joke."
+    },
+    "Festival Square": {
+      "id": "PandabornFestivalSquare", "basis": "new", "who": "-",
+      "name": "Festival Square",
+      "description": "Holds paper lanterns, cooked dishes and fireworks for the Lantern Festival. Call the festival here once the square is stocked, at most once per cycle.",
+      "flavor": "Swept every morning, just in case.",
+      "see": ["festival.*", "tradition.*"]
+    },
+
+    "Den": {
+      "id": "PandabornDen", "basis": "new", "vanilla_basis": "Lodge", "who": "-",
+      "name": "Den",
+      "description": "A simple home for a small family.",
+      "flavor": "It smells of bamboo and of whoever napped there last.",
+      "see": ["young.den_rule"]
+    },
+    "Courtyard House": {
+      "id": "PandabornCourtyardHouse", "basis": "new", "vanilla_basis": "DoubleLodge", "who": "-",
+      "name": "Courtyard House",
+      "description": "A larger home built around a shared yard.",
+      "flavor": "The yard is for airing bedding, drying vegetables and long conversations."
+    },
+    "Terrace House": {
+      "id": "PandabornTerraceHouse", "basis": "new", "vanilla_basis": "TripleLodge", "who": "-",
+      "name": "Terrace House",
+      "description": "A large home for many families. Built to be stacked up a hillside.",
+      "flavor": "The higher the home, the better the view and the longer the walk to dinner."
+    },
+    "Moon Loft": {
+      "id": "PandabornMoonLoft", "basis": "new", "who": "-",
+      "name": "Moon Loft",
+      "description": "A snug home on stilts above a path. Your first Moon Loft invites a Ringtail family to the village. Kits are raised here while there is work for them.",
+      "flavor": "A lantern in a high window is an old invitation.",
+      "see": ["ringtails.arrival", "ringtails.arrival_notification", "young.loft_raising", "young.loft_waiting"],
+      "note": "Any home takes anyone, so the description never says 'home for Ringtails'."
+    },
+
+    "Gatherer Flag": {
+      "id": "GathererFlag", "basis": "rethemed", "vanilla_id": "GathererFlag", "who": "I",
+      "name": null, "description": null,
+      "flavor": "A full basket leaves the bushes. A slightly less full basket reaches the warehouse.",
+      "why": "Vanilla flavor mentions beavers."
+    },
+    "Farmstead": {
+      "id": "PandabornFarmstead", "basis": "new", "vanilla_basis": "EfficientFarmhouse", "who": "I",
+      "name": "Farmstead",
+      "description": "Employs farmers who plant and harvest crops: shoot bamboo and cabbage on moist ground, tea and Sichuan pepper on dry ground.",
+      "flavor": "A field is planted in the morning and admired in the afternoon.",
+      "note": "CONTENT.md marks it re-themed, but the name is new, so all three strings are new."
+    },
+    "Steamer": {
+      "id": "PandabornSteamer", "basis": "new", "vanilla_basis": "Grill", "who": "I",
+      "name": "Steamer",
+      "description": "Steams bamboo shoots and rice.",
+      "flavor": "Lifting the lid early is the most common kitchen offense in the village."
+    },
+    "Pickle Yard": {
+      "id": "PandabornPickleYard", "basis": "new", "who": "I",
+      "name": "Pickle Yard",
+      "description": "Pickles cabbage in clay jars. One cabbage fills several jars, so a small field feeds more villagers.",
+      "flavor": "Every jar belongs to somebody's grandmother, and she knows exactly how many there are."
+    },
+    "Paddy House": {
+      "id": "PandabornPaddyHouse", "basis": "new", "vanilla_basis": "AquaticFarmhouse", "who": "I",
+      "name": "Paddy House",
+      "description": "Employs paddy farmers who plant and harvest rice, an <YellowHighlight>Aquatic</YellowHighlight> crop that grows in shallow flooded fields.",
+      "flavor": "Paddy farmers are the only villagers who wear the wide hat, and they do not lend it.",
+      "note": "'Aquatic' is the vanilla keyword the game already shows on the plant (NaturalResources.Aquatic)."
+    },
+    "Tea Roastery": {
+      "id": "PandabornTeaRoastery", "basis": "new", "who": "I",
+      "name": "Tea Roastery",
+      "description": "Roasts tea leaves and brews them with water. One measure of water makes three cups of tea.",
+      "flavor": "The smell reaches the fields well before the bell does."
+    },
+    "Trip-Hammer Mill": {
+      "id": "PandabornTripHammerMill", "basis": "new", "vanilla_basis": "Gristmill", "who": "I",
+      "name": "Trip-Hammer Mill",
+      "description": "Pounds rice into rice flour. Its wheel is driven directly by flowing water: place it on a flume or a stream. Needs no power shafts.",
+      "flavor": "The water lifts the hammer and lets it fall. The miller mostly watches.",
+      "see": ["water.mill_no_current"]
+    },
+    "Kitchen": {
+      "id": "PandabornKitchen", "basis": "new", "vanilla_basis": "Bakery", "who": "I",
+      "name": "Kitchen",
+      "description": "Cooks sweet rice balls and bamboo seed cakes from rice flour.",
+      "flavor": "Every cook in the village claims the recipe. All the recipes are the same."
+    },
+    "Hot Pot Hall": {
+      "id": "PandabornHotPotHall", "basis": "new", "who": "I",
+      "name": "Hot Pot Hall",
+      "description": "Cooks hot pot from cabbage, Sichuan pepper and bamboo mushrooms. The best everyday meal in the village.",
+      "flavor": "Nobody admits to adding the extra pepper. Everybody reaches for the tea."
+    },
+
+    "Lumberjack Flag": {
+      "id": "LumberjackFlag", "basis": "rethemed", "vanilla_id": "LumberjackFlag", "who": "I",
+      "name": null,
+      "description": "Employs a lumberjack who cuts trees for logs and timber bamboo for poles.",
+      "flavor": "Lumberjacks cut whatever you mark. They would like it noted that bamboo is lighter.",
+      "why": "The Inkpaw lumberjack also cuts timber bamboo, and this is where a player learns that poles need no mill."
+    },
+    "Forester": {
+      "id": "Forester", "basis": "rethemed", "vanilla_id": "Forester", "who": "I",
+      "name": null,
+      "description": "Plants timber bamboo, trees and bushes.",
+      "flavor": "Timber bamboo is ready before the forester has finished admiring it.",
+      "why": "Names timber bamboo; vanilla flavor mentions beaver society."
+    },
+    "Gear Workshop": {
+      "id": "GearWorkshop", "basis": "rethemed", "vanilla_id": "GearWorkshop", "who": "I",
+      "name": null,
+      "description": "Manufactures gears from poles.",
+      "flavor": "A bamboo gear is light, cheap and surprisingly loud.",
+      "why": "Vanilla says 'from planks' and quotes Ol' Kazko."
+    },
+    "Paper Mill": {
+      "id": "PaperMill", "basis": "rethemed", "vanilla_id": "PaperMill", "who": "I",
+      "name": null,
+      "description": "A mechanized mill that makes paper from poles.",
+      "flavor": "Paper goes to lanterns, kites and the Ink Studio, in that order.",
+      "why": "Inkpaw paper is made from poles, not logs; vanilla flavor is about beavers eating paper."
+    },
+    "Lantern Workshop": {
+      "id": "PandabornLanternWorkshop", "basis": "new", "who": "I",
+      "name": "Lantern Workshop",
+      "description": "Makes paper lanterns from paper and poles, for the Lantern Festival and for decoration.",
+      "flavor": "Every lantern is tested once, at dusk, by whoever made it. This is not officially part of the job."
+    },
+    "Smoke Kiln": {
+      "id": "PandabornSmokeKiln", "basis": "new", "vanilla_basis": "WoodWorkshop", "who": "I",
+      "name": "Smoke Kiln",
+      "description": "Cures poles over slow log smoke. Cured poles are the strong material for late construction. Needs no power.",
+      "flavor": "A pole spends hours in the smoke. The kiln keeper smells of it for days."
+    },
+    "Explosives Factory": {
+      "id": "ExplosivesFactory", "basis": "rethemed", "vanilla_id": "ExplosivesFactory", "who": "I",
+      "name": null, "description": null, "flavor": null,
+      "note": "Vanilla text is true and neutral. The vanilla factory already makes fireworks."
+    },
+
+    "Scavenger Flag": {
+      "id": "ScavengerFlag", "basis": "rethemed", "vanilla_id": "ScavengerFlag", "who": "I",
+      "name": null, "description": null, "flavor": null
+    },
+    "Smelter": {
+      "id": "Smelter", "basis": "rethemed", "vanilla_id": "Smelter", "who": "I",
+      "name": null, "description": null,
+      "flavor": "The hottest job in the village. Smelters get the first cup of tea, and nobody argues.",
+      "why": "Vanilla flavor mentions the beaver world and burnt fur."
+    },
+    "Mine": {
+      "id": "Mine", "basis": "rethemed", "vanilla_id": "Mine", "who": "I",
+      "name": null, "description": null, "flavor": null
+    },
+
+    "Water Pump": {
+      "id": "WaterPump", "basis": "rethemed", "vanilla_id": "WaterPump", "who": "I",
+      "name": null,
+      "description": "Pumps and filters water for the village to drink. Badwater contamination slows down its pumping speed.",
+      "flavor": null,
+      "why": "Vanilla description says 'for beavers to drink'."
+    },
+    "Small Cistern": {
+      "id": "PandabornCisternSmall", "basis": "new", "vanilla_basis": "SmallTank", "who": "-",
+      "content_md": "Cistern (small, medium, large)",
+      "name": "Small Cistern",
+      "description": null,
+      "reuse": { "description": "Building.SmallTank.Description" },
+      "flavor": "The first thing built before a drought and the first thing checked during one."
+    },
+    "Medium Cistern": {
+      "id": "PandabornCisternMedium", "basis": "new", "vanilla_basis": "MediumTank", "who": "-",
+      "content_md": "Cistern (small, medium, large)",
+      "name": "Medium Cistern",
+      "description": null,
+      "reuse": { "description": "Building.SmallTank.Description" },
+      "flavor": "After its first drought, every village builds one more than it thinks it needs."
+    },
+    "Large Cistern": {
+      "id": "PandabornCisternLarge", "basis": "new", "vanilla_basis": "LargeTank", "who": "-",
+      "content_md": "Cistern (small, medium, large)",
+      "name": "Large Cistern",
+      "description": null,
+      "reuse": { "description": "Building.SmallTank.Description" },
+      "flavor": "When it is full, it is the calmest sight in the village."
+    },
+    "Flume": {
+      "id": "PandabornFlume", "basis": "new", "who": "-",
+      "name": "Flume",
+      "description": "An open bamboo aqueduct. Water runs one way, along the arrow, level or downhill. It never climbs and never leaks.",
+      "flavor": "Each length knocks once as the water reaches it. Villagers count the knocks.",
+      "see": ["flume.keyword_moist", "flume.dry_intake", "flume.no_water_at_source", "flume.missing_corner", "flume.uphill", "flume.starved", "flume.open_end", "flume.blocks_path"]
+    },
+    "Flume Corner": {
+      "id": "PandabornFlumeCorner", "basis": "new", "who": "-",
+      "name": "Flume Corner",
+      "description": "Turns a flume to the left or to the right. Flumes do not bend on their own.",
+      "flavor": "Water does not like to turn. It was not asked."
+    },
+    "Flume Drop": {
+      "id": "PandabornFlumeDrop", "basis": "new", "who": "-",
+      "name": "Flume Drop",
+      "description": "Steps a flume down one level. Water falls here and cannot come back up.",
+      "flavor": "The one part of a flume that cubs are told not to sit under. They sit under it."
+    },
+    "Flume Bridge": {
+      "id": "PandabornFlumeBridge", "basis": "new", "who": "-",
+      "name": "Flume Bridge",
+      "description": "Carries a flume above the ground on bamboo trestles, across dips and gaps.",
+      "flavor": "Everyone who passes looks up at it. It has never dripped."
+    },
+    "Flume Gate": {
+      "id": "PandabornFlumeGate", "basis": "new", "vanilla_basis": "FillValve", "who": "-",
+      "name": "Flume Gate",
+      "description": "The intake of a flume. Sets how much water enters, and shuts itself when the water turns bad.",
+      "flavor": "It tastes the water so that the rice does not have to.",
+      "see": ["flume.gate_shut_badwater", "flume.gate_reopened", "flume.gate_flow", "flume.gate_open", "flume.gate_shut", "flume.dry_intake"]
+    },
+    "Scoop Wheel": {
+      "id": "PandabornScoopWheel", "basis": "new", "who": "-",
+      "name": "Scoop Wheel",
+      "description": "Sits in a current and lifts water one level into a flume. Needs flowing water and no workers. It stops when the current stops.",
+      "flavor": "The river does the work. In a drought, the river takes time off too.",
+      "see": ["water.scoop_no_current", "water.scoop_no_outlet"]
+    },
+    "Paddy Spout": {
+      "id": "PandabornPaddySpout", "basis": "new", "vanilla_basis": "FillValve", "who": "-",
+      "name": "Paddy Spout",
+      "description": "Keeps the field in front of it flooded to a shallow set depth. Needs water at its back and walls around the field.",
+      "flavor": "Rice likes to stand in water. The spout decides how much.",
+      "see": ["water.spout_dry", "water.spout_depth", "water.spout_unwalled"]
+    },
+    "Cistern Tap": {
+      "id": "PandabornCisternTap", "basis": "new", "vanilla_basis": "Discharge", "who": "-",
+      "name": "Cistern Tap",
+      "description": "Pours stored water into a flume or a basin, slowly and with no workers of its own. Keeps one strip of ground alive through a drought.",
+      "flavor": "A trickle is not much, until it is the only water moving in the valley.",
+      "see": ["water.tap_empty"],
+      "note": "CONTENT.md marks it re-themed (vanilla Discharge), but it has a new name, so its strings are new."
+    },
+    "Dew Collector": {
+      "id": "PandabornDewCollector", "basis": "new", "who": "-",
+      "name": "Dew Collector",
+      "description": "Collects a little drinking water each dawn, and less in a drought. Collectors built close together share the same dew.",
+      "flavor": "Not enough to live on. Enough for the first pot of tea.",
+      "see": ["water.dew_shared", "water.dew_drought"]
+    },
+    "Treadwheel Lift": {
+      "id": "PandabornTreadwheelLift", "basis": "new", "who": "I",
+      "name": "Treadwheel Lift",
+      "description": "Lifts water one level where there is no current. Turned by a worker, so it runs only during the working day.",
+      "flavor": "A morning of walking, and nobody has gone anywhere. The water has gone up."
+    },
+    "Large Water Pump": {
+      "id": "LargeWaterPump", "basis": "rethemed", "vanilla_id": "LargeWaterPump", "who": "I",
+      "name": null,
+      "description": "Pumps and filters large amounts of water for the village to drink. Badwater contamination slows down its pumping speed.",
+      "flavor": "More water than the village can drink in a day. The rest is called a reserve.",
+      "why": "Vanilla description says 'for beavers'; flavor quotes a beaver song."
+    },
+    "Mechanical Pump": {
+      "id": "MechanicalPump", "basis": "rethemed", "vanilla_id": "MechanicalPump", "who": "-",
+      "content_md": "Large Water Pump, Mechanical Pumps, Aquifer Drill",
+      "name": null, "description": null, "flavor": null
+    },
+    "Compact Mechanical Pump": {
+      "id": "CompactMechanicalPump", "basis": "rethemed", "vanilla_id": "CompactMechanicalPump", "who": "-",
+      "content_md": "Large Water Pump, Mechanical Pumps, Aquifer Drill",
+      "name": null, "description": null, "flavor": null
+    },
+    "Aquifer Drill": {
+      "id": "AquiferDrill", "basis": "rethemed", "vanilla_id": "AquiferDrill", "who": "-",
+      "name": null, "description": null,
+      "flavor": "It leads water up instead of down. The principle is the same. The noise is not.",
+      "why": "Vanilla flavor: 'Unlike beavers…'."
+    },
+    "Badwater Pump": {
+      "id": "BadwaterPump", "basis": "rethemed", "vanilla_id": "BadwaterPump", "who": "I",
+      "name": null, "description": null,
+      "flavor": "Pump workers eat their lunch upwind.",
+      "why": "Vanilla flavor is a quote from Suli, a beaver."
+    },
+    "Discharge": {
+      "id": "Discharge", "basis": "rethemed", "vanilla_id": "Discharge", "who": "I",
+      "content_md": "Badwater Pump, Discharge, Centrifuge, Dome, Rig",
+      "name": null, "description": null,
+      "flavor": "Whatever the village does not want is poured out here, a long way from the tea.",
+      "why": "Vanilla flavor is a quote from Ol' Kazko, a beaver."
+    },
+    "Centrifuge": {
+      "id": "Centrifuge", "basis": "rethemed", "vanilla_id": "Centrifuge", "who": "I",
+      "name": null, "description": null,
+      "flavor": "It spins badwater until the useful part gives up and separates.",
+      "why": "Vanilla flavor mentions a Folktails carousel."
+    },
+    "Badwater Dome": {
+      "id": "BadwaterDome", "basis": "rethemed", "vanilla_id": "BadwaterDome", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Badwater Rig": {
+      "id": "BadwaterRig", "basis": "rethemed", "vanilla_id": "BadwaterRig", "who": "I",
+      "name": null, "description": null, "flavor": null
+    },
+
+    "Levee": {
+      "id": "Levee", "basis": "rethemed", "vanilla_id": "Levee", "who": "-",
+      "name": null, "description": null,
+      "flavor": "A flume tells water where to go. A levee tells it where to stop.",
+      "why": "Vanilla flavor mentions beaver water engineers."
+    },
+    "Dam": {
+      "id": "Dam", "basis": "rethemed", "vanilla_id": "Dam", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Floodgate": {
+      "id": "Floodgate", "basis": "rethemed", "vanilla_id": "Floodgate", "who": "-",
+      "content_md": "Floodgates",
+      "name": null, "description": null,
+      "flavor": "Somebody has to decide how high. This takes longer than building it.",
+      "why": "Vanilla flavor names Ol' Kazko."
+    },
+    "Double Floodgate": {
+      "id": "DoubleFloodgate", "basis": "rethemed", "vanilla_id": "DoubleFloodgate", "who": "-",
+      "content_md": "Floodgates",
+      "name": null, "description": null, "flavor": null
+    },
+    "Triple Floodgate": {
+      "id": "TripleFloodgate", "basis": "rethemed", "vanilla_id": "TripleFloodgate", "who": "-",
+      "content_md": "Floodgates",
+      "name": null, "description": null, "flavor": null
+    },
+    "Fill Valve": {
+      "id": "FillValve", "basis": "rethemed", "vanilla_id": "FillValve", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Throttling Valve": {
+      "id": "ThrottlingValve", "basis": "rethemed", "vanilla_id": "ThrottlingValve", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Impermeable Floor": {
+      "id": "ImpermeableFloor", "basis": "rethemed", "vanilla_id": "ImpermeableFloor", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Laid under a pool so that the water stays in the pool.",
+      "why": "Vanilla flavor mentions a beaver."
+    },
+    "Contamination Barrier": {
+      "id": "ContaminationBarrier", "basis": "rethemed", "vanilla_id": "ContaminationBarrier", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Dynamite": {
+      "id": "Dynamite", "basis": "rethemed", "vanilla_id": "Dynamite", "who": "-",
+      "name": null, "description": null, "flavor": null,
+      "note": "Double Dynamite and Triple Dynamite also keep all vanilla text."
+    },
+    "Tunnel": {
+      "id": "Tunnel", "basis": "rethemed", "vanilla_id": "Tunnel", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Dirt Excavator": {
+      "id": "DirtExcavator", "basis": "rethemed", "vanilla_id": "DirtExcavator", "who": "I",
+      "name": null, "description": null, "flavor": null
+    },
+    "Terrain Block": {
+      "id": "TerrainBlock", "basis": "rethemed", "vanilla_id": "TerrainBlock", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Dry-Stone Wall": {
+      "id": "PandabornDryStoneWall", "basis": "new", "vanilla_basis": "Levee", "who": "-",
+      "name": "Dry-Stone Wall",
+      "description": "A stone wall that stops moisture from spreading through the ground past it. Keeps a tea slope dry beside wet fields.",
+      "flavor": "No mortar and no hurry. Each stone was turned over twice before it was placed."
+    },
+
+    "Bamboo Water Wheel": {
+      "id": "PandabornBambooWaterWheel", "basis": "new", "vanilla_basis": "WaterWheel", "who": "-",
+      "name": "Bamboo Water Wheel",
+      "description": null,
+      "reuse": { "description": "Building.WaterWheel.Description" },
+      "flavor": "It turns for as long as the river does, and it does not stop for the bell."
+    },
+    "Power Wheel": {
+      "id": "PowerWheel", "basis": "rethemed", "vanilla_id": "PowerWheel", "who": "I",
+      "name": null,
+      "description": "A backup source of power, turned by a worker.",
+      "flavor": "It turns only while somebody walks in it. At the bell, it stops with everybody else.",
+      "why": "Vanilla says 'beaver-operated'; flavor compares beavers to other rodents."
+    },
+    "Kite Windmill": {
+      "id": "PandabornKiteWindmill", "basis": "new", "vanilla_basis": "WindTurbine", "who": "-",
+      "content_md": "Kite Windmill (small, large)",
+      "name": "Kite Windmill",
+      "description": null,
+      "reuse": { "description": "Building.WindTurbine.Description" },
+      "flavor": "On a windless day the kites hang still, and everyone pretends not to look up."
+    },
+    "Large Kite Windmill": {
+      "id": "PandabornLargeKiteWindmill", "basis": "new", "vanilla_basis": "LargeWindTurbine", "who": "-",
+      "content_md": "Kite Windmill (small, large)",
+      "name": "Large Kite Windmill",
+      "description": null,
+      "reuse": { "description": "Building.LargeWindTurbine.Description" },
+      "flavor": "More kites, more string, more power. Nobody has volunteered to untangle it."
+    },
+    "Power Shaft": {
+      "id": "PowerShaft", "basis": "rethemed", "vanilla_id": "PowerShaft", "who": "-",
+      "content_md": "Shafts, Clutch, Gravity Battery",
+      "name": null, "description": null, "flavor": null,
+      "note": "Vertical Power Shaft also keeps all vanilla text."
+    },
+    "Impermeable Power Shaft": {
+      "id": "ImpermeablePowerShaft", "basis": "rethemed", "vanilla_id": "ImpermeablePowerShaft", "who": "-",
+      "content_md": "Shafts, Clutch, Gravity Battery",
+      "name": null, "description": null,
+      "flavor": "Power passes through. Water does not.",
+      "why": "Vanilla flavor is a quote from Pina, a beaver."
+    },
+    "Clutch": {
+      "id": "Clutch", "basis": "rethemed", "vanilla_id": "Clutch", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Gravity Battery": {
+      "id": "GravityBattery", "basis": "rethemed", "vanilla_id": "GravityBattery", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+
+    "Inventor": {
+      "id": "Inventor", "basis": "rethemed", "vanilla_id": "Inventor", "who": "I",
+      "name": null, "description": null,
+      "flavor": "Inkpaw inventors do their best thinking lying down, and have the notes to prove it.",
+      "why": "Vanilla flavor names Ol' Kazko and beaver inventors."
+    },
+    "Star Tower": {
+      "id": "PandabornStarTower", "basis": "new", "vanilla_basis": "Observatory", "who": "R",
+      "name": "Star Tower",
+      "description": "Ringtail stargazers study the night sky here and turn what they see into Science Points. Works from the afternoon bell to dawn and needs no power.",
+      "flavor": "Every star has a name. The Ringtails are still deciding on some of them.",
+      "see": ["ringtails.closed_for_the_day", "ringtails.keyword_night"]
+    },
+    "Ox Workshop": {
+      "id": "PandabornOxWorkshop", "basis": "new", "vanilla_basis": "BotAssembler", "who": "I",
+      "name": "Ox Workshop",
+      "description": "Builds Wooden Oxen: tireless, strong and slow workers that need no food, no water and no rest.",
+      "flavor": "The first Wooden Ox was built to carry rice. It is still carrying rice.",
+      "note": "CONTENT.md marks it re-themed (vanilla Bot Assembler), but it has a new name. The bot's name is in faction.json."
+    },
+
+    "Small Warehouse": {
+      "id": "SmallWarehouse", "basis": "rethemed", "vanilla_id": "SmallWarehouse", "who": "-",
+      "content_md": "Warehouses, piles and the underground pile",
+      "name": null, "description": null,
+      "flavor": "Everything has a shelf. Finding the shelf is a separate skill.",
+      "why": "Vanilla flavor is a quote from Ma' Ngonel, a beaver."
+    },
+    "Medium Warehouse": {
+      "id": "MediumWarehouse", "basis": "rethemed", "vanilla_id": "MediumWarehouse", "who": "-",
+      "content_md": "Warehouses, piles and the underground pile",
+      "name": null, "description": null, "flavor": null
+    },
+    "Large Warehouse": {
+      "id": "LargeWarehouse", "basis": "rethemed", "vanilla_id": "LargeWarehouse", "who": "-",
+      "content_md": "Warehouses, piles and the underground pile",
+      "name": null, "description": null,
+      "flavor": "Somewhere at the back there is a jar of pickles older than the village.",
+      "why": "Vanilla flavor: 'no room to swing a tail'."
+    },
+    "Small Pile": {
+      "id": "SmallPile", "basis": "rethemed", "vanilla_id": "SmallPile", "who": "-",
+      "content_md": "Warehouses, piles and the underground pile",
+      "name": null, "description": null, "flavor": null,
+      "note": "Large Pile and Underground Pile also keep all vanilla text."
+    },
+
+    "Path": {
+      "id": "Path", "basis": "rethemed", "vanilla_id": "Path", "who": "-",
+      "content_md": "Paths, stairs, platforms, overhangs, bridges, gate, airlock and ziplines",
+      "name": null, "description": null,
+      "flavor": "Every path in the village leads to a teahouse in the end.",
+      "why": "Vanilla flavor is a song about a lodge."
+    },
+    "Stairs": {
+      "id": "Stairs", "basis": "rethemed", "vanilla_id": "Stairs", "who": "-",
+      "name": null, "description": null,
+      "flavor": "The view from the top is worth the climb. The climb is still discussed afterwards.",
+      "why": "Vanilla flavor mentions beavers."
+    },
+    "Spiral Stairs": {
+      "id": "SpiralStairs", "basis": "rethemed", "vanilla_id": "SpiralStairs", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Cubs go up and down for fun. Adults go up once.",
+      "why": "Vanilla flavor is a quote from Suli, a beaver."
+    },
+    "Platform": {
+      "id": "Platform", "basis": "rethemed", "vanilla_id": "Platform", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Bamboo scaffolding holds up most of the village and all of its laundry.",
+      "why": "Vanilla flavor mentions beaver platforms.",
+      "note": "Double Platform keeps its vanilla flavor."
+    },
+    "Triple Platform": {
+      "id": "TriplePlatform", "basis": "rethemed", "vanilla_id": "TriplePlatform", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Eating the scaffolding is strictly prohibited.",
+      "why": "Vanilla flavor: 'Gnawing on poles is strictly prohibited!' The Inkpaw version of the same sign."
+    },
+    "Overhang": {
+      "id": "Overhang", "basis": "rethemed", "vanilla_id": "Overhang", "who": "-",
+      "name": null, "description": null,
+      "flavor": "It sticks out over nothing and holds. Villagers test it with one paw first.",
+      "why": "Vanilla flavor is a quote from Pina, a beaver.",
+      "note": "One flavor key is shared by every overhang size (vanilla Building.Overhang.FlavorDescription)."
+    },
+    "Suspension Bridge": {
+      "id": "SuspensionBridge", "basis": "rethemed", "vanilla_id": "SuspensionBridge", "who": "-",
+      "name": null,
+      "description": "Allows villagers to pass over gaps.",
+      "flavor": null,
+      "why": "Vanilla description says 'Allows beavers to pass over gaps.'",
+      "note": "One description key is shared by every bridge size."
+    },
+    "Metal Platform": {
+      "id": "MetalPlatform", "basis": "rethemed", "vanilla_id": "MetalPlatform", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Metal, for once. The village agreed it was necessary and still prefers bamboo.",
+      "why": "Vanilla flavor is a quote from Ma' Ngonel, a beaver.",
+      "note": "One flavor key is shared by both sizes (vanilla Building.MetalPlatform.FlavorDescription). Use only if the Inkpaws get metal platforms."
+    },
+    "Gate": {
+      "id": "Gate", "basis": "rethemed", "vanilla_id": "Gate", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Airlock": {
+      "id": "Airlock", "basis": "rethemed", "vanilla_id": "Airlock", "who": "-",
+      "name": null,
+      "description": "Allows villagers to pass through while blocking off water.",
+      "flavor": null,
+      "why": "Vanilla description says 'Allows beavers to pass through'."
+    },
+    "Zipline Station": {
+      "id": "ZiplineStation", "basis": "rethemed", "vanilla_id": "ZiplineStation", "who": "-",
+      "content_md": "Paths, stairs, platforms, overhangs, bridges, gate, airlock and ziplines",
+      "name": null, "description": null,
+      "flavor": "The fastest a villager will ever travel. Most keep their eyes closed.",
+      "why": "Vanilla flavor: 'your tail must be this long'."
+    },
+    "Zipline Pylon": {
+      "id": "ZiplinePylon", "basis": "rethemed", "vanilla_id": "ZiplinePylon", "who": "-",
+      "name": null, "description": null,
+      "flavor": "Riders who pass each other wave politely and hold on tightly.",
+      "why": "Vanilla flavor mentions tails and beavers."
+    },
+    "Zipline Beam": {
+      "id": "ZiplineBeam", "basis": "rethemed", "vanilla_id": "ZiplineBeam", "who": "-",
+      "name": null, "description": null,
+      "flavor": "It holds the cable up. That is the whole job, and it does it well.",
+      "why": "Vanilla flavor is a quote from Pina, a beaver."
+    },
+
+    "Campfire": {
+      "id": "Campfire", "basis": "rethemed", "vanilla_id": "Campfire", "who": "-",
+      "name": null,
+      "description": "A place for villagers to relax and keep each other company.",
+      "flavor": null,
+      "why": "Vanilla says 'for beavers… in the evening'. Ringtails use it in the morning."
+    },
+    "Hammock": {
+      "id": "PandabornHammock", "basis": "new", "vanilla_basis": "Hammock", "who": "-",
+      "name": "Hammock",
+      "description": "A hammock for one. A nap here is part of every free afternoon.",
+      "flavor": "An Inkpaw can fall asleep in one faster than you can read this.",
+      "note": "The name equals the vanilla one, but the building satisfies the Nap need, so it needs its own description. The name may point at Building.Hammock.DisplayName."
+    },
+    "Nap Platform": {
+      "id": "PandabornNapPlatform", "basis": "new", "vanilla_basis": "RooftopTerrace", "who": "-",
+      "name": "Nap Platform",
+      "description": "A raised deck where several villagers can nap at once. Can be stacked.",
+      "flavor": "There is room for several. Whoever arrives last naps on the stairs."
+    },
+    "Teahouse": {
+      "id": "PandabornTeahouse", "basis": "new", "vanilla_basis": "DomedGarden", "who": "-",
+      "name": "Teahouse",
+      "description": "A place to drink tea in good company. Keeps a stock of tea for its guests.",
+      "flavor": "Inkpaws fill it in the afternoon and Ringtails in the morning. The kettle never cools."
+    },
+    "Slide and Swing": {
+      "id": "PandabornSlideAndSwing", "basis": "new", "vanilla_basis": "Lido", "who": "-",
+      "name": "Slide and Swing",
+      "description": "A playground with a slide and a swing, for villagers of all ages.",
+      "flavor": "The slide is for the young. The queue is mostly adults."
+    },
+    "Panda Kindergarten": {
+      "id": "PandabornKindergarten", "basis": "new", "vanilla_basis": "Agora", "who": "-",
+      "name": "Panda Kindergarten",
+      "description": "Where cubs and kits play together. Adults come to watch them, and it does the adults a great deal of good.",
+      "flavor": "Officially, the adults are here to supervise.",
+      "see": ["young.kindergarten_playing", "young.kindergarten_watching"]
+    },
+    "Ink Studio": {
+      "id": "PandabornInkStudio", "basis": "new", "vanilla_basis": "ContemplationSpot", "who": "-",
+      "name": "Ink Studio",
+      "description": "A quiet room for ink painting and long thoughts.",
+      "flavor": "Most of the paintings are of bamboo. The rest are of bamboo in the rain."
+    },
+    "Hot Spring Bath": {
+      "id": "PandabornHotSpringBath", "basis": "new", "vanilla_basis": "MudPit", "who": "-",
+      "name": "Hot Spring Bath",
+      "description": "A warm pool for a long soak. It also wets the fur.",
+      "flavor": "Getting in takes a moment. Getting out takes resolve."
+    },
+    "Opera Stage": {
+      "id": "PandabornOperaStage", "basis": "new", "vanilla_basis": "DanceHall", "who": "R",
+      "name": "Opera Stage",
+      "description": "Ringtail performers stage face-changing opera for whoever is off duty. Open while the performers work, from the afternoon bell to dawn.",
+      "flavor": "A new face with every turn of the head. The Ringtails will not say how it is done.",
+      "see": ["ringtails.closed_for_the_day", "ringtails.keyword_night", "ringtails.opera_no_performers"]
+    },
+    "Teeth Grindstone": {
+      "id": "TeethGrindstone", "basis": "rethemed", "vanilla_id": "TeethGrindstone", "who": "-",
+      "name": null, "description": null, "flavor": null,
+      "note": "Vanilla text is true for pandas, who chew bamboo all day."
+    },
+    "Medical Bed": {
+      "id": "MedicalBed", "basis": "rethemed", "vanilla_id": "MedicalBed", "who": "-",
+      "name": null,
+      "description": "Injured villagers lie here to rest and heal.",
+      "flavor": "The only bed in the village that anyone is in a hurry to leave.",
+      "why": "Vanilla says 'Injured beavers'; flavor is a quote from Pina, a beaver."
+    },
+    "Herbalist": {
+      "id": "Herbalist", "basis": "rethemed", "vanilla_id": "Herbalist", "who": "-",
+      "name": null,
+      "description": "Creates antidote that cures contaminated villagers.",
+      "flavor": null,
+      "why": "Vanilla says 'contaminated beavers'."
+    },
+    "Shower": {
+      "id": "Shower", "basis": "rethemed", "vanilla_id": "Shower", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+
+    "Night Builders' Post": {
+      "id": "PandabornNightBuildersPost", "basis": "new", "vanilla_basis": "BuildersHut", "who": "R",
+      "name": "Night Builders' Post",
+      "description": "Employs Ringtail builders who stock and raise construction sites from the afternoon bell to dawn.",
+      "flavor": "The Inkpaws go to bed beside a building site and wake up beside a building.",
+      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]
+    },
+    "Night Courier Post": {
+      "id": "PandabornNightCourierPost", "basis": "new", "vanilla_basis": "HaulingPost", "who": "R",
+      "name": "Night Courier Post",
+      "description": "Employs Ringtail couriers who carry goods around the district from the afternoon bell to dawn. Ringtails run with their loads.",
+      "flavor": "A full back-basket does not slow a Ringtail down. Neither does an empty one.",
+      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night", "ringtails.courier_tip"]
+    },
+    "Night Forager's Post": {
+      "id": "PandabornNightForagersPost", "basis": "new", "vanilla_basis": "GathererFlag", "who": "R",
+      "name": "Night Forager's Post",
+      "description": "Employs Ringtail foragers who gather bamboo mushrooms and wild food from the afternoon bell to dawn.",
+      "flavor": "Bamboo mushrooms are easiest to find by lantern light, or so the foragers insist.",
+      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]
+    },
+
+    "Standing Lantern": {
+      "id": "PandabornStandingLantern", "basis": "new", "vanilla_basis": "Lantern", "who": "-",
+      "content_md": "Standing, hanging and string lanterns",
+      "name": "Standing Lantern",
+      "description": "A decorative lantern on a post.",
+      "flavor": "Lit at the bell, one after another, by nobody in particular."
+    },
+    "Hanging Lantern": {
+      "id": "PandabornHangingLantern", "basis": "new", "who": "-",
+      "content_md": "Standing, hanging and string lanterns",
+      "name": "Hanging Lantern",
+      "description": "A decorative lantern that hangs from a bracket.",
+      "flavor": "It swings a little whenever a Ringtail runs past."
+    },
+    "String Lanterns": {
+      "id": "PandabornStringLanterns", "basis": "new", "who": "-",
+      "content_md": "Standing, hanging and string lanterns",
+      "name": "String Lanterns",
+      "description": "A string of small lanterns between two posts.",
+      "flavor": "Put up for one festival and never taken down."
+    },
+    "Bamboo Fence": {
+      "id": "PandabornBambooFence", "basis": "new", "vanilla_basis": "WoodFence", "who": "-",
+      "name": "Bamboo Fence",
+      "description": "A decorative fence made from bamboo.",
+      "flavor": "It keeps nothing in and nothing out, and looks tidy doing it."
+    },
+    "Hedge": {
+      "id": "Hedge", "basis": "rethemed", "vanilla_id": "Hedge", "who": "-",
+      "name": null, "description": null, "flavor": null,
+      "note": "The vanilla flavor (chewing through a hedge) is at least as true for pandas."
+    },
+    "Shrub": {
+      "id": "Shrub", "basis": "rethemed", "vanilla_id": "Shrub", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Potted Pine": {
+      "id": "PandabornPottedPine", "basis": "new", "who": "-",
+      "name": "Potted Pine",
+      "description": "A small pine tree trained in a pot.",
+      "flavor": "It has been the same size for longer than anyone can remember. That is the idea."
+    },
+    "Panda Statue": {
+      "id": "PandabornPandaStatue", "basis": "new", "vanilla_basis": "BeaverStatue", "who": "-",
+      "name": "Panda Statue",
+      "description": "A statue of a well-rested panda.",
+      "flavor": "Carved sitting down, for accuracy."
+    },
+    "Bamboo Pinwheel": {
+      "id": "PandabornBambooPinwheel", "basis": "new", "vanilla_basis": "Weathervane", "who": "-",
+      "name": "Bamboo Pinwheel",
+      "description": "A small pinwheel that shows wind direction and strength.",
+      "flavor": "Cubs blow on it to make the wind stronger. The kite windmills are not affected."
+    },
+    "Scarecrow": {
+      "id": "Scarecrow", "basis": "rethemed", "vanilla_id": "Scarecrow", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Bench": {
+      "id": "Bench", "basis": "rethemed", "vanilla_id": "Bench", "who": "-",
+      "name": null, "description": null, "flavor": null
+    },
+    "Pole Banner": {
+      "id": "PoleBanner", "basis": "rethemed", "vanilla_id": "PoleBanner", "who": "-",
+      "content_md": "banners",
+      "name": null, "description": null,
+      "flavor": "Raised high so that everyone can see it and no cub or kit can reach it.",
+      "why": "Vanilla flavor blames 'kits' for vandalism. In this faction 'kits' means young Ringtails."
+    },
+    "Square Banner": {
+      "id": "SquareBanner", "basis": "rethemed", "vanilla_id": "SquareBanner", "who": "-",
+      "content_md": "banners",
+      "name": null, "description": null, "flavor": null
+    },
+    "Goldfish Bowl": {
+      "id": "PandabornGoldfishBowl", "basis": "new", "who": "-",
+      "name": "Goldfish Bowl",
+      "description": "A decorative stone bowl with goldfish.",
+      "flavor": "Somebody feeds them every day. Nobody knows who."
+    },
+    "Garden Moon Gate": {
+      "id": "PandabornGardenMoonGate", "basis": "new", "who": "-",
+      "name": "Garden Moon Gate",
+      "description": "A round garden gateway.",
+      "flavor": "It leads from one side of the garden to the other side of the garden. Villagers walk through it anyway."
+    },
+    "Roof": {
+      "id": "Roof", "basis": "rethemed", "vanilla_id": "Roof", "who": "-",
+      "content_md": "grey tile roofs in the vanilla sizes",
+      "name": null, "description": null, "flavor": null,
+      "note": "All five sizes keep their vanilla names (Roof 1x1 … Roof 3x2) and the shared vanilla flavor."
+    },
+
+    "Memorial Arch": {
+      "id": "PandabornMemorialArch", "basis": "new", "vanilla_basis": "BrazierOfBonding", "who": "-",
+      "name": "Memorial Arch",
+      "description": "A tall timber arch over the village road, raised for those who came before.",
+      "flavor": "It carries no names. Everyone knows whom it is for."
+    },
+    "Great Sitting Panda": {
+      "id": "PandabornGreatSittingPanda", "basis": "new", "vanilla_basis": "HallOfAbundance", "who": "-",
+      "name": "Great Sitting Panda",
+      "description": "A great cliff carving of a seated panda, with water running at its feet and a Ringtail on its shoulder.",
+      "flavor": "It took generations to carve, and it has been sitting ever since.",
+      "note": "Always 'cliff carving'. No religious words anywhere near this building."
+    },
+    "Sky Lantern": {
+      "id": "PandabornSkyLantern", "basis": "new", "vanilla_basis": "EarthRecultivator", "who": "-",
+      "name": "Sky Lantern",
+      "description": "A colossal sky lantern that carries seeds over the wasteland. When released, makes the villagers in the area extra happy.",
+      "flavor": "It rises slowly, the way everything here does, and then it is gone over the hills.",
+      "see": ["wonder.release_button", "wonder.not_enough_goods", "wonder.not_enough_workers"],
+      "note": "The game adds the vanilla wonder keyword lines (Buildings.Wonder, Buildings.Wonder.Description) by itself. Buildings.Wonder says 'The pinnacle of beaver engineering'; see messages.json 'vanilla_lines_that_say_beaver'."
+    },
+
+    "Automation": {
+      "id": "(nineteen vanilla buildings)", "basis": "rethemed", "who": "-",
+      "content_md": "All nineteen vanilla automation buildings",
+      "name": null, "description": null, "flavor": null,
+      "members": ["Chronometer", "Contamination Sensor", "Depth Sensor", "Detonator", "Firework Launcher", "Flow Sensor", "HTTP Adapter", "HTTP Lever", "Indicator", "Lever", "Memory", "Population Counter", "Power Meter", "Relay", "Resource Counter", "Science Counter", "Speaker", "Timer", "Weather Station"],
+      "note": "All vanilla text is kept. None of it mentions beavers. The Population Counter modes 'Total beavers' and 'Bots' are vanilla keys shared by every faction and are listed in messages.json 'vanilla_lines_that_say_beaver'."
+    }
+  }
+}

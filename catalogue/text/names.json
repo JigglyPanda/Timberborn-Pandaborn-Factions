@@ -1,0 +1,2147 @@
+{
+  "_meta": {
+    "kind": "colonist names",
+    "WRITTEN_BY_AI": "This list was written by an AI (Claude, by Anthropic). It has not been read by a native speaker of Mandarin. Every name needs a native reader's check before release: the characters, the meaning given, how natural the name sounds, and anything it might call to mind that the writer could not hear.",
+    "language": "enUS display text; pinyin without tone marks",
+    "status": "staging input for the catalogue importer; not yet reviewed by the owner or by a native reader",
+    "what_the_game_shows": "Only the 'display' string: the pinyin and the English gloss, as in 'Mo Mo (Ink)'. No Chinese characters appear in game text. The 'characters' column exists only so a native reader can check each name.",
+    "vanilla_loc_pattern": {
+      "key": "Beaver.NamePool in enUS_names.csv: one key whose text is every name, one per line.",
+      "note": "The vanilla pool is global and shared by every faction (docs/tech/two-peoples.md: BeaverNameService). Writing these names into Beaver.NamePool would rename beavers in Folktails and Iron Teeth games too, so the faction needs its own namer and its own keys."
+    },
+    "suggested_mod_key_pattern": {
+      "inkpaws": "Pandaborn.Inkpaw.NamePool",
+      "ringtails": "Pandaborn.Ringtail.NamePool",
+      "form": "As vanilla: one key, the 'display' strings joined with line breaks. The CSV validator rejects empty lines, so no blank line inside the text."
+    },
+    "field_rules": {
+      "pinyin": "Hanyu pinyin, no tone marks, each syllable capitalized and separated by a space.",
+      "characters": "The intended characters, simplified. For checking only.",
+      "gloss": "A short English meaning.",
+      "display": "What the game shows.",
+      "pattern": "'doubled' = one syllable said twice, the way most zoo pandas are named. 'xiao' = 'Little' plus one syllable, the other everyday way of making a pet name. 'two-syllable' = an ordinary two-syllable word used as a name.",
+      "sure": "'high' = a common name or pet name with this meaning. 'medium' = a real word with this meaning that the writer believes is natural as a name, or a name with a homophone or an English reading worth a second look. 'low' = the writer doubts it; expect to replace it.",
+      "note": "What the checker should look at."
+    },
+    "rules_followed": [
+      "Every name is meant to be a real name or a real word with the stated meaning. No syllable was invented.",
+      "No name is used in both pools. The check is on the pinyin as displayed, so two names written with different characters but the same toneless spelling count as one.",
+      "Left out on purpose: names of well-known living pandas that the writer knows of (among them Le Le, An An, Bei Bei, Bao Bao, Jia Jia, De De, Kai Kai, Ke Ke, Ying Ying, Tuan Tuan, Yuan Yuan, Hua Hua, Meng Meng, Xiang Xiang, Xiao Xiao, Lei Lei, Xin Xin, Xing Xing, Liang Liang, Nuan Nuan, Yang Yang, Tian Tian, Ya Ya, Huan Huan, Qi Zai, Fu Bao). Le Le and An An appear as examples in the design documents; they are left out here for this reason and can be added back by the owner.",
+      "Left out on purpose: syllables that sound like bodily functions, insults, death or animals used as insults when doubled (for example Pi Pi, Pu Pu, Shi Shi, Niao Niao, Si Si, Ben Ben, Dai Dai, Sha Sha, Zhu Zhu, Gou Gou, Gua Gua, Que Que), doubled forms that are family words (Ba Ba, Ma Ma, Ge Ge, Ye Ye, Nai Nai, Shu Shu), and names that read badly in English (for example Dong Dong, Bang Bang, Du Du, Mu Mu, Die Die, You You).",
+      "No religious names. No names tied to the zodiac."
+    ],
+    "why_the_inkpaw_pool_has_two_patterns": "The task asked for at least 120 doubled names. Once well-known pandas and unfortunate syllables are removed, the writer could find only 99 doubled names in toneless pinyin that it was willing to stand behind, and 43 of those are marked 'medium' or 'low'. Rather than pad the list with doubtful names, the pool is completed with 29 'Xiao' names, which are the other common way real pandas and real pets are named. The owner can ship the doubled names alone (99) or both (128).",
+    "recurring_characters": "Four names from these pools are reserved for the small cast that future flavor text may quote (see STYLE.md): Nuo Nuo, Song Song, Dou Dou (Inkpaws) and Hua Jiao (Ringtail). If the checker rejects any of them, change the cast as well.",
+    "counts": {
+      "inkpaws_total": 128,
+      "inkpaws_doubled": 99,
+      "inkpaws_xiao": 29,
+      "ringtails_total": 127,
+      "ringtails_doubled": 8,
+      "sure_inkpaws": {
+        "high": 78,
+        "medium": 49,
+        "low": 1
+      },
+      "sure_ringtails": {
+        "high": 107,
+        "medium": 20,
+        "low": 0
+      }
+    }
+  },
+  "inkpaws": [
+    {
+      "pinyin": "Ban Ban",
+      "characters": "斑斑",
+      "gloss": "Patches",
+      "display": "Ban Ban (Patches)",
+      "sure": "medium",
+      "note": "A real word (\"spotted, patched\") and a pet name; less usual for a person.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Bin Bin",
+      "characters": "彬彬",
+      "gloss": "Courteous",
+      "display": "Bin Bin (Courteous)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Bing Bing",
+      "characters": "冰冰",
+      "gloss": "Ice",
+      "display": "Bing Bing (Ice)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Cai Cai",
+      "characters": "彩彩",
+      "gloss": "Bright colors",
+      "display": "Cai Cai (Bright colors)",
+      "sure": "medium",
+      "note": "菜菜, mild slang for \"beginner\", shares the spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Can Can",
+      "characters": "灿灿",
+      "gloss": "Radiant",
+      "display": "Can Can (Radiant)",
+      "sure": "medium",
+      "note": "Reads as the dance \"can-can\" in English. Drop it if that is unwelcome.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Cha Cha",
+      "characters": "茶茶",
+      "gloss": "Tea",
+      "display": "Cha Cha (Tea)",
+      "sure": "medium",
+      "note": "Reads as the dance \"cha-cha\" in English. Kept because tea is central to the faction; drop it if that is unwelcome.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chan Chan",
+      "characters": "婵婵",
+      "gloss": "Lovely",
+      "display": "Chan Chan (Lovely)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chang Chang",
+      "characters": "畅畅",
+      "gloss": "Free-flowing",
+      "display": "Chang Chang (Free-flowing)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chao Chao",
+      "characters": "超超",
+      "gloss": "Surpassing",
+      "display": "Chao Chao (Surpassing)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chen Chen",
+      "characters": "晨晨",
+      "gloss": "Morning",
+      "display": "Chen Chen (Morning)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chuan Chuan",
+      "characters": "川川",
+      "gloss": "River",
+      "display": "Chuan Chuan (River)",
+      "sure": "high",
+      "note": "川 is also the short name of Sichuan.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Chun Chun",
+      "characters": "春春",
+      "gloss": "Springtime",
+      "display": "Chun Chun (Springtime)",
+      "sure": "medium",
+      "note": "蠢 (\"silly\", third tone) has the same toneless spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Cong Cong",
+      "characters": "聪聪",
+      "gloss": "Clever",
+      "display": "Cong Cong (Clever)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Cui Cui",
+      "characters": "翠翠",
+      "gloss": "Emerald green",
+      "display": "Cui Cui (Emerald green)",
+      "sure": "high",
+      "note": "Also the heroine of Shen Congwen's novel \"Border Town\".",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Dian Dian",
+      "characters": "点点",
+      "gloss": "Dot",
+      "display": "Dian Dian (Dot)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Dou Dou",
+      "characters": "豆豆",
+      "gloss": "Bean",
+      "display": "Dou Dou (Bean)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Dun Dun",
+      "characters": "墩墩",
+      "gloss": "Sturdy",
+      "display": "Dun Dun (Sturdy)",
+      "sure": "high",
+      "note": "Shared with the 2022 Winter Olympics mascot, a fictional panda, not a real animal.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Duo Duo",
+      "characters": "朵朵",
+      "gloss": "Blossom",
+      "display": "Duo Duo (Blossom)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "En En",
+      "characters": "恩恩",
+      "gloss": "Kindness",
+      "display": "En En (Kindness)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Fang Fang",
+      "characters": "芳芳",
+      "gloss": "Fragrance",
+      "display": "Fang Fang (Fragrance)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Feng Feng",
+      "characters": "峰峰",
+      "gloss": "Mountain peak",
+      "display": "Feng Feng (Mountain peak)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Fu Fu",
+      "characters": "福福",
+      "gloss": "Good fortune",
+      "display": "Fu Fu (Good fortune)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Guai Guai",
+      "characters": "乖乖",
+      "gloss": "Well-behaved",
+      "display": "Guai Guai (Well-behaved)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Han Han",
+      "characters": "涵涵",
+      "gloss": "Patient",
+      "display": "Han Han (Patient)",
+      "sure": "medium",
+      "note": "憨憨 (\"endearingly simple\", in some dialects \"silly\") shares the spelling. It is said fondly of pandas, but check.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Jiang Jiang",
+      "characters": "江江",
+      "gloss": "Great river",
+      "display": "Jiang Jiang (Great river)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Jiao Jiao",
+      "characters": "娇娇",
+      "gloss": "Tender",
+      "display": "Jiao Jiao (Tender)",
+      "sure": "medium",
+      "note": "Can suggest \"pampered\".",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Jin Jin",
+      "characters": "锦锦",
+      "gloss": "Brocade",
+      "display": "Jin Jin (Brocade)",
+      "sure": "high",
+      "note": "Sichuan brocade; 锦 is an old byname of Chengdu.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Jun Jun",
+      "characters": "俊俊",
+      "gloss": "Handsome",
+      "display": "Jun Jun (Handsome)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Kang Kang",
+      "characters": "康康",
+      "gloss": "Good health",
+      "display": "Kang Kang (Good health)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Kou Kou",
+      "characters": "扣扣",
+      "gloss": "Button",
+      "display": "Kou Kou (Button)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Kuan Kuan",
+      "characters": "宽宽",
+      "gloss": "Easygoing",
+      "display": "Kuan Kuan (Easygoing)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Kui Kui",
+      "characters": "葵葵",
+      "gloss": "Sunflower",
+      "display": "Kui Kui (Sunflower)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Lan Lan",
+      "characters": "岚岚",
+      "gloss": "Mountain mist",
+      "display": "Lan Lan (Mountain mist)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Lang Lang",
+      "characters": "朗朗",
+      "gloss": "Clear and bright",
+      "display": "Lang Lang (Clear and bright)",
+      "sure": "high",
+      "note": "Shared with a famous pianist (a person, not a panda).",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Lian Lian",
+      "characters": "莲莲",
+      "gloss": "Lotus",
+      "display": "Lian Lian (Lotus)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Lin Lin",
+      "characters": "林林",
+      "gloss": "Forest",
+      "display": "Lin Lin (Forest)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Liu Liu",
+      "characters": "柳柳",
+      "gloss": "Willow",
+      "display": "Liu Liu (Willow)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Lu Lu",
+      "characters": "露露",
+      "gloss": "Dew",
+      "display": "Lu Lu (Dew)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Luo Luo",
+      "characters": "萝萝",
+      "gloss": "Radish",
+      "display": "Luo Luo (Radish)",
+      "sure": "low",
+      "note": "萝 on its own is unusual in a name; 洛洛 is the commoner nickname with this spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Mai Mai",
+      "characters": "麦麦",
+      "gloss": "Wheat",
+      "display": "Mai Mai (Wheat)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Man Man",
+      "characters": "慢慢",
+      "gloss": "Unhurried",
+      "display": "Man Man (Unhurried)",
+      "sure": "medium",
+      "note": "A real word (\"slowly\") used as a nickname. \"Man Man\" may read oddly in English.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Mian Mian",
+      "characters": "绵绵",
+      "gloss": "Cotton-soft",
+      "display": "Mian Mian (Cotton-soft)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Min Min",
+      "characters": "敏敏",
+      "gloss": "Quick-witted",
+      "display": "Min Min (Quick-witted)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ming Ming",
+      "characters": "明明",
+      "gloss": "Bright",
+      "display": "Ming Ming (Bright)",
+      "sure": "high",
+      "note": "A long-lived zoo panda of this name died in 2011.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Mo Mo",
+      "characters": "墨墨",
+      "gloss": "Ink",
+      "display": "Mo Mo (Ink)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Na Na",
+      "characters": "娜娜",
+      "gloss": "Graceful",
+      "display": "Na Na (Graceful)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Nan Nan",
+      "characters": "楠楠",
+      "gloss": "Nanmu tree",
+      "display": "Nan Nan (Nanmu tree)",
+      "sure": "high",
+      "note": "楠 is the fragrant timber tree of Sichuan.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Nao Nao",
+      "characters": "闹闹",
+      "gloss": "Lively",
+      "display": "Nao Nao (Lively)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Nian Nian",
+      "characters": "念念",
+      "gloss": "Fond thoughts",
+      "display": "Nian Nian (Fond thoughts)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ning Ning",
+      "characters": "宁宁",
+      "gloss": "Calm",
+      "display": "Ning Ning (Calm)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Nong Nong",
+      "characters": "浓浓",
+      "gloss": "Rich and deep",
+      "display": "Nong Nong (Rich and deep)",
+      "sure": "medium",
+      "note": "As said of ink or tea.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Nuo Nuo",
+      "characters": "糯糯",
+      "gloss": "Sticky rice",
+      "display": "Nuo Nuo (Sticky rice)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Pao Pao",
+      "characters": "泡泡",
+      "gloss": "Bubble",
+      "display": "Pao Pao (Bubble)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Peng Peng",
+      "characters": "蓬蓬",
+      "gloss": "Fluffy",
+      "display": "Peng Peng (Fluffy)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ping Ping",
+      "characters": "平平",
+      "gloss": "Peaceful",
+      "display": "Ping Ping (Peaceful)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qi Qi",
+      "characters": "琪琪",
+      "gloss": "Fine jade",
+      "display": "Qi Qi (Fine jade)",
+      "sure": "medium",
+      "note": "Several zoo pandas have had names spelled Qi Qi; none famous that the writer knows of.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qian Qian",
+      "characters": "芊芊",
+      "gloss": "Lush",
+      "display": "Qian Qian (Lush)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qiao Qiao",
+      "characters": "悄悄",
+      "gloss": "Quietly",
+      "display": "Qiao Qiao (Quietly)",
+      "sure": "medium",
+      "note": "A real word used as a nickname; 巧巧 (\"deft\") is the commoner name with this spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qin Qin",
+      "characters": "勤勤",
+      "gloss": "Hard-working",
+      "display": "Qin Qin (Hard-working)",
+      "sure": "medium",
+      "note": "亲亲 (\"dear\", also \"kiss\") shares the spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qing Qing",
+      "characters": "青青",
+      "gloss": "Fresh green",
+      "display": "Qing Qing (Fresh green)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Qiu Qiu",
+      "characters": "球球",
+      "gloss": "Ball",
+      "display": "Qiu Qiu (Ball)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Quan Quan",
+      "characters": "泉泉",
+      "gloss": "Mountain spring",
+      "display": "Quan Quan (Mountain spring)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Rong Rong",
+      "characters": "蓉蓉",
+      "gloss": "Hibiscus",
+      "display": "Rong Rong (Hibiscus)",
+      "sure": "high",
+      "note": "The hibiscus is the flower of Chengdu.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Rou Rou",
+      "characters": "柔柔",
+      "gloss": "Gentle",
+      "display": "Rou Rou (Gentle)",
+      "sure": "medium",
+      "note": "肉肉 (\"chubby\") shares the spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ruan Ruan",
+      "characters": "软软",
+      "gloss": "Soft",
+      "display": "Ruan Ruan (Soft)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Rui Rui",
+      "characters": "瑞瑞",
+      "gloss": "Good omen",
+      "display": "Rui Rui (Good omen)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Shan Shan",
+      "characters": "山山",
+      "gloss": "Mountain",
+      "display": "Shan Shan (Mountain)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Sheng Sheng",
+      "characters": "笙笙",
+      "gloss": "Reed pipe",
+      "display": "Sheng Sheng (Reed pipe)",
+      "sure": "medium",
+      "note": "笙 is a bamboo mouth organ.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Shuang Shuang",
+      "characters": "霜霜",
+      "gloss": "Frost",
+      "display": "Shuang Shuang (Frost)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Shun Shun",
+      "characters": "顺顺",
+      "gloss": "Smooth going",
+      "display": "Shun Shun (Smooth going)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Song Song",
+      "characters": "松松",
+      "gloss": "Pine",
+      "display": "Song Song (Pine)",
+      "sure": "high",
+      "note": "松 also means \"relaxed\".",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Su Su",
+      "characters": "酥酥",
+      "gloss": "Flaky pastry",
+      "display": "Su Su (Flaky pastry)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Sui Sui",
+      "characters": "穗穗",
+      "gloss": "Ear of rice",
+      "display": "Sui Sui (Ear of rice)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Sun Sun",
+      "characters": "笋笋",
+      "gloss": "Bamboo shoot",
+      "display": "Sun Sun (Bamboo shoot)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Tan Tan",
+      "characters": "坦坦",
+      "gloss": "Calm and open",
+      "display": "Tan Tan (Calm and open)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Tang Tang",
+      "characters": "糖糖",
+      "gloss": "Sugar",
+      "display": "Tang Tang (Sugar)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Teng Teng",
+      "characters": "腾腾",
+      "gloss": "Rising steam",
+      "display": "Teng Teng (Rising steam)",
+      "sure": "medium",
+      "note": "疼疼 (\"it hurts\") shares the spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ting Ting",
+      "characters": "婷婷",
+      "gloss": "Poised",
+      "display": "Ting Ting (Poised)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Wei Wei",
+      "characters": "巍巍",
+      "gloss": "Lofty",
+      "display": "Wei Wei (Lofty)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Wen Wen",
+      "characters": "文文",
+      "gloss": "Cultured",
+      "display": "Wen Wen (Cultured)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xi Xi",
+      "characters": "溪溪",
+      "gloss": "Brook",
+      "display": "Xi Xi (Brook)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xian Xian",
+      "characters": "娴娴",
+      "gloss": "Serene",
+      "display": "Xian Xian (Serene)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xiu Xiu",
+      "characters": "秀秀",
+      "gloss": "Elegant",
+      "display": "Xiu Xiu (Elegant)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xu Xu",
+      "characters": "旭旭",
+      "gloss": "Sunrise",
+      "display": "Xu Xu (Sunrise)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xuan Xuan",
+      "characters": "萱萱",
+      "gloss": "Daylily",
+      "display": "Xuan Xuan (Daylily)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xue Xue",
+      "characters": "雪雪",
+      "gloss": "Snow",
+      "display": "Xue Xue (Snow)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yan Yan",
+      "characters": "岩岩",
+      "gloss": "Cliff rock",
+      "display": "Yan Yan (Cliff rock)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yao Yao",
+      "characters": "瑶瑶",
+      "gloss": "Precious jade",
+      "display": "Yao Yao (Precious jade)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yi Yi",
+      "characters": "怡怡",
+      "gloss": "Contented",
+      "display": "Yi Yi (Contented)",
+      "sure": "medium",
+      "note": "A panda born in Malaysia in 2018 has a name spelled Yi Yi (谊谊).",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yong Yong",
+      "characters": "勇勇",
+      "gloss": "Brave",
+      "display": "Yong Yong (Brave)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yu Yu",
+      "characters": "雨雨",
+      "gloss": "Rain",
+      "display": "Yu Yu (Rain)",
+      "sure": "medium",
+      "note": "玉玉 is recent internet slang for \"feeling low\".",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yun Yun",
+      "characters": "云云",
+      "gloss": "Cloud",
+      "display": "Yun Yun (Cloud)",
+      "sure": "medium",
+      "note": "云云 also means \"and so on\". 筠筠 (\"bamboo\") is an alternative with the same spelling.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ze Ze",
+      "characters": "泽泽",
+      "gloss": "Marsh water",
+      "display": "Ze Ze (Marsh water)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zhao Zhao",
+      "characters": "朝朝",
+      "gloss": "Every morning",
+      "display": "Zhao Zhao (Every morning)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zheng Zheng",
+      "characters": "正正",
+      "gloss": "Upright",
+      "display": "Zheng Zheng (Upright)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zhi Zhi",
+      "characters": "枝枝",
+      "gloss": "Branch",
+      "display": "Zhi Zhi (Branch)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zhou Zhou",
+      "characters": "粥粥",
+      "gloss": "Rice porridge",
+      "display": "Zhou Zhou (Rice porridge)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zhuang Zhuang",
+      "characters": "壮壮",
+      "gloss": "Strong",
+      "display": "Zhuang Zhuang (Strong)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Zhuo Zhuo",
+      "characters": "卓卓",
+      "gloss": "Remarkable",
+      "display": "Zhuo Zhuo (Remarkable)",
+      "sure": "medium",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xiao An",
+      "characters": "小安",
+      "gloss": "Little peace",
+      "display": "Xiao An (Little peace)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Bai",
+      "characters": "小白",
+      "gloss": "Little white",
+      "display": "Xiao Bai (Little white)",
+      "sure": "high",
+      "note": "Also slang for \"beginner\".",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Bing",
+      "characters": "小饼",
+      "gloss": "Little cake",
+      "display": "Xiao Bing (Little cake)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Cha",
+      "characters": "小茶",
+      "gloss": "Little tea",
+      "display": "Xiao Cha (Little tea)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Chi",
+      "characters": "小池",
+      "gloss": "Little pond",
+      "display": "Xiao Chi (Little pond)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Feng",
+      "characters": "小风",
+      "gloss": "Little breeze",
+      "display": "Xiao Feng (Little breeze)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Han",
+      "characters": "小寒",
+      "gloss": "Lesser Cold",
+      "display": "Xiao Han (Lesser Cold)",
+      "sure": "high",
+      "note": "A solar term in early January.",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao He",
+      "characters": "小禾",
+      "gloss": "Rice seedling",
+      "display": "Xiao He (Rice seedling)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Hei",
+      "characters": "小黑",
+      "gloss": "Little black",
+      "display": "Xiao Hei (Little black)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Le",
+      "characters": "小乐",
+      "gloss": "Little joy",
+      "display": "Xiao Le (Little joy)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Man",
+      "characters": "小满",
+      "gloss": "Grain Buds",
+      "display": "Xiao Man (Grain Buds)",
+      "sure": "high",
+      "note": "A solar term in May; literally \"nearly full\".",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Mo",
+      "characters": "小墨",
+      "gloss": "Little ink",
+      "display": "Xiao Mo (Little ink)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Nian",
+      "characters": "小年",
+      "gloss": "Little New Year",
+      "display": "Xiao Nian (Little New Year)",
+      "sure": "high",
+      "note": "The festival day a week before the New Year.",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Qiao",
+      "characters": "小桥",
+      "gloss": "Little bridge",
+      "display": "Xiao Qiao (Little bridge)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Qing",
+      "characters": "小晴",
+      "gloss": "Clear sky",
+      "display": "Xiao Qing (Clear sky)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Shan",
+      "characters": "小山",
+      "gloss": "Little mountain",
+      "display": "Xiao Shan (Little mountain)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Shi",
+      "characters": "小石",
+      "gloss": "Little stone",
+      "display": "Xiao Shi (Little stone)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Shu",
+      "characters": "小树",
+      "gloss": "Sapling",
+      "display": "Xiao Shu (Sapling)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Tian",
+      "characters": "小田",
+      "gloss": "Little field",
+      "display": "Xiao Tian (Little field)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Tuan",
+      "characters": "小团",
+      "gloss": "Little dumpling",
+      "display": "Xiao Tuan (Little dumpling)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Wan",
+      "characters": "小碗",
+      "gloss": "Little bowl",
+      "display": "Xiao Wan (Little bowl)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Wu",
+      "characters": "小雾",
+      "gloss": "Little mist",
+      "display": "Xiao Wu (Little mist)",
+      "sure": "medium",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Xi",
+      "characters": "小溪",
+      "gloss": "Little brook",
+      "display": "Xiao Xi (Little brook)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Xue",
+      "characters": "小雪",
+      "gloss": "Light Snow",
+      "display": "Xiao Xue (Light Snow)",
+      "sure": "high",
+      "note": "Also a solar term in November.",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Ye",
+      "characters": "小叶",
+      "gloss": "Little leaf",
+      "display": "Xiao Ye (Little leaf)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Yu",
+      "characters": "小雨",
+      "gloss": "Little rain",
+      "display": "Xiao Yu (Little rain)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Yuan",
+      "characters": "小圆",
+      "gloss": "Little round one",
+      "display": "Xiao Yuan (Little round one)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Yun",
+      "characters": "小云",
+      "gloss": "Little cloud",
+      "display": "Xiao Yun (Little cloud)",
+      "sure": "high",
+      "pattern": "xiao"
+    },
+    {
+      "pinyin": "Xiao Zhong",
+      "characters": "小钟",
+      "gloss": "Little bell",
+      "display": "Xiao Zhong (Little bell)",
+      "sure": "medium",
+      "pattern": "xiao"
+    }
+  ],
+  "ringtails": [
+    {
+      "pinyin": "Hong Hong",
+      "characters": "红红",
+      "gloss": "Red",
+      "display": "Hong Hong (Red)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Tong Tong",
+      "characters": "彤彤",
+      "gloss": "Crimson",
+      "display": "Tong Tong (Crimson)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Cheng Cheng",
+      "characters": "橙橙",
+      "gloss": "Orange",
+      "display": "Cheng Cheng (Orange)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Tao Tao",
+      "characters": "桃桃",
+      "gloss": "Peach",
+      "display": "Tao Tao (Peach)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Guo Guo",
+      "characters": "果果",
+      "gloss": "Fruit",
+      "display": "Guo Guo (Fruit)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Xia Xia",
+      "characters": "霞霞",
+      "gloss": "Rosy clouds",
+      "display": "Xia Xia (Rosy clouds)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Yue Yue",
+      "characters": "月月",
+      "gloss": "Moon",
+      "display": "Yue Yue (Moon)",
+      "sure": "high",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Ran Ran",
+      "characters": "冉冉",
+      "gloss": "Rising slowly",
+      "display": "Ran Ran (Rising slowly)",
+      "sure": "high",
+      "note": "As the moon or a lantern rises.",
+      "pattern": "doubled"
+    },
+    {
+      "pinyin": "Dan Xia",
+      "characters": "丹霞",
+      "gloss": "Red clouds",
+      "display": "Dan Xia (Red clouds)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zhu Sha",
+      "characters": "朱砂",
+      "gloss": "Cinnabar red",
+      "display": "Zhu Sha (Cinnabar red)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yan Zhi",
+      "characters": "胭脂",
+      "gloss": "Rouge",
+      "display": "Yan Zhi (Rouge)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Dou",
+      "characters": "红豆",
+      "gloss": "Red bean",
+      "display": "Hong Dou (Red bean)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Zao",
+      "characters": "红枣",
+      "gloss": "Red date",
+      "display": "Hong Zao (Red date)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Ye",
+      "characters": "红叶",
+      "gloss": "Red leaves",
+      "display": "Hong Ye (Red leaves)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Xia",
+      "characters": "红霞",
+      "gloss": "Red sunset",
+      "display": "Hong Xia (Red sunset)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Mei",
+      "characters": "红梅",
+      "gloss": "Red plum blossom",
+      "display": "Hong Mei (Red plum blossom)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Guo",
+      "characters": "红果",
+      "gloss": "Red berry",
+      "display": "Hong Guo (Red berry)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Huo",
+      "characters": "红火",
+      "gloss": "Thriving",
+      "display": "Hong Huo (Thriving)",
+      "sure": "high",
+      "note": "Literally \"red fire\".",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong Yun",
+      "characters": "红云",
+      "gloss": "Red cloud",
+      "display": "Hong Yun (Red cloud)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yan Hong",
+      "characters": "嫣红",
+      "gloss": "Bright red",
+      "display": "Yan Hong (Bright red)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shan Hu",
+      "characters": "珊瑚",
+      "gloss": "Coral",
+      "display": "Shan Hu (Coral)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ma Nao",
+      "characters": "玛瑙",
+      "gloss": "Red agate",
+      "display": "Ma Nao (Red agate)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shi Liu",
+      "characters": "石榴",
+      "gloss": "Pomegranate",
+      "display": "Shi Liu (Pomegranate)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ying Tao",
+      "characters": "樱桃",
+      "gloss": "Cherry",
+      "display": "Ying Tao (Cherry)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shan Zha",
+      "characters": "山楂",
+      "gloss": "Hawthorn",
+      "display": "Shan Zha (Hawthorn)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Li Zhi",
+      "characters": "荔枝",
+      "gloss": "Lychee",
+      "display": "Li Zhi (Lychee)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shi Zi",
+      "characters": "柿子",
+      "gloss": "Persimmon",
+      "display": "Shi Zi (Persimmon)",
+      "sure": "medium",
+      "note": "狮子 (\"lion\") shares the spelling.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ju Zi",
+      "characters": "橘子",
+      "gloss": "Tangerine",
+      "display": "Ju Zi (Tangerine)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Jin Ju",
+      "characters": "金橘",
+      "gloss": "Kumquat",
+      "display": "Jin Ju (Kumquat)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ping Guo",
+      "characters": "苹果",
+      "gloss": "Apple",
+      "display": "Ping Guo (Apple)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Mei Zi",
+      "characters": "梅子",
+      "gloss": "Plum",
+      "display": "Mei Zi (Plum)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Ren",
+      "characters": "杏仁",
+      "gloss": "Apricot kernel",
+      "display": "Xing Ren (Apricot kernel)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "He Tao",
+      "characters": "核桃",
+      "gloss": "Walnut",
+      "display": "He Tao (Walnut)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Li Zi",
+      "characters": "栗子",
+      "gloss": "Chestnut",
+      "display": "Li Zi (Chestnut)",
+      "sure": "high",
+      "note": "李子 (\"plum\") and 梨子 (\"pear\") share the spelling.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Song Zi",
+      "characters": "松子",
+      "gloss": "Pine nut",
+      "display": "Song Zi (Pine nut)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hua Sheng",
+      "characters": "花生",
+      "gloss": "Peanut",
+      "display": "Hua Sheng (Peanut)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Pi Pa",
+      "characters": "枇杷",
+      "gloss": "Loquat",
+      "display": "Pi Pa (Loquat)",
+      "sure": "medium",
+      "note": "琵琶 (the lute) shares the spelling, which also suits a people of artists. \"Pi\" may read oddly in English.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Tang Yuan",
+      "characters": "汤圆",
+      "gloss": "Sweet rice ball",
+      "display": "Tang Yuan (Sweet rice ball)",
+      "sure": "high",
+      "note": "The Lantern Festival sweet, and a common pet name.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Bing",
+      "characters": "月饼",
+      "gloss": "Mooncake",
+      "display": "Yue Bing (Mooncake)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hua Jiao",
+      "characters": "花椒",
+      "gloss": "Sichuan pepper",
+      "display": "Hua Jiao (Sichuan pepper)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "La Jiao",
+      "characters": "辣椒",
+      "gloss": "Chili",
+      "display": "La Jiao (Chili)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ba Jiao",
+      "characters": "八角",
+      "gloss": "Star anise",
+      "display": "Ba Jiao (Star anise)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Rou Gui",
+      "characters": "肉桂",
+      "gloss": "Cinnamon",
+      "display": "Rou Gui (Cinnamon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Dou Kou",
+      "characters": "豆蔻",
+      "gloss": "Cardamom",
+      "display": "Dou Kou (Cardamom)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ding Xiang",
+      "characters": "丁香",
+      "gloss": "Clove",
+      "display": "Ding Xiang (Clove)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hui Xiang",
+      "characters": "茴香",
+      "gloss": "Fennel",
+      "display": "Hui Xiang (Fennel)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Sheng Jiang",
+      "characters": "生姜",
+      "gloss": "Ginger",
+      "display": "Sheng Jiang (Ginger)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Chen Pi",
+      "characters": "陈皮",
+      "gloss": "Tangerine peel",
+      "display": "Chen Pi (Tangerine peel)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zi Su",
+      "characters": "紫苏",
+      "gloss": "Perilla",
+      "display": "Zi Su (Perilla)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Bo He",
+      "characters": "薄荷",
+      "gloss": "Mint",
+      "display": "Bo He (Mint)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zhi Ma",
+      "characters": "芝麻",
+      "gloss": "Sesame",
+      "display": "Zhi Ma (Sesame)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ma La",
+      "characters": "麻辣",
+      "gloss": "Numbing and hot",
+      "display": "Ma La (Numbing and hot)",
+      "sure": "medium",
+      "note": "An adjective used as a nickname.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Dou Ban",
+      "characters": "豆瓣",
+      "gloss": "Chili bean paste",
+      "display": "Dou Ban (Chili bean paste)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Pao Jiao",
+      "characters": "泡椒",
+      "gloss": "Pickled chili",
+      "display": "Pao Jiao (Pickled chili)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Hong You",
+      "characters": "红油",
+      "gloss": "Red chili oil",
+      "display": "Hong You (Red chili oil)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Guo Ba",
+      "characters": "锅巴",
+      "gloss": "Crispy rice",
+      "display": "Guo Ba (Crispy rice)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zha Cai",
+      "characters": "榨菜",
+      "gloss": "Pickled mustard root",
+      "display": "Zha Cai (Pickled mustard root)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Gui Hua",
+      "characters": "桂花",
+      "gloss": "Osmanthus",
+      "display": "Gui Hua (Osmanthus)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Dan Gui",
+      "characters": "丹桂",
+      "gloss": "Red osmanthus",
+      "display": "Dan Gui (Red osmanthus)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Feng Ye",
+      "characters": "枫叶",
+      "gloss": "Maple leaf",
+      "display": "Feng Ye (Maple leaf)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Dan Feng",
+      "characters": "丹枫",
+      "gloss": "Red maple",
+      "display": "Dan Feng (Red maple)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yin Xing",
+      "characters": "银杏",
+      "gloss": "Ginkgo",
+      "display": "Yin Xing (Ginkgo)",
+      "sure": "high",
+      "note": "The city tree of Chengdu.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wu Tong",
+      "characters": "梧桐",
+      "gloss": "Parasol tree",
+      "display": "Wu Tong (Parasol tree)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shui Shan",
+      "characters": "水杉",
+      "gloss": "Dawn redwood",
+      "display": "Shui Shan (Dawn redwood)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Luo Ye",
+      "characters": "落叶",
+      "gloss": "Falling leaf",
+      "display": "Luo Ye (Falling leaf)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qiu Ye",
+      "characters": "秋叶",
+      "gloss": "Autumn leaf",
+      "display": "Qiu Ye (Autumn leaf)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Jin Qiu",
+      "characters": "金秋",
+      "gloss": "Golden autumn",
+      "display": "Jin Qiu (Golden autumn)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qiu Shi",
+      "characters": "秋实",
+      "gloss": "Autumn harvest",
+      "display": "Qiu Shi (Autumn harvest)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qiu Yue",
+      "characters": "秋月",
+      "gloss": "Autumn moon",
+      "display": "Qiu Yue (Autumn moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qiu Feng",
+      "characters": "秋风",
+      "gloss": "Autumn wind",
+      "display": "Qiu Feng (Autumn wind)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shuang Ye",
+      "characters": "霜叶",
+      "gloss": "Frosted leaf",
+      "display": "Shuang Ye (Frosted leaf)",
+      "sure": "high",
+      "note": "From Du Mu's line about frosted leaves redder than spring flowers.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wan Qiu",
+      "characters": "晚秋",
+      "gloss": "Late autumn",
+      "display": "Wan Qiu (Late autumn)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Huo Miao",
+      "characters": "火苗",
+      "gloss": "Flame",
+      "display": "Huo Miao (Flame)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Huo",
+      "characters": "星火",
+      "gloss": "Starfire",
+      "display": "Xing Huo (Starfire)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Huo Hua",
+      "characters": "火花",
+      "gloss": "Spark",
+      "display": "Huo Hua (Spark)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zhu Guang",
+      "characters": "烛光",
+      "gloss": "Candlelight",
+      "display": "Zhu Guang (Candlelight)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Deng Long",
+      "characters": "灯笼",
+      "gloss": "Lantern",
+      "display": "Deng Long (Lantern)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Deng Huo",
+      "characters": "灯火",
+      "gloss": "Lamplight",
+      "display": "Deng Huo (Lamplight)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Deng Ying",
+      "characters": "灯影",
+      "gloss": "Lantern shadow",
+      "display": "Deng Ying (Lantern shadow)",
+      "sure": "medium",
+      "note": "Also the name of Sichuan shadow puppetry.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ying Huo",
+      "characters": "萤火",
+      "gloss": "Firefly glow",
+      "display": "Ying Huo (Firefly glow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yan Huo",
+      "characters": "烟火",
+      "gloss": "Fireworks",
+      "display": "Yan Huo (Fireworks)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Lu Huo",
+      "characters": "炉火",
+      "gloss": "Hearth fire",
+      "display": "Lu Huo (Hearth fire)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Tan Huo",
+      "characters": "炭火",
+      "gloss": "Charcoal glow",
+      "display": "Tan Huo (Charcoal glow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wei Guang",
+      "characters": "微光",
+      "gloss": "Glimmer",
+      "display": "Wei Guang (Glimmer)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zhao Xia",
+      "characters": "朝霞",
+      "gloss": "Dawn glow",
+      "display": "Zhao Xia (Dawn glow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wan Xia",
+      "characters": "晚霞",
+      "gloss": "Sunset glow",
+      "display": "Wan Xia (Sunset glow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Cai Xia",
+      "characters": "彩霞",
+      "gloss": "Colored clouds",
+      "display": "Cai Xia (Colored clouds)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ye Deng",
+      "characters": "夜灯",
+      "gloss": "Night lamp",
+      "display": "Ye Deng (Night lamp)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Chen",
+      "characters": "星辰",
+      "gloss": "Stars",
+      "display": "Xing Chen (Stars)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing He",
+      "characters": "星河",
+      "gloss": "River of stars",
+      "display": "Xing He (River of stars)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Guang",
+      "characters": "星光",
+      "gloss": "Starlight",
+      "display": "Xing Guang (Starlight)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Ye",
+      "characters": "星夜",
+      "gloss": "Starry night",
+      "display": "Xing Ye (Starry night)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Xing Yu",
+      "characters": "星雨",
+      "gloss": "Rain of stars",
+      "display": "Xing Yu (Rain of stars)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yin He",
+      "characters": "银河",
+      "gloss": "Milky Way",
+      "display": "Yin He (Milky Way)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Bei Dou",
+      "characters": "北斗",
+      "gloss": "Northern Dipper",
+      "display": "Bei Dou (Northern Dipper)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qi Xing",
+      "characters": "七星",
+      "gloss": "Seven stars",
+      "display": "Qi Xing (Seven stars)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Liu Xing",
+      "characters": "流星",
+      "gloss": "Shooting star",
+      "display": "Liu Xing (Shooting star)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Qi Ming",
+      "characters": "启明",
+      "gloss": "Morning star",
+      "display": "Qi Ming (Morning star)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Chang Geng",
+      "characters": "长庚",
+      "gloss": "Evening star",
+      "display": "Chang Geng (Evening star)",
+      "sure": "medium",
+      "note": "A classical name for Venus at dusk.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Tian Lang",
+      "characters": "天狼",
+      "gloss": "Sirius",
+      "display": "Tian Lang (Sirius)",
+      "sure": "medium",
+      "note": "Literally \"sky wolf\".",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Liang",
+      "characters": "月亮",
+      "gloss": "Shining moon",
+      "display": "Yue Liang (Shining moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Guang",
+      "characters": "月光",
+      "gloss": "Moonlight",
+      "display": "Yue Guang (Moonlight)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ming Yue",
+      "characters": "明月",
+      "gloss": "Bright moon",
+      "display": "Ming Yue (Bright moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Ya",
+      "characters": "月牙",
+      "gloss": "Crescent moon",
+      "display": "Yue Ya (Crescent moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Man Yue",
+      "characters": "满月",
+      "gloss": "Full moon",
+      "display": "Man Yue (Full moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ban Yue",
+      "characters": "半月",
+      "gloss": "Half moon",
+      "display": "Ban Yue (Half moon)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Hua",
+      "characters": "月华",
+      "gloss": "Moon glow",
+      "display": "Yue Hua (Moon glow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Yue Ying",
+      "characters": "月影",
+      "gloss": "Moon shadow",
+      "display": "Yue Ying (Moon shadow)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Chan Juan",
+      "characters": "婵娟",
+      "gloss": "The fair moon",
+      "display": "Chan Juan (The fair moon)",
+      "sure": "high",
+      "note": "A classical word for the moon.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ye Feng",
+      "characters": "夜风",
+      "gloss": "Night breeze",
+      "display": "Ye Feng (Night breeze)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ye Yu",
+      "characters": "夜雨",
+      "gloss": "Night rain",
+      "display": "Ye Yu (Night rain)",
+      "sure": "high",
+      "note": "As in Li Shangyin's poem on night rain in the Ba mountains.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zi Ye",
+      "characters": "子夜",
+      "gloss": "Midnight",
+      "display": "Zi Ye (Midnight)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wan Feng",
+      "characters": "晚风",
+      "gloss": "Evening breeze",
+      "display": "Wan Feng (Evening breeze)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Wan Zhong",
+      "characters": "晚钟",
+      "gloss": "Evening bell",
+      "display": "Wan Zhong (Evening bell)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Huang Hun",
+      "characters": "黄昏",
+      "gloss": "Dusk",
+      "display": "Huang Hun (Dusk)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Li Ming",
+      "characters": "黎明",
+      "gloss": "Daybreak",
+      "display": "Li Ming (Daybreak)",
+      "sure": "high",
+      "note": "Also the name of a well-known singer.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Po Xiao",
+      "characters": "破晓",
+      "gloss": "First light",
+      "display": "Po Xiao (First light)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Ling Dang",
+      "characters": "铃铛",
+      "gloss": "Bell",
+      "display": "Ling Dang (Bell)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Feng Ling",
+      "characters": "风铃",
+      "gloss": "Wind chime",
+      "display": "Feng Ling (Wind chime)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Di Zi",
+      "characters": "笛子",
+      "gloss": "Bamboo flute",
+      "display": "Di Zi (Bamboo flute)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Luo Gu",
+      "characters": "锣鼓",
+      "gloss": "Gongs and drums",
+      "display": "Luo Gu (Gongs and drums)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Shui Xiu",
+      "characters": "水袖",
+      "gloss": "Flowing sleeves",
+      "display": "Shui Xiu (Flowing sleeves)",
+      "sure": "medium",
+      "note": "The long sleeves of an opera costume.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Lian Pu",
+      "characters": "脸谱",
+      "gloss": "Painted face",
+      "display": "Lian Pu (Painted face)",
+      "sure": "medium",
+      "note": "Opera face paint.",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Zhi Yuan",
+      "characters": "纸鸢",
+      "gloss": "Paper kite",
+      "display": "Zhi Yuan (Paper kite)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Feng Zheng",
+      "characters": "风筝",
+      "gloss": "Kite",
+      "display": "Feng Zheng (Kite)",
+      "sure": "high",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Cai Mo",
+      "characters": "彩墨",
+      "gloss": "Colored ink",
+      "display": "Cai Mo (Colored ink)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    },
+    {
+      "pinyin": "Jian Zhi",
+      "characters": "剪纸",
+      "gloss": "Paper cutting",
+      "display": "Jian Zhi (Paper cutting)",
+      "sure": "medium",
+      "pattern": "two-syllable"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "kind": "needs",
+    "source": "docs/CONTENT.md draft 2 (Needs), docs/tech/balance.md stat sheet (Needs, new)",
+    "language": "enUS",
+    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "keyed_by": "The need's English name exactly as CONTENT.md lists it. The nine dish needs are keyed by the dish.",
+    "vanilla_loc_pattern": {
+      "name": "NeedSpec.DisplayNameLocKey. Vanilla writes a Need.<Id>.DisplayName key only for needs that are not a food or a building (Hunger, Thirst, Sleep, Shelter, Wet fur…).",
+      "food_needs": "A food need points at the good's plural name: Need 'Bread' uses Good.Bread.PluralDisplayName. So a dish need has no text of its own.",
+      "attraction_needs": "An attraction or decoration need points at the building's name: Need 'Campfire' uses Building.Campfire.DisplayName.",
+      "lethal_needs": "Only Hunger and Thirst carry more: LethalNeedSpec.DeathMessageLocKey (Need.Hunger.DeathMessage, a fragment that follows the name) and CriticalNeedSpec.DescriptionLocKey (Status.Need.Hunger, one word with a full stop).",
+      "what_new_needs_carry": "None of the new needs is lethal or critical, so each carries a display name and nothing else."
+    },
+    "suggested_mod_key_pattern": {
+      "name": "Pandaborn.Need.<Id>.DisplayName",
+      "note": "<Id> is the 'id' field without its Pandaborn prefix. Use it only where 'name_key' says 'own'."
+    },
+    "field_rules": {
+      "name": "What the well-being panel shows.",
+      "name_key": "'own' = write a new key with this text. 'good_plural' = point at the good's plural name in goods.json. 'building' = point at the building's name in buildings.json.",
+      "group": "The vanilla need group the stat sheet puts it in. Group names are vanilla keys (NeedGroup.<Id>.DisplayName).",
+      "tooltip": "One optional line: how the need is met and how often. No vanilla key; use it only if the mod adds its own need tooltip (suggested key Pandaborn.Need.<Id>.Tooltip).",
+      "recommended_name": "A name the writer recommends instead, with the reason. Not applied."
+    },
+    "shared_with_vanilla": "Hunger, thirst, sleep, shelter, wet fur, injury, contamination, teeth (Chipped teeth) and the Campfire need keep their vanilla keys and text. CONTENT.md calls the Campfire need 'Company'; vanilla shows it as 'Campfire'."
+  },
+  "items": {
+    "Cabbage": {
+      "id": "PandabornCabbage", "group": "Nutrition",
+      "name": "Cabbages", "name_key": "good_plural", "good": "Cabbage",
+      "tooltip": "Eat cabbage now and then. A bite every few days is enough."
+    },
+    "Persimmons": {
+      "id": "PandabornPersimmons", "group": "Nutrition",
+      "name": "Persimmons", "name_key": "good_plural", "good": "Persimmons",
+      "tooltip": "Eat a persimmon now and then. A bite every few days is enough."
+    },
+    "Bamboo mushrooms": {
+      "id": "PandabornBambooMushrooms", "group": "Nutrition",
+      "name": "Bamboo mushrooms", "name_key": "good_plural", "good": "Bamboo mushrooms",
+      "tooltip": "Eat bamboo mushrooms now and then. A bite every few days is enough."
+    },
+    "Steamed shoots": {
+      "id": "PandabornSteamedShoots", "group": "Nutrition",
+      "name": "Steamed shoots", "name_key": "good_plural", "good": "Steamed shoots",
+      "tooltip": "Eat steamed shoots now and then. A bite every few days is enough."
+    },
+    "Pickles": {
+      "id": "PandabornPickles", "group": "Nutrition",
+      "name": "Pickles", "name_key": "good_plural", "good": "Pickles",
+      "tooltip": "Eat pickles now and then. A bite every few days is enough."
+    },
+    "Steamed rice": {
+      "id": "PandabornSteamedRice", "group": "Nutrition",
+      "name": "Steamed rice", "name_key": "good_plural", "good": "Steamed rice",
+      "tooltip": "Eat steamed rice now and then. A bite every few days is enough."
+    },
+    "Sweet rice balls": {
+      "id": "PandabornSweetRiceBalls", "group": "Nutrition",
+      "name": "Sweet rice balls", "name_key": "good_plural", "good": "Sweet rice balls",
+      "tooltip": "Eat sweet rice balls now and then. A bite every few days is enough."
+    },
+    "Hot pot": {
+      "id": "PandabornHotPot", "group": "Nutrition",
+      "name": "Hot pot", "name_key": "good_plural", "good": "Hot pot",
+      "tooltip": "Eat hot pot now and then. A bite every few days is enough."
+    },
+    "Bamboo seed cakes": {
+      "id": "PandabornBambooSeedCakes", "group": "Nutrition",
+      "name": "Bamboo seed cakes", "name_key": "good_plural", "good": "Bamboo seed cakes",
+      "tooltip": "Eat bamboo seed cakes now and then. A bite every few days is enough."
+    },
+    "Tea": {
+      "id": "PandabornTea", "group": "Nutrition",
+      "name": "Tea", "name_key": "good_plural", "good": "Tea",
+      "tooltip": "A cup or two of tea every day. Tea also quenches some thirst."
+    },
+    "Nap": {
+      "id": "PandabornNap", "group": "Fun",
+      "name": "Nap", "name_key": "own",
+      "tooltip": "A daily nap in a Hammock or on a Nap Platform. It needs a free afternoon.",
+      "translator_comment": "A short daytime rest, not the night's Sleep (Need.Sleep.DisplayName). Use a different word from the one for Sleep."
+    },
+    "Teahouse": {
+      "id": "PandabornTeahouse", "group": "SocialLife",
+      "name": "Teahouse", "name_key": "building", "building": "Teahouse",
+      "tooltip": "An hour of company at the Teahouse every few days.",
+      "note": "The stat sheet has this need (PandabornTeahouse, Social life). CONTENT.md lists it only as 'company' on the Teahouse row, the same word it uses for the Campfire. Following vanilla, each is named for its building."
+    },
+    "Play": {
+      "id": "PandabornPlay", "group": "Fun",
+      "name": "Play", "name_key": "own",
+      "tooltip": "Time on the Slide and Swing every few days. Cubs and kits also play at the Panda Kindergarten."
+    },
+    "Cub-watching": {
+      "id": "PandabornCubWatching", "group": "SocialLife",
+      "name": "Cub-watching", "name_key": "own",
+      "tooltip": "An hour at the Panda Kindergarten every few days, watching cubs and kits play.",
+      "recommended_name": "Watching the young",
+      "recommended_reason": "Cubs and kits share one kindergarten. 'Cub-watching' names only the Inkpaws' young.",
+      "translator_comment": "The pleasure adults take in watching the young play. Cubs are young Inkpaws (giant pandas) and kits are young Ringtails (red pandas)."
+    },
+    "Soak": {
+      "id": "PandabornSoak", "group": "Fun",
+      "name": "Soak", "name_key": "own",
+      "tooltip": "A long soak in the Hot Spring Bath every few days.",
+      "translator_comment": "Sitting in a warm bath for a long time."
+    },
+    "Contemplation": {
+      "id": "PandabornContemplation", "group": "Fun",
+      "name": "Contemplation", "name_key": "own",
+      "tooltip": "A quiet hour of ink painting at the Ink Studio, about once a week.",
+      "recommended_name": "Ink painting",
+      "recommended_reason": "The afternoon ritual in DESIGN.md is 'Ink painting'. It says what the panda is doing, and it avoids a near-match with the vanilla building name 'Contemplation Spot'."
+    },
+    "Performance": {
+      "id": "PandabornPerformance", "group": "Fun",
+      "name": "Performance", "name_key": "own",
+      "tooltip": "A visit to the Opera Stage, about once a week, while the Ringtail performers are at work.",
+      "recommended_name": "Opera",
+      "recommended_reason": "Shorter, and it names the one thing that satisfies it."
+    },
+    "One per decoration kind": {
+      "id": "Pandaborn<Decoration>", "group": "Aesthetics",
+      "name": "(the decoration's name)", "name_key": "building",
+      "tooltip": null,
+      "note": "As in vanilla: each decoration need points at the decoration's own name in buildings.json, and the game shows the range line by itself (Needs.SatisfiesInRange)."
+    },
+    "Awe": {
+      "id": "PandabornMemorialArch / PandabornGreatSittingPanda / PandabornSkyLantern", "group": "Awe",
+      "name": "(the monument's name)", "name_key": "building",
+      "buildings": ["Memorial Arch", "Great Sitting Panda", "Sky Lantern"],
+      "tooltip": null,
+      "note": "As in vanilla: one need per monument, named for the monument. The group name 'Awe' is the vanilla key NeedGroup.Awe.DisplayName."
+    },
+    "Festive spirit": {
+      "id": "PandabornFestive", "group": "Boosts",
+      "name": "Festive spirit", "name_key": "own",
+      "tooltip": "Set by a Lantern Festival. It fades over most of a cycle.",
+      "note": "The stat sheet places it in the vanilla group Boosts, whose vanilla name was written for bots. If that reads wrongly on a panda's panel, the vanilla group 'Temporary effects' (NeedGroup.Temporary.DisplayName) fits the words better."
+    }
+  }
+}

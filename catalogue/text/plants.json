@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "kind": "plants",
+    "source": "docs/CONTENT.md draft 2 (Plants), docs/DESIGN.md pillar 2, docs/tech/balance.md stat sheet",
+    "language": "enUS",
+    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "keyed_by": "The plant's English name exactly as CONTENT.md lists it.",
+    "vanilla_loc_pattern": {
+      "name": "NaturalResource.<Id>.DisplayName",
+      "description": "NaturalResource.<Id>.Description (the field exists on LabeledEntitySpec; vanilla plants leave it empty)",
+      "flavor": "NaturalResource.<Id>.FlavorDescription",
+      "keyword_line": "NaturalResources.Aquatic / NaturalResources.Arid, shown by the game on the planting tooltip",
+      "numbers": "The game prints growth time and drought resistance itself (Growing.Time, NaturalResources.DroughtResistance, NaturalResources.OverwateringResistance). No number is written into these strings."
+    },
+    "suggested_mod_key_pattern": {
+      "name": "Pandaborn.NaturalResource.<Id>.DisplayName",
+      "description": "Pandaborn.NaturalResource.<Id>.Description",
+      "flavor": "Pandaborn.NaturalResource.<Id>.FlavorDescription",
+      "note": "<Id> is the 'id' field without its Pandaborn prefix."
+    },
+    "field_rules": {
+      "name": "Title Case, as vanilla writes plants ('Chestnut Tree', 'Coffee Bush').",
+      "description": "What it is, who plants it and what it gives, then the soil rule as the last sentence.",
+      "soil_rule": "The soil rule on its own, for a planting-tool line or overlay. It repeats the last sentence of the description word for word.",
+      "soil_keyword": "The id of the keyword line in 'keywords' below that belongs on this plant.",
+      "flavor": "At most one short line."
+    },
+    "death_and_status_lines": "In messages.json under 'plants'. Vanilla lines for drying out, flooding and contamination are reused as they are."
+  },
+  "keywords": {
+    "_note": "Written in the form of the vanilla lines NaturalResources.Aquatic and NaturalResources.Arid. 'dry_ground' may replace the vanilla Arid line on Inkpaw plants only if it is shown through its own key; the vanilla Arid key is shared by every faction.",
+    "moist_ground": {
+      "suggested_key": "Pandaborn.NaturalResources.MoistGround",
+      "text": "<YellowHighlight>Moist ground:</YellowHighlight> Grows on irrigated, green land."
+    },
+    "dry_ground": {
+      "suggested_key": "Pandaborn.NaturalResources.DryGround",
+      "text": "<YellowHighlight>Dry ground only:</YellowHighlight> Roots rot if they get wet."
+    },
+    "flooded": {
+      "suggested_key": "Pandaborn.NaturalResources.Flooded",
+      "text": "<YellowHighlight>Flooded field:</YellowHighlight> Must stand in shallow water, up to one block deep.",
+      "vanilla_equivalent": "NaturalResources.Aquatic"
+    }
+  },
+  "items": {
+    "Shoot bamboo": {
+      "id": "PandabornShootBamboo",
+      "name": "Shoot Bamboo",
+      "description": "A fast field crop, planted and harvested by the Farmstead. Its shoots can be eaten raw. Moist ground: it survives a short drought and dies in a long one.",
+      "soil_rule": "Moist ground: it survives a short drought and dies in a long one.",
+      "soil_keyword": "moist_ground",
+      "flavor": "It grows fast enough to watch, and several villagers do."
+    },
+    "Timber bamboo": {
+      "id": "PandabornTimberBamboo",
+      "name": "Timber Bamboo",
+      "description": "A fast tree, planted by the Forester and cut for poles. Bamboo mushrooms grow in standing groves. Moist ground: it survives a short drought and dies in a long one.",
+      "soil_rule": "Moist ground: it survives a short drought and dies in a long one.",
+      "soil_keyword": "moist_ground",
+      "flavor": "Tall, straight and hollow. The village is built from it, and so is most of the furniture."
+    },
+    "Cabbage": {
+      "id": "PandabornCabbage",
+      "name": "Cabbage",
+      "description": "A sturdy field crop that can be eaten raw or pickled. Moist ground: it lasts longer without water than shoot bamboo.",
+      "soil_rule": "Moist ground: it lasts longer without water than shoot bamboo.",
+      "soil_keyword": "moist_ground",
+      "flavor": "Round, patient and difficult to upset. The Inkpaws feel a certain kinship."
+    },
+    "Rice": {
+      "id": "PandabornRice",
+      "name": "Rice",
+      "description": "The staple grain, planted and harvested by the Paddy House. Flooded fields only: it must stand in shallow water, and it dies quickly if the field dries out.",
+      "soil_rule": "Flooded fields only: it must stand in shallow water, and it dies quickly if the field dries out.",
+      "soil_keyword": "flooded",
+      "flavor": "From the hillside, the paddies look like mirrors. From inside the paddies, it is mostly mud."
+    },
+    "Tea bush": {
+      "id": "PandabornTeaBush",
+      "name": "Tea Bush",
+      "description": "A lasting bush whose leaves are picked again and again. Planted by the Farmstead. Dry ground only: roots rot if they get wet.",
+      "soil_rule": "Dry ground only: roots rot if they get wet.",
+      "soil_keyword": "dry_ground",
+      "flavor": "The best leaves grow on the driest slope. The tea pickers mention this on every climb."
+    },
+    "Sichuan pepper": {
+      "id": "PandabornSichuanPepper",
+      "name": "Sichuan Pepper",
+      "description": "A spice crop for hot pot, planted by the Farmstead. It is not a food on its own. Dry ground only: roots rot if they get wet.",
+      "soil_rule": "Dry ground only: roots rot if they get wet.",
+      "soil_keyword": "dry_ground",
+      "flavor": "It does not burn the tongue. It makes the tongue forget where it is."
+    },
+    "Persimmon tree": {
+      "id": "PandabornPersimmonTree",
+      "name": "Persimmon Tree",
+      "description": "An orchard tree, planted by the Forester. Its fruit is gathered again and again, and the tree gives logs when it is cut. Moist ground: it tolerates a long dry spell.",
+      "soil_rule": "Moist ground: it tolerates a long dry spell.",
+      "soil_keyword": "moist_ground",
+      "flavor": "The fruit ripens after the leaves have fallen, so the bare tree seems hung with small lanterns."
+    }
+  },
+  "vanilla_plants_kept": {
+    "_note": "Birch, pine, oak and blueberries remain and keep their vanilla names. Their vanilla flavor lines quote beaver characters or are neutral; replacements are offered below for an Inkpaws-scoped key and can be ignored.",
+    "Birch": { "flavor": "White bark with black marks. The Inkpaws approve of the colors." },
+    "Pine": { "flavor": "Green all winter and in no hurry. The Inkpaws consider it a sensible tree." },
+    "Oak": { "flavor": "Slow to grow and worth the wait. The Inkpaws respect both." },
+    "Blueberry": { "flavor": "The first food of every new village, and the first to be forgotten once the rice comes in." }
+  }
+}

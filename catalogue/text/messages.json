@@ -1,0 +1,919 @@
+{
+  "_meta": {
+    "kind": "teaching and system messages",
+    "source": "docs/DESIGN.md revision 4; docs/reviews/2026-11-14-first-player-and-creative-director.md sections 3 and 6 (the drafts these start from); docs/tech/balance.md",
+    "language": "enUS",
+    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "keyed_by": "A message id of the form group.name. Buildings in buildings.json refer to these ids in their 'see' lists.",
+    "vanilla_loc_patterns": {
+      "status": "Status.<System>.<Problem> is the full sentence in the selected object's panel; it ends with a full stop and, where it helps, says what to do. Status.<System>.<Problem>.Short is the alert on the edge of the screen: two to four words, no full stop.",
+      "notification": "A short fact in the event log, usually with no full stop: 'Drought started', 'Cycle {0} begins', '{0} was born!'.",
+      "weather": "Weather.Notification.<Season>Approaching / <Season>InProgress are the tooltips of the weather panel.",
+      "tutorial": "Tutorial.<Section> is a title in sentence case. Tutorial.<Section>.<Stage> is one to three short paragraphs separated by a blank line: why, then what to do, then an optional 'Tip:'. Building and good names are capitalized inside tutorial text.",
+      "keyword": "<YellowHighlight>Keyword:</YellowHighlight> One sentence. (Work.BeaverOnly, Buildings.GroundOnly)",
+      "label": "A label with a value: 'Workers: {0}', 'Target height: {0}'.",
+      "tip": "Tip.<Scope>.<Id> is a loading-screen tip that begins with 'Tip:'."
+    },
+    "suggested_mod_key_pattern": "Each entry carries 'key'. Status entries with a 'short' text use the same key with '.Short' added, as vanilla does.",
+    "field_rules": {
+      "where": "Where the player sees it.",
+      "text": "The string. \\n\\n is a paragraph break, as in vanilla tutorial text.",
+      "short": "The alert form of a status.",
+      "params": "What each {n} stands for.",
+      "review_draft": "true = it starts from a draft in the first-player review. The note says what changed and why.",
+      "confirm": "A fact the line depends on that the stat sheet or the prototype has not settled. If the fact turns out different, change the line.",
+      "reuse_vanilla": "A vanilla key to use as it is instead of new text."
+    },
+    "icons_in_text": "[sun] and [moon] stand for the day and night icons. The importer replaces them with the sprite tag the interface uses. A line must still read correctly if the icon is missing."
+  },
+
+  "bell": {
+    "_note": "The afternoon bell is the vanilla working-hours control. The rule stated here is the stat sheet's: +33% working and walking speed at 12 working hours or fewer, falling evenly to nothing at 16. Ringtails follow the same curve on the hours of their night.",
+    "bell.first_bell_title": {
+      "where": "Title of the one-time suggestion, shown once the village is settled (about day 5).",
+      "key": "Pandaborn.Tutorial.AfternoonBell",
+      "text": "The afternoon bell"
+    },
+    "bell.first_bell": {
+      "where": "The one-time suggestion itself. Tutorial-style panel.",
+      "key": "Pandaborn.Tutorial.AfternoonBell.Suggestion",
+      "text": "Your village is settled.\n\nInkpaws work a short day and work it well. Try moving the afternoon bell to 12 hours: rested pandas work and walk faster, and the afternoon is free for hammocks, tea and company.",
+      "review_draft": true,
+      "note": "The review's line promised nothing. This one states the rule and asks for one action. The objective under it reuses the vanilla key Tutorial.SetWorkingHours ('Set working hours to {0}') with 12."
+    },
+    "bell.first_bell_button": {
+      "where": "Button on the suggestion that opens the working-hours control.",
+      "key": "Pandaborn.Tutorial.AfternoonBell.ShowMe",
+      "text": "Show me"
+    },
+    "bell.first_ring": {
+      "where": "Notification, the first time the bell ends a working day.",
+      "key": "Pandaborn.Bell.FirstRing",
+      "text": "The afternoon bell rings. The Inkpaws put down their tools."
+    },
+    "bell.handover": {
+      "where": "Notification, the first bell after the Ringtails arrive.",
+      "key": "Pandaborn.Bell.Handover",
+      "text": "The afternoon bell rings. The Inkpaws rest, and the Night Watch begins."
+    },
+    "bell.hours_rule": {
+      "where": "Line on the working-hours control, always visible.",
+      "key": "Pandaborn.Work.HoursRule",
+      "text": "Inkpaws work from dawn to this bell. Ringtails work from this bell to dawn.",
+      "review_draft": true,
+      "note": "Kept word for word. It is the one rule."
+    },
+    "bell.hours_rule_inkpaws_only": {
+      "where": "The same line before any Ringtail lives in the village.",
+      "key": "Pandaborn.Work.HoursRule.InkpawsOnly",
+      "text": "Inkpaws work from dawn to this bell."
+    },
+    "bell.rested": {
+      "where": "Bonus line on the working-hours control, when the bonus is above zero.",
+      "key": "Pandaborn.Work.Rested",
+      "text": "Rested: +{0}% working and walking speed",
+      "params": { "0": "the bonus in percent, 1 to 33" }
+    },
+    "bell.not_rested": {
+      "where": "The same line when the working day is 16 hours or longer.",
+      "key": "Pandaborn.Work.NotRested",
+      "text": "Not rested: no speed bonus"
+    },
+    "bell.rested_tooltip": {
+      "where": "Tooltip of the bonus line.",
+      "key": "Pandaborn.Work.Rested.Tooltip",
+      "text": "Shorter days make rested pandas, who work and walk faster. The bonus is full at 12 working hours or fewer and gone at 16. Long days leave no time for tea and naps.",
+      "note": "States the real rule, as the task asks. The numbers 12, 16 and 33 come from the stat sheet (basis M) and must follow it if it changes."
+    },
+    "bell.rested_tooltip_both": {
+      "where": "Second paragraph of the same tooltip, once Ringtails live in the village.",
+      "key": "Pandaborn.Work.Rested.Tooltip.Both",
+      "text": "Ringtails are rested when their night is short. At 12 hours, both peoples are fully rested."
+    },
+    "bell.rested_tooltip_limit": {
+      "where": "Last line of the same tooltip.",
+      "key": "Pandaborn.Work.Rested.Tooltip.Limit",
+      "text": "Very happy villagers already walk close to their top speed, so they gain less from it.",
+      "note": "balance.md: movement speed is capped, and above well-being of about 60 the walking half of the bonus is cut off."
+    },
+    "bell.rested_status": {
+      "where": "Line on a villager's panel while the bonus applies.",
+      "key": "Pandaborn.Status.Rested",
+      "text": "Rested. Works and walks faster."
+    },
+    "bell.long_day": {
+      "where": "Notification, once, the first time the player sets a working day of 16 hours or more after the suggestion has been shown.",
+      "key": "Pandaborn.Bell.LongDay",
+      "text": "A long day. The rested bonus is gone, and there is no time left for tea and naps.",
+      "review_draft": true,
+      "note": "The review's version ('Long days wear pandas out. Weary Inkpaws work slower') described a penalty that revision 4 removed. There is no Weary status. This line says only what is true."
+    },
+    "bell.sun_arc": {
+      "where": "Tooltip of the sun arc on the working-hours clock.",
+      "key": "Pandaborn.Work.SunArc",
+      "text": "[sun] Inkpaw hours: from dawn to the afternoon bell."
+    },
+    "bell.moon_arc": {
+      "where": "Tooltip of the moon arc on the working-hours clock.",
+      "key": "Pandaborn.Work.MoonArc",
+      "text": "[moon] Ringtail hours: from the afternoon bell to dawn."
+    }
+  },
+
+  "flume": {
+    "_note": "DESIGN.md: a flume never fails silently. Every failure says so on the piece.",
+    "flume.keyword_moist": {
+      "where": "Keyword line under the Flume's description, in the toolbar tooltip and the panel.",
+      "key": "Pandaborn.Flume.Moistens",
+      "text": "<YellowHighlight>Moistens:</YellowHighlight> The ground beside a flume laid on the ground stays moist.",
+      "note": "Kept out of the description so that the description stays the length of a vanilla one. This is the first payoff a player is taught."
+    },
+    "flume.dry_intake": {
+      "where": "Status on a Flume Gate or the first flume of a run.",
+      "key": "Pandaborn.Status.Flume.DryIntake",
+      "text": "No water can enter: the water here is lower than the flume. Raise the water with a dam, or lift it with a Scoop Wheel.",
+      "short": "Flume intake above water",
+      "review_draft": true,
+      "note": "Nearly as drafted. 'Raise it' became 'Raise the water' so that machine translation cannot read 'it' as the flume."
+    },
+    "flume.no_water_at_source": {
+      "where": "Status on a Flume Gate when the water it draws from is gone, for example in a drought.",
+      "key": "Pandaborn.Status.Flume.NoWater",
+      "text": "No water at the intake. The flume will run again when the water returns.",
+      "short": "Flume has no water"
+    },
+    "flume.missing_corner": {
+      "where": "Status on a flume whose neighbor is set at an angle to it.",
+      "key": "Pandaborn.Status.Flume.MissingCorner",
+      "text": "This flume does not connect to the next one. Flumes do not bend: place a Flume Corner here.",
+      "short": "Flume needs a corner",
+      "review_draft": true,
+      "note": "The draft said what was wrong in general. This one also says where to put the fix."
+    },
+    "flume.uphill": {
+      "where": "Status on a flume whose next piece is higher.",
+      "key": "Pandaborn.Status.Flume.Uphill",
+      "text": "Water cannot climb. The next flume is higher than this one.",
+      "short": "Flume runs uphill"
+    },
+    "flume.starved": {
+      "where": "Status on the first dry piece of a run that has water at its intake.",
+      "key": "Pandaborn.Status.Flume.Starved",
+      "text": "Too little water reaches this part of the flume. Open the Flume Gate further, shorten the run, or bring more water to the intake.",
+      "short": "Flume is starved",
+      "confirm": "That a long level run can starve, and that these three remedies work. The review asked for a prototype of a level run of 40 tiles or more."
+    },
+    "flume.open_end": {
+      "where": "Information line on the last flume of a run. Not an alert.",
+      "key": "Pandaborn.Flume.OpenEnd",
+      "text": "The flume ends here. Its water pours out onto the ground below."
+    },
+    "flume.blocks_path": {
+      "where": "Placement warning when a flume on the ground would cut a path.",
+      "key": "Pandaborn.Flume.BlocksPath",
+      "text": "A flume on the ground cannot be walked across. Leave a crossing, or raise the flume on a Flume Bridge.",
+      "confirm": "That villagers can pass under a Flume Bridge."
+    },
+    "flume.gate_shut_badwater": {
+      "where": "Status on a Flume Gate that has closed itself.",
+      "key": "Pandaborn.Status.Flume.GateShutBadwater",
+      "text": "Shut against badwater. The gate opens again by itself when the water runs clean.",
+      "short": "Gate shut: badwater"
+    },
+    "flume.gate_reopened": {
+      "where": "Notification when the gates reopen after a badtide.",
+      "key": "Pandaborn.Flume.GatesReopened",
+      "text": "The water runs clean. Flume Gates have opened again."
+    },
+    "flume.gate_flow": {
+      "where": "Label of the flow control on the Flume Gate.",
+      "key": "Pandaborn.FlumeGate.Flow",
+      "text": "Flow: {0}",
+      "params": { "0": "the set flow" },
+      "note": "Same form as the vanilla ThrottlingValve.OutflowLimit ('Flow limit: {0}')."
+    },
+    "flume.gate_open": { "where": "State of the gate.", "reuse_vanilla": "Toggle.State.Open", "text": "Open" },
+    "flume.gate_shut": { "where": "State of the gate.", "reuse_vanilla": "Toggle.State.Closed", "text": "Closed" },
+    "flume.first_water": {
+      "where": "Notification, once, when water first reaches the end of a flume the player built.",
+      "key": "Pandaborn.Flume.FirstWater",
+      "text": "Water has reached the end of your first flume. The ground beside it will turn green."
+    },
+    "flume.drought_stops": {
+      "where": "Notification at the first drought in which a source feeding a flume stops.",
+      "key": "Pandaborn.Flume.DroughtStops",
+      "text": "The source has stopped. The flumes are running dry, and the scoop wheels fall still."
+    },
+    "flume.water_returns": {
+      "where": "Notification at the end of a drought, when water runs down the flumes again.",
+      "key": "Pandaborn.Flume.WaterReturns",
+      "text": "The water is back. It is running down every flume."
+    }
+  },
+
+  "water": {
+    "water.scoop_no_current": {
+      "where": "Status on a Scoop Wheel in still or dry water.",
+      "key": "Pandaborn.Status.ScoopWheel.NoCurrent",
+      "text": "No current. A Scoop Wheel needs flowing water to turn.",
+      "short": "Scoop Wheel is still"
+    },
+    "water.scoop_no_outlet": {
+      "where": "Status on a Scoop Wheel with nothing at its top to pour into.",
+      "key": "Pandaborn.Status.ScoopWheel.NoOutlet",
+      "text": "Nothing to pour into. Place a flume at the top of the wheel.",
+      "short": "Scoop Wheel has no flume"
+    },
+    "water.spout_dry": {
+      "where": "Status on a Paddy Spout with no water behind it.",
+      "key": "Pandaborn.Status.PaddySpout.Dry",
+      "text": "No water behind the spout. Bring a flume or a pool to its back.",
+      "short": "Paddy Spout is dry"
+    },
+    "water.spout_depth": {
+      "where": "Label of the depth control on the Paddy Spout.",
+      "key": "Pandaborn.PaddySpout.Depth",
+      "text": "Field depth: {0}",
+      "params": { "0": "the set depth" },
+      "note": "Same form as the vanilla FillValve.TargetHeight ('Target height: {0}')."
+    },
+    "water.spout_unwalled": {
+      "where": "Status on a Paddy Spout whose field never reaches its depth.",
+      "key": "Pandaborn.Status.PaddySpout.Unwalled",
+      "text": "The field does not fill. It is not walled in, so the water spreads. Close the gaps with levees.",
+      "short": "Paddy field leaks",
+      "confirm": "That the code can tell a leaking field from a slow one. If it cannot, drop this line and keep the sentence in the spout's description."
+    },
+    "water.spout_tooltip": {
+      "where": "Extra placement line for the Paddy Spout.",
+      "key": "Pandaborn.PaddySpout.PlacementTip",
+      "text": "Wall the field in first. Water that is not held in will flood the crops beside it.",
+      "review_draft": true,
+      "note": "The review named the unwalled paddy as a likely first mistake."
+    },
+    "water.mill_no_current": {
+      "where": "Status on a Trip-Hammer Mill with no flowing water at its wheel.",
+      "key": "Pandaborn.Status.TripHammerMill.NoCurrent",
+      "text": "No flowing water at the wheel. The hammer is still.",
+      "short": "Mill has no current"
+    },
+    "water.tap_empty": {
+      "where": "Status on a Cistern Tap with no water in stock.",
+      "key": "Pandaborn.Status.CisternTap.Empty",
+      "text": "No stored water to pour.",
+      "short": "Cistern Tap is empty"
+    },
+    "water.dew_shared": {
+      "where": "Information line on a Dew Collector with others in range.",
+      "key": "Pandaborn.DewCollector.Shared",
+      "text": "Shares its dew with {0} collectors nearby. Each collects less.",
+      "params": { "0": "number of other collectors in range" }
+    },
+    "water.dew_drought": {
+      "where": "Information line on a Dew Collector during a drought.",
+      "key": "Pandaborn.DewCollector.Drought",
+      "text": "Drought: less dew at dawn."
+    }
+  },
+
+  "plants": {
+    "_note": "Vanilla lines are reused for drying out (Status.NaturalResources.Drying, NaturalResources.Dried), contamination and flooding, and the game prints 'Dies in: {0} days' itself. The lines below are the new reasons.",
+    "plants.roots_wet": {
+      "where": "Status on a tea bush or Sichuan pepper plant whose soil has turned moist.",
+      "key": "Pandaborn.Status.NaturalResources.RootsWet",
+      "text": "Roots too wet. This plant needs dry ground.",
+      "short": "Roots too wet",
+      "review_draft": true,
+      "note": "The draft was written for tea only. One line now covers both dry-ground plants. Same slot as the vanilla Status.NaturalResources.Overwatered."
+    },
+    "plants.died_wet_roots": {
+      "where": "Reason on a dead tea bush or Sichuan pepper plant.",
+      "key": "Pandaborn.NaturalResources.DiedFromWetRoots",
+      "text": "Died from wet roots.",
+      "note": "Same slot and form as the vanilla NaturalResources.Overwatered ('Died from overwatering.')."
+    },
+    "plants.planting_on_moist": {
+      "where": "Planting-tool warning when tea or Sichuan pepper is marked on moist ground.",
+      "key": "Pandaborn.Planting.MoistGroundWarning",
+      "text": "This ground is moist. Tea and Sichuan pepper will die here."
+    },
+    "plants.flume_near_dry_crops": {
+      "where": "Placement warning when a ground flume is drawn next to tea or Sichuan pepper.",
+      "key": "Pandaborn.Flume.NearDryCrops",
+      "text": "A flume on the ground moistens the strip beside it. Keep it away from tea and Sichuan pepper, or build a Dry-Stone Wall between them.",
+      "review_draft": true,
+      "note": "The review: a player plants tea, later runs a flume past it, and the tea dies with no reason given."
+    },
+    "plants.dead_bamboo": {
+      "where": "Hint on dead shoot bamboo or timber bamboo.",
+      "key": "Pandaborn.NaturalResources.DeadBamboo",
+      "text": "Dead bamboo does not grow back. Clear it, then plant again."
+    },
+    "plants.budding": {
+      "where": "Status on bamboo during the forecast cycle of a Great Flowering.",
+      "key": "Pandaborn.Status.NaturalResources.Budding",
+      "text": "Budding. It will flower, drop its seed and die.",
+      "short": "Bamboo is budding"
+    },
+    "plants.flowering": {
+      "where": "Status on bamboo that is flowering.",
+      "key": "Pandaborn.Status.NaturalResources.Flowering",
+      "text": "Flowering. It will die within days."
+    },
+    "plants.died_after_flowering": {
+      "where": "Reason on bamboo killed by a Great Flowering.",
+      "key": "Pandaborn.NaturalResources.DiedAfterFlowering",
+      "text": "Died after flowering. Clear it to collect bamboo seed."
+    },
+    "plants.replant_blocked_shoot": {
+      "where": "Planting-tool line while shoot bamboo cannot be planted.",
+      "key": "Pandaborn.Planting.BlockedAfterFlowering.Shoot",
+      "text": "Shoot bamboo has flowered. It cannot be planted again until the next temperate season."
+    },
+    "plants.replant_blocked_timber": {
+      "where": "Planting-tool line while timber bamboo cannot be planted.",
+      "key": "Pandaborn.Planting.BlockedAfterFlowering.Timber",
+      "text": "Timber bamboo has flowered. It cannot be planted again until the next temperate season."
+    }
+  },
+
+  "ringtails": {
+    "_note": "Standards: the two peoples are equals. Ringtails are the village's Night Watch, its stargazers and its artists. No line says helpers, servants, serve, little ones or 'for the Inkpaws'.",
+    "ringtails.arrival_title": {
+      "where": "Title of the one-time panel when the first Moon Loft is finished.",
+      "key": "Pandaborn.Tutorial.Ringtails",
+      "text": "The Ringtails have arrived"
+    },
+    "ringtails.arrival": {
+      "where": "The one-time panel itself.",
+      "key": "Pandaborn.Tutorial.Ringtails.Arrival",
+      "text": "A lantern in a high window is an old invitation, and a Ringtail family has accepted it.\n\nThe Ringtails are the village's Night Watch. They start work when the afternoon bell rings and stop at dawn, in buildings marked [moon]. They eat, drink and rest like everyone else.\n\nBuild a Night Builders' Post, and construction will carry on through the night.",
+      "review_draft": true,
+      "note": "The first job is now the Night Builders' Post (revision 4), not the courier post. 'Ringtails keep the night' became 'the village's Night Watch', the term used everywhere else. Three short paragraphs, as a vanilla tutorial stage."
+    },
+    "ringtails.arrival_button": {
+      "where": "Button on the panel that opens the Night Watch toolbar group.",
+      "key": "Pandaborn.Tutorial.Ringtails.ShowMe",
+      "text": "Show me"
+    },
+    "ringtails.arrival_notification": {
+      "where": "Event-log line for the same moment.",
+      "key": "Pandaborn.Ringtails.Arrived",
+      "text": "A Ringtail family has moved into the Moon Loft"
+    },
+    "ringtails.closed_for_the_day": {
+      "where": "Status on a Ringtail workplace during the Inkpaws' working day, in place of the vanilla no-workers alert.",
+      "key": "Pandaborn.Status.Work.ClosedForTheDay",
+      "text": "Closed for the day. Ringtails start at the afternoon bell.",
+      "short": "Closed for the day",
+      "review_draft": true,
+      "note": "Kept. The short form is information, not an alert; do not show it on the edge of the screen."
+    },
+    "ringtails.closed_for_the_night": {
+      "where": "The matching status on an Inkpaw workplace at night, if the interface shows one.",
+      "key": "Pandaborn.Status.Work.ClosedForTheNight",
+      "text": "Closed for the night. Inkpaws start at dawn.",
+      "short": "Closed for the night"
+    },
+    "ringtails.none_yet": {
+      "where": "Status on a Ringtail workplace built before any Ringtail lives in the village.",
+      "key": "Pandaborn.Status.Work.NoRingtailsYet",
+      "text": "No Ringtails live in the village yet. Build a Moon Loft to invite them.",
+      "short": "No Ringtails yet"
+    },
+    "ringtails.no_free_ringtails": {
+      "where": "Status on a Ringtail workplace with empty places at night.",
+      "key": "Pandaborn.Status.Work.NoFreeRingtails",
+      "text": "No free Ringtails in the district. Kits are raised in Moon Lofts.",
+      "short": "No free Ringtails",
+      "review_draft": true,
+      "note": "Added 'in the district', as the vanilla Status.Work.NoUnemployed has it, and the full building name."
+    },
+    "ringtails.idle_one": {
+      "where": "One-time alert when a Ringtail has no work.",
+      "key": "Pandaborn.Ringtails.Idle.One",
+      "text": "A Ringtail has no work. Ringtails work in buildings marked [moon]."
+    },
+    "ringtails.idle_many": {
+      "where": "The same alert for more than one.",
+      "key": "Pandaborn.Ringtails.Idle.Many",
+      "text": "{0} Ringtails have no work. Ringtails work in buildings marked [moon].",
+      "short": "Idle Ringtails",
+      "params": { "0": "number of idle adult Ringtails" },
+      "review_draft": true,
+      "note": "'work only in' became 'work in': the sentence is about where to build next, not about a restriction."
+    },
+    "ringtails.keyword_night": {
+      "where": "Keyword line on every Ringtail workplace, in the toolbar tooltip and the panel.",
+      "key": "Pandaborn.Work.NightWatch",
+      "text": "<YellowHighlight>Night Watch:</YellowHighlight> Ringtails work here, from the afternoon bell to dawn.",
+      "note": "Same slot and form as the vanilla Work.BeaverOnly."
+    },
+    "ringtails.keyword_day": {
+      "where": "Keyword line on Inkpaw workplaces, once Ringtails live in the village.",
+      "key": "Pandaborn.Work.DayWork",
+      "text": "<YellowHighlight>Day work:</YellowHighlight> Inkpaws work here, from dawn to the afternoon bell."
+    },
+    "ringtails.empty_place": {
+      "where": "Tooltip of an empty worker place in a Ringtail workplace.",
+      "key": "Pandaborn.Work.VacantRingtail",
+      "text": "Vacant: a place for a Ringtail"
+    },
+    "ringtails.trait_ringtail": {
+      "where": "Line on a Ringtail's panel.",
+      "key": "Pandaborn.Ringtail.Trait",
+      "text": "Runs with its load: carrying does not slow a Ringtail down."
+    },
+    "ringtails.trait_inkpaw": {
+      "where": "Line on an Inkpaw's panel.",
+      "key": "Pandaborn.Inkpaw.Trait",
+      "text": "Lifts more: an Inkpaw carries a larger load on every trip."
+    },
+    "ringtails.morning_leisure": {
+      "where": "Tooltip on a Ringtail seen in an attraction by day.",
+      "key": "Pandaborn.Ringtail.MorningLeisure",
+      "text": "Ringtails take their leisure in the morning, while the Inkpaws work."
+    },
+    "ringtails.courier_tip": {
+      "where": "Extra line in the Night Courier Post's tooltip.",
+      "key": "Pandaborn.NightCourierPost.Tip",
+      "text": "Night couriers do the most good where a workshop holds more than a day's ingredients: kitchens, smelters and gear workshops.",
+      "note": "balance.md, claim 15: the post's tooltip should name the buildings it gains for."
+    },
+    "ringtails.opera_no_performers": {
+      "where": "Status on the Opera Stage by day or with no performers.",
+      "key": "Pandaborn.Status.OperaStage.NoPerformance",
+      "text": "No performance. The stage is open while its Ringtail performers work, from the afternoon bell to dawn.",
+      "short": "No performance"
+    },
+    "ringtails.switched_off": {
+      "where": "Notice on loading a save if a game update has disabled the Ringtail code.",
+      "key": "Pandaborn.Notice.RingtailsOff",
+      "text": "The Night Watch is switched off in this version of the game. The Ringtails in this save appear as Inkpaws until it returns. Nobody has been lost."
+    },
+    "ringtails.feature_switched_off": {
+      "where": "The general form of the same notice, for any optional feature.",
+      "key": "Pandaborn.Notice.FeatureOff",
+      "text": "{0} is switched off, because it does not match this version of the game. Everything else works as usual.",
+      "params": { "0": "the feature's name, for example 'The Lantern Festival'" }
+    }
+  },
+
+  "population": {
+    "_note": "The population panel in two rows. Vanilla labels for adults, children, homeless and contaminated are reused.",
+    "population.row_inkpaws": { "where": "Row label.", "key": "Pandaborn.Population.Inkpaws", "text": "Inkpaws" },
+    "population.row_ringtails": { "where": "Row label.", "key": "Pandaborn.Population.Ringtails", "text": "Ringtails" },
+    "population.row_inkpaws_full": {
+      "where": "The row written out, for a tooltip or a top-bar line.",
+      "key": "Pandaborn.Population.Inkpaws.Row",
+      "text": "[sun] Inkpaws {0}, {1} idle",
+      "params": { "0": "adult Inkpaws", "1": "adult Inkpaws without work" },
+      "review_draft": true
+    },
+    "population.row_ringtails_full": {
+      "where": "The row written out.",
+      "key": "Pandaborn.Population.Ringtails.Row",
+      "text": "[moon] Ringtails {0}, {1} idle",
+      "params": { "0": "adult Ringtails", "1": "adult Ringtails without work" },
+      "review_draft": true
+    },
+    "population.idle": { "where": "Column label.", "key": "Pandaborn.Population.Idle", "text": "Idle" },
+    "population.cubs": { "where": "Label before the number of young Inkpaws.", "key": "Pandaborn.Population.Cubs", "text": "Cubs" },
+    "population.kits": { "where": "Label before the number of young Ringtails.", "key": "Pandaborn.Population.Kits", "text": "Kits" },
+    "population.wooden_oxen": { "where": "Label before the number of Wooden Oxen.", "key": "Pandaborn.Population.WoodenOxen", "text": "Wooden Oxen" },
+    "population.tooltip_inkpaws": {
+      "where": "Tooltip of the Inkpaws row.",
+      "key": "Pandaborn.Population.Inkpaws.Tooltip",
+      "text": "Inkpaws work from dawn to the afternoon bell, in buildings marked [sun]."
+    },
+    "population.tooltip_ringtails": {
+      "where": "Tooltip of the Ringtails row.",
+      "key": "Pandaborn.Population.Ringtails.Tooltip",
+      "text": "Ringtails work from the afternoon bell to dawn, in buildings marked [moon]."
+    }
+  },
+
+  "young": {
+    "_note": "Cubs are young Inkpaws and are born as vanilla children are. Kits are young Ringtails and are raised in Moon Lofts while there is work for them. The review's den line about a well-being gate is not used: revision 4 kept vanilla births.",
+    "young.den_rule": {
+      "where": "Line on a home's panel.",
+      "key": "Pandaborn.Dwelling.CubRule",
+      "text": "Cubs are born in homes with two adults and a free bed."
+    },
+    "young.cub_born": { "where": "Event-log line.", "reuse_vanilla": "Dwelling.Newborn", "text": "{0} was born!" },
+    "young.kit_born": {
+      "where": "Event-log line.",
+      "key": "Pandaborn.MoonLoft.KitBorn",
+      "text": "{0} was born in a Moon Loft!",
+      "params": { "0": "the kit's name" }
+    },
+    "young.grew_up": { "where": "Event-log line for a cub.", "reuse_vanilla": "Beaver.GrewUp", "text": "{0} grew up." },
+    "young.kit_grew_up": {
+      "where": "Event-log line for a kit.",
+      "key": "Pandaborn.Ringtail.GrewUp",
+      "text": "{0} grew up and joined the Night Watch.",
+      "params": { "0": "the Ringtail's name" }
+    },
+    "young.loft_rule": {
+      "where": "Line on the Moon Loft's panel.",
+      "key": "Pandaborn.MoonLoft.KitRule",
+      "text": "Kits are raised in Moon Lofts while the village has more Ringtail jobs than Ringtails."
+    },
+    "young.loft_raising": {
+      "where": "State line on a Moon Loft with a kit.",
+      "key": "Pandaborn.MoonLoft.Raising",
+      "text": "A kit is growing up here."
+    },
+    "young.loft_waiting": {
+      "where": "State line on a Moon Loft with no kit because every Ringtail job is filled.",
+      "key": "Pandaborn.MoonLoft.Waiting",
+      "text": "No kit for now: every Ringtail job is filled. Build another [moon] workplace and a kit will follow.",
+      "review_draft": true,
+      "note": "Replaces the review's 'Welcome kits' switch, which revision 4 dropped in favor of this rule."
+    },
+    "young.kindergarten_playing": {
+      "where": "Label on the Panda Kindergarten's panel.",
+      "key": "Pandaborn.Kindergarten.Playing",
+      "text": "Cubs and kits at play: {0}",
+      "params": { "0": "number of young inside" }
+    },
+    "young.kindergarten_watching": {
+      "where": "Label on the Panda Kindergarten's panel.",
+      "key": "Pandaborn.Kindergarten.Watching",
+      "text": "Adults watching: {0}",
+      "params": { "0": "number of adult visitors" }
+    },
+    "young.objective_cub": {
+      "where": "Tutorial objective, in place of the vanilla Tutorial.MoreBeavers.BeaverBirth ('Have a kit').",
+      "key": "Pandaborn.Tutorial.MoreInkpaws.CubBirth",
+      "text": "Have a cub"
+    },
+    "young.tip_words": {
+      "where": "Tip at the end of the population tutorial stage, in place of the vanilla 'Tip: Beaver children are called kits.'",
+      "key": "Pandaborn.Tutorial.MoreInkpaws.Tip",
+      "text": "Tip: Young Inkpaws are called cubs. Young Ringtails are called kits."
+    }
+  },
+
+  "festival": {
+    "_note": "Stat sheet: a Small Festival needs 40 paper lanterns and 20 each of three cooked dishes; a Grand Festival adds 20 fireworks. Amounts are parameters, never written into the text.",
+    "festival.name": { "where": "Panel header and event name.", "key": "Pandaborn.Festival.Name", "text": "Lantern Festival" },
+    "festival.small": { "where": "Tier name.", "key": "Pandaborn.Festival.Small", "text": "Small Festival" },
+    "festival.grand": { "where": "Tier name.", "key": "Pandaborn.Festival.Grand", "text": "Grand Festival" },
+    "festival.check_lanterns": {
+      "where": "Checklist row on the Festival Square.",
+      "key": "Pandaborn.Festival.Check.Lanterns",
+      "text": "Paper lanterns: {0}/{1}",
+      "params": { "0": "in stock", "1": "needed" },
+      "review_draft": true
+    },
+    "festival.check_dishes": {
+      "where": "Checklist row: how many kinds of cooked dish are fully stocked.",
+      "key": "Pandaborn.Festival.Check.Dishes",
+      "text": "Cooked dishes: {0}/{1} kinds",
+      "params": { "0": "kinds fully stocked", "1": "kinds needed (3)" }
+    },
+    "festival.check_dish_row": {
+      "where": "Checklist sub-row for one dish.",
+      "key": "Pandaborn.Festival.Check.Dish",
+      "text": "{0}: {1}/{2}",
+      "params": { "0": "the dish's plural name", "1": "in stock", "2": "needed" }
+    },
+    "festival.check_fireworks": {
+      "where": "Checklist row.",
+      "key": "Pandaborn.Festival.Check.Fireworks",
+      "text": "Fireworks: {0}/{1} (for a Grand Festival)",
+      "params": { "0": "in stock", "1": "needed" }
+    },
+    "festival.check_seed_cakes": {
+      "where": "Checklist row, shown only when bamboo seed cakes are in stock.",
+      "key": "Pandaborn.Festival.Check.SeedCakes",
+      "text": "Bamboo seed cakes: {0} (they make the festival grander)",
+      "params": { "0": "in stock" }
+    },
+    "festival.state_not_ready": { "where": "State line.", "key": "Pandaborn.Festival.State.NotReady", "text": "Not ready yet." },
+    "festival.state_small_ready": { "where": "State line.", "key": "Pandaborn.Festival.State.SmallReady", "text": "Ready for a Small Festival." },
+    "festival.state_grand_ready": { "where": "State line.", "key": "Pandaborn.Festival.State.GrandReady", "text": "Ready for a Grand Festival." },
+    "festival.state_held": {
+      "where": "State line after the festival of this cycle.",
+      "key": "Pandaborn.Festival.State.Held",
+      "text": "This cycle's festival has been held. The next can be called next cycle."
+    },
+    "festival.call_button": { "where": "Button on the Festival Square.", "key": "Pandaborn.Festival.Call", "text": "Call the festival" },
+    "festival.call_tooltip": {
+      "where": "Tooltip of the button.",
+      "key": "Pandaborn.Festival.Call.Tooltip",
+      "text": "Both peoples take a day and a night off, from dawn to the next dawn: dancing, rising lanterns and, at a Grand Festival, fireworks. The village gains festive spirit for most of a cycle and one step of Tradition. The cost is a day's work.",
+      "review_draft": true,
+      "note": "The draft said 'both peoples take the night off'. The stat sheet's cost is a full day and night, and the review itself warned that players would not expect it."
+    },
+    "festival.call_confirm": {
+      "where": "Confirmation prompt.",
+      "key": "Pandaborn.Festival.Call.Prompt",
+      "text": "Call the Lantern Festival? Nobody will work from the next dawn until the dawn after."
+    },
+    "festival.auto_toggle": {
+      "where": "Toggle on the Festival Square.",
+      "key": "Pandaborn.Festival.Auto",
+      "text": "Call it when the square is stocked"
+    },
+    "festival.announce_called": {
+      "where": "Event-log line when the festival is called.",
+      "key": "Pandaborn.Festival.Called",
+      "text": "The Lantern Festival begins at dawn"
+    },
+    "festival.announce_small": {
+      "where": "Announcement at dawn.",
+      "key": "Pandaborn.Festival.Started.Small",
+      "text": "The Lantern Festival! Both peoples have the day and the night off."
+    },
+    "festival.announce_grand": {
+      "where": "Announcement at dawn.",
+      "key": "Pandaborn.Festival.Started.Grand",
+      "text": "The Grand Lantern Festival! Both peoples have the day and the night off, and tonight there are fireworks."
+    },
+    "festival.announce_lanterns": {
+      "where": "Event-log line at dusk on the festival day.",
+      "key": "Pandaborn.Festival.LanternsRise",
+      "text": "The lanterns are rising"
+    },
+    "festival.announce_end": {
+      "where": "Event-log line at the next dawn.",
+      "key": "Pandaborn.Festival.Ended",
+      "text": "The festival is over. The village goes back to work in festive spirit."
+    },
+    "festival.workplace_closed": {
+      "where": "Status on every workplace during the festival.",
+      "key": "Pandaborn.Status.Work.Festival",
+      "text": "Closed for the festival.",
+      "short": "Closed for the festival"
+    }
+  },
+
+  "tradition": {
+    "tradition.label": {
+      "where": "Label on the Festival Square.",
+      "key": "Pandaborn.Tradition.Label",
+      "text": "Tradition: {0}",
+      "params": { "0": "steps of Tradition" }
+    },
+    "tradition.tooltip": {
+      "where": "Tooltip of the label.",
+      "key": "Pandaborn.Tradition.Tooltip",
+      "text": "Each Lantern Festival adds one step of Tradition. Tradition unlocks lantern shapes and colors and other decorations."
+    },
+    "tradition.gained": {
+      "where": "Event-log line after a festival.",
+      "key": "Pandaborn.Tradition.Gained",
+      "text": "Tradition {0}. New decoration: {1}",
+      "params": { "0": "the new step", "1": "name of the decoration unlocked" }
+    },
+    "tradition.locked": {
+      "where": "Toolbar tooltip of a decoration that Tradition has not yet unlocked.",
+      "key": "Pandaborn.Tradition.Locked",
+      "text": "Unlocked by Tradition {0}.",
+      "params": { "0": "the step needed" }
+    }
+  },
+
+  "flowering": {
+    "_note": "Tone: bittersweet, never a joke. Mass flowering really kills bamboo and starves pandas. The windfall of seed is real too, and the text says both.",
+    "flowering.name": { "where": "Event name.", "key": "Pandaborn.Flowering.Name", "text": "Great Flowering" },
+    "flowering.weather_approaching": {
+      "where": "Weather-panel tooltip during the forecast cycle.",
+      "key": "Pandaborn.Weather.Notification.FloweringApproaching",
+      "text": "Great Flowering approaching",
+      "note": "Same form as the vanilla Weather.Notification.DroughtApproaching."
+    },
+    "flowering.weather_in_progress": {
+      "where": "Weather-panel tooltip while the bamboo flowers.",
+      "key": "Pandaborn.Weather.Notification.FloweringInProgress",
+      "text": "Great Flowering in progress"
+    },
+    "flowering.countdown": {
+      "where": "Label on budding bamboo and in the weather panel.",
+      "key": "Pandaborn.Flowering.Countdown",
+      "text": "Flowers in: {0} days",
+      "params": { "0": "days left" },
+      "note": "Same form as the vanilla NaturalResources.DaysToDie ('Dies in: {0} days')."
+    },
+    "flowering.forecast_shoot": {
+      "where": "Forecast, a full cycle ahead, when shoot bamboo will flower.",
+      "key": "Pandaborn.Flowering.Forecast.Shoot",
+      "text": "The shoot bamboo is budding. In {0} days it will flower, drop its seed and die, everywhere at once. Timber bamboo is not affected.\n\nStore food for a season without shoots.",
+      "params": { "0": "days until the flowering" },
+      "review_draft": true,
+      "note": "The draft used the cut names 'river bamboo' and 'cloud bamboo'. This adds the one thing to do about it."
+    },
+    "flowering.forecast_timber": {
+      "where": "Forecast, a full cycle ahead, when timber bamboo will flower.",
+      "key": "Pandaborn.Flowering.Forecast.Timber",
+      "text": "The timber bamboo is budding. In {0} days it will flower, drop its seed and die, everywhere at once. Shoot bamboo is not affected.\n\nStock poles for a season without timber bamboo.",
+      "params": { "0": "days until the flowering" }
+    },
+    "flowering.arrival_shoot": {
+      "where": "Announcement on the day shoot bamboo flowers.",
+      "key": "Pandaborn.Flowering.Arrived.Shoot",
+      "text": "The shoot bamboo is in flower. It flowers once, all together, and it is the last thing it does."
+    },
+    "flowering.arrival_timber": {
+      "where": "Announcement on the day timber bamboo flowers.",
+      "key": "Pandaborn.Flowering.Arrived.Timber",
+      "text": "The timber bamboo is in flower. It flowers once, all together, and it is the last thing it does."
+    },
+    "flowering.arrival_how": {
+      "where": "Second paragraph of either announcement, and the tooltip of the weather panel.",
+      "key": "Pandaborn.Flowering.Arrived.How",
+      "text": "Flowered bamboo dies within days. Clear it to collect bamboo seed. It cannot be planted again until the next temperate season."
+    },
+    "flowering.first_seed": {
+      "where": "Event-log line, once, when the first bamboo seed is collected.",
+      "key": "Pandaborn.Flowering.FirstSeed",
+      "text": "The first bamboo seed is in. The Kitchen can make bamboo seed cakes."
+    },
+    "flowering.ended_shoot": {
+      "where": "Event-log line when planting is allowed again.",
+      "key": "Pandaborn.Flowering.Ended.Shoot",
+      "text": "Shoot bamboo can be planted again"
+    },
+    "flowering.ended_timber": {
+      "where": "Event-log line when planting is allowed again.",
+      "key": "Pandaborn.Flowering.Ended.Timber",
+      "text": "Timber bamboo can be planted again"
+    },
+    "flowering.explainer_title": {
+      "where": "Title of the one-time panel at the first forecast.",
+      "key": "Pandaborn.Tutorial.Flowering",
+      "text": "The Great Flowering"
+    },
+    "flowering.explainer": {
+      "where": "The one-time panel at the first forecast.",
+      "key": "Pandaborn.Tutorial.Flowering.Description",
+      "text": "Once in many years, all the bamboo of one kind flowers together, drops its seed and dies.\n\nIt never comes without warning: the buds show a full cycle ahead. It never comes in a drought or a badtide, and it never takes both bamboos at once.\n\nIt is a loss, and it is also a harvest. The fallen seed makes the best food the village knows."
+    },
+    "flowering.setting_label": {
+      "where": "New-game setting.",
+      "key": "Pandaborn.NewGameConfigurationPanel.Flowering",
+      "text": "Great Flowering",
+      "note": "Same form as the vanilla NewGameConfigurationPanel labels."
+    },
+    "flowering.setting_off": { "where": "Setting value.", "key": "Pandaborn.NewGameConfigurationPanel.Flowering.Off", "text": "Off" },
+    "flowering.setting_rare": { "where": "Setting value.", "key": "Pandaborn.NewGameConfigurationPanel.Flowering.Rare", "text": "Rare" },
+    "flowering.setting_normal": { "where": "Setting value.", "key": "Pandaborn.NewGameConfigurationPanel.Flowering.Normal", "text": "Normal" },
+    "flowering.setting_tooltip": {
+      "where": "Tooltip of the setting.",
+      "key": "Pandaborn.NewGameConfigurationPanel.Flowering.Tooltip",
+      "text": "From time to time, one kind of bamboo flowers, drops its seed and dies across the map. It is always announced a full cycle ahead."
+    }
+  },
+
+  "wonder": {
+    "wonder.release_button": {
+      "where": "Button on the finished Sky Lantern, in place of the vanilla Wonder.Activate ('Launch').",
+      "key": "Pandaborn.Wonder.Release",
+      "text": "Release"
+    },
+    "wonder.not_enough_goods": {
+      "where": "Status, in place of the vanilla Status.Wonder.NotEnoughGoods.",
+      "key": "Pandaborn.Status.Wonder.NotEnoughGoods",
+      "text": "Not enough paper lanterns and tea to release it."
+    },
+    "wonder.not_enough_workers": {
+      "where": "Status, in place of the vanilla Status.Wonder.NotEnoughWorkers.",
+      "key": "Pandaborn.Status.Wonder.NotEnoughWorkers",
+      "text": "Not enough workers to release it."
+    },
+    "wonder.completed": {
+      "where": "Event-log line.",
+      "reuse_vanilla": "WonderCompletion.WonderCompleted",
+      "text": "Wonder completed: {0}"
+    }
+  },
+
+  "tutorial": {
+    "_note": "The Inkpaws' own first objectives, in the vanilla tutorial form, following 'The first two hours' in DESIGN.md. The vanilla stages speak of beavers, Folktails, carrots and the Lumber Mill and cannot be shown as they are. Camera, speed, storage and layer-tool stages are vanilla and are reused.",
+    "tutorial.intro": {
+      "where": "First panel of a new Inkpaws game, in place of Tutorial.Introduction.Description.",
+      "key": "Pandaborn.Tutorial.Introduction.Description",
+      "text": "Welcome to the valley! This tutorial will help your Inkpaws through their first days.\n\nThe first steps are the ones you know: water, food, wood and a roof. What is new arrives one thing at a time.\n\nAs you go on, the tips will appear here."
+    },
+    "tutorial.farmstead": {
+      "where": "Water and food: build the Farmstead.",
+      "key": "Pandaborn.Tutorial.WaterAndFood.Farmstead",
+      "text": "Berries will not last. Build a Farmstead to plant and harvest crops.\n\nLike flags, a Farmstead has a limited range."
+    },
+    "tutorial.shoot_bamboo": {
+      "where": "Water and food: mark the first field.",
+      "key": "Pandaborn.Tutorial.WaterAndFood.MarkShootBamboo",
+      "text": "Farmers do not start working until you tell them what to plant and where.\n\nUse the Plant Crops tool to mark a field of Shoot Bamboo. It is ready in a few days, and the shoots can be eaten raw.\n\nCrops need irrigated, green land. Shoot bamboo survives a short drought, but not a long one."
+    },
+    "tutorial.poles": {
+      "where": "Forestry: the stage that replaces 'Power and planks'.",
+      "key": "Pandaborn.Tutorial.Forestry.Poles",
+      "text": "Inkpaws build with Poles, and Poles are cut from Timber Bamboo. No mill is needed.\n\nBuild a Forester and use the Plant Trees and Bushes tool to plant Timber Bamboo. Then mark it for cutting, as you would any tree.",
+      "review_draft": true,
+      "note": "From the review's lines for bamboo and poles, rewritten for the two-plant design."
+    },
+    "tutorial.poles_tip": {
+      "where": "Tip under the same stage.",
+      "key": "Pandaborn.Tutorial.Forestry.Poles.Tip",
+      "text": "Tip: In the first days it is Logs you will run short of, not builders. Three or four Lumberjack Flags are not too many.",
+      "note": "balance.md, claim 1: the opening is limited by logs."
+    },
+    "tutorial.steamer": {
+      "where": "Cooking: build the Steamer.",
+      "key": "Pandaborn.Tutorial.Cooking.Steamer",
+      "text": "Raw food keeps a village alive. Cooked food makes it content.\n\nBuild a Steamer. A steamed shoot feeds more villagers than a raw one, and every cooked dish is a small pleasure of its own."
+    },
+    "tutorial.hammock": {
+      "where": "Afternoons: build a Hammock.",
+      "key": "Pandaborn.Tutorial.Afternoons.Hammock",
+      "text": "When the afternoon bell rings, Inkpaws put down their tools. Give them somewhere to go.\n\nBuild a Hammock. A daily nap is the simplest of the afternoon rituals. Tea, play and a long soak come later."
+    },
+    "tutorial.leading_water": {
+      "where": "Leading water: the first scoop wheel and flume.",
+      "key": "Pandaborn.Tutorial.LeadingWater.FirstFlume",
+      "text": "Inkpaws would rather lead water than hold it back.\n\nPlace a Scoop Wheel in the current. Then run a Flume from the top of the wheel across dry land. Water runs one way, along the arrow, level or downhill.\n\nThe ground beside the flume will turn green. Plant bamboo there."
+    },
+    "tutorial.first_drought": {
+      "where": "After the first drought, in place of Tutorial.Droughts.Description.",
+      "key": "Pandaborn.Tutorial.Droughts.Description",
+      "text": "Your village has come through its first drought.\n\nBamboo and cabbage stop growing when the ground dries and start again when the water returns. They die only if the drought outlasts them.\n\nDroughts grow longer. Build more cisterns, and remember the Cistern Tap: it can keep your best grove alive."
+    },
+    "tutorial.moon_loft": {
+      "where": "End of the first cycle: build the first Moon Loft.",
+      "key": "Pandaborn.Tutorial.NightWatch.MoonLoft",
+      "text": "The village sleeps at night, but it does not have to stand still.\n\nBuild a Moon Loft above a path. A lantern in a high window is an old invitation."
+    },
+    "tutorial.paddy": {
+      "where": "Second cycle: the first paddy.",
+      "key": "Pandaborn.Tutorial.Paddies.FirstPaddy",
+      "text": "Rice grows only in flooded fields.\n\nWall a field in with Levees and place a Paddy Spout on its edge, with water behind it. The spout keeps the field at a shallow depth.\n\nThen build a Paddy House and plant Rice."
+    },
+    "tutorial.festival": {
+      "where": "Second cycle: the Festival Square.",
+      "key": "Pandaborn.Tutorial.Festival.Square",
+      "text": "A village needs something to look forward to.\n\nBuild a Festival Square and stock it with Paper Lanterns and three kinds of cooked dish. Then call the Lantern Festival.\n\nEveryone takes a day and a night off, and the festive spirit lasts most of a cycle."
+    },
+    "tutorial.dry_ground": {
+      "where": "Third cycle: tea.",
+      "key": "Pandaborn.Tutorial.DryGround.Tea",
+      "text": "Not all land should be green. Tea Bushes and Sichuan Pepper grow on dry ground only, and their roots rot if they get wet.\n\nUse the Farmstead to plant Tea Bushes on a dry slope. Keep flumes away from them, or build a Dry-Stone Wall in between."
+    }
+  },
+
+  "tips": {
+    "_note": "Loading-screen tips in the vanilla form (Tip.Game.<Id>).",
+    "tips.bell": {
+      "key": "Pandaborn.Tip.Game.Bell",
+      "text": "Tip: Rested Inkpaws work and walk faster. A working day of <YellowHighlight>12 hours</YellowHighlight> gets as much done as a long one, and leaves the afternoon free."
+    },
+    "tips.flume_strip": {
+      "key": "Pandaborn.Tip.Game.FlumeStrip",
+      "text": "Tip: The ground beside a <YellowHighlight>Flume</YellowHighlight> laid on the ground stays moist. A flume and a row of bamboo is the simplest farm there is."
+    },
+    "tips.dry_ground": {
+      "key": "Pandaborn.Tip.Game.DryGround",
+      "text": "Tip: <YellowHighlight>Tea Bushes</YellowHighlight> and <YellowHighlight>Sichuan Pepper</YellowHighlight> need dry ground. Water that reaches their roots kills them."
+    },
+    "tips.hard_staple": {
+      "key": "Pandaborn.Tip.Game.HardStaple",
+      "text": "Tip: Cabbage lasts longer without water than shoot bamboo. On Hard, plant both before the first drought.",
+      "note": "balance.md, claim 8: on Hard, shoot bamboo survives only two first droughts in three; cabbage is the staple."
+    },
+    "tips.tea_water": {
+      "key": "Pandaborn.Tip.Game.TeaWater",
+      "text": "Tip: Tea quenches some thirst, and one measure of water makes three cups. In a long drought, a village that drinks tea uses less water."
+    },
+    "tips.night_builders": {
+      "key": "Pandaborn.Tip.Game.NightBuilders",
+      "text": "Tip: With a <YellowHighlight>Night Builders' Post</YellowHighlight>, construction carries on from the afternoon bell to dawn."
+    },
+    "tips.cistern_tap": {
+      "key": "Pandaborn.Tip.Game.CisternTap",
+      "text": "Tip: In a drought, a <YellowHighlight>Cistern Tap</YellowHighlight> can pour stored water into a flume and keep one grove alive."
+    },
+    "tips.flowering": {
+      "key": "Pandaborn.Tip.Game.Flowering",
+      "text": "Tip: A <YellowHighlight>Great Flowering</YellowHighlight> is announced a full cycle ahead. Use the time to store food or poles."
+    }
+  },
+
+  "vanilla_lines_that_say_beaver": {
+    "_note": "Vanilla interface lines that an Inkpaws game will show and that speak of beavers. Each is a key shared by every faction: writing a new text to the vanilla key would change it for Folktails and Iron Teeth too. These rewrites are for the day the mod can show its own key in an Inkpaws game. Until then the vanilla lines stay, and that is acceptable.",
+    "Needs.Beaver.DeathWarning": { "vanilla": "Beaver will die soon.", "text": "Villager will die soon." },
+    "Status.Need.Injury.Short": { "vanilla": "Beaver is injured", "text": "Villager is injured" },
+    "Status.Need.BadwaterContamination.Short": { "vanilla": "Beaver is contaminated", "text": "Villager is contaminated" },
+    "Status.BadwaterContamination.Incubation": { "vanilla": "This beaver spent too much time in contaminated water. It's fine for now, but will get sick in a few days.", "text": "This villager spent too much time in contaminated water. It is fine for now, but will get sick in a few days." },
+    "Status.BadwaterContamination.Incubation.Short": { "vanilla": "Beaver is unwell", "text": "Villager is unwell" },
+    "Status.Beaver.DiedTragicallyShort": { "vanilla": "Beaver died tragically", "text": "Villager died tragically" },
+    "Dwelling.NoBeaverCanReach": { "vanilla": "No beaver can reach this dwelling.", "text": "No villager can reach this home." },
+    "Dwelling.NoUnemployedCanReach": { "vanilla": "No unemployed beaver can reach this dwelling.", "text": "No villager without work can reach this home." },
+    "Beaver.PluralDisplayName": { "vanilla": "Beavers", "text": "Villagers" },
+    "BatchControl.PopulationStatistics.BeaverEmployment": { "vanilla": "Beaver employment", "text": "Villager employment" },
+    "Building.PopulationCounter.Mode.TotalBeavers": { "vanilla": "Total beavers", "text": "Total villagers" },
+    "Work.BeaverOnly": { "vanilla": "<YellowHighlight>Beaver-only:</YellowHighlight> Only beavers are allowed to work in this workplace.", "text": "<YellowHighlight>Villagers only:</YellowHighlight> Wooden Oxen cannot work here." },
+    "Work.BotOnly": { "vanilla": "<YellowHighlight>Bot-only:</YellowHighlight> Only bots are allowed to work in this workplace.", "text": "<YellowHighlight>Wooden Oxen only:</YellowHighlight> Only Wooden Oxen can work here." },
+    "Tutorial.Wellbeing.SetWorkingHours": { "vanilla": "Remember that beavers need free time to eat, drink, sleep, and enjoy the settlement's attractions. …", "text": "See bell.first_bell, which takes this stage's place." }
+  }
+}

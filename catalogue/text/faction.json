@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "kind": "faction",
+    "source": "docs/DESIGN.md revision 4; mod/PandabornFactions/Localizations/enUS_PandabornFactions.csv (the current placeholder texts, replaced here)",
+    "language": "enUS",
+    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "keyed_by": "A short id per text. Each entry names the loc key it belongs to.",
+    "vanilla_loc_pattern": {
+      "faction": "Faction.<FactionId>.DisplayName / .Description / .GameOver.Message / .GameOver.Flavor / .WonderCompletionMessage / .WonderCompletionFlavor (FactionSpec and FactionWonderSpec)",
+      "bot_name": "Bot.DisplayName.<FactionId>",
+      "motto": "Vanilla shows the motto twice: as the last line of the faction description ('Their motto: <i>…</i>') and as the District Center's flavor line."
+    },
+    "field_rules": {
+      "key": "The loc key. Keys under 'core' already exist in the mod's CSV and are faction-scoped vanilla keys, so they keep their names.",
+      "text": "The string. A line break inside a text is written as \\n, as in the vanilla CSV.",
+      "replaces": "The vanilla key whose wording this stands in for, where the vanilla key is shared by all factions and cannot simply be overwritten.",
+      "needs_code": "true = the game shows the vanilla key for every faction; showing this text for the Inkpaws only needs a faction check in the mod's code."
+    }
+  },
+  "core": {
+    "display_name": {
+      "key": "Faction.Inkpaws.DisplayName",
+      "text": "Inkpaws",
+      "translator_comment": "Name of the faction of giant pandas. One word. 'Ink' for their black and white coats."
+    },
+    "description": {
+      "key": "Faction.Inkpaws.Description",
+      "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well. When the afternoon bell rings, the Ringtails of the Night Watch take over the village until dawn.\nTheir motto: <i>Work well, rest well.</i>",
+      "translator_comment": "Faction description on the new game screen. Inkpaws are giant pandas; Ringtails are red pandas who live in the same village and work at night. A flume is an open bamboo aqueduct."
+    },
+    "game_over_message": {
+      "key": "Faction.Inkpaws.GameOver.Message",
+      "text": "Your village has fallen silent, as the human towns did before it. This is the end.",
+      "translator_comment": "Text of the game over panel."
+    },
+    "game_over_flavor": {
+      "key": "Faction.Inkpaws.GameOver.Flavor",
+      "text": "The bell still hangs in the square. There is nobody left to ring it.",
+      "translator_comment": "Flavor text of the game over panel. The afternoon bell is the faction's signature."
+    },
+    "wonder_completion_message": {
+      "key": "Faction.Inkpaws.WonderCompletionMessage",
+      "text": "Congratulations! You mastered the Inkpaws' unhurried ways and used this map's resources to build the faction's wonder.",
+      "translator_comment": "Shown when the player has mastered a map with the Inkpaws by building and releasing the Sky Lantern."
+    },
+    "wonder_completion_flavor": {
+      "key": "Faction.Inkpaws.WonderCompletionFlavor",
+      "text": "Both peoples gathered at dusk to let the Sky Lantern go. It rose over the terraces and drifted out across the wasteland. Wherever its seeds fall, something green will begin again.",
+      "translator_comment": "Flavor text of the wonder completion panel. 'Both peoples' are the Inkpaws and the Ringtails."
+    },
+    "bot_name": {
+      "key": "Bot.DisplayName.Inkpaws",
+      "text": "Wooden Ox {0}",
+      "translator_comment": "{0} is a serial number. The Inkpaws' bots are wooden oxen. Replaces the placeholder 'Bamboobot {0}'."
+    }
+  },
+  "motto": {
+    "text": "Work well, rest well.",
+    "used_in": ["core.description", "buildings.json: Village Hall flavor"],
+    "note": "Written against the Iron Teeth motto 'Work hard, work hard.' It is attributed to the village, not to the Inkpaws, because both peoples live by it."
+  },
+  "peoples": {
+    "_note": "The words for the two peoples and their young. Use these forms everywhere.",
+    "inkpaw": { "singular": "Inkpaw", "plural": "Inkpaws", "young_singular": "cub", "young_plural": "cubs", "what": "giant pandas; they work from dawn to the afternoon bell" },
+    "ringtail": { "singular": "Ringtail", "plural": "Ringtails", "young_singular": "kit", "young_plural": "kits", "what": "red pandas, the village's Night Watch; they work from the afternoon bell to dawn" },
+    "together": { "singular": "villager", "plural": "villagers", "what": "any colonist of either people, where vanilla text says 'beaver'" },
+    "settlement": "village",
+    "entity_labels": {
+      "_note": "docs/tech/two-peoples.md: the batch-control window throws for any entity name key other than Beaver.Adult.TemplateName, Beaver.Child.TemplateName and Bot.TemplateName, so templates keep the vanilla keys. These texts are for the mod's own badge or panel header.",
+      "inkpaw_adult": { "suggested_key": "Pandaborn.Inkpaw.Adult.Label", "text": "Inkpaw adult" },
+      "inkpaw_child": { "suggested_key": "Pandaborn.Inkpaw.Child.Label", "text": "Inkpaw cub" },
+      "ringtail_adult": { "suggested_key": "Pandaborn.Ringtail.Adult.Label", "text": "Ringtail adult" },
+      "ringtail_child": { "suggested_key": "Pandaborn.Ringtail.Child.Label", "text": "Ringtail kit" },
+      "wooden_ox": { "suggested_key": "Pandaborn.WoodenOx.Label", "text": "Wooden Ox", "plural": "Wooden Oxen" }
+    }
+  },
+  "toolbar": {
+    "night_watch_group": {
+      "suggested_key": "Pandaborn.ToolGroups.NightWatch",
+      "vanilla_pattern": "ToolGroups.<Id>",
+      "text": "Night Watch",
+      "tooltip": "Ringtail homes and workplaces. Ringtails work from the afternoon bell to dawn.",
+      "note": "The one toolbar group that holds every Ringtail building, marked with a moon."
+    }
+  },
+  "optional_faction_flavored_lines": {
+    "_note": "Vanilla keys that every faction shares and that speak of beavers. Each needs a faction check in code to be shown for the Inkpaws only. All are optional; the game is correct without them.",
+    "new_game_notification": {
+      "replaces": "NewGame.Notification ('Found wood and water. A new beginning.')",
+      "suggested_key": "Pandaborn.NewGame.Notification",
+      "text": "Found bamboo and water. A good place for a village.",
+      "needs_code": true
+    },
+    "all_perished_tooltip": {
+      "replaces": "Population.AllPerished",
+      "suggested_key": "Pandaborn.Population.AllPerished",
+      "text": "And though the village fell silent, the water ran on down the flumes,\nwith no one left to lead it.",
+      "needs_code": true
+    },
+    "wellbeing_highscore": {
+      "replaces": "Wellbeing.HighscoreReached ('Your beavers are happier than ever!')",
+      "suggested_key": "Pandaborn.Wellbeing.HighscoreReached",
+      "text": "Your village is happier than ever!",
+      "needs_code": true
+    },
+    "wonder_keyword": {
+      "replaces": "Buildings.Wonder ('Wonder: The pinnacle of beaver engineering.')",
+      "suggested_key": "Pandaborn.Buildings.Wonder",
+      "text": "<YellowHighlight>Wonder:</YellowHighlight> The work of both peoples and many patient years.",
+      "needs_code": true
+    },
+    "wonder_statistics": {
+      "_note": "Vanilla ends a mastered map with a few statistics, some of them jokes (WonderCompletion.Statistic.TailsPainted, .ChippedTeeth, .BeaversExploded). These are Inkpaw counterparts in the same form: a label ending in a colon, followed by a number.",
+      "vanilla_pattern": "WonderCompletion.Statistic.<Id>",
+      "villagers_born": { "replaces": "WonderCompletion.Statistic.BeaversBorn", "suggested_key": "Pandaborn.WonderCompletion.Statistic.VillagersBorn", "text": "Cubs and kits born:", "needs_code": true },
+      "naps_taken": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.NapsTaken", "text": "Naps taken:", "needs_code": true },
+      "tea_drunk": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.TeaDrunk", "text": "Cups of tea drunk:", "needs_code": true },
+      "festivals_held": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.FestivalsHeld", "text": "Lantern Festivals held:", "needs_code": true },
+      "bamboo_cut": { "replaces": "WonderCompletion.Statistic.TreesCut", "suggested_key": "Pandaborn.WonderCompletion.Statistic.BambooCut", "text": "Bamboo cut:", "needs_code": true }
+    }
+  },
+  "placeholder_replaced": {
+    "_note": "For the record: the mod's CSV currently ships these lines, which this file replaces. The description ended with 'Early development build: the Inkpaws borrow Folktails buildings and crops for now.'",
+    "keys": ["Faction.Inkpaws.DisplayName", "Faction.Inkpaws.Description", "Faction.Inkpaws.GameOver.Flavor", "Faction.Inkpaws.GameOver.Message", "Faction.Inkpaws.WonderCompletionFlavor", "Faction.Inkpaws.WonderCompletionMessage", "Bot.DisplayName.Inkpaws"]
+  }
+}

@@ -1,0 +1,51 @@
+DRAFT NOTES (delete everything down to the line of dashes before publishing)
+- Written by an AI. Not published anywhere. Describes the mod as designed in docs/DESIGN.md revision 4.
+- Check every claim against the release build. Remove a feature line if the feature does not ship:
+  the Ringtails (they depend on the prototype gate), the Lantern Festival, the Great Flowering,
+  Wooden Oxen, the Sky Lantern, Mac support.
+- The sentence about a native speaker in the disclosure is in [square brackets]. Keep it only once it is true.
+- Steam Workshop descriptions use BBCode and are limited to 8,000 characters. This one is about 3,500.
+- A one-line description for manifest.json, which still says "Early development build":
+  Adds the Inkpaws, a playable faction of giant pandas who lead water down bamboo flumes, work a short day, and share their village with the red pandas of the Night Watch. Needs no other mods. Art, code and text are AI-generated.
+----------------------------------------------------------------------
+[h1]Pandaborn - Factions: the Inkpaws[/h1]
+
+A new playable faction for Timberborn. The Inkpaws are giant pandas who run bamboo aqueducts down to rice terraces. When the afternoon bell rings, they put down their tools, and the red pandas take over the village for the night.
+
+Unlocked from the start. Needs no other mods.
+
+[h2]Three things that make them different[/h2]
+
+[b]1. They lead the water.[/b]
+A flume is an open bamboo aqueduct, one tile wide. Water runs one way along it, level or downhill, and it never leaks. A Scoop Wheel lifts water out of the river with no workers. A Paddy Spout holds a rice field at a shallow depth. Levees, dams and floodgates are all still there, under their usual names, so every map plays from day one.
+
+[b]2. They ring the afternoon bell.[/b]
+The bell is the working-hours control you already know. The shorter the day, the faster rested pandas work and walk: at twelve hours they get as much done as beavers do in sixteen. The afternoon is for hammocks, tea, the hot spring and watching the cubs. Long days are allowed. They only leave no time for tea and naps.
+
+[b]3. Two peoples, one village.[/b]
+Build a Moon Loft, a snug home on stilts with a lantern in its window, and a family of Ringtails moves in. The Ringtails are the village's Night Watch, its stargazers and its artists. They work from the bell to dawn: night builders raise your buildings while the Inkpaws sleep, couriers run with full baskets, and the Star Tower turns the night sky into science. A village with no Ringtails is still a complete village.
+
+[h2]Also in the valley[/h2]
+[list]
+[*][b]Every kind of land has a use.[/b] Rice in flooded fields, bamboo and cabbage on moist ground, tea and Sichuan pepper on dry ground only.
+[*][b]Bamboo, twice.[/b] Shoot bamboo is the first crop. Timber bamboo is a fast tree cut for poles, and poles need no mill.
+[*][b]A Sichuan kitchen.[/b] Steamed shoots, pickles, steamed rice, tea, sweet rice balls and hot pot. Each dish is a step up in well-being.
+[*][b]The Lantern Festival.[/b] Stock the square, call the festival, and everyone takes a day and a night off.
+[*][b]The Great Flowering.[/b] Once in many cycles, one kind of bamboo flowers and dies. It is announced a full cycle ahead, and it leaves behind the best food in the valley. It can be made rare or switched off.
+[*][b]Late game.[/b] Wooden Oxen, kite windmills, a great cliff carving of a seated panda, and a Sky Lantern that carries seeds over the wasteland.
+[*][b]Real names.[/b] Colonists are called things like Mo Mo (Ink) and Xing He (River of stars).
+[/list]
+
+[h2]What it changes, and what it does not[/h2]
+[list]
+[*]Adds one faction, the Inkpaws, with its own buildings, goods, crops and needs.
+[*]Folktails and Iron Teeth play exactly as before. No file of the game is replaced.
+[*]Needs no other mods. It works with or without [i]Pandaborn - Panda Reskin[/i].
+[*]Safe to add at any time.
+[*][b]Removing the mod breaks Inkpaws saves.[/b] A game played as the Inkpaws needs the mod to load. Games played as other factions are not affected.
+[*]Windows and Mac.
+[*]The text is in English, written plainly so that machine translation reads well.
+[/list]
+
+[h2]Credits and AI disclosure[/h2]
+Made by JigglyPanda. Generative AI (Claude, by Anthropic) was used to write the code and the art pipeline, to generate the models, textures and icons in code, and to write the in-game text and the colonist names. [The names were checked by a native speaker of Mandarin.] Timberborn is © Mechanistry. This is an unofficial fan mod.
