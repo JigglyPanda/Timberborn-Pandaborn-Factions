@@ -59,6 +59,7 @@ class Model:
         self.notes = []
         self.extra = {}
         self.stage_extra = None
+        self.stage_slots = []         # [(name, pos, yaw)]: slots on the construction stage (builders at a wonder)
         self.stage_height = None
 
     # -- grid helpers ------------------------------------------------------------------------------------------
@@ -76,14 +77,14 @@ class Model:
         self.slots.append((name, tuple(float(v) for v in pos), yaw))
 
     def animate(self, node, pivot, axis, frames=100, fps=24.0, turns=1, driver="", direction=1, kind="turn",
-                amplitude=0.25, pivot_rot=None, parent=None):
+                amplitude=0.25, pivot_rot=None, parent=None, height=30.0):
         """Parts added inside `with geo.node(node):` become a child node animated about pivot: kind 'turn' (wheels:
         `turns` full turns per loop) or 'swing' (+-amplitude radians). pivot_rot puts the node under a rotated
         'Pivot' node so `axis` is in that local frame (as the vanilla hammock does)."""
         self.animated[node] = {"pivot": tuple(float(v) for v in pivot), "axis": tuple(float(v) for v in axis),
                                "frames": frames, "fps": fps, "turns": turns, "driver": driver,
                                "direction": direction, "kind": kind, "amplitude": amplitude,
-                               "pivot_rot": pivot_rot, "parent": parent}
+                               "pivot_rot": pivot_rot, "parent": parent, "height": height}
 
     def collider(self, center, size):
         self.colliders.append({"Center": dict(zip("XYZ", map(float, center))),
@@ -179,7 +180,8 @@ class Model:
         fin_path = os.path.join(self.out, f"{self.id}.Model.timbermesh")
         st_path = os.path.join(self.out, f"{self.id}.ConstructionStage0.Model.timbermesh")
         write(fin_path, self.id, self.geo.parts, self.animated, self.slots)
-        write(st_path, self.id + ".ConstructionStage0", [p.transformed() for p in stage if not p.node])
+        write(st_path, self.id + ".ConstructionStage0", [p.transformed() for p in stage if not p.node],
+              slots=self.stage_slots)
         rep = self.report(self.geo.parts, stage)
         rep["files"] = {"finished": fin_path, "stage": st_path}
         json.dump(rep, open(os.path.join(self.out, "report.json"), "w"), indent=1)

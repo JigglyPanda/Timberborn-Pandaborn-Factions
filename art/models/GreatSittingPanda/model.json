@@ -1,0 +1,61 @@
+{
+ "id": "GreatSittingPanda",
+ "standIn": "HallOfAbundance.Folktails",
+ "generatedBy": "art/models/GreatSittingPanda/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "GreatSittingPanda.Model",
+  "constructionStage0": "GreatSittingPanda.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 5,
+  "Y": 5,
+  "Z": 3
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 2.5,
+    "Y": 1.5,
+    "Z": 3.2
+   },
+   "Size": {
+    "X": 4.8,
+    "Y": 3.0,
+    "Z": 3.4
+   }
+  },
+  {
+   "Center": {
+    "X": 2.5,
+    "Y": 0.1,
+    "Z": 0.75
+   },
+   "Size": {
+    "X": 4.2,
+    "Y": 0.2,
+    "Z": 1.3
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 3576,
+  "constructionStage0": 1124,
+  "vanillaMedianForFootprint": 2900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks and monument specs as the vanilla Hall of Abundance (no entrance). One construction stage: set ConstructionSiteProgressVisualizerSpec.ProgressThresholds to [0.0] (the vanilla has two)."
+ ]
+}

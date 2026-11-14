@@ -5,7 +5,7 @@
     "BuildingCost": [],
     "ScienceCost": 0,
     "PlaceFinished": false,
-    "FinishableWithBeaversOnSite": false,
+    "FinishableWithBeaversOnSite": true,
     "DrawRangeBoundsOnIt": false
   },
   "TemplateSpec": {

@@ -355,6 +355,13 @@ def write(path, root_name, parts, animated=None, slots=None):
             t = (f + 1) / frames
             if a.get("kind", "turn") == "swing":
                 ang = a.get("amplitude", 0.25) * math.sin(2 * math.pi * t)
+            elif a.get("kind") == "rise":
+                # a one-shot launch (wonders play their animation once): up and away with a slow turn, and back home
+                # on the last frame so the model rests at its start pose when the animator stops
+                k = 0.0 if f == frames - 1 else (t / 0.97) ** 1.6
+                fr.position.y = a["_pos"][1] + a.get("height", 30.0) * k
+                fr.position.x = a["_pos"][0] + 1.5 * k * k
+                ang = 1.5 * math.pi * k
             else:
                 ang = 2 * math.pi * a.get("turns", 1) * t * a.get("direction", 1)
             fr.rotation.x, fr.rotation.y, fr.rotation.z, fr.rotation.w = quat_axis(a["axis"], ang)

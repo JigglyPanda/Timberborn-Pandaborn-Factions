@@ -1,0 +1,80 @@
+{
+ "id": "InkStudio",
+ "standIn": "ContemplationSpot.Folktails",
+ "generatedBy": "art/models/InkStudio/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "InkStudio.Model",
+  "constructionStage0": "InkStudio.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 0,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Spot",
+   "position": {
+    "X": 0.5,
+    "Y": 0.0,
+    "Z": 0.3
+   },
+   "yaw": 0.0
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.5,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.95,
+    "Y": 1.0,
+    "Z": 0.95
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Fire",
+   "Position": {
+    "X": 0.84,
+    "Y": 0.05,
+    "Z": 0.75
+   },
+   "note": "the vanilla small fire, as a brazier warming the ink water"
+  }
+ ],
+ "triangles": {
+  "finished": 820,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Paper.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails"
+ ],
+ "notes": [],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": 0.2
+ }
+}

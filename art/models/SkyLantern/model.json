@@ -1,0 +1,126 @@
+{
+ "id": "SkyLantern",
+ "standIn": "EarthRecultivator.Folktails",
+ "generatedBy": "art/models/SkyLantern/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "SkyLantern.Model",
+  "constructionStage0": "SkyLantern.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 7,
+  "Y": 7,
+  "Z": 8
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 3,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 3.5,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#SkyLanternAnimated",
+   "driver": "WonderAnimationControllerSpec",
+   "pivot": {
+    "X": 3.5,
+    "Y": 4.25,
+    "Z": 3.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "rise",
+   "frames": 240,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WonderAnimationControllerSpec (plays once when the wonder fires)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 3.5,
+    "Y": 0.45,
+    "Z": 3.5
+   },
+   "Size": {
+    "X": 7.0,
+    "Y": 0.9,
+    "Z": 7.0
+   }
+  },
+  {
+   "Center": {
+    "X": 3.5,
+    "Y": 3.0,
+    "Z": 3.5
+   },
+   "Size": {
+    "X": 3.2,
+    "Y": 4.4,
+    "Z": 3.2
+   }
+  },
+  {
+   "Center": {
+    "X": 3.5,
+    "Y": 6.3,
+    "Z": 3.5
+   },
+   "Size": {
+    "X": 3.6,
+    "Y": 3.8,
+    "Z": 3.6
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Lanterns",
+   "Position": {
+    "X": 3.5,
+    "Y": 8.3,
+    "Z": 3.5
+   },
+   "note": "the vanilla rising-lantern particles, now from the top platform"
+  }
+ ],
+ "triangles": {
+  "finished": 4966,
+  "constructionStage0": 2740,
+  "vanillaMedianForFootprint": 2900
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, entrance and wonder specs as the vanilla Earth Recultivator. The vanilla wonder uses four stages (thresholds 0.25/0.5/0.75); this model ships one stage carrying the builder slots (Working, Building, Cutting, Digging): set ConstructionSiteProgressVisualizerSpec.ProgressThresholds to [0.0].",
+  "WonderAnimationController plays '#SkyLanternAnimated' once (rise, 10 s) and it snaps home on the last frame."
+ ],
+ "access": {
+  "X": 3.5,
+  "Y": 0.0,
+  "Z": 0.6
+ }
+}
