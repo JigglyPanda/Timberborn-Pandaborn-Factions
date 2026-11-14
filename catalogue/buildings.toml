@@ -13,7 +13,7 @@
 
 [buildings]
 # ------------------------------------------------------------------ village and logistics (CONTENT: Village)
-PandabornVillageHall = { model = "VillageHall" }
+PandabornVillageHall = { model = "VillageHall", set = { "BuildingSpec.SelectionSoundName" = "Pandaborn.VillageHall" } }
 BuildersHut = {}
 HaulingPost = {}
 DistrictCrossing = {}
@@ -28,22 +28,22 @@ PandabornMoonLoft = { model = "MoonLoft", waits_for = "Ringtails", needs_code = 
 # ------------------------------------------------------------------ food
 GathererFlag = {}
 EfficientFarmHouse = { text = "PandabornFarmstead", note = "CONTENT's Farmstead; keeps the vanilla name Farmhouse (coordinator, 2026-11-14)" }
-PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice"] }
-PandabornPickleYard = { archetype = "workshop", model = "PickleYard", recipes = ["PandabornPickles"] }
+PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Steamer" } }
+PandabornPickleYard = { archetype = "workshop", model = "PickleYard", recipes = ["PandabornPickles"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.PickleYard" } }
 PandabornPaddyHouse = { model = "PaddyHouse" }
-PandabornTeaRoastery = { archetype = "workshop", basis = "Bakery.Folktails", model = "TeaRoastery", recipes = ["PandabornTea"], tool_order = 31 }
-PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", recipes = ["PandabornRiceFlour"], waits_for = "Water", needs_code = "driven by flowing water: until then powered like the vanilla gristmill", tool_order = 40 }
-PandabornKitchen = { basis = "Bakery.Folktails", model = "Kitchen", recipes = ["PandabornSweetRiceBalls", "PandabornBambooSeedCakes"], waits_for = "Water", needs_code = "both its dishes need rice flour from the Trip-Hammer Mill (water module)", tool_order = 52 }
-PandabornHotPotHall = { archetype = "workshop", basis = "Bakery.Folktails", model = "HotPotHall", recipes = ["PandabornHotPot"], tool_order = 51 }
+PandabornTeaRoastery = { archetype = "workshop", basis = "Bakery.Folktails", model = "TeaRoastery", recipes = ["PandabornTea"], tool_order = 31, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.TeaRoastery" } }
+PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", recipes = ["PandabornRiceFlour"], waits_for = "Water", needs_code = "driven by flowing water: until then powered like the vanilla gristmill", tool_order = 40, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.TripHammer" } }
+PandabornKitchen = { basis = "Bakery.Folktails", model = "Kitchen", recipes = ["PandabornSweetRiceBalls", "PandabornBambooSeedCakes"], waits_for = "Water", needs_code = "both its dishes need rice flour from the Trip-Hammer Mill (water module)", tool_order = 52, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Simmer" } }
+PandabornHotPotHall = { archetype = "workshop", basis = "Bakery.Folktails", model = "HotPotHall", recipes = ["PandabornHotPot"], tool_order = 51, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Simmer" } }
 
 # ------------------------------------------------------------------ wood and materials
 LumberjackFlag = {}
 Forester = {}
 GearWorkshop = {}
 PaperMill = { recipes = ["PandabornPaper"] }
-PandabornLanternWorkshop = { archetype = "workshop", basis = "Bakery.Folktails", model = "LanternWorkshop", recipes = ["PandabornPaperLantern"], tool_group = "Wood", tool_order = 60 }
+PandabornLanternWorkshop = { archetype = "workshop", basis = "Bakery.Folktails", model = "LanternWorkshop", recipes = ["PandabornPaperLantern"], tool_group = "Wood", tool_order = 60, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.LanternWorkshop" } }
 LumberMill = { text = "PandabornPoleMill", icon = "Sprites/Pandaborn/Buildings/PandabornPoleMillIcon", note = "the Pole Mill: vanilla lumber mill, logs to poles (Plank renamed); DESIGN.md 2026-11-14" }
-PandabornSmokeKiln = { basis = "WoodWorkshop.Folktails", model = "SmokeKiln", recipes = ["PandabornCuredPole"] }
+PandabornSmokeKiln = { basis = "WoodWorkshop.Folktails", model = "SmokeKiln", recipes = ["PandabornCuredPole"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.SmokeKiln" } }
 ExplosivesFactory = {}
 
 # ------------------------------------------------------------------ metal
@@ -73,7 +73,7 @@ PandabornFlumeCorner = { basis = "PoleBanner.Folktails", standin = "art/models/F
 PandabornFlumeDrop = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeDrop", waits_for = "Water", needs_code = "flume segment; inert until the water module ships", tool_group = "Water", tool_order = 112 }
 PandabornFlumeBridge = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeBridge", waits_for = "Water", needs_code = "flume segment; inert until the water module ships", tool_group = "Water", tool_order = 113 }
 PandabornFlumeGate = { basis = "FillValve.Folktails", standin = "art/models/FlumeGate", waits_for = "Water", needs_code = "intake, flow setting and badwater shut-off; until then a fill valve", tool_group = "Water", tool_order = 114, module_specs = { Water = { PandabornEntityStateSpec = {} } } }
-PandabornScoopWheel = { basis = "CompactMechanicalPump.Folktails", standin = "art/models/ScoopWheel", waits_for = "Water", needs_code = "lifts water with the current; until then a powered pump", tool_group = "Water", tool_order = 120 }
+PandabornScoopWheel = { basis = "CompactMechanicalPump.Folktails", standin = "art/models/ScoopWheel", waits_for = "Water", needs_code = "lifts water with the current; until then a powered pump", tool_group = "Water", tool_order = 120, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.ScoopWheel" }, add = { PowerGeneratorSoundsSpec = {} } }
 PandabornPaddySpout = { basis = "FillValve.Folktails", standin = "art/models/PaddySpout", waits_for = "Water", needs_code = "holds a field at a shallow depth; until then a fill valve", tool_group = "Water", tool_order = 130 }
 PandabornCisternTap = { basis = "Discharge.Folktails", standin = "new model", waits_for = "Water", needs_code = "pours stored water into a flume; until then a vanilla discharge", tool_group = "Water", tool_order = 131 }
 PandabornDewCollector = { model = "DewCollector", basis = "Grill.Folktails", recipes = ["PandabornDewWater"], waits_for = "Water", needs_code = "no workers and less water in drought (dew limiter); until then a staffed workshop making a steady trickle", tool_group = "Water", tool_order = 140 }
@@ -104,9 +104,9 @@ ImpermeablePowerShaft = {}
 VerticalPowerShaft = { text = "PowerShaft" }
 Clutch = {}
 GravityBattery = {}
-PandabornBambooWaterWheel = { model = "BambooWaterWheel" }
-PandabornKiteWindmill = { model = "KiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillSmallIcon" }
-PandabornLargeKiteWindmill = { basis = "LargeWindTurbine.Folktails", model = "LargeKiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillLargeIcon" }
+PandabornBambooWaterWheel = { model = "BambooWaterWheel", set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.BambooWaterWheel" } }
+PandabornKiteWindmill = { model = "KiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillSmallIcon", set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.KiteWindmill" } }
+PandabornLargeKiteWindmill = { basis = "LargeWindTurbine.Folktails", model = "LargeKiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillLargeIcon", set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.KiteWindmill" } }
 DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGenerator.blueprint" }
 
 # ------------------------------------------------------------------ science and Wooden Oxen
@@ -153,12 +153,12 @@ Campfire = {}
 # the Nap attraction: the vanilla hammock (a rest place for idle wanderers) plus an attraction on its swinging Spot
 PandabornHammock = { model = "Hammock", delete = ["RestPlaceSpec"], add = { AttractionSpec = { Effects = [{ NeedId = "PandabornNap", PointsPerHour = 0.6, SatisfyToMaxValue = false }] } }, tool_group = "Wellbeing", tool_order = 21, module_specs = { Bell = { PandabornBellSettledMarkerSpec = {} } } }
 PandabornNapPlatform = { model = "NapPlatform", effects = { PandabornNap = 0.6, RooftopTerrace = 0.6 }, set = { "EnterableSpec.CapacityFinished" = 5 }, tool_order = 20, note = "on the ground or on a roof (GroundOrStackable), eight nappers; keeps the rooftop terrace effect" }
-PandabornTeahouse = { model = "Teahouse", effects = { PandabornTea = 0.6 }, tool_order = 11, add = { GoodConsumingBuildingSpec = { FullInventoryWorkHours = 20, ConsumedGoods = [{ GoodId = "PandabornTea", GoodPerHour = 1.0 }, { GoodId = "Water", GoodPerHour = 0.5 }] }, GoodConsumingAttractionSpec = {} }, module_specs = { Bell = { PandabornBellSettledMarkerSpec = {} } }, note = "the only place the Tea need is met; uses roasted tea and water while guests sit, closed without them" }
+PandabornTeahouse = { model = "Teahouse", effects = { PandabornTea = 0.6 }, tool_order = 11, add = { GoodConsumingBuildingSpec = { FullInventoryWorkHours = 20, ConsumedGoods = [{ GoodId = "PandabornTea", GoodPerHour = 1.0 }, { GoodId = "Water", GoodPerHour = 0.5 }] }, GoodConsumingAttractionSpec = {} }, module_specs = { Bell = { PandabornBellSettledMarkerSpec = {} } }, note = "the only place the Tea need is met; uses roasted tea and water while guests sit, closed without them", set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Teahouse" } }
 PandabornSlideAndSwing = { basis = "Lido.Folktails", model = "SlideAndSwing", needs_map = { Lido = "PandabornPlay" } }
 PandabornKindergarten = { model = "Kindergarten", needs_map = { Campfire = "PandabornCubWatching" }, tool_order = 12, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
 PandabornInkStudio = { basis = "ContemplationSpot.Folktails", model = "InkStudio", needs_map = { ContemplationSpot = "PandabornContemplation" } }
-PandabornHotSpringBath = { basis = "MudPit.Folktails", model = "HotSpringBath", effects = { PandabornSoak = 0.6, WetFur = 0.4 }, set = { "GoodConsumingBuildingSpec.ConsumedGoods" = [{ GoodId = "Water", GoodPerHour = 0.5 }] }, note = "uses water, not dirt (DESIGN.md 2026-11-14); wets the fur as the domed garden does" }
-PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "RingtailVenues", needs_code = "run by Ringtails", tool_group = "PandabornNightWatch", tool_order = 60 }
+PandabornHotSpringBath = { basis = "MudPit.Folktails", model = "HotSpringBath", effects = { PandabornSoak = 0.6, WetFur = 0.4 }, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.HotSpring", "GoodConsumingBuildingSpec.ConsumedGoods" = [{ GoodId = "Water", GoodPerHour = 0.5 }] }, note = "uses water, not dirt (DESIGN.md 2026-11-14); wets the fur as the domed garden does" }
+PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "RingtailVenues", needs_code = "run by Ringtails", tool_group = "PandabornNightWatch", tool_order = 60, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.OperaStage" } }
 TeethGrindstone = {}
 MedicalBed = {}
 Herbalist = {}

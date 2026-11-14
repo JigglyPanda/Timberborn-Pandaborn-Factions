@@ -56,7 +56,10 @@ param(
     [string]$StageDir = 'E:\PandabornDev\build\stage\PandabornFactions',
     [string]$InstallDir = 'E:\PandabornDev\build\PandabornFactions',
     [string]$PackageDir = 'E:\PandabornDev\build\package',
-    [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles'),
+    # plants (tools/build_plants.ps1) and sounds (tools/build_sound.ps1); the look bundle comes with the code. Planned:
+    # E:\PandabornDev\build\characters\attachments (pandabornattachments, hats and baskets) once that lane's real
+    # geometry and _mac twin are in (docs/tech/ringtail-body.md 7.3)
+    [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles', 'E:\PandabornDev\build\sound\AssetBundles'),
     [string]$MeshSource = 'E:\PandabornDev\assets\Pandaborn-Reskin-release\Characters\Beaver',
     [string]$RingtailMeshSource = 'E:\PandabornDev\build\characters\out',
     [string]$ModsDir = 'C:\Users\Israel Gonzalez\Documents\Timberborn\Mods',

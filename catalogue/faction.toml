@@ -42,7 +42,7 @@ game_over_flavor = "Faction.Inkpaws.GameOver.Flavor"
 
 [faction.wonder]
 completion_image = "UI/Images/WonderCompletion/wonder-completion-folktails"
-launch_sound = "UI.Buildings.Wonder.EarthRecultivator"
+launch_sound = "UI.Buildings.Wonder.PandabornSkyLantern"   # sound lane (pandabornsounds bundle)
 completion_flavor = "Faction.Inkpaws.WonderCompletionFlavor"
 completion_message = "Faction.Inkpaws.WonderCompletionMessage"
 

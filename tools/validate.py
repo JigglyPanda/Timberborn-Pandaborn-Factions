@@ -355,6 +355,7 @@ def main(argv=None):
     check_asset_refs(c)
     check_models(c)
     check_template_names(c)
+    check_building_sounds(c)
     check_no_vanilla_side_effects(c)
     check_global_specs(c)
     check_unique_ids(c)
@@ -609,14 +610,73 @@ def check_references(c):
             resolve(c, value, rel + " " + path, kind)
 
 
+BUNDLE_PY = r"E:\PandabornDev\tools\venv\Scripts\python.exe"   # has UnityPy (docs/tech/sound.md)
+BUNDLE_LIST = r"""
+import sys, UnityPy
+for path in sys.argv[1:]:
+    env = UnityPy.load(path)
+    for name in env.container.keys():
+        print(name)
+"""
+
+
+def mod_bundle_sounds(c):
+    """Clip names inside the mod's own AssetBundles/*_win (container paths .../resources/sounds/.../<clip>.wav), read
+    with UnityPy from the art venv. None when they cannot be read (then such sounds are reported as unchecked)."""
+    if hasattr(c, "bundle_sounds"):
+        return c.bundle_sounds
+    c.bundle_sounds = set()
+    bundles = [c.files[r] for r in c.files if r.lower().startswith("assetbundles/") and r.lower().endswith("_win")]
+    if not bundles:
+        return c.bundle_sounds
+    if not os.path.isfile(BUNDLE_PY):
+        c.bundle_sounds = None
+        return None
+    try:
+        r = subprocess.run([BUNDLE_PY, "-I", "-c", BUNDLE_LIST] + bundles, capture_output=True, timeout=300)
+    except (OSError, subprocess.TimeoutExpired):
+        c.bundle_sounds = None
+        return None
+    if r.returncode != 0:
+        c.bundle_sounds = None
+        return None
+    for line in r.stdout.decode("utf-8", "replace").splitlines():
+        low = line.strip().lower()
+        if "/resources/sounds/" in low and low.endswith(".wav"):
+            c.bundle_sounds.add(low.rsplit("/", 1)[-1][:-4])
+    return c.bundle_sounds
+
+
+def sound_known(names, name):
+    low = name.lower()
+    return low in names or any(re.fullmatch(re.escape(low) + r"_\d+", s) for s in names)
+
+
 def check_sound(c, name, where):
     if not name:
         R.error(where + " is empty")
-    elif c.res is None:
+        return
+    own = mod_bundle_sounds(c)
+    if own and sound_known(own, name):
+        return
+    if c.res is None or (own is None and "pandaborn" in name.lower()):
         R.unchecked.add("%s -> %s" % (where, name))
-    elif name.lower() not in c.sound_names and not any(
-            re.fullmatch(re.escape(name.lower()) + r"_\d+", s) for s in c.sound_names):
-        R.error("%s: no built-in sound named %s (or %s_NN variants)" % (where, name, name))
+    elif not sound_known(c.sound_names, name):
+        R.error("%s: no built-in sound or sound in the mod's bundles named %s (or %s_NN variants)" % (where, name, name))
+
+
+def check_building_sounds(c):
+    """BuildingSpec sounds of our own (names starting Pandaborn.): looping Environment.Buildings.Loop.<name>, selection
+    UI.Buildings.Selected.<name> must be a clip in the game or the mod's bundles (a missing clip throws when played)."""
+    for key, bp in sorted(c.mod_bp.items()):
+        bs = bp.get("BuildingSpec")
+        if not bs:
+            continue
+        rel = c.keys[key][0]
+        for field, prefix in (("LoopingSoundName", "Environment.Buildings.Loop."), ("SelectionSoundName", "UI.Buildings.Selected.")):
+            v = bs.get(field) or ""
+            if v.lower().startswith("pandaborn"):
+                check_sound(c, prefix + v, "%s BuildingSpec.%s" % (rel, field))
 
 
 def check_template_names(c):
@@ -1403,7 +1463,9 @@ def check_material_coverage(c, fid, bp):
 
 # bundles whose file name is fixed by a recorded decision (docs/ENGINEERING.md asks for pandabornfactions*)
 BUNDLE_NAME_EXCEPTIONS = {"pandabornlook": "docs/tech/look.md (the Look module loads its materials from this bundle)",
-                          "pandabornplants": "docs/tech/plants.md (never renamed: look.md problem 10)"}
+                          "pandabornplants": "docs/tech/plants.md (never renamed: look.md problem 10)",
+                          "pandabornsounds": "docs/tech/sound.md (built and checked under this name)",
+                          "pandabornattachments": "docs/tech/ringtail-body.md 7.3 (planned: hats and baskets)"}
 
 
 def check_bundles(c):
