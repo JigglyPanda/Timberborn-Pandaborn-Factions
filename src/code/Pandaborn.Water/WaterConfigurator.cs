@@ -11,6 +11,8 @@ namespace Pandaborn.Water
         protected override void Configure()
         {
             Bind<FlumeService>().AsSingleton();
+            Bind<WaterSounds>().AsSingleton();
+            Bind<CisternTapHint>().AsSingleton();
             Bind<FlumeGateFragment>().AsSingleton();
             Bind<WaterInfoFragment>().AsSingleton();
             Bind<FlumeSegment>().AsTransient();

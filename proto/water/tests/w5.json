@@ -1,0 +1,430 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 1200,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "w5",
+  "speed": 3,
+  "area": [
+   26,
+   18
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     4,
+     1,
+     24,
+     1
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     12,
+     3,
+     14,
+     4
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     11,
+     13,
+     15,
+     16
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     8,
+     3,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.PandabornProto",
+    "at": [
+     13,
+     1,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "sc"
+   },
+   {
+    "op": "place",
+    "template": "PandabornCisternTap.PandabornProto",
+    "at": [
+     2,
+     7,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "tap"
+   },
+   {
+    "op": "water",
+    "id": "chIn",
+    "at": [
+     5,
+     1,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "chOut",
+    "at": [
+     23,
+     1,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "objects": [
+     "sc",
+     "g",
+     "f0",
+     "f5"
+    ],
+    "cells": [
+     [
+      13,
+      1,
+      -2
+     ],
+     [
+      13,
+      4,
+      -1
+     ],
+     [
+      13,
+      8,
+      -1
+     ],
+     [
+      13,
+      12,
+      -1
+     ],
+     [
+      13,
+      14,
+      -2
+     ]
+    ],
+    "volumes": [
+     [
+      12,
+      3,
+      14,
+      4,
+      -1
+     ],
+     [
+      11,
+      13,
+      15,
+      16,
+      -2
+     ]
+    ],
+    "label": "basin_full"
+   },
+   {
+    "op": "uiText",
+    "id": "sc",
+    "label": "ui_sc_full"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     13,
+     5,
+     13,
+     12
+    ],
+    "z": -1
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     13,
+     5,
+     -1
+    ],
+    "orientation": "Cw0",
+    "id": "g"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     13,
+     6,
+     -1
+    ],
+    "count": 6,
+    "step": [
+     0,
+     1,
+     0
+    ],
+    "orientation": "Cw0",
+    "idPrefix": "f"
+   },
+   {
+    "op": "wait",
+    "ticks": 240,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "objects": [
+     "sc",
+     "g",
+     "f0",
+     "f5"
+    ],
+    "cells": [
+     [
+      13,
+      1,
+      -2
+     ],
+     [
+      13,
+      4,
+      -1
+     ],
+     [
+      13,
+      8,
+      -1
+     ],
+     [
+      13,
+      12,
+      -1
+     ],
+     [
+      13,
+      14,
+      -2
+     ]
+    ],
+    "volumes": [
+     [
+      12,
+      3,
+      14,
+      4,
+      -1
+     ],
+     [
+      11,
+      13,
+      15,
+      16,
+      -2
+     ]
+    ],
+    "label": "running"
+   },
+   {
+    "op": "statics",
+    "type": "Pandaborn.Water.WaterSounds",
+    "props": [
+     "AreaSoundActive",
+     "Toks"
+    ],
+    "label": "sound_running"
+   },
+   {
+    "op": "uiText",
+    "id": "sc",
+    "label": "ui_sc_running"
+   },
+   {
+    "op": "uiText",
+    "id": "g",
+    "label": "ui_g_running"
+   },
+   {
+    "op": "shot",
+    "name": "w5_running",
+    "focus": [
+     13,
+     8,
+     -1
+    ],
+    "distance": 14,
+    "pitch": 45,
+    "yaw": 20
+   },
+   {
+    "op": "waterOff",
+    "id": "chIn"
+   },
+   {
+    "op": "waterOff",
+    "id": "chOut"
+   },
+   {
+    "op": "drought"
+   },
+   {
+    "op": "water",
+    "id": "empty",
+    "at": [
+     13,
+     3,
+     -1
+    ],
+    "rate": -2.0
+   },
+   {
+    "op": "wait",
+    "ticks": 400,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "objects": [
+     "sc",
+     "g",
+     "f0",
+     "f5"
+    ],
+    "cells": [
+     [
+      13,
+      1,
+      -2
+     ],
+     [
+      13,
+      4,
+      -1
+     ],
+     [
+      13,
+      8,
+      -1
+     ],
+     [
+      13,
+      12,
+      -1
+     ],
+     [
+      13,
+      14,
+      -2
+     ]
+    ],
+    "volumes": [
+     [
+      12,
+      3,
+      14,
+      4,
+      -1
+     ],
+     [
+      11,
+      13,
+      15,
+      16,
+      -2
+     ]
+    ],
+    "label": "drought"
+   },
+   {
+    "op": "statics",
+    "type": "Pandaborn.Water.WaterSounds",
+    "props": [
+     "AreaSoundActive",
+     "Toks"
+    ],
+    "label": "sound_drought"
+   },
+   {
+    "op": "uiText",
+    "id": "sc",
+    "label": "ui_sc_drought"
+   },
+   {
+    "op": "uiText",
+    "id": "g",
+    "label": "ui_g_drought"
+   },
+   {
+    "op": "uiText",
+    "id": "tap",
+    "label": "ui_tap"
+   },
+   {
+    "op": "shot",
+    "name": "w5_drought",
+    "focus": [
+     13,
+     8,
+     -1
+    ],
+    "distance": 14,
+    "pitch": 45,
+    "yaw": 20
+   }
+  ],
+  "reloadSteps": []
+ }
+}

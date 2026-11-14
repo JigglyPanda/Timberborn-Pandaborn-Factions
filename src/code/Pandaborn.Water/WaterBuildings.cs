@@ -47,12 +47,22 @@ namespace Pandaborn.Water
     {
         private const int Interval = 20;
         private readonly ILoc _loc;
+        private readonly CisternTapHint _hint;
         private WaterPoweredGenerator _generator;
         private MechanicalNode _node;
-        private StatusToggle _weak;
+        private StatusSubject _subject;
+        private StatusToggle _weak, _weakWithHint;
+        private bool _hadCurrent;
         private int _countdown;
 
-        public CurrentDriven(ILoc loc) => _loc = loc;
+        public CurrentDriven(ILoc loc, CisternTapHint hint)
+        {
+            _loc = loc;
+            _hint = hint;
+        }
+
+        /// <summary>True while the "needs a current" status carries the Cistern Tap hint (for tests).</summary>
+        public bool ShowsTapHint => _weakWithHint != null && _weakWithHint.IsActive;
 
         /// <summary>The current at the wheel, as the generator reads it (0 below the generator's minimum).</summary>
         public float Current => _generator != null ? System.Math.Abs(_generator.GeneratorRotation) : 0f;
@@ -77,14 +87,34 @@ namespace Pandaborn.Water
             _weak = StatusToggle.CreateNormalStatusWithFloatingIcon("NothingToDo", _loc.T("Pandaborn.Water.Status.WeakCurrent"));
         }
 
-        public void InitializeEntity() => GetComponent<StatusSubject>()?.RegisterStatus(_weak);
+        public void InitializeEntity()
+        {
+            _subject = GetComponent<StatusSubject>();
+            _subject?.RegisterStatus(_weak);
+        }
 
         public override void Tick()
         {
             if (--_countdown > 0) return;
             _countdown = Interval;
             var blockObject = GetComponent<Timberborn.BlockSystem.BlockObject>();
-            _weak.Toggle(blockObject != null && blockObject.IsFinished && _generator != null && Current <= 0f);
+            bool still = blockObject != null && blockObject.IsFinished && _generator != null && Current <= 0f;
+            if (!still && Current > 0f) _hadCurrent = true;
+            // a wheel that turned before and stopped (its river dried up), or any wheel in a drought: stored water helps.
+            // A wheel built in still water is in the wrong place, and the plain status says so.
+            bool hinted = still && (_hadCurrent || _hint.InDrought) && _hint.Available && EnsureHinted();
+            _weak.Toggle(still && !hinted);
+            _weakWithHint?.Toggle(hinted);
+        }
+
+        private bool EnsureHinted()
+        {
+            if (_weakWithHint != null) return true;
+            if (_subject == null || _hint.Sentence == null) return false;
+            _weakWithHint = StatusToggle.CreateNormalStatusWithFloatingIcon("NothingToDo",
+                _loc.T("Pandaborn.Water.Status.WeakCurrent") + " " + _hint.Sentence);
+            _subject.RegisterStatus(_weakWithHint);
+            return true;
         }
     }
 }

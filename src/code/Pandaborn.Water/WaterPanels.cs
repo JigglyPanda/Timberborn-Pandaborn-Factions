@@ -163,6 +163,8 @@ namespace Pandaborn.Water
         public string Text(BaseComponent e)
         {
             var mover = e.GetComponent<WaterMover>();
+            var input = e.GetComponent<WaterInput>();
+            var output = e.GetComponent<WaterOutput>();
             string rate = mover != null ? Cms(mover.CanMoveWater ? mover.EffectiveFlowRate : 0f) : null;
 
             var current = e.GetComponent<CurrentDriven>();
@@ -171,13 +173,20 @@ namespace Pandaborn.Water
                 string c = current.Current.ToString("0.00", CultureInfo.InvariantCulture);
                 string rated = current.RatedCurrent.ToString("0.00", CultureInfo.InvariantCulture);
                 if (current.Current <= 0f) return _loc.T("Pandaborn.Water.Info.CurrentNone", rated);
-                if (mover != null) return _loc.T("Pandaborn.Water.Info.CurrentLift", c, rated, rate);
+                if (mover != null)
+                {
+                    // a zero lift in a good current is a state, not a fault: name it
+                    if (!mover.CanMoveWater && output != null && !output.HasSpaceForWater) return _loc.T("Pandaborn.Water.Info.CurrentFull", c, rated);
+                    if (!mover.CanMoveWater && input != null && !input.IsUnderwater) return _loc.T("Pandaborn.Water.Info.CurrentNoReach", c, rated);
+                    return _loc.T("Pandaborn.Water.Info.CurrentLift", c, rated, rate);
+                }
                 return _loc.T("Pandaborn.Water.Info.CurrentWork", c, rated, Pct(current.Speed));
             }
             var spout = e.GetComponent<FillValve>();
             if (spout != null && e.GetComponent<PandabornPaddySpoutSpec>() != null)
             {
                 float now = Mathf.Max(0f, spout.ActualHeight - spout.MinTargetHeight);
+                if (now < 0.01f && input != null && !input.IsUnderwater) return _loc.T("Pandaborn.Water.Info.SpoutDry", Depth(spout.TargetDepth));
                 return _loc.T("Pandaborn.Water.Info.Spout", Depth(spout.TargetDepth), Depth(now));
             }
             if (e.GetComponent<PandabornTreadwheelSpec>() != null && mover != null)
@@ -185,6 +194,8 @@ namespace Pandaborn.Water
                 var workplace = e.GetComponent<Workplace>();
                 bool staffed = workplace != null && workplace.NumberOfAssignedWorkers > 0;
                 if (mover.CanMoveWater) return _loc.T("Pandaborn.Water.Info.TreadwheelLifting", rate);
+                if (output != null && !output.HasSpaceForWater) return _loc.T("Pandaborn.Water.Info.TreadwheelFull");
+                if (input != null && !input.IsUnderwater) return _loc.T("Pandaborn.Water.Info.TreadwheelNoReach");
                 return staffed ? _loc.T("Pandaborn.Water.Info.TreadwheelIdle") : _loc.T("Pandaborn.Water.Info.TreadwheelNoWorker");
             }
             if (e.GetComponent<PandabornCisternTapSpec>() != null)

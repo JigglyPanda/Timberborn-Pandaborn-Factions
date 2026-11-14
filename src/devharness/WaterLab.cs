@@ -710,6 +710,22 @@ namespace PandabornDevHarness
                     Note("invoke " + id + " " + typeName + "." + method + "(" + string.Join(", ", args) + ")");
                     break;
                 }
+                case "statics":
+                {
+                    // read public static properties of a mod type by full name (dev only), e.g. the water module's sound state
+                    string typeName = Request.Str(step, "type", null);
+                    var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(typeName, false)).FirstOrDefault(t => t != null);
+                    var o = new JObject { ["type"] = typeName, ["found"] = type != null };
+                    if (type != null)
+                        foreach (var name in (step["props"] as JArray ?? new JArray()).Select(t => (string)t))
+                        {
+                            var v = type.GetProperty(name)?.GetValue(null);
+                            o[name] = v == null ? null : JToken.FromObject(v);
+                        }
+                    _probes[Request.Str(step, "label", "statics")] = o;
+                    Note("statics " + o.ToString(Newtonsoft.Json.Formatting.None));
+                    break;
+                }
                 case "uiText":
                     UiText(step);
                     break;
@@ -1020,8 +1036,10 @@ namespace PandabornDevHarness
             if (seg != null) o["flume"] = seg;
             var gate = Reflect(bo, "FlumeGate", "Flow", "IsOpen", "ClosedByBadwater", "GuardEnabled", "LastContamination");
             if (gate != null) o["gate"] = gate;
-            var cur = Reflect(bo, "CurrentDriven", "Current", "Speed", "RatedCurrent");
+            var cur = Reflect(bo, "CurrentDriven", "Current", "Speed", "RatedCurrent", "ShowsTapHint");
             if (cur != null) o["current"] = cur;
+            var mon = Reflect(bo, "FlumeMonitor", "Flowing", "ShowsTapHint", "EndDry", "IntakeDry");
+            if (mon != null) o["monitor"] = mon;
             var workplace = bo.GetComponent<Workplace>();
             if (workplace != null) { o["workers"] = workplace.NumberOfAssignedWorkers; o["maxWorkers"] = workplace.MaxWorkers; }
             var enterable = bo.GetComponent<Enterable>();

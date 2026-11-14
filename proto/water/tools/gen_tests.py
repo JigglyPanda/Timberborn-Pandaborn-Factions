@@ -763,7 +763,36 @@ def w4():
     request2("w4", s, reload, [26, 20], 3, 1500, "auto")
 
 
+def w5():
+    """Phase 3, the small part: states named on the panel, the Cistern Tap hint, the flume's sound.
+    A Scoop Wheel (13,1,-2) in a channel lifts into a small basin (x12..14 y3..4, floor -1) that fills: its line must say
+    the basin is full and that it resumes by itself. Then a Flume Gate (13,5) and Flumes (13,6..11) in a trench are built
+    from the basin, ending over a pit: water runs (the flume loop has emitter tiles) and reaches the end (one tok).
+    Then the current stops and a drought starts: the wheel's status and the dry gate's status must carry the Cistern Tap
+    sentence (the dev mod's tap has no science cost, so it is unlocked), and the flume falls quiet.
+    """
+    S = "Pandaborn.Water.WaterSounds"
+    s = [flat(4, 1, 24, 1, -2), flat(12, 3, 14, 4, -1), flat(11, 13, 15, 16, -2), flat(1, 8, 3, 10, -1), wait(3),
+         place("PandabornScoopWheel", [13, 1, -2], "Cw0", id="sc"), place("PandabornCisternTap", [2, 7, 0], "Cw0", id="tap"),
+         water("chIn", [5, 1, -2], 1.6, 1.6), water("chOut", [23, 1, -2], -2.4)]
+    objs = ["sc", "g", "f0", "f5"]
+    probe = {"op": "probe", "objects": objs, "cells": [[13, 1, -2], [13, 4, -1], [13, 8, -1], [13, 12, -1], [13, 14, -2]],
+             "volumes": [[12, 3, 14, 4, -1], [11, 13, 15, 16, -2]]}
+    s += [wait(300), dict(probe, label="basin_full"), {"op": "uiText", "id": "sc", "label": "ui_sc_full"},
+          flat(13, 5, 13, 12, -1), place("PandabornFlumeGate", [13, 5, -1], "Cw0", id="g"),
+          line("PandabornFlume", [13, 6, -1], 6, (0, 1, 0), "Cw0", prefix="f"),
+          wait(240), dict(probe, label="running"), {"op": "statics", "type": S, "props": ["AreaSoundActive", "Toks"], "label": "sound_running"},
+          {"op": "uiText", "id": "sc", "label": "ui_sc_running"}, {"op": "uiText", "id": "g", "label": "ui_g_running"},
+          shot("w5_running", [13, 8, -1], 14, 45, 20)]
+    s += off("chIn", "chOut") + [{"op": "drought"}, water("empty", [13, 3, -1], -2.0), wait(400), dict(probe, label="drought"),
+          {"op": "statics", "type": S, "props": ["AreaSoundActive", "Toks"], "label": "sound_drought"},
+          {"op": "uiText", "id": "sc", "label": "ui_sc_drought"}, {"op": "uiText", "id": "g", "label": "ui_g_drought"},
+          {"op": "uiText", "id": "tap", "label": "ui_tap"}, shot("w5_drought", [13, 8, -1], 14, 45, 20)]
+    request2("w5", s, [], [26, 18], 3, 1200, "auto")
+
+
 if __name__ == "__main__":
+    w5()
     w4()
     w1()
     w2()

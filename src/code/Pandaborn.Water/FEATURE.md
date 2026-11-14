@@ -25,7 +25,19 @@ What it does, per spec (all specs in `Pandaborn.Specs/WaterSpecs.cs`, only on `.
 * `PandabornPaddySpoutSpec`, `PandabornTreadwheelSpec`, `PandabornCisternTapSpec`: markers for the info panel lines.
 * Panels (`WaterPanels.cs`, inside `SafeUi`): the Flume Gate panel reuses the vanilla floodgate fragment (flow slider in
   m3/s, badwater toggle, state line); one info line for Scoop Wheel, Trip-Hammer, Paddy Spout, Treadwheel, Cistern Tap.
-  Text: `mod/Localizations/enUS_PandabornWater.csv`.
+  Text: `mod/Localizations/enUS_PandabornWater.csv`. A zero that is a healthy state is named, not shown as a number: a
+  wheel whose basin is full says so and that it resumes by itself; a wheel whose scoops miss the water, a dry spout and
+  an off-shift treadwheel say what is going on.
+* `CisternTapHint`: when a Scoop Wheel that turned before (or any, in a drought) stops, or a Flume Gate that had water
+  runs dry, the status carries one more sentence naming the faction's Cistern Tap ("A Cistern Tap can pour stored Water
+  into the line."), only if the faction has a building with `PandabornCisternTapSpec` and it is unlocked.
+* `WaterSounds` (docs/tech/sound.md §8): one area sound (`Environment.Pandaborn.FlumeWater`, building mixer, 10-tile
+  cutoff) whose emitter tiles are the flume cells where water is flowing (each `FlumeMonitor` reports its own every 30
+  ticks; a dry or standing line is quiet), and the bamboo tok (`Environment.Pandaborn.BambooTok`) from a child object
+  of a run's last piece when water first reaches it, at most once every 20 real seconds game-wide. Both check
+  `PandabornSounds.Has` first: silent without the clips.
+* The Cistern Tap's panel line also gives the drought numbers in one sentence (how many tiles of farmland a small,
+  medium or large cistern keeps moist through 3, 6 or 9 dry days).
 
 **Data alone behaves like vanilla** (module off, forced off, or its API check failed):
 
@@ -75,6 +87,7 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `DisableComponent()`
   * method `EnableComponent()`
   * method `GetComponent<1>()`
+  * method `get_Transform()`
   * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
@@ -90,6 +103,21 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `GetObjectsAt(UnityEngine.Vector3Int)`
 * type `Timberborn.BlockSystem.IFinishedStateListener`
 
+**Timberborn.BlueprintSystem**
+
+* type `Timberborn.BlueprintSystem.Blueprint`
+  * method `GetSpec<1>()`
+  * method `HasSpec<1>()`
+* type `Timberborn.BlueprintSystem.ComponentSpec`
+  * method `get_Blueprint()`
+
+**Timberborn.Buildings**
+
+* type `Timberborn.Buildings.BuildingService`
+  * method `get_Buildings()`
+* type `Timberborn.Buildings.BuildingSpec`
+  * method `op_Inequality(Timberborn.Buildings.BuildingSpec, Timberborn.Buildings.BuildingSpec)`
+
 **Timberborn.Common**
 
 * type `Timberborn.Common.ReadOnlyList`1`
@@ -98,6 +126,11 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 **Timberborn.Coordinates**
 
 * type `Timberborn.Coordinates.Orientation`
+
+**Timberborn.CoreSound**
+
+* type `Timberborn.CoreSound.MixerNames`
+  * field `BuildingMixerNameKey`
 
 **Timberborn.CoreUI**
 
@@ -119,6 +152,9 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 
 * type `Timberborn.EntitySystem.IInitializableEntity`
 * type `Timberborn.EntitySystem.IPostLoadableEntity`
+* type `Timberborn.EntitySystem.LabeledEntitySpec`
+  * method `get_DisplayNameLocKey()`
+  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`
 
 **Timberborn.Goods**
 
@@ -155,6 +191,26 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 
 * type `Timberborn.PowerGeneration.WaterPoweredGenerator`
   * method `get_GeneratorRotation()`
+
+**Timberborn.RootProviders**
+
+* type `Timberborn.RootProviders.RootObjectProvider`
+  * method `CreateRootObject(System.String)`
+
+**Timberborn.ScienceSystem**
+
+* type `Timberborn.ScienceSystem.BuildingUnlockingService`
+  * method `Unlocked(Timberborn.Buildings.BuildingSpec)`
+
+**Timberborn.SingletonSystem**
+
+* type `Timberborn.SingletonSystem.ILoadableSingleton`
+
+**Timberborn.SoundSystem**
+
+* type `Timberborn.SoundSystem.IEmitterMap`
+* type `Timberborn.SoundSystem.ISoundSystem`
+  * method `AddLargeAreaSound(UnityEngine.Transform, Timberborn.SoundSystem.IEmitterMap, System.String, System.Int32, System.Int32, System.String)`
 
 **Timberborn.StatusSystem**
 
@@ -193,9 +249,13 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `get_MinTargetHeight()`
   * method `get_TargetDepth()`
 * type `Timberborn.WaterBuildings.ThrottlingValve`
+* type `Timberborn.WaterBuildings.WaterInput`
+  * method `get_IsUnderwater()`
 * type `Timberborn.WaterBuildings.WaterMover`
   * method `get_CanMoveWater()`
   * method `get_EffectiveFlowRate()`
+* type `Timberborn.WaterBuildings.WaterOutput`
+  * method `get_HasSpaceForWater()`
 
 **Timberborn.WaterObjects**
 
@@ -212,6 +272,7 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `ColumnContamination(UnityEngine.Vector3Int)`
   * method `TryGetColumnFloor(UnityEngine.Vector3Int, System.Int32&)`
   * method `WaterDepth(UnityEngine.Vector3Int)`
+  * method `WaterFlowDirection(UnityEngine.Vector3Int)`
   * method `WaterHeightOrFloor(UnityEngine.Vector3Int)`
 * type `Timberborn.WaterSystem.IWaterService`
   * method `AddCleanWater(UnityEngine.Vector3Int, System.Single)`
@@ -247,6 +308,9 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 
 * type `UnityEngine.Debug`
   * method `LogWarning(System.Object)`
+* type `UnityEngine.GameObject`
+  * method `.ctor(System.String)`
+  * method `get_transform()`
 * type `UnityEngine.Mathf`
   * method `Abs(System.Int32)`
   * method `Abs(System.Single)`
@@ -255,8 +319,23 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `Max(System.Single, System.Single)`
   * method `Round(System.Single)`
   * method `RoundToInt(System.Single)`
+* type `UnityEngine.Object`
+  * method `op_Implicit(UnityEngine.Object)`
+* type `UnityEngine.Time`
+  * method `get_unscaledTime()`
+* type `UnityEngine.Transform`
+  * method `SetParent(UnityEngine.Transform, System.Boolean)`
+  * method `set_localPosition(UnityEngine.Vector3)`
+* type `UnityEngine.Vector2`
+  * method `get_magnitude()`
+* type `UnityEngine.Vector2Int`
+  * method `.ctor(System.Int32, System.Int32)`
+* type `UnityEngine.Vector3`
+  * method `.ctor(System.Single, System.Single, System.Single)`
 * type `UnityEngine.Vector3Int`
   * method `.ctor(System.Int32, System.Int32, System.Int32)`
+  * method `get_x()`
+  * method `get_y()`
   * method `get_z()`
   * method `get_zero()`
   * method `op_Addition(UnityEngine.Vector3Int, UnityEngine.Vector3Int)`

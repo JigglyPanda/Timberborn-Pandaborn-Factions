@@ -28,20 +28,35 @@ namespace Pandaborn.Water
         private const int DryChecksBeforeAlarm = 4;
         private const float WetDepth = 0.005f;
 
+        private const float FlowingSpeed = 0.03f;   // a backed-up, standing line moves about 0.01; a running one 0.1 and more
+
         private readonly IThreadSafeWaterMap _waterMap;
         private readonly IBlockService _blockService;
         private readonly ILoc _loc;
+        private readonly WaterSounds _sounds;
+        private readonly CisternTapHint _hint;
         private FlumeSegment _segment;
         private FlumeGate _gate;
-        private StatusToggle _blocked, _misaligned, _intakeDry, _endDry;
+        private StatusSubject _subject;
+        private StatusToggle _blocked, _misaligned, _intakeDry, _intakeDryWithHint, _endDry;
         private int _countdown, _dryChecks;
+        private bool _hadWater, _endWet;
+        private GameObject _emitter;
 
-        public FlumeMonitor(IThreadSafeWaterMap waterMap, IBlockService blockService, ILoc loc)
+        public FlumeMonitor(IThreadSafeWaterMap waterMap, IBlockService blockService, ILoc loc, WaterSounds sounds, CisternTapHint hint)
         {
             _waterMap = waterMap;
             _blockService = blockService;
             _loc = loc;
+            _sounds = sounds;
+            _hint = hint;
         }
+
+        /// <summary>True while this piece reports flowing water to the flume sound (for tests).</summary>
+        public bool Flowing { get; private set; }
+
+        /// <summary>True while the dry-intake status carries the Cistern Tap hint (for tests).</summary>
+        public bool ShowsTapHint => _intakeDryWithHint != null && _intakeDryWithHint.IsActive;
 
         public bool Blocked => _blocked.IsActive;
         public bool Misaligned => _misaligned.IsActive;
@@ -65,6 +80,7 @@ namespace Pandaborn.Water
         public void InitializeEntity()
         {
             var subject = GetComponent<StatusSubject>();
+            _subject = subject;
             if (subject == null) return;
             subject.RegisterStatus(_blocked);
             subject.RegisterStatus(_misaligned);
@@ -84,7 +100,10 @@ namespace Pandaborn.Water
             _blocked.Deactivate();
             _misaligned.Deactivate();
             _intakeDry.Deactivate();
+            _intakeDryWithHint?.Deactivate();
             _endDry.Deactivate();
+            SetFlowing(false);
+            _endWet = false;
         }
 
         public override void Tick()
@@ -113,13 +132,59 @@ namespace Pandaborn.Water
             // a closed gate is its own status; its intake is not "dry"
             bool gateClosed = _gate != null && !_gate.IsOpen;
             bool isIntake = !prevIsFlume;
-            _intakeDry.Toggle(isIntake && !gateClosed && _waterMap.WaterDepth(first) < WetDepth
-                              && _waterMap.WaterHeightOrFloor(behind) <= first.z + 0.001f);
+            bool firstWet = _waterMap.WaterDepth(first) >= WetDepth;
+            if (firstWet) _hadWater = true;
+            bool intakeDry = isIntake && !gateClosed && !firstWet && _waterMap.WaterHeightOrFloor(behind) <= first.z + 0.001f;
+            // a Flume Gate whose water has gone (a dried-up source, a drought): stored water can be poured in
+            bool hinted = intakeDry && _gate != null && (_hadWater || _hint.InDrought) && _hint.Available && EnsureHinted();
+            _intakeDry.Toggle(intakeDry && !hinted);
+            _intakeDryWithHint?.Toggle(hinted);
 
             bool isEnd = !nextIsFlume;
-            if (isEnd && _waterMap.WaterDepth(last) < WetDepth) _dryChecks++;
+            bool lastWet = _waterMap.WaterDepth(last) >= WetDepth;
+            if (isEnd && !lastWet) _dryChecks++;
             else _dryChecks = 0;
             _endDry.Toggle(isEnd && !isIntake && _dryChecks >= DryChecksBeforeAlarm);
+
+            // sound: the loop where water runs; the tok when water first reaches the end of a run (once per fill)
+            bool flowing = false;
+            foreach (var c in cells)
+                if (_waterMap.WaterDepth(c) >= WetDepth && _waterMap.WaterFlowDirection(c).magnitude >= FlowingSpeed) { flowing = true; break; }
+            SetFlowing(flowing);
+            if (isEnd && !isIntake && lastWet && !_endWet) _sounds.Tok(Emitter);
+            _endWet = isEnd && lastWet;
+        }
+
+        private void SetFlowing(bool flowing)
+        {
+            if (Flowing == flowing || _segment == null) return;
+            Flowing = flowing;
+            foreach (var c in _segment.WorldFlowCells) _sounds.SetFlowing(new Vector2Int(c.x, c.y), flowing);
+        }
+
+        /// <summary>A child object for the tok: a selected building's own object carries the UI mixer.</summary>
+        private GameObject Emitter
+        {
+            get
+            {
+                if (!_emitter)
+                {
+                    _emitter = new GameObject("PandabornFlumeSounds");
+                    _emitter.transform.SetParent(Transform, false);
+                    _emitter.transform.localPosition = new Vector3(0.5f, 0.5f, 0.5f);
+                }
+                return _emitter;
+            }
+        }
+
+        private bool EnsureHinted()
+        {
+            if (_intakeDryWithHint != null) return true;
+            if (_subject == null || _hint.Sentence == null) return false;
+            _intakeDryWithHint = StatusToggle.CreateNormalStatusWithFloatingIcon("BuildingNeedsWater",
+                _loc.T("Pandaborn.Water.Status.IntakeDry") + " " + _hint.Sentence);
+            _subject.RegisterStatus(_intakeDryWithHint);
+            return true;
         }
 
         /// <summary>Flow direction of a flume flow cell or vanilla valve channel cell at (or one level below) the cell.</summary>

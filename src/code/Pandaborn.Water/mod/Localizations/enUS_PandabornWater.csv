@@ -18,6 +18,12 @@ Pandaborn.Water.Info.CurrentLift,Current at the wheel: {0} (full speed at {1}). 
 Pandaborn.Water.Info.CurrentWork,Current at the wheel: {0} (full speed at {1}). Working at {2} of full speed.,Trip-Hammer panel line
 Pandaborn.Water.Info.Spout,Keeps the field {0} deep. Now: {1}.,Paddy Spout panel line; depths in blocks
 Pandaborn.Water.Info.TreadwheelLifting,Lifting {0} while someone walks the wheel.,Treadwheel Lift panel line
-Pandaborn.Water.Info.TreadwheelIdle,"Not lifting: the water is out of reach, or the basin above is full.",Treadwheel Lift panel line
+Pandaborn.Water.Info.TreadwheelIdle,Not lifting while nobody walks the wheel. It starts again when the worker comes back.,Treadwheel Lift panel line when staffed but nobody is on the wheel (off shift)
 Pandaborn.Water.Info.TreadwheelNoWorker,Needs a worker to walk the wheel.,Treadwheel Lift panel line
-Pandaborn.Water.Info.CisternTap,Each {1} h of work pours {0} stored Water out as {2} m³ of clean water.,Cistern Tap panel line
+Pandaborn.Water.Info.CisternTap,"Each {1} h of work pours {0} stored Water out as {2} m³ of clean water. Poured into a flume through a drought of 3, 6 or 9 days, a small cistern keeps about 165, 83 or 55 tiles of farmland moist, a medium one 1,240, 620 or 410, and a large one 4,950, 2,480 or 1,650.",Cistern Tap panel line; tile counts measured in docs/tech/water.md (a strip costs 0.21 m³ per tile per day and keeps 13 tiles across moist; cisterns of 40/300/1200 Water)
+Pandaborn.Water.Info.CurrentFull,"Current at the wheel: {0} (full speed at {1}). Not lifting: the basin above is full. The wheel starts again by itself when the water there drops.",Scoop Wheel panel line when its outlet has no room
+Pandaborn.Water.Info.CurrentNoReach,"Current at the wheel: {0} (full speed at {1}). Not lifting: the scoops do not reach the water. The water at the wheel is too low.",Scoop Wheel panel line when its intake is dry
+Pandaborn.Water.Info.TreadwheelFull,Not lifting: the basin above is full. The wheel starts again by itself when the water there drops.,Treadwheel Lift panel line when its outlet has no room
+Pandaborn.Water.Info.TreadwheelNoReach,Not lifting: there is no water at the intake. Build the wheel where its intake stands in water.,Treadwheel Lift panel line when its intake is dry
+Pandaborn.Water.Info.SpoutDry,"Keeps the field {0} deep, but no water reaches the spout. Check the flume and the Flume Gate that feed it.",Paddy Spout panel line when it is dry
+Pandaborn.Water.Hint.CisternTap,A {0} can pour stored Water into the line.,One sentence added to a stopped Scoop Wheel or dry Flume Gate status when the tap is unlocked; {0} = the tap's name
