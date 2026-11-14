@@ -16,7 +16,7 @@ stays; only textures, colours and floats change. It yields no ids. The originals
 Folktails and Iron Teeth games are untouched.
 
 **Data.** Only the asset bundle `pandabornlook_win`, a build artefact of `tools/build_look.ps1 -BundleName pandabornlook`
-(in `E:\PandabornDevuild\look\AssetBundles`, never in git); the code build copies it into `<mod>\AssetBundles` when it
+(in `E:\PandabornDev\build\look\AssetBundles`, never in git); the code build copies it into `<mod>\AssetBundles` when it
 is there. No material collection, no spec, no id to lock.
 
 **Fails safely.** Module off (forced, or the game API changed): nothing is copied and the Inkpaws have the vanilla

@@ -197,8 +197,8 @@ MediumTank, Inventor, WaterWheel; day at the start, lit night 13.5 h later). Mat
 | `look-close-inkpaws-2` | iteration 2: bolder weave, darker bamboo, rounded tiles |
 | `look-close-inkpaws-3` | iteration 3: aged plaster, heightfield-baked windows/details/iron (the current state, minus the last plaster and glow tweak) |
 
-Shots: `E:\PandabornDevuild	est\<run>\{day,night}_<building>.png`. Side-by-side sheets (Folktails left, Inkpaws
-right): `E:\PandabornDevuild\look\previewinal_day.png`, `final_day2.png`, `final_night.png`,
+Shots: `E:\PandabornDev\build\test\<run>\{day,night}_<building>.png`. Side-by-side sheets (Folktails left, Inkpaws
+right): `E:\PandabornDev\build\look\preview\final_day.png`, `final_day2.png`, `final_night.png`,
 `cmp2_night_lit.png`; earlier iterations `cmp_day1..3.png`, `cmp2_day1.png`.
 
 Judged harshly against the hand-painted vanilla look:
@@ -218,7 +218,7 @@ Judged harshly against the hand-painted vanilla look:
 
 Shot with the installed faction build, which now ships the code modules and `pandabornlook_win`
 (`look-close-inkpaws-6`, request `proto/look/tests/closeups_inkpaws.request.json`: the 11 adopted kit models plus
-the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\look\preview\p3_day1.png`,
+the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDev\build\look\preview\p3_day1.png`,
 `p3_day2.png` (Folktails left), `p3_kit.png` (kit models).
 
 * Which material dominates (vanilla models): `BaseWood_LightBrown` is the district center's walls (972 triangles) and
@@ -228,7 +228,7 @@ the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\lo
 * Result: the village reads dark timber, grey tile and lime plaster, with bamboo as the warm note; no lemon-yellow
   surfaces remain. Flat roofs (`IrregularPlanks_Mossy`: lodges, warehouses, mine, Roof3x2) are mossy grey tile laid
   flat. Plaster is a warm off-white with damp at the foot; it no longer reads as blank white.
-* Tile (pass 3b, `look-close-inkpaws-8`, sheet `E:\PandabornDevuild\look\preview\p4_tiles.png`: Folktails |
+* Tile (pass 3b, `look-close-inkpaws-8`, sheet `E:\PandabornDev\build\look\preview\p4_tiles.png`: Folktails |
   old tile | new tile, night rows first): the light silver tile turned electric blue under the night light. It is now a
   warm charcoal (base 88,84,81, about 30% darker), matte (smoothness 0.10, no metal), with a soft crown instead of a
   hard streak, more per-tile variation and lichen; flat tiles likewise (84,81,78). At night the roofs are now about as
@@ -245,11 +245,24 @@ the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\lo
   light; flat tiles (80,69,58). Texture means: pitched (71,61,50), flat (67,58,48); lime plaster (185,180,167).
 * Lantern paper patches (see the table above) for the kit's `PB_LANTERN_WARM=1`.
 * Evidence (`look-close-inkpaws-9`, the faction with this bundle as a dev copy `proto/foundation/build.ps1 -Name pblook`):
-  `E:\PandabornDevuild\look\preview\p5_tiles.png` (Folktails | 3b tile | 3c tile; night rows first) and
+  `E:\PandabornDev\build\look\preview\p5_tiles.png` (Folktails | 3b tile | 3c tile; night rows first) and
   `p5_village_night.png` (16 of our buildings, wide night view). At night the roofs are now dull and dark, no brighter
   than the plaster walls and paths beneath them, and calmer than the 3b tile. By day they read as a dark brown-grey
   tile with visible course rows; on large pagoda roofs the warm brown is noticeable (if it ever reads as wood, the knob
   is `tile_rgb` in `src/pipeline/bake_sheets.py`: less red/blue difference = greyer by day, bluer at night).
+
+### Pass 3d (tile colour halfway back to neutral; current)
+
+* The 3c tile read as brown wooden shingles by day. Only the colour moved, halfway back to neutral; everything else is
+  3c (flattened normals 0.65, shallow geometry, low pan/cover contrast, lantern patches). Final values in
+  `src/pipeline/bake_sheets.py`: pans `tile_rgb=(80,74,67)` (red minus blue 13, was 24), covers and the odd newer tile
+  (66,62,57) a touch darker, flat tiles `(76,71,64)`. Texture means: pitched (68,63,56), flat (64,60,53).
+* Evidence (`look-close-inkpaws-10`, same dev-copy method as 3c): `E:\PandabornDev\build\look\preview\p6_tiles.png`
+  (Folktails | 3b | 3c | 3d; rows night district center, night courtyard, day district center, day courtyard) and
+  `p6_village_night.png` (wide night view). Measured on the same pixels of the day courtyard roof: 3b (97,93,86),
+  3c (99,86,69), **3d (95,88,76)**, red minus blue 11 / 30 / 19. By day 3d reads as dark grey clay tile with a hint of
+  warmth, clearly apart from the brown timber under it. At night the roof averages luminance 48 (3b 53, 3c 46), still
+  no brighter than the plaster walls and paths beneath it, so halfway holds the night.
 
 ## Pandaborn.Look module
 
@@ -260,10 +273,10 @@ the asset bundle holds under `Materials/Pandaborn/Look/` (found with `IAssetLoad
 copied into the same-named material of the faction's own collections. There is no material collection and no id to
 lock. (An earlier version put a `PandabornLookSpec` on the faction blueprint and listed a `PandabornLook.Inkpaws`
 collection; both were removed on 2026-11-14.) The bundle is `pandabornlook_win`, built by
-`tools/build_look.ps1 -BundleName pandabornlook` into `E:\PandabornDevuild\look\AssetBundles`; the code build copies
+`tools/build_look.ps1 -BundleName pandabornlook` into `E:\PandabornDev\build\look\AssetBundles`; the code build copies
 it into the mod. `tools/build_code_devmod.ps1` builds all of `src/code` as a dev-only mod
-(`JigglyPanda.PandabornCodeDev`, `E:\PandabornDevuild\PandabornCodeDev`) so tests can load the code without
-switching it on for everyone. **Do not enable it together with the old prototype `E:\PandabornDevuild\proto\look-swap`**
+(`JigglyPanda.PandabornCodeDev`, `E:\PandabornDev\build\PandabornCodeDev`) so tests can load the code without
+switching it on for everyone. **Do not enable it together with the old prototype `E:\PandabornDev\build\proto\look-swap`**
 (both would swap the same materials).
 
 Tests (`tests/scenarios/look/`, driver `tests/scenarios/look/run_look_tests.ps1`; all with the owner's mods). The harness
@@ -272,11 +285,12 @@ ours start `PBLook_`, vanilla ones are `BaseWood_1K_D_Brown`, `ThatchedRoof_D`, 
 
 | Run | Case | Result |
 |---|---|---|
-| `look-module-then-2` | Inkpaws game, then exit to the main menu and a Folktails game **in the same session** (harness `"then"`) | PASS. Inkpaws: `PBLook_Timber_D`, `PBLook_RoofTiles_D`, `PBLook_Windows_D` at load and end. Folktails (`look-module-then-2olktails`): `BaseWood_1K_D_Brown`, `ThatchedRoof_D`, `WindowsAtlas_D.Folktails` |
+| `look-module-then-2` | Inkpaws game, then exit to the main menu and a Folktails game **in the same session** (harness `"then"`) | PASS. Inkpaws: `PBLook_Timber_D`, `PBLook_RoofTiles_D`, `PBLook_Windows_D` at load and end. Folktails (`look-module-then-2\folktails`): `BaseWood_1K_D_Brown`, `ThatchedRoof_D`, `WindowsAtlas_D.Folktails` |
 | `look-module-on-2` | feature on, Inkpaws | PASS, Look `on`, probe `PBLook_*` |
 | `look-module-relaunch-2` | Folktails launch after the Inkpaws game quit to desktop | PASS, probe vanilla |
 | `look-module-forceoff-2` | `force-off: Look` | PASS, Look `forced-off`, probe vanilla (Inkpaws get the Folktails look) |
 | `look-module-missingapi-2` | `simulate-missing-api: Look` | Look `off` ("game API changed: 1 missing"), probe vanilla: correct. The run's verdict was FAIL only because none of the 20 Folktails test buildings could be placed ("template not available to this faction"): another agent was changing the shared Inkpaws faction build (catalogue) during the run; unrelated to Look |
+| `look-module-missingapi-5` | `simulate-missing-api: Look`, re-run with the `.Inkpaws` building list | PASS (all checks). Look `off` ("game API changed: 1 missing, e.g. type Timberborn.PandabornSimulated.MissingType"), the player gets the feature message, every other feature on, 16 of 16 buildings placed, probe vanilla at load and end, no own errors |
 
 `look-module-then-1` crashed: it used a hand-renamed copy of the prototype bundle (see *Problems*, item 10).
 
@@ -317,7 +331,7 @@ frame lines, plate seams).
 | `Details` → Details | painter, regions by position | indigo banner with ink-painted bamboo; hemp sack; straw rope; plain colour labels with pictures; bamboo crates with cane lashing |
 | `RammedEarth` → Sand, `Moss` → Moss | painter | layered rammed earth with pebbles; tea-green moss |
 
-Previews: `E:\PandabornDevuild\look\preview\look_sheet.png` (albedo × tint of every material),
+Previews: `E:\PandabornDev\build\look\preview\look_sheet.png` (albedo × tint of every material),
 `baked_D.png` (the baked sets), `regions_<Sheet>.png` (each region map drawn over our sheet).
 
 Still to raise, in order of value: bake the remaining sheets too (windows with modelled frames and lattice,
@@ -459,7 +473,7 @@ still keeps a small Bee cache in `%LOCALAPPDATA%\Unity\Caches` (43 MB in total, 
 
 ## Mac bundles
 
-> **Superseded 2026-11-14:** Mac bundles now build on this machine from a private editor copy on E: (`toolsuild_look.ps1 -Mac`, `toolsuild_plants.ps1 -Mac`). See [mac.md](mac.md). The text below is kept as history.
+> **Superseded 2026-11-14:** Mac bundles now build on this machine from a private editor copy on E: (`tools\build_look.ps1 -Mac`, `tools\build_plants.ps1 -Mac`). See [mac.md](mac.md). The text below is kept as history.
 
 * `C:\Program Files\Unity\Hub\Editor\6000.5.11f1\Editor\Data\PlaybackEngines` holds only
   `windowsstandalonesupport` (1.1 GB). `BuildTarget.StandaloneOSX` therefore cannot be built; `build_look.ps1 -Mac`
