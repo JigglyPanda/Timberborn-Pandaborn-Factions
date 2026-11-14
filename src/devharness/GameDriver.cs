@@ -61,6 +61,7 @@ namespace PandabornDevHarness
         private readonly BotPopulation _botPopulation;
         private readonly TemplateService _templateService;
         private readonly CameraService _cameraService;
+        private readonly Timberborn.Rendering.MaterialColorer _materialColorer;
         private readonly DistrictCenterRegistry _districtCenterRegistry;
         private readonly ITerrainService _terrainService;
         private readonly PreviewPlacerFactory _previewPlacerFactory;
@@ -78,6 +79,8 @@ namespace PandabornDevHarness
         private readonly Queue<ShotRequest> _shotQueue = new Queue<ShotRequest>();
         private readonly List<ShotRequest> _timedShots = new List<ShotRequest>();
         private readonly List<string> _pendingScreenFiles = new List<string>();
+        // first placed building of each template, for "building" close-up shots
+        private readonly Dictionary<string, BlockObject> _placedByTemplate = new Dictionary<string, BlockObject>();
         private float _waitUntil;
         private int _batchStep;
         private List<BatchControlTab> _batchTabs;
@@ -91,6 +94,7 @@ namespace PandabornDevHarness
 
         public GameDriver(EventBus eventBus, SpeedManager speedManager, IDayNightCycle dayNightCycle, DevModeManager devModeManager,
                           FactionService factionService, CharacterPopulation characterPopulation, BeaverPopulation beaverPopulation,
+                          Timberborn.Rendering.MaterialColorer materialColorer,
                           BotPopulation botPopulation, TemplateService templateService, CameraService cameraService,
                           DistrictCenterRegistry districtCenterRegistry, ITerrainService terrainService,
                           PreviewPlacerFactory previewPlacerFactory, BlockObjectPlacerService blockObjectPlacerService,
@@ -117,6 +121,7 @@ namespace PandabornDevHarness
             _botPopulation = botPopulation;
             _templateService = templateService;
             _cameraService = cameraService;
+            _materialColorer = materialColorer;
             _districtCenterRegistry = districtCenterRegistry;
             _terrainService = terrainService;
             _previewPlacerFactory = previewPlacerFactory;
@@ -421,7 +426,11 @@ namespace PandabornDevHarness
                     {
                         var blockObject = r.Finished ? _constructionFactory.CreateAsFinished(builder, placement.Value)
                                                      : _constructionFactory.CreateAsUnfinished(builder, placement.Value);
-                        if (blockObject) created.Add(blockObject);
+                        if (blockObject)
+                        {
+                            created.Add(blockObject);
+                            if (!_placedByTemplate.ContainsKey(r.Template)) _placedByTemplate[r.Template] = blockObject;
+                        }
                     }
                     else
                     {
@@ -638,6 +647,28 @@ namespace PandabornDevHarness
                         break;
                     case "overview":
                         Capture.RenderView(source, request.ShotWidth, request.ShotHeight, file);
+                        break;
+                    case "building":
+                        GameObject framed = null;
+                        Timberborn.BaseComponentSystem.BaseComponent framedEntity = null;
+                        if (shot.Target != null && _placedByTemplate.TryGetValue(shot.Target, out var placed) && placed) framedEntity = placed;
+                        else if (shot.Target != null && shot.Target.StartsWith("DistrictCenter", StringComparison.Ordinal))
+                            framedEntity = _districtCenterRegistry.AllDistrictCenters.FirstOrDefault();
+                        if (framedEntity) framed = framedEntity.GameObject;
+                        // "lit": switch the building's night lighting on (as an occupied house or a working workplace is)
+                        if (framed && shot.Lit)
+                        {
+                            try { _materialColorer.EnableLighting(framedEntity, 1f); }
+                            catch (Exception) { Harness.Warn("shot " + shot.Name + ": " + shot.Target + " has no night lighting to switch on"); }
+                        }
+                        if (!framed)
+                        {
+                            Harness.RecordScreenshot(shot.Name, shot.Kind, null, null, "no placed building " + (shot.Target ?? "(no target)"));
+                            return _shotQueue.Count > 0;
+                        }
+                        subject = new JObject { ["template"] = shot.Target, ["yaw"] = shot.Yaw, ["pitch"] = shot.Pitch, ["zoom"] = shot.Zoom };
+                        Capture.RenderFramed(source, framed, shot.Yaw, shot.Pitch, shot.Zoom,
+                                             request.ShotWidth, request.ShotHeight, file);
                         break;
                     case "adult":
                     case "child":

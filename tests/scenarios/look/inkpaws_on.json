@@ -1,0 +1,69 @@
+{
+  "faction": "Inkpaws",
+  "run": {
+    "inGameHours": 13.5,
+    "realSeconds": 240
+  },
+  "speed": 3,
+  "batchControl": false,
+  "buildings": [
+    "Lodge.Folktails",
+    "DoubleLodge.Folktails",
+    "LumberMill.Folktails",
+    "Inventor.Folktails",
+    "WaterWheel.Folktails",
+    "PowerShaft.Folktails",
+    "SmallWarehouse.Folktails",
+    "MediumTank.Folktails",
+    "Campfire.Folktails",
+    "Lantern.Folktails",
+    "PoleBanner.Folktails",
+    "WindTurbine.Folktails",
+    "GearWorkshop.Folktails",
+    "Bakery.Folktails",
+    "SmallPile.Folktails",
+    "Shrub.Folktails",
+    {
+      "template": "TripleLodge.Folktails",
+      "finished": false
+    },
+    {
+      "template": "Gristmill.Folktails",
+      "finished": false
+    },
+    "WoodWorkshop.Folktails",
+    "BeaverStatue.Folktails"
+  ],
+  "screenshots": [
+    {
+      "name": "day_overview",
+      "kind": "overview",
+      "at": "start"
+    },
+    {
+      "name": "day_screen",
+      "kind": "screen",
+      "at": "start"
+    },
+    {
+      "name": "night_overview",
+      "kind": "overview",
+      "at": "end"
+    },
+    {
+      "name": "night_screen",
+      "kind": "screen",
+      "at": "end"
+    }
+  ],
+  "screenshotSize": [
+    1600,
+    1000
+  ],
+  "checks": {
+    "materialMainTexPrefix": "PBLook_",
+    "pandabornFeatures": {
+      "Look": "on"
+    }
+  }
+}

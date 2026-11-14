@@ -127,6 +127,8 @@ namespace PandabornDevHarness
             if (options["templatesUnavailable"] is JArray unwanted)
                 foreach (var w in unwanted) Add("templateUnavailable", !templates.Contains((string)w), (string)w);
 
+            MaterialProbe.AddChecks(result, options, Add);
+
             bool allPass = true;
             foreach (var c in checks) allPass &= (bool)c["pass"];
             result["checks"] = checks;

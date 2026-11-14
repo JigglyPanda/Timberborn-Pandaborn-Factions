@@ -30,7 +30,7 @@ namespace PandabornDevHarness
     }
 
     /// <summary>Static state shared by the main-menu and game drivers; survives scene changes.</summary>
-    public static class Harness
+    public static partial class Harness
     {
         public const string Version = "1.0.0";
         public const string DefaultRequestPath = @"E:\PandabornDev\build\test\request.json";
@@ -212,12 +212,16 @@ namespace PandabornDevHarness
         {
             if (Finished) return;
             Finished = true;
+            MaterialProbe.ProbeAtEnd();
+            if (TryChain(status)) return;   // a second game follows in this launch (request "then", Chain.cs)
             try
             {
                 WriteResult(status);
                 Info("finished with status " + status + "; verdict " + Result["verdict"]);
             }
             catch (Exception e) { AppendHarnessLog("ERROR writing result: " + e); }
+            try { MergeIntoParent(status); }
+            catch (Exception e) { AppendHarnessLog("ERROR writing the first game's result: " + e); }
             if (Request == null || Request.Quit)
             {
                 Info("quitting");
@@ -225,7 +229,7 @@ namespace PandabornDevHarness
             }
         }
 
-        public static void WriteResult(string status)
+        public static void WriteResult(string status, string fileName = null)
         {
             if (OutputDir == null) return;
             JObject snapshot;
@@ -254,7 +258,7 @@ namespace PandabornDevHarness
                 if (status != "running") Checks.Evaluate(Result, Request, status, _ownErrors + _ownExceptions, _errors + _exceptions);
                 snapshot = (JObject)Result.DeepClone();
             }
-            string target = Path.Combine(OutputDir, status == "running" ? "progress.json" : "result.json");
+            string target = Path.Combine(OutputDir, fileName ?? (status == "running" ? "progress.json" : "result.json"));
             string tmp = target + ".tmp";
             File.WriteAllText(tmp, snapshot.ToString(Formatting.Indented));
             if (File.Exists(target)) File.Delete(target);

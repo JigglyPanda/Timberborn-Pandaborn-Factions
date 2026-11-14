@@ -122,7 +122,7 @@ same-named material would be a duplicate): `Dirt` (153 models, construction grou
 
 | | "names" (data only) | "swap" (≈100 lines C#, no Harmony) |
 |---|---|---|
-| Files | `proto/look/mod` | `proto/look/mod-swap` + `proto/look/src/MaterialSwap.cs` |
+| Files | `proto/look/mod` | was `proto/look/mod-swap` + `proto/look/src`; now the `Pandaborn.Look` module (below) |
 | Faction | merge onto `Factions/Pandaborn/Faction.Inkpaws.blueprint.json`: `MaterialCollectionIds` = `["PandabornLook.Inkpaws"]`, `BaseWoodMaterial` = ours | unchanged (keeps `Folktails`) |
 | Collection `PandabornLook.Inkpaws` | our 19 bundle materials + the 16 non-replaced vanilla Folktails entries | our 19 bundle materials only (not listed by the faction) |
 | How | the repository finds our materials under the vanilla names | during `MaterialRepository.Load` our provider copies each bundle material's properties into the loaded vanilla material of the same name; restores on unload and on the main menu |
@@ -175,6 +175,61 @@ What the screenshots show (`look-swap-inkpaws-2/day_overview_crop.png`, same as 
   woven panels are too yellow and too uniform on big walls; roof tiles read as grey stripes from above (the arched
   lips only show close up); the beaver-dome lodges and round domes stay beaver-shaped; the Beaver Statue is still
   a beaver; textures are flatter than the hand-painted vanilla ones.
+
+## Close-ups against Folktails
+
+The harness can now frame one building at about a player's zoom (`"kind": "building", "target": "<template>"`, plus
+`yaw`, `pitch`, `zoom`, and `"lit": true` to switch its night lighting on as an occupied house is). Request:
+`proto/look/tests/closeups.request.json` (district center, Lodge, DoubleLodge, TripleLodge, LumberMill, SmallWarehouse,
+MediumTank, Inventor, WaterWheel; day at the start, lit night 13.5 h later). Matched runs, same map and request:
+
+| Run | What |
+|---|---|
+| `look-close-folktails-1`, `look-close-folktails-2` (lit) | vanilla Folktails, the benchmark |
+| `look-close-inkpaws-1` | first Blender bakes |
+| `look-close-inkpaws-2` | iteration 2: bolder weave, darker bamboo, rounded tiles |
+| `look-close-inkpaws-3` | iteration 3: aged plaster, heightfield-baked windows/details/iron (the current state, minus the last plaster and glow tweak) |
+
+Shots: `E:\PandabornDevuild	est\<run>\{day,night}_<building>.png`. Side-by-side sheets (Folktails left, Inkpaws
+right): `E:\PandabornDevuild\look\previewinal_day.png`, `final_day2.png`, `final_night.png`,
+`cmp2_night_lit.png`; earlier iterations `cmp_day1..3.png`, `cmp2_day1.png`.
+
+Judged harshly against the hand-painted vanilla look:
+
+* **Iteration 1** (first bakes) was flatter than Folktails: the 16 px weave read as a fine grid (moiré) at game zoom,
+  pale bamboo looked like plastic, tiles read as flat grey stripes, wood grain was a pinstripe.
+* **Now** the roofs read as clay pan-and-cover tiles with rounded lit covers over dark channels, the walls as
+  basket-woven bamboo panels framed by battens, the timber as painted wavy-grain boards (on a par with vanilla's
+  wood), barrels as dark staves with straw-gold bamboo bands. At night lit buildings show warm lattice windows about
+  as bright as vanilla's. Side by side, our buildings no longer look flatter than the Folktails ones.
+* **Still weaker than vanilla:** large plain plaster surfaces (chimneys, warehouse walls) are cleaner and brighter
+  than vanilla's mottled plaster (darkened once more after the last run, not yet re-shot); flat roofs that vanilla
+  makes of mossy planks become woven mats, which are not Sichuan (they would be tile); vanilla's painted outlines and
+  colour shifts inside one board are richer than our noise-based detail. Domes stay domes.
+
+## Pandaborn.Look module
+
+The swap variant is now the faction's base layer: `src/code/Pandaborn.Look` (see its `FEATURE.md` and
+`src/code/README.md`). Activation is data-driven: `PandabornLookSpec { MaterialCollectionIds }` (in `Pandaborn.Specs`)
+sits on the faction blueprint through `src/code/Pandaborn.Look/mod/Factions/Pandaborn/Faction.Inkpaws.optional.blueprint.json`,
+and the collection `PandabornLook.Inkpaws` (19 bundle materials) ships in the module's `mod/` folder. The bundle is
+`pandabornlook_win`, built by `tools/build_look.ps1 -BundleName pandabornlook` into `E:\PandabornDevuild\look\AssetBundles`;
+the code build copies it into the mod. `tools/build_code_devmod.ps1` builds all of `src/code` as a dev-only mod
+(`JigglyPanda.PandabornCodeDev`) so tests can load the code without switching it on for everyone.
+
+Tests (`tests/scenarios/look/`, driver `tests/scenarios/look/run_look_tests.ps1`; all with the owner's mods). The harness
+records, at load and at the end of each game, the `_MainTex` currently on three vanilla materials (`materialProbe`;
+ours start `PBLook_`, vanilla ones are `BaseWood_1K_D_Brown`, `ThatchedRoof_D`, `WindowsAtlas_D.Folktails`):
+
+| Run | Case | Result |
+|---|---|---|
+| `look-module-then-2` | Inkpaws game, then exit to the main menu and a Folktails game **in the same session** (harness `"then"`) | PASS. Inkpaws: `PBLook_Timber_D`, `PBLook_RoofTiles_D`, `PBLook_Windows_D` at load and end. Folktails (`look-module-then-2olktails`): `BaseWood_1K_D_Brown`, `ThatchedRoof_D`, `WindowsAtlas_D.Folktails` |
+| `look-module-on-2` | feature on, Inkpaws | PASS, Look `on`, probe `PBLook_*` |
+| `look-module-relaunch-2` | Folktails launch after the Inkpaws game quit to desktop | PASS, probe vanilla |
+| `look-module-forceoff-2` | `force-off: Look` | PASS, Look `forced-off`, probe vanilla (Inkpaws get the Folktails look) |
+| `look-module-missingapi-2` | `simulate-missing-api: Look` | Look `off` ("game API changed: 1 missing"), probe vanilla: correct. The run's verdict was FAIL only because none of the 20 Folktails test buildings could be placed ("template not available to this faction"): another agent was changing the shared Inkpaws faction build (catalogue) during the run; unrelated to Look |
+
+`look-module-then-1` crashed: it used a hand-renamed copy of the prototype bundle (see *Problems*, item 10).
 
 ## The replacement textures
 

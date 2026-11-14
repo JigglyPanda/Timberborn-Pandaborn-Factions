@@ -10,7 +10,7 @@ page is how they are built and how to add a feature.
 | `Pandaborn.Bootstrap` | `Scripts/Pandaborn.Bootstrap.dll` | by the game | Only the mod starter. References nothing but `IModStarter` and `Debug.Log`, so it can always load |
 | `Pandaborn.Specs` | `Scripts/Pandaborn.Specs.bin` | always, first | Every spec record (`Pandaborn…Spec`). Only references the blueprint system |
 | `Pandaborn.Core` | `Scripts/Pandaborn.Core.bin` | always, second | Feature registry, save carrier (`PandabornStore`), notices (`FeatureNotices`, `Messenger`), interface guard (`SafeUi`) |
-| `Pandaborn.<Feature>` | `Modules/Pandaborn.<Feature>.bin` | only if its game-API check passes | One feature each: `Bell` (the afternoon bell), `Names` (faction colonist names) |
+| `Pandaborn.<Feature>` | `Modules/Pandaborn.<Feature>.bin` | only if its game-API check passes | One feature each: `Bell` (the afternoon bell), `Names` (faction colonist names), `Look` (the Inkpaws building look) |
 | `tools/Pandaborn.ApiScan` | not shipped | build only | Extracts a module's required-API list from the compiled assembly |
 
 Every `.bin` ships with `<name>.api.txt`, the list of game types, methods and fields it references (generated on every
@@ -27,6 +27,13 @@ Intermediates go to `E:\PandabornDev\build\obj\code\<project>`. Each build also 
 project's `FEATURE.md`, so a game update that changes what a module touches shows up as a diff in git. Note: `tools/build.ps1`
 mirrors `mod/PandabornFactions` and deletes anything else in the build folder, so run the code build after it (or wire it in
 there; it is not yet wired, to keep other agents' test runs unaffected until the owner switches the code on).
+
+`Pandaborn.Look` also copies its asset bundle (`pandabornlook_win`/`_mac`, made by `tools/build_look.ps1 -BundleName
+pandabornlook` into `E:\PandabornDev\build\look\AssetBundles`, never in git) into `<ModOut>\AssetBundles` when it is there.
+Until the code ships in the faction mod, feature tests use `tools/build_code_devmod.ps1 [-DevSwitch '...']`: the whole code
+build plus a manifest in `E:\PandabornDev\build\PandabornCodeDev` (Id `JigglyPanda.PandabornCodeDev`, requires the faction
+mod), passed to `tools/run_game_test.ps1 -ExtraMods`. Never enable it together with another mod that carries the code
+(`proto/stage0`).
 
 ## What happens at start
 
@@ -60,7 +67,7 @@ force-off: Bell, Names          # the module is not loaded, as for a player whos
 simulate-missing-api: Bell      # the API check fails (adds a missing type), exercising the "needs update" path
 ```
 
-`proto/stage0/build.ps1 -DevSwitch 'force-off: Bell'` writes it; the stage-0 probe can write it for the next launch.
+`proto/stage0/build.ps1 -DevSwitch 'force-off: Bell'` (or `tools/build_code_devmod.ps1 -DevSwitch ...`) writes it; the stage-0 probe can write it for the next launch.
 
 ## Adding a feature module
 

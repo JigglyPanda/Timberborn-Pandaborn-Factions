@@ -49,6 +49,28 @@ namespace PandabornDevHarness
             Save(sheet, path);
         }
 
+        /// <summary>
+        /// Close-up of one object in the world, with the game camera's settings (lighting, post-processing): looks at
+        /// the centre of all its renderers from the game camera's heading plus <paramref name="yawOffset"/>, at
+        /// <paramref name="pitch"/> degrees down, from a distance at which the bounds fill the frame (divided by zoom).
+        /// </summary>
+        public static void RenderFramed(Camera source, GameObject root, float yawOffset, float pitch, float zoom,
+                                        int width, int height, string path)
+        {
+            var renderers = root.GetComponentsInChildren<Renderer>(false);
+            if (renderers.Length == 0) throw new InvalidOperationException(root.name + " has no visible renderers");
+            var bounds = renderers[0].bounds;
+            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+            float radius = Mathf.Max(bounds.extents.magnitude, 0.5f);
+            float fov = source ? source.fieldOfView : 30f;
+            float distance = radius / Mathf.Sin(fov * 0.5f * Mathf.Deg2Rad) * 1.02f / Mathf.Max(zoom, 0.05f);
+            float heading = source ? source.transform.eulerAngles.y : 45f;
+            var rotation = Quaternion.Euler(pitch, heading + yawOffset, 0f);
+            var position = bounds.center - rotation * Vector3.forward * distance;
+            var texture = Render(source, width, height, position, rotation, null);
+            Save(texture, path);
+        }
+
         private static Texture2D Render(Camera source, int width, int height, Vector3? position, Quaternion? rotation, Color? background)
         {
             var cameraObject = new GameObject("PandabornDevHarnessCamera");

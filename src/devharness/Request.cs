@@ -12,6 +12,14 @@ namespace PandabornDevHarness
         public string Name;
         public string Kind;
         public string At;
+        /// <summary>Kind "building": template name of a building placed by this request, framed in close-up.</summary>
+        public string Target;
+        /// <summary>Kind "building": degrees added to the game camera's heading, camera pitch, and zoom (1 = building fills the frame).</summary>
+        public float Yaw;
+        public float Pitch = 35f;
+        public float Zoom = 1f;
+        /// <summary>Kind "building": switch the building's night lighting on before the shot (as when occupied).</summary>
+        public bool Lit;
 
         public bool IsTimed(out float seconds)
         {
@@ -37,7 +45,8 @@ namespace PandabornDevHarness
     ///   "window": { "windowed": true, "width": 1280, "height": 720 },
     ///   "run": { "realSeconds": 60, "inGameDays": 0, "inGameHours": 0, "settleSeconds": 4, "startTimeoutSeconds": 240 },
     ///   "buildings": [ "Lodge.Folktails", { "template", "finished": true, "offset": [dx, dy, dz], "orientation": "Cw90" } ],
-    ///   "screenshots": [ { "name", "kind": "overview|screen|adult|child|bot", "at": "start|end|&lt;seconds into run&gt;" } ],
+    ///   "screenshots": [ { "name", "kind": "overview|screen|adult|child|bot|building", "at": "start|end|&lt;seconds into run&gt;",
+    ///                      "target": "Lodge.Folktails" (kind building), "yaw": 0, "pitch": 35, "zoom": 1, "lit": false } ],
     ///   "screenshotSize": [1280, 720], "closeupSize": 640, "samplePerKind": 3,
     ///   "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws" ],
     ///   "batchControl": true (open every batch-control tab at the end; a throwing tab fails the run),
@@ -45,6 +54,9 @@ namespace PandabornDevHarness
     ///   "factionPanelShots": false (screen captures of the main menu's new-game faction panel, one per faction),
     ///   "save": "PB_AutoTest" (save name; the game is saved to Saves/&lt;settlementName&gt;/ at the end),
     ///   "loadSave": false (the game was launched with -saveName/-settlementName: do not start a new game),
+    ///   "then": { "faction": "Folktails", "name": "then", ... } (after this game, exit to the main menu and play a second new
+    ///           game in the same launch with these keys overriding; its output goes to &lt;outputDir&gt;\&lt;name&gt;; see Chain.cs),
+    ///   "materialProbe": [ material asset paths ] (texture names on loaded materials in result "materialProbe"; MaterialProbe.cs),
     ///   "checks": { "minAdults": 1, "minChildren": 0, "minBots": 0, "noOwnErrors": true, "maxErrors": n,
     ///               "adultTemplate", "childTemplate", "botTemplate", "adultMeshContains", "adultTextureContains",
     ///               "adultModel" (exact model asset path), "adultTextureAsset" (substring of the coat's asset path), ...,
@@ -164,7 +176,12 @@ namespace PandabornDevHarness
                     if (!(token is JObject s)) continue;
                     var kind = Str(s, "kind", "overview").ToLowerInvariant();
                     var at = Str(s, "at", "start").ToLowerInvariant();
-                    r.Screenshots.Add(new ShotRequest { Kind = kind, At = at, Name = Str(s, "name", kind + "_" + at) });
+                    r.Screenshots.Add(new ShotRequest
+                    {
+                        Kind = kind, At = at, Name = Str(s, "name", kind + "_" + at), Target = Str(s, "target", null),
+                        Yaw = Num(s, "yaw", 0f), Pitch = Num(s, "pitch", 35f), Zoom = Num(s, "zoom", 1f),
+                        Lit = Bool(s, "lit", false)
+                    });
                 }
             }
             else

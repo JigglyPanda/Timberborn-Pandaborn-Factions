@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Feature module: the Inkpaws building look (Modules\Pandaborn.Look.bin). See FEATURE.md. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Pandaborn.Look</AssemblyName>
+    <RootNamespace>Pandaborn.Look</RootNamespace>
+    <PandabornKind>Feature</PandabornKind>
+    <!-- The look's asset bundle is a build artefact of tools/build_look.ps1 -BundleName pandabornlook (never in git).
+         When it is there it is copied into $(ModOut)\AssetBundles; when it is not, the faction keeps the vanilla look. -->
+    <LookBundleDir Condition="'$(LookBundleDir)' == ''">E:\PandabornDev\build\look\AssetBundles</LookBundleDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Core\Pandaborn.Core.csproj" Private="false" />
+  </ItemGroup>
+  <Target Name="CopyLookBundle" AfterTargets="PandabornPackage">
+    <ItemGroup>
+      <LookBundle Include="$(LookBundleDir)\pandabornlook_win;$(LookBundleDir)\pandabornlook_mac" Condition="Exists('$(LookBundleDir)')" />
+      <LookBundleFound Include="@(LookBundle)" Condition="Exists('%(FullPath)')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LookBundleFound)" DestinationFolder="$(ModOut)\AssetBundles" SkipUnchangedFiles="true" />
+    <Message Importance="high" Condition="'@(LookBundleFound)' != ''" Text="Pandaborn.Look bundle -> $(ModOut)\AssetBundles (@(LookBundleFound->'%(Filename)'))" />
+    <Message Importance="high" Condition="'@(LookBundleFound)' == ''" Text="Pandaborn.Look: no bundle in $(LookBundleDir); the Inkpaws keep the vanilla building look" />
+  </Target>
+</Project>
