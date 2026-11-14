@@ -1,0 +1,27 @@
+# Large binaries ship in Releases / the Workshop, not in git
+*.timbermesh
+!mod/**/Buildings/**/*.timbermesh
+*.7z
+*.zip
+
+# Build output
+bin/
+obj/
+dist/
+*.user
+.vs/
+
+# Unity
+Library/
+Temp/
+Logs/
+UserSettings/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Never commit game files or decompiled code
+reference/
+decompiled/

@@ -1,0 +1,10 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Characters.Inkpaws",
+    "Blueprints": [
+      "Characters/Pandaborn/InkpawAdult.Inkpaws.blueprint",
+      "Characters/Pandaborn/InkpawChild.Inkpaws.blueprint",
+      "Characters/Pandaborn/Bot.Inkpaws.blueprint"
+    ]
+  }
+}

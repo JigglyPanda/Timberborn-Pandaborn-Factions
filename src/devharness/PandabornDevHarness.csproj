@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Dev-only automated test harness. Never shipped. Build: dotnet build src/devharness -c Release
+       Output: E:\PandabornDev\build\PandabornDevHarness (a mod folder; tools/run_game_test.ps1 junctions it into Mods). -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>PandabornDevHarness</AssemblyName>
+    <RootNamespace>PandabornDevHarness</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\PandabornDevHarness</ModOut>
+    <OutputPath>$(ModOut)\Scripts\</OutputPath>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
+    <NoWarn>CS1701;CS1702;MSB3277;NU1701</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.ImageConversionModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.ScreenCaptureModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.AudioModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+  </ItemGroup>
+  <Target Name="CopyManifest" AfterTargets="Build">
+    <Copy SourceFiles="manifest.json" DestinationFolder="$(ModOut)" />
+  </Target>
+</Project>

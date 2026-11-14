@@ -1,0 +1,9 @@
+{
+  "Name": "Pandaborn Dev Harness (dev only)",
+  "Version": "1.0.0",
+  "Id": "JigglyPanda.PandabornDevHarness",
+  "MinimumGameVersion": "1.0.0.0",
+  "Description": "Development-only automated test harness for Pandaborn - Factions. It does nothing unless a test request file (E:\\PandabornDev\\build\\test\\request.json) exists. Never shipped.",
+  "RequiredMods": [],
+  "OptionalMods": []
+}

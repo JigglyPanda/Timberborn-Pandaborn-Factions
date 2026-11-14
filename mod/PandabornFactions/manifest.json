@@ -1,0 +1,9 @@
+{
+  "Name": "Pandaborn - Factions",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornFactions",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Early development build. Adds the Inkpaws, a playable giant panda faction. For now they use the Folktails buildings, crops and needs with their own panda bodies, coats and portraits; their own content comes in later versions. Art and code are AI-generated.",
+  "RequiredMods": [],
+  "OptionalMods": []
+}
