@@ -1,0 +1,110 @@
+{
+ "run": {
+  "inGameHours": 19.0,
+  "realSeconds": 500
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelMoonLoft.PandabornProto",
+  "PandabornModelTeahouse.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelKindergarten.PandabornProto",
+  "Lodge.Folktails"
+ ],
+ "screenshots": [
+  {
+   "name": "overview_start",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "late_Den",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "late_MoonLoft",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "late_Teahouse",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "late_Hammock",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "late_Kindergarten",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "late_lodge",
+   "kind": "building",
+   "target": "Lodge.Folktails",
+   "at": "end",
+   "zoom": 1.4
+  },
+  {
+   "name": "overview_end",
+   "kind": "overview",
+   "at": "end"
+  },
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  },
+  {
+   "name": "hammock_0",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "150",
+   "zoom": 1.2
+  },
+  {
+   "name": "hammock_1",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "151",
+   "zoom": 1.2
+  },
+  {
+   "name": "hammock_2",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "152",
+   "zoom": 1.2
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "PandabornModel"
+ ]
+}
