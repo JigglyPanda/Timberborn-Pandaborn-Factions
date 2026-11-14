@@ -6,6 +6,12 @@ and the vanilla assets extracted for reference into `E:\PandabornDev\reference\v
 
 ## Summary
 
+**Update, second pass (2026-11-14):** the swap is now the `Pandaborn.Look` feature module (tested: same-session
+Inkpaws → Folktails and relaunch both show vanilla materials in Folktails; force-off and missing-API leave the vanilla
+look). The trim sheets are baked in Blender from modelled surfaces at the measured vanilla layouts
+([look-regions.md](look-regions.md)), and matched building close-ups against Folktails show our buildings no longer
+flatter than vanilla (see *Close-ups against Folktails*). The character material (step 4) has not been started.
+
 * **The re-theme works in game.** An Inkpaws game renders every vanilla Folktails building model (finished and
   construction stages, district center, power shafts, decorations, storage, paths' tunnel roofs) with our own
   materials; a Folktails game with the same mod enabled is unchanged. No new models, no errors in the log.
