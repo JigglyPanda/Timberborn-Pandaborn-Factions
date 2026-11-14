@@ -195,6 +195,15 @@
     ]
   },
   "FinishableWaterObstacleSpec": {
-    "Height": 1.0
+    "Height": 2.0
+  },
+  "PandabornSolidCellsSpec": {
+    "Cells": [
+      {
+        "X": 0,
+        "Y": 0,
+        "Z": 1
+      }
+    ]
   }
 }

@@ -167,5 +167,14 @@
     ],
     "InflowLimit": 0.3,
     "ContaminationShutoff": 0.05
+  },
+  "PandabornSolidCellsSpec": {
+    "Cells": [
+      {
+        "X": 0,
+        "Y": 0,
+        "Z": 1
+      }
+    ]
   }
 }

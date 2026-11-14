@@ -12,6 +12,7 @@ namespace Pandaborn.Water
             Bind<DewLimiter>().AsTransient();
             Bind<FlumeMonitor>().AsTransient();
             Bind<FlumeGateGuard>().AsTransient();
+            Bind<SolidCells>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
 
@@ -22,6 +23,7 @@ namespace Pandaborn.Water
             builder.AddDecorator<FlumeSegment, FlumeMonitor>();
             builder.AddDecorator<FlumeSegment, FlumeGateGuard>();
             builder.AddDecorator<PandabornDewLimiterSpec, DewLimiter>();
+            builder.AddDecorator<PandabornSolidCellsSpec, SolidCells>();
             return builder.Build();
         }
     }

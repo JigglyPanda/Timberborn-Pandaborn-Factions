@@ -96,6 +96,7 @@ def spout():
     bp = load("Buildings/Landscaping/FillValve/FillValve.Folktails.blueprint.json")
     bp["FillValveSpec"]["DefaultTargetHeightOffset"] = 0.3
     bp["FillValveSpec"]["DefaultTargetHeightEnabled"] = True
+    bp["PandabornSolidCellsSpec"] = {"Cells": [v3(0, 0, 1)]}   # cap: backed-up water cannot run over the top
     name_building(bp, "PaddySpout", "Paddy Spout",
                   "Holds the pool in front of it at a set shallow depth (default 0.3). Water comes in from behind.",
                   "Landscaping", 36)
@@ -145,6 +146,7 @@ def flumes():
     one_by_one(bp)
     bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": -1.0, "ContaminationShutoff": 0.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
+    bp["PandabornSolidCellsSpec"] = {"Cells": [v3(0, 0, 1)]}   # cap: backed-up water cannot run over the top
     name_building(bp, "FlumeLidded", "Flume (covered)",
                   "A covered flume segment. Holds at most one block of water; a path can be built on top.",
                   "Landscaping", 39)
@@ -183,6 +185,7 @@ def flumes():
     one_by_one(bp)
     bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": 0.3, "ContaminationShutoff": 0.05}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
+    bp["PandabornSolidCellsSpec"] = {"Cells": [v3(0, 0, 1)]}   # cap: backed-up water cannot run over the top
     name_building(bp, "FlumeGate", "Flume Gate",
                   "The intake of a flume. Lets at most 0.3 cubic metres per second through, and shuts by itself while "
                   "the water at the intake is contaminated.", "Landscaping", 42)
@@ -197,8 +200,9 @@ def turning_box():
     bp["BlockObjectSpec"] = blocks_spec((2, 2, 1), {(0, 0, 0): full, (1, 0, 0): full, (0, 1, 0): full, (1, 1, 0): full})
     # water cell (0,0); solid posts on its two inner faces plus the far corner
     bp["WaterObstacleSpec"] = {"Coordinates": [{"X": 1, "Y": 0}, {"X": 0, "Y": 1}, {"X": 1, "Y": 1}]}
-    bp["FinishableWaterObstacleSpec"] = {"Height": 1.0}
+    bp["FinishableWaterObstacleSpec"] = {"Height": 2.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
+    bp["PandabornSolidCellsSpec"] = {"Cells": [v3(0, 0, 1)]}   # cap: backed-up water cannot run over the top
     bp["PlaceableBlockObjectSpec"]["CustomPivot"] = {"HasCustomPivot": False, "Coordinates": {"X": 0.0, "Y": 0.0, "Z": 0.0}}
     name_building(bp, "FlumeCorner", "Flume Corner",
                   "A corner for flumes: one open water cell with posts on two sides. Flumes enter and leave through "
