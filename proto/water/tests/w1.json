@@ -357,6 +357,28 @@
     "allowGood": "PandabornCabbage"
    },
    {
+    "op": "place",
+    "template": "Stairs.Inkpaws",
+    "at": [
+     28,
+     7,
+     -1
+    ],
+    "orientation": "Cw0",
+    "id": "stairsA"
+   },
+   {
+    "op": "place",
+    "template": "Stairs.Inkpaws",
+    "at": [
+     33,
+     7,
+     -1
+    ],
+    "orientation": "Cw180",
+    "id": "stairsB"
+   },
+   {
     "op": "wait",
     "ticks": 3,
     "capSeconds": 900
@@ -654,7 +676,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -822,12 +846,12 @@
    },
    {
     "op": "wait",
-    "hours": 6,
+    "hours": 2,
     "capSeconds": 900
    },
    {
     "op": "plants",
-    "label": "field_h6",
+    "label": "field_h2",
     "rect": [
      28,
      7,
@@ -941,7 +965,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -970,7 +996,7 @@
      "Water",
      "PandabornCabbage"
     ],
-    "label": "h6"
+    "label": "h2"
    },
    {
     "op": "water",
@@ -985,7 +1011,7 @@
    },
    {
     "op": "wait",
-    "hours": 18,
+    "hours": 22,
     "capSeconds": 900
    },
    {
@@ -1104,7 +1130,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -1134,12 +1162,6 @@
      "PandabornCabbage"
     ],
     "label": "h24"
-   },
-   {
-    "op": "giveGoods",
-    "id": "tap",
-    "good": "Water",
-    "amount": 20
    },
    {
     "op": "uiText",
@@ -1267,7 +1289,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -1312,12 +1336,12 @@
    },
    {
     "op": "wait",
-    "hours": 18,
+    "hours": 10,
     "capSeconds": 900
    },
    {
     "op": "plants",
-    "label": "field_h66",
+    "label": "field_h58",
     "rect": [
      28,
      7,
@@ -1431,7 +1455,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -1460,7 +1486,7 @@
      "Water",
      "PandabornCabbage"
     ],
-    "label": "h66"
+    "label": "h58"
    },
    {
     "op": "waterOff",
@@ -1488,7 +1514,169 @@
    },
    {
     "op": "wait",
-    "hours": 6,
+    "hours": 4,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h62",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7",
+     "stairsA",
+     "stairsB"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h62"
+   },
+   {
+    "op": "waterOff",
+    "id": "dr1"
+   },
+   {
+    "op": "waterOff",
+    "id": "dr2"
+   },
+   {
+    "op": "wait",
+    "hours": 10,
     "capSeconds": 900
    },
    {
@@ -1607,7 +1795,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -1637,14 +1827,6 @@
      "PandabornCabbage"
     ],
     "label": "h72"
-   },
-   {
-    "op": "waterOff",
-    "id": "dr1"
-   },
-   {
-    "op": "waterOff",
-    "id": "dr2"
    },
    {
     "op": "wait",
@@ -1767,7 +1949,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [
@@ -1799,162 +1983,10 @@
     "label": "h84"
    },
    {
-    "op": "wait",
-    "hours": 16,
-    "capSeconds": 900
-   },
-   {
-    "op": "plants",
-    "label": "field_h100",
-    "rect": [
-     28,
-     7,
-     33,
-     8,
-     -1
-    ]
-   },
-   {
-    "op": "probe",
-    "cells": [
-     [
-      12,
-      7,
-      0
-     ],
-     [
-      12,
-      8,
-      0
-     ],
-     [
-      12,
-      10,
-      0
-     ],
-     [
-      11,
-      10,
-      0
-     ],
-     [
-      13,
-      10,
-      0
-     ],
-     [
-      12,
-      8,
-      1
-     ],
-     [
-      9,
-      8,
-      1
-     ],
-     [
-      9,
-      8,
-      0
-     ],
-     [
-      9,
-      7,
-      0
-     ],
-     [
-      19,
-      8,
-      1
-     ],
-     [
-      22,
-      8,
-      -1
-     ],
-     [
-      12,
-      15,
-      -1
-     ],
-     [
-      16,
-      20,
-      -2
-     ],
-     [
-      16,
-      23,
-      -1
-     ],
-     [
-      26,
-      4,
-      -1
-     ],
-     [
-      30,
-      7,
-      -1
-     ],
-     [
-      5,
-      8,
-      1
-     ],
-     [
-      11,
-      6,
-      0
-     ]
-    ],
-    "objects": [
-     "g1",
-     "g2",
-     "span",
-     "f0",
-     "f5",
-     "sp",
-     "sc",
-     "tap",
-     "farm",
-     "br0",
-     "bs7"
-    ],
-    "volumes": [
-     [
-      15,
-      22,
-      17,
-      24,
-      -1
-     ],
-     [
-      25,
-      3,
-      27,
-      5,
-      -1
-     ],
-     [
-      21,
-      6,
-      24,
-      10,
-      -1
-     ]
-    ],
-    "goods": [
-     "Water",
-     "PandabornCabbage"
-    ],
-    "label": "h100"
-   },
-   {
     "op": "expect",
     "label": "cabbage replanted after the flood",
     "what": "healthy",
-    "min": 6,
+    "min": 5,
     "template": "PandabornCabbage.Inkpaws",
     "rect": [
      28,
@@ -2128,7 +2160,9 @@
      "tap",
      "farm",
      "br0",
-     "bs7"
+     "bs7",
+     "stairsA",
+     "stairsB"
     ],
     "volumes": [
      [

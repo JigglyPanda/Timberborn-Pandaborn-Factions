@@ -128,25 +128,36 @@ def flume_piece(model_id, flow_cells, floors, inert_height, solid_cells=()):
     return bp
 
 
+# Occupations that let exactly one thing stand over a ground flume: the Bridge span. The flume leaves its cell's corners
+# free; the span's leg takes only the corners (and is supported by the ground, unlike a leg that occupies nothing, which
+# the game deletes on load as "not supported by terrain physics"); a regular Bridge leg also takes Bottom, so it cannot
+# be built over a flume (its inert obstacle would share the flume's cell).
+FLUME_OCCUPATIONS = "Bottom, Middle, Path"
+BRIDGE_LEG = "Corners, Bottom"
+SPAN_LEG = "Corners"
+
+
 def flumes():
     bp = flume_piece("Flume", [(0, 0, 0)], [(0, 0, 0)], 1.0)
+    bp["BlockObjectSpec"]["Blocks"][0]["Occupations"] = FLUME_OCCUPATIONS
     name_building(bp, "Flume", "Flume", "Carries water one way along the arrow, level or downhill.", "Landscaping", 38)
 
     bp = flume_piece("Flume", [(0, 0, 0)], [(0, 0, 0), (0, 0, 1)], 1.0, [(0, 0, 1)])
     bp["BlockObjectSpec"]["Blocks"][0]["Stackable"] = "BlockObject"   # a path can stand on it
     name_building(bp, "FlumeCovered", "Flume (covered)", "A covered flume. A path can be built on top.", "Landscaping", 39)
 
-    # Bridge span: the piece that crosses over a ground flume. Its lower block occupies nothing (the kit's leg occupies
-    # Corners, which a flume tile also occupies) and it carries no inert obstacle (that would cover the flume cell below
-    # a second time; full obstacles are not reference counted). With the module off its neighbours are inert, so no
-    # water reaches it. See docs/tech/models.md, "Requests from the water lane".
+    # Bridge span: the piece that crosses over a ground flume. Its leg takes only the cell's corners (the flume leaves them
+    # free) and it carries no inert obstacle (that would cover the flume cell below a second time; full obstacles are not
+    # reference counted). With the module off its neighbours are inert, so no water reaches it.
+    # See docs/tech/models.md, "Requests from the water lane".
     bp = flume_piece("FlumeBridge", [(0, 0, 1)], [(0, 0, 1)], 2.0)
-    bp["BlockObjectSpec"]["Blocks"][0]["Occupations"] = "None"
+    bp["BlockObjectSpec"]["Blocks"][0]["Occupations"] = SPAN_LEG
     del bp["WaterObstacleSpec"], bp["FinishableWaterObstacleSpec"]
     name_building(bp, "FlumeBridgeSpan", "Flume Bridge (span over a flume)",
                   "A Flume Bridge piece that stands over another flume.", "Landscaping", 40)
 
     bp = flume_piece("FlumeBridge", [(0, 0, 1)], [(0, 0, 1)], 2.0)
+    bp["BlockObjectSpec"]["Blocks"][0]["Occupations"] = BRIDGE_LEG
     name_building(bp, "FlumeBridge", "Flume Bridge", "A flume one block up on a trestle. Water and walkers pass under it.",
                   "Landscaping", 40)
 

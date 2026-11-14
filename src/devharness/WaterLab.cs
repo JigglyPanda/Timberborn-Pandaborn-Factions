@@ -44,6 +44,8 @@ using Timberborn.InventorySystem;
 using Timberborn.WorkSystem;
 using Timberborn.EnterableSystem;
 using Timberborn.ResourceCountingSystem;
+using Timberborn.CoreUI;
+using UnityEngine.UIElements;
 using UnityEngine;
 
 namespace PandabornDevHarness
@@ -99,6 +101,7 @@ namespace PandabornDevHarness
         private readonly PlantingService _plantingService;
         private readonly ResourceCountingService _resourceCountingService;
         private readonly EntitySelectionService _selection;
+        private readonly PanelStack _panelStack;
 
         private JObject _spec;
         private JArray _steps;
@@ -152,7 +155,8 @@ namespace PandabornDevHarness
                         WeatherService weatherService, HazardousWeatherService hazardousWeatherService,
                         WeatherFastForwarder weatherFastForwarder, GameCycleService gameCycleService,
                         TreeCuttingArea treeCuttingArea, PlantingService plantingService,
-                        ResourceCountingService resourceCountingService, EntitySelectionService selection)
+                        ResourceCountingService resourceCountingService, EntitySelectionService selection,
+                        PanelStack panelStack)
         {
             _waterService = waterService;
             _waterMap = waterMap;
@@ -180,6 +184,7 @@ namespace PandabornDevHarness
             _plantingService = plantingService;
             _resourceCountingService = resourceCountingService;
             _selection = selection;
+            _panelStack = panelStack;
         }
 
         public void Load()
@@ -734,7 +739,36 @@ namespace PandabornDevHarness
             if (step["ticks"] != null) _waitUntilTick = _ticks + (long)Request.Num(step, "ticks", 0f);
             else _waitUntilHours = Hours() + Request.Num(step, "hours", 0f) + 24f * Request.Num(step, "days", 0f);
             float speed = Request.Num(step, "speed", _speed);
+            ClearSpeedLock();
             _speedManager.ChangeSpeed(speed);
+        }
+
+        /// <summary>A panel that locks the game speed (a dialog shown after loading a save, for example) would stop every
+        /// wait: record what it is and what it says, close it, and unlock the speed. Dev only (reads PanelStack._stack).</summary>
+        private void ClearSpeedLock()
+        {
+            try
+            {
+                var field = typeof(PanelStack).GetField("_stack", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var stack = field?.GetValue(_panelStack) as System.Collections.IEnumerable;
+                if (stack != null)
+                {
+                    foreach (var panel in stack.Cast<object>().ToList())   // top first
+                    {
+                        var t = panel.GetType();
+                        bool lockSpeed = (bool)t.GetProperty("LockSpeed").GetValue(panel);
+                        var controller = t.GetProperty("PanelController").GetValue(panel) as IPanelController;
+                        var element = t.GetProperty("VisualElement").GetValue(panel) as VisualElement;
+                        string text = element == null ? "" : string.Join(" | ", element.Query<Label>().ToList().Select(l => l.text).Where(x => !string.IsNullOrWhiteSpace(x)).Take(8));
+                        Note("panel on stack: " + controller?.GetType().FullName + " lockSpeed=" + lockSpeed + " text: " + text);
+                        if (!lockSpeed || controller == null) break;
+                        _panelStack.Pop(controller);
+                        Note("closed panel " + controller.GetType().Name);
+                    }
+                }
+            }
+            catch (Exception e) { Note("panel check failed: " + e.Message); }
+            _speedManager.UnlockSpeed();
         }
 
         private Vector3Int Rel(JToken token)

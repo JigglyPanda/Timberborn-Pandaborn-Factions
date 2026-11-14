@@ -545,6 +545,9 @@ def w1():
          place("PandabornCisternTap", [26, 2, 0], "Cw0", id="tap"),
          place("EfficientFarmHouse.Inkpaws", [29, 2, 0], "Cw0", id="farm"),
          place("SmallWarehouse.Inkpaws", [33, 2, 0], "Cw0", id="store"), {"op": "set", "id": "store", "allowGood": "PandabornCabbage"},
+         # stairs down into the field pit (run water-w1-0809: a pit with no way down is out of the farmers' reach);
+         # both orientations, one of them climbs towards the farmhouse
+         place("Stairs.Inkpaws", [28, 7, -1], "Cw0", id="stairsA"), place("Stairs.Inkpaws", [33, 7, -1], "Cw180", id="stairsB"),
          wait(3), {"op": "set", "id": "sp", "targetDepth": 0.3},
          {"op": "plant", "template": RICE, "rect": [11, 15, 13, 16, -1]},
          {"op": "markPlant", "template": CABBAGE, "rect": [28, 7, 33, 8, -1]},
@@ -552,7 +555,7 @@ def w1():
          {"op": "grow", "rect": [28, 7, 33, 8, -1], "progress": 0.6},
          water("p1", [12, 4, 0], 2.0, 0.8), water("p2", [3, 8, 1], 2.0, 0.8), water("keepB2", [23, 8, -1], -3.0, 0.3),
          water("chIn", [1, 20, -2], 1.6, 1.6), water("chOut", [30, 20, -2], -2.4), water("strip", [30, 10, -1], 1.0, 0.5)]
-    objs = ["g1", "g2", "span", "f0", "f5", "sp", "sc", "tap", "farm", "br0", "bs7"]
+    objs = ["g1", "g2", "span", "f0", "f5", "sp", "sc", "tap", "farm", "br0", "bs7", "stairsA", "stairsB"]
     cells = [[12, 7, 0], [12, 8, 0], [12, 10, 0], [11, 10, 0], [13, 10, 0], [12, 8, 1], [9, 8, 1], [9, 8, 0], [9, 7, 0],
              [19, 8, 1], [22, 8, -1], [12, 15, -1], [16, 20, -2], [16, 23, -1], [26, 4, -1], [30, 7, -1], [5, 8, 1], [11, 6, 0]]
     vols = [[15, 22, 17, 24, -1], [25, 3, 27, 5, -1], [21, 6, 24, 10, -1]]
@@ -572,7 +575,7 @@ def w1():
           expect("scoop wheel lifts", "volume", rect=[15, 22, 17, 24, -1], mn=0.05)]
     s += [{"op": "uiText", "id": i, "label": "ui_" + i} for i in ("g1", "sp", "sc", "tap")]
     t = 0
-    for h, act in ((6, "flood"), (24, None), (48, None), (66, "drain"), (72, "stop"), (84, None), (100, None)):
+    for h, act in ((2, "flood"), (24, None), (48, None), (58, "drain"), (62, "stop"), (72, None), (84, None)):
         s += [wait_hours(h - t), {"op": "plants", "label": f"field_h{h}", **field}, dict(probe, label=f"h{h}")]
         t = h
         if act == "flood":
@@ -583,9 +586,9 @@ def w1():
             s += off("dr1", "dr2")
         if h == 48:
             s += [shot("w1_flooded", [30, 6, 0], 16, 50, 0)]
-        if h == 24:   # the tap's first day ran on hauled Water only; now a sure supply to measure pouring
-            s += [{"op": "giveGoods", "id": "tap", "good": "Water", "amount": 20}, {"op": "uiText", "id": "tap", "label": "ui_tap_h24"}]
-    s += [expect("cabbage replanted after the flood", "healthy", template=CABBAGE, rect=field["rect"], mn=6),
+        if h == 24:
+            s += [{"op": "uiText", "id": "tap", "label": "ui_tap_h24"}]
+    s += [expect("cabbage replanted after the flood", "healthy", template=CABBAGE, rect=field["rect"], mn=5),
           shot("w1_field", [30, 6, 0], 16, 50, 0), shot("w1_tap", [26, 3, 0], 12, 45, 30), shot("w1_end", [16, 12, 0], 36),
           {"op": "invoke", "id": "g1", "component": "FlumeGate", "method": "SetFlow", "args": [0.45]},
           {"op": "invoke", "id": "g1", "component": "FlumeGate", "method": "SetGuardEnabled", "args": [False]},

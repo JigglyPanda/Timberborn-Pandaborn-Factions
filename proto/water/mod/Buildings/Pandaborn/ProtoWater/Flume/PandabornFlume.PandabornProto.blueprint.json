@@ -36,7 +36,7 @@
     "Blocks": [
       {
         "MatterBelow": "GroundOrStackable",
-        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Occupations": "Bottom, Middle, Path",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
