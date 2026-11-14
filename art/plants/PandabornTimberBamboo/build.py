@@ -75,10 +75,10 @@ def clump(m, rng, state, n, h_range, r_range, spread, sprays_per, spray_size, br
                  A.uv(SPRAYS[int(rng.integers(2, 5))]), leaf_colour(rng, state), sway=(0.9, 1.0), back_offset=0.05)
     if mushrooms:
         for k in range(3):
-            a = rng.uniform(0, 2 * math.pi)
-            p = np.array([C[0] + math.cos(a) * 0.36, 0.0, C[2] + math.sin(a) * 0.36])
+            a = 2 * math.pi * k / 3 + rng.uniform(-0.4, 0.4)
+            p = np.array([C[0] + math.cos(a) * 0.4, 0.0, C[2] + math.sin(a) * 0.4])
             # invisible card (blank albedo) that shows bamboo fungus when the grove has mushrooms to gather
-            upright(m, p, a + math.pi / 2, 0.24, 0.26, (A.BLANK_UV[0], A.BLANK_UV[1], A.BLANK_UV[0] + 0.001, A.BLANK_UV[1] + 0.001),
+            upright(m, p, a + math.pi / 2, 0.3, 0.32, (A.BLANK_UV[0], A.BLANK_UV[1], A.BLANK_UV[0] + 0.001, A.BLANK_UV[1] + 0.001),
                     [1, 1, 1], uv2=A.duv("mushrooms" if k % 2 == 0 else "mushrooms_b"), two_sided=True)
     if shoot:
         a = rng.uniform(0, 2 * math.pi)
@@ -132,7 +132,7 @@ p.extra = {
                    "MinWidthScaleFactor": 0.9, "MaxWidthScaleFactor": 1.1, "RandomizedRotation": "BetweenMinAndMax",
                    "MinRotation": 0.0, "MaxRotation": 360.0},
     "colliders": {"Seedling": {"capsule": {"center": [0.5, 0.35, 0.5], "radius": 0.2, "height": 0.9}},
-                  "Mature": {"capsule": {"center": [0.5, 1.3, 0.5], "radius": 0.28, "height": 2.7}},
+                  "Mature": {"capsule": {"center": [0.5, 1.6, 0.5], "radius": 0.45, "height": 2.9}},
                   "#Leftover": {"capsule": {"center": [0.5, 0.12, 0.5], "radius": 0.25, "height": 0.3}}},
 }
 if __name__ == "__main__":

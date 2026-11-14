@@ -126,7 +126,7 @@ p.extra = {
                    "MinWidthScaleFactor": 0.9, "MaxWidthScaleFactor": 1.1, "RandomizedRotation": "BetweenMinAndMax",
                    "MinRotation": 0.0, "MaxRotation": 360.0},
     "colliders": {"Seedling": {"capsule": {"center": [0.5, 0.3, 0.5], "radius": 0.2, "height": 0.7}},
-                  "Mature": {"capsule": {"center": [0.5, 1.0, 0.5], "radius": 0.3, "height": 2.2}},
+                  "Mature": {"capsule": {"center": [0.5, 1.45, 0.5], "radius": 0.62, "height": 1.6}},
                   "#Leftover": {"capsule": {"center": [0.5, 0.12, 0.5], "radius": 0.12, "height": 0.3}}},
 }
 if __name__ == "__main__":

@@ -149,11 +149,11 @@
    "capsule": {
     "center": [
      0.5,
-     1.0,
+     1.45,
      0.5
     ],
-    "radius": 0.3,
-    "height": 2.2
+    "radius": 0.62,
+    "height": 1.6
    }
   },
   "#Leftover": {
