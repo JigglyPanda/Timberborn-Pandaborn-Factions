@@ -68,7 +68,7 @@ def seedling(m, state):
     tuft = "rice_tuft_b" if state != "dead" else "rice_tuft_dry"
     for i, (x, z) in enumerate(GRID):
         p = np.array([x + rng.uniform(-0.02, 0.02), 0.0, z + rng.uniform(-0.02, 0.02)])
-        H = rng.uniform(0.48, 0.56) * (0.7 if state == "dead" else 1.0)
+        H = rng.uniform(0.6, 0.68) * (0.7 if state == "dead" else 1.0)
         hill(m, rng, p, H, 0.3, tuft, col(rng, YOUNG, state), rng.uniform(0, math.pi), arching=3)
     ambient(m, 0.4, floor=0.7)
     auto_sway(m, 0.6, seed=2)

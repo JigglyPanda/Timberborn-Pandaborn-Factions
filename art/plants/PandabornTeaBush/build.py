@@ -54,12 +54,12 @@ def mature(m, state):
     ripe = state == "alive"
     dome = (C + np.array([0, 0.06, 0]), (R, H - 0.06, R))
     # sides: two rings of leaf masses laid like tiles down a squat dome, lower ring first
-    for ring, (phi, n, size) in enumerate(((1.22, 9, 0.36), (0.72, 8, 0.32))):
+    for ring, (phi, n, size) in enumerate(((1.45, 9, 0.3), (1.12, 9, 0.36), (0.72, 8, 0.32))):
         for k in range(n):
             th = 2 * math.pi * (k + 0.5 * ring) / n + rng.uniform(-0.12, 0.12)
             shingle(m, dome[0], dome[1], phi + rng.uniform(-0.08, 0.08), th, size, size * 1.15, A.uv("tea_leaves"),
-                    col(rng, LEAF if ring == 0 else TOP, state),
-                    uv2=A.duv("tea_flush") if (ripe and ring == 1) else None, inset=0.35, sway=(0.3 + 0.4 * ring, 0.8))
+                    col(rng, LEAF if ring < 2 else TOP, state),
+                    uv2=A.duv("tea_flush") if (ripe and ring == 2) else None, inset=0.35, sway=(0.2 + 0.3 * ring, 0.8))
     table(m, rng, state, H, R * 0.6, A.uv("tea_top"), A.duv("tea_flush_top") if ripe else None, col(rng, TOP, state))
     ambient(m, H, floor=0.5, power=0.8)
     auto_sway(m, 0.6, seed=1)

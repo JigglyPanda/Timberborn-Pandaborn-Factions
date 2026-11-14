@@ -147,7 +147,7 @@ dry, dead, ripe yield, stumps).
 |---|---|---|---|---|
 | Timber bamboo (`PandabornTimberBamboo.Inkpaws`) | Trees / ChestnutTree, 1x1x3 | six tall green culms (2.35-2.95, 5-sided, nodes and waxy bands from the culm strip) leaning out, feathery leaf sprays in the upper half, arching tips; bamboo fungus (white lace veils) at the base while it has mushrooms; dry = straw culms and sprays; dead = grey culms, two snapped, a few dry twigs; stump = four hollow cut culms | 128 / 252 / 60 | strong slow sway, fluttering leaves |
 | Persimmon tree (`PandabornPersimmonTree.Inkpaws`) | Trees / ChestnutTree, 1x1x3 | dark blocky trunk forking into three limbs, a round crown of 54 shingled puffs of broad dark glossy leaves, 16 orange persimmons with green calyxes hanging outside the crown while it has fruit; sapling forks into three leafy twigs; dead = bare forked branches | 52 / 188 / 21 | as chestnut |
-| Tea bush (`PandabornTeaBush.Inkpaws`) | Bushes / BlueberryBush, 1x1x1 | clipped dome of small dark glossy leaves with a flat plucking table, filling the tile so planted rows join into hedgerows; bright yellow-green young tips across the top while there is tea to pick | 28 / 52 / - | almost still |
+| Tea bush (`PandabornTeaBush.Inkpaws`) | Bushes / BlueberryBush, 1x1x1 | clipped dome of small dark glossy leaves with a flat plucking table, filling the tile so planted rows join into hedgerows; bright yellow-green young tips across the top while there is tea to pick | 28 / 70 / - | almost still |
 | Shoot bamboo (`PandabornShootBamboo.Inkpaws`) | Crops / Carrot | four thin culms with small leaf fans and low ground fans on a tilled soil patch, three fat tan sheathed shoots with yellow-green tips around it at harvest | 97 / 138 / - | light |
 | Cabbage (`PandabornCabbage.Inkpaws`) | Crops / Carrot | four tall napa heads per tile: six pale crinkled leaves with white midribs wrapped into a barrel, four darker spreading outer leaves; seedlings are rosettes of young leaves | 40 / 264 / - | stiff |
 | Rice (`PandabornRice.Inkpaws`) | Crops / Cattail, 1x1x2, aquatic | 3x3 transplanted hills per tile on a grid that runs on across tiles; bright green upright tufts (0.55 high) when young, green-gold arching leaves under pale gold drooping panicles (0.87) at harvest; stands on the paddy floor | 126 / 180 / - | supple |
@@ -190,6 +190,19 @@ shows the exact merge and is the reference implementation. The generator (`src/g
 |---|---|---|
 | `plants-states-1` | Plains, Inkpaws, only the faction + the plants prototype. Every plant in every state, 2x2 blocks: seedling, seedling dry, seedling dead, mature, ripe (gatherables), mature dry, mature dead, cut (trees); a 0.3-deep paddy of rice seedlings and mature rice; day shots, then 12.5 in-game hours later | **PASS**, 0 errors, 0 exceptions. The plant lab's report (result.json `plantLab`) shows for all 47 blocks the expected node active (`Seedling/#Alive/PandabornRiceSeedling`, `Mature/#Dying/...Dry`, `#Leftover/...Stump`, ...), the material `Pandaborn<X> - Uncolored<n>` (our bundle material re-created by the game's optimizer), uv2 present, and `_EnableDetail` 1 exactly on the ripe blocks (bamboo fungus, persimmons and tea tips visible) |
 
+| `plants-terrace-1` | Plains, same mods. A mixed Sichuan terrace with **real** water and soil moisture: a 0.3 paddy at the bottom (mature rice west, seedlings east), a moist bench along an irrigation ditch (shoot bamboo, cabbage, a timber bamboo grove of 70 clumps, a persimmon orchard), a dry upper bench one level up (three tea rows, Sichuan pepper); only the ripe yields forced; day, then 16 in-game hours later (hour 23.8) | **PASS**, 0 errors. The water lab's plant probe counts **346 plants, 346 healthy, 0 dying, 0 dead** at the start and at night: the moisture zones of Pillar 2 work with these blueprints as laid out (tea and pepper alive on the dry bench, the rest on moist soil, rice in water) |
+
+Screenshots: `E:\PandabornDev\build\test\plants-terrace-1\terrace_{day,night}.png` (the whole terrace from the game
+camera), `terrace_grove_*`, `terrace_tea_*`, `terrace_paddy_*`, `terrace_orchard_*`, `terrace_low_*` (a low view from the
+far side). The terrace reads as a Chengdu-plain farm at a glance: dark joined tea hedgerows on the top bench, the
+bamboo grove as the tallest, most vertical mass with fungus veils at its feet, round dark persimmons with orange
+specks, pale cabbage barrels and tan bamboo shoots in neat rows, a green-gold paddy. At hour 23.8 the game's light is a
+warm dim dusk, not a dark night; vegetation has no emissive parts, so nothing changes but the light.
+
+After the terrace run (not re-run in game): a third, lower ring of leaf masses closes the small holes at the foot of
+the tea domes (70 triangles), and rice seedlings were raised to 0.6-0.68 so they stay above water deeper than the
+spout's 0.3.
+
 Screenshots in `E:\PandabornDev\build\test\plants-states-1\`: `matrix_{day,night}.png` (all states), `row_<Plant>_{day,night}.png`
 (one plant's row framed), `paddy_{day,night}.png`, `game_{day,night}.png`.
 
@@ -219,5 +232,9 @@ What the game shots showed and what changed after them:
 * Seedlings are only one stage (the game has no more); the shoot-bamboo and cabbage seedlings are small on large soil
   patches, as vanilla's are.
 * Colliders are per stage, the same for alive, dry and dead (vanilla narrows the dead tree's collider).
+* Rice panicles still read as small yellow hooks from close up (one curved sprite per card); a denser, shorter tassel
+  sprite would be better. From the normal camera the paddy reads correctly.
+* The persimmon crown is shingled puffs; it is solid now but less sculpted than vanilla's chestnut, and the fruit are
+  small at full zoom-out.
 * The painted atlas is procedural: leaves are clean and graphic next to vanilla's hand-painted clusters; at game zoom
   it holds up, close up the bamboo leaf sprays and the persimmon puffs are the weakest sprites.
