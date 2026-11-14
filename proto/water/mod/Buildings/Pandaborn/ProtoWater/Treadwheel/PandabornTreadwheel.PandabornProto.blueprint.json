@@ -152,8 +152,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornTreadwheel.DisplayName",
-    "DescriptionLocKey": "Building.PandabornTreadwheel.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoTreadwheel.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoTreadwheel.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Power/PowerWheel/PowerWheelIcon"
   },
@@ -293,7 +293,6 @@
   "WaterMoverSpec": {
     "WaterPerSecond": 0.1
   },
-  "WaterInputFixedSpec": {},
   "WaterInputSpec": {
     "WaterInputCoordinates": {
       "X": 0,
@@ -301,6 +300,7 @@
       "Z": -1
     }
   },
+  "WaterInputFixedSpec": {},
   "WaterOutputSpec": {
     "WaterCoordinates": {
       "X": 2,
@@ -309,5 +309,6 @@
     },
     "DistanceToGroundOffset": 0.0,
     "OverflowAllowed": false
-  }
+  },
+  "PandabornTreadwheelSpec": {}
 }

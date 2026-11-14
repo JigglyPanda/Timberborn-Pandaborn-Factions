@@ -1,13 +1,8 @@
 {
   "TemplateCollectionSpec": {
-    "CollectionId": "NaturalResources.Folktails",
+    "CollectionId": "NaturalResources.Inkpaws",
     "Blueprints": [
-      "NaturalResources/Pandaborn/ProtoWater/PaddyCrop/PandabornPaddyCrop.PandabornProto.blueprint",
-      "NaturalResources/Pandaborn/ProtoWater/MoistCrop/PandabornMoistCrop.PandabornProto.blueprint",
-      "NaturalResources/Pandaborn/ProtoWater/DryCrop/PandabornDryCrop.PandabornProto.blueprint",
-      "NaturalResources/Pandaborn/ProtoWater/Bamboo/PandabornBamboo.PandabornProto.blueprint",
-      "NaturalResources/Pandaborn/ProtoWater/ShootBamboo/PandabornShootBamboo.PandabornProto.blueprint",
-      "NaturalResources/Pandaborn/ProtoWater/TimberBamboo/PandabornTimberBamboo.PandabornProto.blueprint"
+      "NaturalResources/Pandaborn/ProtoWater/DryCrop/PandabornDryCrop.PandabornProto.blueprint"
     ]
   }
 }

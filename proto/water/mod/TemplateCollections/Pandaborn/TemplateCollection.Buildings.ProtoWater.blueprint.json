@@ -1,23 +1,20 @@
 {
   "TemplateCollectionSpec": {
-    "CollectionId": "Buildings.Folktails",
+    "CollectionId": "Buildings.Inkpaws",
     "Blueprints": [
-      "Buildings/Pandaborn/ProtoWater/PaddySpout/PandabornPaddySpout.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/FlumeValve/PandabornFlumeValve.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/FlumeValveOpen/PandabornFlumeValveOpen.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/FlumeValveGate/PandabornFlumeValveGate.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/Flume/PandabornFlume.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/FlumeLidded/PandabornFlumeLidded.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeCovered/PandabornFlumeCovered.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeBridgeSpan/PandabornFlumeBridgeSpan.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/FlumeBridge/PandabornFlumeBridge.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/FlumeDrop/PandabornFlumeDrop.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/FlumeDropOpen/PandabornFlumeDropOpen.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/FlumeGate/PandabornFlumeGate.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/FlumeCorner/PandabornFlumeCorner.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/PaddySpout/PandabornPaddySpout.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/ScoopWheel/PandabornScoopWheel.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/Treadwheel/PandabornTreadwheel.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/DewCollector/PandabornDewCollector.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/TripHammer/PandabornTripHammer.PandabornProto.blueprint",
       "Buildings/Pandaborn/ProtoWater/CisternTap/PandabornCisternTap.PandabornProto.blueprint",
-      "Buildings/Pandaborn/ProtoWater/TripHammer/PandabornTripHammer.PandabornProto.blueprint"
+      "Buildings/Pandaborn/ProtoWater/DewCollector/PandabornDewCollector.PandabornProto.blueprint"
     ]
   }
 }

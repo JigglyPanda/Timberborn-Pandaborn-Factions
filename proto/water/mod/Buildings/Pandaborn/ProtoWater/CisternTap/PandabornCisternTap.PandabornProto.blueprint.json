@@ -136,8 +136,8 @@
   },
   "WorkplaceIlluminatorSpec": {},
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornCisternTap.DisplayName",
-    "DescriptionLocKey": "Building.PandabornCisternTap.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoCisternTap.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoCisternTap.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Water/Discharge/DischargeIcon"
   },
@@ -278,5 +278,6 @@
         }
       }
     }
-  }
+  },
+  "PandabornCisternTapSpec": {}
 }

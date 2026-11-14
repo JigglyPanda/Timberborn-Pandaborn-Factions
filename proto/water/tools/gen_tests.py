@@ -38,7 +38,7 @@ def flat(x0, y0, x1, y1, z):
 
 
 def place(t, at, o="Cw90", id=None, **kw):
-    s = {"op": "place", "template": t if t.endswith(".Folktails") or t == "Path" else t + P, "at": at, "orientation": o}
+    s = {"op": "place", "template": t if t.endswith((".Folktails", ".Inkpaws")) or t == "Path" else t + P, "at": at, "orientation": o}
     if id:
         s["id"] = id
     s.update(kw)
@@ -494,7 +494,230 @@ def district2():
     request("district2", s, [32, 12], speed=5, real_seconds=3600, origin={"nearDistrict": True})
 
 
+# ================================================================================================ phase 2: Inkpaws + module
+CABBAGE, RICE, TEA = "PandabornCabbage.Inkpaws", "PandabornRice.Inkpaws", "PandabornTeaBush.Inkpaws"
+DEV_SWITCH = r"E:\PandabornDev\build\proto\water\pandaborn.dev.txt"
+OWN = ["PandabornFactions", "PandabornDevHarness", "Inkpaws", "Pandaborn.", "PandabornProto"]
+
+
+def request2(name, steps, reload, area, speed, real_seconds, origin, **extra):
+    """An Inkpaws request for the water dev mod (run with -Faction Inkpaws -DisableMods JigglyPanda.PandabornFactions
+    -ExtraMods E:\\PandabornDev\\build\\proto\\water -SaveAndReload)."""
+    water_spec = {"name": name, "speed": speed, "area": area, "origin": origin, "flattenMargin": 2,
+                  "steps": steps, "reloadSteps": reload}
+    water_spec.update(extra)
+    r = {"faction": "Inkpaws", "map": "Plains", "speed": 0, "batchControl": False,
+         "run": {"realSeconds": real_seconds, "settleSeconds": 2},
+         "screenshots": [{"name": "screen_end", "kind": "screen", "at": "end"}],
+         "ownPatterns": OWN, "water": water_spec}
+    os.makedirs(OUT, exist_ok=True)
+    with open(os.path.join(OUT, name + ".json"), "w", encoding="utf-8", newline="\n") as f:
+        json.dump(r, f, indent=1)
+        f.write("\n")
+
+
+def w1():
+    """Inkpaws (generated build + the module), next to the district; saved, reloaded with the module on.
+    L2: plateau pond (floor +1) -> Flume Gate g2 (6,8,+1) -> Flume Bridges x7..20 on y=8 (flow at +1) with a Bridge span
+    over L1 at (12,8); L2 pours over basin B2 (x21..24, floor -1, kept at 0.3).
+    L1: pond (x11..13 y3..5) -> Flume Gate g1 (12,6) -> Flumes (12,7..12) north, under the span -> Paddy Spout (12,13)
+    -> paddy x10..14 y14..17 (floor -1) with rice.
+    Channel y=20 (floor -2) with a current; Scoop Wheel (16,20,-2) lifts into basin x15..17 y22..24 (floor -1).
+    Beavers: Cistern Tap (26,2) with a worker over a pit (x25..27 y3..5, floor -1); farmhouse (29,2) with a cabbage field
+    in a shallow pit (x28..33 y7..8, floor -1) kept moist by a strip (y=10). The field is flooded h6..h66 (2.5 days; the
+    cabbage dies after 2 days under water), then drained: do farmers clear and replant?
+    Before saving, g1 is set to 0.45 m3/s with the badwater guard off; after reload both must have survived.
+    """
+    s = [{"op": "pathFromDistrict", "to": [1, 1, 0]},
+         {"op": "placeLine", "template": "Path", "from": [1, 1, 0], "count": 34, "step": [1, 0, 0], "orientation": "Cw0"},
+         flat(1, 5, 6, 11, 3), flat(2, 6, 5, 10, 1), flat(6, 8, 6, 8, 1), flat(21, 6, 24, 10, -1),
+         flat(10, 2, 14, 6, 2), flat(11, 3, 13, 5, 0), flat(12, 6, 12, 6, 0), flat(10, 14, 14, 17, -1),
+         flat(0, 19, 31, 21, 1), flat(0, 20, 31, 20, -2), flat(14, 21, 18, 25, 1), flat(15, 22, 17, 24, -1),
+         flat(25, 3, 27, 5, -1), flat(28, 7, 33, 8, -1), flat(26, 10, 34, 10, -1), wait(3),
+         place("PandabornFlumeGate", [6, 8, 1], "Cw90", id="g2"),
+         line("PandabornFlumeBridge", [7, 8, 0], 5, prefix="br"),
+         place("PandabornFlumeBridgeSpan", [12, 8, 0], "Cw90", id="span"),
+         line("PandabornFlumeBridge", [13, 8, 0], 8, prefix="bs"),
+         place("PandabornFlumeGate", [12, 6, 0], "Cw0", id="g1"),
+         line("PandabornFlume", [12, 7, 0], 6, (0, 1, 0), "Cw0", prefix="f"),
+         place("PandabornPaddySpout", [12, 13, 0], "Cw0", id="sp"),
+         place("PandabornScoopWheel", [16, 20, -2], "Cw0", id="sc"),
+         place("PandabornCisternTap", [26, 2, 0], "Cw0", id="tap"),
+         place("EfficientFarmHouse.Inkpaws", [29, 2, 0], "Cw0", id="farm"),
+         place("SmallWarehouse.Inkpaws", [33, 2, 0], "Cw0", id="store"), {"op": "set", "id": "store", "allowGood": "PandabornCabbage"},
+         wait(3), {"op": "set", "id": "sp", "targetDepth": 0.3},
+         {"op": "plant", "template": RICE, "rect": [11, 15, 13, 16, -1]},
+         {"op": "markPlant", "template": CABBAGE, "rect": [28, 7, 33, 8, -1]},
+         {"op": "plant", "template": CABBAGE, "rect": [28, 7, 33, 8, -1]},
+         {"op": "grow", "rect": [28, 7, 33, 8, -1], "progress": 0.6},
+         water("p1", [12, 4, 0], 2.0, 0.8), water("p2", [3, 8, 1], 2.0, 0.8), water("keepB2", [23, 8, -1], -3.0, 0.3),
+         water("chIn", [1, 20, -2], 1.6, 1.6), water("chOut", [30, 20, -2], -2.4), water("strip", [30, 10, -1], 1.0, 0.5)]
+    objs = ["g1", "g2", "span", "f0", "f5", "sp", "sc", "tap", "farm", "br0", "bs7"]
+    cells = [[12, 7, 0], [12, 8, 0], [12, 10, 0], [11, 10, 0], [13, 10, 0], [12, 8, 1], [9, 8, 1], [9, 8, 0], [9, 7, 0],
+             [19, 8, 1], [22, 8, -1], [12, 15, -1], [16, 20, -2], [16, 23, -1], [26, 4, -1], [30, 7, -1], [5, 8, 1], [11, 6, 0]]
+    vols = [[15, 22, 17, 24, -1], [25, 3, 27, 5, -1], [21, 6, 24, 10, -1]]
+    probe = {"op": "probe", "cells": cells, "objects": objs, "volumes": vols, "goods": ["Water", "PandabornCabbage"]}
+    field = {"rect": [28, 7, 33, 8, -1]}
+    s += [{"op": "series", "id": "w1", "every": 40, "cells": [[12, 10, 0], [12, 8, 1], [12, 15, -1], [16, 23, -1], [26, 4, -1], [30, 7, -1]],
+           "volumes": vols[:2], "objects": ["sc", "tap"]},
+          shot("w1_setup", [16, 12, 0], 36), wait(300), dict(probe, label="t300"),
+          shot("w1_crossing", [12, 8, 0], 12, 40, 30), shot("w1_t300", [16, 12, 0], 36)]
+    s += [expect("L1 flume carries water", "depth", [12, 10, 0], 0.01),
+          expect("L1 side dry", "depth", [11, 10, 0], None, 0.001),
+          expect("bridge carries water over L1", "depth", [12, 8, 1], 0.01),
+          expect("flume under the bridge carries water", "depth", [12, 8, 0], 0.01),
+          expect("no water beside the bridge leg", "depth", [9, 7, 0], None, 0.001),
+          expect("bridge end pours into the basin", "depth", [22, 8, -1], 0.05),
+          expect("spout holds the paddy", "depth", [12, 15, -1], 0.2, 0.45),
+          expect("scoop wheel lifts", "volume", rect=[15, 22, 17, 24, -1], mn=0.05)]
+    s += [{"op": "uiText", "id": i, "label": "ui_" + i} for i in ("g1", "sp", "sc", "tap")]
+    t = 0
+    for h, act in ((6, "flood"), (24, None), (48, None), (66, "drain"), (72, "stop"), (84, None), (100, None)):
+        s += [wait_hours(h - t), {"op": "plants", "label": f"field_h{h}", **field}, dict(probe, label=f"h{h}")]
+        t = h
+        if act == "flood":
+            s += [water("flood", [30, 8, -1], 0.6, 0.3)]
+        elif act == "drain":
+            s += off("flood") + [water("dr1", [28, 7, -1], -1.0), water("dr2", [33, 8, -1], -1.0)]
+        elif act == "stop":
+            s += off("dr1", "dr2")
+        if h == 48:
+            s += [shot("w1_flooded", [30, 6, 0], 16, 50, 0)]
+        if h == 24:   # the tap's first day ran on hauled Water only; now a sure supply to measure pouring
+            s += [{"op": "giveGoods", "id": "tap", "good": "Water", "amount": 20}, {"op": "uiText", "id": "tap", "label": "ui_tap_h24"}]
+    s += [expect("cabbage replanted after the flood", "healthy", template=CABBAGE, rect=field["rect"], mn=6),
+          shot("w1_field", [30, 6, 0], 16, 50, 0), shot("w1_tap", [26, 3, 0], 12, 45, 30), shot("w1_end", [16, 12, 0], 36),
+          {"op": "invoke", "id": "g1", "component": "FlumeGate", "method": "SetFlow", "args": [0.45]},
+          {"op": "invoke", "id": "g1", "component": "FlumeGate", "method": "SetGuardEnabled", "args": [False]},
+          wait(30), dict(probe, label="before_save")]
+    binds = [{"op": "bind", "id": k, "at": at} for k, at in
+             (("g1", [12, 6, 0]), ("g2", [6, 8, 1]), ("sp", [12, 13, 0]), ("sc", [16, 20, 0]), ("tap", [26, 2, 0]),
+              ("span", [12, 8, 1]), ("f0", [12, 7, 0]), ("br0", [7, 8, 1]))]
+    rprobe = {"op": "probe", "cells": cells, "objects": ["g1", "g2", "sp", "sc", "tap", "span", "f0", "br0"], "volumes": vols}
+    reload = binds + [dict(rprobe, label="reload_t0"),
+                      water("p1", [12, 4, 0], 2.0, 0.8), water("p2", [3, 8, 1], 2.0, 0.8), water("keepB2", [23, 8, -1], -3.0, 0.3),
+                      water("chIn", [1, 20, -2], 1.6, 1.6), water("chOut", [30, 20, -2], -2.4), wait(300),
+                      dict(rprobe, label="reload_t300"),
+                      expect("after reload: L1 flume carries water", "depth", [12, 10, 0], 0.01),
+                      expect("after reload: L1 side dry", "depth", [11, 10, 0], None, 0.001),
+                      expect("after reload: bridge carries water", "depth", [12, 8, 1], 0.01),
+                      expect("after reload: spout holds the paddy", "depth", [12, 15, -1], 0.2, 0.45),
+                      expect("after reload: scoop wheel lifts", "volume", rect=[15, 22, 17, 24, -1], mn=0.05),
+                      shot("w1_reload", [16, 12, 0], 36)]
+    reload += [{"op": "uiText", "id": i, "label": "reload_ui_" + i} for i in ("g1", "sp", "sc")]
+    request2("w1", s, reload, [36, 26], 5, 4200, {"nearDistrict": True})
+
+
+def w2():
+    """Inkpaws with TimberCommons switched off for the run; saved, then reloaded with the module's API check failing
+    (dev switch "simulate-missing-api: Water", the same path as an old game: the module is not loaded).
+    Mini line: pond -> Flume Gate (4,4) -> Flumes x5..9 -> Paddy Spout (10,4) -> paddy x11..13 y3..5 (floor -1).
+    Channel y=10 with a current; Scoop Wheel (8,10,-2) lifts into basin x7..9 y12..14 (floor -1).
+    Dry-crop rule: rows of the test dry crop (DaysToDieWet 3) and the catalogue tea bush (2):
+    D1 truly dry (y2..3, 9+ tiles from any water); D2 two tiles from a strip that runs 36 h, then is drained;
+    D3 two tiles from a strip that runs to the end.
+    """
+    s = [flat(0, 2, 4, 6, 2), flat(1, 3, 3, 5, 0), flat(4, 4, 4, 4, 0), flat(11, 3, 13, 5, -1),
+         flat(0, 9, 22, 11, 1), flat(0, 10, 22, 10, -2), flat(6, 11, 10, 15, 1), flat(7, 12, 9, 14, -1),
+         flat(28, 12, 38, 12, -1), flat(28, 19, 38, 19, -1), wait(3),
+         place("PandabornFlumeGate", [4, 4, 0], "Cw90", id="g"), line("PandabornFlume", [5, 4, 0], 5, prefix="f"),
+         place("PandabornPaddySpout", [10, 4, 0], "Cw90", id="sp"),
+         place("PandabornScoopWheel", [8, 10, -2], "Cw0", id="sc"), wait(3), {"op": "set", "id": "sp", "targetDepth": 0.3}]
+    for y in (2, 3, 10, 17):
+        s += [{"op": "plant", "template": DRY, "rect": [30, y, 33, y, 0]}, {"op": "plant", "template": TEA, "rect": [34, y, 37, y, 0]}]
+    s += [water("p", [2, 4, 0], 2.0, 0.8), water("chIn", [1, 10, -2], 1.6, 1.6), water("chOut", [21, 10, -2], -2.4),
+          water("s2", [33, 12, -1], 1.0, 0.5), water("s3", [33, 19, -1], 1.0, 0.5)]
+    dry = {"op": "plants", "rect": [28, 0, 39, 20, 0]}
+    cells = [[5, 4, 0], [8, 4, 0], [8, 3, 0], [8, 5, 0], [5, 3, 0], [12, 4, -1], [14, 4, 0], [3, 4, 0], [8, 10, -2], [8, 13, -1]]
+    probe = {"op": "probe", "cells": cells, "objects": ["g", "sp", "sc", "f0", "f4"], "volumes": [[7, 12, 9, 14, -1], [11, 3, 13, 5, -1]],
+             "moistRows": [[y, 28, 39, 0] for y in (2, 3, 10, 17)]}
+    s += [shot("w2_setup", [18, 10, 0], 34), wait(300), dict(probe, label="t300"), dict(dry, label="dry_t300"),
+          expect("flume carries water (TimberCommons off)", "depth", [8, 4, 0], 0.01),
+          expect("flume side dry (TimberCommons off)", "depth", [8, 5, 0], None, 0.001),
+          expect("scoop wheel lifts (TimberCommons off)", "volume", rect=[7, 12, 9, 14, -1], mn=0.05),
+          {"op": "uiText", "id": "g", "label": "ui_g"}, {"op": "uiText", "id": "sc", "label": "ui_sc"}]
+    t = 0
+    for h in (12, 24, 36, 48, 60, 72, 84, 96, 120):
+        s += [wait_hours(h - t), dict(dry, label=f"dry_h{h}"), dict(probe, label=f"h{h}")]
+        t = h
+        if h == 36:
+            s += off("s2") + [water("d2", [33, 12, -1], -1.0)]
+        if h == 48:
+            s += off("d2")
+    s += [expect("dry crop thrives on truly dry ground", "healthy", template=DRY, rect=[30, 2, 33, 3, 0], mn=8),
+          expect("dry crop survives 36 h of wet roots", "healthy", template=DRY, rect=[30, 10, 33, 10, 0], mn=3),
+          expect("dry crop dies after 5 days of wet roots", "dead", template=DRY, rect=[30, 17, 33, 17, 0], mn=3),
+          shot("w2_dry", [33, 10, 0], 22, 55, 0), shot("w2_end", [18, 10, 0], 34),
+          dict(probe, label="before_save")]
+    binds = [{"op": "bind", "id": k, "at": at} for k, at in (("g", [4, 4, 0]), ("sp", [10, 4, 0]), ("sc", [8, 10, 0]), ("f0", [5, 4, 0]), ("f4", [9, 4, 0]))]
+    reload = binds + [dict(probe, label="moduleoff_t0"),
+                      water("p", [2, 4, 0], 2.0, 0.8), water("chIn", [1, 10, -2], 1.6, 1.6), water("chOut", [21, 10, -2], -2.4),
+                      wait(400), dict(probe, label="moduleoff_t400"), shot("w2_moduleoff", [8, 6, 0], 20, 50, 20),
+                      expect("module off: nothing in the flume", "depth", [8, 4, 0], None, 0.001),
+                      expect("module off: nothing beside the gate", "depth", [5, 3, 0], None, 0.001),
+                      expect("module off: nothing beside the flume", "depth", [8, 5, 0], None, 0.001),
+                      expect("module off: the pond still holds", "depth", [2, 4, 0], 0.3),
+                      {"op": "uiText", "id": "g", "label": "moduleoff_ui_g"}, {"op": "uiText", "id": "sc", "label": "moduleoff_ui_sc"}]
+    request2("w2", s, reload, [40, 22], 7, 4200, "auto",
+             devSwitchFile=DEV_SWITCH, devSwitchNextLaunch="simulate-missing-api: Water")
+
+
+def w3():
+    """First drought, as a player would meet it (DESIGN "first two hours": days 5-8, then the first drought).
+    A current in channel y=1 turns a Scoop Wheel (13,1,-2) that lifts into a small basin x8..14 y3..5 (floor -1); a
+    Flume Gate (11,6,-1) and 18 Flumes run north in a trench to a Paddy Spout (11,25,-1) over a rice paddy x8..14 y26..28.
+    Along the flume: shoot bamboo 1-2 tiles west, timber bamboo 1-2 east, cabbage 4-5 east (y14..23).
+    Day 1 everything runs. Then drought: the current stops (sources off) and the weather turns. What dries in what order?
+    Two days into the drought a Cistern Tap (8,2) with a worker gets 40 Water (one small cistern) and pours it into the
+    basin: what does it keep alive, and for how long?
+    """
+    s = [{"op": "pathFromDistrict", "to": [8, 1, 0]},
+         flat(10, 1, 29, 1, -2), flat(8, 3, 14, 5, -1), flat(11, 6, 11, 25, -1), flat(8, 26, 14, 28, -2), wait(3),
+         place("PandabornScoopWheel", [13, 1, -2], "Cw0", id="sc"),
+         place("PandabornFlumeGate", [11, 6, -1], "Cw0", id="g"),
+         line("PandabornFlume", [11, 7, -1], 18, (0, 1, 0), "Cw0", prefix="f"),
+         place("PandabornPaddySpout", [11, 25, -1], "Cw0", id="sp"),
+         place("PandabornCisternTap", [8, 2, 0], "Cw0", id="tap"),
+         wait(3), {"op": "set", "id": "sp", "targetDepth": 0.3},
+         {"op": "plant", "template": "PandabornShootBamboo.Inkpaws", "rect": [9, 14, 10, 23, 0]},
+         {"op": "plant", "template": "PandabornTimberBamboo.Inkpaws", "rect": [12, 14, 13, 23, 0]},
+         {"op": "plant", "template": CABBAGE, "rect": [15, 14, 16, 23, 0]},
+         {"op": "plant", "template": RICE, "rect": [9, 27, 13, 27, -2]},
+         {"op": "grow", "rect": [8, 14, 16, 27, -2], "progress": 0.5},
+         water("chIn", [11, 1, -2], 1.6, 1.6), water("chOut", [28, 1, -2], -2.4)]
+    cells = [[13, 1, -2], [11, 4, -1], [11, 7, -1], [11, 15, -1], [11, 24, -1], [11, 27, -2], [9, 18, 0], [16, 18, 0]]
+    objs = ["sc", "g", "f0", "f17", "sp", "tap"]
+    probe = {"op": "probe", "cells": cells, "objects": objs, "volumes": [[8, 3, 14, 5, -1], [8, 26, 14, 28, -2]],
+             "moistRows": [[y, 0, 29, 0] for y in (8, 14, 18, 23)], "goods": ["Water"]}
+    grove = {"op": "plants", "rect": [8, 13, 17, 28, -2]}
+    s += [{"op": "series", "id": "w3", "every": 40, "cells": [[13, 1, -2], [11, 4, -1], [11, 15, -1], [11, 24, -1], [11, 27, -2]],
+           "volumes": [[8, 3, 14, 5, -1]], "objects": ["sc", "tap"]},
+          shot("w3_setup", [12, 14, 0], 34), wait(300), dict(probe, label="t300"),
+          expect("scoop wheel feeds the line", "depth", [11, 15, -1], 0.01),
+          {"op": "uiText", "id": "sc", "label": "ui_sc_running"}, {"op": "uiText", "id": "g", "label": "ui_g_running"},
+          wait_hours(24), dict(probe, label="day1"), dict(grove, label="grove_day1"), shot("w3_day1", [12, 14, 0], 34)]
+    s += [{"op": "drought"}] + off("chIn", "chOut") + [wait(60), dict(probe, label="drought_t60"),
+          {"op": "uiText", "id": "sc", "label": "ui_sc_drought"}, {"op": "uiText", "id": "g", "label": "ui_g_drought"},
+          {"op": "uiText", "id": "f17", "label": "ui_end_drought"}]
+    t = 0
+    for h in (2, 6, 12, 24, 36, 48):
+        s += [wait_hours(h - t), dict(probe, label=f"d_h{h}"), dict(grove, label=f"grove_d_h{h}")]
+        t = h
+    s += [shot("w3_drought_h48", [12, 14, 0], 34),
+          {"op": "giveGoods", "id": "tap", "good": "Water", "amount": 40}, {"op": "uiText", "id": "tap", "label": "ui_tap"}]
+    for h in (52, 60, 72, 96, 120, 144):
+        s += [wait_hours(h - t), dict(probe, label=f"d_h{h}"), dict(grove, label=f"grove_d_h{h}")]
+        t = h
+        if h == 72:
+            s += [shot("w3_tap_h72", [12, 14, 0], 34)]
+    s += [shot("w3_end", [12, 14, 0], 34)]
+    request2("w3", s, [], [30, 30], 7, 3600, {"nearDistrict": True})
+
+
 if __name__ == "__main__":
+    w1()
+    w2()
+    w3()
     flume()
     longrun()
     parts()

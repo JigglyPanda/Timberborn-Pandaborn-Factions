@@ -64,8 +64,8 @@
     "Yielder": {
       "YielderComponentName": "Cuttable",
       "Yield": {
-        "Id": "SunflowerSeeds",
-        "Amount": 2
+        "Id": "PandabornTeaLeaves",
+        "Amount": 1
       },
       "RemovalTimeInHours": 1.8,
       "ResourceGroup": "Farmhouse"
@@ -75,7 +75,7 @@
     "Model": "NaturalResources/Crops/Sunflower/SunflowerMature"
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "NaturalResource.PandabornDryCrop.DisplayName",
+    "DisplayNameLocKey": "NaturalResource.PandabornProtoDryCrop.DisplayName",
     "DescriptionLocKey": "",
     "FlavorDescriptionLocKey": "",
     "Icon": "NaturalResources/Crops/Sunflower/SunflowerIcon"
@@ -83,7 +83,7 @@
   "FloodableNaturalResourceSpec": {
     "MinWaterHeight": 0,
     "MaxWaterHeight": 0,
-    "DaysToDie": 0.5
+    "DaysToDie": 3.0
   },
   "NaturalResourceModelRandomizerSpec": {
     "ConstrainProportion": true,
@@ -256,6 +256,6 @@
     }
   },
   "AridNaturalResourceSpec": {
-    "DaysToDieWet": 1.0
+    "DaysToDieWet": 3.0
   }
 }

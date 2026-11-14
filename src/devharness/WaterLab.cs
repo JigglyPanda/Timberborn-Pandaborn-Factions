@@ -37,6 +37,7 @@ using Timberborn.WaterBuildings;
 using Timberborn.WaterSystem;
 using Timberborn.WeatherSystem;
 using Timberborn.Workshops;
+using Timberborn.SelectionSystem;
 using Timberborn.StatusSystem;
 using Timberborn.Goods;
 using Timberborn.InventorySystem;
@@ -97,6 +98,7 @@ namespace PandabornDevHarness
         private readonly TreeCuttingArea _treeCuttingArea;
         private readonly PlantingService _plantingService;
         private readonly ResourceCountingService _resourceCountingService;
+        private readonly EntitySelectionService _selection;
 
         private JObject _spec;
         private JArray _steps;
@@ -104,7 +106,7 @@ namespace PandabornDevHarness
         private JArray _log, _checks;
         private JObject _probes, _series;
         private int _stepIndex;
-        private bool _started, _done;
+        private bool _started, _done, _reload;
         private Vector3Int _origin;
         private float _speed = 3f;
         private int _shotDelay;
@@ -150,7 +152,7 @@ namespace PandabornDevHarness
                         WeatherService weatherService, HazardousWeatherService hazardousWeatherService,
                         WeatherFastForwarder weatherFastForwarder, GameCycleService gameCycleService,
                         TreeCuttingArea treeCuttingArea, PlantingService plantingService,
-                        ResourceCountingService resourceCountingService)
+                        ResourceCountingService resourceCountingService, EntitySelectionService selection)
         {
             _waterService = waterService;
             _waterMap = waterMap;
@@ -177,12 +179,14 @@ namespace PandabornDevHarness
             _treeCuttingArea = treeCuttingArea;
             _plantingService = plantingService;
             _resourceCountingService = resourceCountingService;
+            _selection = selection;
         }
 
         public void Load()
         {
             _spec = (JObject)Harness.Request.Raw["water"];
-            _steps = _spec["steps"] as JArray ?? new JArray();
+            _reload = Harness.Request.LoadSave;
+            _steps = (_reload ? _spec["reloadSteps"] : _spec["steps"]) as JArray ?? new JArray();
             _speed = Request.Num(_spec, "speed", 3f);
             _out = new JObject { ["name"] = Request.Str(_spec, "name", "water"), ["status"] = "waiting" };
             _log = new JArray();
@@ -277,6 +281,7 @@ namespace PandabornDevHarness
             }
             // run instant steps until a wait or the end; at most 40 per frame
             if (_shotDelay > 0) { _shotDelay--; return; }
+            if (StepPendingUi()) return;
             for (int n = 0; n < 40; n++)
             {
                 if (_stepIndex >= _steps.Count) { Finish("completed"); return; }
@@ -287,7 +292,7 @@ namespace PandabornDevHarness
                 if (Request.Str(step, "op", "") != "shot") _changedSinceShot = true;
                 Execute(step);
                 if (_waitUntilTick >= 0 || _waitUntilHours >= 0f) return;
-                if (Request.Str(step, "op", "") == "shot") return;   // one render per frame
+                if (Request.Str(step, "op", "") == "shot" || _pendingUi != null) return;   // one render / panel per frame
             }
         }
 
@@ -302,10 +307,82 @@ namespace PandabornDevHarness
             foreach (var kv in _sources) sources[kv.Key] = Math.Round(kv.Value.Total, 4);
             _out["sourceTotals"] = sources;
             _speedManager.ChangeSpeed(0f);
+            if (!_reload && _spec["devSwitchFile"] != null && _spec["devSwitchNextLaunch"] != null)
+            {
+                try
+                {
+                    File.WriteAllText((string)_spec["devSwitchFile"], ((string)_spec["devSwitchNextLaunch"]).Replace(";", "\n"));
+                    Note("dev switch for the next launch: " + _spec["devSwitchNextLaunch"]);
+                }
+                catch (Exception e) { Harness.Warn("water lab: could not write the dev switch: " + e.Message); }
+            }
             Harness.Info("water lab " + status + " after " + _ticks + " ticks; " + _checks.Count(c => !(bool)c["pass"]) + " failed check(s)");
             // end the game driver's run phase now
             Harness.Request.RunInGameHours = 0f;
             Harness.Request.RunRealSeconds = 0f;
+        }
+
+        /// <summary>
+        /// "uiText": selects an object (its panel opens), and on the next frames records the water module's panel lines
+        /// (static ShownText of its fragments, found by type name) and a screen capture with the panel open.
+        /// </summary>
+        private void UiText(JObject step)
+        {
+            string id = Request.Str(step, "id", null);
+            if (id == null || !_objects.TryGetValue(id, out var bo) || !bo) { Note("uiText: no object " + id); return; }
+            _selection.Select(bo);
+            _pendingUi = (id, Request.Str(step, "label", "ui_" + id), Time.frameCount + 3);
+        }
+
+        private (string Id, string Label, int Frame)? _pendingUi;
+
+        private bool StepPendingUi()
+        {
+            if (_pendingUi == null) return false;
+            var p = _pendingUi.Value;
+            if (Time.frameCount < p.Frame) return true;
+            var o = new JObject { ["tick"] = _ticks };
+            foreach (var typeName in new[] { "Pandaborn.Water.FlumeGateFragment", "Pandaborn.Water.WaterInfoFragment" })
+            {
+                var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType(typeName, false)).FirstOrDefault(t => t != null);
+                var prop = type?.GetProperty("ShownText");
+                o[typeName.Substring(typeName.LastIndexOf('.') + 1)] = prop?.GetValue(null) as string;
+                prop?.SetValue(null, null);
+            }
+            if (_objects.TryGetValue(p.Id, out var bo) && bo) o["object"] = ObjectInfo(p.Id);
+            string file = Path.Combine(Harness.OutputDir, p.Label + ".png");
+            ScreenCapture.CaptureScreenshot(file);
+            Harness.RecordScreenshot(p.Label, "screen", Path.GetFileName(file), new JObject { ["tick"] = _ticks }, null);
+            _probes[p.Label] = o;
+            _selection.Unselect();
+            _pendingUi = null;
+            Note("ui text " + p.Label + ": " + o.ToString(Newtonsoft.Json.Formatting.None).Substring(0, Math.Min(200, o.ToString(Newtonsoft.Json.Formatting.None).Length)));
+            return true;
+        }
+
+        private void TryDelete(string file)
+        {
+            try { if (File.Exists(file)) { File.Delete(file); Note("deleted " + file); } }
+            catch (Exception e) { Harness.Warn("water lab: could not delete " + file + ": " + e.Message); }
+        }
+
+        /// <summary>Public properties of a mod component found by type name (the harness does not reference mod code).</summary>
+        private static JObject Reflect(BlockObject bo, string typeName, params string[] properties)
+        {
+            foreach (var c in bo.AllComponents)
+            {
+                if (c == null || c.GetType().Name != typeName) continue;
+                var o = new JObject();
+                foreach (var name in properties)
+                {
+                    var prop = c.GetType().GetProperty(name);
+                    if (prop == null) continue;
+                    var v = prop.GetValue(c);
+                    o[name] = v == null ? null : v is float f ? (JToken)Math.Round(f, 4) : v is bool b ? (JToken)b : v.ToString();
+                }
+                return o;
+            }
+            return null;
         }
 
         private float Hours()
@@ -315,8 +392,20 @@ namespace PandabornDevHarness
 
         // ------------------------------------------------------------------ origin and terrain
 
+        private string OriginFile(bool reload) => Path.Combine(reload ? Path.Combine(Harness.OutputDir, "..") : Harness.OutputDir, "water_origin.json");
+
         private void ChooseOrigin()
         {
+            if (_reload)
+            {
+                var saved = JArray.Parse(File.ReadAllText(OriginFile(true)));
+                _origin = new Vector3Int((int)saved[0], (int)saved[1], (int)saved[2]);
+                _out["origin"] = Arr(_origin);
+                _out["reload"] = true;
+                Note("reload: origin " + _origin + " from the first run");
+                if (_spec["devSwitchFile"] != null) TryDelete((string)_spec["devSwitchFile"]);
+                return;
+            }
             var size = _terrainService.Size;
             var area = _spec["area"] as JArray;
             int w = area != null ? (int)area[0] : 24, h = area != null ? (int)area[1] : 16;
@@ -345,6 +434,7 @@ namespace PandabornDevHarness
             }
             _origin = new Vector3Int(corner.x, corner.y, z0);
             _out["origin"] = Arr(_origin);
+            File.WriteAllText(OriginFile(false), Arr(_origin).ToString(Newtonsoft.Json.Formatting.None));
             _out["area"] = new JArray(w, h);
             _out["mapSize"] = Arr(size);
             var dc = _districtCenterRegistry.AllDistrictCenters.FirstOrDefault();
@@ -591,6 +681,33 @@ namespace PandabornDevHarness
                     Note("marked for planting " + template + ": " + n + " cells");
                     break;
                 }
+                case "bind":
+                {
+                    // reload: re-attach an id to the object at a cell (objects placed by the first run)
+                    var at = Rel(step["at"]);
+                    string template = Request.Str(step, "template", null);
+                    var found = _blockService.GetObjectsAt(at).FirstOrDefault(b => template == null || b.GetComponent<TemplateSpec>()?.TemplateName == template);
+                    if (found) _objects[Request.Str(step, "id", "x")] = found;
+                    Note("bind " + Request.Str(step, "id", "x") + " -> " + (found ? found.GetComponent<TemplateSpec>()?.TemplateName : "nothing"));
+                    break;
+                }
+                case "invoke":
+                {
+                    // call a public method of a mod component on an object, found by type name (dev only)
+                    string id = Request.Str(step, "id", null);
+                    if (id == null || !_objects.TryGetValue(id, out var ibo) || !ibo) { Note("invoke: no object " + id); break; }
+                    string typeName = Request.Str(step, "component", null), method = Request.Str(step, "method", null);
+                    var target = ibo.AllComponents.FirstOrDefault(c => c != null && c.GetType().Name == typeName);
+                    var mi = target?.GetType().GetMethod(method);
+                    if (mi == null) { Note("invoke: " + typeName + "." + method + " not found on " + id); break; }
+                    var args = (step["args"] as JArray ?? new JArray()).Select((a, i) => a.ToObject(mi.GetParameters()[i].ParameterType)).ToArray();
+                    mi.Invoke(target, args);
+                    Note("invoke " + id + " " + typeName + "." + method + "(" + string.Join(", ", args) + ")");
+                    break;
+                }
+                case "uiText":
+                    UiText(step);
+                    break;
                 case "giveGoods":
                 {
                     string id = Request.Str(step, "id", null);
@@ -865,6 +982,12 @@ namespace PandabornDevHarness
                 o["productionProgress"] = R(manufactory.ProductionProgress);
                 o["readyToProduce"] = manufactory.IsReadyToProduce;
             }
+            var seg = Reflect(bo, "FlumeSegment", "Active");
+            if (seg != null) o["flume"] = seg;
+            var gate = Reflect(bo, "FlumeGate", "Flow", "IsOpen", "ClosedByBadwater", "GuardEnabled", "LastContamination");
+            if (gate != null) o["gate"] = gate;
+            var cur = Reflect(bo, "CurrentDriven", "Current", "Speed", "RatedCurrent");
+            if (cur != null) o["current"] = cur;
             var workplace = bo.GetComponent<Workplace>();
             if (workplace != null) { o["workers"] = workplace.NumberOfAssignedWorkers; o["maxWorkers"] = workplace.MaxWorkers; }
             var enterable = bo.GetComponent<Enterable>();

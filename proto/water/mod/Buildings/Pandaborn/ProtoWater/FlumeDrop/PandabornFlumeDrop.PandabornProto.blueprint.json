@@ -36,7 +36,7 @@
     "Blocks": [
       {
         "MatterBelow": "GroundOrStackable",
-        "Occupations": "Corners",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -44,14 +44,14 @@
       {
         "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
-        "Stackable": "BlockObject",
+        "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
         "MatterBelow": "Any",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
-        "Stackable": "BlockObject",
+        "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
@@ -99,8 +99,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornFlumeDrop.DisplayName",
-    "DescriptionLocKey": "Building.PandabornFlumeDrop.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoFlumeDrop.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoFlumeDrop.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/ThrottlingValve/ThrottlingValveIcon"
   },
@@ -126,20 +126,32 @@
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/Landscaping/ImpermeableFloor/ImpermeableFloor.Folktails.Model"
+        "Model": "Buildings/Pandaborn/ProtoWater/Models/FlumeDrop/FlumeDrop.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
           {
             "Center": {
               "X": 0.5,
-              "Y": 0.510495067,
+              "Y": 0.65,
               "Z": 0.5
             },
             "Size": {
               "X": 0.9,
-              "Y": 1.02099013,
-              "Z": 0.9
+              "Y": 1.3,
+              "Z": 1.0
+            }
+          },
+          {
+            "Center": {
+              "X": 0.5,
+              "Y": 0.2,
+              "Z": 1.5
+            },
+            "Size": {
+              "X": 0.9,
+              "Y": 0.4,
+              "Z": 1.0
             }
           }
         ],
@@ -154,7 +166,7 @@
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
-            "Model": "Buildings/Landscaping/ThrottlingValve/ThrottlingValve.Folktails.ConstructionStage0.Model"
+            "Model": "Buildings/Pandaborn/ProtoWater/Models/FlumeDrop/FlumeDrop.ConstructionStage0.Model"
           },
           "CollidersSpec": {
             "BoxColliders": [
@@ -190,9 +202,7 @@
         "Y": 1,
         "Z": 0
       }
-    ],
-    "InflowLimit": -1.0,
-    "ContaminationShutoff": 0.0
+    ]
   },
   "WaterObstacleSpec": {
     "Coordinates": [
@@ -203,6 +213,15 @@
     ]
   },
   "FinishableWaterObstacleSpec": {
-    "Height": 1.0
+    "Height": 2.0
+  },
+  "PandabornSolidCellsSpec": {
+    "Cells": [
+      {
+        "X": 0,
+        "Y": 0,
+        "Z": 0
+      }
+    ]
   }
 }

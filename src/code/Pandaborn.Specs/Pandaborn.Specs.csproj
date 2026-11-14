@@ -10,5 +10,7 @@
   <ItemGroup>
     <Reference Include="$(GameManaged)\Timberborn.BlueprintSystem.dll" Private="false" />
     <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+    <!-- Vector3Int in the water specs' cell lists -->
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
   </ItemGroup>
 </Project>

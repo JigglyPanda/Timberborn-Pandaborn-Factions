@@ -122,19 +122,9 @@ simulate-missing-member: Words  # a module's private-member reflection takes its
 11. **Test** with the harness: a request under `tests/scenarios/<feature>/`, one run with the feature on, one with
     `force-off`, one with `simulate-missing-api`; Folktails unchanged.
 
-## Migrating the water code (`src/scripts/Water`) into `Pandaborn.Water`
+## The water module (`Pandaborn.Water`)
 
-The flume and dew code is still being prototyped by another agent in `src/scripts/` (built into `proto/water`). When it
-settles:
-
-1. Move the spec records (`PandabornFlume…Spec`, `PandabornDew…Spec` and so on, currently next to their components) into
-   `Pandaborn.Specs/WaterSpecs.cs`, unchanged in name and fields.
-2. Move the components, services and `WaterConfigurator` into `src/code/Pandaborn.Water/`, with a csproj made as above, and
-   add `Water  Pandaborn.Water.bin  ...` to `modules.txt`.
-3. Persisted state (if any) moves to `PandabornStore` entries `Water.*`; limiters are not saved by the game, which suits
-   rule 5 already.
-4. Any panel or status text goes behind `SafeUi`.
-5. Check the generated `FEATURE.md`: the touch list should be `IWaterService` direction limiters and inflow limits,
-   `BlockObject`, `IFinishedStateListener`, `FlowDirection`, the manufactory limiter and weather services, and nothing
-   private. If it shows a private member, write its fallback first.
-6. Retire `src/scripts/Pandaborn.Water.csproj`; `proto/water` then builds `src/code` with `-p:ModOut` like `proto/stage0` does.
+Migrated from the old `src/scripts/` prototype (retired): specs in `Pandaborn.Specs/WaterSpecs.cs`, components, panels and
+statuses in `Pandaborn.Water/`, gate settings in the per-entity carrier (entry `Water`), no private members. What each
+piece is with the module off is in `Pandaborn.Water/FEATURE.md`; the catalogue hand-over (basis, specs, cells per piece)
+is in `docs/tech/water.md`, "For the catalogue lane". `proto/water/build.ps1` builds a dev copy of the faction with it.

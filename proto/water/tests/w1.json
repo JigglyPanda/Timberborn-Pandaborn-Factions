@@ -1,0 +1,2640 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 4200,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "w1",
+  "speed": 5,
+  "area": [
+   36,
+   26
+  ],
+  "origin": {
+   "nearDistrict": true
+  },
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "pathFromDistrict",
+    "to": [
+     1,
+     1,
+     0
+    ]
+   },
+   {
+    "op": "placeLine",
+    "template": "Path",
+    "from": [
+     1,
+     1,
+     0
+    ],
+    "count": 34,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw0"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     5,
+     6,
+     11
+    ],
+    "z": 3
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     6,
+     5,
+     10
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     8,
+     6,
+     8
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     21,
+     6,
+     24,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     2,
+     14,
+     6
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     11,
+     3,
+     13,
+     5
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     12,
+     6,
+     12,
+     6
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     14,
+     14,
+     17
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     19,
+     31,
+     21
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     20,
+     31,
+     20
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     14,
+     21,
+     18,
+     25
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     15,
+     22,
+     17,
+     24
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     25,
+     3,
+     27,
+     5
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     28,
+     7,
+     33,
+     8
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     26,
+     10,
+     34,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     6,
+     8,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "g2"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlumeBridge.PandabornProto",
+    "from": [
+     7,
+     8,
+     0
+    ],
+    "count": 5,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "br"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeBridgeSpan.PandabornProto",
+    "at": [
+     12,
+     8,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "span"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlumeBridge.PandabornProto",
+    "from": [
+     13,
+     8,
+     0
+    ],
+    "count": 8,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "bs"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     12,
+     6,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "g1"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     12,
+     7,
+     0
+    ],
+    "count": 6,
+    "step": [
+     0,
+     1,
+     0
+    ],
+    "orientation": "Cw0",
+    "idPrefix": "f"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     12,
+     13,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "sp"
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.PandabornProto",
+    "at": [
+     16,
+     20,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "sc"
+   },
+   {
+    "op": "place",
+    "template": "PandabornCisternTap.PandabornProto",
+    "at": [
+     26,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "tap"
+   },
+   {
+    "op": "place",
+    "template": "EfficientFarmHouse.Inkpaws",
+    "at": [
+     29,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "farm"
+   },
+   {
+    "op": "place",
+    "template": "SmallWarehouse.Inkpaws",
+    "at": [
+     33,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "store"
+   },
+   {
+    "op": "set",
+    "id": "store",
+    "allowGood": "PandabornCabbage"
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "set",
+    "id": "sp",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     11,
+     15,
+     13,
+     16,
+     -1
+    ]
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "grow",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ],
+    "progress": 0.6
+   },
+   {
+    "op": "water",
+    "id": "p1",
+    "at": [
+     12,
+     4,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "p2",
+    "at": [
+     3,
+     8,
+     1
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "keepB2",
+    "at": [
+     23,
+     8,
+     -1
+    ],
+    "rate": -3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "chIn",
+    "at": [
+     1,
+     20,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "chOut",
+    "at": [
+     30,
+     20,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "water",
+    "id": "strip",
+    "at": [
+     30,
+     10,
+     -1
+    ],
+    "rate": 1.0,
+    "maxDepth": 0.5
+   },
+   {
+    "op": "series",
+    "id": "w1",
+    "every": 40,
+    "cells": [
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ]
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ]
+    ],
+    "objects": [
+     "sc",
+     "tap"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "w1_setup",
+    "focus": [
+     16,
+     12,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "t300"
+   },
+   {
+    "op": "shot",
+    "name": "w1_crossing",
+    "focus": [
+     12,
+     8,
+     0
+    ],
+    "distance": 12,
+    "pitch": 40,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "w1_t300",
+    "focus": [
+     16,
+     12,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "expect",
+    "label": "L1 flume carries water",
+    "what": "depth",
+    "at": [
+     12,
+     10,
+     0
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "L1 side dry",
+    "what": "depth",
+    "at": [
+     11,
+     10,
+     0
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "expect",
+    "label": "bridge carries water over L1",
+    "what": "depth",
+    "at": [
+     12,
+     8,
+     1
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "flume under the bridge carries water",
+    "what": "depth",
+    "at": [
+     12,
+     8,
+     0
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "no water beside the bridge leg",
+    "what": "depth",
+    "at": [
+     9,
+     7,
+     0
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "expect",
+    "label": "bridge end pours into the basin",
+    "what": "depth",
+    "at": [
+     22,
+     8,
+     -1
+    ],
+    "min": 0.05
+   },
+   {
+    "op": "expect",
+    "label": "spout holds the paddy",
+    "what": "depth",
+    "at": [
+     12,
+     15,
+     -1
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "scoop wheel lifts",
+    "what": "volume",
+    "min": 0.05,
+    "rect": [
+     15,
+     22,
+     17,
+     24,
+     -1
+    ]
+   },
+   {
+    "op": "uiText",
+    "id": "g1",
+    "label": "ui_g1"
+   },
+   {
+    "op": "uiText",
+    "id": "sp",
+    "label": "ui_sp"
+   },
+   {
+    "op": "uiText",
+    "id": "sc",
+    "label": "ui_sc"
+   },
+   {
+    "op": "uiText",
+    "id": "tap",
+    "label": "ui_tap"
+   },
+   {
+    "op": "wait",
+    "hours": 6,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h6",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h6"
+   },
+   {
+    "op": "water",
+    "id": "flood",
+    "at": [
+     30,
+     8,
+     -1
+    ],
+    "rate": 0.6,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "wait",
+    "hours": 18,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h24",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h24"
+   },
+   {
+    "op": "giveGoods",
+    "id": "tap",
+    "good": "Water",
+    "amount": 20
+   },
+   {
+    "op": "uiText",
+    "id": "tap",
+    "label": "ui_tap_h24"
+   },
+   {
+    "op": "wait",
+    "hours": 24,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h48",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h48"
+   },
+   {
+    "op": "shot",
+    "name": "w1_flooded",
+    "focus": [
+     30,
+     6,
+     0
+    ],
+    "distance": 16,
+    "pitch": 50,
+    "yaw": 0
+   },
+   {
+    "op": "wait",
+    "hours": 18,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h66",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h66"
+   },
+   {
+    "op": "waterOff",
+    "id": "flood"
+   },
+   {
+    "op": "water",
+    "id": "dr1",
+    "at": [
+     28,
+     7,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "dr2",
+    "at": [
+     33,
+     8,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "wait",
+    "hours": 6,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h72",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h72"
+   },
+   {
+    "op": "waterOff",
+    "id": "dr1"
+   },
+   {
+    "op": "waterOff",
+    "id": "dr2"
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h84",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h84"
+   },
+   {
+    "op": "wait",
+    "hours": 16,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "field_h100",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "h100"
+   },
+   {
+    "op": "expect",
+    "label": "cabbage replanted after the flood",
+    "what": "healthy",
+    "min": 6,
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     28,
+     7,
+     33,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "w1_field",
+    "focus": [
+     30,
+     6,
+     0
+    ],
+    "distance": 16,
+    "pitch": 50,
+    "yaw": 0
+   },
+   {
+    "op": "shot",
+    "name": "w1_tap",
+    "focus": [
+     26,
+     3,
+     0
+    ],
+    "distance": 12,
+    "pitch": 45,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "w1_end",
+    "focus": [
+     16,
+     12,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "invoke",
+    "id": "g1",
+    "component": "FlumeGate",
+    "method": "SetFlow",
+    "args": [
+     0.45
+    ]
+   },
+   {
+    "op": "invoke",
+    "id": "g1",
+    "component": "FlumeGate",
+    "method": "SetGuardEnabled",
+    "args": [
+     false
+    ]
+   },
+   {
+    "op": "wait",
+    "ticks": 30,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "span",
+     "f0",
+     "f5",
+     "sp",
+     "sc",
+     "tap",
+     "farm",
+     "br0",
+     "bs7"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "goods": [
+     "Water",
+     "PandabornCabbage"
+    ],
+    "label": "before_save"
+   }
+  ],
+  "reloadSteps": [
+   {
+    "op": "bind",
+    "id": "g1",
+    "at": [
+     12,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "g2",
+    "at": [
+     6,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "sp",
+    "at": [
+     12,
+     13,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "sc",
+    "at": [
+     16,
+     20,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "tap",
+    "at": [
+     26,
+     2,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "span",
+    "at": [
+     12,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "f0",
+    "at": [
+     12,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "bind",
+    "id": "br0",
+    "at": [
+     7,
+     8,
+     1
+    ]
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "sp",
+     "sc",
+     "tap",
+     "span",
+     "f0",
+     "br0"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "label": "reload_t0"
+   },
+   {
+    "op": "water",
+    "id": "p1",
+    "at": [
+     12,
+     4,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "p2",
+    "at": [
+     3,
+     8,
+     1
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "keepB2",
+    "at": [
+     23,
+     8,
+     -1
+    ],
+    "rate": -3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "chIn",
+    "at": [
+     1,
+     20,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "chOut",
+    "at": [
+     30,
+     20,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "cells": [
+     [
+      12,
+      7,
+      0
+     ],
+     [
+      12,
+      8,
+      0
+     ],
+     [
+      12,
+      10,
+      0
+     ],
+     [
+      11,
+      10,
+      0
+     ],
+     [
+      13,
+      10,
+      0
+     ],
+     [
+      12,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      1
+     ],
+     [
+      9,
+      8,
+      0
+     ],
+     [
+      9,
+      7,
+      0
+     ],
+     [
+      19,
+      8,
+      1
+     ],
+     [
+      22,
+      8,
+      -1
+     ],
+     [
+      12,
+      15,
+      -1
+     ],
+     [
+      16,
+      20,
+      -2
+     ],
+     [
+      16,
+      23,
+      -1
+     ],
+     [
+      26,
+      4,
+      -1
+     ],
+     [
+      30,
+      7,
+      -1
+     ],
+     [
+      5,
+      8,
+      1
+     ],
+     [
+      11,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "g1",
+     "g2",
+     "sp",
+     "sc",
+     "tap",
+     "span",
+     "f0",
+     "br0"
+    ],
+    "volumes": [
+     [
+      15,
+      22,
+      17,
+      24,
+      -1
+     ],
+     [
+      25,
+      3,
+      27,
+      5,
+      -1
+     ],
+     [
+      21,
+      6,
+      24,
+      10,
+      -1
+     ]
+    ],
+    "label": "reload_t300"
+   },
+   {
+    "op": "expect",
+    "label": "after reload: L1 flume carries water",
+    "what": "depth",
+    "at": [
+     12,
+     10,
+     0
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "after reload: L1 side dry",
+    "what": "depth",
+    "at": [
+     11,
+     10,
+     0
+    ],
+    "max": 0.001
+   },
+   {
+    "op": "expect",
+    "label": "after reload: bridge carries water",
+    "what": "depth",
+    "at": [
+     12,
+     8,
+     1
+    ],
+    "min": 0.01
+   },
+   {
+    "op": "expect",
+    "label": "after reload: spout holds the paddy",
+    "what": "depth",
+    "at": [
+     12,
+     15,
+     -1
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "after reload: scoop wheel lifts",
+    "what": "volume",
+    "min": 0.05,
+    "rect": [
+     15,
+     22,
+     17,
+     24,
+     -1
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "w1_reload",
+    "focus": [
+     16,
+     12,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "uiText",
+    "id": "g1",
+    "label": "reload_ui_g1"
+   },
+   {
+    "op": "uiText",
+    "id": "sp",
+    "label": "reload_ui_sp"
+   },
+   {
+    "op": "uiText",
+    "id": "sc",
+    "label": "reload_ui_sc"
+   }
+  ]
+ }
+}

@@ -168,8 +168,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornDewCollector.DisplayName",
-    "DescriptionLocKey": "Building.PandabornDewCollector.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoDewCollector.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoDewCollector.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Water/WaterPump/WaterPumpIcon"
   },

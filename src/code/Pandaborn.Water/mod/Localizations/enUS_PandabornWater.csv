@@ -1,0 +1,23 @@
+ID,Text,Comment
+Pandaborn.Feature.Water,Water toolkit,Feature name in the notice shown when a code module is off
+Pandaborn.Water.Status.Blocked,"The tile after this flume is solid, so the water cannot leave. Clear that tile, or turn the line with a Flume Corner.",Flume status; what to do next
+Pandaborn.Water.Status.Misaligned,The flume next to this one runs another way. Put a Flume Corner where the line turns.,Flume status
+Pandaborn.Water.Status.IntakeDry,"No water can enter this flume: the water behind it is not above its floor. Build the start lower, or raise the water with a dam.",Flume status
+Pandaborn.Water.Status.EndDry,"No water reaches the end of this flume. Let more through at the Flume Gate, or look for a gap in the line.",Flume status
+Pandaborn.Water.Status.GateBadwater,"Closed because the water at the intake is contaminated. The gate opens again by itself when the water is clean.",Flume Gate status
+Pandaborn.Water.Status.GateBadwater.Short,Gate closed by badwater,Alert at the screen edge; two to four words
+Pandaborn.Water.Status.WeakCurrent,The current here is too weak to turn the wheel. Build it where the water runs faster.,Scoop Wheel and Trip-Hammer status
+Pandaborn.Water.Gate.GuardToggle,Close when the water is contaminated,Flume Gate panel switch
+Pandaborn.Water.Gate.Flow,Lets through up to {0}.,Flume Gate panel; {0} = flow with unit
+Pandaborn.Water.Gate.FlowZero,Closed: lets no water through.,Flume Gate panel when the flow is set to zero
+Pandaborn.Water.Gate.StateOpen,Open,Flume Gate panel state
+Pandaborn.Water.Gate.StateClosed,Closed,Flume Gate panel state
+Pandaborn.Water.Gate.StateBadwater,Closed by badwater,Flume Gate panel state
+Pandaborn.Water.Info.CurrentNone,"No current at the wheel. It needs flowing water, and works at full speed in a current of {0}.",Scoop Wheel and Trip-Hammer panel line
+Pandaborn.Water.Info.CurrentLift,Current at the wheel: {0} (full speed at {1}). Lifting {2}.,Scoop Wheel panel line
+Pandaborn.Water.Info.CurrentWork,Current at the wheel: {0} (full speed at {1}). Working at {2} of full speed.,Trip-Hammer panel line
+Pandaborn.Water.Info.Spout,Keeps the field {0} deep. Now: {1}.,Paddy Spout panel line; depths in blocks
+Pandaborn.Water.Info.TreadwheelLifting,Lifting {0} while someone walks the wheel.,Treadwheel Lift panel line
+Pandaborn.Water.Info.TreadwheelIdle,"Not lifting: the water is out of reach, or the basin above is full.",Treadwheel Lift panel line
+Pandaborn.Water.Info.TreadwheelNoWorker,Needs a worker to walk the wheel.,Treadwheel Lift panel line
+Pandaborn.Water.Info.CisternTap,Each {1} h of work pours {0} stored Water out as {2} m³ of clean water.,Cistern Tap panel line

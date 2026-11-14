@@ -85,8 +85,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornPaddySpout.DisplayName",
-    "DescriptionLocKey": "Building.PandabornPaddySpout.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoPaddySpout.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoPaddySpout.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/FillValve/FillValveIcon"
   },
@@ -124,20 +124,32 @@
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/Landscaping/FillValve/FillValve.Folktails.Model"
+        "Model": "Buildings/Pandaborn/ProtoWater/Models/PaddySpout/PaddySpout.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
           {
             "Center": {
               "X": 0.5,
-              "Y": 0.510495067,
+              "Y": 0.15,
               "Z": 0.5
             },
             "Size": {
-              "X": 0.9,
-              "Y": 1.02099013,
-              "Z": 0.9
+              "X": 1.0,
+              "Y": 0.4,
+              "Z": 1.0
+            }
+          },
+          {
+            "Center": {
+              "X": 0.5,
+              "Y": 0.1,
+              "Z": 1.25
+            },
+            "Size": {
+              "X": 0.3,
+              "Y": 0.2,
+              "Z": 0.5
             }
           }
         ],
@@ -152,7 +164,7 @@
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
-            "Model": "Buildings/Landscaping/FillValve/FillValve.Folktails.ConstructionStage0.Model"
+            "Model": "Buildings/Pandaborn/ProtoWater/Models/PaddySpout/PaddySpout.ConstructionStage0.Model"
           },
           "CollidersSpec": {
             "BoxColliders": [
@@ -176,6 +188,7 @@
       }
     }
   },
+  "PandabornPaddySpoutSpec": {},
   "PandabornSolidCellsSpec": {
     "Cells": [
       {

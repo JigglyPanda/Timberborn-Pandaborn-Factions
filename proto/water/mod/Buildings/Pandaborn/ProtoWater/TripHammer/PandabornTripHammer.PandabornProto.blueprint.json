@@ -70,7 +70,7 @@
   },
   "MechanicalNodeSpec": {
     "PowerOutput": 100,
-    "PowerInput": 100,
+    "PowerInput": 30,
     "IsShaft": false
   },
   "TransputProviderSpec": {
@@ -108,8 +108,8 @@
     "MinRequiredOutflow": 0.15
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornTripHammer.DisplayName",
-    "DescriptionLocKey": "Building.PandabornTripHammer.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoTripHammer.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoTripHammer.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Power/WaterWheel/WaterWheelIcon"
   },
@@ -190,5 +190,6 @@
       "PandabornTripHammerTest"
     ]
   },
-  "ProductionIncreaserSpec": {}
+  "ProductionIncreaserSpec": {},
+  "PandabornCurrentDrivenSpec": {}
 }

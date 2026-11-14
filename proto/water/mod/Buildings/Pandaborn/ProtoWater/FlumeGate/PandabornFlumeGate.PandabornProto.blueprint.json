@@ -37,7 +37,7 @@
       {
         "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
-        "Stackable": "BlockObject",
+        "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       }
@@ -78,8 +78,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornFlumeGate.DisplayName",
-    "DescriptionLocKey": "Building.PandabornFlumeGate.Description",
+    "DisplayNameLocKey": "Building.PandabornProtoFlumeGate.DisplayName",
+    "DescriptionLocKey": "Building.PandabornProtoFlumeGate.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/ThrottlingValve/ThrottlingValveIcon"
   },
@@ -105,20 +105,20 @@
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/Landscaping/ImpermeableFloor/ImpermeableFloor.Folktails.Model"
+        "Model": "Buildings/Pandaborn/ProtoWater/Models/FlumeGate/FlumeGate.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
           {
             "Center": {
               "X": 0.5,
-              "Y": 0.510495067,
+              "Y": 0.55,
               "Z": 0.5
             },
             "Size": {
-              "X": 0.9,
-              "Y": 1.02099013,
-              "Z": 0.9
+              "X": 1.0,
+              "Y": 1.1,
+              "Z": 1.0
             }
           }
         ],
@@ -133,7 +133,7 @@
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
-            "Model": "Buildings/Landscaping/ThrottlingValve/ThrottlingValve.Folktails.ConstructionStage0.Model"
+            "Model": "Buildings/Pandaborn/ProtoWater/Models/FlumeGate/FlumeGate.ConstructionStage0.Model"
           },
           "CollidersSpec": {
             "BoxColliders": [
@@ -164,9 +164,18 @@
         "Y": 0,
         "Z": 0
       }
-    ],
-    "InflowLimit": 0.3,
-    "ContaminationShutoff": 0.05
+    ]
+  },
+  "WaterObstacleSpec": {
+    "Coordinates": [
+      {
+        "X": 0,
+        "Y": 0
+      }
+    ]
+  },
+  "FinishableWaterObstacleSpec": {
+    "Height": 1.0
   },
   "PandabornSolidCellsSpec": {
     "Cells": [
@@ -175,6 +184,17 @@
         "Y": 0,
         "Z": 1
       }
+    ]
+  },
+  "PandabornFlumeGateSpec": {
+    "DefaultFlow": 0.3,
+    "MaxFlow": 1.0,
+    "FlowStep": 0.05,
+    "ContaminationShutoff": 0.05
+  },
+  "PandabornEntityStateSpec": {
+    "Features": [
+      "Water"
     ]
   }
 }
