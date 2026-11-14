@@ -341,10 +341,13 @@ water pieces need beyond the current models, in priority order:
    (`Bottom, Top, Corners, Path, Middle`, `MatterBelow Any`) with a visible hood, lid or post top, so the cap is inside
    the building. Corner posts: two blocks tall as well (the module makes them solid to that height).
 2. **Flume Bridge span.** A Bridge piece cannot stand over a ground flume: the leg's `Corners` occupation collides with
-   the flume tile below. The dev mod adds a span variant (same model, lower block `Occupations None`, no inert
-   obstacle) and the coordinator's crossing test uses it. A model for it: the deck on the same height, trestle legs
-   outside the cell (or none), so nothing visibly stands in the flume below. Save it as `FlumeBridgeSpan` with the same
-   `waterCells` `(0,0,1)`.
+   the flume tile below. The dev mod now gives the Flume `Occupations "Bottom, Middle, Path"` (corners free), the span
+   variant a leg on `Corners` only and no inert obstacle, and the regular Bridge leg `Corners, Bottom` (so it cannot go
+   over a flume). Proven in game (`water-w1b-0934`): the span stands over a running flume, both lines run, and it
+   survives save and load (a leg that occupied nothing was deleted on load as "not supported by terrain physics"). A
+   model for it: the same deck, with the four trestle posts at the very corners of the cell so they stand beside the
+   channel below, not in it. Save it as `FlumeBridgeSpan` with `waterCells` `(0,0,1)`, and keep the Flume's channel
+   clear of the cell corners.
 3. **Flume Drop: the open cell above the lower half.** The lower flow cell `(0,1,0)` has open air above it; that is
    right. Keep the upper half's leg `(0,0,0)` solid as it is (`solidCells` `(0,0)`): it is what stops the drop leaking
    backwards.
@@ -511,6 +514,19 @@ not copied): `mod/PandabornFactions/Sprites/Pandaborn/WonderCompletion/wonder-co
 * `"animations": [{"target", "at", "name", "speed", "looped", "backwards"}]` plays a placed building's animation as
   WonderAnimationController does on activation, without activating the wonder (no wonder events, no achievements).
 
+### Named nodes the stand-in looks up (crash found in pass 4)
+
+Several stand-in specs find model nodes by name at run time and throw when one is missing: the Bot Assembler's
+`ManufactoryProgressVisualizerSpec` (`#BotAssembler.Folktails.Progress0`, `...Progress1Of3`, `...2Of3`, `...3Of3`),
+`BotManufactoryAnimationControllerSpec` (ring, drill), the Earth Recultivator's `BuildingModelGroundCutoffSpec`
+(`#Screw_Animated`, `FindChild(...).GetComponent<MeshRenderer>()`), wind rotators, observatory parts. The adopted Ox
+Workshop lacked the progress nodes and **every new Inkpaws game crashed** ("Child #BotAssembler.Folktails.Progress0
+not found", `models-pass3-3`, 11:29). Fixed: the Ox Workshop carries the four progress nodes (empty cradle, frame,
+half planked, closed body) and the vanilla ring/drill names; the Sky Lantern removes the ground-cutoff spec
+(`removeSpecs`). Rule: run `python src/pipeline/kit/check_nodes.py` before handing models over; it lists every
+`#Name` a stand-in's specs reference that the model lacks (only the optional `#Underground` of the Campfire basis
+remains, looked up with `FindChildIfNameNotEmpty`).
+
 ### Catalogue adoption list for pass 4
 
 * Regenerate every adopted model: meshes changed (lantern paper region) and these model.json files changed:
@@ -523,4 +539,6 @@ not copied): `mod/PandabornFactions/Sprites/Pandaborn/WonderCompletion/wonder-co
 * New: TripHammerMill (Gristmill), Kitchen (Bakery), OxWorkshop (BotAssembler; RingName/DrillName), TreadwheelLift
   (WaterPump; drop WaterInputPipeSpec), CisternTap (Discharge), DryStoneWall (Levee), LargeKiteWindmill
   (LargeWindTurbine; WindRotationAnimatorSpec), FlumeBridgeSpan (water module).
+* OxWorkshop and SkyLantern again after `aad784b` (progress nodes; ground-cutoff spec removed): the build installed
+  at 11:28 crashes every Inkpaws game until regenerated.
 * Faction: `FactionSpec.WonderCompletionImage` = `Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws`.
