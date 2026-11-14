@@ -111,7 +111,7 @@ DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGener
 
 # ------------------------------------------------------------------ science and Wooden Oxen
 Inventor = {}
-PandabornOxWorkshop = { basis = "BotAssembler.Folktails", standin = "new model", note = "model OxWorkshop un-adopted 2026-11-14: its nodes do not answer the BotAssembler progress steps (crashed every Inkpaws game)", recipes = ["PandabornWoodenOx"] }
+PandabornOxWorkshop = { basis = "BotAssembler.Folktails", model = "OxWorkshop", note = "re-adopted after the kit added the BotAssembler progress and ring nodes (aad784b); the validator checks every looked-up node", recipes = ["PandabornWoodenOx"] }
 PandabornStarTower = { model = "StarTower", waits_for = "RingtailVenues", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory", tool_group = "PandabornNightWatch", tool_order = 50 }
 
 # ------------------------------------------------------------------ storage

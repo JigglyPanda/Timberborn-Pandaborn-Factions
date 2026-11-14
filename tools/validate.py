@@ -1690,7 +1690,7 @@ MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "Pandabo
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
-NODE_CHECK_SKIP = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec", "BuildingModelSpec"}
+NODE_CHECK_SKIP = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec"}
 
 
 def hash_names(o, out):

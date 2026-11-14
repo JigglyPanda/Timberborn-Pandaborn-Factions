@@ -1,9 +1,0 @@
-{
-  "TemplateCollectionSpec": {
-    "CollectionId": "NaturalResources.Inkpaws",
-    "Blueprints": [
-      "NaturalResources/Pandaborn/Crops/PandabornShootBambooInFlower/PandabornShootBambooInFlower.Inkpaws.blueprint",
-      "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlower.Inkpaws.blueprint"
-    ]
-  }
-}
