@@ -115,7 +115,11 @@ def generate(a, v):
             placeable.append(o.data["TemplateSpec"]["TemplateName"])
     # every placeable template placed and finished, then recipes on, a speed ladder and a few in-game hours, so
     # finished-state and working-state code runs (the install gate, CLAUDE.md)
-    grid = {"speed": 3, "grid": {"templates": placeable,
+    # a night shot of the finished Sky Lantern: it must glow unforced (lit every night, like the lantern decorations)
+    night = [{"template": t, "finished": True, "name": "night_" + t.split(".")[0], "atHour": 23, "pitch": 30, "zoom": 1.4}
+             for t in ("PandabornSkyLantern.Inkpaws", "PandabornStringLanterns.Inkpaws") if t in placeable]
+    grid = {"speed": 3, "modelShots": {"afterGrid": True, "delaySeconds": 3, "shots": night},
+            "grid": {"templates": placeable,
                                  "exercise": {"recipes": True, "bots": 2, "speeds": [1, 3, 0, 2, 3], "everySeconds": 4,
                                               "holdHours": 3}}}
 

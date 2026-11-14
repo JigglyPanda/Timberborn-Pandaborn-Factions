@@ -33,7 +33,9 @@ namespace PandabornDevHarness
     ///                                                                // "finished": false) are started: a little build time
     ///                                                                // is added, so the construction-stage model shows
     ///                 "shots": [ { "template": "PandabornDen.Inkpaws", "finished": true, "name": "den",
-    ///                              "yaw": 0, "pitch": 35, "zoom": 1 } ] }
+    ///                              "yaw": 0, "pitch": 35, "zoom": 1,
+    ///                              "atHour": 23 } ] }                 // optional: wait for this hour of the day (a night
+    ///                                                                // shot: lights unforced, as a player sees them)
     /// </code>
     /// Waits for the grid scenario to complete when "afterGrid" is set. Result under "modelShots": stage starts (build
     /// progress, whether construction was started) and the shots taken (files &lt;name&gt;.png in the output folder).
@@ -43,13 +45,16 @@ namespace PandabornDevHarness
         private readonly EventBus _eventBus;
         private readonly EntityRegistry _entityRegistry;
         private readonly CameraService _cameraService;
+        private readonly Timberborn.TimeSystem.IDayNightCycle _dayNightCycle;
         private JObject _spec, _out;
         private float _readyAt = -1f, _nextAt;
         private int _step, _shotIndex;
         private bool _done;
 
-        public ModelShots(EventBus eventBus, EntityRegistry entityRegistry, CameraService cameraService)
+        public ModelShots(EventBus eventBus, EntityRegistry entityRegistry, CameraService cameraService,
+                          Timberborn.TimeSystem.IDayNightCycle dayNightCycle)
         {
+            _dayNightCycle = dayNightCycle;
             _eventBus = eventBus;
             _entityRegistry = entityRegistry;
             _cameraService = cameraService;
@@ -79,7 +84,19 @@ namespace PandabornDevHarness
             {
                 if (_step == 0) { StartStages(); _step = 1; _nextAt = now + Request.Num(_spec, "stageWaitSeconds", 2f); return; }
                 var shots = (_spec["shots"] as JArray) ?? new JArray();
-                if (_shotIndex < shots.Count) { TakeShot((JObject)shots[_shotIndex++]); _nextAt = now + 0.3f; return; }
+                if (_shotIndex < shots.Count)
+                {
+                    var next = (JObject)shots[_shotIndex];
+                    if (next["atHour"] != null)
+                    {
+                        float hour = (float)(_dayNightCycle.PartialDayNumber % 1.0) * 24f;
+                        if (hour < Request.Num(next, "atHour", 0f)) return;   // game time keeps running meanwhile
+                    }
+                    TakeShot(next);
+                    _shotIndex++;
+                    _nextAt = now + 0.3f;
+                    return;
+                }
                 RecordStages();
                 _out["complete"] = true;
                 _done = true;

@@ -376,8 +376,10 @@ namespace PandabornDevHarness
             if (Harness.Request.Raw?["grid"]?["exercise"] != null)
             {
                 string status = (string)Harness.Result["grid"]?["status"] ?? "";
-                if (((bool?)Harness.Result["grid"]?["exercise"]?["done"] ?? false) || status.StartsWith("incomplete")
-                    || status.StartsWith("error"))
+                bool shotsPending = Harness.Request.Raw?["modelShots"] != null
+                                    && !((bool?)Harness.Result["modelShots"]?["complete"] ?? false);
+                if ((((bool?)Harness.Result["grid"]?["exercise"]?["done"] ?? false) && !shotsPending)
+                    || status.StartsWith("incomplete") || status.StartsWith("error"))
                     return true;
                 return real >= request.RunRealSeconds;
             }

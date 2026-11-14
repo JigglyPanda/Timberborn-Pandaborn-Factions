@@ -296,6 +296,23 @@ foreach ($s in $stages) {
                 if ($missingMesh) { Say ("assemble: {0} model mesh(es) missing; run the models stage first: {1}" -f $missingMesh.Count, ($missingMesh | Select-Object -First 3) -join ', ') 'Red'; $failed += $s; break }
             }
             if (Test-Path $bundleOut) { Add-Tree $map $bundleOut 'bundles' $origins }
+            # PAIRED CHANGE: the models' lantern paper and windows sit on regions of the look sheet
+            # (src/pipeline/sheet_regions.json); a pandabornlook bundle older than the last change of that file pairs new
+            # meshes with an old sheet (lanterns that never glow). The bundle must be built after it.
+            if (-not $NoCode) {
+                $regionsAt = & git -C $repo log -1 --format=%ct -- 'src/pipeline/sheet_regions.json' 2>$null
+                if ($regionsAt) {
+                    $regionsTime = [DateTimeOffset]::FromUnixTimeSeconds([long]$regionsAt).LocalDateTime
+                    foreach ($b in 'pandabornlook_win', 'pandabornlook_mac') {
+                        $f = Join-Path $codeOut "AssetBundles\$b"
+                        if ((Test-Path -LiteralPath $f) -and (Get-Item -LiteralPath $f).LastWriteTime -lt $regionsTime) {
+                            Say "assemble: $b ($((Get-Item -LiteralPath $f).LastWriteTime)) is older than the look-sheet regions the meshes use ($regionsTime): rebuild it (tools/build_look.ps1), then the code stage" 'Red'
+                            $failed += $s
+                        }
+                    }
+                    if ($failed -contains $s) { break }
+                }
+            }
             $allMeshes = [ordered]@{}; foreach ($k in $meshes.Keys) { $allMeshes[$k] = $meshes[$k] }
             if (Test-Path -LiteralPath (Join-Path $GenDir 'Characters\Pandaborn\RingtailAdult.Inkpaws.blueprint.json')) {
                 foreach ($k in $ringtailMeshes.Keys) { $allMeshes[$k] = $ringtailMeshes[$k] }

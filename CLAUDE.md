@@ -246,6 +246,11 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     for `package` (`validate.py --release`); Mac builds: docs/tech/mac.md. Never enable `proto/sound` with the
     faction (the same bundle twice crashes). A folder `AssetBundles.parked` (left by a second enabled copy) is never
     content: assemble skips it, install's mirror removes it, `package` refuses it.
+  * **Paired change: models and the look bundle.** Lantern paper and windows sit on regions of the look sheet
+    (`src/pipeline/sheet_regions.json`): meshes rebuilt on new regions ship only with a `pandabornlook` bundle built
+    after that file's last change (old bundle + new meshes = lanterns that never glow; new bundle + old meshes = pale
+    lanterns). `assemble` refuses a `pandabornlook_win|_mac` older than the last commit of `sheet_regions.json`; take
+    the newest bundle from `E:\PandabornDev\build\look\AssetBundles` (win and mac) when you build.
   * **Install discipline:** run `install` only when no Timberborn process runs (other lanes queue game tests all
     day); take the test mutex `Global\PandabornGameTest` for it, and never leave the tree in a state where `all`
     fails.

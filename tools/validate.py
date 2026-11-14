@@ -356,6 +356,7 @@ def main(argv=None):
     check_models(c)
     check_template_names(c)
     check_building_sounds(c)
+    check_spec_dependencies(c)
     check_no_vanilla_side_effects(c)
     check_global_specs(c)
     check_unique_ids(c)
@@ -663,6 +664,22 @@ def check_sound(c, name, where):
         R.unchecked.add("%s -> %s" % (where, name))
     elif not sound_known(c.sound_names, name):
         R.error("%s: no built-in sound or sound in the mod's bundles named %s (or %s_NN variants)" % (where, name, name))
+
+
+# specs whose component looks up the Workshop component of the same building without a null check: without WorkshopSpec
+# the building throws when finished (the workerless Dew Collector, gate run 2026-11-14)
+NEEDS_WORKSHOP = ("WorkshopParticleControllerSpec", "WorkshopAnimationControllerSpec", "WorkshopWorkerHiderSpec",
+                  "SimpleManufactoryBehaviorsSpec")
+
+
+def check_spec_dependencies(c):
+    for key, bp in sorted(c.mod_bp.items()):
+        if "WorkshopSpec" in bp:
+            continue
+        for spec in NEEDS_WORKSHOP:
+            if spec in bp:
+                R.error("%s: %s without WorkshopSpec: its component needs the building's Workshop and throws when the "
+                        "building is finished" % (c.keys[key][0], spec))
 
 
 def check_building_sounds(c):
