@@ -11,13 +11,11 @@
   "PandabornPickleYard.Inkpaws",
   "PandabornLanternWorkshop.Inkpaws",
   "PandabornSmokeKiln.Inkpaws",
-  "PandabornTripHammerMill.Inkpaws",
   "PandabornKitchen.Inkpaws",
   "PandabornHotPotHall.Inkpaws",
   "PandabornKiteWindmill.Inkpaws",
   "PandabornTeahouse.Inkpaws",
-  "PandabornHotSpringBath.Inkpaws",
-  "PandabornOperaStage.Inkpaws"
+  "PandabornHotSpringBath.Inkpaws"
  ],
  "screenshots": [
   {
@@ -129,6 +127,18 @@
     "id": "Environment.Pandaborn.RingtailTwitter",
     "at": 47,
     "mode": "2d"
+   },
+   {
+    "id": "Environment.Buildings.Loop.Pandaborn.TripHammer",
+    "at": 42.5,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Buildings.Loop.Pandaborn.OperaStage",
+    "at": 44.0,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
    }
   ],
   "loops": [
@@ -158,11 +168,6 @@
     "stopAt": 58
    },
    {
-    "target": "PandabornTripHammerMill.Inkpaws",
-    "at": 17,
-    "stopAt": 58
-   },
-   {
     "target": "PandabornKitchen.Inkpaws",
     "at": 18,
     "stopAt": 58
@@ -185,11 +190,6 @@
    {
     "target": "PandabornHotSpringBath.Inkpaws",
     "at": 22,
-    "stopAt": 58
-   },
-   {
-    "target": "PandabornOperaStage.Inkpaws",
-    "at": 23,
     "stopAt": 58
    }
   ],
