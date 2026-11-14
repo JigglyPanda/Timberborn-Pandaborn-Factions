@@ -1,0 +1,615 @@
+{
+ "id": "OperaStage",
+ "standIn": "DanceHall.Folktails",
+ "generatedBy": "art/models/OperaStage/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "OperaStage.Model",
+  "constructionStage0": "OperaStage.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 5,
+  "Y": 5,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 2,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Spot1",
+   "position": {
+    "X": 0.65,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot2",
+   "position": {
+    "X": 1.2999999999999998,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot3",
+   "position": {
+    "X": 1.95,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot4",
+   "position": {
+    "X": 3.05,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot5",
+   "position": {
+    "X": 3.6999999999999997,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot6",
+   "position": {
+    "X": 4.35,
+    "Y": 0.3,
+    "Z": 0.75
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot7",
+   "position": {
+    "X": 0.65,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot8",
+   "position": {
+    "X": 1.2999999999999998,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot9",
+   "position": {
+    "X": 1.95,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot10",
+   "position": {
+    "X": 3.05,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot11",
+   "position": {
+    "X": 3.6999999999999997,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot12",
+   "position": {
+    "X": 4.35,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot13",
+   "position": {
+    "X": 0.65,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot14",
+   "position": {
+    "X": 1.2999999999999998,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot15",
+   "position": {
+    "X": 1.95,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot16",
+   "position": {
+    "X": 3.05,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot17",
+   "position": {
+    "X": 3.6999999999999997,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot18",
+   "position": {
+    "X": 4.35,
+    "Y": 0.3,
+    "Z": 2.25
+   },
+   "yaw": 180.0
+  },
+  {
+   "node": "#Slot#Spot19",
+   "position": {
+    "X": 1.6,
+    "Y": 0.63,
+    "Z": 3.8
+   },
+   "yaw": 0.0
+  },
+  {
+   "node": "#Slot#Spot20",
+   "position": {
+    "X": 2.2,
+    "Y": 0.63,
+    "Z": 3.8
+   },
+   "yaw": 0.0
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 2.5,
+    "Y": 0.05,
+    "Z": 2.5
+   },
+   "Size": {
+    "X": 5.0,
+    "Y": 0.1,
+    "Z": 5.0
+   }
+  },
+  {
+   "Center": {
+    "X": 2.5,
+    "Y": 1.5,
+    "Z": 3.9
+   },
+   "Size": {
+    "X": 3.9,
+    "Y": 3.0,
+    "Z": 1.9
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Light",
+   "Position": {
+    "X": 2.5,
+    "Y": 2.0,
+    "Z": 3.9
+   },
+   "note": "the vanilla dance-hall light, hung under the stage roof"
+  }
+ ],
+ "triangles": {
+  "finished": 2632,
+  "constructionStage0": 1284,
+  "vanillaMedianForFootprint": 2900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Twenty Spot slots: eighteen on the benches (audience) and four on the stage (players). The vanilla animation is 'Dancing' for all; a 'Sitting' keyword for the benches would suit better."
+ ],
+ "access": {
+  "X": 2.5,
+  "Y": 0.05,
+  "Z": 0.4
+ }
+}
