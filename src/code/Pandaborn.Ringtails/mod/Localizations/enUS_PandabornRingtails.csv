@@ -1,0 +1,14 @@
+ID,Text,Comment
+Pandaborn.Ringtails.Arrived,"A Ringtail family has moved into the Moon Loft: {0}. Ringtails work from the afternoon bell to dawn. The night posts are now available.",Notification when the first Moon Loft is finished
+Pandaborn.Ringtails.KitBorn,"{0} was born in a Moon Loft!",Notification when a loft raises a kit (vanilla style: {0} was born!)
+Pandaborn.Ringtails.Age,"Ringtail, age {0}",Character panel subtitle of a Ringtail adult
+Pandaborn.Ringtails.KitAge,"Ringtail kit, age {0}",Character panel subtitle of a Ringtail kit
+Pandaborn.Ringtails.PopulationRow,"Ringtails: {0}   Working: {1}   Idle: {2}",Second population row under the vanilla population panel
+Pandaborn.Ringtails.Status.ClosedForTheDay,"Closed for the day. Ringtails start at the afternoon bell.",Status on a night post by day
+Pandaborn.Ringtails.Panel.NightPost,"Night post: Ringtails work here from the afternoon bell to dawn.",Line on a night post panel
+Pandaborn.Ringtails.Panel.Loft,"Moon Loft: a home for Ringtails.",Line on a Moon Loft panel
+Pandaborn.Ringtails.Loft.Raising,"Kits: one is raised each morning while night jobs are open.",Moon Loft nursery state
+Pandaborn.Ringtails.Loft.WaitingForJobs,"Kits: waiting for open night jobs.",Moon Loft nursery state
+Pandaborn.Ringtails.Loft.NoParents,"Kits: no Ringtail lives here.",Moon Loft nursery state
+Pandaborn.Ringtails.Loft.NoRoom,"Kits: no room for a kit.",Moon Loft nursery state
+Pandaborn.Ringtails.Loft.Hungry,"Kits: none while anyone in the district is hungry or thirsty.",Moon Loft nursery state

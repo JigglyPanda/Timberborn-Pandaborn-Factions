@@ -1,0 +1,55 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 0,
+    "place": [
+      "PaperMill.Inkpaws",
+      "PaperMill.Inkpaws",
+      "PandabornPickleYard.Inkpaws",
+      "PandabornPickleYard.Inkpaws",
+      "LargePile.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "MediumWarehouse.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws"
+    ],
+    "storage": [
+      {
+        "good": "Plank",
+        "stock": 160
+      },
+      {
+        "good": "PandabornCabbage",
+        "stock": 160
+      },
+      {
+        "good": "Paper",
+        "stock": 0
+      },
+      {
+        "good": "PandabornPickles",
+        "stock": 0
+      }
+    ],
+    "stock": {
+      "Water": 300
+    },
+    "shots": [
+      {
+        "name": "w_d0_h20_courier",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "w_d1_h10_inkpawWorkplace",
+        "day": 1,
+        "hour": 10,
+        "select": "inkpawWorkplace"
+      }
+    ]
+  }
+}

@@ -1,32 +1,39 @@
-"""Derive the Ringtail prototype's blueprint copies from the vanilla blueprint dump.
+"""Derive the Ringtails test data (dev mod proto/ringtails) that rides on the generated Inkpaws build.
 
-Prototype only (proto/ringtails). Writes into proto/ringtails/mod:
-  * Characters/Pandaborn/RingtailAdult|RingtailChild.Inkpaws  - hidden second colonist kind (in no template collection)
-  * Buildings/Pandaborn/Ringtails/RingtailHaulingPost|RingtailGathererFlag.Inkpaws - Ringtail-only workplaces
-  * Buildings/Pandaborn/Ringtails/RingtailLoft.Inkpaws        - a Lodge copy marked as a Ringtail home (no procreation)
-  * WorkerOutfits/Pandaborn/WorkerOutfit.<Id>.PandabornRingtail.Inkpaws - outfits for the Ringtail worker type
-Hand-written files (manifest, worker type, collections, faction merge, localization) are not touched.
-
+This is the data the catalogue lane will own (docs/tech/two-peoples.md, "For the catalogue lane"); until then it lives in
+the dev mod. Writes into proto/ringtails/mod:
+  * Characters/Pandaborn/RingtailAdult|RingtailChild.Inkpaws   hidden Ringtail templates (in no template collection),
+    real red panda body (ringtail-body lane), coats and avatars from the faction build, PandabornRingtailSpec
+  * Characters/Pandaborn/InkpawAdult|InkpawChild.Inkpaws       merges: PandabornRingtailsSpec (adult), the save alias
+  * Buildings/Pandaborn/.../PandabornNight*Post.Inkpaws         merges: PandabornNightPostSpec (+ a science cost)
+  * Buildings/Pandaborn/Housing/PandabornMoonLoft.Inkpaws        merge: PandabornMoonLoftSpec, no ProcreationHouseSpec
+  * WorkerTypes/Pandaborn/WorkerType.PandabornRingtail           the worker type (must stay in data forever: saves name it)
+  * WorkerOutfits/Pandaborn/WorkerOutfit.<Id>.PandabornRingtail.Inkpaws
 Usage: python proto/ringtails/tools/derive.py [--blueprints E:\\PandabornDev\\reference\\Blueprints]
-Standard library only. Rerun after a game update.
 """
 import argparse
 import json
 import os
+import shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MOD = os.path.abspath(os.path.join(HERE, "..", "mod"))
 WORKER_TYPE = "PandabornRingtail"
+ANIMATION_FACTOR = 1.25    # the ringtail-body lane: suits the shorter legs
+LIFTING = 14               # DESIGN: Inkpaws lift 18, Ringtails 14
 
-# Ringtail stats relative to the vanilla beaver (Inkpaws use the vanilla values today)
-WALK_FACTOR = 1.0          # same unladen speed as Inkpaws (coordinator decision 2026-11-14)
-ANIMATION_FACTOR = 1.0
-NO_LOAD_SLOWDOWN = True    # shoulder poles: carrying does not slow them (BaseSlowedSpeed = BaseWalkingSpeed)
-BODY_SCALE = 0.82
-APPETITE_FACTOR = 0.75     # light eaters and drinkers: net Hunger/Thirst decay x0.75          # smaller body, applied to the Model_Preserved child (TransformSpec)
+COATS_ADULT = ["Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat%d" % i for i in range(1, 6)]
+COATS_CHILD = ["Materials/Pandaborn/Ringtails/Child/RingtailChildCoat%d" % i for i in range(1, 4)]
+AVATARS = {True: ("Sprites/Pandaborn/Avatars/RingtailAdult", "Sprites/Pandaborn/Avatars/RingtailContaminatedAdult"),
+           False: ("Sprites/Pandaborn/Avatars/RingtailChild", "Sprites/Pandaborn/Avatars/RingtailContaminatedChild")}
 
-COATS_ADULT = ["Materials/Pandaborn/Ringtails/Adult/RingtailAdult%d" % i for i in range(1, 6)]
-COATS_CHILD = ["Materials/Pandaborn/Ringtails/Child/RingtailChild%d" % i for i in range(1, 4)]
+POSTS = {
+    "Buildings/Pandaborn/DistrictManagement/PandabornNightBuildersPost/PandabornNightBuildersPost.Inkpaws.blueprint.json": 50,
+    "Buildings/Pandaborn/DistrictManagement/PandabornNightCourierPost/PandabornNightCourierPost.Inkpaws.blueprint.json": None,
+    "Buildings/Pandaborn/Food/PandabornNightForagersPost/PandabornNightForagersPost.Inkpaws.blueprint.json": None,
+}
+LOFT = "Buildings/Pandaborn/Housing/PandabornMoonLoft/PandabornMoonLoft.Inkpaws.blueprint.json"
+OUTFITS = ("Builder", "Hauler", "Gatherer")
 
 
 def load(path):
@@ -42,103 +49,69 @@ def save(rel, data):
     print("wrote", rel)
 
 
-def scale(v):
-    return {"X": v, "Y": v, "Z": v}
-
-
 def derive_character(bp, src, dst, template, model, adult):
     data = load(os.path.join(bp, src))
     data["TemplateSpec"]["TemplateName"] = template
     data["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
-    model_child = data["Children"]["Model_Preserved"]
-    model_child["TimbermeshSpec"]["Model"] = model
-    model_child["TransformSpec"] = {"Position": scale(0.0), "Rotation": scale(0.0), "Scale": scale(BODY_SCALE)}
+    child = data["Children"]["Model_Preserved"]
+    child["TimbermeshSpec"]["Model"] = model      # the red panda body; its 0.82 size is baked in (no TransformSpec)
+    child.pop("TransformSpec", None)
     walker = data["WalkerSpeedManagerSpec"]
-    walker["BaseWalkingSpeed"] = round(walker["BaseWalkingSpeed"] * WALK_FACTOR, 3)
-    walker["BaseSlowedSpeed"] = walker["BaseWalkingSpeed"] if NO_LOAD_SLOWDOWN else round(walker["BaseSlowedSpeed"] * WALK_FACTOR, 3)
-    data["MovementAnimatorSpec"]["AnimationSpeedScale"] = round(
-        data["MovementAnimatorSpec"].get("AnimationSpeedScale", 1.0) * ANIMATION_FACTOR, 3)
-    # keep the vanilla label key: CharacterBatchControlTab.GetSortingKey throws for any other key
+    walker["BaseSlowedSpeed"] = walker["BaseWalkingSpeed"]   # loads never slow a Ringtail (DESIGN.md Pillar 4)
+    data["MovementAnimatorSpec"]["AnimationSpeedScale"] = round(data["MovementAnimatorSpec"].get("AnimationSpeedScale", 1.0) * ANIMATION_FACTOR, 3)
     assert data["SimpleLabeledEntitySpec"]["EntityNameLocKey"] in ("Beaver.Adult.TemplateName", "Beaver.Child.TemplateName")
     if adult:
         data["WorkerSpec"]["WorkerType"] = WORKER_TYPE
-    # our marker: drives the Ringtail decorators (coat, day rest, registry)
+        data["GoodCarrierSpec"]["BaseLiftingCapacity"] = LIFTING
+    avatar, contaminated = AVATARS[adult]
     data["PandabornRingtailSpec"] = {
         "Kind": "Ringtail",
         "Textures": COATS_ADULT if adult else COATS_CHILD,
+        "Avatar": avatar,
+        "ContaminatedAvatar": contaminated,
         "RestStartHours": 0.0,
         "RestEndHours": 8.0,
-        "SleepBelow": 0.55,
         "RestEndsAtBell": True,
         "RestMinEndHours": 4.0,
         "RestMaxEndHours": 16.0,
+        "SleepBelow": 0.55,
     }
     save(dst, data)
-
-
-def derive_workplace(bp, src, dst, template, name_key, desc_key, tool_order):
-    data = load(os.path.join(bp, src))
-    data["TemplateSpec"]["TemplateName"] = template
-    data["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
-    wp = data["WorkplaceSpec"]
-    wp["DefaultWorkerType"] = WORKER_TYPE
-    wp["DisallowOtherWorkerTypes"] = True
-    wp["WorkerTypeUnlockCosts"] = []   # required: Workplace.ValidateWorkplaceSpec throws otherwise
-    data["LabeledEntitySpec"]["DisplayNameLocKey"] = name_key
-    data["LabeledEntitySpec"]["DescriptionLocKey"] = desc_key
-    data["PlaceableBlockObjectSpec"]["ToolOrder"] = tool_order
-    data["PandabornRingtailWorkplaceSpec"] = {}
-    save(dst, data)
-
-
-def derive_loft(bp):
-    data = load(os.path.join(bp, "Buildings/Housing/Lodge/Lodge.Folktails.blueprint.json"))
-    data["TemplateSpec"]["TemplateName"] = "RingtailLoft.Inkpaws"
-    data["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
-    data.pop("ProcreationHouseSpec", None)   # Inkpaw cubs are not born in lofts (Ringtail litters are stage 2)
-    data["LabeledEntitySpec"]["DisplayNameLocKey"] = "Pandaborn.Ringtails.Loft.DisplayName"
-    data["LabeledEntitySpec"]["DescriptionLocKey"] = "Pandaborn.Ringtails.Loft.Description"
-    data["PlaceableBlockObjectSpec"]["ToolOrder"] = data["PlaceableBlockObjectSpec"]["ToolOrder"] + 1
-    data["PandabornLoftSpec"] = {}
-    save("Buildings/Pandaborn/Ringtails/RingtailLoft.Inkpaws.blueprint.json", data)
-
-
-def derive_outfits(bp):
-    for outfit_id in ("Hauler", "Gatherer"):
-        src = os.path.join(bp, "WorkerOutfits", "WorkerOutfit.%s.Beaver.Folktails.blueprint.json" % outfit_id)
-        if not os.path.exists(src):
-            # fall back to any Folktails beaver outfit file with this id
-            for root, _, files in os.walk(os.path.join(bp, "WorkerOutfits")):
-                for f in files:
-                    d = load(os.path.join(root, f)).get("WorkerOutfitSpec", {})
-                    if d.get("Id") == outfit_id and d.get("FactionId") == "Folktails" and d.get("WorkerType") == "Beaver":
-                        src = os.path.join(root, f)
-        data = load(src)
-        data["WorkerOutfitSpec"]["FactionId"] = "Inkpaws"
-        data["WorkerOutfitSpec"]["WorkerType"] = WORKER_TYPE
-        save("WorkerOutfits/Pandaborn/WorkerOutfit.%s.%s.Inkpaws.blueprint.json" % (outfit_id, WORKER_TYPE), data)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--blueprints", default=r"E:\PandabornDev\reference\Blueprints")
     bp = ap.parse_args().blueprints
-    derive_character(bp, "Characters/Beaver/BeaverAdult.blueprint.json",
-                     "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json",
-                     "RingtailAdult.Inkpaws", "Characters/Pandaborn/InkpawAdult.Model", True)
-    derive_character(bp, "Characters/Beaver/BeaverChild.blueprint.json",
-                     "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint.json",
-                     "RingtailChild.Inkpaws", "Characters/Pandaborn/InkpawChild.Model", False)
-    derive_workplace(bp, "Buildings/DistrictManagement/HaulingPost/HaulingPost.Folktails.blueprint.json",
-                     "Buildings/Pandaborn/Ringtails/RingtailHaulingPost.Inkpaws.blueprint.json",
-                     "RingtailHaulingPost.Inkpaws", "Pandaborn.Ringtails.CourierLoft.DisplayName",
-                     "Pandaborn.Ringtails.CourierLoft.Description", 21)
-    derive_workplace(bp, "Buildings/Food/GathererFlag/GathererFlag.Folktails.blueprint.json",
-                     "Buildings/Pandaborn/Ringtails/RingtailGathererFlag.Inkpaws.blueprint.json",
-                     "RingtailGathererFlag.Inkpaws", "Pandaborn.Ringtails.ForagersNest.DisplayName",
-                     "Pandaborn.Ringtails.ForagersNest.Description", 11)
-    derive_loft(bp)
-    derive_outfits(bp)
+    # start clean: everything under mod/ except the manifest and the hand-written loc is generated here
+    for sub in ("Characters", "Buildings", "WorkerTypes", "WorkerOutfits"):
+        shutil.rmtree(os.path.join(MOD, sub), ignore_errors=True)
+    derive_character(bp, "Characters/Beaver/BeaverAdult.blueprint.json", "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json",
+                     "RingtailAdult.Inkpaws", "Characters/Pandaborn/RingtailAdult.Model", True)
+    derive_character(bp, "Characters/Beaver/BeaverChild.blueprint.json", "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint.json",
+                     "RingtailChild.Inkpaws", "Characters/Pandaborn/RingtailChild.Model", False)
+    save("Characters/Pandaborn/InkpawAdult.Inkpaws.blueprint.json", {
+        "TemplateSpec": {"BackwardCompatibleTemplateNames#append": ["RingtailAdult.Inkpaws"]},
+        "PandabornRingtailsSpec": {
+            "AdultBlueprint": "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint",
+            "ChildBlueprint": "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint",
+            "WorkerType": WORKER_TYPE, "ArrivalAdults": 2, "ArrivalKits": 1}})
+    save("Characters/Pandaborn/InkpawChild.Inkpaws.blueprint.json", {
+        "TemplateSpec": {"BackwardCompatibleTemplateNames#append": ["RingtailChild.Inkpaws"]}})
+    for path, science in POSTS.items():
+        merge = {"PandabornNightPostSpec": {}}
+        if science is not None:
+            merge["BuildingSpec"] = {"ScienceCost": science}   # locked until the Ringtails arrive (they unlock it for free)
+        save(path, merge)
+    save(LOFT, {"PandabornMoonLoftSpec": {"KitsPerDay": 1}, "ProcreationHouseSpec#delete": {}})
+    save("WorkerTypes/Pandaborn/WorkerType.PandabornRingtail.blueprint.json", {"WorkerTypeSpec": {
+        "Id": WORKER_TYPE, "BackwardCompatibleIds": [], "IgnoresWorkingHours": True,
+        "DisplayNameLocKey": "Pandaborn.Ringtails.PluralDisplayName", "WorkerOnlyTextLocKey": "Pandaborn.Ringtails.WorkerOnly"}})
+    for outfit_id in OUTFITS:
+        data = load(os.path.join(bp, "WorkerOutfits", "WorkerOutfit.%s.Beaver.Folktails.blueprint.json" % outfit_id))
+        data["WorkerOutfitSpec"]["FactionId"] = "Inkpaws"
+        data["WorkerOutfitSpec"]["WorkerType"] = WORKER_TYPE
+        save("WorkerOutfits/Pandaborn/WorkerOutfit.%s.%s.Inkpaws.blueprint.json" % (outfit_id, WORKER_TYPE), data)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Pandaborn.Core;
 using Pandaborn.Specs;
@@ -7,9 +8,12 @@ using Timberborn.BaseComponentSystem;
 using Timberborn.Beavers;
 using Timberborn.BehaviorSystem;
 using Timberborn.BlueprintSystem;
+using Timberborn.Buildings;
 using Timberborn.Characters;
 using Timberborn.EntitySystem;
 using Timberborn.LifeSystem;
+using Timberborn.Localization;
+using Timberborn.ScienceSystem;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateInstantiation;
 using Timberborn.TemplateSystem;
@@ -18,20 +22,22 @@ using UnityEngine;
 namespace Pandaborn.Ringtails
 {
     /// <summary>
-    /// The Ringtails' feature switch, compatibility check, factory and save registration (prototype: proto/ringtails,
-    /// results: docs/tech/two-peoples.md section 17).
+    /// The Ringtails' switch, load-time compatibility check, factory, save registration and arrival
+    /// (docs/tech/two-peoples.md section 17; DESIGN.md Pillar 4).
     ///
-    /// A Ringtails game is one whose faction adult template carries <see cref="PandabornRingtailsSpec"/>; no faction id is
-    /// hard-coded. At load, before any Ringtail exists, the two private members the feature needs are checked once:
-    ///  * TemplateNameMapper._templates (save/load of the hidden templates). Missing: Ringtails are off; saved Ringtails load
-    ///    as Inkpaws through the BackwardCompatibleTemplateNames alias on the Inkpaw templates; no new Ringtails.
-    ///  * BehaviorManager._rootBehaviors (the day rest). Missing: rest is off; no new Ringtails are created, existing ones
-    ///    keep working (vanilla critical sleep keeps them alive).
-    /// Either way one notice is posted and nothing throws.
+    /// A Ringtails game is one whose faction adult template carries <see cref="PandabornRingtailsSpec"/>. At load, before any
+    /// Ringtail exists, the two private members the feature needs are checked once:
+    ///  * TemplateNameMapper._templates (saves): missing means the feature is degraded to "off": saved Ringtails load as Inkpaws
+    ///    through the BackwardCompatibleTemplateNames alias, night posts stay ordinary Inkpaw workplaces, no Ringtails arrive.
+    ///  * BehaviorManager._rootBehaviors (the day rest): same.
+    /// Either way Core posts one "falls back" notice (FeatureRegistry.ReportDegraded) and nothing throws.
+    /// Saved state (PandabornStore "Ringtails" v1): arrived=0|1.
     /// </summary>
     public class RingtailService : ILoadableSingleton, IPostLoadableSingleton
     {
+        public const string FeatureId = "Ringtails";
         private const string LogPrefix = "[Pandaborn.Ringtails] ";
+        private const int StoreVersion = 1;
 
         internal static readonly FieldInfo TemplatesField =
             typeof(TemplateNameMapper).GetField("_templates", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -44,15 +50,17 @@ namespace Pandaborn.Ringtails
         private readonly TemplateInstantiator _templateInstantiator;
         private readonly EntityService _entityService;
         private readonly LifeService _lifeService;
+        private readonly BuildingUnlockingService _buildingUnlockingService;
+        private readonly PandabornStore _store;
         private readonly Messenger _messenger;
+        private readonly ILoc _loc;
 
         private Blueprint _adult;
         private Blueprint _child;
-        private string _notice;
 
         public RingtailService(TemplateService templateService, ISpecService specService, TemplateNameMapper templateNameMapper,
                                TemplateInstantiator templateInstantiator, EntityService entityService, LifeService lifeService,
-                               Messenger messenger)
+                               BuildingUnlockingService buildingUnlockingService, PandabornStore store, Messenger messenger, ILoc loc)
         {
             _templateService = templateService;
             _specService = specService;
@@ -60,58 +68,75 @@ namespace Pandaborn.Ringtails
             _templateInstantiator = templateInstantiator;
             _entityService = entityService;
             _lifeService = lifeService;
+            _buildingUnlockingService = buildingUnlockingService;
+            _store = store;
             _messenger = messenger;
+            _loc = loc;
         }
 
+        /// <summary>The service of the running game (tests, the dev probe).</summary>
+        public static RingtailService Current { get; private set; }
+
+        public PandabornRingtailsSpec Spec { get; private set; }
+
         /// <summary>The faction carries Ringtails at all.</summary>
-        public bool IsRingtailsGame { get; private set; }
+        public bool IsRingtailsGame => Spec != null;
 
-        /// <summary>Saved Ringtails load as Ringtails (registration worked).</summary>
-        public bool SaveSupport { get; private set; }
+        /// <summary>Everything checked out: Ringtails work, rest, save, arrive and are born.</summary>
+        public bool Enabled { get; private set; }
 
-        /// <summary>The day rest can be installed.</summary>
-        public static bool RestSupport { get; private set; }
+        public string DisabledReason { get; private set; }
 
-        /// <summary>New Ringtails may be created (both checks passed).</summary>
-        public bool Enabled => SaveSupport && RestSupport;
+        public string WorkerType => Spec?.WorkerType ?? "PandabornRingtail";
+
+        /// <summary>The first Moon Loft has brought the Ringtails in this save.</summary>
+        public bool Arrived { get; private set; }
+
+        public event Action ArrivedChanged;
 
         public void Load()
         {
-            PandabornRingtailsSpec spec = null;
-            try { spec = _templateService.GetSingle<AdultSpec>().GetSpec<PandabornRingtailsSpec>(); }
-            catch (Exception) { }
-            IsRingtailsGame = spec != null;
+            Current = this;
+            try { Spec = _templateService.GetSingle<AdultSpec>().GetSpec<PandabornRingtailsSpec>(); }
+            catch (Exception) { Spec = null; }
             if (!IsRingtailsGame) return;
+            if (_store.TryGet(FeatureId, out int version, out string payload) && version == StoreVersion)
+                Arrived = Payload.Parse(payload).TryGetValue("arrived", out var a) && a == "1";
             try
             {
-                _adult = _specService.GetBlueprint(spec.AdultBlueprint);
-                _child = _specService.GetBlueprint(spec.ChildBlueprint);
-                RestSupport = RootBehaviorsField != null && RootBehaviorsField.FieldType == typeof(List<RootBehavior>);
-                SaveSupport = RegisterTemplates();
-                if (Enabled)
+                _adult = _specService.GetBlueprint(Spec.AdultBlueprint);
+                _child = _specService.GetBlueprint(Spec.ChildBlueprint);
+                if (FeatureRegistry.DevFlag("simulate-missing-member", FeatureId))
+                    Degrade("simulated: TemplateNameMapper._templates missing");
+                else if (RootBehaviorsField == null || RootBehaviorsField.FieldType != typeof(List<RootBehavior>))
+                    Degrade("BehaviorManager._rootBehaviors changed");
+                else if (!RegisterTemplates())
+                    Degrade("TemplateNameMapper._templates changed");
+                else
                 {
                     _templateInstantiator.CacheInstance(_adult);
                     _templateInstantiator.CacheInstance(_child);
-                    Debug.Log(LogPrefix + "on");
-                }
-                else
-                {
-                    _notice = !SaveSupport ? "Ringtails: this game version changed how saves find characters. Ringtails are paused and load as Inkpaws until the mod is updated."
-                                           : "Ringtails: this game version changed character behaviour. No new Ringtails until the mod is updated.";
-                    Debug.LogWarning(LogPrefix + "off: save support " + SaveSupport + ", rest support " + RestSupport);
+                    Enabled = true;
+                    Debug.Log(LogPrefix + "on" + (Arrived ? " (arrived)" : ""));
                 }
             }
             catch (Exception e)
             {
-                SaveSupport = false;
-                _notice = "Ringtails are paused until the mod is updated.";
-                Debug.LogWarning(LogPrefix + "off: " + e.GetType().Name + ": " + e.Message);
+                Degrade(e.GetType().Name + ": " + e.Message);
             }
         }
 
         public void PostLoad()
         {
-            if (_notice != null) _messenger.Post(_notice, warning: true);
+            if (Enabled && Arrived) UnlockNightPosts();
+        }
+
+        private void Degrade(string reason)
+        {
+            Enabled = false;
+            DisabledReason = reason;
+            FeatureRegistry.ReportDegraded(FeatureId, reason);
+            Debug.LogWarning(LogPrefix + "falls back to the plain game: " + reason);
         }
 
         private bool RegisterTemplates()
@@ -126,6 +151,41 @@ namespace Pandaborn.Ringtails
             return _templateNameMapper.TryGetTemplate(_adult.GetSpec<TemplateSpec>().TemplateName, out var check) && check.Blueprint == _adult;
         }
 
+        // ------------------------------------------------------------------ arrival
+
+        /// <summary>Called by a Moon Loft when it is finished. The first one in a save brings the family.</summary>
+        public void OnMoonLoftFinished(MoonLoft loft)
+        {
+            if (!Enabled || Arrived) return;
+            Arrived = true;
+            _store.Set(FeatureId, StoreVersion, Payload.Write(new[] { new KeyValuePair<string, string>("arrived", "1") }));
+            var names = new List<string>();
+            for (int i = 0; i < Spec.ArrivalAdults; i++)
+            {
+                var c = CreateAdult(loft.Doorstep, 0.15f + 0.2f * i);
+                if (c) { loft.TakeIn(c); names.Add(c.FirstName); }
+            }
+            for (int i = 0; i < Spec.ArrivalKits; i++)
+            {
+                var c = CreateChild(loft.Doorstep);
+                if (c) { loft.TakeIn(c); names.Add(c.FirstName); }
+            }
+            UnlockNightPosts();
+            _messenger.Post(_loc.T("Pandaborn.Ringtails.Arrived", string.Join(", ", names)));
+            ArrivedChanged?.Invoke();
+        }
+
+        private void UnlockNightPosts()
+        {
+            foreach (var post in _templateService.GetAll<PandabornNightPostSpec>())
+            {
+                var building = post.GetSpec<BuildingSpec>();
+                if (building != null && !_buildingUnlockingService.Unlocked(building)) _buildingUnlockingService.UnlockIgnoringCost(building);
+            }
+        }
+
+        // ------------------------------------------------------------------ factory
+
         public Character CreateAdult(Vector3 position, float adulthoodProgress)
         {
             if (!Enabled) return null;
@@ -133,7 +193,7 @@ namespace Pandaborn.Ringtails
             return Create(_adult, new CharacterInit(_lifeService.CalculateDayOfBirth(lifeProgress), lifeProgress, null, position, Quaternion.identity));
         }
 
-        /// <summary>A newborn kit (ChildInit is internal, so kits start at growth 0), e.g. for a loft nursery.</summary>
+        /// <summary>A newborn kit (ChildInit is internal, so kits start at growth 0).</summary>
         public Character CreateChild(Vector3 position)
         {
             if (!Enabled) return null;

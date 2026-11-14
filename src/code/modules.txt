@@ -5,3 +5,6 @@ Bell   Pandaborn.Bell.bin    The afternoon bell: rested Inkpaws work and walk fa
 Names  Pandaborn.Names.bin   Per-faction colonist names from the template's PandabornNamePoolSpec
 Look   Pandaborn.Look.bin    The Inkpaws building look: in Inkpaws games, copies the bundle's Materials/Pandaborn/Look materials into the same-named vanilla ones
 Words  Pandaborn.Words.bin   Inkpaw words: in Inkpaws games, swaps the reviewed vanilla enUS texts that call the colonists beavers, restored on unload
+Water  Pandaborn.Water.bin   The water toolkit: one-way flumes, Flume Gates (flow setting, badwater shut-off), status icons, solid caps, dew in drought, plain-words panels for spouts and wheels
+Ringtails  Pandaborn.Ringtails.bin  The Ringtails: a second people who work from the bell to dawn in their own night posts and live in Moon Lofts
+RingtailsFallback  Pandaborn.RingtailsFallback.bin  Night posts become ordinary Inkpaw workplaces when the Ringtails module is off or degraded

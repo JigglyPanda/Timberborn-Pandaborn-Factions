@@ -1,0 +1,13 @@
+{
+  "Name": "Pandaborn - shelves test (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoShelves",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only: raises four Inkpaws recipes' input and output capacity to three working days, to measure night hauling. Never shipped.",
+  "RequiredMods": [
+    {
+      "Id": "JigglyPanda.PandabornFactions"
+    }
+  ],
+  "OptionalMods": []
+}

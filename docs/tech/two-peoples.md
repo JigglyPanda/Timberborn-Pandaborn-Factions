@@ -739,3 +739,40 @@ Code: roughly 1,000–1,500 lines on top of the prototype's 640, all without Har
 (the prototype's runtime code ported as a feature module with the load-time compatibility check; not wired until its
 spec records, proposed in `proposed/RingtailSpecs.cs`, are added to `Pandaborn.Specs`).
 
+
+---
+
+## 18. Phase 2: the shipping module
+
+Status: 2026-11-14. The Ringtails are a feature module of the faction's runtime code (`src/code/Pandaborn.Ringtails`,
+`src/code/Pandaborn.RingtailsFallback`, specs in `src/code/Pandaborn.Specs/RingtailSpecs.cs`), wired into
+`Pandaborn.Code.sln` and `modules.txt`. Until the catalogue lane adopts the data below, the data rides in the dev mod
+`proto/ringtails` (`tools/derive.py`), on top of the generated Inkpaws build.
+
+### 18.1 For the catalogue lane
+
+Everything the main mod's data needs. Ids follow the lock rules; the four spec classes are already in `Pandaborn.Specs`.
+
+| What | Path / id | Content |
+|---|---|---|
+| Ringtail adult template | `Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json`, template `RingtailAdult.Inkpaws` | The vanilla beaver adult (as the Inkpaw adult is made), **in no template collection**. `Children.Model_Preserved.TimbermeshSpec.Model = Characters/Pandaborn/RingtailAdult.Model` (ringtail-body lane; add the mesh to the build's `$meshes` table), **no `TransformSpec`** (size is baked in). `WorkerSpec.WorkerType = PandabornRingtail`. `GoodCarrierSpec.BaseLiftingCapacity = 14`. `WalkerSpeedManagerSpec.BaseSlowedSpeed = BaseWalkingSpeed` (no slowing when loaded). `MovementAnimatorSpec.AnimationSpeedScale = 1.25`. Keep `SimpleLabeledEntitySpec.EntityNameLocKey = Beaver.Adult.TemplateName`. No `PandabornBellSpec` (the rested bonus is an Inkpaw thing). `PandabornNamePoolSpec { NamePoolLocKey: Pandaborn.Ringtail.NamePool }` (names.json). `PandabornRingtailSpec { Textures: Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1..5, Avatar: Sprites/Pandaborn/Avatars/RingtailAdult, ContaminatedAvatar: Sprites/Pandaborn/Avatars/RingtailContaminatedAdult, RestStartHours: 0, RestEndsAtBell: true, RestMinEndHours: 4, RestMaxEndHours: 16, SleepBelow: 0.55 }` |
+| Ringtail kit template | `Characters/Pandaborn/RingtailChild.Inkpaws.blueprint.json`, template `RingtailChild.Inkpaws` | The vanilla beaver child, same rules: model `Characters/Pandaborn/RingtailChild.Model`, no `TransformSpec`, `BaseSlowedSpeed = BaseWalkingSpeed`, label `Beaver.Child.TemplateName`, name pool, `PandabornRingtailSpec` with the `RingtailChildCoat1..3` coats and the `RingtailChild` / `RingtailContaminatedChild` avatars |
+| Inkpaw adult (merge) | `InkpawAdult.Inkpaws` | `PandabornRingtailsSpec { AdultBlueprint: Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint, ChildBlueprint: Characters/Pandaborn/RingtailChild.Inkpaws.blueprint, WorkerType: PandabornRingtail, ArrivalAdults: 2, ArrivalKits: 1 }`; `TemplateSpec.BackwardCompatibleTemplateNames += RingtailAdult.Inkpaws` — **permanent**: it is what lets a save keep its Ringtails (as Inkpaws) whenever the module is off |
+| Inkpaw child (merge) | `InkpawChild.Inkpaws` | `BackwardCompatibleTemplateNames += RingtailChild.Inkpaws` — permanent |
+| Worker type | `WorkerTypes/Pandaborn/WorkerType.PandabornRingtail.blueprint.json`, id `PandabornRingtail` (global) | `IgnoresWorkingHours: true`, `DisplayNameLocKey: Pandaborn.Ringtails.PluralDisplayName`, `WorkerOnlyTextLocKey: Pandaborn.Ringtails.WorkerOnly`. **Must stay in data forever**: saves store a workplace's worker type, and the game throws loading a save that names an unknown one |
+| Outfits | `WorkerOutfits/Pandaborn/WorkerOutfit.{Builder,Hauler,Gatherer}.PandabornRingtail.Inkpaws` | Copies of the Inkpaws `Beaver` outfits with `WorkerType: PandabornRingtail` |
+| Night posts | `PandabornNightBuildersPost`, `PandabornNightCourierPost`, `PandabornNightForagersPost` (`.Inkpaws`) | Add `PandabornNightPostSpec {}`. **Keep** `WorkplaceSpec.DefaultWorkerType: Beaver` and `DisallowOtherWorkerTypes: false`: the module switches them to Ringtails; without it they are Inkpaw workplaces. Give each a science cost above 0 (the Builders' Post has 0 today): the Ringtails' arrival unlocks them for free, so a player without a Moon Loft does not see them as free buildings. Consider dropping the `Bot` unlock cost (the module switches a post back to Ringtails anyway) |
+| Moon Loft | `PandabornMoonLoft.Inkpaws` | Add `PandabornMoonLoftSpec { KitsPerDay: 1 }`; **remove `ProcreationHouseSpec`** (it would make Inkpaw cubs from Ringtail parents; the loft's kits come from the module) |
+| Loc (data) | `Pandaborn.Ringtails.PluralDisplayName` ("Ringtails"), `Pandaborn.Ringtails.WorkerOnly` (keyword line) | Used by the worker type even when the module is off; the module's own texts ship with it (`enUS_PandabornRingtails.csv`) |
+| Collections | none new | The posts and the loft are already in `Buildings.Inkpaws`; the Ringtail templates must stay out of every collection |
+
+### 18.2 Data alone (module off or failing its checks)
+
+| Thing | Module on | Module off (API check failed or forced off) | Module degraded (private member gone) |
+|---|---|---|---|
+| Ringtails in a save | Ringtails | Load as Inkpaws (alias), keep name, age, needs, home | Same as off |
+| Night posts | Ringtail workplaces, night shift | Ordinary Inkpaw workplaces: `Pandaborn.RingtailsFallback` switches any post a save left on the Ringtail type back to `Beaver` (public `SetWorkerType`) | Same (the fallback also acts when Ringtails reports itself degraded) |
+| Moon Loft | Ringtail home, arrival, kits | Ordinary home without births | Same |
+| New Ringtails | Arrival and kits | Never | Never |
+| Notice | — | Core's "switched off" notice | Core's "falls back to the plain game" notice |
+

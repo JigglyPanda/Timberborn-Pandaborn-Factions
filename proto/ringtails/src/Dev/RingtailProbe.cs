@@ -41,8 +41,6 @@ namespace Pandaborn.Ringtails.Dev
         {
             if (!HarnessBridge.Active) return;
             var config = HarnessBridge.Config;
-            RingtailService.SimulateRegistrationFailure = config["disableTemplateRegistration"]?.Value<bool>() ?? false;
-            LoftHousingRule.DisabledByDev = !(config["housingRule"]?.Value<bool>() ?? true);
             Bind<PathConnector>().AsSingleton();
             Bind<RingtailProbe>().AsSingleton();
         }
@@ -61,8 +59,6 @@ namespace Pandaborn.Ringtails.Dev
     /// </summary>
     public class RingtailProbe : ILoadableSingleton, IUpdatableSingleton
     {
-        private readonly RingtailService _ringtailService;
-        private readonly LoftHousingRule _housingRule;
         private readonly EventBus _eventBus;
         private readonly IDayNightCycle _dayNightCycle;
         private readonly CharacterPopulation _characterPopulation;
@@ -79,6 +75,8 @@ namespace Pandaborn.Ringtails.Dev
         private readonly JArray _shotsTaken = new JArray();
         private readonly Dictionary<Character, bool> _wasCarrying = new Dictionary<Character, bool>();
         private readonly Dictionary<string, JObject> _pickups = new Dictionary<string, JObject>();
+        private readonly Dictionary<string, double> _behaviorHours = new Dictionary<string, double>();
+        private float _lastTrackHours = -1f;
         private readonly Queue<JObject> _shotQueue = new Queue<JObject>();
         private readonly List<JObject> _pendingShots = new List<JObject>();
 
@@ -93,13 +91,11 @@ namespace Pandaborn.Ringtails.Dev
         private int _shotStep;
         private float _shotWait;
 
-        public RingtailProbe(RingtailService ringtailService, LoftHousingRule housingRule, EventBus eventBus, IDayNightCycle dayNightCycle,
+        public RingtailProbe(EventBus eventBus, IDayNightCycle dayNightCycle,
                              CharacterPopulation characterPopulation, DistrictCenterRegistry districtCenterRegistry, EntityRegistry entityRegistry,
                              EntitySelectionService entitySelectionService, WorkingHoursManager workingHoursManager,
                              PathConnector pathConnector)
         {
-            _ringtailService = ringtailService;
-            _housingRule = housingRule;
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
             _characterPopulation = characterPopulation;
@@ -116,16 +112,41 @@ namespace Pandaborn.Ringtails.Dev
             _eventBus.Register(this);
             _out["config"] = _config.DeepClone();
             _out["loadSave"] = HarnessBridge.LoadSave;
-            _out["feature"] = new JObject
-            {
-                ["inkpawsGame"] = _ringtailService.IsInkpawsGame,
-                ["enabled"] = _ringtailService.Enabled,
-                ["disabledReason"] = _ringtailService.DisabledReason,
-                ["housingRule"] = _housingRule.Active
-            };
+            _out["feature"] = FeatureState();
+            HandleNextLaunchDevSwitch();
             if (_config["shots"] is JArray shots)
                 foreach (var s in shots.OfType<JObject>()) _pendingShots.Add(s);
-            HarnessBridge.Info("probe loaded; feature " + (_ringtailService.Enabled ? "enabled" : "off (" + (_ringtailService.DisabledReason ?? "not Inkpaws") + ")"));
+            HarnessBridge.Info("probe loaded; module " + (ModuleBridge.Loaded ? "loaded" : "NOT loaded"));
+        }
+
+        /// <summary>
+        /// "devSwitchNextLaunch": "force-off: Ringtails" makes the relaunch of a save-and-reload run start with that dev switch:
+        /// the first launch writes pandaborn.dev.txt into the faction mod folder (the bootstrap read its switches at start, so
+        /// this launch is unaffected); the reload launch records what it saw and deletes the file at once.
+        /// </summary>
+        private void HandleNextLaunchDevSwitch()
+        {
+            try
+            {
+                string owner = AppDomain.CurrentDomain.GetData("Pandaborn.Boot.Owner") as string;
+                if (string.IsNullOrEmpty(owner)) return;
+                string file = Path.Combine(owner, "pandaborn.dev.txt");
+                if (HarnessBridge.LoadSave)
+                {
+                    if (File.Exists(file))
+                    {
+                        _out["devSwitchThisLaunch"] = File.ReadAllText(file);
+                        File.Delete(file);
+                        Event("devSwitch", "this launch ran with: " + _out["devSwitchThisLaunch"] + " (file removed)");
+                    }
+                    return;
+                }
+                string next = HarnessBridge.Config["devSwitchNextLaunch"]?.Value<string>();
+                if (string.IsNullOrEmpty(next)) return;
+                File.WriteAllText(file, next.Replace(";", "\n"));
+                Event("devSwitch", "written for the reload: " + next);
+            }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] dev switch file failed: " + e); }
         }
 
         [OnEvent]
@@ -178,6 +199,11 @@ namespace Pandaborn.Ringtails.Dev
                 try { Event("place", _pathConnector.PlaceOnDistrictLevel(center, list)); }
                 catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] placing buildings failed: " + e); }
             }
+            if (!HarnessBridge.LoadSave)
+            {
+                try { SetUpStorageAndRecipes(); }
+                catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] storage/recipe set-up failed: " + e); }
+            }
             if (!HarnessBridge.LoadSave && (_config["connectPaths"]?.Value<bool>() ?? true) && center != null)
             {
                 try { Event("paths", _pathConnector.Connect(center)); }
@@ -200,7 +226,7 @@ namespace Pandaborn.Ringtails.Dev
             int adults = _config["spawn"]?.Value<int>() ?? 0;
             int kits = _config["spawnKits"]?.Value<int>() ?? 0;
             if (HarnessBridge.LoadSave) { adults = 0; kits = 0; }
-            var anchor = _characterPopulation.Characters.FirstOrDefault(c => c && c.GetComponent<Bot>() == null && !RingtailService.IsRingtail(c));
+            var anchor = _characterPopulation.Characters.FirstOrDefault(c => c && c.GetComponent<Bot>() == null && !ModuleBridge.IsRingtail(c));
             var spawned = new JArray();
             if ((adults > 0 || kits > 0) && anchor == null) { Event("spawn", "no colonist to spawn next to"); }
             else
@@ -208,12 +234,12 @@ namespace Pandaborn.Ringtails.Dev
                 var basePos = anchor ? anchor.Transform.position : Vector3.zero;
                 for (int i = 0; i < adults; i++)
                 {
-                    var c = _ringtailService.CreateAdult(basePos, 0.2f + 0.1f * i);
+                    var c = ModuleBridge.CreateAdult(basePos, 0.2f + 0.1f * i);
                     spawned.Add(c ? Id(c) : "null");
                 }
                 for (int i = 0; i < kits; i++)
                 {
-                    var c = _ringtailService.CreateChild(basePos);
+                    var c = ModuleBridge.CreateChild(basePos);
                     if (c)
                     {
                         // dev only: push the kit close to growing up, to see the Ringtail growth hook within the run
@@ -227,6 +253,40 @@ namespace Pandaborn.Ringtails.Dev
             _out["spawned"] = spawned;
             _out["runStartDay"] = Math.Round(_dayNightCycle.PartialDayNumber, 3);
             Event("spawn", adults + " adult(s), " + kits + " kit(s) requested; created " + spawned.Count(t => (string)t != "null"));
+        }
+
+        /// <summary>"storage": [ { "good": "Plank", "stock": 100 } ]: assigned in order to the placed stockpiles that have no good
+        /// yet, then filled. Every manufactory without a recipe gets its first one (or "recipes": { template: recipeId }).</summary>
+        private void SetUpStorageAndRecipes()
+        {
+            var report = new List<string>();
+            if (_config["storage"] is JArray storage)
+            {
+                var allowers = _entityRegistry.Entities.Select(e => e.GetComponent<Timberborn.InventorySystem.SingleGoodAllower>())
+                    .Where(a => a && !a.HasAllowedGood).ToList();
+                int i = 0;
+                foreach (var entry in storage.OfType<JObject>())
+                {
+                    if (i >= allowers.Count) { report.Add("no stockpile for " + entry["good"]); continue; }
+                    var allower = allowers[i++];
+                    string good = (string)entry["good"];
+                    allower.Allow(good);
+                    int stock = entry["stock"]?.Value<int>() ?? 0;
+                    var inventory = allower.GetComponent<Timberborn.InventorySystem.Inventories>()?.EnabledInventories.FirstOrDefault();
+                    if (stock > 0 && inventory != null) inventory.GiveExistingIgnoringCapacity(new Timberborn.Goods.GoodAmount(good, stock));
+                    report.Add(good + " " + stock);
+                }
+            }
+            var recipes = _config["recipes"] as JObject;
+            foreach (var m in _entityRegistry.Entities.Select(e => e.GetComponent<Timberborn.Workshops.Manufactory>()).Where(m => m && !m.HasCurrentRecipe))
+            {
+                string wanted = recipes?[TemplateName(m) ?? ""]?.Value<string>();
+                var recipe = m.ProductionRecipes.FirstOrDefault(r => wanted == null || r.Id == wanted);
+                if (recipe == null) continue;
+                m.SetRecipe(recipe);
+                report.Add(TemplateName(m) + ":" + recipe.Id);
+            }
+            if (report.Count > 0) Event("setup", string.Join(", ", report));
         }
 
         // ------------------------------------------------------------------ measuring
@@ -246,15 +306,29 @@ namespace Pandaborn.Ringtails.Dev
         {
             if (c.GetComponent<Bot>() != null) return "bot";
             bool child = c.GetComponent<Child>() != null;
-            if (RingtailService.IsRingtail(c)) return child ? "ringtailKit" : "ringtail";
+            if (ModuleBridge.IsRingtail(c)) return child ? "ringtailKit" : "ringtail";
             return child ? "inkpawCub" : "inkpaw";
         }
 
         private void TrackCarrying()
         {
+            float nowHours = _dayNightCycle.PartialDayNumber * 24f;
+            float dt = _lastTrackHours < 0f ? 0f : nowHours - _lastTrackHours;
+            _lastTrackHours = nowHours;
             foreach (var c in _characterPopulation.Characters)
             {
                 if (!c) continue;
+                if (dt > 0f && dt < 1f)
+                {
+                    var w = c.GetComponent<Worker>();
+                    var bm = c.GetComponent<BehaviorManager>();
+                    if (w != null && w.Workplace && bm != null)
+                    {
+                        string hkey = Kind(c) + "|" + TemplateName(w.Workplace) + "|" + (bm.RunningBehavior.Name ?? "-") + "|" + (c.GetComponent<GoodCarrier>()?.IsCarrying == true ? "carrying" : "empty");
+                        _behaviorHours.TryGetValue(hkey, out double h);
+                        _behaviorHours[hkey] = h + dt;
+                    }
+                }
                 var carrier = c.GetComponent<GoodCarrier>();
                 if (carrier == null) continue;
                 bool carrying = carrier.IsCarrying;
@@ -303,7 +377,7 @@ namespace Pandaborn.Ringtails.Dev
                     ["id"] = Id(wp),
                     ["template"] = TemplateName(wp),
                     ["workerType"] = wp.GetComponent<WorkplaceWorkerType>()?.WorkerType,
-                    ["ringtailOnly"] = wp.GetComponent<PandabornRingtailWorkplaceSpec>() != null,
+                    ["ringtailOnly"] = ModuleBridge.IsNightPost(wp),
                     ["desired"] = wp.DesiredWorkers,
                     ["assigned"] = assigned.Count,
                     ["assignedKinds"] = new JArray(assigned.Select(x => (object)Kind(x)).ToArray()),
@@ -316,9 +390,14 @@ namespace Pandaborn.Ringtails.Dev
             foreach (var b in _pickups.Values) pickups.Add(b);
             sample["pickupsSinceLastSample"] = pickups;
             _pickups.Clear();
+            var hoursByBehavior = new JObject();
+            foreach (var kv in _behaviorHours) hoursByBehavior[kv.Key] = Math.Round(kv.Value, 3);
+            sample["workerHoursSinceLastSample"] = hoursByBehavior;
+            _behaviorHours.Clear();
 
             sample["playerNumbers"] = PlayerNumbers();
-            sample["housing"] = new JObject { ["swaps"] = _housingRule.Swaps, ["movesIntoLofts"] = _housingRule.MovesIntoLofts, ["evictions"] = _housingRule.Evictions };
+            sample["ui"] = new JObject { ["populationRow"] = ModuleBridge.Shown("RingtailsPopulationRow"), ["buildingFragment"] = ModuleBridge.Shown("RingtailsBuildingFragment") };
+            sample["feature"] = FeatureState();
             _samples.Add(sample);
             Write();
         }
@@ -350,7 +429,7 @@ namespace Pandaborn.Ringtails.Dev
             {
                 o["home"] = TemplateName(home);
                 o["homeId"] = Id(home);
-                o["homeIsLoft"] = home.GetComponent<PandabornLoftSpec>() != null;
+                o["homeIsLoft"] = ModuleBridge.IsMoonLoft(home);
             }
             var enterer = c.GetComponent<Enterer>();
             string location = "outdoors";
@@ -372,15 +451,6 @@ namespace Pandaborn.Ringtails.Dev
                     if (needs.HasNeed(id) && needs.NeedIsInCriticalState(id)) critical.Add(id);
                 if (critical.Count > 0) o["critical"] = critical;
             }
-            var rest = c.GetComponent<RingtailRestRootBehavior>();
-            if (rest != null)
-            {
-                o["restInserted"] = rest.Inserted;
-                o["inRestWindow"] = rest.InRestWindow;
-                o["restEnd"] = Math.Round(rest.RestEndHours, 2);
-            }
-            var coat = c.GetComponent<RingtailCoat>();
-            if (coat != null) o["coat"] = coat.CoatName;
             var walker = c.GetComponent<WalkerSpeedManager>();
             if (walker != null) o["baseSpeed"] = Math.Round(walker.GetWalkerBaseSpeed(), 3);
             return o;
@@ -518,15 +588,15 @@ namespace Pandaborn.Ringtails.Dev
                     return _characterPopulation.Characters.Where(c => c && Kind(c) == "inkpaw")
                         .OrderByDescending(c => c.GetComponent<Worker>()?.JobRunning == true).FirstOrDefault();
                 case "ringtailWorkplace":
-                    return Workplaces().Where(w => w.GetComponent<PandabornRingtailWorkplaceSpec>() != null)
+                    return Workplaces().Where(w => ModuleBridge.IsNightPost(w))
                         .OrderByDescending(w => w.NumberOfAssignedWorkers).FirstOrDefault();
                 case "ringtailGatherer":
                     return Workplaces().FirstOrDefault(w => TemplateName(w) == "RingtailGathererFlag.Inkpaws");
                 case "inkpawWorkplace":
-                    return Workplaces().Where(w => w.GetComponent<PandabornRingtailWorkplaceSpec>() == null && w.GetComponent<DistrictCenter>() == null)
+                    return Workplaces().Where(w => !ModuleBridge.IsNightPost(w) && w.GetComponent<DistrictCenter>() == null)
                         .OrderByDescending(w => w.NumberOfAssignedWorkers).FirstOrDefault();
                 case "loft":
-                    return _entityRegistry.Entities.Select(e => e.GetComponent<Dwelling>()).FirstOrDefault(d => d && d.GetComponent<PandabornLoftSpec>() != null);
+                    return _entityRegistry.Entities.Select(e => e.GetComponent<Dwelling>()).FirstOrDefault(d => d && ModuleBridge.IsMoonLoft(d));
                 case "districtCenter":
                     return _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
                 default:
@@ -541,6 +611,16 @@ namespace Pandaborn.Ringtails.Dev
 
         // ------------------------------------------------------------------ output
 
+        private static JObject FeatureState() => new JObject
+        {
+            ["moduleLoaded"] = ModuleBridge.Loaded,
+            ["ringtailsGame"] = ModuleBridge.IsRingtailsGame,
+            ["enabled"] = ModuleBridge.Enabled,
+            ["arrived"] = ModuleBridge.Arrived,
+            ["disabledReason"] = ModuleBridge.DisabledReason,
+            ["kitsRaised"] = ModuleBridge.KitsRaised
+        };
+
         private void Event(string what, string detail)
         {
             _events.Add(new JObject { ["what"] = what, ["detail"] = detail, ["day"] = Math.Round(_dayNightCycle.PartialDayNumber, 3) });
@@ -553,7 +633,7 @@ namespace Pandaborn.Ringtails.Dev
             string dir = HarnessBridge.OutputDir;
             if (dir == null) return;
             _out["updatedUtc"] = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-            _out["restInsertionError"] = RingtailRestRootBehavior.InsertionError;
+            _out["feature"] = FeatureState();
             _out["events"] = _events;
             _out["shots"] = _shotsTaken;
             _out["samples"] = _samples;

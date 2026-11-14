@@ -17,7 +17,7 @@
     "DiedTragicallyAlertLocKey": "Status.Beaver.DiedTragicallyShort"
   },
   "MovementAnimatorSpec": {
-    "AnimationSpeedScale": 1.0
+    "AnimationSpeedScale": 1.25
   },
   "WorkerSpec": {
     "WorkerType": "PandabornRingtail"
@@ -1905,41 +1905,26 @@
   "Children": {
     "Model_Preserved": {
       "TimbermeshSpec": {
-        "Model": "Characters/Pandaborn/InkpawAdult.Model"
-      },
-      "TransformSpec": {
-        "Position": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Rotation": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Scale": {
-          "X": 0.82,
-          "Y": 0.82,
-          "Z": 0.82
-        }
+        "Model": "Characters/Pandaborn/RingtailAdult.Model"
       }
     }
   },
   "PandabornRingtailSpec": {
     "Kind": "Ringtail",
     "Textures": [
-      "Materials/Pandaborn/Ringtails/Adult/RingtailAdult1",
-      "Materials/Pandaborn/Ringtails/Adult/RingtailAdult2",
-      "Materials/Pandaborn/Ringtails/Adult/RingtailAdult3",
-      "Materials/Pandaborn/Ringtails/Adult/RingtailAdult4",
-      "Materials/Pandaborn/Ringtails/Adult/RingtailAdult5"
+      "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1",
+      "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat2",
+      "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat3",
+      "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat4",
+      "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat5"
     ],
+    "Avatar": "Sprites/Pandaborn/Avatars/RingtailAdult",
+    "ContaminatedAvatar": "Sprites/Pandaborn/Avatars/RingtailContaminatedAdult",
     "RestStartHours": 0.0,
     "RestEndHours": 8.0,
-    "SleepBelow": 0.55,
     "RestEndsAtBell": true,
     "RestMinEndHours": 4.0,
-    "RestMaxEndHours": 16.0
+    "RestMaxEndHours": 16.0,
+    "SleepBelow": 0.55
   }
 }

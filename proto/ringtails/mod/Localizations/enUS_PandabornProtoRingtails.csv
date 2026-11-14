@@ -1,9 +1,3 @@
 ID,Text,Comment
 "Pandaborn.Ringtails.PluralDisplayName","Ringtails","Plural name of the red panda colonists (a worker type)"
-"Pandaborn.Ringtails.WorkerOnly","Ringtails only","Shown on a workplace only Ringtails can staff"
-"Pandaborn.Ringtails.CourierLoft.DisplayName","Courier Loft","Ringtail-only hauling post (prototype)"
-"Pandaborn.Ringtails.CourierLoft.Description","Ringtail couriers haul goods from here. They sleep through the morning and work the afternoon and the night.","Prototype"
-"Pandaborn.Ringtails.ForagersNest.DisplayName","Forager's Nest","Ringtail-only gatherer flag (prototype)"
-"Pandaborn.Ringtails.ForagersNest.Description","Ringtail foragers gather wild food around it in the afternoon and at night.","Prototype"
-"Pandaborn.Ringtails.Loft.DisplayName","Loft","Ringtail home (prototype)"
-"Pandaborn.Ringtails.Loft.Description","A small home where Ringtails sleep through the morning.","Prototype"
+"Pandaborn.Ringtails.WorkerOnly","<YellowHighlight>Night post:</YellowHighlight> Only Ringtails work here, from the afternoon bell to dawn.","Keyword line on a Ringtail workplace"

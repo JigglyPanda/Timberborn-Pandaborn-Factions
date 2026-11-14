@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Feature module: the Ringtails, the Inkpaws' second people (Modules\Pandaborn.Ringtails.bin). See FEATURE.md.
-       Not in Pandaborn.Code.sln yet: its spec records are proposed in proposed/RingtailSpecs.cs for Pandaborn.Specs.
-       Compile check before that lands: dotnet build -c Release -p:RingtailsProposedSpecs=true -p:ModOut=<scratch folder> -->
+       Specs: Pandaborn.Specs/RingtailSpecs.cs. Loc that ships with it: mod/. -->
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Pandaborn.Ringtails</AssemblyName>
@@ -9,10 +8,9 @@
     <PandabornKind>Feature</PandabornKind>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="proposed/**" />
-    <Compile Include="proposed/RingtailSpecs.cs" Condition="'$(RingtailsProposedSpecs)' == 'true'" />
     <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.UIElementsModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
     <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
     <ProjectReference Include="..\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />

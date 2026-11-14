@@ -1,0 +1,85 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 0,
+    "place": [
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornNightBuildersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      }
+    ],
+    "stock": {
+      "Water": 300,
+      "Log": 120,
+      "Plank": 60
+    },
+    "laterPlace": [
+      {
+        "day": 0,
+        "hour": 15,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      }
+    ],
+    "shots": [
+      {
+        "name": "m_d0_h10_loft",
+        "day": 0,
+        "hour": 10,
+        "select": "loft"
+      },
+      {
+        "name": "m_d0_h11_post_day",
+        "day": 0,
+        "hour": 11,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "m_d0_h12_ringtail",
+        "day": 0,
+        "hour": 12,
+        "select": "ringtail"
+      },
+      {
+        "name": "m_d0_h20_post_night",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "m_d0_h21_ringtail_night",
+        "day": 0,
+        "hour": 21,
+        "select": "ringtail"
+      },
+      {
+        "name": "m_d1_h6_loft",
+        "day": 1,
+        "hour": 6,
+        "select": "loft"
+      }
+    ]
+  }
+}

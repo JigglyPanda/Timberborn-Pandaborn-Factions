@@ -17,7 +17,7 @@
     "DiedTragicallyAlertLocKey": "Status.Beaver.DiedTragicallyShort"
   },
   "MovementAnimatorSpec": {
-    "AnimationSpeedScale": 0.8
+    "AnimationSpeedScale": 1.0
   },
   "TemplateSpec": {
     "TemplateName": "RingtailChild.Inkpaws",
@@ -894,39 +894,24 @@
   "Children": {
     "Model_Preserved": {
       "TimbermeshSpec": {
-        "Model": "Characters/Pandaborn/InkpawChild.Model"
-      },
-      "TransformSpec": {
-        "Position": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Rotation": {
-          "X": 0.0,
-          "Y": 0.0,
-          "Z": 0.0
-        },
-        "Scale": {
-          "X": 0.82,
-          "Y": 0.82,
-          "Z": 0.82
-        }
+        "Model": "Characters/Pandaborn/RingtailChild.Model"
       }
     }
   },
   "PandabornRingtailSpec": {
     "Kind": "Ringtail",
     "Textures": [
-      "Materials/Pandaborn/Ringtails/Child/RingtailChild1",
-      "Materials/Pandaborn/Ringtails/Child/RingtailChild2",
-      "Materials/Pandaborn/Ringtails/Child/RingtailChild3"
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat1",
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat2",
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat3"
     ],
+    "Avatar": "Sprites/Pandaborn/Avatars/RingtailChild",
+    "ContaminatedAvatar": "Sprites/Pandaborn/Avatars/RingtailContaminatedChild",
     "RestStartHours": 0.0,
     "RestEndHours": 8.0,
-    "SleepBelow": 0.55,
     "RestEndsAtBell": true,
     "RestMinEndHours": 4.0,
-    "RestMaxEndHours": 16.0
+    "RestMaxEndHours": 16.0,
+    "SleepBelow": 0.55
   }
 }

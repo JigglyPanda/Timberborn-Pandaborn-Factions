@@ -50,7 +50,7 @@ namespace Pandaborn.Ringtails
                 Pass(district.DistrictPopulation);
         }
 
-        private static bool IsLoft(Dwelling home) => home && home.GetComponent<PandabornLoftSpec>() != null;
+        private static bool IsLoft(Dwelling home) => home && home.GetComponent<PandabornMoonLoftSpec>() != null;
 
         private void Pass(DistrictPopulation population)
         {

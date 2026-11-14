@@ -3,5 +3,12 @@
     "BackwardCompatibleTemplateNames#append": [
       "RingtailAdult.Inkpaws"
     ]
+  },
+  "PandabornRingtailsSpec": {
+    "AdultBlueprint": "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint",
+    "ChildBlueprint": "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint",
+    "WorkerType": "PandabornRingtail",
+    "ArrivalAdults": 2,
+    "ArrivalKits": 1
   }
 }

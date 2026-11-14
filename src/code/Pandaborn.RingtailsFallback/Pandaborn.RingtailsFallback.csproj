@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Feature module: keeps night posts useful when the Ringtails module is off or degraded (Modules\Pandaborn.RingtailsFallback.bin).
+       Deliberately tiny, so its own API check almost never fails. See FEATURE.md. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Pandaborn.RingtailsFallback</AssemblyName>
+    <RootNamespace>Pandaborn.RingtailsFallback</RootNamespace>
+    <PandabornKind>Feature</PandabornKind>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Core\Pandaborn.Core.csproj" Private="false" />
+  </ItemGroup>
+</Project>
