@@ -51,7 +51,7 @@ Materials: `BaseWood_Brown.Folktails`, `BaseWood_White.Folktails`, `BaseWood_Lig
 
 ## IrregularPlanks
 
-Materials: `IrregularPlanks_*.Folktails`. Our texture sets: Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), WeaveMossy (Mossy). Density: `IrregularPlanks_White` 473.2 (386.4-673.8); `IrregularPlanks_Brown` 578.9 (453.6-832.1); `IrregularPlanks_LightBrown` 605.7 (473.0-646.3).
+Materials: `IrregularPlanks_*.Folktails`. Our texture sets: Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), FlatTiles (Mossy: flat roofs, grey tile laid flat). Density: `IrregularPlanks_White` 473.2 (386.4-673.8); `IrregularPlanks_Brown` 578.9 (453.6-832.1); `IrregularPlanks_LightBrown` 605.7 (473.0-646.3).
 
 | # | Rect [x0, y0, x1, y1) | Surface |
 |---|---|---|

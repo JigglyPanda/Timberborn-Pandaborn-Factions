@@ -154,7 +154,7 @@ def painted():
 
 SHEETS = {
     "BaseWood": (basewood, ["BaseWood_Brown", "BaseWood_White", "BaseWood_LightBrown", "BaseWood_Yellow"], "Timber (Brown), Bamboo (White, LightBrown, Yellow)"),
-    "IrregularPlanks": (planks, ["IrregularPlanks_*"], "Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), WeaveMossy (Mossy)"),
+    "IrregularPlanks": (planks, ["IrregularPlanks_*"], "Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), FlatTiles (Mossy: flat roofs, grey tile laid flat)"),
     "ThatchedRoof": (thatch, ["ThatchedRoof"], "RoofTiles"),
     "WindowsAtlas": (windows, ["WindowsAtlas"], "Windows"),
     "Details": (details, ["Details"], "Details"),

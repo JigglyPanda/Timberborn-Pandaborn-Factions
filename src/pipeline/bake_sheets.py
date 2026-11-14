@@ -12,7 +12,7 @@ each float32 HxWx3 with row 0 at the TOP of the image. look_textures.py turns th
 
 Run (bash; see CLAUDE.md for the env vars that keep Blender off C:):
   $BL -b --factory-startup --python src/pipeline/bake_sheets.py -- src/pipeline/sheet_regions.json E:/PandabornDev/build/look/bake [Set,Set]
-Sets: Timber Bamboo Weave WeaveCoarse WeaveMossy RoofTiles (modelled), and the heightfield sets Windows LatticePaper
+Sets: Timber Bamboo Weave WeaveCoarse RoofTiles FlatTiles (modelled), and the heightfield sets Windows LatticePaper
 Details Iron Banded PlasterLath (relief from look_textures.py --export-hf, baked only when that export exists)
 """
 import json
@@ -167,6 +167,20 @@ def jitter(col, rnd, amount=0.08):
     return tuple(max(0.0, c * k * (1 + hh)) for c, hh in zip(col, h))
 
 
+WEATHERED_BAMBOO = [((168, 146, 100), 4), ((148, 138, 98), 3), ((128, 132, 110), 2), ((184, 162, 112), 1)]
+
+
+def bamboo_col(rnd):
+    """Weathered culm colours: mostly honey- and olive-tan, some grey-green aged culms, the odd warmer straw one."""
+    total = sum(w for _, w in WEATHERED_BAMBOO)
+    pick = rnd.uniform(0, total)
+    for c, w in WEATHERED_BAMBOO:
+        pick -= w
+        if pick <= 0:
+            return jitter(srgb(c), rnd, 0.06)
+    return jitter(srgb(WEATHERED_BAMBOO[0][0]), rnd, 0.06)
+
+
 # ------------------------------------------------------------------------------------------------ materials
 def material(name, fine="streak", scale=(1, 1, 1), bump=0.3, rough=0.6, grain=None):
     """Colour = vertex colour x fine detail; bump from the same detail. fine: streak (fibres along local Y),
@@ -239,6 +253,7 @@ def culm(name, x0, y0, x1, y1, col, mat, rnd, horizontal=False, node_gap=(110, 1
         p += rnd.uniform(*node_gap)
     nodes = np.array(nodes) if nodes else np.array([-1e3])
     nu = max(int(length / 1.5), 4)
+    rnd_k = (rnd.uniform(0.6, 2.2), rnd.uniform(0, 6.28), rnd.uniform(0, 6.28))
 
     def fn(u, v):
         s = u * length                                          # along axis, px
@@ -250,7 +265,9 @@ def culm(name, x0, y0, x1, y1, col, mat, rnd, horizontal=False, node_gap=(110, 1
         th = math.pi * v                                         # upper half only: the camera looks down
         across = rr * np.cos(th)
         zz = rr * np.sin(th) * (0.35 if split else 1.0)
-        shade = 1 - 0.20 * np.clip(band, 0, 1) - 0.25 * np.clip(groove, 0, 1)
+        # value varies along the culm (weathering blotches) and nodes are clearly darker
+        blot = 0.88 + 0.12 * np.sin(s / length * 2 * math.pi * rnd_k[0] + rnd_k[1])             + 0.06 * np.sin(s / 37.0 + rnd_k[2])
+        shade = (1 - 0.30 * np.clip(band, 0, 1) - 0.40 * np.clip(groove, 0, 1)) * blot
         if horizontal:
             x, y = X(x0 + s), Y((y0 + y1) / 2 + across)
         else:
@@ -334,21 +351,21 @@ def set_wood(name, kind):
         endm.node_tree.nodes["Wave Texture"].wave_type = "RINGS"
         endm.node_tree.nodes["Wave Texture"].inputs["Scale"].default_value = 260.0
     else:
-        base, gap = srgb((204, 192, 142)), srgb((226, 222, 210))
+        base, gap = srgb((168, 146, 100)), srgb((200, 194, 180))
         wood = material("bamboo", "streak", scale=(900, 6, 900), bump=0.15)
         wood_h = material("bamboo_h", "streak", scale=(6, 900, 900), bump=0.15)
     plane("bg", -20, -20, S + 20, S + 20, 0.0, gap, material("bg", "mottle", scale=(40, 40, 40), bump=0.05))
     for i, r in enumerate(regions("BaseWood")):
         x0, y0, x1, y1 = r["rect"]
         k = r["kind"]
-        col = jitter(base, rnd, 0.18 if kind == "timber" else 0.10)
+        col = jitter(base, rnd, 0.18) if kind == "timber" else bamboo_col(rnd)
         if k.startswith("long-grain"):
             x = x0
             j = 0
             while x < x1 - 4:
                 bw = rnd.randint(52, 86) if kind == "timber" else rnd.randint(24, 40)
                 xe = min(x + bw, x1)
-                c = jitter(base, rnd, 0.18 if kind == "timber" else 0.12)
+                c = jitter(base, rnd, 0.18) if kind == "timber" else bamboo_col(rnd)
                 if kind == "timber":
                     board("blk%d" % j, x + 1, y0 + 2, xe - 1, y1 - 2, c, wood, rnd)
                 else:
@@ -376,7 +393,9 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
     """Plain-weave bamboo panels, one per vanilla plank column, with bamboo battens on the seams, a binding batten
     across the middle, a few repaired patches in fresher strands."""
     rnd = random.Random(seed)
-    tones = tones or [srgb((188, 168, 118)), srgb((150, 150, 120)), srgb((170, 156, 112)), srgb((138, 142, 112))]
+    # muted tan / grey-brown / grey-olive panels; straw (fresh) only for a minority
+    tones = tones or [srgb(c) for c in ((150, 132, 100), (126, 118, 98), (142, 128, 100), (118, 116, 98),
+                                        (176, 156, 108), (126, 118, 98), (146, 130, 100), (120, 118, 100))]
     warp_m = material("warp", "streak", scale=(900, 8, 900), bump=0.12)
     weft_m = material("weft", "streak", scale=(8, 900, 900), bump=0.12)
     batten_m = material("batten", "streak", scale=(900, 6, 900), bump=0.15)
@@ -415,7 +434,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
             c = jitter(tone, rnd, 0.07)
             fresh = any(a < yc < b for a, b in patch)
             if fresh:
-                c = jitter(srgb((182, 176, 128)), rnd, 0.04)
+                c = jitter(srgb((160, 150, 112)), rnd, 0.04)
 
             def ff(u, v, yc=yc, j=j, c=c):
                 xx = x0 + 2 + (x1 - x0 - 4) * u
@@ -442,29 +461,31 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 Y(cy + rr * u * np.sin(2 * math.pi * v)), (10 + 2 * (1 - u)) / S + 0 * u, c[0], c[1], c[2]), mm)
 
 
-def set_tiles():
-    """Clay pan-and-cover tiles. Courses 256 px tall with their lower lip at y = 200 + 256k (the vanilla thatch
-    rhythm), 16 pan/cover pairs across (64 px), three tiles per course with a small step at each tile's lower end."""
-    rnd = random.Random(5)
+def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.18, tile_rgb=(112, 116, 122), seed=5):
+    """Clay pan-and-cover tiles. Default: courses 256 px tall with their lower lip at y = 200 + 256k (the vanilla thatch
+    rhythm), 16 pan/cover pairs across (64 px), three tiles per course with a small step at each tile's lower end.
+    The flat-roof variant (FlatTiles) lays shorter, flatter courses with more moss."""
+    rnd = random.Random(seed)
     pan_m = material("pan", "mottle", scale=(90, 90, 90), bump=0.25, rough=0.7)
     cov_m = material("cover", "mottle", scale=(90, 90, 90), bump=0.25, rough=0.6)
     moss_m = material("moss", "mottle", scale=(150, 150, 150), bump=0.5)
     plane("bg", -80, -300, S + 80, S + 300, -0.02, srgb((30, 30, 34)), material("bgt", "none"))
-    tile = srgb((112, 116, 122))
-    pitch, course = 64.0, 256.0
-    for k in range(-1, 5):
-        lip = 200 + course * k
-        for t in range(3):
-            ya = lip - course + t * course / 3      # upper end of this tile
-            yb = ya + course / 3 + 10               # lower end, overlapping the next one down
+    tile = srgb(tile_rgb)
+    pitch = 64.0
+    ncourse = int(round(S / course))
+    for k in range(-1, ncourse + 1):
+        lip = edge0 + course * k
+        for t in range(per_course):
+            ya = lip - course + t * course / per_course      # upper end of this tile
+            yb = ya + course / per_course + 10               # lower end, overlapping the next one down
             for col in range(-1, 17):
-                key = (col % 16, k % 4, t)
+                key = (col % 16, k % ncourse, t, seed)
                 r2 = random.Random(hash(key) & 0xFFFF)
                 c = jitter(tile, r2, 0.05)
                 if r2.random() < 0.03:
                     c = jitter(srgb((88, 94, 102)), r2, 0.05)         # an odd newer, darker tile
                 cx = col * pitch + pitch / 2
-                rise = 3 + 6 * t                                       # tiles further down a course sit higher
+                rise = 3 + rise_step * t                               # tiles further down a course sit higher
 
                 def fpan(u, v, cx=cx, ya=ya, yb=yb, c=c, rise=rise):
                     xx = cx - pitch / 2 + pitch * v - 0.5
@@ -486,12 +507,12 @@ def set_tiles():
                 cc = jitter(c, r2, 0.05)
                 surface("c%d_%d_%d" % (k, t, col), 24, 16, fcov, cov_m)
                 # end cap disc of the cover tile at its lip
-                if t == 2:
+                if t == per_course - 1:
                     surface("cap%d_%d" % (k, col), 4, 16, lambda u, v, cx=cx + pitch / 2, yb=yb, cc=cc, rise=rise: (
                         X(cx + rc * 1.05 * np.cos(math.pi * v) * u), Y(yb - 1 + 0 * u),
                         (rise + 12 + rc * 1.05 * np.sin(math.pi * v) * u) / S, cc[0] * 0.7, cc[1] * 0.7, cc[2] * 0.7), cov_m)
                 # moss in the channel near the lip
-                if r2.random() < 0.18:
+                if r2.random() < moss_p:
                     mc = jitter(srgb((92, 112, 64)), r2, 0.2)
                     my = yb - r2.uniform(8, 40)
                     mr = r2.uniform(3, 7)
@@ -546,9 +567,11 @@ SETS = {
     "Timber": lambda: set_wood("Timber", "timber"),
     "Bamboo": lambda: set_wood("Bamboo", "bamboo"),
     "Weave": lambda: set_weave("Weave", 28, seed=3),
-    "WeaveCoarse": lambda: set_weave("WeaveCoarse", 40, tones=[srgb((150, 128, 92)), srgb((128, 116, 90)),
-                                                                srgb((140, 120, 84))], seed=4),
-    "WeaveMossy": lambda: set_weave("WeaveMossy", 28, moss=0.6, seed=5),
+    "WeaveCoarse": lambda: set_weave("WeaveCoarse", 40, tones=[srgb((118, 100, 76)), srgb((104, 94, 78)),
+                                                                srgb((112, 98, 74))], seed=4),
+    # flat roofs (IrregularPlanks_Mossy: lodge, warehouse, mine roofs): grey clay tile laid flat, mossy
+    "FlatTiles": lambda: set_tiles(course=128.0, edge0=0.0, per_course=2, rise_step=2.0, moss_p=0.45,
+                                   tile_rgb=(100, 104, 108), seed=9),
     "RoofTiles": set_tiles,
 }
 

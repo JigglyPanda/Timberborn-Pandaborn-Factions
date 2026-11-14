@@ -56,9 +56,9 @@ STONE = np.array([150, 148, 140])             # river stone
 # _Color tints per material (linear multipliers applied by the game, baked into vertex colours)
 TINT = {
     "BaseWood_Brown": (1.0, 1.0, 1.0, 1.0),          # dark timber frame (own texture; most used wood: 320 models)
-    "BaseWood_White": (0.86, 0.85, 0.80, 1.0),       # weathered grey bamboo
-    "BaseWood_LightBrown": (0.88, 0.80, 0.62, 1.0),  # cured straw-gold bamboo
-    "BaseWood_Yellow": (0.66, 0.80, 0.50, 1.0),      # fresh green bamboo
+    "BaseWood_White": (0.90, 0.90, 0.88, 1.0),       # silvered, long-weathered bamboo
+    "BaseWood_LightBrown": (1.0, 0.95, 0.86, 1.0),   # weathered honey/olive-tan bamboo: the most used light wood (DC walls, tank hoops)
+    "BaseWood_Yellow": (0.84, 0.94, 0.76, 1.0),      # fresher green bamboo
     "IrregularPlanks_White": (1.0, 1.0, 1.0, 1.0),     # woven panels: tones are baked in (straw, grey-green)
     "IrregularPlanks_Brown": (1.0, 1.0, 1.0, 1.0),     # coarse, smoke-darkened weave (own texture)
     "IrregularPlanks_LightBrown": (0.96, 0.92, 0.84, 1.0),
@@ -219,8 +219,8 @@ def baked_or(name, fallback, smooth, keep_emission=False, crisp=None):
         if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
             print("  (from Blender bake)", flush=True)
             st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8),
-                           paint=0.85 if name == "RoofTiles" else 0.55,
-                           light=(-0.75, 0.25, 0.6) if name == "RoofTiles" else None)   # grazing: rounds the covers
+                           paint=0.85 if name in ("RoofTiles", "FlatTiles") else 0.55,
+                           light=(-0.75, 0.25, 0.6) if name in ("RoofTiles", "FlatTiles") else None)   # grazing: rounds the covers
             if keep_emission:
                 st.e = fallback().e
             return st
@@ -497,8 +497,9 @@ def make_tiles():
     return st
 
 
-def make_plaster(name="Plaster", base=LIME, seed=40):
-    """White lime plaster: soft mottling and trowel marks."""
+def make_plaster(name="Plaster", base=LIME, seed=40, damp=False, lath_patches=0):
+    """Lime plaster: warm off-white, soft mottling and trowel marks; optionally damp stains rising from the base of the
+    sheet (image bottom = v 0 = foot of the wall on most vanilla walls) and a few small spalls showing bamboo laths."""
     st = Set(name)
     n1, n2, n3 = noise(seed, 120), noise(seed + 1, 24), noise(seed + 2, 6)
     strokes = noise(seed + 5, 18, 1.8, aniso=(1.0, 0.25))      # trowel strokes, mostly horizontal
@@ -507,6 +508,23 @@ def make_plaster(name="Plaster", base=LIME, seed=40):
     pits = noise(seed + 4, 3, 1.0) > 0.86
     st.d[pits] *= 0.92
     st.h = 0.3 * n1 + 0.15 * n2 + 0.05 * n3 - 0.1 * pits + 0.08 * strokes
+    if damp:
+        yy = np.mgrid[0:S, 0:S][0].astype(np.float32) / S
+        rise = 0.78 - 0.10 * noise(seed + 6, 90)                        # ragged tide line
+        wet = np.clip((yy - rise) / 0.12, 0, 1) * (0.6 + 0.4 * noise(seed + 7, 30))
+        st.d = st.d * (1 - 0.28 * wet[..., None]) + np.array([0.06, 0.05, 0.02]) * wet[..., None] * 0.5
+    if lath_patches:
+        r = rng(seed + 8)
+        yy, xx = np.mgrid[0:S, 0:S].astype(np.float32)
+        for _ in range(lath_patches):
+            cx, cy, rx, ry = r.uniform(0, S), r.uniform(0, S), r.uniform(25, 60), r.uniform(15, 35)
+            dx = (xx - cx + S / 2) % S - S / 2
+            dy = (yy - cy + S / 2) % S - S / 2
+            edge = 1 + 0.25 * (noise(seed + 9, 12) - 0.5)
+            m = (dx / rx) ** 2 + (dy / ry) ** 2 < edge
+            laths = (yy % 14) < 9
+            st.d[m] = np.where(laths[m][:, None], BAMBOO_PALE / 255.0 * 0.55, EARTH / 255.0 * 0.7)
+            st.h[m] -= 0.2
     st.smooth = 0.18
     st.nstrength = 3.0
     return st
@@ -514,7 +532,7 @@ def make_plaster(name="Plaster", base=LIME, seed=40):
 
 def make_plastered_wood():
     """Replaces PlasteredWood: lime plaster over wattle; where it has spalled, bamboo laths and rammed earth show."""
-    st = make_plaster("PlasterLath", LIME, 50)
+    st = make_plaster("PlasterLath", LIME, 50, damp=True)
     r = rng(51)
     yy, xx = np.mgrid[0:S, 0:S].astype(np.float32)
     lath = np.zeros((S, S), np.float32)
@@ -764,9 +782,9 @@ SETS = {
     "Timber": baked_or("Timber", make_timber, 0.30), "Bamboo": baked_or("Bamboo", make_bamboo, 0.40),
     "Weave": baked_or("Weave", make_weave, 0.25),
     "WeaveCoarse": baked_or("WeaveCoarse", lambda: make_weave("WeaveCoarse", 48, 121), 0.22),
-    "WeaveMossy": baked_or("WeaveMossy", lambda: make_weave("WeaveMossy", 32, 221, True), 0.20),
     "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30, crisp=1.0),
-    "Plaster": make_plaster,
+    "FlatTiles": baked_or("FlatTiles", make_tiles, 0.30, crisp=1.0),
+    "Plaster": lambda: make_plaster(damp=True, lath_patches=3),
     "PlasterLath": baked_or("PlasterLath", make_plastered_wood, 0.18, crisp=0.4),
     "LatticePaper": baked_or("LatticePaper", make_lattice_paper, 0.3, crisp=0.5),
     "Iron": baked_or("Iron", make_iron, 0.35, crisp=0.6), "Banded": baked_or("Banded", make_painted, 0.4, crisp=0.6),
@@ -789,7 +807,7 @@ MATERIALS = {
     "IrregularPlanks_Brown.Folktails": ("WeaveCoarse", "IrregularPlanks_Brown"),
     "IrregularPlanks_LightBrown.Folktails": ("Weave", "IrregularPlanks_LightBrown"),
     "IrregularPlanks_Yellow.Folktails": ("Weave", "IrregularPlanks_Yellow"),
-    "IrregularPlanks_Mossy.Folktails": ("WeaveMossy", "IrregularPlanks_Mossy"),
+    "IrregularPlanks_Mossy.Folktails": ("FlatTiles", None),           # flat roofs of lodges, warehouses, mine
     "ThatchedRoof.Folktails": ("RoofTiles", None),
     "Plaster_White.Folktails": ("Plaster", None),
     "PlasteredWood_White.Folktails": ("PlasterLath", None),

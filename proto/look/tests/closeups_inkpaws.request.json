@@ -1,0 +1,226 @@
+{
+  "run": {
+    "inGameHours": 13.5,
+    "realSeconds": 240
+  },
+  "speed": 3,
+  "batchControl": false,
+  "buildings": [
+    "PandabornDen.Inkpaws",
+    "PandabornCourtyardHouse.Inkpaws",
+    "MediumWarehouse.Inkpaws",
+    "Inventor.Inkpaws",
+    "PandabornBambooWaterWheel.Inkpaws",
+    "SmallWarehouse.Inkpaws",
+    "PandabornCisternMedium.Inkpaws",
+    "PandabornKiteWindmill.Inkpaws",
+    "PandabornKitchen.Inkpaws",
+    {
+      "template": "PandabornTerraceHouse.Inkpaws",
+      "finished": false
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "day_overview",
+      "kind": "overview",
+      "at": "start"
+    },
+    {
+      "name": "night_overview",
+      "kind": "overview",
+      "at": "end"
+    },
+    {
+      "name": "day_dc",
+      "kind": "building",
+      "target": "DistrictCenter.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_lodge",
+      "kind": "building",
+      "target": "PandabornDen.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_doublelodge",
+      "kind": "building",
+      "target": "PandabornCourtyardHouse.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_medwarehouse",
+      "kind": "building",
+      "target": "MediumWarehouse.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_warehouse",
+      "kind": "building",
+      "target": "SmallWarehouse.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_tank",
+      "kind": "building",
+      "target": "PandabornCisternMedium.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_inventor",
+      "kind": "building",
+      "target": "Inventor.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_waterwheel",
+      "kind": "building",
+      "target": "PandabornBambooWaterWheel.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_triplelodge",
+      "kind": "building",
+      "target": "PandabornTerraceHouse.Inkpaws",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_dc",
+      "kind": "building",
+      "target": "DistrictCenter.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_lodge",
+      "kind": "building",
+      "target": "PandabornDen.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_doublelodge",
+      "kind": "building",
+      "target": "PandabornCourtyardHouse.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_medwarehouse",
+      "kind": "building",
+      "target": "MediumWarehouse.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_warehouse",
+      "kind": "building",
+      "target": "SmallWarehouse.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_tank",
+      "kind": "building",
+      "target": "PandabornCisternMedium.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_inventor",
+      "kind": "building",
+      "target": "Inventor.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_waterwheel",
+      "kind": "building",
+      "target": "PandabornBambooWaterWheel.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "night_triplelodge",
+      "kind": "building",
+      "target": "PandabornTerraceHouse.Inkpaws",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0,
+      "lit": true
+    },
+    {
+      "name": "day_kitchen",
+      "kind": "building",
+      "target": "PandabornKitchen.Inkpaws",
+      "at": "start",
+      "pitch": 38
+    },
+    {
+      "name": "night_kitchen",
+      "kind": "building",
+      "target": "PandabornKitchen.Inkpaws",
+      "at": "end",
+      "pitch": 38,
+      "lit": true
+    }
+  ],
+  "screenshotSize": [
+    1600,
+    1100
+  ],
+  "faction": "Inkpaws"
+}
