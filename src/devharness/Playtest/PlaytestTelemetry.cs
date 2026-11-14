@@ -354,6 +354,29 @@ namespace PandabornDevHarness
             }
             o["goods"] = goods;
 
+            // where the water and the staple foods are actually held (stock and limit per building template)
+            var holders = new JObject();
+            var holderGoods = Request.Str(_spec, "holderGoods", "Water");
+            var invs = new List<Timberborn.InventorySystem.Inventory>();
+            foreach (var entity in _entityRegistry.Entities)
+            {
+                if (!entity || entity.GetComponent<Timberborn.InventorySystem.Inventory>() == null) continue;
+                invs.Clear();
+                entity.GetComponents(invs);
+                string t = entity.GetComponent<TemplateSpec>()?.TemplateName ?? "?";
+                foreach (var good in holderGoods.Split(','))
+                    foreach (var inv in invs)
+                    {
+                        int limit = inv.LimitedAmount(good), stock = inv.AmountInStock(good);
+                        if (limit == 0 && stock == 0) continue;
+                        if (!(holders[good] is JObject g)) holders[good] = g = new JObject();
+                        var key = t + "/" + inv.ComponentName;
+                        var cur = g[key] as JArray ?? new JArray(0, 0, 0);
+                        g[key] = new JArray((int)cur[0] + stock, (int)cur[1] + limit, (int)cur[2] + 1);
+                    }
+            }
+            o["holders"] = holders;   // good -> "template/inventory": [stock, limit, buildings]
+
             // workplaces over the day: worker-samples by running behavior, statuses seen
             var work = new JArray();
             foreach (var kv in _work.OrderBy(k => k.Value.Label))
