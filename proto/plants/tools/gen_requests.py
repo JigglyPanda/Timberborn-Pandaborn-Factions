@@ -247,13 +247,15 @@ def flowering():
 
 
 def buds():
-    """Pass 4: budding shoot bamboo next to a normal field and a flowering one, from the game camera. The plant lab
-    switches the detail map on the middle field exactly as the Flowering module does at the announcement
-    (renderer.material _EnableDetail = 1, proven by the events lane in events-buds-1); before/after = the left and
-    middle fields of one shot (same model, same light). Needs the events prototype for the flowering twin."""
+    """Pass 4: budding shoot bamboo next to a normal field and a flowering one, from the game camera. The middle field is
+    the test template whose material has the detail map baked on (gen_mod.py --buds-test; the plant lab's own switch
+    did not take in plants-flowering-1 and plants-buds-1, the Flowering module's switch is proven by the events lane in
+    events-buds-1); before/after = the left and middle fields of one shot (same model, same light). Needs the events
+    prototype for the flowering twin."""
     I = ".Inkpaws"
     SB, SF = "PandabornShootBamboo" + I, "PandabornShootBambooInFlower" + I
-    blocks = [(SB, [0, 0, 5, 5], ["alive"]), (SB, [7, 0, 12, 5], ["alive", "buds"]), (SF, [14, 0, 19, 5], ["alive"])]
+    BT = "PandabornShootBambooBudsTest" + I     # gen_mod.py --buds-test: same plant, detail map baked on
+    blocks = [(SB, [0, 0, 5, 5], ["alive"]), (BT, [7, 0, 12, 5], ["alive", "buds"]), (SF, [14, 0, 19, 5], ["alive"])]
     steps, rules = [], []
     for t, rect, states_ in blocks:
         steps.append({"op": "plant", "template": t, "rect": rect})

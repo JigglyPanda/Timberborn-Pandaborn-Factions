@@ -112,7 +112,7 @@ def dev_materials(out, keep, ids):
     shutil.copyfile(DEV_BUNDLE, os.path.join(out, "AssetBundles", os.path.basename(DEV_BUNDLE)))
     keep.add(os.path.join("assetbundles", os.path.basename(DEV_BUNDLE)).lower())
     names = ["PandabornTimberBamboo", "PandabornShootBamboo", "PandabornCabbage", "PandabornRice", "PandabornTeaBush",
-             "PandabornSichuanPepper", "PandabornPersimmonTree"]
+             "PandabornSichuanPepper", "PandabornPersimmonTree", "PandabornShootBambooBuds"]
     coll = {"MaterialCollectionSpec": {"CollectionId": DEV_COLLECTION,
                                        "Materials": ["Materials/Pandaborn/Plants/%sDev" % n for n in names]}}
     cp = os.path.join(out, "MaterialCollections", "Pandaborn", "MaterialCollection.%s.blueprint.json" % DEV_COLLECTION)
@@ -125,6 +125,49 @@ def dev_materials(out, keep, ids):
     keep.add(os.path.relpath(fp, out).lower())
 
 
+def buds_test(out, keep):
+    """A test-only template, PandabornShootBambooBudsTest.Inkpaws: the installed shoot bamboo's blueprint with its models
+    copied onto the dev material whose detail map is baked on (build_dev_bundle.py), joined to NaturalResources.Inkpaws,
+    so a test can plant a budding field beside a normal one (the Flowering module's switch is proven separately)."""
+    import sys
+    import zlib
+    sys.path.insert(0, os.path.join(REPO, "src", "pipeline"))
+    import model_pb2 as pb
+    info = json.load(open(os.path.join(REPO, "art", "plants", "PandabornShootBamboo", "model.json")))
+    tid = "PandabornShootBambooBudsTest"
+    d = os.path.join(out, "NaturalResources", "Pandaborn", "Dev", tid)
+    os.makedirs(d, exist_ok=True)
+    src_bp = os.path.join(FACTION, *info["modelDir"].split("/"), info["template"] + ".blueprint.json")
+    bp = json.load(open(src_bp, encoding="utf-8"))
+    bp["TemplateSpec"]["TemplateName"] = tid + ".Inkpaws"
+    bp["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
+    for k in [k for k in bp if k.startswith("Pandaborn")]:   # no module behaviour on a test plant
+        del bp[k]
+    models = bp["Children"]["#Models"]["Children"]
+    for key, path in info["models"].items():
+        name = path.split("/")[-1]
+        m = pb.Model()
+        m.ParseFromString(zlib.decompress(open(os.path.join(info["builtTo"], name + ".timbermesh"), "rb").read()))
+        for nd in m.nodes:
+            for me in nd.meshes:
+                me.material = "PandabornShootBambooBudsDev"
+        open(os.path.join(d, name + ".timbermesh"), "wb").write(zlib.compress(m.SerializeToString(), 6))
+        keep.add(os.path.relpath(os.path.join(d, name + ".timbermesh"), out).lower())
+        stage, state = key.split("/")
+        models[stage]["Children"][state]["TimbermeshSpec"]["Model"] = "NaturalResources/Pandaborn/Dev/%s/%s" % (tid, name)
+    if "PlantablePreviewModelSpec" in bp:
+        bp["PlantablePreviewModelSpec"]["Model"] = "NaturalResources/Pandaborn/Dev/%s/%sMature" % (tid, info["id"])
+    bpp = os.path.join(d, tid + ".Inkpaws.blueprint.json")
+    json.dump(bp, open(bpp, "w", encoding="utf-8"), indent=2)
+    keep.add(os.path.relpath(bpp, out).lower())
+    cp = os.path.join(out, "TemplateCollections", "Pandaborn", "TemplateCollection.PandabornPlantsDev.blueprint.json")
+    os.makedirs(os.path.dirname(cp), exist_ok=True)
+    json.dump({"TemplateCollectionSpec": {"CollectionId": "NaturalResources.Inkpaws", "Blueprints": [
+        "NaturalResources/Pandaborn/Dev/%s/%s.Inkpaws.blueprint" % (tid, tid)]}}, open(cp, "w"), indent=2)
+    keep.add(os.path.relpath(cp, out).lower())
+    print("buds test template:", tid + ".Inkpaws")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=r"E:\PandabornDev\build\proto\plants")
@@ -133,6 +176,7 @@ def main():
     ap.add_argument("--dev-materials", default="",
                     help="comma list of plant ids whose models switch to the dev bundle's <name>Dev materials "
                          "(build_dev_bundle.py), for new art the installed faction's bundle does not have yet")
+    ap.add_argument("--buds-test", action="store_true", help="with --dev-materials: add the budding test template")
     a = ap.parse_args()
     out = a.out
     adopted = a.adopted or (not a.standalone and
@@ -170,6 +214,8 @@ def main():
         keep.add(os.path.join("assetbundles", os.path.basename(BUNDLE)).lower())
     if a.dev_materials:
         dev_materials(out, keep, [x.strip() for x in a.dev_materials.split(",") if x.strip()])
+        if a.buds_test:
+            buds_test(out, keep)
     for root, _, files in os.walk(out):
         for f in files:
             rel = os.path.relpath(os.path.join(root, f), out)

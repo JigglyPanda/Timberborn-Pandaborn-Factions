@@ -30,6 +30,16 @@ def main():
     spec = json.load(open(spec_path))
     for m in spec["materials"]:
         m["name"] += "Dev"
+    # a copy of the shoot bamboo's material with the detail map baked on (_EnableDetail 1, which the game's optimizer
+    # keeps): the buds test template uses it to show the budding look through the game's own render path
+    import copy
+    shoot = next(m for m in spec["materials"] if m["name"] == "PandabornShootBambooDev")
+    buds = copy.deepcopy(shoot)
+    buds["name"] = "PandabornShootBambooBudsDev"
+    for f in buds["floats"]:
+        if f["key"] == "_EnableDetail":
+            f["value"] = 1.0
+    spec["materials"].append(buds)
     json.dump(spec, open(spec_path, "w"), indent=1)
     os.makedirs(OUT, exist_ok=True)
     log = os.path.join(os.path.dirname(OUT), "unity_build_dev.log")
