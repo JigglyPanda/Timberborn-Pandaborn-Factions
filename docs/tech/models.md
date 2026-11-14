@@ -709,3 +709,18 @@ switch) is gone; lantern vertex colour is white. All 58 models rebuilt; `check_n
   after look 2ea9691). The new meshes need the bundle with the lantern patches: install them together with that
   bundle, never one without the other (old bundle + new meshes = lanterns on blank wall, no glow; new bundle + old
   meshes = the pale lanterns of before).
+
+### Pass 6 in game: `models-lanterns-1`
+
+PASS: hidden desktop, Diorama, the dev copy `models-look` with the new bundle plus the prototype; 9 of 9 placed, **0
+errors from our mods**, 20 of 20 shots, ended at day 1.842 in the dark. PNGs `E:\PandabornDev\build\test\models-lanterns-1\`,
+sheet `E:\PandabornDev\build\models\preview\lanterns_ingame_sheet.png`.
+
+* Small lanterns glow **red-orange** in game: Festival Square (unforced and lit), Lantern Workshop, Standing, Hanging
+  and String Lanterns; red paper by day.
+* The Sky Lantern's great lantern glows **amber** when lit (`SkyLantern_night_lit.png`).
+* Windows keep the pale amber glow (Lantern Workshop's neighbours, the Den).
+* Found: risen at night without `lit`, the great lantern is dark (`SkyLantern_rise_night_*.png`, `night_overview.png`):
+  the wonder is only illuminated while lit like any building. For the launch to glow, the wonder needs to be lit while
+  it is active (an illuminator on the Sky Lantern's blueprint or the wonder code switching its lighting on at
+  activation): catalogue / code lane.
