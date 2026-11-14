@@ -104,6 +104,11 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
 * Every `NeedSpec` must sit in a collection, and every need collection must be used by an installed faction.
 * A timbermesh can only use materials from the faction's `MaterialCollectionIds` plus `Common`. A faction may
   list `Folktails` and `IronTeeth` material collections to reuse their models.
+* `MaterialRepository` keys materials by the Unity asset's **name**, from the active faction's collections
+  only, and throws on a duplicate name. So a faction-only collection may hold bundle materials *named* like
+  vanilla ones (e.g. `BaseWood_Brown.Folktails`), provided the faction does not also list the `Folktails`
+  collection. Every vanilla Folktails model then renders with our materials in an Inkpaws game only.
+  *Untested in game.*
 * Global, not per faction: game modes, starting goods (hardcoded Berries and Water), the name pool
   (`Beaver.NamePool`), wellbeing tiers, bottom-bar tool groups, achievements.
 
