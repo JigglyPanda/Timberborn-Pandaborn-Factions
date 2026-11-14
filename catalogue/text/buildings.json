@@ -86,7 +86,7 @@
     "Moon Loft": {
       "id": "PandabornMoonLoft", "basis": "new", "who": "-",
       "name": "Moon Loft",
-      "description": "A snug home on stilts above a path. Your first Moon Loft invites a Ringtail family to the village. Kits are raised here while there is work for them.",
+      "description": "A home on stilts over a path. The first one invites a Ringtail family; kits are raised here while there is night work.",
       "flavor": "A lantern in a high window is an old invitation.",
       "see": ["ringtails.arrival", "ringtails.arrival_notification", "young.loft_raising", "young.loft_waiting"],
       "note": "Any home takes anyone, so the description never says 'home for Ringtails'."
@@ -833,7 +833,7 @@
     "Sky Lantern": {
       "id": "PandabornSkyLantern", "basis": "new", "vanilla_basis": "EarthRecultivator", "who": "-",
       "name": "Sky Lantern",
-      "description": "A colossal sky lantern, launched with paper lanterns. When released, makes the villagers in the area extra happy.",
+      "description": "A colossal sky lantern, launched with paper lanterns. Makes the villagers in the area extra happy.",
       "flavor": "It rises slowly, the way everything here does, and then it is gone over the hills.",
       "see": ["wonder.release_button", "wonder.not_enough_goods", "wonder.not_enough_workers"],
       "note": "The game adds the vanilla wonder keyword lines (Buildings.Wonder, Buildings.Wonder.Description) by itself. Buildings.Wonder says 'The pinnacle of beaver engineering'; see messages.json 'vanilla_lines_that_say_beaver'."
