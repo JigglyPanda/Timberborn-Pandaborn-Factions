@@ -1,0 +1,48 @@
+{
+ "id": "StandingLantern",
+ "standIn": "Lantern.Folktails",
+ "generatedBy": "art/models/StandingLantern/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "StandingLantern.Model",
+  "constructionStage0": "StandingLantern.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.75,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.5,
+    "Y": 1.5,
+    "Z": 0.5
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 152,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Lantern (1x1x2); NightTimeLightControllerSpec lights the paper (WindowsAtlas glow region) at night with nobody needed."
+ ]
+}

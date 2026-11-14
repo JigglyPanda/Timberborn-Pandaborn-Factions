@@ -687,6 +687,8 @@ def lantern(geo, at, r=0.09, h=0.2, hanging=True, tags=()):
     body = [(r * 0.62, 0.0), (r, h * 0.3), (r, h * 0.7), (r * 0.62, h)]
     lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS, uv_region=(0.80, 0.03, 0.95, 0.20),
           tags=set(tags) | {"glow"}, cap_top=False)
+    # red paper: the glowing window paper tinted by vertex colour (red by day, warm red glow by night)
+    geo.parts[-1].C = np.tile([0.95, 0.42, 0.3, 1.0], (len(geo.parts[-1].P), 1))
     for k, y in enumerate(((0.03, -0.0), (h - 0.03, h + 0.005))):
         base = (at - V([0, h, 0]) if hanging else at) + V([0, y[0], 0])
         # red rings capping the body; closed on the outside so neither end shows a hole
