@@ -72,6 +72,24 @@ namespace Pandaborn.Ringtails
             if (dweller == null || _dwelling == null || !_dwelling.HasFreeSlots) return;
             _dwelling.AssignDweller(dweller);
         }
+
+        /// <summary>
+        /// Lofts are Ringtail homes: when the nursery has a kit to raise here, an Inkpaw lodger gives way (an Inkpaw cub in
+        /// the kit slot first, else an Inkpaw adult in a full loft) and looks for another home as any homeless colonist does.
+        /// Ringtails are never moved. Found in phase 3: homeless Inkpaws fill a new loft before its first dawn, and without
+        /// this the loft would say "no room" for ever. True when there is room for a kit now.
+        /// </summary>
+        public bool MakeRoomForKit()
+        {
+            if (_dwelling == null) return false;
+            if (_dwelling.HasFreeSlots && _dwelling.HasFreeChildSlots) return true;
+            var lodger = _dwelling.ChildDwellers.FirstOrDefault(d => !RingtailService.IsRingtail(d));
+            if (lodger == null && !_dwelling.HasFreeSlots)
+                lodger = _dwelling.AdultDwellers.FirstOrDefault(d => !RingtailService.IsRingtail(d));
+            if (lodger == null) return false;
+            _dwelling.UnassignDweller(lodger);
+            return _dwelling.HasFreeSlots && _dwelling.HasFreeChildSlots;
+        }
     }
 
     /// <summary>
@@ -156,7 +174,7 @@ namespace Pandaborn.Ringtails
                 if (!parents) { loft.KitState = "Pandaborn.Ringtails.Loft.NoParents"; continue; }
                 if (starving) { loft.KitState = "Pandaborn.Ringtails.Loft.Hungry"; continue; }
                 if (open <= 0) { loft.KitState = "Pandaborn.Ringtails.Loft.WaitingForJobs"; continue; }
-                if (!loft.Dwelling.HasFreeChildSlots || !loft.Dwelling.HasFreeSlots) { loft.KitState = "Pandaborn.Ringtails.Loft.NoRoom"; continue; }
+                if (!loft.MakeRoomForKit()) { loft.KitState = "Pandaborn.Ringtails.Loft.NoRoom"; continue; }
                 int perDay = loft.Spec != null ? Mathf.Max(1, loft.Spec.KitsPerDay) : 1;
                 for (int i = 0; i < perDay && open > 0 && loft.Dwelling.HasFreeChildSlots && loft.Dwelling.HasFreeSlots; i++)
                 {

@@ -43,22 +43,30 @@ namespace Pandaborn.Ringtails
         /// <summary>"sun", "moon" or "" (tests).</summary>
         public static string ShownMark { get; private set; }
 
+        /// <summary>Where the mark was laid out last ("x,y wxh" in panel pixels; tests).</summary>
+        public static string ShownMarkBounds { get; private set; }
+
         public VisualElement InitializeFragment()
         {
             _root = SafeUi.Get(Piece, () =>
             {
-                var root = _visualElementLoader.LoadVisualElement("Game/EntityPanel/GoodCarrierFragment");
-                _label = root.Q<Label>("GoodCarrierFragment");
+                // the loader returns the vanilla label itself (a NineSliceLabel, the green text box); a child added inside a
+                // text element is not drawn (seen in phase 3), so the label and the mark sit side by side in our own
+                // container: the mark absolute over the label's widened left padding, drawn after it
+                var loaded = _visualElementLoader.LoadVisualElement("Game/EntityPanel/GoodCarrierFragment");
+                _label = loaded as Label ?? loaded.Q<Label>("GoodCarrierFragment");
+                var root = new VisualElement { name = "PandabornRingtailsFragment" };
+                root.Add(loaded);
+                if (_label != null) _label.style.paddingLeft = 30;
                 _icon = new VisualElement { name = "PandabornShiftMark", pickingMode = PickingMode.Ignore };
+                _icon.style.position = Position.Absolute;
                 _icon.style.width = 16;
                 _icon.style.height = 16;
-                _icon.style.flexShrink = 0;
-                _icon.style.marginRight = 4;
-                _icon.style.alignSelf = Align.Center;
+                _icon.style.left = 10;
+                _icon.style.top = Length.Percent(50);
+                _icon.style.marginTop = -8;
                 _icon.generateVisualContent += DrawMark;
-                var parent = _label?.parent ?? root;
-                parent.style.flexDirection = FlexDirection.Row;
-                parent.Insert(0, _icon);
+                root.Add(_icon);
                 root.ToggleDisplayStyle(false);
                 return root;
             }, null) ?? new VisualElement();
@@ -123,6 +131,11 @@ namespace Pandaborn.Ringtails
                     }
                 }
                 ShownMark = icon ? (night ? "moon" : "sun") : "";
+                if (icon && _icon != null)
+                {
+                    var b = _icon.worldBound;
+                    ShownMarkBounds = Mathf.RoundToInt(b.x) + "," + Mathf.RoundToInt(b.y) + " " + Mathf.RoundToInt(b.width) + "x" + Mathf.RoundToInt(b.height);
+                }
             });
         }
 

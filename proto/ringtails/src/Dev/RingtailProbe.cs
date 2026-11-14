@@ -422,6 +422,7 @@ namespace Pandaborn.Ringtails.Dev
                 ["populationRow"] = ModuleBridge.Shown("RingtailsPopulationRow"),
                 ["buildingFragment"] = ModuleBridge.Shown("RingtailsBuildingFragment"),
                 ["buildingMark"] = ModuleBridge.Static("RingtailsBuildingFragment", "ShownMark")?.ToString(),
+                ["buildingMarkBounds"] = ModuleBridge.Static("RingtailsBuildingFragment", "ShownMarkBounds")?.ToString(),
                 ["clockArc"] = ModuleBridge.Static("RingtailClockArc", "Shown")?.ToString(),
                 ["clapper"] = ModuleBridge.Static("RingtailSounds", "LastClapper")?.ToString(),
                 ["clappersPlayed"] = ModuleBridge.Static("RingtailSounds", "ClappersPlayed") is int n ? n : -1
