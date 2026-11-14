@@ -51,11 +51,14 @@ namespace Pandaborn.Bootstrap
                 domain.SetData(DuplicatesKey, string.IsNullOrEmpty(previous) ? modPath : previous + "\n" + modPath);
                 Debug.LogWarning("[Pandaborn] a second copy of Pandaborn - Factions is enabled (" + modPath + "); its code is not loaded. "
                                  + "Using the copy in " + owner + ". Disable one of them in the mod manager.");
+                Bundles.Park(modPath);
                 return;
             }
             domain.SetData(OwnerKey, modPath);
+            Bundles.Unpark(modPath);
             var started = DateTime.UtcNow;
             var dev = DevSwitch.Read(modPath);
+            domain.SetData("Pandaborn.Boot.Dev", string.Join("\n", dev.Lines));
             var report = new List<string[]>();
             domain.AssemblyResolve += ResolveOurs;
 
@@ -136,6 +139,45 @@ namespace Pandaborn.Bootstrap
         }
     }
 
+    /// <summary>
+    /// Two enabled copies of the mod (a local folder and the Workshop, or two local folders) both carry the same asset
+    /// bundles, and Unity refuses to load a bundle twice: the game's ModAssetBundleLoader then throws and every game fails to
+    /// start, before our code could do anything else (verified, run fd-dup-1). Mod starters run before the bundle loader, so
+    /// the copy that is not running the code moves its own bundles aside (AssetBundles -> AssetBundles.parked), and the copy
+    /// that runs the code moves its own back if an earlier session parked them. Only ever touches this mod's own folder.
+    /// </summary>
+    internal static class Bundles
+    {
+        private const string Folder = "AssetBundles";
+        private const string Parked = "AssetBundles.parked";
+
+        public static void Park(string modPath) => Move(Path.Combine(modPath, Folder), Path.Combine(modPath, Parked), "parked");
+
+        public static void Unpark(string modPath) => Move(Path.Combine(modPath, Parked), Path.Combine(modPath, Folder), "restored");
+
+        private static void Move(string from, string to, string what)
+        {
+            try
+            {
+                if (!Directory.Exists(from)) return;
+                var files = Directory.GetFiles(from);
+                if (files.Length == 0) return;
+                Directory.CreateDirectory(to);
+                foreach (var file in files)
+                {
+                    string target = Path.Combine(to, Path.GetFileName(file));
+                    if (File.Exists(target)) File.Delete(target);
+                    File.Move(file, target);
+                }
+                Debug.LogWarning("[Pandaborn] " + what + " " + files.Length + " asset bundle file(s): " + from + " -> " + to);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[Pandaborn] could not move asset bundles (" + from + " -> " + to + "): " + e.Message);
+            }
+        }
+    }
+
     internal sealed class ModuleEntry
     {
         public string Id;
@@ -176,6 +218,9 @@ namespace Pandaborn.Bootstrap
         private readonly HashSet<string> _forcedOff = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _missingApi = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>Every dev-switch line, published for Pandaborn.Core (FeatureRegistry.DevFlag) as AppDomain data Pandaborn.Boot.Dev.</summary>
+        public readonly List<string> Lines = new List<string>();
+
         public bool ForcedOff(string id) => _forcedOff.Contains(id) || _forcedOff.Contains("*");
         public bool SimulatesMissingApi(string id) => _missingApi.Contains(id) || _missingApi.Contains("*");
 
@@ -193,6 +238,7 @@ namespace Pandaborn.Bootstrap
                 {
                     int colon = raw.IndexOf(':');
                     if (colon < 0 || raw.TrimStart().StartsWith("#")) continue;
+                    dev.Lines.Add(raw.Trim());
                     string key = raw.Substring(0, colon).Trim().ToLowerInvariant();
                     var ids = raw.Substring(colon + 1).Split(',').Select(s => s.Trim()).Where(s => s.Length > 0);
                     if (key == "force-off") foreach (var id in ids) dev._forcedOff.Add(id);

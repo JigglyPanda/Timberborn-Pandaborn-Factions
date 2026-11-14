@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Timberborn.GameDistricts;
+using Timberborn.GameFactionSystem;
 using Timberborn.Localization;
 using Timberborn.NotificationSystem;
 using Timberborn.QuickNotificationSystem;
@@ -23,16 +24,24 @@ namespace Pandaborn.Core
         private readonly ILoc _loc;
         private readonly Messenger _messenger;
         private readonly PandabornStore _store;
+        private readonly FactionService _factionService;
+
+        /// <summary>The faction whose games get the feature report.</summary>
+        public const string FactionId = "Inkpaws";
 
         /// <summary>The notices posted in this session (for tests and logs).</summary>
         public static readonly List<string> Posted = new List<string>();
 
-        public FeatureNotices(EventBus eventBus, ILoc loc, Messenger messenger, PandabornStore store)
+        /// <summary>The last feature report text (for tests).</summary>
+        public static string LastReport { get; private set; }
+
+        public FeatureNotices(EventBus eventBus, ILoc loc, Messenger messenger, PandabornStore store, FactionService factionService)
         {
             _eventBus = eventBus;
             _loc = loc;
             _messenger = messenger;
             _store = store;
+            _factionService = factionService;
         }
 
         public void Load()
@@ -63,6 +72,8 @@ namespace Pandaborn.Core
                     : _loc.T("Pandaborn.Core.FeatureOff", name, state.Reason);
                 messages.Add(new KeyValuePair<string, string>(key, text));
             }
+            foreach (var d in FeatureRegistry.Degraded)
+                messages.Add(new KeyValuePair<string, string>(d.Key + ":Degraded", _loc.T("Pandaborn.Core.FeatureDegraded", FeatureName(d.Key), d.Value)));
             if (FeatureRegistry.DuplicateCopies.Count > 0)
                 messages.Add(new KeyValuePair<string, string>("Duplicate", _loc.T("Pandaborn.Core.Duplicate", FeatureRegistry.Owner)));
 
@@ -73,7 +84,45 @@ namespace Pandaborn.Core
                 Posted.Add(m.Value);
                 _messenger.Post(m.Value, warning: true);
             }
+            // The feature report: one notification-log entry per save (and again whenever the states change) in games of
+            // our faction, listing every unit and why any is off, so a player can see what runs without dev mode.
+            string report = Report();
+            LastReport = report;
+            string reportKey = "Report#" + Signature();
+            if (IsOurFaction() && !shown.Contains(reportKey))
+            {
+                foreach (var old in shown.Where(s => s.StartsWith("Report#", StringComparison.Ordinal)).ToList()) shown.Remove(old);
+                shown.Add(reportKey);
+                _messenger.Post(report, warning: false, toast: false);
+            }
             _store.Set(StoreFeature, 1, string.Join(",", shown.OrderBy(s => s, StringComparer.Ordinal)));
+        }
+
+        private bool IsOurFaction()
+        {
+            try { return _factionService.Current?.Id == FactionId; }
+            catch (Exception) { return false; }
+        }
+
+        private static string Signature() =>
+            string.Join("/", FeatureRegistry.All.Select(s => s.Id + "=" + s.Status)) + (FeatureRegistry.Degraded.Count > 0 ? "/degraded" : "")
+            + (FeatureRegistry.DuplicateCopies.Count > 0 ? "/duplicate" : "");
+
+        /// <summary>"Pandaborn - Factions features: The afternoon bell: on; Inkpaw names: off (reason); ..."</summary>
+        public string Report()
+        {
+            var parts = new List<string>();
+            foreach (var s in FeatureRegistry.All.Where(s => s.Id != "Specs" && s.Id != "Core"))
+            {
+                string state = s.Status == FeatureStatus.On
+                    ? (FeatureRegistry.Degraded.TryGetValue(s.Id, out var why) ? _loc.T("Pandaborn.Core.Report.Degraded", why) : _loc.T("Pandaborn.Core.Report.On"))
+                    : s.Status == FeatureStatus.ForcedOff ? _loc.T("Pandaborn.Core.Report.ForcedOff") : _loc.T("Pandaborn.Core.Report.Off", s.Reason);
+                parts.Add(FeatureName(s.Id) + ": " + state);
+            }
+            var core = FeatureRegistry.All.Where(s => (s.Id == "Specs" || s.Id == "Core") && !s.IsOn).Select(s => FeatureName(s.Id) + ": " + _loc.T("Pandaborn.Core.Report.Off", s.Reason));
+            parts.InsertRange(0, core);
+            if (FeatureRegistry.DuplicateCopies.Count > 0) parts.Add(_loc.T("Pandaborn.Core.Report.Duplicate", FeatureRegistry.DuplicateCopies.Count));
+            return _loc.T("Pandaborn.Core.Report", string.Join("; ", parts));
         }
 
         private string FeatureName(string id)
@@ -104,11 +153,11 @@ namespace Pandaborn.Core
             _districtCenterRegistry = districtCenterRegistry;
         }
 
-        public void Post(string text, bool warning = false)
+        public void Post(string text, bool warning = false, bool toast = true)
         {
             Log.Add(text);
             Debug.Log("[Pandaborn] message: " + text);
-            try
+            if (toast) try
             {
                 if (warning) _quickNotificationService.SendWarningNotification(text);
                 else _quickNotificationService.SendNotification(text);

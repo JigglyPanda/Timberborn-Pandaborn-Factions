@@ -694,6 +694,9 @@ namespace Pandaborn.Stage0
         {
             if (_config["showTutorialPanelUntilRunHour"] == null || HarnessBridge.LoadSave) return;
             _tutorialSettingBefore = _tutorialSettings.DisableTutorial;
+            // the owner's setting: record it in the run folder BEFORE changing it (like mod states), verify after restore
+            File.WriteAllText(Path.Combine(HarnessBridge.OutputDir, "settings.before.json"),
+                new JObject { ["setting"] = "TutorialSettings.DisableTutorial", ["value"] = _tutorialSettingBefore.Value }.ToString());
             if (_tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = false;
             Event("tutorialSetting", "DisableTutorial was " + _tutorialSettingBefore.Value + "; panel shown for screenshots");
         }
@@ -704,7 +707,12 @@ namespace Pandaborn.Stage0
             try
             {
                 if (_tutorialSettings.DisableTutorial != _tutorialSettingBefore.Value) _tutorialSettings.DisableTutorial = _tutorialSettingBefore.Value;
-                Event("tutorialSetting", "DisableTutorial restored to " + _tutorialSettings.DisableTutorial);
+                bool ok = _tutorialSettings.DisableTutorial == _tutorialSettingBefore.Value;
+                File.WriteAllText(Path.Combine(HarnessBridge.OutputDir, "settings.restore.json"),
+                    new JObject { ["setting"] = "TutorialSettings.DisableTutorial", ["expected"] = _tutorialSettingBefore.Value,
+                                  ["actual"] = _tutorialSettings.DisableTutorial, ["verified"] = ok }.ToString());
+                if (!ok) Debug.LogError("[Pandaborn.Stage0] could not restore the owner's DisableTutorial setting; restore it by hand");
+                Event("tutorialSetting", "DisableTutorial restored to " + _tutorialSettings.DisableTutorial + (ok ? " (verified)" : " (NOT VERIFIED)"));
             }
             catch (Exception e) { Event("tutorialSettingError", e.Message); }
             _tutorialSettingBefore = null;

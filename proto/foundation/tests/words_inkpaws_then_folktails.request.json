@@ -1,0 +1,10 @@
+{
+  "speed": 3,
+  "run": { "inGameHours": 4 },
+  "foundation": { "dataAtRunHour": 0.2, "shots": [ { "name": "population_tab", "atRunHour": 0.3, "what": "populationTab" }, { "name": "migration_tab", "atRunHour": 0.9, "what": "migrationTab" }, { "name": "population_tooltip", "atRunHour": 1.5, "what": "populationTooltip" }, { "name": "district_center", "atRunHour": 2.1, "what": "districtCenter" }, { "name": "colonist", "atRunHour": 2.7, "what": "inkpaw" } ] },
+  "then": {
+    "name": "folktails",
+    "faction": "Folktails",
+    "foundation": { "dataAtRunHour": 0.2, "shots": [ { "name": "population_tab", "atRunHour": 0.3, "what": "populationTab" }, { "name": "migration_tab", "atRunHour": 0.9, "what": "migrationTab" }, { "name": "population_tooltip", "atRunHour": 1.5, "what": "populationTooltip" }, { "name": "district_center", "atRunHour": 2.1, "what": "districtCenter" }, { "name": "colonist", "atRunHour": 2.7, "what": "inkpaw" } ] }
+  }
+}

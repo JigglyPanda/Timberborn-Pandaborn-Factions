@@ -1,0 +1,4 @@
+{
+  "speed": 3,
+  "foundation": { "dataAtRunHour": 0.3, "shots": [ { "name": "duplicate_screen", "atRunHour": 0.6, "what": "none" } ] }
+}

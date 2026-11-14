@@ -1,0 +1,176 @@
+# Pandaborn.Words: hand-reviewed replacements for vanilla enUS texts in an Inkpaws game.
+# Source for mod/Pandaborn/Words/words.enUS.txt (tools/candidates.py --build adds the vanilla-text hashes).
+# Format: KEY<TAB>replacement   (\n = new line). "# keep KEY reason" = reviewed and deliberately left vanilla.
+# Optional first column "@Feature" applies the line only while that Pandaborn feature is on (e.g. @Ringtails).
+# Policy: the player's colonists are "Inkpaws" (adult "Inkpaw", child "cub"); beaver folk in general lore become
+# "pandas", kits become "cubs". Texts about other factions, beaver lore figures' own monuments, main-menu, map and
+# vanilla-tutorial texts stay vanilla (the vanilla tutorial is switched off for Inkpaws).
+
+BatchControl.PopulationStatistics.BeaverEmployment	Inkpaw employment
+Beaver.Adult.TemplateName	Inkpaw adult
+Beaver.Child.TemplateName	Inkpaw cub
+Beaver.PluralDisplayName	Inkpaws
+Beaver.Population.Children	Cubs
+Beaver.Population.ContaminatedChildren	Contaminated cubs
+Bot.BeaversPerished	Don’t even get me started on the pandas.\nThey had it all. Fresh air, clean water.\nNow they’re just a faint memory.
+Building.AdvancedBreedingPod.Description	Utilizes an advanced breeding process to produce adult pandas, eager to get to work.
+Building.AdvancedBreedingPod.FlavorDescription	The idea came up when a cub fell into a cauldron full of extract and had a giant growth spurt after drinking it all.
+Building.Agora.Description	A large gathering place where pandas can discuss bamboo-related topics.
+Building.Airlock.Description	Allows Inkpaws to pass through while blocking off water.
+Building.AquiferDrill.FlavorDescription	Unlike most dams, it's built to let water flow.
+# keep Building.BeaverBust.Description a beaver monument stays a beaver monument
+# keep Building.BeaverBust.DisplayName a beaver monument stays a beaver monument
+# keep Building.BeaverBust.FlavorDescription Ol' Kazko lore (a beaver figure)
+# keep Building.BeaverStatue.Description.Folktails Folktails monument
+# keep Building.BeaverStatue.Description.IronTeeth Iron Teeth monument
+# keep Building.BeaverStatue.DisplayName a beaver monument stays a beaver monument
+Building.Blockage.FlavorDescription	It's a wonder that nature creates something on par with panda engineering.
+Building.BreedingPod.FlavorDescription	"Cubs are our future. We need twelve more by next month." —Ol' Kazko
+Building.Campfire.Description	A place for pandas to relax and socialize in the evening.
+Building.Carousel.Description	A wooden merry-go-round for pandas of all ages.
+Building.Carousel.FlavorDescription	"Where do you think you're going, cub? These bamboo shoots won't peel themselves." —Ma' Ngonel
+Building.ContemplationSpot.Description	A small spot where pandas can contemplate nature.
+Building.ContemplationSpot.FlavorDescription	Pandas spend some quiet time here, pondering the whims of mother nature.
+Building.ControlTower.FlavorDescription	A bot must obey orders given it by panda beings except where pandas are no more.
+Building.DanceHall.Description	An open hall where pandas can let their tails loose.
+Building.DancePit.Description	A muddy pit where pandas can dance out their stress.
+Building.DecontaminationPod.Description	A bath for pandas to recover from badwater exposure.
+Building.DecontaminationPod.FlavorDescription	"No Suli, you can't drink the extract. You fell into the cauldron when you was a cub!" —Ma 'Ngonel
+Building.DecorativeClock.FlavorDescription	It's difficult to imagine that in the olden times, pandas used clepsydras.
+Building.DeepWaterPump.Description	Pumps and filters water for pandas to drink. Badwater contamination slows down its pumping speed.
+# keep Building.DeepWaterPump.FlavorDescription an Iron Teeth work song
+Building.Detailer.Description	Customizes pandas' tails.
+Building.DistrictCrossing.FlavorDescription	Why did a panda cross a district?
+Building.DoubleLodge.Description	A bigger lodge that fits more pandas.
+# keep Building.EarthRecultivator.Folktails.Description the Folktails wonder
+# keep Building.EarthRepopulator.IronTeeth.Description the Iron Teeth wonder
+Building.Farmhouse.FlavorDescription	Agriculture is one of the pillars on which today's panda society stands.
+Building.Forester.FlavorDescription	Bold and beautiful, foresters are the core of panda society.
+Building.GathererFlag.FlavorDescription	By putting berries in a basket, pandas accidentally came up with a tasty dessert.
+Building.HaulingPost.FlavorDescription	The most muscular of all pandas, you don't want to step on a hauler's paw.
+Building.Herbalist.Description	Creates antidote that cures contaminated pandas.
+Building.ImpermeableFloor.FlavorDescription	It all started with one panda getting fed up with the sound of a leaking roof.
+Building.ImpermeableTubeway.Description	A fast, if cramped, means of panda transportation. Blocks off water.
+Building.Inventor.FlavorDescription	Inspired by the legacy of Ol' Kazko, panda inventors are always eager to improve their timbertech.
+Building.Lantern.FlavorDescription	Pandas love a lantern-lit evening, and feel a little anxious when it's dark.
+Building.LargePowerWheel.Description	A panda-operated source of power, redesigned to employ multiple workers.
+Building.LargeTank.FlavorDescription	Despite the efforts of cubs trying to use it as a swimming pool, this tank was designed for industrial use.
+Building.LargeWaterPump.Description	Pumps and filters large amounts of water for pandas to drink. Badwater contamination slows down its pumping speed.
+# keep Building.LargeWaterPump.FlavorDescription a beaver song title ("The Shores of Beaver Bay")
+Building.Levee.FlavorDescription	Balanced, reinforced, and shaped to perfection by generations of panda water engineers, this is not "just a block of wood".
+Building.Lido.FlavorDescription	To celebrate their cubs' first swim, pandas throw a pool party.
+Building.LumberMill.FlavorDescription	Encouraged by Ol’ Kazko, mechanized wood processing caused much gnashing of teeth among older pandas.
+Building.LumberjackFlag.FlavorDescription	"They are lumberjacks and that's the way, they sleep all night and they work all day!" —Popular panda song
+Building.MedicalBed.Description	Injured pandas lie here to rest and heal.
+Building.MediumTank.FlavorDescription	After The Great Drought, pandas made it a rule to always have a few of these around.
+Building.MetalFence.FlavorDescription	Beware the panda who prefers metal to wood.
+Building.MiniLodge.Description	A small lodge for a single panda.
+Building.MudPit.FlavorDescription	This is where cubs build their first little dams.
+Building.Numbercruncher.Description	A complicated machine that solves calculations without pandas operating it.
+Building.Observatory.Description	By exploring the stars, pandas gain more knowledge about the world they live in.
+Building.OilPress.FlavorDescription	Curious cubs use it to squash anything from cookies to pine cones.
+Building.Path.FlavorDescription	"Country roads, take me home, to the lodge I belong." —Popular panda song
+Building.Platform.FlavorDescription	Impressive load carrying capacity of panda platforms makes them masterpieces of engineering.
+Building.PoleBanner.FlavorDescription	It was raised up to prevent cubs from vandalising the pictures.
+Building.PopulationCounter.Mode.TotalBeavers	Total Inkpaws
+Building.PowerWheel.Description	A panda-operated backup source of power.
+Building.PowerWheel.FlavorDescription	Pandas quickly realized they could borrow some techniques from hamsters.
+Building.PrintingPress.FlavorDescription	Pandas read slowly and reread often, so good literature is always in demand.
+Building.RooftopTerrace.Description	A raised terrace where pandas can socialize and appreciate the view.
+Building.Ruins.FlavorDescription	Scattered throughout the land, decrepit human ruins provided pandas with the unimaginable - a good superior to wood.
+Building.Sauna.Description	An open roof sauna where pandas can sweat out their worries.
+Building.Slope.FlavorDescription	Whoever put it here, pandas are grateful.
+Building.SmallTank.FlavorDescription	Learning how to save every drop of water helped pandas adapt to the harsh environment.
+Building.Smelter.FlavorDescription	The new panda world is forged in sweat and smell of burnt fur.
+Building.Stairs.FlavorDescription	With the invention of stairs, pandas ascended to the next level.
+# keep Building.SteamEngine.FlavorDescription about beaver nations other than Iron Teeth
+Building.StreamGauge.FlavorDescription	There is a tide in the affairs of pandas. Which, taken at the flood, leads on to fortune.
+Building.SuspensionBridge.Description	Allows Inkpaws to pass over gaps.
+Building.TappersShack.FlavorDescription	Cubs are taught early that every droplet matters — be it water or resin.
+Building.TripleLodge.Description	Houses a lot of pandas.
+Building.Tubeway.Description	A fast, if cramped, means of panda transportation.
+# keep Building.Tubeway.FlavorDescription an Iron Teeth anecdote
+Building.TubewayStation.FlavorDescription	Claustrophobic pandas are advised to choose a path instead.
+Building.VerticalTubeway.Description	A fast, if cramped, means of panda transportation. Connects upward.
+Building.WaterPump.Description	Pumps and filters water for pandas to drink. Badwater contamination slows down its pumping speed.
+Building.WaterSource.FlavorDescription	"May your river always flow." —Panda greeting
+Building.WindTunnel.Description	A machine capable of lifting pandas off the ground for extreme experiences.
+Building.WoodFence.FlavorDescription	It's like a dam but for pandas.
+Building.ZiplinePylon.FlavorDescription	It's common courtesy to wave a paw when passing another panda.
+Buildings.Wonder	<YellowHighlight>Wonder:</YellowHighlight> The pinnacle of panda engineering.
+Dwelling.NoBeaverCanReach	No Inkpaw can reach this dwelling.
+Dwelling.NoUnemployedCanReach	No unemployed Inkpaw can reach this dwelling.
+# keep Experimental.WelcomeText main menu, not shown in a game
+# keep Faction.Folktails.WonderCompletionFlavor the Folktails wonder
+# keep Faction.IronTeeth.WonderCompletionFlavor the Iron Teeth wonder
+# keep MainMenu.SteamUpdateInfoText main menu
+# keep MainMenu.UpdateInfoText main menu
+# keep MapMetadata.Beaverome.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Canyon.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Cliffside.Description map lore, shown before the faction is chosen
+# keep MapMetadata.HelixMountain.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Hollows.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Meander.Description map lore, shown before the faction is chosen
+# keep MapMetadata.MountainRange.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Nomads.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Oasis.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Plains.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Pressure.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Terraces.Description map lore, shown before the faction is chosen
+# keep MapMetadata.Waterfalls.Description map lore, shown before the faction is chosen
+NaturalResource.Birch.FlavorDescription	"Remember, cubs, do not peel too much bark off! It harms the tree!" —Ma' Ngonel
+NaturalResource.Carrot.FlavorDescription	Raw carrots help pandas balance their diet without giving up on the joy of crunching.
+NaturalResource.ChestnutTree.FlavorDescription	"May you step on a chestnut!" —Pandas' harshest insult
+NaturalResource.Coffee.FlavorDescription	Ancient pandas chewed the beans for an energy boost; the Iron Teeth brewed up a better idea.
+NaturalResource.Corn.FlavorDescription	"Nothing good comes from cubs playing in the corn." —Ma' Ngonel
+NaturalResource.Dandelion.FlavorDescription	In panda fairy tales, dandelions are known for their melodic voices.
+NaturalResource.Oak.FlavorDescription	The best panda constructions are all oak and iron bound.
+NaturalResource.Pine.FlavorDescription	"Oh, mighty forest, how I pine for thee!" —Unknown panda poet
+NaturalResource.Potato.FlavorDescription	"There's more than one way to cook a potato." —Panda proverb
+NaturalResource.Soybean.FlavorDescription	Hard and water-resistant, its seeds are perfect toys for cubs.
+NaturalResource.Succulent.FlavorDescription	"To bite or not to bite." —A thirsty panda's dilemma
+NaturalResource.Sunflower.FlavorDescription	Pandas grow these to show they’re not afraid of the burning sun.
+NaturalResource.Wheat.FlavorDescription	"You'll forget the sun in the cloudless sky as we walk in fields of gold." —Panda ballad
+Needs.Beaver.DeathWarning	Inkpaw will die soon.
+# keep NewGameConfigurationPanel.EasyModeDescription new-game screen, before the faction is chosen
+Population.AllPerished	And though all the pandas perished, the river flowed on,\ntheir brief existence but a speck of bamboo dust.
+Status.BadwaterContamination.Incubation	This Inkpaw spent too much time in contaminated water. It's fine for now, but will get sick in a few days.
+Status.BadwaterContamination.Incubation.Short	Inkpaw is unwell
+Status.Beaver.DiedTragicallyShort	Inkpaw died tragically
+Status.Need.BadwaterContamination.Short	Inkpaw is contaminated
+Status.Need.Injury.Short	Inkpaw is injured
+# keep Tutorial.Basics.ManageSpeed vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Basics.ZoomCamera vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Dams.BuildDam vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Forestry.Forester vanilla tutorial (off for Inkpaws)
+# keep Tutorial.HaulersAndWorkforce.PauseHaulingPost vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Housing.Lodges vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Introduction.Description vanilla tutorial (off for Inkpaws)
+# keep Tutorial.MoreBeavers vanilla tutorial (off for Inkpaws)
+# keep Tutorial.MoreBeavers.BeaverBirth vanilla tutorial (off for Inkpaws)
+# keep Tutorial.MoreBeavers.GrowPopulation vanilla tutorial (off for Inkpaws)
+# keep Tutorial.PowerAndPlanks.WaterWheel vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Science.Inventor vanilla tutorial (off for Inkpaws)
+# keep Tutorial.VerticalArchitecture.BuildRooftopTerrace vanilla tutorial (off for Inkpaws)
+# keep Tutorial.WaterAndFood.Gatherer vanilla tutorial (off for Inkpaws)
+# keep Tutorial.WaterAndFood.WaterPump vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.Beaver vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.Campfire vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.SelectBeaver vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.SetWorkingHours vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.Shrub vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wellbeing.WellbeingPanel vanilla tutorial (off for Inkpaws)
+# keep Tutorial.Wood.PlaceLumberjacks vanilla tutorial (off for Inkpaws)
+# keep Tutorial.WorkingHours.SetWorkingHours vanilla tutorial (off for Inkpaws)
+Wellbeing.HighscoreReached	Your Inkpaws are happier than ever!
+WonderCompletion.Statistic.BeaversBorn	Inkpaws born:
+WonderCompletion.Statistic.BeaversExploded	Inkpaws exploded:
+Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace.
+
+# With Ringtails on, both peoples share the vanilla character label keys (the batch-control window groups by key and
+# throws on any other key), so the shared headers name both.
+@Ringtails	Beaver.Adult.TemplateName	Panda adult
+@Ringtails	Beaver.Child.TemplateName	Panda cub
+@Ringtails	Beaver.PluralDisplayName	Pandas
+@Ringtails	Building.PopulationCounter.Mode.TotalBeavers	Total pandas
+@Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace (not Ringtails).

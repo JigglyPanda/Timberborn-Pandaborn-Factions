@@ -1,0 +1,21 @@
+﻿<Project>
+  <!-- Dev-only feature module (never shipped): exercises the Core per-entity save carrier. Built like a src/code module
+       (required-API list, .bin) by importing src/code's build files. -->
+  <Import Project="..\..\..\src\code\Directory.Build.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Pandaborn.DevCarrier</AssemblyName>
+    <RootNamespace>Pandaborn.DevCarrier</RootNamespace>
+    <PandabornKind>Feature</PandabornKind>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <ProjectReference Include="..\..\..\src\code\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />
+    <ProjectReference Include="..\..\..\src\code\Pandaborn.Core\Pandaborn.Core.csproj" Private="false" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="..\..\..\src\code\Directory.Build.targets" />
+</Project>

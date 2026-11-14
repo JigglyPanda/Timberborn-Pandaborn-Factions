@@ -1,0 +1,14 @@
+{
+  "speed": 3,
+  "foundation": {
+    "devSwitchNext": "",
+    "carrierWriteAtRunHour": 0.3,
+    "dataAtRunHour": 0.6,
+    "shots": [ { "name": "population_tab_fallback", "atRunHour": 0.8, "what": "populationTab" } ],
+    "reload": {
+      "carrierWriteAtRunHour": null,
+      "dataAtRunHour": 0.3,
+      "shots": [ { "name": "population_tab_reload", "atRunHour": 0.5, "what": "populationTab" } ]
+    }
+  }
+}

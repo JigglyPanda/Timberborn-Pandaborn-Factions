@@ -17,20 +17,31 @@
 * type `Bindito.Core.Configurator`
   * method `.ctor()`
   * method `Bind<1>()`
+  * method `MultiBind<1>()`
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
+* type `Bindito.Core.IBindingBuilder`1`
+  * method `ToProvider(System.Func`1<!0>)`
 * type `Bindito.Core.IExportAssignee`
+* type `Bindito.Core.IMultiBindingBuilder`1`
 * type `Bindito.Core.IScopeAssignee`
   * method `AsSingleton()`
+  * method `AsTransient()`
 * type `Bindito.Core.ISingleBindingBuilder`1`
 
 **Timberborn.BaseComponentSystem**
 
 * type `Timberborn.BaseComponentSystem.BaseComponent`
+  * method `.ctor()`
 
 **Timberborn.Common**
 
 * type `Timberborn.Common.ReadOnlyList`1`
+
+**Timberborn.FactionSystem**
+
+* type `Timberborn.FactionSystem.FactionSpec`
+  * method `get_Id()`
 
 **Timberborn.GameDistricts**
 
@@ -38,6 +49,11 @@
 * type `Timberborn.GameDistricts.DistrictCenterRegistry`
   * method `get_AllDistrictCenters()`
   * method `get_FinishedDistrictCenters()`
+
+**Timberborn.GameFactionSystem**
+
+* type `Timberborn.GameFactionSystem.FactionService`
+  * method `get_Current()`
 
 **Timberborn.Localization**
 
@@ -75,12 +91,28 @@
 * type `Timberborn.SingletonSystem.OnEventAttribute`
   * method `.ctor()`
 
+**Timberborn.TemplateInstantiation**
+
+* type `Timberborn.TemplateInstantiation.TemplateModule`
+* type `Timberborn.TemplateInstantiation.TemplateModule+Builder`
+  * method `.ctor()`
+  * method `AddDecorator<2>()`
+  * method `Build()`
+
 **Timberborn.UILayoutSystem**
 
 * type `Timberborn.UILayoutSystem.ShowPrimaryUIEvent`
 
 **Timberborn.WorldPersistence**
 
+* type `Timberborn.WorldPersistence.ComponentKey`
+  * method `.ctor(System.String)`
+* type `Timberborn.WorldPersistence.IEntityLoader`
+  * method `GetComponent(Timberborn.WorldPersistence.ComponentKey)`
+  * method `HasComponent(Timberborn.WorldPersistence.ComponentKey)`
+* type `Timberborn.WorldPersistence.IEntitySaver`
+  * method `GetComponent(Timberborn.WorldPersistence.ComponentKey)`
+* type `Timberborn.WorldPersistence.IPersistentEntity`
 * type `Timberborn.WorldPersistence.ISaveableSingleton`
 * type `Timberborn.WorldPersistence.ISingletonLoader`
   * method `TryGetSingleton(Timberborn.WorldPersistence.SingletonKey, Timberborn.Persistence.IObjectLoader&)`

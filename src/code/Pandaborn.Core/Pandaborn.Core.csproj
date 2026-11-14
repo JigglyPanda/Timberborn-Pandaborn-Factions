@@ -12,5 +12,6 @@
     <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
     <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />
   </ItemGroup>
 </Project>

@@ -4,3 +4,4 @@
 Bell   Pandaborn.Bell.bin    The afternoon bell: rested Inkpaws work and walk faster on a short working day
 Names  Pandaborn.Names.bin   Per-faction colonist names from the template's PandabornNamePoolSpec
 Look   Pandaborn.Look.bin    The Inkpaws building look: in Inkpaws games, copies the bundle's Materials/Pandaborn/Look materials into the same-named vanilla ones
+Words  Pandaborn.Words.bin   Inkpaw words: in Inkpaws games, swaps the reviewed vanilla enUS texts that call the colonists beavers, restored on unload

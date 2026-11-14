@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pandaborn.Names", "Pandabor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pandaborn.Look", "Pandaborn.Look\Pandaborn.Look.csproj", "{344EADB9-1A64-4324-977B-6D63329B6B38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pandaborn.Words", "Pandaborn.Words\Pandaborn.Words.csproj", "{B6698DDC-004B-47DA-B6CF-53BED6069B0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,18 @@ Global
 		{344EADB9-1A64-4324-977B-6D63329B6B38}.Release|x64.Build.0 = Release|Any CPU
 		{344EADB9-1A64-4324-977B-6D63329B6B38}.Release|x86.ActiveCfg = Release|Any CPU
 		{344EADB9-1A64-4324-977B-6D63329B6B38}.Release|x86.Build.0 = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|x64.Build.0 = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6698DDC-004B-47DA-B6CF-53BED6069B0A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -50,6 +50,34 @@ namespace Pandaborn.Core
 
         public static bool IsOn(string id) => Get(id)?.IsOn ?? false;
 
+        /// <summary>True when the dev switch has a line "key: ..., id, ..." (or "key: *"). For tests only, e.g.
+        /// DevFlag("simulate-missing-member", "Words") makes a module take its written fallback.</summary>
+        public static bool DevFlag(string key, string id)
+        {
+            var text = AppDomain.CurrentDomain.GetData("Pandaborn.Boot.Dev") as string ?? "";
+            foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                int colon = line.IndexOf(':');
+                if (colon < 0 || !string.Equals(line.Substring(0, colon).Trim(), key, StringComparison.OrdinalIgnoreCase)) continue;
+                foreach (var part in line.Substring(colon + 1).Split(','))
+                    if (part.Trim() == "*" || string.Equals(part.Trim(), id, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
+        }
+
+        private static readonly Dictionary<string, string> DegradedStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Features that loaded but run in a fallback mode (for example a private game member is gone), with why.
+        /// Listed in the feature report and announced once per save.</summary>
+        public static IReadOnlyDictionary<string, string> Degraded => DegradedStates;
+
+        /// <summary>A loaded feature reports that it runs in its written fallback mode (vanilla behaviour) and why.</summary>
+        public static void ReportDegraded(string id, string reason)
+        {
+            DegradedStates[id] = reason ?? "";
+            UnityEngine.Debug.LogWarning("[Pandaborn] " + id + " runs in its fallback mode: " + reason);
+        }
+
         public static FeatureState Get(string id) => States.FirstOrDefault(s => string.Equals(s.Id, id, StringComparison.OrdinalIgnoreCase));
 
         private static List<FeatureState> States

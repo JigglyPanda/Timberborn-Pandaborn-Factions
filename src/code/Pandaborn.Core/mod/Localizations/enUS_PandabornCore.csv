@@ -7,3 +7,13 @@ Pandaborn.Feature.Core,"its core services",Feature name used in notices
 Pandaborn.Feature.Bell,"The afternoon bell (rested Inkpaws)",Feature name used in notices
 Pandaborn.Feature.Names,"Inkpaw names",Feature name used in notices
 Pandaborn.Feature.Look,"The Inkpaws building look",Feature name used in notices
+Pandaborn.Core.FeatureDegraded,"Pandaborn - Factions: {0} falls back to the plain game because this game version changed something it relies on ({1}). Everything else works.",Notice when a feature runs in its fallback mode
+Pandaborn.Core.Report,Pandaborn - Factions features: {0},"Notification-log entry listing every code feature and its state, once per save"
+Pandaborn.Core.Report.On,on,Feature state in the feature report
+Pandaborn.Core.Report.ForcedOff,off (developer setting),Feature state in the feature report
+Pandaborn.Core.Report.Off,off ({0}),"Feature state in the feature report, with the reason"
+Pandaborn.Core.Report.Degraded,on with plain-game fallback ({0}),"Feature state in the feature report, with the reason"
+Pandaborn.Core.Report.Duplicate,mod enabled {0} more time(s),Shown in the feature report when the mod is enabled more than once
+Pandaborn.Feature.Words,Inkpaw words,Feature name used in notices
+Pandaborn.Feature.Ringtails,"The Ringtails (night workers)",Feature name used in notices
+Pandaborn.Feature.RingtailsFallback,"Night posts without Ringtails",Feature name used in notices

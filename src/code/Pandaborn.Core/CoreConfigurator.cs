@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Bindito.Core;
+using Pandaborn.Specs;
+using Timberborn.TemplateInstantiation;
 using UnityEngine;
 
 namespace Pandaborn.Core
@@ -13,6 +15,15 @@ namespace Pandaborn.Core
             Bind<PandabornStore>().AsSingleton();
             Bind<Messenger>().AsSingleton();
             Bind<FeatureNotices>().AsSingleton();
+            Bind<PandabornEntityState>().AsTransient();
+            MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
+        }
+
+        private static TemplateModule ProvideTemplateModule()
+        {
+            var builder = new TemplateModule.Builder();
+            builder.AddDecorator<PandabornEntityStateSpec, PandabornEntityState>();
+            return builder.Build();
         }
     }
 

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Feature module: Inkpaw words in the interface (Modules\Pandaborn.Words.bin). See FEATURE.md.
+       The table mod\Pandaborn\Words\words.enUS.txt is generated from words.review.enUS.txt by
+       tools\candidates.py with the build option (which records the vanilla text each line was reviewed against). -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Pandaborn.Words</AssemblyName>
+    <RootNamespace>Pandaborn.Words</RootNamespace>
+    <PandabornKind>Feature</PandabornKind>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="tools\**" />
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Specs\Pandaborn.Specs.csproj" Private="false" />
+    <ProjectReference Include="..\Pandaborn.Core\Pandaborn.Core.csproj" Private="false" />
+  </ItemGroup>
+</Project>
