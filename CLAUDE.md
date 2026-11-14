@@ -74,7 +74,9 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
 
 **Loading**
 * Every file in the mod is an asset. Its path is relative to the mod root, lowercased, extension stripped.
-* Loose types: `.png`/`.jpg` (sprite needs `<file>.meta.json` with `{"isSprite": true}`), `.timbermesh`,
+* Loose types: `.png`/`.jpg` (any PNG asked for as a Sprite becomes one, `ModSpriteConverter`; the `<file>.meta.json`
+  sets the texture preset: `{"isSprite": true}` for UI sprites, mipmap settings for goods icons as BerryJam does;
+  house rule: every icon has one), `.timbermesh`,
   `*.blueprint.json`, text files. Materials, shaders and audio only load from `AssetBundles/<name>_win|_mac`.
 * Blueprints are indexed by spec type; folders are convention. Files at the same path merge: objects deep-merge,
   arrays replace unless the key ends `#append` / `#remove`; `#delete` removes a key. `X.optional.blueprint.json`

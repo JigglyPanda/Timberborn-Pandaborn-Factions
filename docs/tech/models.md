@@ -206,3 +206,33 @@ Lessons that bind the catalogue lane (who turns `model.json` into blueprints):
 | Cistern | 502 (Small Tank 390) | built | **Fair**: a plain glazed jar |
 | Dew Collector | 677 | built | **Good**: the mesh funnel is unmistakable |
 | Hammock | 303 (Hammock 248) | built | **Fair**: small; the swing animation not yet seen with a sleeper |
+
+## Requests from the catalogue lane
+
+The catalogue adopts a model with one line, `PandabornDen = { model = "Den" }` in `catalogue/buildings.toml`; the
+generator (`src/gen/pbgen/models.py`) takes footprint, blocks, entrance, access, colliders, both meshes, the
+construction base (first) and stage, attachment positions, `connectionAnchor`, `windRotationAnimator`, `removeSpecs`
+and `addSpecs` from `model.json`, and the basis defaults to `standIn`. `tools/validate.py` checks the result against
+`model.json` and the mesh (slot keywords against `#Slot#` nodes, animated nodes against the mesh and their driver
+spec against the blueprint). Adopted on 2026-11-14: Village Hall, Den, Moon Loft, Steamer, Pickle Yard, Teahouse,
+Kindergarten, Hammock (as the Nap attraction), Kite Windmill, Bamboo Water Wheel, Cistern (small only). Water pieces
+(Flume set, Flume Gate, Paddy Spout, Scoop Wheel, Dew Collector) wait for the water module. Requests, in priority
+order:
+
+1. **`drivenBy` as data.** Please add `"driver": "<SpecName>"` (e.g. `"EnterableAnimationControllerSpec"`,
+   `"WindRotationAnimatorSpec"`) to each `animatedNodes` entry. The validator now parses the first `...Spec` word out
+   of the free text; a field cannot be misread.
+2. **Cistern sizes.** The catalogue has three cisterns (small 1x1, medium and large on the vanilla Medium/Large Tank
+   footprints). One `model.json` per size (`CisternMedium`, `CisternLarge`, with their own `size`/`blocks`) lets all
+   three adopt; today only the small one does.
+3. **Dew Collector.** Until the water module ships it stands in as a staffed workshop (data alone needs a worker):
+   it needs an `entrance` and a `#Slot#Entrance` (or say it should stay un-adopted until then).
+4. **`standIn` that matches the catalogue.** Teahouse and Kindergarten were made for the Campfire; the catalogue now
+   uses that basis and retargets the need, so nothing is needed. Pickle Yard's Bakery and Moon Loft's Lodge also
+   became the catalogue's basis. If a model is made for a different basis than CONTENT's, say why in `notes`.
+5. **Models still missing** (each building stands on a vanilla model until then; the generator's report lists them):
+   Courtyard House, Terrace House, Paddy House, Tea Roastery, Trip-Hammer Mill, Kitchen, Hot Pot Hall, Lantern
+   Workshop, Smoke Kiln, Ox Workshop, Star Tower, Festival Square, Nap Platform, Slide and Swing, Ink Studio, Hot
+   Spring Bath, Opera Stage, the three night posts, Dry-Stone Wall, Treadwheel Lift, Cistern Tap, the decorations
+   (lanterns, fence, potted pine, statue, pinwheel, goldfish bowl, moon gate), Memorial Arch, Great Sitting Panda,
+   Sky Lantern.
