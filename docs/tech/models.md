@@ -516,7 +516,8 @@ not copied): `mod/PandabornFactions/Sprites/Pandaborn/WonderCompletion/wonder-co
 * Regenerate every adopted model: meshes changed (lantern paper region) and these model.json files changed:
   Steamer (Smoke attachment now at the cone's vent, y 1.96), Pickle Yard, Tea Roastery, Lantern Workshop, Hot Pot
   Hall (Smoke at the vent (1.0, 2.5, 0.92), access z 0.2, colliders), Memorial Arch (colliders), Paddy House (thatch),
-  Night Builders' Post, Den, Courtyard House, Nap Platform (blocks GroundOrStackable, access y 0.26, five seats:
+  Night Builders' Post, Teahouse (a brazier with a big kettle and a tea stand with teapot and cups out front, in
+  view of the game camera), Den, Courtyard House, Nap Platform (blocks GroundOrStackable, access y 0.26, five seats:
   `EnterableSpec.CapacityFinished` 5), Flume Gate, Flume Corner, Paddy Spout (two blocks; `capCells`).
   The faction's own validator flags Steamer and Nap Platform until regenerated.
 * New: TripHammerMill (Gristmill), Kitchen (Bakery), OxWorkshop (BotAssembler; RingName/DrillName), TreadwheelLift
