@@ -301,7 +301,7 @@ def door(geo, center_bottom, normal, w=0.42, h=0.62, frame=0.06, leaf="ajar", ta
         tags=set(tags) | {"stone"})
     if leaf == "ajar":
         hinge = c - s * (w / 2) - n * 0.01
-        ac = s * 0.55 - n * 0.83
+        ac = -n * 0.97 - s * 0.25        # swung right in, so the lit doorway shows
         boards(geo, hinge, up, ac, h * 0.98, w * 0.92, 2, TIMBER, thick=0.03, tags=tags)
 
 
@@ -956,3 +956,53 @@ def chilli_string(geo, top, length=0.45, n=7, tags=()):
         c = top - V([0, y, 0]) + V([math.cos(a), 0, math.sin(a)]) * 0.025
         tip = c + V([math.cos(a) * 0.02, -0.07, math.sin(a) * 0.02])
         tube(geo, [c, tip], [0.024, 0.006], DETAILS, sides=3, strips=[DET_RED], caps="start", tags=tags)
+
+
+def gear(geo, center, axis, radius, teeth=12, width=0.08, tooth=0.06, material=TIMBER, tags=()):
+    """A wooden cog wheel: a thick disc with square pegs round its rim (lantern-gear style), on its axis."""
+    c, ax = V(center, float), V(axis, float)
+    ax /= np.linalg.norm(ax)
+    lathe(geo, [(0.0, -width / 2), (radius, -width / 2), (radius, width / 2), (0.0, width / 2)], c - ax * 0.0, 10,
+          material, axis=ax, tags=tags, strips=[WOOD_BLOCK])
+    F = frame_from(ax)
+    for k in range(teeth):
+        a = 2 * math.pi * k / teeth
+        radial = F[:, 0] * math.cos(a) + F[:, 1] * math.sin(a)
+        p = c + radial * (radius + tooth / 2)
+        beam(geo, p - radial * tooth / 2, p + radial * tooth / 2, w=tooth * 0.8, h=width * 0.9, material=material,
+             up=ax, tags=tags, caps="end")
+
+
+def standing_lantern(geo, base, h=0.75, tags=()):
+    """A lantern on a post: a river-stone foot, a timber post, a crossbar with the lantern hanging from it."""
+    b = V(base, float)
+    stones(geo, b[0] - 0.08, b[2] - 0.08, b[0] + 0.08, b[2] + 0.08, y=b[1], size=0.16, h=0.08, ring=False, tags=tags)
+    beam(geo, b, b + V([0, h, 0]), w=0.05, tags=tags, caps="end")
+    beam(geo, b + V([0, h - 0.04, 0]), b + V([0.18, h - 0.04, 0]), w=0.03, tags=tags)
+    lantern(geo, b + V([0.16, h - 0.06, 0]), r=0.06, h=0.14, tags=tags)
+
+
+def screen(geo, a, b, y0, y1, material="IrregularPlanks_LightBrown.Folktails", frame=BAMBOO_GOLD, tags=()):
+    """A woven bamboo screen in a bamboo frame between two posts, both faces."""
+    a, b = V([a[0], 0, a[1]], float), V([b[0], 0, b[1]], float)
+    up = V([0, 1.0, 0])
+    panel(geo, [a + up * y0, b + up * y0, b + up * y1, a + up * y1], material, both=True, tags=tags)
+    for p in (a, b):
+        pole(geo, p + up * (y0 - 0.02), p + up * (y1 + 0.04), r=0.025, material=frame, sides=5, bend=0.0, tags=tags)
+    for y in (y0, y1):
+        pole(geo, a + up * y, b + up * y, r=0.016, material=frame, sides=4, bend=0.0, tags=tags, caps=False)
+
+
+def round_roof(geo, center, radius, y_eave, y_apex, sides=8, sag=0.06, thick=0.06, tags=()):
+    """A round (many-sided) tiled roof rising to a point with a little finial: kiosks, pavilions, well houses."""
+    c = V(center, float)
+    apex = c + V([0, y_apex, 0])
+    lift = lambda s: 0.03 * abs(2 * s - 1) ** 2  # noqa: E731
+    for k in range(sides):
+        a0, a1 = 2 * math.pi * k / sides, 2 * math.pi * (k + 1) / sides
+        e0 = c + V([math.cos(a0) * radius, y_eave, math.sin(a0) * radius])
+        e1 = c + V([math.cos(a1) * radius, y_eave, math.sin(a1) * radius])
+        _tile_patch(geo, e1, e0, apex, apex, max(2, int(radius / 0.3)), 2, sag, lift, thick, tags=tags,
+                    col_offset=2 * k)
+    lathe(geo, [(0.0, 0.0), (0.07, 0.0), (0.08, 0.05), (0.05, 0.11), (0.06, 0.14), (0.0, 0.16)], apex - V([0, 0.03, 0]),
+          6, TILE, uv_region=(0.0, TILE_COURSES[1][0], 0.25, TILE_COURSES[1][1]), tags=tags)

@@ -31,6 +31,11 @@ A({"op": "place", "template": T("FlumeDrop"), "at": [11, 19, 0], "orientation": 
 A({"op": "place", "template": T("Flume"), "at": [13, 19, 0], "orientation": "Cw90", "id": "f4"})
 A({"op": "place", "template": T("Flume"), "at": [14, 19, 0], "orientation": "Cw90", "id": "f5"})
 A({"op": "place", "template": T("PaddySpout"), "at": [15, 19, 0], "orientation": "Cw90", "id": "spout"})
+# walk-under check: a Moon Loft on the upper terrace, then Path tiles through the cells under it
+A({"op": "place", "template": T("MoonLoft"), "at": [2, 23, 1], "orientation": "Cw0", "id": "loft"})
+for y in (22, 23, 24, 25):
+    A({"op": "place", "template": "Path", "at": [2, y, 1], "orientation": "Cw0", "id": f"pathUnder{y}"})
+A({"op": "place", "template": "Path", "at": [3, 24, 1], "orientation": "Cw0", "id": "pathUnderB"})
 A({"op": "place", "template": T("VillageHall"), "at": [22, 23, 0], "orientation": "Cw0", "id": "hall"})
 A({"op": "shot", "name": "line_setup", "focus": [11, 19, 0], "distance": 22, "pitch": 50, "yaw": 15})
 A({"op": "shot", "name": "scoop_setup", "focus": [12, 7, 0], "distance": 14, "pitch": 40, "yaw": 25})
@@ -62,6 +67,7 @@ A({"op": "shot", "name": "scoop_c", "focus": [12, 6, -1], "distance": 11, "pitch
 A({"op": "shot", "name": "wheel_a", "focus": [17, 1, -1], "distance": 11, "pitch": 30, "yaw": 20})
 A({"op": "wait", "ticks": 3, "capSeconds": 60})
 A({"op": "shot", "name": "wheel_b", "focus": [17, 1, -1], "distance": 11, "pitch": 30, "yaw": 20})
+A({"op": "shot", "name": "loft_paths", "focus": [3, 24, 1], "distance": 8, "pitch": 35, "yaw": 30})
 A({"op": "shot", "name": "hall_day", "focus": [23, 24, 1], "distance": 10, "pitch": 45, "yaw": 20})
 A({"op": "shot", "name": "overview_all", "focus": [13, 13, 0], "distance": 34, "pitch": 55, "yaw": 15})
 A({"op": "expect", "label": "scoop wheel lifts in a strong current", "what": "flowRate", "min": 0.01, "id": "scoop"})

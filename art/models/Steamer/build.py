@@ -1,6 +1,6 @@
 """Steamer: steamed shoots, then steamed rice. 2x2, one worker, on the vanilla Grill's workshop blueprint.
 
-A rammed-earth kitchen stove (zao) in front of a grey-tile lean-to, under a woven sunshade: an iron wok with a tall stack of bamboo
+A rammed-earth kitchen stove (zao) in front of a grey-tile lean-to, open to the sky so the steam rises free, a woven sunshade over the side bench: an iron wok with a tall stack of bamboo
 steamer baskets breathing steam (the vanilla 'Smoke' attachment sits on the stack), a firing hole glowing at
 night, a back wall of plaster with a lattice window, firewood and a basket of shoots, a water jar.
 """
@@ -27,10 +27,10 @@ for x in (0.16, 1.84):
 K.roof(g, 0.14, 1.02, 1.86, 1.78, 1.14, 1.42, kind="lean", overhang=0.18, sag=0.03, lift=0.04, ridge=False,
        tile=0.28, course=0.32)
 # a woven-mat sunshade on bamboo poles over the front work area
-for x in (0.2, 1.8):
+for x in (1.4, 1.86):
     K.pole(g, (x, B, 0.12), (x, 1.0, 0.14), r=0.03, material=BAMBOO_GOLD, sides=5, bend=0.015)
-K.cloth(g, [(0.12, 0.98, 0.1), (1.88, 0.98, 0.1), (1.88, 1.1, 0.9), (0.12, 1.1, 0.9)], WEAVE_GOLD,
-        (0.05, 0.05, 0.95, 0.95), sag=0.05, nu=3, nv=2, wave=0.01)
+K.cloth(g, [(1.34, 0.98, 0.1), (1.92, 0.98, 0.1), (1.92, 1.1, 0.95), (1.34, 1.1, 0.95)], WEAVE_GOLD,
+        (0.05, 0.05, 0.95, 0.95), sag=0.04, nu=2, nv=2, wave=0.01)
 # the stove: an earthen block with a firing hole, a wok and the steamer stack
 SX, SZ = 0.95, 0.98
 K.box(g, (0.45, B, 0.66), (1.45, 0.62, 1.3), EARTH, (0.05, 0.05, 0.95, 0.95), skip=(3,))

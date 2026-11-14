@@ -269,6 +269,72 @@
    },
    {
     "op": "place",
+    "template": "PandabornModelMoonLoft.PandabornProto",
+    "at": [
+     2,
+     23,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "loft"
+   },
+   {
+    "op": "place",
+    "template": "Path",
+    "at": [
+     2,
+     22,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "pathUnder22"
+   },
+   {
+    "op": "place",
+    "template": "Path",
+    "at": [
+     2,
+     23,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "pathUnder23"
+   },
+   {
+    "op": "place",
+    "template": "Path",
+    "at": [
+     2,
+     24,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "pathUnder24"
+   },
+   {
+    "op": "place",
+    "template": "Path",
+    "at": [
+     2,
+     25,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "pathUnder25"
+   },
+   {
+    "op": "place",
+    "template": "Path",
+    "at": [
+     3,
+     24,
+     1
+    ],
+    "orientation": "Cw0",
+    "id": "pathUnderB"
+   },
+   {
+    "op": "place",
     "template": "PandabornModelVillageHall.PandabornProto",
     "at": [
      22,
@@ -641,6 +707,18 @@
     "distance": 11,
     "pitch": 30,
     "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "loft_paths",
+    "focus": [
+     3,
+     24,
+     1
+    ],
+    "distance": 8,
+    "pitch": 35,
+    "yaw": 30
    },
    {
     "op": "shot",

@@ -56,7 +56,10 @@ undersides, and per-part tinting. Means are 0.8–1.0, minimums 0–0.5. White m
 ### Construction stages
 
 `#Unfinished` holds a nested `ConstructionBase<X>x<Y>` (the dirt pad, shared) and `ConstructionStage0` (sometimes
-more, with `ConstructionSiteProgressVisualizerSpec.ProgressThresholds`). The stage model is the building's timber
+more, with `ConstructionSiteProgressVisualizerSpec.ProgressThresholds`). **Exactly one ConstructionBase child is
+required:** the game counts the children minus one base against the thresholds, and a blueprint without a base throws
+on every game load (seen in game: the whole new game failed to start). Sizes with no vanilla base (1x3) use
+`ConstructionBase1x1`. The stage model is the building's timber
 skeleton in `BaseWood_Brown` only: posts, beams and arches outlining the finished shape, at 60–100 % of its height,
 with no walls, roof or glass. The finished model replaces it when construction ends.
 
@@ -94,6 +97,10 @@ with no walls, roof or glass. The finished model replaces it when construction e
   `WindowsAtlas`.
 
 ### What the blueprint needs from the model
+
+**Two district centres joined by a path crash the game** (`District ... conflicts with district`, seen in game when
+the test harness laid a path from the starting centre to a placed Village Hall): test a district centre model away
+from the road network.
 
 Footprint and per-cell `Blocks` (occupations decide what can stand on, under and beside it: `Corners` only = legs, a
 path can pass beneath, as the Double Platform), entrance cell, `LocalAccess`, slot node names, animated node and its
@@ -135,7 +142,7 @@ things seen from both sides (cloth, banners, mats) need both faces. The winding 
 | Module | Does |
 |---|---|
 | `core.py` | Materials, trim regions, `Part`/`Geo` (geometry bag with seeded rng, tag and node contexts), vertex-colour shading (base occlusion, undersides, per-part tint jitter), the `.timbermesh` writer with animated child nodes (turn or swing, optional rotated pivot) and slot nodes |
-| `parts.py` | `tube`, `pole` (bamboo or round timber: taper, bend, strip-mapped segments, disc caps), `beam` (squared timber, sag), `lashing`, `box`, `panel`, `boards`, `frame_ring`, `window` (lattice / panes / round, glowing), `door` (dark glowing doorway, posts, lintel, step, plank leaf ajar), `wall` (timber frame + lime plaster with openings), `gable_end` (chuan-dou frame on plaster or weave), `roof` (gable, hip, pyramid, lean-to: pan-and-cover tile columns with real cover-tile ribs aligned to the texture, courses, sagging Sichuan curve, gently lifted corners, underside, fascia, verge boards, hip rolls, `ridge_course` with softly raised ends), `lathe` (jars, barrels, pots, finials), `jar`, `barrel`, `basket`, `lantern` (glowing, red caps), `lantern_string`, `chilli_string`, `cloth` (sagging awnings and banners, both faces), `stones` (river stones as painted plaster), `plinth` (rammed earth with a stone edge), `stairs`, `ladder`, `wheel` (bamboo rims, spokes, cross-bars, woven paddles, tube buckets), `channel` (split giant-bamboo half-pipe with rims, cut ends and an upstream rope sleeve), `cradle` |
+| `parts.py` | `tube`, `pole` (bamboo or round timber: taper, bend, strip-mapped segments, disc caps), `beam` (squared timber, sag), `lashing`, `box`, `panel`, `boards`, `frame_ring`, `window` (lattice / panes / round, glowing), `door` (dark glowing doorway, posts, lintel, step, plank leaf ajar), `wall` (timber frame + lime plaster with openings), `gable_end` (chuan-dou frame on plaster or weave), `roof` (gable, hip, pyramid, lean-to: pan-and-cover tile columns with real cover-tile ribs aligned to the texture, courses, sagging Sichuan curve, gently lifted corners, underside, fascia, verge boards, hip rolls, `ridge_course` with softly raised ends), `lathe` (jars, barrels, pots, finials), `jar`, `barrel`, `basket`, `lantern` (glowing, red caps), `lantern_string`, `chilli_string`, `cloth` (sagging awnings and banners, both faces), `stones` (river stones as painted plaster), `plinth` (rammed earth with a stone edge), `stairs`, `ladder`, `wheel` (bamboo rims, spokes, cross-bars, woven paddles, tube buckets), `channel` (split giant-bamboo half-pipe with rims, cut ends and an upstream rope sleeve), `cradle`, `gear` (cog wheel), `standing_lantern`, `screen` (woven panel in a bamboo frame), `round_roof` (many-sided tiled cone), `chilli_string` |
 | `waterworks.py` | Flume pieces: `straight` channel on a water cell's floor, `stakes`, `x_trestle`, `leg_frame` (corner legs so the middle stays walkable) |
 | `building.py` | `Model`: grid helpers, entrance, slots, animation, colliders, attachments, blocks; automatic construction stage (frame/base parts + bamboo scaffold scaled to the footprint + a pole pile); report (triangles per material and per tag, budget against vanilla, footprint and overhang, UV range); writes `<Id>.Model` and `<Id>.ConstructionStage0.Model` to `E:\PandabornDev\build\models\<Id>\` and `model.json` beside the script |
 | `tmio.py` | Reads any `.timbermesh` (vanilla or ours) with node transforms and animation poses |

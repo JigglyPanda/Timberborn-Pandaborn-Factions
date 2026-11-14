@@ -18,6 +18,11 @@ CX = 0.5
 def straight(geo, z0, z1, y_floor, material=BAMBOO_GREEN, sleeve=True, tilt=0.0, tags=()):
     K.channel(geo, z0, z1, y_floor + 0.012, CX, r_in=R_IN, wall=0.045, material=material, around=6, sleeve=sleeve,
               tilt=tilt, tags=tags)
+    # a culm node: a slightly proud ring round the outside near the downstream end
+    L = z1 - z0
+    zn = z0 + L * 0.62
+    K.channel(geo, zn, zn + 0.035 * (1 if L > 0 else -1), y_floor + 0.012 - 0.045 - 0.012 + tilt * 0.38,
+              CX, r_in=R_IN + 0.045, wall=0.018, material=material, around=6, sleeve=False, tags=tags)
 
 
 def stakes(geo, z, y_base=-0.02, y_top=0.46, tie=True, material=BAMBOO_GOLD, tags=()):
