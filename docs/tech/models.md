@@ -305,3 +305,19 @@ by all Ringtail buildings, glows at night, and sits high enough to read from the
   (RooftopTerrace; eight `#Slot#Seat` nodes), `StandingLantern`, `HangingLantern`, `StringLanterns` (Lantern),
   `NightBuildersPost` (BuildersHut), `NightCourierPost` (HaulingPost), `NightForagersPost` (GathererFlag; keeps the
   `Seat` slot keyword), `DewCollector` (entrance and `#Slot#Entrance` added).
+
+### Pass 2 in game (`models-pass2-1`, Diorama, code-module re-theme, 17 h into the night)
+
+23 of 25 placed, **0 errors from our mods**. Not placed: Nap Platform (needs a stackable top: the Rooftop Terrace
+basis has `MatterBelow: Stackable`, so it must go on a roof; expected) and `Lodge.Inkpaws` (no such template; the
+request's mistake). Screenshots `E:\PandabornDev\build\test\models-pass2-1\*_{day,night}.png`, sheet
+`E:\PandabornDev\build\models\ingame_pass2_day.png`. The starting district centre is already the catalogue-adopted
+Village Hall (pass-1 mesh), fire burning on its mast.
+
+Harsh findings: the night overview shows almost no window glow on any home, ours or the re-themed vanilla ones, and
+the lanterns glow only faintly; with the look module's latest window map the glow is too weak to read at this zoom
+(look lane). The celadon vat reads pale grey-white under the new palette (glaze tint should be darker). The Terrace
+House reads from above as a flat tan box (the clear roof needed for stacking is a weakness; it needs a parapet coping
+and a stronger roof colour). The flume green still reads bright in daylight next to the brown-grey terrain.
+Still unverified: lit windows with occupants at close range, hammock swinging with a sleeper (the swing shots caught
+nobody in it), colonists walking under the Moon Loft.
