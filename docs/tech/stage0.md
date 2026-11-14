@@ -221,3 +221,11 @@ E:\PandabornDev\build\proto\<copy>`), because the installed mod now carries its 
 * **Feature report**: one notification-log entry per save in Inkpaws games, e.g. "Pandaborn - Factions features: The
   afternoon bell (rested Inkpaws): on; Inkpaw names: on; The Inkpaws building look: on; Inkpaw words: on; DevCarrier:
   off (developer setting)" (visible top left in every screenshot of those runs).
+* **Duplicate copies** (two local folders with the same manifest Id; `MarkDuplicatedIds` only renames them in the mod
+  list, and a local plus a Workshop copy are not even marked: in both cases both copies load). Without a guard every game
+  crashed at startup on the asset bundles (`fd-dup-1`: "another AssetBundle with the same files is already loaded",
+  `ModAssetBundleLoader` throws). With the duplicate's starter parking its own bundles (`AssetBundles.parked`) that crash
+  is gone (`fd-dup-2`); that run then stopped on another mod (TimberUi's `ModUpdateService` builds a dictionary by mod Id
+  and throws on any duplicated Id, with or without our code). With only our mods (`fd-dup-3`, `-OnlyMods`): the game
+  starts, plays, saves and reloads; only the first copy runs code; the player gets one notice ("enabled twice ... Only the
+  copy in ...\pbdupA runs its code") and the feature report ends "mod enabled 1 more time(s)"; not repeated after reload.
