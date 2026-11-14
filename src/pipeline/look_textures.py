@@ -39,7 +39,7 @@ S = 1024
 INK = np.array([34, 31, 30])
 INK_GREY = np.array([66, 63, 60])
 TIMBER = np.array([72, 54, 40])               # dark, oiled and smoke-darkened fir
-LIME = np.array([236, 234, 226])              # white lime plaster
+LIME = np.array([222, 217, 204])              # white lime plaster, aged (pure white reads as plastic in game)
 PAPER = np.array([232, 222, 198])             # window paper (unbleached)
 PAPER_WARM = np.array([240, 220, 180])
 LACQUER = np.array([150, 44, 36])             # accents only
@@ -501,10 +501,12 @@ def make_plaster(name="Plaster", base=LIME, seed=40):
     """White lime plaster: soft mottling and trowel marks."""
     st = Set(name)
     n1, n2, n3 = noise(seed, 120), noise(seed + 1, 24), noise(seed + 2, 6)
-    st.d = color_field(base, 0.04, seed + 3, 140) * (0.95 + 0.05 * n2[..., None]) * (0.97 + 0.04 * n3[..., None])
+    strokes = noise(seed + 5, 18, 1.8, aniso=(1.0, 0.25))      # trowel strokes, mostly horizontal
+    st.d = color_field(base, 0.07, seed + 3, 140) * (0.92 + 0.08 * n2[..., None]) * (0.96 + 0.05 * n3[..., None])
+    st.d = st.d * (0.93 + 0.1 * strokes[..., None])
     pits = noise(seed + 4, 3, 1.0) > 0.86
     st.d[pits] *= 0.92
-    st.h = 0.3 * n1 + 0.15 * n2 + 0.05 * n3 - 0.1 * pits
+    st.h = 0.3 * n1 + 0.15 * n2 + 0.05 * n3 - 0.1 * pits + 0.08 * strokes
     st.smooth = 0.18
     st.nstrength = 3.0
     return st
