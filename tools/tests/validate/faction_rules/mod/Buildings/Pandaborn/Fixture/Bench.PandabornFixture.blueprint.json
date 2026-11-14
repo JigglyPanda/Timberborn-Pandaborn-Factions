@@ -190,5 +190,14 @@
         }
       }
     }
+  },
+  "GoodConsumingBuildingSpec": {
+    "FullInventoryWorkHours": 10,
+    "ConsumedGoods": [
+      {
+        "GoodId": "Carrot",
+        "GoodPerHour": 0.5
+      }
+    ]
   }
 }

@@ -179,6 +179,8 @@ def main():
     faction.pop("StartingFactionSpec", None)
     bcost = copy.deepcopy(bench)
     bcost["BuildingSpec"]["BuildingCost"] = [{"Id": "TreatedPlank", "Amount": 2}]
+    bcost["GoodConsumingBuildingSpec"] = {"FullInventoryWorkHours": 10,
+                                          "ConsumedGoods": [{"GoodId": "Carrot", "GoodPerHour": 0.5}]}
     fx = {"Factions/Pandaborn/Faction.PandabornFixture.blueprint.json": faction,
           bench_rel: bcost,
           "TemplateCollections/Pandaborn/TemplateCollection.PandabornFixture.Buildings.blueprint.json":
@@ -196,6 +198,7 @@ def main():
           "NeedCollections/Pandaborn/NeedCollection.PandabornFixtureOther.blueprint.json":
               {"NeedCollectionSpec": {"CollectionId": "Folktails", "Needs": ["PandabornFixtureNeed"]}}}
     case("faction_rules", ["costs TreatedPlank, which is not in the faction's good collections",
+                           "uses good Carrot (GoodConsumingBuildingSpec.ConsumedGoods.GoodId)",
                            "drops the Folktails material collection but uses Folktails models",
                            "need PandabornFixtureNeed is not in a need collection this mod's faction always lists",
                            "adds to vanilla need collection Folktails"],
