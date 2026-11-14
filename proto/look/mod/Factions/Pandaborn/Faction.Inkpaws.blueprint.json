@@ -1,0 +1,8 @@
+{
+  "FactionSpec": {
+    "MaterialCollectionIds": [
+      "PandabornLook.Inkpaws"
+    ],
+    "BaseWoodMaterial": "Materials/Pandaborn/Look/BaseWood_White.Folktails"
+  }
+}

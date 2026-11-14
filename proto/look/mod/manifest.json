@@ -1,0 +1,11 @@
+{
+  "Name": "Pandaborn - Look prototype (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoLook",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only prototype: re-themes every vanilla Folktails building model for the Inkpaws faction of Pandaborn - Factions by giving the faction its own material collection whose bundle materials carry the vanilla material names. Folktails and Iron Teeth games are untouched. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [
+    { "Id": "JigglyPanda.PandabornFactions" }
+  ],
+  "OptionalMods": []
+}
