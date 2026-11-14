@@ -4,7 +4,7 @@
   "speed": 30,
   "playtest": {
     "name": "folktails-baseline",
-    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6. Homes keep at least four free beds (a full home has no child slot, so no births).",
+    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks clear those trees before any other cutting. More trees are marked whenever fewer than 15 cuttable trees remain marked; a third lumberjack on day 6. Homes keep at least four free beds (a full home has no child slot, so no births). When the marked wild trees run low a new lumberjack goes to the nearest uncut forest (up to four).",
     "shotsEveryDays": 4,
     "names": {
       "lumber": "LumberjackFlag.Folktails",
@@ -158,7 +158,9 @@
               "@tree1"
             ]
           }
-        }
+        },
+        "attempts": 100,
+        "retryHours": 6
       },
       {
         "id": "cutMore2",
@@ -176,7 +178,9 @@
               "@tree1"
             ]
           }
-        }
+        },
+        "attempts": 100,
+        "retryHours": 6
       },
       {
         "id": "lumber3",
@@ -200,6 +204,52 @@
           "after": [
             "lumber3"
           ]
+        },
+        "attempts": 100,
+        "retryHours": 6
+      },
+      {
+        "id": "lumberMore",
+        "op": "build",
+        "template": "@lumber",
+        "rule": "trees",
+        "maxDistance": 45,
+        "min": 15,
+        "radius": 9,
+        "repeat": 4,
+        "everyHours": 12,
+        "attempts": 100,
+        "retryHours": 6,
+        "when": {
+          "day": 5,
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
+        }
+      },
+      {
+        "id": "cutNew",
+        "op": "cut",
+        "target": "lumberMore",
+        "count": 40,
+        "radius": 14,
+        "repeat": 4,
+        "everyHours": 12,
+        "attempts": 100,
+        "retryHours": 3,
+        "when": {
+          "after": [
+            "lumberMore"
+          ],
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {

@@ -174,7 +174,9 @@
               "@tree1"
             ]
           }
-        }
+        },
+        "attempts": 100,
+        "retryHours": 6
       },
       {
         "id": "cutMore2",
@@ -192,7 +194,9 @@
               "@tree1"
             ]
           }
-        }
+        },
+        "attempts": 100,
+        "retryHours": 6
       },
       {
         "id": "lumber3",
@@ -216,6 +220,52 @@
           "after": [
             "lumber3"
           ]
+        },
+        "attempts": 100,
+        "retryHours": 6
+      },
+      {
+        "id": "lumberMore",
+        "op": "build",
+        "template": "@lumber",
+        "rule": "trees",
+        "maxDistance": 45,
+        "min": 15,
+        "radius": 9,
+        "repeat": 4,
+        "everyHours": 12,
+        "attempts": 100,
+        "retryHours": 6,
+        "when": {
+          "day": 5,
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
+        }
+      },
+      {
+        "id": "cutNew",
+        "op": "cut",
+        "target": "lumberMore",
+        "count": 40,
+        "radius": 14,
+        "repeat": 4,
+        "everyHours": 12,
+        "attempts": 100,
+        "retryHours": 3,
+        "when": {
+          "after": [
+            "lumberMore"
+          ],
+          "markedTreesBelow": {
+            "count": 15,
+            "except": [
+              "@tree1"
+            ]
+          }
         }
       },
       {

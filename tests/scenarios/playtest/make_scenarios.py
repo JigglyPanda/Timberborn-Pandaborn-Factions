@@ -81,6 +81,15 @@ for s in hard["playtest"]["steps"]:
     if s["id"] == "farm2": w["day"] = 3
 save("inkpaws-hard.json", hard)
 
+fthard = copy.deepcopy(ft)
+fthard["playtest"]["name"] = "folktails-hard"
+fthard["playtest"]["note"] = "Folktails on Hard, the comparison for inkpaws-hard: the baseline plan with water storage and the second farm brought forward."
+for s in fthard["playtest"]["steps"]:
+    w = s.get("when", {})
+    if s["id"] in ("tank2", "tank3"): w["day"] = {"tank2": 2.5, "tank3": 3.5}[s["id"]]
+    if s["id"] == "farm2": w["day"] = 3
+save("folktails-hard.json", fthard)
+
 def careless(d, name, faction_note):
     d = copy.deepcopy(d)
     p = d["playtest"]

@@ -109,7 +109,8 @@ namespace PandabornDevHarness
                 var bo = center.GetComponent<BlockObject>();
                 return bo != null && bo.HasEntrance ? bo.PositionedEntrance.Coordinates : center.GetComponent<BlockObject>().Coordinates;
             }
-            var placed = Instances(near).FirstOrDefault(p => p.Bo);
+            // a repeating step anchors on its newest instance (a new lumberjack's trees are marked around the new flag)
+            var placed = Instances(near).LastOrDefault(p => p.Bo);
             if (placed == null) return null;
             return placed.Bo.HasEntrance ? placed.Bo.PositionedEntrance.Coordinates : placed.Bo.Coordinates;
         }
@@ -401,7 +402,11 @@ namespace PandabornDevHarness
                 for (int dy = -radius; dy <= radius; dy++)
                 {
                     if (dx * dx + dy * dy > radius * radius) continue;
-                    if (_resourceIndex.TryGetValue(new Vector2Int(cell.x + dx, cell.y + dy), out var kind) && kind.StartsWith(prefix, StringComparison.Ordinal)) n++;
+                    var key = new Vector2Int(cell.x + dx, cell.y + dy);
+                    if (!_resourceIndex.TryGetValue(key, out var kind) || !kind.StartsWith(prefix, StringComparison.Ordinal)) continue;
+                    // trees already marked belong to another flag: a new flag goes where the uncut forest is
+                    if (prefix == "tree:" && _treeCuttingArea.IsInCuttingArea(_resourceCoords[key])) continue;
+                    n++;
                 }
             return n;
         }
