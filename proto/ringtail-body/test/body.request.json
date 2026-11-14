@@ -1,8 +1,16 @@
 {
   "buildings": [],
   "screenshots": [
-    { "name": "overview_start", "kind": "overview", "at": "start" },
-    { "name": "screen_end", "kind": "screen", "at": "end" }
+    {
+      "name": "overview_start",
+      "kind": "overview",
+      "at": "start"
+    },
+    {
+      "name": "screen_end",
+      "kind": "screen",
+      "at": "end"
+    }
   ],
   "ringtails": {
     "spawn": 4,
@@ -10,8 +18,18 @@
     "kitGrowth": 0.05,
     "housingRule": true,
     "shots": [
-      { "name": "d0_h10_ringtail", "day": 0, "hour": 10, "select": "ringtail" },
-      { "name": "d0_h20_night_ringtail", "day": 0, "hour": 20, "select": "ringtail" }
+      {
+        "name": "d0_h10_ringtail",
+        "day": 0,
+        "hour": 10,
+        "select": "ringtail"
+      },
+      {
+        "name": "d0_h20_night_ringtail",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtail"
+      }
     ],
     "place": [
       "RingtailHaulingPost.Inkpaws",
@@ -24,23 +42,127 @@
       "PandabornDen.Inkpaws",
       "PandabornDen.Inkpaws",
       "PandabornDen.Inkpaws",
-      { "template": "PandabornDen.Inkpaws", "finished": false },
-      { "template": "PandabornDen.Inkpaws", "finished": false },
-      { "template": "PandabornDen.Inkpaws", "finished": false }
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      }
     ],
-    "stock": { "Water": 400, "Log": 40 }
+    "stock": {
+      "Water": 400,
+      "Log": 40
+    }
   },
   "ringtailBody": {
     "startDelaySeconds": 30,
     "shots": [
-      { "name": "lineup1", "kind": "lineup", "day": 0, "hour": 0.3, "day_only": true },
-      { "name": "carry_day", "kind": "game", "day": 0, "hour": 8, "prefer": "carrying", "waitHours": 6, "day_only": true, "pitch": 55, "distances": [3, 6, 12] },
-      { "name": "group_day", "kind": "group", "day": 0, "hour": 9, "day_only": true, "pitch": 55, "distances": [3, 6] },
-      { "name": "lineup2", "kind": "lineup", "day": 0, "hour": 10, "day_only": true },
-      { "name": "carry_day_steep", "kind": "game", "day": 0, "hour": 11, "prefer": "carrying", "waitHours": 3, "day_only": true, "pitch": 70, "distances": [4, 9] },
-      { "name": "carry_night", "kind": "game", "day": 0, "hour": 16, "night": true, "prefer": "carrying", "waitHours": 6, "pitch": 55, "distances": [3, 6, 12] },
-      { "name": "group_night", "kind": "group", "day": 0, "hour": 18, "night": true, "pitch": 55, "distances": [3, 6] },
-      { "name": "carry_night2", "kind": "game", "day": 0, "hour": 21, "night": true, "prefer": "carrying", "waitHours": 3, "pitch": 62, "distances": [4, 8] }
+      {
+        "name": "lineup1",
+        "kind": "lineup",
+        "window": [
+          8.4,
+          15.5
+        ]
+      },
+      {
+        "name": "carry_day",
+        "kind": "game",
+        "window": [
+          10,
+          15.5
+        ],
+        "prefer": "carrying",
+        "pitch": 55,
+        "distances": [
+          3,
+          6,
+          12
+        ]
+      },
+      {
+        "name": "group_day",
+        "kind": "group",
+        "window": [
+          11,
+          15.5
+        ],
+        "pitch": 55,
+        "distances": [
+          3,
+          6
+        ]
+      },
+      {
+        "name": "lineup2",
+        "kind": "lineup",
+        "window": [
+          12.5,
+          15.5
+        ]
+      },
+      {
+        "name": "carry_day_steep",
+        "kind": "game",
+        "window": [
+          13,
+          15.5
+        ],
+        "prefer": "carrying",
+        "pitch": 70,
+        "distances": [
+          4,
+          9
+        ]
+      },
+      {
+        "name": "carry_night",
+        "kind": "game",
+        "window": [
+          18,
+          23.5
+        ],
+        "prefer": "carrying",
+        "pitch": 55,
+        "distances": [
+          3,
+          6,
+          12
+        ]
+      },
+      {
+        "name": "group_night",
+        "kind": "group",
+        "window": [
+          19.5,
+          23.8
+        ],
+        "pitch": 55,
+        "distances": [
+          3,
+          6
+        ]
+      },
+      {
+        "name": "carry_night2",
+        "kind": "game",
+        "window": [
+          21,
+          23.9
+        ],
+        "prefer": "carrying",
+        "pitch": 62,
+        "distances": [
+          4,
+          8
+        ]
+      }
     ]
   }
 }

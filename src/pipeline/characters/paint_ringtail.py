@@ -127,7 +127,7 @@ class RingtailPainter(paint.Painter):
         reach = var.get('arm_reach', 0.075) - var.get('arm_back_trim', 0.035) * smoothstep(0.0, -0.6, N[..., 2])
         arms = 1 - smoothstep(reach - 0.015, reach + 0.015, darm + jag * 1.5)
         dsole = r['dsole'][..., 0]
-        lr = var.get('leg_reach', 0.17)
+        lr = var.get('leg_reach', 0.20)
         legs = 1 - smoothstep(lr - 0.02, lr + 0.02, dsole + jag * 1.6)
         legs = np.maximum(legs, r['sole'][..., 0])
         under = smoothstep(-0.05, -0.45, N[..., 1] + jag * 6) * (head < 0.45)
@@ -234,7 +234,7 @@ class RingtailPainter(paint.Painter):
         if var.get('frost', 0) > 0:     # an older individual: grizzled muzzle and brow, frosted crown and shoulders
             where = np.maximum((head[..., 0] > 0.5) * smoothstep(0.0, 0.6, N[..., 2]), 0.5 * smoothstep(0.3, 0.9, N[..., 1]))
             where *= (1 - tail) * (1 - rm['dark'])
-            g = smoothstep(0.1, 0.6, fbm(P * 120, 3, var.get('seed', 0) + 5) + 0.25) * where
+            g = smoothstep(0.2, 0.7, fbm(P * 260, 2, var.get('seed', 0) + 5) + 0.25) * where
             col = col + var['frost'] * ndimage.gaussian_filter(g, 1.0)[..., None] * (white - col)
         pa = ndimage.gaussian_filter(self.ao, 6)
         ba = ndimage.gaussian_filter(self.beaver_ao, 6)
@@ -276,7 +276,7 @@ ADULT_COATS = [
          tear_col=(0.42, 0.16, 0.06), tear_w=0.17, tip_dark=0.45, ear_tuft=0.8),
     # an older individual: frosted muzzle, dusky back, nine fine rings
     dict(name=4, seed=44, red=(0.55, 0.22, 0.085), dark=(0.07, 0.05, 0.045), white=(0.86, 0.84, 0.79),
-         ring_col=(0.76, 0.52, 0.30), rings=8, ring_width=0.40, ring_contrast=0.85, back_deep=0.26, frost=0.18,
+         ring_col=(0.76, 0.52, 0.30), rings=8, ring_width=0.40, ring_contrast=0.85, back_deep=0.26, frost=0.10,
          cheek=(1.52, -0.02, 0.76, 0.60), tear_w=0.22),
     # rare cinnamon: light, sandy-red with brown (not black) legs
     dict(name=5, seed=45, red=(0.76, 0.46, 0.24), dark=(0.30, 0.17, 0.10), white=(0.95, 0.93, 0.88),
@@ -328,7 +328,7 @@ def main():
             continue
         var = dict(style, **v)
         if kind == 'child':
-            var.setdefault('arm_reach', 0.075); var.setdefault('leg_reach', 0.17); var.setdefault('neck_y', 0.345)
+            var.setdefault('arm_reach', 0.075); var.setdefault('leg_reach', 0.20); var.setdefault('neck_y', 0.345)
         nm = f"Ringtail{'Adult' if kind == 'adult' else 'Child'}Coat{v['name']}.png"
         pt.paint_ringtail(var, beaver_tex, os.path.join(a.outdir, nm), out_size)
         print('painted', nm)

@@ -97,6 +97,23 @@ namespace Pandaborn.RingtailBody
                 var s = _pending[i];
                 float due = (s["day"]?.Value<float>() ?? 0f) * 24f + (s["hour"]?.Value<float>() ?? 0f);
                 if (run < due) continue;
+                if (s["window"] is JArray window && window.Count == 2)
+                {
+                    // [from, to] hours after dawn: wait for the window; inside it, wait for a carrying Ringtail until
+                    // 0.5 h before its end, then take the picture anyway
+                    float h = _dayNightCycle.HoursPassedToday, from = window[0].Value<float>(), to = window[1].Value<float>();
+                    if (h < from || h >= to) continue;
+                    if ((string)s["prefer"] == "carrying" && h < to - 0.5f && !Ringtails().Any(IsCarrying)) continue;
+                    _pending.RemoveAt(i);
+                    try { Take(s); }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("[Pandaborn.RingtailBody] shot " + s["name"] + " failed: " + e);
+                        _taken.Add(new JObject { ["name"] = s["name"], ["error"] = e.GetType().Name + ": " + e.Message });
+                    }
+                    Write();
+                    return;
+                }
                 bool night = s["night"]?.Value<bool>() ?? false;
                 if (night && !_dayNightCycle.IsNighttime && run < due + 20f) continue;
                 if (!night && (s["day_only"]?.Value<bool>() ?? false) && !_dayNightCycle.IsDaytime && run < due + 20f) continue;
@@ -202,7 +219,9 @@ namespace Pandaborn.RingtailBody
                 foreach (var (view, dir) in views)
                 {
                     float fov = 22f;
-                    float dist = (width * 0.5f + 0.25f) / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
+                    int w = s["width"]?.Value<int>() ?? 1600, h = s["height"]?.Value<int>() ?? 760;
+                    float halfH = Mathf.Atan(Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad) * w / h);   // horizontal half-angle
+                    float dist = (width * 0.5f + 0.15f) / Mathf.Tan(halfH);
                     var position = focus + facing * dir.normalized * dist;
                     var rotation = Quaternion.LookRotation(focus - position, Vector3.up);
                     string file = Path.Combine(HarnessBridge.OutputDir, "rb_" + name + "_" + view + ".png");
