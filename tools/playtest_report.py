@@ -300,13 +300,13 @@ def verdict(a):
     deaths = a["deaths"]
     starving = sum(n for c, n in a["deathCauses"].items() if "Hunger" in c or "Thirst" in c)
     if a["popEnd"] == 0:
-        lines.append("**Colony died out** by day %s." % a["lastDay"])
+        lines.append("**Colony died out** by day %s" % a["lastDay"])
     elif starving:
-        lines.append("**Survived with losses:** %d deaths from hunger or thirst." % starving)
+        lines.append("**Survived with losses:** %d deaths from hunger or thirst" % starving)
     elif a["popEnd"] < a["popStart"]:
-        lines.append("**Survived but shrank** (%d to %d)." % (a["popStart"], a["popEnd"]))
+        lines.append("**Survived but shrank** (%d to %d)" % (a["popStart"], a["popEnd"]))
     else:
-        lines.append("**Thriving:** %d to %d colonists, no starvation." % (a["popStart"], a["popEnd"]))
+        lines.append("**Thriving:** %d to %d colonists, no starvation" % (a["popStart"], a["popEnd"]))
     return " ".join(lines)
 
 

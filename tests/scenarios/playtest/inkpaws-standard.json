@@ -53,9 +53,10 @@
         "rule": "nearWater",
         "maxDistance": 40,
         "priority": "VeryHigh",
-        "minDepth": 0.3,
+        "minDepth": 0.15,
         "tries": 600,
-        "pathThroughTrees": true
+        "pathThroughTrees": true,
+        "maxPath": 120
       },
       {
         "id": "lumber1",
@@ -412,9 +413,10 @@
         "when": {
           "population": 18
         },
-        "minDepth": 0.3,
+        "minDepth": 0.15,
         "tries": 600,
-        "pathThroughTrees": true
+        "pathThroughTrees": true,
+        "maxPath": 120
       },
       {
         "id": "tank3",

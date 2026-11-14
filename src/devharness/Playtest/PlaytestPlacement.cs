@@ -170,7 +170,8 @@ namespace PandabornDevHarness
                             {
                                 int w = WaterDistance(cell, 4, minDepth);
                                 if (w < 0) continue;
-                                score = d + 4f * w;
+                                // deeper water lasts longer into a drought: a metre of depth is worth 15 tiles of walking
+                                score = d + 4f * w - 15f * Mathf.Min(1.5f, DeepestWater(cell, 3));
                                 break;
                             }
                             case "moist":
@@ -201,16 +202,25 @@ namespace PandabornDevHarness
             {
                 var clock = Stopwatch.StartNew();
                 long searchMs = (long)Request.Num(o, "searchMs", 4000f);
+                // with "pathThroughTrees", a spot reachable over open ground is still preferred: the first pass refuses
+                // routes through trees, the second allows them
+                bool allowTrees = Request.Bool(o, "pathThroughTrees", false);
+                for (int pass = allowTrees ? 0 : 1; pass < 2; pass++)
+                {
+                bool throughTrees = pass == 1 && allowTrees;
+                int passTried = 0;
                 foreach (var (cell, _) in candidates)
                 {
                     if (tried >= budget) { why = "tried " + budget + " candidates; last: " + why; break; }
                     if (clock.ElapsedMilliseconds > searchMs) { why = "search time out (" + searchMs + " ms); last: " + why; break; }
+                    if (allowTrees && pass == 0 && (passTried >= budget / 2 || clock.ElapsedMilliseconds > searchMs / 2)) break;
                     foreach (var orientation in orientations)
                     {
                         var target = new Vector3Int(cell.x, cell.y, cell.z - baseZ);
                         var placement = Valid(placer, target, orientation);
                         if (!placement.HasValue) continue;
                         tried++;
+                        passTried++;
                         var builder = new EntitySetup.Builder(spec.Blueprint);
                         BlockObject bo;
                         if (spec.HasSpec<BuildingSpec>())
@@ -232,7 +242,7 @@ namespace PandabornDevHarness
                         if (reject == null && bo.HasEntrance)
                         {
                             // through trees only when the scenario says so (the lumberjacks must be able to clear them first)
-                            var route = Route(bo.PositionedEntrance.Coordinates, (int)Request.Num(o, "maxPath", 60f), Request.Bool(o, "pathThroughTrees", false));
+                            var route = Route(bo.PositionedEntrance.Coordinates, (int)Request.Num(o, "maxPath", 60f), throughTrees);
                             if (route == null) reject = "no level path to the network";
                             else laid = LayPath(route);
                         }
@@ -249,6 +259,7 @@ namespace PandabornDevHarness
                         if (bo.HasEntrance) _keepClear.Add(new Vector2Int(bo.PositionedEntrance.Coordinates.x, bo.PositionedEntrance.Coordinates.y));
                         return new PlaceResult { bo = bo, pathTiles = laid };
                     }
+                }
                 }
             }
             finally { placer.HideAllPreviews(); }
@@ -325,6 +336,19 @@ namespace PandabornDevHarness
                         if (_waterMap.WaterDepth(g) >= minDepth) return r;
                     }
             return -1;
+        }
+
+        private float DeepestWater(Vector3Int cell, int radius)
+        {
+            float best = 0f;
+            for (int dx = -radius; dx <= radius; dx++)
+                for (int dy = -radius; dy <= radius; dy++)
+                {
+                    var xy = new Vector2Int(cell.x + dx, cell.y + dy);
+                    if (!_terrainService.Contains(xy)) continue;
+                    best = Mathf.Max(best, _waterMap.WaterDepth(Ground(new Vector3Int(xy.x, xy.y, cell.z))));
+                }
+            return best;
         }
 
         private int SoilCount(Vector3Int cell, int radius, bool moist)

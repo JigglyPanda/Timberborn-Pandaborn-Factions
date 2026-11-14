@@ -386,7 +386,19 @@ namespace PandabornDevHarness
                 if (site != null && waiting.Count < 12)
                     waiting.Add(new JObject { ["id"] = p.Id, ["materials"] = Math.Round(site.MaterialProgress, 2), ["built"] = Math.Round(site.BuildTimeProgress, 2) });
             }
-            o["sites"] = new JObject { ["unfinished"] = unfinished, ["list"] = waiting, ["pathTilesWaitingForTrees"] = _pendingPath.Count };
+            var pending = new JArray();
+            foreach (var cell in _pendingPath.Take(10))
+            {
+                var t = TreeAt(cell);
+                var tree = t.HasValue ? _blockService.GetBottomObjectAt(t.Value) : null;
+                var living = tree ? tree.GetComponent<LivingNaturalResource>() : null;
+                pending.Add(new JObject
+                {
+                    ["cell"] = new JArray(cell.x, cell.y, cell.z), ["tree"] = tree ? tree.GetComponent<TemplateSpec>()?.TemplateName : null,
+                    ["dead"] = living != null && living.IsDead, ["marked"] = t.HasValue && _treeCuttingArea.IsInCuttingArea(t.Value)
+                });
+            }
+            o["sites"] = new JObject { ["unfinished"] = unfinished, ["list"] = waiting, ["pathTilesWaitingForTrees"] = _pendingPath.Count, ["pendingPath"] = pending };
 
             // plants by template: [alive, grown, dying, dead]
             var plants = new Dictionary<string, int[]>();
