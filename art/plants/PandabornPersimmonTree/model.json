@@ -1,0 +1,171 @@
+{
+ "id": "PandabornPersimmonTree",
+ "template": "PandabornPersimmonTree.Inkpaws",
+ "kind": "Trees",
+ "material": "PandabornPersimmonTree",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornPersimmonTree",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeMatureDead",
+  "#Leftover": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeMatureStump"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Trees/PandabornPersimmonTree/PandabornPersimmonTreeMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornPersimmonTree",
+ "stats": {
+  "PandabornPersimmonTreeSeedling": {
+   "triangles": 20,
+   "vertices": 34,
+   "bboxMin": [
+    0.227,
+    -0.001,
+    0.215
+   ],
+   "bboxMax": [
+    0.761,
+    0.695,
+    0.774
+   ]
+  },
+  "PandabornPersimmonTreeSeedlingDry": {
+   "triangles": 20,
+   "vertices": 34,
+   "bboxMin": [
+    0.227,
+    -0.001,
+    0.215
+   ],
+   "bboxMax": [
+    0.761,
+    0.695,
+    0.774
+   ]
+  },
+  "PandabornPersimmonTreeSeedlingDead": {
+   "triangles": 12,
+   "vertices": 18,
+   "bboxMin": [
+    0.316,
+    -0.001,
+    0.422
+   ],
+   "bboxMax": [
+    0.684,
+    0.62,
+    0.578
+   ]
+  },
+  "PandabornPersimmonTreeMature": {
+   "triangles": 132,
+   "vertices": 219,
+   "bboxMin": [
+    -0.264,
+    -0.01,
+    -0.279
+   ],
+   "bboxMax": [
+    1.35,
+    2.462,
+    1.33
+   ]
+  },
+  "PandabornPersimmonTreeMatureDry": {
+   "triangles": 108,
+   "vertices": 171,
+   "bboxMin": [
+    -0.264,
+    -0.01,
+    -0.279
+   ],
+   "bboxMax": [
+    1.35,
+    2.462,
+    1.33
+   ]
+  },
+  "PandabornPersimmonTreeMatureDead": {
+   "triangles": 60,
+   "vertices": 75,
+   "bboxMin": [
+    0.1,
+    -0.01,
+    0.037
+   ],
+   "bboxMax": [
+    0.871,
+    1.738,
+    0.887
+   ]
+  },
+  "PandabornPersimmonTreeMatureStump": {
+   "triangles": 21,
+   "vertices": 24,
+   "bboxMin": [
+    0.414,
+    0.0,
+    0.407
+   ],
+   "bboxMax": [
+    0.595,
+    0.24,
+    0.593
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "ChestnutTree",
+ "gatherableDetail": "12 persimmon cards around the crown (detail sheet persimmon_fruit_*), shown while the tree has fruit",
+ "blockHeight": 3,
+ "treeCuttingRadius": 0.145,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.9,
+  "MaxHeightScaleFactor": 1.1,
+  "MinWidthScaleFactor": 0.9,
+  "MaxWidthScaleFactor": 1.1,
+  "RandomizedRotation": "BetweenMinAndMax",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": {
+  "Seedling": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.3,
+     0.5
+    ],
+    "radius": 0.2,
+    "height": 0.7
+   }
+  },
+  "Mature": {
+   "capsule": {
+    "center": [
+     0.5,
+     1.0,
+     0.5
+    ],
+    "radius": 0.3,
+    "height": 2.2
+   }
+  },
+  "#Leftover": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.12,
+     0.5
+    ],
+    "radius": 0.12,
+    "height": 0.3
+   }
+  }
+ }
+}

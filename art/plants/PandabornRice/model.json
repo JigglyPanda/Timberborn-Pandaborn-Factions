@@ -1,0 +1,150 @@
+{
+ "id": "PandabornRice",
+ "template": "PandabornRice.Inkpaws",
+ "kind": "Crops",
+ "material": "PandabornRice",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornRice",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Crops/PandabornRice",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceMatureDead"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Crops/PandabornRice/PandabornRiceMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornRice",
+ "stats": {
+  "PandabornRiceSeedling": {
+   "triangles": 72,
+   "vertices": 144,
+   "bboxMin": [
+    0.01,
+    0.0,
+    0.018
+   ],
+   "bboxMax": [
+    0.955,
+    0.553,
+    0.987
+   ]
+  },
+  "PandabornRiceSeedlingDry": {
+   "triangles": 72,
+   "vertices": 144,
+   "bboxMin": [
+    0.01,
+    0.0,
+    0.018
+   ],
+   "bboxMax": [
+    0.955,
+    0.553,
+    0.987
+   ]
+  },
+  "PandabornRiceSeedlingDead": {
+   "triangles": 72,
+   "vertices": 144,
+   "bboxMin": [
+    0.01,
+    0.0,
+    0.018
+   ],
+   "bboxMax": [
+    0.955,
+    0.387,
+    0.987
+   ]
+  },
+  "PandabornRiceMature": {
+   "triangles": 108,
+   "vertices": 216,
+   "bboxMin": [
+    -0.084,
+    0.0,
+    -0.153
+   ],
+   "bboxMax": [
+    1.115,
+    0.9,
+    1.055
+   ]
+  },
+  "PandabornRiceMatureDry": {
+   "triangles": 108,
+   "vertices": 216,
+   "bboxMin": [
+    -0.084,
+    0.0,
+    -0.153
+   ],
+   "bboxMax": [
+    1.115,
+    0.9,
+    1.055
+   ]
+  },
+  "PandabornRiceMatureDead": {
+   "triangles": 72,
+   "vertices": 144,
+   "bboxMin": [
+    -0.056,
+    0.0,
+    -0.047
+   ],
+   "bboxMax": [
+    1.047,
+    0.671,
+    1.056
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "Cattail",
+ "blockHeight": 2,
+ "water": "stands on the paddy floor; designed for 0.3 deep water (Paddy Spout), readable up to 1.0",
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.95,
+  "MaxHeightScaleFactor": 1.05,
+  "MinWidthScaleFactor": 1.0,
+  "MaxWidthScaleFactor": 1.0,
+  "RandomizedRotation": "By90Degree",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": {
+  "Seedling": {
+   "box": {
+    "center": [
+     0.5,
+     0.25,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.5,
+     1.0
+    ]
+   }
+  },
+  "Mature": {
+   "box": {
+    "center": [
+     0.5,
+     0.45,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.9,
+     1.0
+    ]
+   }
+  }
+ }
+}

@@ -18,7 +18,7 @@ g = m.geo
 C = np.array([1.5, 1.5, 1.0])
 with g.node("#WheelAnimated"):
     K.wheel(g, C, (0, 0, 1), 1.38, width=1.25, spokes=8, rim_r=0.05, material=BAMBOO_GOLD, buckets=0,
-            paddles=16, paddle_depth=0.42, paddle_material=WEAVE_GOLD)
+            paddles=16, paddle_depth=0.5, paddle_material=WEAVE_GOLD)
     # a middle rim so the wide wheel does not read as two
     ring = [C + np.array([np.cos(a), np.sin(a), 0.0]) * 1.38 for a in np.linspace(0, 2 * np.pi, 15)]
     K.tube(g, ring, [0.04] * len(ring), BAMBOO_GREEN, sides=5, caps=False)

@@ -839,8 +839,10 @@ def wheel(geo, center, axis, radius, width=0.3, spokes=8, rim_r=0.035, material=
         a = 2 * math.pi * k / (spokes * 2)
         radial = s * math.cos(a) + u * math.sin(a)
         p = c + radial * radius
-        beam(geo, p - ax * width / 2, p + ax * width / 2, w=0.04, h=0.04, material=TIMBER, tags=tags)
-        if paddles and k % max(1, (spokes * 2) // paddles) == (1 if (spokes * 2) // paddles > 1 else 0):
+        has_paddle = paddles and k % max(1, (spokes * 2) // paddles) == (1 if (spokes * 2) // paddles > 1 else 0)
+        if not has_paddle:      # a paddle is its own cross-member; bars everywhere read as a cage
+            beam(geo, p - ax * width / 2, p + ax * width / 2, w=0.04, h=0.04, material=TIMBER, tags=tags)
+        if has_paddle:
             a_ = c + radial * (radius + 0.04)
             b_ = c + radial * (radius - paddle_depth)
             panel(geo, [b_ - ax * width * 0.55, b_ + ax * width * 0.55, a_ + ax * width * 0.55, a_ - ax * width * 0.55],
