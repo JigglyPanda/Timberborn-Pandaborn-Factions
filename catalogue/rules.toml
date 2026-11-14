@@ -33,7 +33,16 @@ Names = true
 Look = true
 Words = true
 Water = false        # data shapes in buildings.toml follow docs/tech/water.md "For the catalogue lane"
-Ringtails = false    # docs/tech/two-peoples.md 18.1
-RingtailsFallback = false
+Ringtails = true     # docs/tech/two-peoples.md 18.1: adopted 2026-11-14
+RingtailsFallback = true
+RingtailVenues = false   # Opera Stage and Star Tower: no module runs them yet (two-peoples.md has no venue behaviour)
 Festival = false     # docs/tech/events.md 8 (no Festival module in src/code yet)
 Flowering = false
+
+[shelves]
+# Workplace stores sized in hours of work (docs/tech/two-peoples.md 18.3, measured): night couriers have something to
+# carry, and the day crew starts with full inputs. One number each, applied by the generator to every Inkpaw workplace
+# (never below vanilla). The playtest lane may bring workshop_hours down to 24 if workshops hoard logs and poles early.
+workshop_hours = 48            # recipe CyclesCapacity = ceil(hours x MaxWorkers / cycle hours); FuelCapacity scaled alike
+harvest_hours = 16             # flags and farms: output store = ceil(hours x MaxWorkers x harvest_per_worker_hour)
+harvest_per_worker_hour = 2.0

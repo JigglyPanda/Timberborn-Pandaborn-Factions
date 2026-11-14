@@ -58,6 +58,7 @@ param(
     [string]$PackageDir = 'E:\PandabornDev\build\package',
     [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles'),
     [string]$MeshSource = 'E:\PandabornDev\assets\Pandaborn-Reskin-release\Characters\Beaver',
+    [string]$RingtailMeshSource = 'E:\PandabornDev\build\characters\out',
     [string]$ModsDir = 'C:\Users\Israel Gonzalez\Documents\Timberborn\Mods',
     [string]$LinkName = 'PandabornFactions',
     [string[]]$TestArgs = @()
@@ -75,6 +76,12 @@ foreach ($s in $stages) { if ($known -notcontains $s) { throw "unknown stage '$s
 $meshes = [ordered]@{
     'Characters\Pandaborn\InkpawAdult.Model.timbermesh' = Join-Path $MeshSource 'BeaverAdult.Model.timbermesh'
     'Characters\Pandaborn\InkpawChild.Model.timbermesh' = Join-Path $MeshSource 'BeaverChild.Model.timbermesh'
+}
+# the Ringtail bodies (ringtail-body lane, docs/tech/ringtail-body.md), shipped only when the generated data has the
+# Ringtail templates (catalogue/rules.toml [modules] Ringtails)
+$ringtailMeshes = [ordered]@{
+    'Characters\Pandaborn\RingtailAdult.Model.timbermesh' = Join-Path $RingtailMeshSource 'RingtailAdult.Model.timbermesh'
+    'Characters\Pandaborn\RingtailChild.Model.timbermesh' = Join-Path $RingtailMeshSource 'RingtailChild.Model.timbermesh'
 }
 
 function Say([string]$text, [string]$color = 'Gray') { Write-Host $text -ForegroundColor $color }
@@ -251,8 +258,12 @@ foreach ($s in $stages) {
                 if ($missingMesh) { Say ("assemble: {0} model mesh(es) missing; run the models stage first: {1}" -f $missingMesh.Count, ($missingMesh | Select-Object -First 3) -join ', ') 'Red'; $failed += $s; break }
             }
             if (Test-Path $bundleOut) { Add-Tree $map $bundleOut 'bundles' $origins }
-            foreach ($rel in $meshes.Keys) {
-                $from = $meshes[$rel]
+            $allMeshes = [ordered]@{}; foreach ($k in $meshes.Keys) { $allMeshes[$k] = $meshes[$k] }
+            if (Test-Path -LiteralPath (Join-Path $GenDir 'Characters\Pandaborn\RingtailAdult.Inkpaws.blueprint.json')) {
+                foreach ($k in $ringtailMeshes.Keys) { $allMeshes[$k] = $ringtailMeshes[$k] }
+            }
+            foreach ($rel in $allMeshes.Keys) {
+                $from = $allMeshes[$rel]
                 if (-not (Test-Path -LiteralPath $from)) { throw "large mesh missing: $from" }
                 $fs = [IO.File]::OpenRead($from); try { $b0 = $fs.ReadByte(); $b1 = $fs.ReadByte() } finally { $fs.Dispose() }
                 if ($b0 -ne 0x78 -or $b1 -ne 0x9C) { throw "$from does not start with zlib header 78 9C" }

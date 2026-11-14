@@ -23,7 +23,7 @@ PandabornFestivalSquare = { archetype = "storage", standin = "new model", waits_
 PandabornDen = { model = "Den" }
 PandabornCourtyardHouse = { model = "CourtyardHouse" }
 PandabornTerraceHouse = { model = "TerraceHouse" }
-PandabornMoonLoft = { model = "MoonLoft", waits_for = "Ringtails", needs_code = "invites and raises the Ringtails (Ringtails module); until then a home", tool_group = "PandabornNightWatch", tool_order = 10 }
+PandabornMoonLoft = { model = "MoonLoft", waits_for = "Ringtails", needs_code = "invites and raises the Ringtails (Ringtails module); until then a home", tool_group = "PandabornNightWatch", tool_order = 10, delete = ["ProcreationHouseSpec"], module_specs = { Ringtails = { PandabornMoonLoftSpec = { KitsPerDay = 1 } } } }
 
 # ------------------------------------------------------------------ food
 GathererFlag = {}
@@ -112,7 +112,7 @@ DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGener
 # ------------------------------------------------------------------ science and Wooden Oxen
 Inventor = {}
 PandabornOxWorkshop = { basis = "BotAssembler.Folktails", standin = "new model", recipes = ["PandabornWoodenOx"] }
-PandabornStarTower = { model = "StarTower", waits_for = "Ringtails", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory", tool_group = "PandabornNightWatch", tool_order = 50 }
+PandabornStarTower = { model = "StarTower", waits_for = "RingtailVenues", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory", tool_group = "PandabornNightWatch", tool_order = 50 }
 
 # ------------------------------------------------------------------ storage
 SmallWarehouse = {}
@@ -158,16 +158,16 @@ PandabornSlideAndSwing = { basis = "Lido.Folktails", standin = "new model", need
 PandabornKindergarten = { model = "Kindergarten", needs_map = { Campfire = "PandabornCubWatching" }, tool_order = 12, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
 PandabornInkStudio = { basis = "ContemplationSpot.Folktails", standin = "new model", needs_map = { ContemplationSpot = "PandabornContemplation" } }
 PandabornHotSpringBath = { basis = "MudPit.Folktails", standin = "new model", effects = { PandabornSoak = 0.6, WetFur = 0.4 }, set = { "GoodConsumingBuildingSpec.ConsumedGoods" = [{ GoodId = "Water", GoodPerHour = 0.5 }] }, note = "uses water, not dirt (DESIGN.md 2026-11-14); wets the fur as the domed garden does" }
-PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "Ringtails", needs_code = "run by Ringtails", tool_group = "PandabornNightWatch", tool_order = 60 }
+PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "RingtailVenues", needs_code = "run by Ringtails", tool_group = "PandabornNightWatch", tool_order = 60 }
 TeethGrindstone = {}
 MedicalBed = {}
 Herbalist = {}
 Shower = {}
 
 # ------------------------------------------------------------------ Ringtail workplaces (need the Ringtails module; vanilla-behaving until then)
-PandabornNightBuildersPost = { model = "NightBuildersPost", waits_for = "Ringtails", needs_code = "Ringtail-only, works from the bell to dawn; until then a builders' hut", tool_group = "PandabornNightWatch", tool_order = 20 }
-PandabornNightCourierPost = { model = "NightCourierPost", waits_for = "Ringtails", needs_code = "Ringtail-only hauling; until then a hauling post", tool_group = "PandabornNightWatch", tool_order = 30 }
-PandabornNightForagersPost = { model = "NightForagersPost", waits_for = "Ringtails", needs_code = "Ringtail-only gathering; until then a gatherer flag", tool_group = "PandabornNightWatch", tool_order = 40 }
+PandabornNightBuildersPost = { model = "NightBuildersPost", waits_for = "Ringtails", needs_code = "Ringtail-only, works from the bell to dawn; until then a builders' hut", tool_group = "PandabornNightWatch", tool_order = 20, module_specs = { Ringtails = { PandabornNightPostSpec = {} } } }
+PandabornNightCourierPost = { model = "NightCourierPost", waits_for = "Ringtails", needs_code = "Ringtail-only hauling; until then a hauling post", tool_group = "PandabornNightWatch", tool_order = 30, module_specs = { Ringtails = { PandabornNightPostSpec = {} } } }
+PandabornNightForagersPost = { model = "NightForagersPost", waits_for = "Ringtails", needs_code = "Ringtail-only gathering; until then a gatherer flag", tool_group = "PandabornNightWatch", tool_order = 40, module_specs = { Ringtails = { PandabornNightPostSpec = {} } } }
 
 # ------------------------------------------------------------------ decoration
 PandabornStandingLantern = { model = "StandingLantern", tool_order = 20 }

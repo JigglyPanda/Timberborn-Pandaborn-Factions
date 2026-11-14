@@ -126,5 +126,11 @@
   "placeholder_replaced": {
     "_note": "For the record: the mod's CSV currently ships these lines, which this file replaces. The description ended with 'Early development build: the Inkpaws borrow Folktails buildings and crops for now.'",
     "keys": ["Faction.Inkpaws.DisplayName", "Faction.Inkpaws.Description", "Faction.Inkpaws.GameOver.Flavor", "Faction.Inkpaws.GameOver.Message", "Faction.Inkpaws.WonderCompletionFlavor", "Faction.Inkpaws.WonderCompletionMessage", "Bot.DisplayName.Inkpaws"]
+  },
+  "worker_types": {
+    "PandabornRingtail": {
+      "plural": { "key": "Pandaborn.Ringtails.PluralDisplayName", "text": "Ringtails", "translator_comment": "Plural name of the red panda colonists (a worker type)" },
+      "worker_only": { "key": "Pandaborn.Ringtails.WorkerOnly", "text": "<YellowHighlight>Night post:</YellowHighlight> Only Ringtails work here, from the afternoon bell to dawn.", "translator_comment": "Keyword line on a Ringtail workplace" }
+    }
   }
 }

@@ -70,7 +70,7 @@ wastable = false
 src = "V (Contemplation Spot)"
 
 [needs.PandabornPerformance]
-waits_for = "Ringtails"   # only the Opera Stage raises it, and the Ringtails run it
+waits_for = "RingtailVenues"   # only the Opera Stage raises it, and no module runs the stage yet
 basis = "DanceHall"
 name_from = "own"
 group = "Fun"

@@ -6,6 +6,7 @@ provenance (vanilla source path and its sha256, catalogue item). Nothing is gues
 template the faction does not have, a loc key that would overwrite vanilla text, a duplicate id all raise GenError.
 """
 import copy
+import math
 import os
 import re
 
@@ -152,6 +153,8 @@ class Generator:
         self.gen_own_decals(self.cat["faction"].get("decals", {}))
         self.gen_tool_groups()
         self.gen_faction_keyed("WorkerOutfits", "WorkerOutfitSpec", self.cat["faction"].get("outfits", {}))
+        self.gen_worker_types()
+        self.gen_extra_outfits(self.cat["faction"].get("outfits", {}))
         content.gen_goods(self)
         self.gen_buildings()
         content.gen_needs(self)
@@ -161,6 +164,7 @@ class Generator:
         self.gen_poles()
         self.gen_modifiers()
         self.gen_tutorial()
+        self.apply_shelves()
         self.gen_collections()
         self.gen_faction()
         return self
@@ -171,6 +175,8 @@ class Generator:
         coll = []
         for cid, c in chars.items():
             item = self.cat.where("faction", "characters." + cid)
+            if self.skip_for_module("template", c["template"], c):
+                continue
             key = self.vanilla_template_key(c["basis"], item)
             data = self.v.copy(key)
             self.set_template(data, c["template"], c.get("aliases"), item)
@@ -181,7 +187,9 @@ class Generator:
             for spec, body in (c.get("add") or {}).items():
                 data[spec] = copy.deepcopy(body)
             self.apply_module_specs(data, c.get("module_specs"), item)
-            coll.append(self.emit(c["path"], data, item, "character", key))
+            path = self.emit(c["path"], data, item, "character", key)
+            if c.get("in_collection", True):
+                coll.append(path)   # in_collection = false: made by code from its blueprint path (the Ringtails)
         if coll:
             self.collections["Characters." + self.faction_id] = coll
 
@@ -286,6 +294,94 @@ class Generator:
             self.emit("BlockObjectToolGroups/Pandaborn/BlockObjectToolGroup.%s" % gid,
                       {"BlockObjectToolGroupSpec": {"Id": gid, "Order": int(g["order"]), "NameLocKey": g["name_key"],
                                                     "Icon": g["icon"], "FallbackGroup": False}}, item, "tool_group")
+
+    def gen_worker_types(self):
+        """[worker_types.<Id>] in faction.toml: global worker types (WorkerTypeSpec). Saves store a workplace's worker
+        type and the game throws on an unknown one, so a worker type ships in every build once released."""
+        texts = (self.cat.text.get("faction") or {}).get("worker_types") or {}
+        for wid, w in (self.cat["faction"].get("worker_types") or {}).items():
+            item = self.cat.where("faction", "worker_types." + wid)
+            unknown = set(w) - {"ignores_working_hours", "note"}
+            if unknown:
+                raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
+            if not wid.startswith("Pandaborn"):
+                raise GenError("%s: a worker type id is global; start it with Pandaborn" % item)
+            t = texts.get(wid)
+            if not t:
+                raise GenError("%s: no text/faction.json worker_types entry" % item)
+            for part in ("plural", "worker_only"):
+                self.add_loc("Faction", t[part]["key"], t[part]["text"], t[part].get("translator_comment"), item)
+            self.add_id("worker_type", wid, item)
+            self.emit("WorkerTypes/Pandaborn/WorkerType.%s" % wid, {"WorkerTypeSpec": {
+                "Id": wid, "BackwardCompatibleIds": [], "IgnoresWorkingHours": bool(w.get("ignores_working_hours")),
+                "DisplayNameLocKey": t["plural"]["key"], "WorkerOnlyTextLocKey": t["worker_only"]["key"]}}, item,
+                "worker_type")
+
+    def gen_extra_outfits(self, conf):
+        """[outfits] extra = [{ copy = "<outfit id>", worker_type = "<id>", set = {...} }]: an outfit of the copied
+        faction's Beaver set, for another worker type of ours (the Ringtails)."""
+        src = conf.get("copy_faction")
+        item = self.cat.where("faction", "outfits")
+        for e in conf.get("extra") or []:
+            path = "WorkerOutfits/WorkerOutfit.%s.Beaver.%s.blueprint" % (e["copy"], src)
+            key = self.vanilla_template_key(path, item)
+            data = self.v.copy(key)
+            data["WorkerOutfitSpec"]["FactionId"] = self.faction_id
+            data["WorkerOutfitSpec"]["WorkerType"] = e["worker_type"]
+            for f, v in (e.get("set") or {}).items():
+                if f not in data["WorkerOutfitSpec"]:
+                    raise GenError("%s: extra outfit %s: no field %s" % (item, e["copy"], f))
+                data["WorkerOutfitSpec"][f] = copy.deepcopy(v)
+            if e["worker_type"] not in self.ids.get("worker_type", {}):
+                raise GenError("%s: extra outfit for unknown worker type %s" % (item, e["worker_type"]))
+            self.emit("WorkerOutfits/Pandaborn/WorkerOutfit.%s.%s.%s" % (e["copy"], e["worker_type"], self.faction_id),
+                      data, item, "outfits", key)
+
+    def apply_shelves(self):
+        """rules.toml [shelves] (docs/tech/two-peoples.md 18.3): every Inkpaw workshop recipe holds `workshop_hours` of
+        work at full staffing, CyclesCapacity = ceil(hours x MaxWorkers / CycleDurationInHours), FuelCapacity scaled
+        by the same factor; every Inkpaw flag and farm holds `harvest_hours` of harvest, SimpleOutputInventorySpec
+        .Capacity = ceil(hours x MaxWorkers x harvest_per_worker_hour). Never below the vanilla number. Our recipes are
+        changed in place; vanilla recipes our buildings use get an Inkpaws-only modifier."""
+        conf = self.rules.get("shelves") or {}
+        if not conf:
+            return
+        item = "catalogue/rules.toml [shelves]"
+        wh, hh, rate = float(conf["workshop_hours"]), float(conf["harvest_hours"]), float(conf["harvest_per_worker_hour"])
+        workers = {}
+        for o in list(self.outputs.values()):
+            d = o.data
+            if o.kind != "building" or "WorkplaceSpec" not in d:
+                continue
+            mw = int(d["WorkplaceSpec"].get("MaxWorkers") or 0)
+            if mw <= 0:
+                continue
+            for rid in (d.get("ManufactorySpec") or {}).get("ProductionRecipeIds") or []:
+                workers[rid] = max(workers.get(rid, 0), mw)
+            so = d.get("SimpleOutputInventorySpec")
+            if so and "YieldRemovingBuildingSpec" in d:
+                so["Capacity"] = max(int(so.get("Capacity") or 0), int(math.ceil(hh * mw * rate)))
+        ours = {o.data["RecipeSpec"]["Id"]: o for o in self.outputs.values() if "RecipeSpec" in o.data
+                and o.path.startswith("Recipes/")}
+        for rid, mw in sorted(workers.items()):
+            if rid in ours:
+                rs = ours[rid].data["RecipeSpec"]
+            else:
+                key = self.v.ids["RecipeSpec"].get(rid)
+                if key is None:
+                    raise GenError("%s: recipe %s is neither ours nor vanilla" % (item, rid))
+                rs = copy.deepcopy(self.v.get(key)["RecipeSpec"])
+            old = int(rs.get("CyclesCapacity") or 0)
+            new = max(old, int(math.ceil(wh * mw / float(rs["CycleDurationInHours"]))))
+            fuel_old = int(rs.get("FuelCapacity") or 0)
+            fuel_new = int(math.ceil(fuel_old * new / float(old))) if old and fuel_old else fuel_old
+            if rid in ours:
+                rs["CyclesCapacity"], rs["FuelCapacity"] = new, fuel_new
+            elif new != old or fuel_new != fuel_old:
+                body = {"CyclesCapacity": new}
+                if fuel_new != fuel_old:
+                    body["FuelCapacity"] = fuel_new
+                self.add_modifier(key, "Shelf.Recipe." + rid, {"RecipeSpec": body}, item)
 
     def gen_faction_keyed(self, folder, spec, conf):
         src = conf.get("copy_faction")

@@ -316,27 +316,23 @@
         "since": "2026-11-14"
       },
       "PandabornMoonLoft.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornNapPlatform.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornNightBuildersPost.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornNightCourierPost.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornNightForagersPost.Inkpaws": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornOperaStage.Inkpaws": {
         "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "gatedBy": "RingtailVenues"
       },
       "PandabornOxWorkshop.Inkpaws": {
         "since": "2026-11-14"
@@ -387,7 +383,7 @@
       },
       "PandabornStarTower.Inkpaws": {
         "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "gatedBy": "RingtailVenues"
       },
       "PandabornSteamer.Inkpaws": {
         "since": "2026-11-14"
@@ -446,6 +442,12 @@
         "since": "2026-11-14"
       },
       "ResourceCounter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "RingtailAdult.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "RingtailChild.Inkpaws": {
         "since": "2026-11-14"
       },
       "Roof1x1.Inkpaws": {
@@ -567,6 +569,12 @@
       }
     },
     "template_alias": {
+      "RingtailAdult.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "RingtailChild.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "Stairs.Folktails": {
         "since": "2026-11-14"
       }
@@ -698,7 +706,7 @@
       },
       "PandabornPerformance": {
         "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "gatedBy": "RingtailVenues"
       },
       "PandabornPersimmons": {
         "since": "2026-11-14"
@@ -781,14 +789,17 @@
         "since": "2026-11-14"
       }
     },
-    "worker_type": {},
+    "worker_type": {
+      "PandabornRingtail": {
+        "since": "2026-11-14"
+      }
+    },
     "spec_class": {},
     "save_key": {},
     "bundle": {},
     "tool_group": {
       "PandabornNightWatch": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       }
     },
     "tutorial": {
@@ -812,8 +823,7 @@
         "since": "2026-11-14"
       },
       "PandabornRingtails": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornTutorial.Bell": {
         "since": "2026-11-14"
@@ -835,8 +845,7 @@
         "since": "2026-11-14"
       },
       "PandabornTutorial.MoonLoft": {
-        "since": "2026-11-14",
-        "gatedBy": "Ringtails"
+        "since": "2026-11-14"
       },
       "PandabornTutorial.PoleMill": {
         "since": "2026-11-14"

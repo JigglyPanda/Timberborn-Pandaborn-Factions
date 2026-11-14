@@ -293,7 +293,7 @@ src = "M q8"
 
 [stats.PandabornNightBuildersPost]
 cost = { Log = 15, Plank = 10 }
-science = 0
+science = 50
 workers = 4
 default_workers = 4
 src = "M q5"
