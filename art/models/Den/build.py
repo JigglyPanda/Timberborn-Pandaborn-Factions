@@ -26,7 +26,7 @@ K.plinth(g, 0.05, 0.08, 1.95, 1.92, h=BASE)
 with g.tagged("walls"):
     # front: lattice window left, door right of centre (entrance cell x = 1)
     K.wall(g, (WX0, WZ0), (WX1, WZ0), BASE, TOP,
-           openings=[("window", 0.24, 0.42, 0.26, 0.66), ("door", 0.71, 0.38, 0.0, 0.66)])
+           openings=[("window", 0.26, 0.44, 0.2, 0.74), ("door", 0.71, 0.38, 0.0, 0.66)])   # big lattice: glows at night
     K.wall(g, (WX1, WZ0), (WX1, WZ1), BASE, TOP, openings=[("window", 0.5, 0.4, 0.26, 0.64)])
     K.wall(g, (WX1, WZ1), (WX0, WZ1), BASE, TOP, openings=[("panes", 0.35, 0.42, 0.42, 0.62)])
     K.wall(g, (WX0, WZ1), (WX0, WZ0), BASE, TOP, openings=[("window", 0.5, 0.34, 0.3, 0.6)], braces=True)

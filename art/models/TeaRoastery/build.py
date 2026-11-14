@@ -1,9 +1,10 @@
 """Tea Roastery: tea leaves into tea. 2x3 on the vanilla Bakery's workshop footprint (one worker, the bakery smoke
 rising from the roasting stove).
 
-An open-fronted plastered workshop under a grey-tile gable: two big iron roasting woks set in a clay stove, and in the
-yard tiers of round woven trays of green leaves drying on a bamboo rack, baskets of fresh leaves, clay tea jars on a
-shelf, a lantern.
+An open-fronted plastered workshop under a grey-tile gable: two big iron roasting woks set in a clay stove; in front
+of the roofline a rack of two stepped tiers of wide, shallow, pale bamboo trays of green and roasted leaf, tilted
+toward the street (the one thing that tells it from every other workshop from the game camera); trays drying on the
+side shelf, a basket of fresh leaves, clay tea jars on a shelf, a lantern.
 """
 import math
 import os
@@ -36,22 +37,27 @@ for x in (0.7, 1.3):
     K.lathe(g, [(0.0, 0.0), (0.2, 0.05), (0.26, 0.11)], (x, 0.48, 2.32), 8, IRON, cap_top=False)
     K.lathe(g, [(0.0, 0.0), (0.18, 0.02), (0.0, 0.04)], (x, 0.5, 2.32), 8, MOSS, cap_top=False)
 K.tube(g, [(1.55, 0.55, 2.55), (1.57, 1.95, 2.6)], [0.07, 0.06], EARTH, sides=6)
-# the drying rack of round woven trays in the yard
-for x in (0.2, 1.1):
-    for z in (0.3, 1.0):
-        K.pole(g, (x, B, z), (x, 1.0, z), r=0.025, material=BAMBOO_GOLD, sides=4, bend=0.0)
-for y in (0.35, 0.62, 0.9):
-    for (x, z) in ((0.4, 0.5), (0.9, 0.5), (0.4, 0.82), (0.9, 0.82)):
-        K.lathe(g, [(0.0, 0.0), (0.2, 0.0), (0.22, 0.03)], (x, y, z), 8, WEAVE_GOLD, cap_top=False)
-        K.lathe(g, [(0.17, 0.012), (0.0, 0.012)], (x, y, z), 7, MOSS, cap_top=False)
-        lid = g.parts[-1]
-        lid.N[:] = (0, 1, 0)
-        lid.T = fix_winding(lid.P, lid.N, lid.T)
-    K.pole(g, (0.15, y - 0.01, 0.3), (1.15, y - 0.01, 0.3), r=0.015, material=BAMBOO_GOLD, sides=3, bend=0.0, caps=False)
-    K.pole(g, (0.15, y - 0.01, 1.0), (1.15, y - 0.01, 1.0), r=0.015, material=BAMBOO_GOLD, sides=3, bend=0.0, caps=False)
+# the drying rack in the yard, out from under the roof: two stepped tiers of wide, shallow, pale bamboo trays of
+# leaf, tilted toward the street (and the camera), green fresh leaf and brown roasted leaf
+for x in (0.1, 1.9):
+    for z, top in ((0.18, 0.62), (0.78, 1.02)):
+        K.pole(g, (x, B, z), (x, top, z), r=0.03, material=BAMBOO_GOLD, sides=5, bend=0.0)
+    K.pole(g, (x, 0.5, 0.18), (x, 0.92, 0.78), r=0.022, material=BAMBOO_GOLD, sides=4, bend=0.0, caps=False)
+for z, y in ((0.18, 0.55), (0.78, 0.95)):
+    K.pole(g, (0.04, y, z), (1.96, y, z), r=0.02, material=BAMBOO_GOLD, sides=4, bend=0.0)
+for row, (z, y) in enumerate(((0.36, 0.6), (0.92, 1.0))):
+    for k, x in enumerate((0.36, 1.0, 1.64)):
+        n0 = len(g.parts)
+        K.tray(g, (x, y, z), r=0.31, tilt=(-0.5, 0.0), leaf=MOSS, fill=0.85)
+        if (row + k) % 2:
+            leaf = g.parts[-1]
+            leaf.C = np.tile([0.55, 0.38, 0.22, 1.0], (len(leaf.P), 1))
+# two more trays drying flat on the shelf over the stove room's side
+for z in (1.75, 2.35):
+    K.tray(g, (0.0, 1.32, z), r=0.24, tilt=(0.0, 0.25), leaf=MOSS)
 # baskets of fresh leaves, tea jars on a shelf, lantern
-K.basket(g, (1.55, B, 0.45), h=0.16, r=0.14)
-K.lathe(g, [(0.0, 0.14), (0.12, 0.16)], (1.55, B, 0.45), 7, MOSS, cap_top=False)
+K.basket(g, (1.72, B, 1.12), h=0.16, r=0.14)
+K.lathe(g, [(0.0, 0.14), (0.12, 0.16)], (1.72, B, 1.12), 7, MOSS, cap_top=False)
 K.box(g, (1.5, 0.6, 1.4), (1.85, 0.64, 1.95), TIMBER, WOOD_STRIPS[0])
 for k in range(3):
     K.jar(g, (1.62 + 0.1 * (k % 2), 0.64, 1.5 + 0.18 * k), h=0.18, r=0.06, material=PLASTER)
@@ -63,5 +69,5 @@ m.slot("Entrance", (1.0, B, 1.6), yaw=180)
 m.attach("Smoke", (1.57, 2.0, 2.6), "the vanilla bakery smoke from the stove flue")
 m.extra["access"] = {"X": 1.0, "Y": B, "Z": 1.5}
 m.collider((1.0, 0.7, 2.1), (1.9, 1.4, 1.6))
-m.collider((0.65, 0.5, 0.65), (1.1, 1.0, 0.9))
+m.collider((1.0, 0.55, 0.6), (1.9, 1.0, 0.9))
 m.build()

@@ -26,7 +26,7 @@
     "Size": {
       "X": 1,
       "Y": 2,
-      "Z": 1
+      "Z": 2
     },
     "Blocks": [
       {
@@ -39,6 +39,20 @@
       {
         "MatterBelow": "Any",
         "Occupations": "Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false

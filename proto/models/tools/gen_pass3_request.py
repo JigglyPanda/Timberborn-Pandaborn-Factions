@@ -26,15 +26,16 @@ def at_hour(h):
 
 
 # every placeable prototype except the Village Hall (a second district centre joined by a path crashes the game) and
-# the water machines that need a river (Scoop Wheel, Bamboo Water Wheel, Paddy Spout)
+# the water machines that need a river (Scoop Wheel, Bamboo Water Wheel, Paddy Spout, Treadwheel Lift)
 ids = ["Den", "Hammock", "Teahouse", "Kindergarten", "CourtyardHouse", "TerraceHouse", "PaddyHouse",
        "NightBuildersPost", "NightCourierPost", "NightForagersPost", "StarTower", "FestivalSquare", "HotSpringBath",
        "InkStudio", "OperaStage", "SlideAndSwing", "Steamer", "PickleYard", "TeaRoastery", "LanternWorkshop",
-       "HotPotHall", "SmokeKiln", "KiteWindmill", "BambooPinwheel", "DewCollector", "MemorialArch",
+       "HotPotHall", "SmokeKiln", "Kitchen", "TripHammerMill", "OxWorkshop", "KiteWindmill", "LargeKiteWindmill",
+       "NapPlatform", "DryStoneWall", "CisternTap", "FlumeBridgeSpan", "BambooPinwheel", "DewCollector", "MemorialArch",
        "GreatSittingPanda", "SkyLantern", "CisternLarge", "CisternMedium", "Cistern", "StandingLantern",
        "HangingLantern", "StringLanterns", "PandaStatue", "PottedPine", "GoldfishBowl", "GardenMoonGate",
        "Flume", "FlumeGate", "FlumeBridge", "FlumeDrop", "FlumeCorner"]
-small = {"Hammock", "InkStudio", "Cistern", "StandingLantern", "HangingLantern", "StringLanterns", "Flume",
+small = {"DryStoneWall", "CisternTap", "FlumeBridgeSpan", "Hammock", "InkStudio", "Cistern", "StandingLantern", "HangingLantern", "StringLanterns", "Flume",
          "FlumeGate", "FlumeBridge", "NightForagersPost", "BambooPinwheel", "PandaStatue", "PottedPine",
          "GoldfishBowl", "BambooFence"}
 
@@ -58,7 +59,7 @@ for i in ["MoonLoft", "BambooFence"] + ids:
     shots.append({"name": f"{i}_3q", "kind": "building", "target": T(i), "at": "start", "front": True, "yaw": 35,
                   "pitch": 30, "zoom": 1.25, "minDistance": md * 0.8})
 # rotors: two frames a few seconds apart
-for i in ("BambooPinwheel", "KiteWindmill"):
+for i in ("BambooPinwheel", "KiteWindmill", "LargeKiteWindmill"):
     for k, t in enumerate((8.0, 9.5)):
         shots.append({"name": f"{i}_turn_{k}", "kind": "building", "target": T(i), "at": str(t), "front": True,
                       "yaw": 20, "pitch": 30, "zoom": 1.1, "minDistance": 3.0 if i in small else 5.0})

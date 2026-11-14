@@ -9,9 +9,38 @@
  "size": {
   "X": 1,
   "Y": 2,
-  "Z": 1
+  "Z": 2
  },
- "blocks": null,
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "BlockObject",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
  "entrance": null,
  "slots": [],
  "animatedNodes": [],
@@ -43,7 +72,7 @@
  ],
  "attachments": [],
  "triangles": {
-  "finished": 594,
+  "finished": 990,
   "constructionStage0": 280,
   "vanillaMedianForFootprint": 520
  },
@@ -53,11 +82,19 @@
   "BaseWood_Yellow.Folktails",
   "Details.Folktails",
   "Plaster_White.Folktails",
-  "Sand.Folktails"
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails"
  ],
  "notes": [
-  "Blocks as the vanilla Fill Valve (1x2x1, second cell 'Middle' only over the field).",
+  "Blocks as the vanilla Fill Valve (1x2x1, second cell 'Middle' only over the field) plus a cap layer: (0,0,1) occupied (the hood), (0,1,1) free.",
   "The spout tip is at about y = 0.0 over the far cell: water seems to pour from it into the field."
+ ],
+ "capCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 1
+  }
  ],
  "outputCell": {
   "X": 0,

@@ -21,7 +21,7 @@ K.plinth(g, 0.04, 0.05, 1.96, 1.95, h=B)
 # main hall along the back: two storeys, gallery under the front eave
 MZ0, MZ1, MTOP, MRIDGE = 1.0, 1.85, 1.3, 1.95
 with g.tagged("walls"):
-    K.wall(g, (0.12, MZ0), (1.88, MZ0), B, 0.68, openings=[("door", 0.3, 0.32, 0.0, 0.52), ("window", 0.7, 0.3, 0.2, 0.46)])
+    K.wall(g, (0.12, MZ0), (1.88, MZ0), B, 0.68, openings=[("door", 0.3, 0.32, 0.0, 0.52), ("window", 0.7, 0.42, 0.12, 0.5)])
     K.wall(g, (0.12, MZ0 + 0.06), (1.88, MZ0 + 0.06), 0.68, MTOP, openings=[("panes", 0.3, 0.36, 0.14, 0.4),
                                                                       ("panes", 0.72, 0.36, 0.14, 0.4)], rail=False)
     K.wall(g, (1.88, MZ1), (0.12, MZ1), B, MTOP)

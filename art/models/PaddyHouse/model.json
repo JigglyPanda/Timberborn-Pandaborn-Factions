@@ -130,7 +130,7 @@
  ],
  "attachments": [],
  "triangles": {
-  "finished": 1839,
+  "finished": 1639,
   "constructionStage0": 1170,
   "vanillaMedianForFootprint": 1250
  },
@@ -138,13 +138,13 @@
   "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
   "Details.Folktails",
+  "IrregularPlanks_Brown.Folktails",
   "IrregularPlanks_LightBrown.Folktails",
   "IrregularPlanks_White.Folktails",
   "Moss.Folktails",
   "Plaster_White.Folktails",
   "PlasteredWood_White.Folktails",
   "Sand.Folktails",
-  "ThatchedRoof.Folktails",
   "WindowsAtlas.Folktails"
  ],
  "notes": [

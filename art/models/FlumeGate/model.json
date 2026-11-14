@@ -9,11 +9,18 @@
  "size": {
   "X": 1,
   "Y": 1,
-  "Z": 1
+  "Z": 2
  },
  "blocks": [
   {
    "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
    "Occupations": "Bottom, Top, Corners, Path, Middle",
    "Stackable": "None",
    "OccupyAllBelow": false,
@@ -35,11 +42,23 @@
     "Y": 1.1,
     "Z": 1.0
    }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 1.8,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 0.3,
+    "Z": 1.0
+   }
   }
  ],
  "attachments": [],
  "triangles": {
-  "finished": 498,
+  "finished": 918,
   "constructionStage0": 136,
   "vanillaMedianForFootprint": 300
  },
@@ -48,9 +67,17 @@
   "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
   "Details.Folktails",
-  "Plaster_White.Folktails"
+  "Plaster_White.Folktails",
+  "ThatchedRoof.Folktails"
  ],
  "notes": [],
+ "capCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 1
+  }
+ ],
  "waterCells": [
   {
    "X": 0,

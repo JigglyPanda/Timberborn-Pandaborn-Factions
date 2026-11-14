@@ -1,0 +1,116 @@
+{
+ "id": "LargeKiteWindmill",
+ "standIn": "LargeWindTurbine.Folktails",
+ "generatedBy": "art/models/LargeKiteWindmill/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "LargeKiteWindmill.Model",
+  "constructionStage0": "LargeKiteWindmill.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 5
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [
+  {
+   "node": "#KiteTower",
+   "driver": "WindRotationAnimatorSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.0,
+    "Z": 1.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.Tower (yaws to the wind)"
+  },
+  {
+   "node": "#KiteRotor",
+   "driver": "WindRotationAnimatorSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 1.0,
+    "Z": 1.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WindRotationAnimatorSpec.WindRotators (turns about y)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 2.4,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 2.8,
+    "Y": 3.8,
+    "Z": 2.8
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2206,
+  "constructionStage0": 1026,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "PaintedMetal.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails"
+ ],
+ "notes": [
+  "Blocks, transput and wind specs as the vanilla Large Wind Turbine (3x3x5).",
+  "A vertical-axis sail windmill: it turns the same whichever way the wind blows."
+ ],
+ "windRotationAnimator": {
+  "WindRotators": [
+   {
+    "TransformName": "#KiteRotor",
+    "RotationAxis": {
+     "X": 0.0,
+     "Y": 1.0,
+     "Z": 0.0
+    },
+    "RotationSpeed": 55.0
+   }
+  ],
+  "Tower": {
+   "TransformName": "#KiteTower",
+   "RotationAxis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "RotationSpeed": 75.0
+  }
+ }
+}

@@ -1,6 +1,7 @@
 """Night Builders' Post: the Ringtails' first workplace (builders from the bell to dawn). 3x2 on the vanilla Builders'
 Hut. The moon mark of the Ringtail buildings: a big round moon window glowing in a white back wall. An open timber
-shed under a grey-tile lean-to: stacks of poles and planks, a sawhorse, baskets of lashing rope, a ladder, lanterns.
+shed under a grey-tile lean-to, tall bamboo shear legs with a hoisted bundle of poles over the yard (its mark from the
+game camera): stacks of poles and planks, a sawhorse, baskets of lashing rope, a ladder, lanterns.
 """
 import math
 import os
@@ -47,6 +48,17 @@ K.basket(g, (2.25, B, 0.5), h=0.12, r=0.1, material=WEAVE)
 K.ladder(g, (1.62, B, 0.36), (1.56, 1.1, 0.32), width=0.26, rungs=5)
 for x in (0.16, 2.84):
     K.lantern(g, (x, 1.08, 0.22), r=0.07, h=0.16)
+# the builders' mark from the game camera: tall bamboo shear legs over the yard, a pulley and a rope with a bundle of
+# poles hanging from it, taller than the roof
+TOPH = np.array([0.45, 2.6, 0.05])
+for foot in ((-0.05, B, -0.15), (1.0, B, -0.15), (0.4, B, 0.85)):
+    K.pole(g, foot, tuple(TOPH), r=0.035, material=BAMBOO_GOLD, sides=5, bend=0.008)
+K.lashing(g, tuple(TOPH - [0, 0.08, 0]), (0, 1, 0), r=0.07)
+K.wheel(g, tuple(TOPH - [0, 0.2, 0]), (1, 0, 0), 0.09, width=0.04, spokes=4, rim_r=0.015, material=TIMBER)
+K.beam(g, tuple(TOPH - [0, 0.2, 0.09]), (0.55, 0.95, 0.11), w=0.012, material=DETAILS, caps=False)
+for k in range(5):
+    K.pole(g, (0.3, 0.9 - 0.05 * (k % 2), 0.08 + 0.04 * k), (0.8, 0.95 - 0.05 * (k % 2), 0.1 + 0.04 * k), r=0.025,
+           material=BAMBOO_GREEN, sides=4, bend=0.0)
 PX, PZ, PH = 2.6, 1.86, 1.55
 # the moon mark seen from the high camera: a glowing moon plaque on a bamboo pole above the roof, a crescent on top
 K.pole(g, (PX, 0.0, PZ), (PX, PH + 0.55, PZ), r=0.035, material=BAMBOO_GOLD, sides=5, bend=0.005)

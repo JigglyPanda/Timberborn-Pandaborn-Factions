@@ -1,6 +1,7 @@
 """Paddy House: the rice farmers' house. 3x2x2 on the vanilla Aquatic Farmhouse (its blocks, entrance, workplace).
 
-A long low farmhouse on a stone plinth under a grey-tile gable roof, its front open as a work porch: sheaves of rice
+A long low farmhouse on a stone plinth under a thick rice-straw thatch roof (gold from above: the Paddy House's
+mark), its front open as a work porch: sheaves of rice
 drying on a bamboo rack, conical rice hats hung on the posts, seedling trays, a rice-threshing tub, a water buffalo
 yoke against the wall; a lattice window and a lantern.
 """
@@ -28,7 +29,8 @@ with g.tagged("walls"):
     K.gable_end(g, 0.12, 0.25, WZ1, TOP, RIDGE, outward=-1)
     K.gable_end(g, 2.88, 0.25, WZ1, TOP, RIDGE, outward=1)
 # roof over house and porch together: the front slope runs down over the porch posts
-K.roof(g, 0.12, 0.25, 2.88, WZ1, TOP, RIDGE, kind="gable", overhang=0.2, sag=0.09, lift=0.05, ridge_ends=0.06)
+# rice-straw thatch, the farm roof of the Sichuan plain: gold from the game camera where workshops read charcoal tile
+K.thatch_roof(g, 0.12, 0.25, 2.88, WZ1, TOP, RIDGE + 0.08, overhang=0.22, thick=0.14, bulge=0.06)
 for x in (0.14, 1.0, 2.0, 2.86):
     K.pole(g, (x, B, 0.28), (x, TOP - 0.02, 0.28), r=0.045, material=TIMBER, sides=6, bend=0.01, taper=0.92,
            tags={"frame"})

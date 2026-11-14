@@ -1,0 +1,71 @@
+{
+ "id": "FlumeBridgeSpan",
+ "standIn": "ThrottlingValve.Folktails",
+ "generatedBy": "art/models/FlumeBridgeSpan/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "FlumeBridgeSpan.Model",
+  "constructionStage0": "FlumeBridgeSpan.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 1.2,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 0.45,
+    "Z": 1.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 508,
+  "constructionStage0": 316,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails"
+ ],
+ "notes": [
+  "The water lane's FlumeBridgeSpan: same water cell as the Flume Bridge; no inert obstacle and no legs in the cell below. Stringers overhang the cell's front and back edges by 0.1 to rest on the neighbours."
+ ],
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 1
+  }
+ ],
+ "flow": "along +Y (grid) for orientation Cw0",
+ "spanOver": "the lower cell (0, 0, 0) is unoccupied: a ground flume or a path may run under the span"
+}

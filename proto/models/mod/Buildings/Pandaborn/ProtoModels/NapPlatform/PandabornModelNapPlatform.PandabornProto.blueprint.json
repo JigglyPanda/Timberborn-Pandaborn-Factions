@@ -40,7 +40,7 @@
   "EnterableSpec": {
     "OperatingState": "Finished",
     "LimitedCapacityFinished": true,
-    "CapacityFinished": 8,
+    "CapacityFinished": 5,
     "LimitedCapacityUnfinished": false,
     "CapacityUnfinished": 0
   },
@@ -58,42 +58,42 @@
     },
     "Blocks": [
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "Stackable",
+        "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
@@ -115,7 +115,7 @@
   "BuildingAccessibleSpec": {
     "LocalAccess": {
       "X": 1.5,
-      "Y": 0.12,
+      "Y": 0.26,
       "Z": 0.4
     },
     "ForceOneFinalAccess": false
@@ -189,12 +189,12 @@
           {
             "Center": {
               "X": 1.5,
-              "Y": 0.08,
+              "Y": 0.13,
               "Z": 1.0
             },
             "Size": {
               "X": 3.0,
-              "Y": 0.16,
+              "Y": 0.26,
               "Z": 2.0
             }
           }

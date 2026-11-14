@@ -213,12 +213,12 @@
   },
   {
    "Center": {
-    "X": 0.65,
-    "Y": 0.5,
-    "Z": 0.65
+    "X": 1.0,
+    "Y": 0.55,
+    "Z": 0.6
    },
    "Size": {
-    "X": 1.1,
+    "X": 1.9,
     "Y": 1.0,
     "Z": 0.9
    }
@@ -236,7 +236,7 @@
   }
  ],
  "triangles": {
-  "finished": 1963,
+  "finished": 2491,
   "constructionStage0": 1020,
   "vanillaMedianForFootprint": 1250
  },
@@ -246,6 +246,7 @@
   "BaseWood_LightBrown.Folktails",
   "Details.Folktails",
   "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
   "Moss.Folktails",
   "Plaster_White.Folktails",
   "PlasteredWood_White.Folktails",

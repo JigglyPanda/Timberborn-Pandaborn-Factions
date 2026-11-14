@@ -1,0 +1,201 @@
+{
+ "id": "OxWorkshop",
+ "standIn": "BotAssembler.Folktails",
+ "generatedBy": "art/models/OxWorkshop/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "OxWorkshop.Model",
+  "constructionStage0": "OxWorkshop.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 2.0,
+    "Y": 0.08,
+    "Z": 2.2
+   },
+   "yaw": 0
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#OxTurntable",
+   "driver": "BotManufactoryAnimationControllerSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 0.11,
+    "Z": 1.35
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "BotManufactoryAnimationControllerSpec.RingName (turns about its up axis)"
+  },
+  {
+   "node": "#OxAuger",
+   "driver": "BotManufactoryAnimationControllerSpec",
+   "pivot": {
+    "X": 2.26,
+    "Y": 0.62,
+    "Z": 2.45
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 1.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "BotManufactoryAnimationControllerSpec.DrillName (turns about its forward axis)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.3,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 2.8,
+    "Y": 0.6,
+    "Z": 2.8
+   }
+  },
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.8,
+    "Z": 2.65
+   },
+   "Size": {
+    "X": 2.8,
+    "Y": 0.6,
+    "Z": 0.6
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Smoke",
+   "Position": {
+    "X": 1.5,
+    "Y": 0.6,
+    "Z": 1.4
+   },
+   "note": "the vanilla bot-assembler smoke (sawdust) over the turntable"
+  }
+ ],
+ "triangles": {
+  "finished": 2204,
+  "constructionStage0": 840,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks and driveway as the vanilla Bot Assembler (3x3x1, NarrowCenter driveway); the front centre is kept clear. Set BotManufactoryAnimationControllerSpec RingName/DrillName from botManufactoryAnimation."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.08,
+  "Z": 0.1
+ },
+ "botManufactoryAnimation": {
+  "RingName": "#OxTurntable",
+  "DrillName": "#OxAuger"
+ }
+}

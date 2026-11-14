@@ -1,7 +1,8 @@
 """Lantern Workshop: paper lanterns for the festival. 2x3 on the vanilla Bakery's workshop footprint (one worker).
 
 A plastered workshop with a grey-tile gable roof, its long front open as a shop: inside, a workbench with a split-
-bamboo lantern frame half covered in red paper, rolls of paper and pots of glue; outside, a bamboo drying rack hung
+bamboo lantern frame half covered in red paper, rolls of paper and pots of glue; outside, a tall bamboo mast whose strings of big red lanterns run down to the eaves and the yard (red from every
+angle: the workshop's mark at game zoom), a bamboo drying rack hung
 with finished red lanterns (they glow at night with the workplace lit) and bundles of thin canes leaning on the wall.
 """
 import math
@@ -50,7 +51,14 @@ for x in (0.15, 1.85):
 K.pole(g, (0.08, 1.0, 0.35), (1.92, 1.0, 0.35), r=0.025, material=BAMBOO_GOLD, sides=4, bend=0.0)
 for k in range(5):
     x = 0.38 + 0.31 * k
-    K.lantern(g, (x, 0.98 - 0.02 * (k % 2), 0.35), r=0.07 + 0.01 * (k % 3), h=0.17)
+    K.lantern(g, (x, 0.98 - 0.02 * (k % 2), 0.35), r=0.1 + 0.01 * (k % 3), h=0.22)
+# the sign of the trade, seen from anywhere: a tall bamboo mast at the yard corner with strings of big red lanterns
+# running from its top down to the rack, the eaves and the far gable
+MAST = np.array([0.08, 2.75, 0.08])
+K.pole(g, (0.08, B, 0.08), tuple(MAST), r=0.045, material=BAMBOO_GOLD, sides=6, bend=0.01, taper=0.8)
+K.lathe(g, [(0.0, 0.0), (0.06, 0.02), (0.0, 0.12)], tuple(MAST), 6, DETAILS, uv_region=DET_RED)
+for end, n in (((1.95, 1.0, 0.35), 3), ((2.02, 1.3, 1.15), 4), ((0.02, 1.35, 2.95), 4), ((1.98, 1.85, 2.0), 3)):
+    K.lantern_string(g, MAST - [0, 0.1, 0], end, n=n, sag=0.18, r=0.085)
 # bundles of thin canes leaning on the side wall
 for k in range(5):
     K.pole(g, (1.95 + 0.01 * k, B, 1.4 + 0.04 * k), (1.92, 1.1, 1.55 + 0.04 * k), r=0.01, material=BAMBOO_GREEN,

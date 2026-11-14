@@ -9,7 +9,7 @@
  "size": {
   "X": 2,
   "Y": 2,
-  "Z": 1
+  "Z": 2
  },
  "blocks": [
   {
@@ -39,6 +39,34 @@
    "Stackable": "None",
    "OccupyAllBelow": false,
    "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
   }
  ],
  "entrance": null,
@@ -60,8 +88,8 @@
  ],
  "attachments": [],
  "triangles": {
-  "finished": 976,
-  "constructionStage0": 900,
+  "finished": 1554,
+  "constructionStage0": 890,
   "vanillaMedianForFootprint": 900
  },
  "materials": [
@@ -72,9 +100,17 @@
   "Moss.Folktails",
   "Plaster_White.Folktails",
   "Sand.Folktails",
+  "ThatchedRoof.Folktails",
   "WindowsAtlas.Folktails"
  ],
  "notes": [],
+ "capCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 1
+  }
+ ],
  "waterCells": [
   {
    "X": 0,

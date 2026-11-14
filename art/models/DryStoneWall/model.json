@@ -1,0 +1,55 @@
+{
+ "id": "DryStoneWall",
+ "standIn": "Levee.Folktails",
+ "generatedBy": "art/models/DryStoneWall/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "DryStoneWall.Model",
+  "constructionStage0": "DryStoneWall.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "BlockObject",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.5,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 1.0,
+    "Z": 1.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 554,
+  "constructionStage0": 130,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Yellow.Folktails",
+  "Moss.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Levee (stackable on itself); keep the Levee's water obstacle and soil barrier specs."
+ ]
+}

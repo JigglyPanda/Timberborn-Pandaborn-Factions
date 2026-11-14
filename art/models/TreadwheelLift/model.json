@@ -1,0 +1,105 @@
+{
+ "id": "TreadwheelLift",
+ "standIn": "WaterPump.Folktails",
+ "generatedBy": "art/models/TreadwheelLift/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "TreadwheelLift.Model",
+  "constructionStage0": "TreadwheelLift.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 3,
+  "Z": 3
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 1
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.4,
+    "Y": 0.1,
+    "Z": 1.2
+   },
+   "yaw": 0
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#TreadAxle",
+   "driver": "WorkshopAnimationControllerSpec",
+   "pivot": {
+    "X": 1.0,
+    "Y": 0.82,
+    "Z": 1.55
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "turn",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WorkshopAnimationControllerSpec (plays while the lift works)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 1.0,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 1.9,
+    "Y": 1.9,
+    "Z": 1.0
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": -0.1,
+    "Z": 2.2
+   },
+   "Size": {
+    "X": 0.4,
+    "Y": 2.0,
+    "Z": 1.6
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2306,
+  "constructionStage0": 830,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, BaseZ 1, entrance (1, -1, 1) and water input as the vanilla Water Pump (2x3x3). Its WaterInputPipeSpec still hangs the vanilla pipe segments: drop that spec when adopting (the trough is the intake)."
+ ],
+ "access": {
+  "X": 1.0,
+  "Y": 0.1,
+  "Z": 0.1
+ },
+ "intake": "the trough's foot stands in the intake column, cell (0, 2), at y = -1 (one level down, in the water)"
+}

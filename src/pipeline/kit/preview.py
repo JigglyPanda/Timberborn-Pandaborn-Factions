@@ -40,7 +40,7 @@ def bounds_unity(path):
 
 
 def render(model, ref=None, out=OUT, name=None, yaw=25.0, pitch=55.0, size=(1200, 800), frame_anim=None,
-           slots=False, samples=48, night=True, extra=()):
+           slots=False, samples=48, night=True, extra=(), ppu=None):
     os.makedirs(out, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
     name = name or os.path.basename(model).split(".")[0]
@@ -66,6 +66,8 @@ def render(model, ref=None, out=OUT, name=None, yaw=25.0, pitch=55.0, size=(1200
     job = {"items": items, "textures": os.path.join(LOOK, "Textures"), "spec": os.path.join(LOOK, "look_spec.json"),
            "out": res, "size": list(size), "yaw": yaw, "pitch": pitch, "focal": 110, "samples": samples,
            "grid": grid, "showSlots": slots}
+    if ppu:
+        job["ppu"] = ppu
     jp = os.path.join(work, "job.json")
     json.dump(job, open(jp, "w"))
     env = dict(os.environ, BLENDER_USER_RESOURCES=r"E:\PandabornDev\tools\blender-userdata", TEMP=TMP, TMP=TMP)

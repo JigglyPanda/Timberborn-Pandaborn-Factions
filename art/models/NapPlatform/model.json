@@ -11,7 +11,50 @@
   "Y": 2,
   "Z": 1
  },
- "blocks": null,
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
  "entrance": {
   "X": 1,
   "Y": -1,
@@ -21,72 +64,45 @@
   {
    "node": "#Slot#Seat1",
    "position": {
-    "X": 0.45,
-    "Y": 0.13999999999999999,
-    "Z": 0.45
+    "X": 0.5,
+    "Y": 0.28,
+    "Z": 0.5
    },
    "yaw": 180
   },
   {
    "node": "#Slot#Seat2",
    "position": {
-    "X": 1.05,
-    "Y": 0.13999999999999999,
-    "Z": 0.45
+    "X": 1.5,
+    "Y": 0.28,
+    "Z": 0.5
    },
    "yaw": 180
   },
   {
    "node": "#Slot#Seat3",
    "position": {
-    "X": 1.9,
-    "Y": 0.13999999999999999,
-    "Z": 0.45
+    "X": 2.5,
+    "Y": 0.28,
+    "Z": 0.5
    },
    "yaw": 180
   },
   {
    "node": "#Slot#Seat4",
    "position": {
-    "X": 2.45,
-    "Y": 0.13999999999999999,
-    "Z": 0.5
+    "X": 0.85,
+    "Y": 0.28,
+    "Z": 1.45
    },
-   "yaw": 180
+   "yaw": 0
   },
   {
    "node": "#Slot#Seat5",
    "position": {
-    "X": 0.5,
-    "Y": 0.13999999999999999,
-    "Z": 1.4
-   },
-   "yaw": 0
-  },
-  {
-   "node": "#Slot#Seat6",
-   "position": {
-    "X": 1.05,
-    "Y": 0.13999999999999999,
-    "Z": 1.55
-   },
-   "yaw": 0
-  },
-  {
-   "node": "#Slot#Seat7",
-   "position": {
-    "X": 1.8,
-    "Y": 0.13999999999999999,
-    "Z": 1.55
-   },
-   "yaw": 0
-  },
-  {
-   "node": "#Slot#Seat8",
-   "position": {
-    "X": 2.45,
-    "Y": 0.13999999999999999,
-    "Z": 1.4
+    "X": 2.15,
+    "Y": 0.28,
+    "Z": 1.45
    },
    "yaw": 0
   }
@@ -96,19 +112,19 @@
   {
    "Center": {
     "X": 1.5,
-    "Y": 0.08,
+    "Y": 0.13,
     "Z": 1.0
    },
    "Size": {
     "X": 3.0,
-    "Y": 0.16,
+    "Y": 0.26,
     "Z": 2.0
    }
   }
  ],
  "attachments": [],
  "triangles": {
-  "finished": 612,
+  "finished": 696,
   "constructionStage0": 554,
   "vanillaMedianForFootprint": 1250
  },
@@ -119,14 +135,15 @@
   "Details.Folktails",
   "IrregularPlanks_LightBrown.Folktails",
   "IrregularPlanks_White.Folktails",
+  "Plaster_White.Folktails",
   "Sand.Folktails"
  ],
  "notes": [
-  "Blocks as the vanilla Rooftop Terrace (MatterBelow Stackable: it goes on roofs, e.g. a Terrace House); eight Seat slots on the mats (Sitting, as vanilla)."
+  "Blocks as the vanilla Rooftop Terrace but MatterBelow GroundOrStackable (ground or roof); five Seat slots on the mats (Sitting, as vanilla): set the attraction's capacity and FixedSlotManagerSpec to five."
  ],
  "access": {
   "X": 1.5,
-  "Y": 0.12,
+  "Y": 0.26,
   "Z": 0.4
  }
 }

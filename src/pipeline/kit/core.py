@@ -87,6 +87,7 @@ WIN_LATTICE = (0.755, 0.006, 0.994, 0.240)   # square cracked-ice lattice, glows
 WIN_PANES = (0.672, 0.885, 0.915, 0.978)     # four-pane strip, glows
 WIN_TALL = (0.538, 0.865, 0.590, 0.990)      # tall narrow pane, glows
 WIN_ROUND = (0.755, 0.255, 0.994, 0.495)     # round cracked-ice window, glows
+LANTERN_GLOW = (0.76, 0.015, 0.84, 0.08)  # an even strip of the glass panel's paper cells (no dark gap): lantern paper
 WIN_DARK = (0.02, 0.02, 0.48, 0.48)          # dark doorway (warm glow at night in the lower part)
 WIN_WALL = (0.52, 0.02, 0.73, 0.48)          # plain lime wall
 # Details sheet
@@ -358,6 +359,10 @@ def write(path, root_name, parts, animated=None, slots=None):
             t = (f + 1) / frames
             if a.get("kind", "turn") == "swing":
                 ang = a.get("amplitude", 0.25) * math.sin(2 * math.pi * t)
+            elif a.get("kind") == "trip":
+                # a trip hammer: a cam lifts the beam slowly, then lets it fall; `turns` lifts per loop, `phase` offset
+                ph = (t * a.get("turns", 1) + a.get("phase", 0.0)) % 1.0
+                ang = a.get("amplitude", 0.25) * (ph / 0.7 if ph < 0.7 else max(0.0, 1 - (ph - 0.7) / 0.08))
             elif a.get("kind") == "rise":
                 # a one-shot launch (wonders play their animation once): up and away with a slow turn, and back home
                 # on the last frame so the model rests at its start pose when the animator stops

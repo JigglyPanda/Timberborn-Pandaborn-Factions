@@ -9,12 +9,12 @@ import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "src", "pipeline", "kit"))
-from building import Model  # noqa: E402
+from building import Model, block  # noqa: E402
 import parts as K  # noqa: E402
 import waterworks as W  # noqa: E402
 from core import *  # noqa: E402,F401,F403
 
-m = Model("PaddySpout", size=(1, 2, 1), seed=67, stand_in="FillValve.Folktails", overhang=0.4)
+m = Model("PaddySpout", size=(1, 2, 2), seed=67, stand_in="FillValve.Folktails", overhang=0.4)
 g = m.geo
 # earth block under the channel's sides, faced with stones on the field side
 K.box(g, (0.04, -0.3, 0.04), (0.96, 0.18, 0.98), EARTH, (0.02, 0.02, 0.98, 0.98), skip=(2, 3), tags={"base"})
@@ -30,10 +30,22 @@ K.beam(g, (0.94, 0.66, 0.86), (0.35, 0.78, 0.86), w=0.035)
 K.beam(g, (0.45, 0.76, 0.86), (0.45, 0.42, 0.86), w=0.01, material=DETAILS, caps=False)
 K.tube(g, [(0.45, 0.42, 0.86), (0.45, 0.26, 0.86)], [0.06, 0.05], BAMBOO_GREEN, sides=6)
 K.stones(g, 0.88, 0.8, 1.0, 0.92, y=0.66, size=0.1, h=0.08, ring=False)
+# the cap block (0, 0, 1): a little tiled hood over the valve on three posts (the valve post runs up as the fourth)
+for (x, z) in ((0.08, 0.08), (0.92, 0.08), (0.08, 0.86)):
+    K.beam(g, (x, -0.02, z), (x, 1.5, z), w=0.055, caps=False)
+K.beam(g, (0.9, 0.7, 0.86), (0.9, 1.5, 0.86), w=0.055, caps=False)
+K.roof(g, 0.08, 0.08, 0.92, 0.86, 1.5, 1.75, kind="gable", axis="z", overhang=0.1, sag=0.03, lift=0.03, thick=0.05,
+       tile=0.2, course=0.2, ridge_ends=0.04)
+m.blocks = [block("GroundOrStackable", "Bottom, Top, Corners, Path, Middle", "BlockObject"),
+            block("Any", "Middle", "None"),
+            block("Any", "Bottom, Top, Corners, Path, Middle", "None"),
+            block("Any", "None", "None")]
+m.extra["capCells"] = [{"X": 0, "Y": 0, "Z": 1}]
+m.stage_height = 1.0
 m.extra["outputCell"] = {"X": 0, "Y": 1, "Z": 0}
 m.extra["waterCells"] = [{"X": 0, "Y": 0, "Z": 0}]
 m.collider((0.5, 0.15, 0.5), (1.0, 0.4, 1.0))
 m.collider((0.5, 0.1, 1.25), (0.3, 0.2, 0.5))
-m.notes += ["Blocks as the vanilla Fill Valve (1x2x1, second cell 'Middle' only over the field).",
+m.notes += ["Blocks as the vanilla Fill Valve (1x2x1, second cell 'Middle' only over the field) plus a cap layer: (0,0,1) occupied (the hood), (0,1,1) free.",
             "The spout tip is at about y = 0.0 over the far cell: water seems to pour from it into the field."]
 m.build()

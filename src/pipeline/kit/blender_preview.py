@@ -120,8 +120,18 @@ def material(name, night):
         if night and "_LightingMap" in tex:
             e = nt.nodes.new("ShaderNodeTexImage")
             e.image = image(tex["_LightingMap"])
-            nt.links.new(e.outputs["Color"], bsdf.inputs["Emission Color"])
-            bsdf.inputs["Emission Strength"].default_value = 6.0
+            if job.get("emissionByVertexColor"):
+                # tint the glow by the vertex colour (red paper lanterns glow red, not white)
+                em = nt.nodes.new("ShaderNodeMix")
+                em.data_type = "RGBA"
+                em.blend_type = "MULTIPLY"
+                em.inputs["Factor"].default_value = 1.0
+                nt.links.new(e.outputs["Color"], em.inputs[6])
+                nt.links.new(vc.outputs["Color"], em.inputs[7])
+                nt.links.new(em.outputs[2], bsdf.inputs["Emission Color"])
+            else:
+                nt.links.new(e.outputs["Color"], bsdf.inputs["Emission Color"])
+            bsdf.inputs["Emission Strength"].default_value = job.get("emission", 6.0)
     else:
         c = FLAT.get(name, (1.0, 0.0, 1.0))
         mul = nt.nodes.new("ShaderNodeMix")
@@ -180,6 +190,17 @@ def add_npz(path, night):
 
 def ground(grid):
     x0, y0, x1, y1 = grid
+    if job.get("groundColor"):
+        bpy.ops.mesh.primitive_plane_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, -0.002))
+        g = bpy.context.object
+        g.scale = (x1 - x0, y1 - y0, 1)
+        mat = bpy.data.materials.new("ground")
+        mat.use_nodes = True
+        b = mat.node_tree.nodes["Principled BSDF"]
+        b.inputs["Base Color"].default_value = (*job["groundColor"], 1)
+        b.inputs["Roughness"].default_value = 1.0
+        g.data.materials.append(mat)
+        return
     bpy.ops.mesh.primitive_plane_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, -0.002))
     g = bpy.context.object
     g.scale = (x1 - x0, y1 - y0, 1)
@@ -258,9 +279,46 @@ def setup(night):
         sun.data.color = (1.0, 0.96, 0.88)
     sun.data.angle = math.radians(3)
     sun.rotation_euler = (math.radians(-42), math.radians(0), math.radians(-30))
+    if job.get("sky"):
+        # a vertical gradient sky: job["sky"] = [horizon rgb, zenith rgb, strength]
+        hz, zn, st = job["sky"]
+        nt = w.node_tree
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(tc.outputs["Generated"], sep.inputs[0])
+        mr = nt.nodes.new("ShaderNodeMapRange")
+        mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = -0.05, 0.6
+        nt.links.new(sep.outputs[2], mr.inputs["Value"])
+        mix = nt.nodes.new("ShaderNodeMix")
+        mix.data_type = "RGBA"
+        nt.links.new(mr.outputs["Result"], mix.inputs["Factor"])
+        mix.inputs[6].default_value = (*hz, 1)
+        mix.inputs[7].default_value = (*zn, 1)
+        nt.links.new(mix.outputs[2], bg.inputs["Color"])
+        bg.inputs["Strength"].default_value = st
+    if "sunEnergy" in job:
+        sun.data.energy = job["sunEnergy"]
+    for L in job.get("lights", []):
+        bpy.ops.object.light_add(type=L.get("type", "POINT"), location=L["loc"])
+        lo = bpy.context.object
+        lo.data.energy = L.get("energy", 50)
+        lo.data.color = L.get("color", (1.0, 0.6, 0.3))
+        if hasattr(lo.data, "shadow_soft_size"):
+            lo.data.shadow_soft_size = L.get("radius", 0.3)
 
 
 def camera(objs):
+    if job.get("camera"):
+        cj = job["camera"]
+        bpy.ops.object.camera_add(location=cj["loc"])
+        cam = bpy.context.object
+        cam.data.lens = cj.get("lens", 50)
+        cam.data.sensor_width = 36
+        cam.data.clip_end = 2000
+        sc.camera = cam
+        d = Vector(cj["target"]) - Vector(cj["loc"])
+        cam.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        return
     pts = [ob.matrix_world @ Vector(c) for ob in objs for c in ob.bound_box]
     if job.get("frame"):
         x0, y0, x1, y1 = job["frame"]
@@ -285,6 +343,19 @@ def camera(objs):
     w, h = sc.render.resolution_x, sc.render.resolution_y
     fx = cam.data.lens / cam.data.sensor_width * (1 if w >= h else w / h)
     fy = fx * w / h
+    if job.get("ppu"):
+        # fixed scale ("game zoom"): orthographic, ppu pixels per unit, the image sized to the model plus a margin
+        xs = [(p - c).dot(right) for p in pts]
+        ys = [(p - c).dot(up) for p in pts]
+        ppu, pad = job["ppu"], job.get("pad", 0.35)
+        ex, ey = max(xs) - min(xs) + 2 * pad, max(ys) - min(ys) + 2 * pad
+        sc.render.resolution_x, sc.render.resolution_y = int(math.ceil(ex * ppu)), int(math.ceil(ey * ppu))
+        cam.data.type = "ORTHO"
+        cam.data.ortho_scale = max(ex, ey)
+        mid = c + right * (max(xs) + min(xs)) / 2 + up * (max(ys) + min(ys)) / 2
+        cam.location = mid + d * 60
+        cam.data.clip_end = 1000
+        return
     need = 0.0
     for p in pts:
         v = p - c

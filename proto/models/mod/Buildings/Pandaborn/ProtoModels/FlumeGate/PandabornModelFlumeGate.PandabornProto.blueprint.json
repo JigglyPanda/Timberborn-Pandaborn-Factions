@@ -26,11 +26,18 @@
     "Size": {
       "X": 1,
       "Y": 1,
-      "Z": 1
+      "Z": 2
     },
     "Blocks": [
       {
         "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
@@ -129,6 +136,18 @@
             "Size": {
               "X": 1.0,
               "Y": 1.1,
+              "Z": 1.0
+            }
+          },
+          {
+            "Center": {
+              "X": 0.5,
+              "Y": 1.8,
+              "Z": 0.5
+            },
+            "Size": {
+              "X": 1.0,
+              "Y": 0.3,
               "Z": 1.0
             }
           }

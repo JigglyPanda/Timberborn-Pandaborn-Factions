@@ -64,6 +64,11 @@ STAND_IN = {   # stand-in vanilla template -> blueprint path under BP
     "Bakery.Folktails": "Buildings/Food/Bakery/Bakery.Folktails.blueprint.json",
     "WindTurbine.Folktails": "Buildings/Power/WindTurbine/WindTurbine.Folktails.blueprint.json",
     "WaterPump.Folktails": "Buildings/Water/WaterPump/WaterPump.Folktails.blueprint.json",
+    "Gristmill.Folktails": "Buildings/Food/Gristmill/Gristmill.Folktails.blueprint.json",
+    "BotAssembler.Folktails": "Buildings/Science/BotAssembler/BotAssembler.Folktails.blueprint.json",
+    "Discharge.Folktails": "Buildings/Water/Discharge/Discharge.Folktails.blueprint.json",
+    "Levee.Folktails": "Buildings/Landscaping/Levee/Levee.Folktails.blueprint.json",
+    "LargeWindTurbine.Folktails": "Buildings/Power/LargeWindTurbine/LargeWindTurbine.Folktails.blueprint.json",
 }
 
 
@@ -203,6 +208,10 @@ EDITS = {
     "StarTower": lambda bp, mj: bp.__setitem__("ObservatoryAnimatorSpec", mj["observatoryAnimator"]),
     "KiteWindmill": lambda bp, mj: bp.__setitem__("WindRotationAnimatorSpec", mj["windRotationAnimator"]),
     "PaddySpout": edit_spout,
+    "FlumeBridgeSpan": lambda bp, mj: edit_flume(bp, mj),
+    "LargeKiteWindmill": lambda bp, mj: bp.__setitem__("WindRotationAnimatorSpec", mj["windRotationAnimator"]),
+    "OxWorkshop": lambda bp, mj: bp["BotManufactoryAnimationControllerSpec"].update(mj["botManufactoryAnimation"]),
+    "NapPlatform": lambda bp, mj: bp["EnterableSpec"].__setitem__("CapacityFinished", 5),
 }
 
 

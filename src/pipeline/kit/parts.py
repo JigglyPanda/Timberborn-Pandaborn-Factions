@@ -10,7 +10,7 @@ import numpy as np
 from core import (Part, fix_winding, frame_from, quad_part, rot_axis, TEXEL, TIMBER, BAMBOO_GOLD, BAMBOO_GREEN,
                   PLASTER, PLASTER_LATH, TILE, WINDOWS, DETAILS, EARTH, WEAVE, IRON,
                   WOOD_STRIPS, WOOD_SHORT, WOOD_BLOCK, WOOD_DISCS, WIN_LATTICE, WIN_DARK, WIN_PANES, WIN_ROUND,
-                  DET_ROPE, DET_RED, DET_CLOTH, TILE_COURSES, TILE_COLS)
+                  DET_ROPE, DET_RED, DET_CLOTH, TILE_COURSES, TILE_COLS, WEAVE_GOLD, WEAVE_DARK, MOSS, LANTERN_GLOW)
 
 V = np.asarray
 
@@ -687,7 +687,7 @@ def lantern(geo, at, r=0.09, h=0.2, hanging=True, tags=()):
     """A red paper lantern: glowing round body (window paper glows at night), red caps, a tassel."""
     at = V(at, float)
     body = [(r * 0.62, 0.0), (r, h * 0.3), (r, h * 0.7), (r * 0.62, h)]
-    lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS, uv_region=(0.80, 0.03, 0.95, 0.20),
+    lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS, uv_region=LANTERN_GLOW,
           tags=set(tags) | {"glow"}, cap_top=False)
     # red paper: the glowing window paper tinted by vertex colour (red by day, warm red glow by night)
     geo.parts[-1].C = np.tile([0.95, 0.42, 0.3, 1.0], (len(geo.parts[-1].P), 1))
@@ -700,7 +700,7 @@ def lantern(geo, at, r=0.09, h=0.2, hanging=True, tags=()):
         beam(geo, at, at + V([0, 0.08, 0]), w=0.012, material=DETAILS, tags=tags)
 
 
-def lantern_string(geo, a, b, n=4, sag=0.12, tags=()):
+def lantern_string(geo, a, b, n=4, sag=0.12, r=0.05, tags=()):
     """A rope with n small lanterns hanging along its sag."""
     a, b = V(a, float), V(b, float)
     pts = [a + (b - a) * (i / 8) - V([0, sag * math.sin(math.pi * i / 8), 0]) for i in range(9)]
@@ -708,7 +708,7 @@ def lantern_string(geo, a, b, n=4, sag=0.12, tags=()):
     for i in range(n):
         t = (i + 1) / (n + 1)
         p = a + (b - a) * t - V([0, sag * math.sin(math.pi * t), 0])
-        lantern(geo, p, r=0.05, h=0.1, tags=tags)
+        lantern(geo, p, r=r, h=r * 2, tags=tags)
 
 
 def cloth(geo, corners, material=DETAILS, region=DET_CLOTH, sag=0.06, nu=4, nv=3, tags=(), wave=0.02):
@@ -1043,3 +1043,98 @@ def moon_window(geo, center, normal, r=0.3, tags=()):
     N = np.tile(n, (len(P), 1))
     T = V([(0, 1 + i, 1 + (i + 1) % k) for i in range(k)])
     geo.add(Part(WINDOWS, P, N, V(UV), fix_winding(P, N, T)), set(tags) | {"glow"})
+
+
+STRAW = (0.86, 0.72, 0.42)     # vertex tint that turns the pale woven sheet into rice-straw thatch
+
+
+def thatch_roof(geo, x0, z0, x1, z1, y_eave, y_ridge, overhang=0.2, thick=0.13, bulge=0.05, axis="x", hip=False,
+                tint=STRAW, tags=()):
+    """A rice-straw thatch roof (the farm roof of the Sichuan countryside; reads gold from above where the tile roofs
+    read charcoal): two thick, softly swelling slopes with rounded eaves and a dark straw ridge roll. Gable, or with
+    `hip` the short ends slope too. Ridge along `axis`."""
+    tags = set(tags) | {"roof"}
+    if axis == "z":
+        sub = type(geo)(int(geo.rng.integers(1 << 30)))
+        cx, cz = (x0 + x1) / 2, (z0 + z1) / 2
+        hw, hd = (x1 - x0) / 2, (z1 - z0) / 2
+        thatch_roof(sub, cx - hd, cz - hw, cx + hd, cz + hw, y_eave, y_ridge, overhang, thick, bulge, "x", hip, tint,
+                    tags)
+        R = rot_axis((0, 1, 0), math.pi / 2)
+        c = V([cx, 0, cz])
+        for p in sub.parts:
+            geo.add(p.transformed(R, c - R @ c))
+        return
+    o = overhang
+    X0, X1, Z0, Z1 = x0 - o, x1 + o, z0 - o, z1 + o
+    zm = (Z0 + Z1) / 2
+    hin = (Z1 - Z0) / 2 * 0.8 if hip else 0.0
+    nu, nv = max(3, int((X1 - X0) / 0.35)), 5
+
+    def slope(E0, E1, R0, R1, flip):
+        E0, E1, R0, R1 = V(E0, float), V(E1, float), V(R0, float), V(R1, float)
+        P, UV = [], []
+        for j in range(nv + 1):
+            v = j / nv
+            for i in range(nu + 1):
+                u = i / nu
+                e, r = E0 + (E1 - E0) * u, R0 + (R1 - R0) * u
+                p = e + (r - e) * v
+                p[1] += bulge * math.sin(math.pi * v) + thick * (1 - v) * 0.4   # swollen body, thick at the eave
+                P.append(p)
+                UV.append((0.05 + 0.9 * u, 0.05 + 0.9 * v))
+        P = V(P)
+        T = []
+        for j in range(nv):
+            for i in range(nu):
+                a = j * (nu + 1) + i
+                T += [(a, a + 1, a + nu + 2), (a, a + nu + 2, a + nu + 1)]
+        T = V(T)
+        N = np.zeros_like(P)
+        for t in T:
+            n = np.cross(P[t[1]] - P[t[0]], P[t[2]] - P[t[0]])
+            N[t] += n
+        N /= np.linalg.norm(N, axis=1, keepdims=True) + 1e-9
+        if N[:, 1].mean() < 0:
+            N = -N
+        part = Part(WEAVE_GOLD, P, N, V(UV), fix_winding(P, N, T))
+        part.C = np.tile(list(tint) + [1.0], (len(P), 1))
+        geo.add(part, tags)
+        # the cut eave: a thick rounded edge of straw ends
+        tube(geo, [E0 + V([0, thick * 0.2, 0]), E1 + V([0, thick * 0.2, 0])], [thick * 0.55, thick * 0.55], WEAVE_DARK,
+             sides=5, caps=True, tags=tags)
+        geo.parts[-1].C = np.tile([0.62, 0.5, 0.3, 1.0], (len(geo.parts[-1].P), 1))
+    slope((X0, y_eave, Z0), (X1, y_eave, Z0), (X0 + hin, y_ridge, zm), (X1 - hin, y_ridge, zm), False)
+    slope((X1, y_eave, Z1), (X0, y_eave, Z1), (X1 - hin, y_ridge, zm), (X0 + hin, y_ridge, zm), True)
+    if hip:
+        slope((X0, y_eave, Z1), (X0, y_eave, Z0), (X0 + hin, y_ridge, zm), (X0 + hin, y_ridge, zm), False)
+        slope((X1, y_eave, Z0), (X1, y_eave, Z1), (X1 - hin, y_ridge, zm), (X1 - hin, y_ridge, zm), False)
+    else:
+        for xx, sg in ((X0 + 0.02, -1), (X1 - 0.02, 1)):   # gable ends: a woven triangle under the thatch
+            panel(geo, [(xx, y_eave - 0.05, Z1 - o) if sg < 0 else (xx, y_eave - 0.05, Z0 + o),
+                        (xx, y_eave - 0.05, Z0 + o) if sg < 0 else (xx, y_eave - 0.05, Z1 - o),
+                        (xx, y_ridge - 0.02, zm), (xx, y_ridge - 0.02, zm + 0.001)], WEAVE_DARK, (0.05, 0.05, 0.95, 0.95),
+                  tags=tags)
+    tube(geo, [(X0 + hin - 0.05, y_ridge + bulge * 0.3 + 0.03, zm), (X1 - hin + 0.05, y_ridge + bulge * 0.3 + 0.03, zm)],
+         [0.09, 0.09], WEAVE_DARK, sides=6, caps=True, tags=tags)
+    geo.parts[-1].C = np.tile([0.55, 0.45, 0.28, 1.0], (len(geo.parts[-1].P), 1))
+    for x in np.linspace(X0 + hin + 0.1, X1 - hin - 0.1, max(2, int((X1 - X0 - 2 * hin) / 0.5))):   # binding ties
+        lashing(geo, (x, y_ridge + bulge * 0.3 + 0.03, zm), (1, 0, 0), r=0.1, tags=tags)
+
+
+def tray(geo, center, r=0.3, tilt=(0.0, 0.0), leaf=MOSS, fill=0.8, sides=9, tags=()):
+    """A wide, shallow round woven bamboo tray (a tea or grain sieve), optionally tilted (radians about x, z), with a
+    layer of leaves (or grain) spread on it."""
+    c = V(center, float)
+    before = len(geo.parts)
+    lathe(geo, [(0.0, 0.0), (r * 0.94, 0.0), (r, 0.035), (r * 0.97, 0.045)], (0, 0, 0), sides, WEAVE, cap_top=False,
+          tags=tags)
+    lathe(geo, [(r * 1.0, 0.03), (r * 1.03, 0.045), (r * 0.99, 0.055)], (0, 0, 0), sides, BAMBOO_GOLD, cap_top=False,
+          tags=tags)
+    if leaf:
+        lathe(geo, [(r * fill, 0.012), (r * fill * 0.6, 0.026), (0.0, 0.03)], (0, 0, 0), sides, leaf, cap_top=False,
+              tags=tags)
+    R = rot_axis((1, 0, 0), tilt[0]) @ rot_axis((0, 0, 1), tilt[1])
+    for p in geo.parts[before:]:
+        p.P = p.P @ R.T + c
+        p.N = p.N @ R.T

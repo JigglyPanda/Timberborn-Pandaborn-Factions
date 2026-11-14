@@ -1,0 +1,299 @@
+{
+ "id": "TripHammerMill",
+ "standIn": "Gristmill.Folktails",
+ "generatedBy": "art/models/TripHammerMill/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "TripHammerMill.Model",
+  "constructionStage0": "TripHammerMill.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 2,
+  "Z": 3
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 2,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 2.5,
+    "Y": 0.1,
+    "Z": 0.15
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#MillWheel",
+   "driver": "WorkshopAnimationControllerSpec",
+   "pivot": {
+    "X": 0.5,
+    "Y": 0.62,
+    "Z": 1.42
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "turn",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WorkshopAnimationControllerSpec (plays while the mill works)"
+  },
+  {
+   "node": "#Hammer1",
+   "driver": "WorkshopAnimationControllerSpec",
+   "pivot": {
+    "X": 1.42,
+    "Y": 0.5,
+    "Z": 0.98
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "trip",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 2,
+   "drivenBy": "WorkshopAnimationControllerSpec (plays while the mill works)"
+  },
+  {
+   "node": "#Hammer2",
+   "driver": "WorkshopAnimationControllerSpec",
+   "pivot": {
+    "X": 2.08,
+    "Y": 0.5,
+    "Z": 0.98
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "trip",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 2,
+   "drivenBy": "WorkshopAnimationControllerSpec (plays while the mill works)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 2.0,
+    "Y": 0.8,
+    "Z": 1.42
+   },
+   "Size": {
+    "X": 2.0,
+    "Y": 1.4,
+    "Z": 1.0
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.6,
+    "Z": 1.42
+   },
+   "Size": {
+    "X": 0.4,
+    "Y": 1.2,
+    "Z": 1.2
+   }
+  },
+  {
+   "Center": {
+    "X": 1.75,
+    "Y": 0.4,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.4,
+    "Y": 0.7,
+    "Z": 0.9
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2013,
+  "constructionStage0": 954,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "On the Gristmill's blocks (all solid) until the water module decides which cell stands in the current.",
+  "Animated nodes: #MillWheel turns once per loop; #Hammer1/#Hammer2 trip twice per loop, half a lift apart."
+ ],
+ "access": {
+  "X": 2.5,
+  "Y": 0.1,
+  "Z": 0.05
+ },
+ "wheelCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  },
+  {
+   "X": 0,
+   "Y": 1,
+   "Z": 0
+  }
+ ],
+ "waterPoweredGeneratorBlocks": "the wheel turns in the race over cells (0, 0, 0) and (0, 1, 0); either can be the WaterPoweredGeneratorSpec block standing in the current (the wheel's lowest paddles are at (0.5, 0.06, 1.42), cell (0, 1))"
+}

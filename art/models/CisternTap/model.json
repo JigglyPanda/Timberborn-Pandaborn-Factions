@@ -1,0 +1,107 @@
+{
+ "id": "CisternTap",
+ "standIn": "Discharge.Folktails",
+ "generatedBy": "art/models/CisternTap/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "CisternTap.Model",
+  "constructionStage0": "CisternTap.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 2,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Air",
+   "Occupations": "Floor, Bottom, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 0,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 0.5,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.55,
+    "Z": 0.42
+   },
+   "Size": {
+    "X": 0.8,
+    "Y": 1.1,
+    "Z": 0.8
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.05,
+    "Z": 1.4
+   },
+   "Size": {
+    "X": 0.7,
+    "Y": 0.1,
+    "Z": 0.9
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Water",
+   "Position": {
+    "X": 0.5,
+    "Y": 0.25,
+    "Z": 1.62
+   },
+   "note": "the vanilla Discharge's water drops, falling from the spout tip"
+  }
+ ],
+ "triangles": {
+  "finished": 682,
+  "constructionStage0": 262,
+  "vanillaMedianForFootprint": 520
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, entrance and WaterOutput (0, 1, 0) as the vanilla Discharge (1x2x1)."
+ ],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": -0.1
+ }
+}
