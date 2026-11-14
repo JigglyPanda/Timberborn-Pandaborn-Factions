@@ -14,7 +14,8 @@
     "PandabornCooking": "Cooking",
     "PandabornAfternoon": "The afternoon",
     "PandabornFlumes": "Flumes",
-    "PandabornRingtails": "The Ringtails"
+    "PandabornRingtails": "The Ringtails",
+    "PandabornTea": "Tea"
   },
   "stages": {
     "PandabornTutorial.Water": "Every village starts at the water. A Water Pump fills the stores with clean water.",
@@ -29,6 +30,12 @@
     "PandabornTutorial.Bell": "Inkpaws work a short day and work it well. With a twelve-hour day, they work and walk a third faster.",
     "PandabornTutorial.ScoopWheel": "A Scoop Wheel sits in a current and lifts water into a flume.",
     "PandabornTutorial.Flume": "Flumes carry water downhill, one way, to fields and groves far from the river.",
-    "PandabornTutorial.MoonLoft": "Your first Moon Loft invites a Ringtail family. Ringtails work from the afternoon bell to dawn."
+    "PandabornTutorial.MoonLoft": "Your first Moon Loft invites a Ringtail family. Ringtails work from the afternoon bell to dawn.",
+    "PandabornTutorial.FirstShoots": "A good store of shoots carries the village through the first dry days.",
+    "PandabornTutorial.FirstPoles": "Poles build almost everything. Gather a stock before the big buildings.",
+    "PandabornTutorial.TeaGarden": "Tea grows on dry ground, away from the wet fields. The Forester plants it and gatherers pick it.",
+    "PandabornTutorial.Roastery": "A Tea Roastery roasts the picked leaves into tea that keeps.",
+    "PandabornTutorial.Tea": "Roasted tea waits in the warehouse until the Teahouse calls for it.",
+    "PandabornTutorial.Teahouse": "Tea is drunk at the Teahouse, nowhere else. It serves roasted tea and water to villagers off duty."
   }
 }

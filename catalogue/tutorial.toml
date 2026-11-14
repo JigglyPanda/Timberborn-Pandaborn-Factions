@@ -24,12 +24,12 @@ stages = ["Basics.MoveCamera", "Basics.RotateCamera", "Basics.ZoomCamera", "Basi
 [tutorials.PandabornWaterAndFood]
 order = 10
 after = ["PandabornBasics"]
-stages = ["PandabornTutorial.Water", "PandabornTutorial.Gatherer", "PandabornTutorial.ShootBamboo"]
+stages = ["PandabornTutorial.Water", "PandabornTutorial.Gatherer", "PandabornTutorial.ShootBamboo", "PandabornTutorial.FirstShoots"]
 
 [tutorials.PandabornPoles]
 order = 20
 after = ["PandabornWaterAndFood"]
-stages = ["PandabornTutorial.Lumberjack", "PandabornTutorial.PoleMill", "PandabornTutorial.TimberBamboo"]
+stages = ["PandabornTutorial.Lumberjack", "PandabornTutorial.PoleMill", "PandabornTutorial.FirstPoles", "PandabornTutorial.TimberBamboo"]
 
 [tutorials.PandabornHomes]
 order = 30
@@ -45,6 +45,11 @@ stages = ["PandabornTutorial.Steamer"]
 order = 50
 after = ["PandabornCooking"]
 stages = ["PandabornTutorial.Hammock", "PandabornTutorial.Bell"]
+
+[tutorials.PandabornTea]
+order = 55
+after = ["PandabornAfternoon"]
+stages = ["PandabornTutorial.TeaGarden", "PandabornTutorial.Roastery", "PandabornTutorial.Tea", "PandabornTutorial.Teahouse"]
 
 [tutorials.PandabornFlumes]
 order = 60
@@ -69,6 +74,11 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["GathererFlag.Inkpaws"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["EfficientFarmHouse.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
          { MarkPlantablesTutorialStepSpec = { TemplateName = "PandabornShootBamboo.Inkpaws", RequiredAmount = 6 } }]
 
+[stages."PandabornTutorial.FirstShoots"]
+# "have N of a good" (module Pandaborn.Tutorial, docs/tech/tutorial.md); left out of a build without that module
+waits_for = "Tutorial"
+steps = [{ PandabornGoodAmountStepSpec = { GoodId = "PandabornBambooShoots", Amount = 20 } }]
+
 [stages."PandabornTutorial.Lumberjack"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["LumberjackFlag.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
          { MarkTreesTutorialStepSpec = {} }]
@@ -76,6 +86,10 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["LumberjackFlag.Inkpaws
 [stages."PandabornTutorial.PoleMill"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["LumberMill.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
          { BuildingTutorialStepSpec = { TemplateNames = ["PowerWheel.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]
+
+[stages."PandabornTutorial.FirstPoles"]
+waits_for = "Tutorial"
+steps = [{ PandabornGoodAmountStepSpec = { GoodId = "Plank", Amount = 20 } }]
 
 [stages."PandabornTutorial.TimberBamboo"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["Forester.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
@@ -93,6 +107,19 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornHammock.Inkpa
 [stages."PandabornTutorial.Bell"]
 waits_for = "Bell"
 steps = [{ SetWorkingHoursStepSpec = { TargetWorkingHours = 12 } }]
+
+[stages."PandabornTutorial.TeaGarden"]
+steps = [{ MarkPlantablesTutorialStepSpec = { TemplateName = "PandabornTeaBush.Inkpaws", RequiredAmount = 4 } }]
+
+[stages."PandabornTutorial.Roastery"]
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornTeaRoastery.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]
+
+[stages."PandabornTutorial.Tea"]
+waits_for = "Tutorial"
+steps = [{ PandabornGoodAmountStepSpec = { GoodId = "PandabornTea", Amount = 10 } }]
+
+[stages."PandabornTutorial.Teahouse"]
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornTeahouse.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]
 
 [stages."PandabornTutorial.ScoopWheel"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornScoopWheel.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]

@@ -837,10 +837,19 @@
       "PandabornRingtails": {
         "since": "2026-11-14"
       },
+      "PandabornTea": {
+        "since": "2026-11-14"
+      },
       "PandabornTutorial.Bell": {
         "since": "2026-11-14"
       },
       "PandabornTutorial.Dens": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.FirstPoles": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.FirstShoots": {
         "since": "2026-11-14"
       },
       "PandabornTutorial.Flume": {
@@ -862,6 +871,9 @@
       "PandabornTutorial.PoleMill": {
         "since": "2026-11-14"
       },
+      "PandabornTutorial.Roastery": {
+        "since": "2026-11-14"
+      },
       "PandabornTutorial.ScoopWheel": {
         "since": "2026-11-14",
         "gatedBy": "Water"
@@ -870,6 +882,15 @@
         "since": "2026-11-14"
       },
       "PandabornTutorial.Steamer": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Tea": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.TeaGarden": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Teahouse": {
         "since": "2026-11-14"
       },
       "PandabornTutorial.TimberBamboo": {
