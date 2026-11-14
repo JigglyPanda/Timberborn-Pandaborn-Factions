@@ -24,7 +24,7 @@ Ringtails work the night in their **own** night posts, from the afternoon bell t
 | Stats | Data only: Inkpaw walking speed, never slowed by a load, lifting 14. Same needs, appetite and wellbeing tables as Inkpaws (the per-kind appetite was dropped) | §17.8 |
 | Arrival | Once per save, when the first Moon Loft is finished: 2 adults and 1 kit at its door, the night posts unlock for free, one message, the red panda twitter | §18.6, §19 |
 | Births | `LoftNursery`, each dawn, per loft: one kit while the district has a Ringtail adult (any loft), open night jobs (Ringtail-typed posts' desired workers minus Ringtail adults and kits), nobody critically hungry or thirsty, and a free kit slot. Kits grow into Ringtail adults. Population follows **night jobs**, not beds | §19 |
-| Housing | Lofts are Ringtail homes (`LoftHousingRule` swaps an Inkpaw out for a Ringtail); Inkpaws may use spare loft beds; Inkpaw cubs leave a loft only for a free cub slot | §17.4, §18 |
+| Housing | Lofts are Ringtail homes (`LoftHousingRule` swaps an Inkpaw out for a Ringtail); Inkpaws may use spare loft beds; an Inkpaw lodger moves out when the nursery has a kit to raise there (cub first) | §17.4, §18, §19 |
 | Interface | Ringtail badge; a second population row; sun mark on every Inkpaw workplace, moon mark on night posts, nursery line on lofts; "Closed for the day" status on posts; moon arc on the day clock. All behind `SafeUi` | §18.5, §19 |
 | Sound | Night clapper when the shift starts (2.5 s after the bell), only with Ringtails; twitter at arrival; silent if a clip is missing | §19 |
 | Saved | The arrival flag in `PandabornStore`. Nothing per colonist or building (no `PandabornEntityState` needed) | §19 |
@@ -917,3 +917,76 @@ mark and the clock arc; the Night Builders' Post actually raising sites at night
 in a layout with room; the soak queues dens after the bell); births over many days (one kit per loft per dawn was seen
 blocked by the cub, then fixed, but a long breeding run was not done); the module-off case where the API check fails
 for real (simulated by `force-off` and by `simulate-missing-member: Ringtails`, which takes the degraded path).
+
+---
+
+## 19. Phase 3: births, interface, clapper, data in the catalogue
+
+Status: 2026-11-14. Tested on a dev copy of the installed faction build carrying the code under test
+(`proto/foundation/build.ps1 -Name rtdev`, run with `-DisableMods JigglyPanda.PandabornFactions -ExtraMods
+E:\PandabornDev\build\proto\rtdev,E:\PandabornDev\build\proto\ringtails`); the Ringtail data came from the installed
+build, generated from the catalogue.
+
+### 19.1 What changed
+
+| Change | Detail |
+|---|---|
+| Data in the catalogue | The content lane adopted §18.1: templates, worker type, outfits, specs on posts and loft, alias and name pool are generated. `proto/ringtails` lost its data copy and `derive.py`; it is the test probe only (README there) |
+| `IWorkdayClock` | `RingtailWorkday` takes `IEnumerable<IWorkdayClock>` (Core) and uses the first with `HasLockedDay`; the by-name Bell bridge is gone |
+| Per-entity state | Nothing to move: Ringtails save only the arrival flag (`PandabornStore`). Colonists are ordinary entities, a post's worker type is the vanilla `WorkplaceWorkerType` save, a loft's nursery line is display only and comes back at the next dawn |
+| Clock arc | `RingtailClockArc`: a pale arc inside the day clock's rim from the shift start to dawn, an extra child of the vanilla `Clock` element drawn with `Painter2D` |
+| Sun and moon marks | `RingtailsBuildingFragment`: a drawn sun and "Day shift: Inkpaws work here from dawn to the afternoon bell." on every Inkpaw workplace, a crescent and "Night shift: Ringtails work here from the afternoon bell to dawn." on night posts, once the Ringtails have arrived. The mark sits beside the vanilla label in our own container (a child added inside the label, a text element, was not drawn: first run) |
+| Clapper | `RingtailSounds`: `Environment.Pandaborn.NightClapper` (2D) once when the shift starts, 2.5 s after the bell when they coincide, only if the village has Ringtails and the clip exists; `RingtailTwitter` (3D at the loft) when the family arrives |
+| Loft lodgers give way | Found in `rt3_ui3`: homeless Inkpaws moved into a new loft before its first dawn and it said "no room" for ever. Now, when the nursery has a kit to raise in a full loft, an Inkpaw lodger moves out (an Inkpaw cub in the kit slot first, else an Inkpaw adult) and looks for another home like any homeless colonist. Ringtails are never moved |
+
+### 19.2 Runs
+
+| Run | What | Result |
+|---|---|---|
+| `rt3_ui3` | Diorama, 2.4 days: a Moon Loft, three posts, four dens; a second loft on day 1 | Exit 0, 0 errors from our code. Arrival at once (2 adults, 1 kit); the clock arc from the first sample; the clapper "played" at both shift starts (hour 17 after dawn, the 16-hour bell plus the answer delay); loft 1 "no room" (2 Ringtails and their kit); loft 2 filled by homeless Inkpaws and also said "no room" (fixed, §19.1); the panel lines showed but the mark did not (fixed) |
+| `rt3_breed3` | Plains, 7.2 days, save, reload, 6 more days (to day 13.2): ten lofts, three posts, six dens, a second Courier Post on day 4; in the reload, all water taken on day 7 and 600 given back on day 9 | Both launches passed (exit 0, 0 errors from our code), details below |
+
+`rt3_breed3`, day by day (hourly samples, `python proto\ringtails\test\births.py E:\PandabornDev\build\test\rt3_breed3`):
+
+* **The layout:** 21 buildings placed, but the upper terrace had no path to the district: 3 lofts, the Night Builders'
+  Post and the first Night Courier Post were "unconnected" all game. So the district had **7 lofts** and 2 night jobs
+  (Night Foragers' Post) until day 4, then 5 (the second Courier Post). This also shows the valve is per district:
+  unconnected posts and lofts are ignored, as the vanilla job assigner ignores them.
+* **Days 2-4:** 3 Ringtails (2 adults and the arrival kit), 2 jobs: every connected loft "Kits: waiting for open night
+  jobs." No kit.
+* **Day 4, hour 3:** second Courier Post (3 jobs). **Day 5 dawn:** open jobs 5 - 3 = 2, so exactly **2 kits** were raised,
+  in two lofts that held Inkpaw lodgers (their cubs moved out); those lofts said "Kits: one is raised each morning..."
+  for that day, then everyone went back to "waiting" (open jobs 0).
+* **Save and reload at day 7:** all 5 Ringtails came back (2 adults, 3 kits) with names, homes and jobs; the nursery
+  lines came back at the next dawn.
+* **Growing up:** the arrival kit (Li Zi) grew up on day 7 and the two loft kits (Tao Tao, Luo Gu) by day 11 ("X grew
+  up" messages). All three took the second Courier Post's three jobs: **5 Ringtails, 5 working, 0 idle**
+  (`reload\rt_br_r5_h21_night_post.png`: the three grown kits on the post at night).
+* **Starving:** water taken on day 7.1 (701 units); first colonist critically thirsty at hour 20; at the day 8 dawn
+  every connected loft said "Kits: none while anyone in the district is hungry or thirsty." (19 colonists critical at
+  worst). Water back on day 9.2; nobody critical by hour 6; at the day 10 dawn the lofts said "waiting" again. No deaths.
+* **Valve:** Ringtails never outnumbered the district's night jobs (peak 5 of 5), never ran away with 21 free loft beds,
+  and never fell below 2 adults. The clapper played at all 12 shift starts (6 per launch).
+
+Nursery states seen: Raising, WaitingForJobs, Hungry (`rt3_breed3`), NoRoom (`rt3_ui3`); NoParents needs a district
+without a Ringtail adult and was not staged.
+
+Screenshots (in `E:\PandabornDev\build\test\`):
+
+| What | File |
+|---|---|
+| Clock arc by day, at night, at dawn | `rt3_ui3\rt_ui_d0_h4_clock_day.png`, `rt3_ui3\rt_ui_d0_h20_clock_night.png`, `rt3_ui3\rt_ui_d1_h2_clock_dawn.png`; zoomed: `rt3_ui3\zoom_clock_day.png`, `rt3_ui3\zoom_clock_night.png` |
+| Sun mark (Village Hall panel) | `rt3_breed3\rt_br_d0_h6_overview.png`, zoomed `rt3_breed3\zoom_sun.png` |
+| Moon mark (Night Courier Post at night) | `rt3_breed3\reload\rt_br_r5_h21_night_post.png` |
+| Loft "no room" | `rt3_ui3\rt_ui_d1_h1_loft_noroom.png` |
+| Day-shift and night-shift lines before the mark fix | `rt3_ui3\rt_ui_d0_h5_inkpaw_workplace_sun.png`, `rt3_ui3\rt_ui_d0_h21_night_post_moon_night.png` |
+
+The probe's loft shots in `rt3_breed3` picked the first loft, which was one of the unconnected ones, so the
+"waiting" and "hungry" lines are proven by the samples (`ringtails.json`, `lofts[].kitState`), not by a picture.
+
+### 19.3 Still unproven
+
+Ten connected lofts on one map (seven were); the NoParents line in game; the twitter at the arrival (the call is
+made, but no test records it);
+walking in from the map edge; the Night Builders' Post raising sites at night (unconnected in `rt3_breed3`); the
+module-off case where the API check fails for real.

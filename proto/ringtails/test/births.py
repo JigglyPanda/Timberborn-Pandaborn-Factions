@@ -1,6 +1,7 @@
 """Births, growth and the population valve from a probe run (ringtails.json, and reload/ringtails.json if present).
 
 Usage: python births.py <run dir>
+Night jobs count only posts connected to a district (older probe output has no "inDistrict": every post counts).
 Prints one line per in-game hour where something changed (Ringtail adults, kits, night jobs wanted, loft states,
 kits raised, colonists in critical thirst/hunger, UI and sound state), then a summary of what was seen.
 """
@@ -26,7 +27,8 @@ def rows(data, part):
     for s in data.get("samples", []):
         cols = s.get("colonists", [])
         kinds = Counter(c.get("kind") for c in cols)
-        jobs = sum(w.get("desired", 0) for w in s.get("workplaces", []) if w.get("ringtailOnly") and w.get("workerType") == "PandabornRingtail")
+        jobs = sum(w.get("desired", 0) for w in s.get("workplaces", []) if w.get("ringtailOnly") and w.get("workerType") == "PandabornRingtail"
+                   and w.get("inDistrict", True))
         employed = sum(1 for c in cols if c.get("kind") == "ringtail" and c.get("workplace", "").startswith("PandabornNight"))
         critical = sum(1 for c in cols if c.get("critical"))
         dead = sum(1 for c in cols if c.get("alive") is False)

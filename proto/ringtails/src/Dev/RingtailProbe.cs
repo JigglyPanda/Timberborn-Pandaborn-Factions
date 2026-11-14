@@ -386,6 +386,7 @@ namespace Pandaborn.Ringtails.Dev
                     ["template"] = TemplateName(wp),
                     ["workerType"] = wp.GetComponent<WorkplaceWorkerType>()?.WorkerType,
                     ["ringtailOnly"] = ModuleBridge.IsNightPost(wp),
+                    ["inDistrict"] = wp.GetComponent<DistrictBuilding>()?.InstantDistrict != null,
                     ["desired"] = wp.DesiredWorkers,
                     ["assigned"] = assigned.Count,
                     ["assignedKinds"] = new JArray(assigned.Select(x => (object)Kind(x)).ToArray()),
@@ -409,6 +410,7 @@ namespace Pandaborn.Ringtails.Dev
                 lofts.Add(new JObject
                 {
                     ["id"] = Id(d),
+                    ["inDistrict"] = d.GetComponent<DistrictBuilding>()?.InstantDistrict != null,
                     ["kitState"] = ModuleBridge.LoftKitState(d),
                     ["adults"] = d.NumberOfAdultDwellers,
                     ["children"] = d.NumberOfChildDwellers,

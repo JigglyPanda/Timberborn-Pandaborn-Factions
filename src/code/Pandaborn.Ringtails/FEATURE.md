@@ -12,7 +12,7 @@ DESIGN.md Pillar 4. Results and the catalogue hand-over: `docs/tech/two-peoples.
 | `RingtailRestRootBehavior` | Rest from dawn to the bell (clamped 4–16 h): to bed first thing unless nearly rested, then needs and leisure; a root behaviour inserted above `WorkerRootBehavior` |
 | `NightPost` | On `PandabornNightPostSpec`: switches the post to the Ringtail worker type when finished or loaded, keeps it there, shows "Closed for the day" by day |
 | `MoonLoft`, `LoftNursery` | On `PandabornMoonLoftSpec`: triggers the arrival; at each dawn raises at most one kit per loft while the district has open night jobs (desired workers of Ringtail-typed posts minus Ringtail adults and kits) and nobody is critically hungry or thirsty |
-| `LoftHousingRule` | Lofts are Ringtail homes: swaps an Inkpaw out for a Ringtail; a homeless Ringtail takes a loft bed |
+| `LoftHousingRule` | Lofts are Ringtail homes: swaps an Inkpaw out for a Ringtail; a homeless Ringtail takes a loft bed. With `MoonLoft.MakeRoomForKit`, an Inkpaw lodger (cub first) moves out when the nursery has a kit to raise in a full loft |
 | `RingtailCoat`, `RingtailGrowth`, `RingtailBadge` | Coat; kit grows into a Ringtail; portrait and "Ringtail, age N" |
 | `RingtailsPopulationRow` | The second population row (Ringtails, working, idle), behind `SafeUi` |
 | `RingtailsBuildingFragment` | Once the Ringtails have arrived: a drawn sun and "Day shift: ..." on every Inkpaw workplace, a crescent and "Night shift: ..." on night posts, the nursery state on Moon Lofts; behind `SafeUi` |
@@ -160,6 +160,7 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
   * method `AssignDweller(Timberborn.DwellingSystem.Dweller)`
   * method `UnassignDweller(Timberborn.DwellingSystem.Dweller)`
   * method `get_AdultDwellers()`
+  * method `get_ChildDwellers()`
   * method `get_HasFreeChildSlots()`
   * method `get_HasFreeSlots()`
   * method `get_UnderpopulatedByChildren()`
@@ -365,6 +366,7 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
   * method `Cos(System.Single)`
   * method `Max(System.Int32, System.Int32)`
   * method `Min(System.Single, System.Single)`
+  * method `RoundToInt(System.Single)`
   * method `Sin(System.Single)`
 * type `UnityEngine.Object`
   * method `get_name()`
@@ -374,6 +376,8 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
 * type `UnityEngine.Rect`
   * method `get_height()`
   * method `get_width()`
+  * method `get_x()`
+  * method `get_y()`
 * type `UnityEngine.Shader`
   * method `PropertyToID(System.String)`
 * type `UnityEngine.Sprite`
@@ -392,30 +396,28 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
 
 **UnityEngine.UIElementsModule**
 
-* type `UnityEngine.UIElements.Align`
 * type `UnityEngine.UIElements.Angle`
   * method `Degrees(System.Single)`
 * type `UnityEngine.UIElements.ArcDirection`
 * type `UnityEngine.UIElements.Button`
 * type `UnityEngine.UIElements.DisplayStyle`
 * type `UnityEngine.UIElements.FillRule`
-* type `UnityEngine.UIElements.FlexDirection`
 * type `UnityEngine.UIElements.IPanel`
   * method `get_visualTree()`
 * type `UnityEngine.UIElements.IStyle`
-  * method `set_alignSelf(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.Align>)`
   * method `set_bottom(UnityEngine.UIElements.StyleLength)`
   * method `set_display(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.DisplayStyle>)`
-  * method `set_flexDirection(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.FlexDirection>)`
-  * method `set_flexShrink(UnityEngine.UIElements.StyleFloat)`
   * method `set_height(UnityEngine.UIElements.StyleLength)`
   * method `set_left(UnityEngine.UIElements.StyleLength)`
-  * method `set_marginRight(UnityEngine.UIElements.StyleLength)`
+  * method `set_marginTop(UnityEngine.UIElements.StyleLength)`
+  * method `set_paddingLeft(UnityEngine.UIElements.StyleLength)`
   * method `set_position(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.Position>)`
   * method `set_right(UnityEngine.UIElements.StyleLength)`
   * method `set_top(UnityEngine.UIElements.StyleLength)`
   * method `set_width(UnityEngine.UIElements.StyleLength)`
 * type `UnityEngine.UIElements.Label`
+* type `UnityEngine.UIElements.Length`
+  * method `Percent(System.Single)`
 * type `UnityEngine.UIElements.LineCap`
 * type `UnityEngine.UIElements.MeshGenerationContext`
   * method `get_painter2D()`
@@ -435,10 +437,9 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
 * type `UnityEngine.UIElements.Position`
 * type `UnityEngine.UIElements.StyleEnum`1`
   * method `op_Implicit(!0)`
-* type `UnityEngine.UIElements.StyleFloat`
-  * method `op_Implicit(System.Single)`
 * type `UnityEngine.UIElements.StyleLength`
   * method `op_Implicit(System.Single)`
+  * method `op_Implicit(UnityEngine.UIElements.Length)`
 * type `UnityEngine.UIElements.TextElement`
   * method `set_text(System.String)`
 * type `UnityEngine.UIElements.UQueryExtensions`
@@ -446,13 +447,12 @@ load), and a loft's nursery state is display only (recomputed at each dawn). So 
 * type `UnityEngine.UIElements.VisualElement`
   * method `.ctor()`
   * method `Add(UnityEngine.UIElements.VisualElement)`
-  * method `Insert(System.Int32, UnityEngine.UIElements.VisualElement)`
   * method `MarkDirtyRepaint()`
   * method `get_contentRect()`
   * method `get_generateVisualContent()`
   * method `get_panel()`
-  * method `get_parent()`
   * method `get_style()`
+  * method `get_worldBound()`
   * method `set_generateVisualContent(System.Action`1<UnityEngine.UIElements.MeshGenerationContext>)`
   * method `set_name(System.String)`
   * method `set_pickingMode(UnityEngine.UIElements.PickingMode)`
