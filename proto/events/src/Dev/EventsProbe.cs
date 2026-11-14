@@ -71,6 +71,8 @@ namespace Pandaborn.Events.Dev
         private readonly WeatherService _weatherService;
         private readonly WeatherFastForwarder _weatherFastForwarder;
         private readonly EntityService _entityService;
+        private readonly Timberborn.Beavers.BeaverFactory _beaverFactory;
+        private readonly Timberborn.Navigation.IDistrictService _districtService;
 
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
@@ -95,8 +97,11 @@ namespace Pandaborn.Events.Dev
         public EventsProbe(EventBus eventBus, IDayNightCycle dayNightCycle, DistrictCenterRegistry districtCenterRegistry, EntityRegistry entityRegistry,
                            EntitySelectionService entitySelectionService, NaturalResourceFactory naturalResourceFactory, PlantingService plantingService,
                            TreeCuttingArea treeCuttingArea, ISoilMoistureService soilMoistureService, ITerrainService terrainService, PandabornStore store,
-                           WeatherService weatherService, WeatherFastForwarder weatherFastForwarder, EntityService entityService)
+                           WeatherService weatherService, WeatherFastForwarder weatherFastForwarder, EntityService entityService,
+                           Timberborn.Beavers.BeaverFactory beaverFactory, Timberborn.Navigation.IDistrictService districtService)
         {
+            _beaverFactory = beaverFactory;
+            _districtService = districtService;
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
             _districtCenterRegistry = districtCenterRegistry;
@@ -325,6 +330,16 @@ namespace Pandaborn.Events.Dev
                 {
                     if (!_weatherService.IsHazardousWeather) _weatherFastForwarder.JumpToNextSeason();
                     return "hazardous " + _weatherService.IsHazardousWeather + ", day " + _dayNightCycle.DayNumber + " hour " + _dayNightCycle.HoursPassedToday.ToString("0.0");
+                }
+                case "spawnAdults":
+                {
+                    // grown colonists at the district centre (a crowd for the square; never on a loaded save's run)
+                    if (_districtCenterRegistry.FinishedDistrictCenters.Count == 0) return "no district centre";
+                    var dc = _districtCenterRegistry.FinishedDistrictCenters[0];
+                    int n = a["count"]?.Value<int>() ?? 10;
+                    var at = dc.GetComponent<BlockObjectCenter>().WorldCenterGrounded;
+                    for (int i = 0; i < n; i++) _beaverFactory.CreateAdult(_districtService.GetRandomDestinationInDistrict(dc.District, at), 0.3f);
+                    return n + " adults near the district centre";
                 }
                 case "seedlings":
                 {

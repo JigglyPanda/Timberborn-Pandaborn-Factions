@@ -101,9 +101,13 @@ the festival can claim it. On the festival day:
 
 1. a worker at a `KeepWorkingTemplates` workplace releases to the Worker root and works its normal hours;
 2. by day, the game's `NeederRootBehavior` decides first (eat, drink, attractions, decorations, sleep near dawn);
-3. otherwise, and first of all during the show (`ShowStartHours`..`ShowEndHours`), walk to a spot near the district's
-   square (the nearest of five `IDistrictService.GetRandomDestinationInDistrict` picks around the square's centre, so the
-   crowd stands on and beside it rather than scattered), then wait there 0.3–0.8 h;
+3. otherwise, and first of all during the show (`ShowStartHours`..`ShowEndHours`), go to the district's square: onto
+   one of its own 20 dance slots (the Dance Hall basis' `Dancing` slots in rings round the pole; entered with the game's
+   `WalkInsideExecutor` exactly as an attraction is entered, then a 0.5–1 h stay with `ApplyEffectExecutor` and the
+   square's attraction effects, so dancers also get its Campfire points); when every slot is taken, to a spot just outside
+   its edge (a ring 3.2–3.8 m from its centre, else the nearest of five `GetRandomDestinationInDistrict` picks) for
+   0.3–0.8 h. Overflow colonists try the slots again each time they choose. Both peoples' bodies carry the `Dancing`
+   animation;
 4. with no square in the district: needs, then the game's wander behaviour.
 
 **What keeps running** (so a festival never strands a colony): critical needs (above us), all eating and drinking from
@@ -171,7 +175,7 @@ Store entry `Festival` v1: `phase`, `day`, `grand`, `last` (cycle of the last fe
 | When | What the player sees |
 |---|---|
 | Before cycle 6 | Nothing, except a line on any bamboo's panel: "Bamboo flowers once in a long while: about every 5 to 7 cycles, never before cycle 6." and a **Flowering: Normal** button (the setting) |
-| Start of cycle 5 (a full cycle ahead) | "The Shoot Bamboo is budding. It will flower at the start of cycle 6, bear seed for a few days and die." A line under the top bar: "Shoot Bamboo flowers at the start of cycle 6", whose tooltip says what to do: store about 11 food for each panda or grow other food, set the farmhouses to harvest first, keep storage free for bamboo seed. Every shoot bamboo's panel: "Budding: it will flower at the start of cycle 6, bear seed for 3 days, then die." Buds on the plants once the plant lane paints them |
+| Start of cycle 5 (a full cycle ahead) | "The Shoot Bamboo is budding. It will flower at the start of cycle 6, bear seed for a few days and die." A line under the top bar: "Shoot Bamboo flowers at the start of cycle 6", whose tooltip gives one instruction: "Store about 11 food for each panda before it starts" (timber bamboo: about 5 poles for each panda; a Pole Mill can split logs into poles meanwhile). Every shoot bamboo's panel: "Budding: it will flower at the start of cycle 6, bear seed for 3 days, then die." Buds on the plants once the plant lane paints them |
 | Start of cycle 6 | "The Shoot Bamboo is in flower. 56 plants bear 168 bamboo seed: harvest it within 3 days." Every grown shoot bamboo on the map, planted or wild, becomes Flowering Shoot Bamboo, whose harvest is bamboo seed; young plants die. Top-bar line: "Shoot Bamboo in flower: harvest the seed, 3 days left" |
 | Days 1–3 | Farmers harvest the flowering plants for seed exactly as they harvest shoots (it is their crop's harvest), carry it to the farmhouse and on to storage. Freed tiles are replanted at once from the planting marks |
 | Day 3 | Unharvested flowering plants die over the last day ("The flowered Shoot Bamboo has died. Bamboo seed harvested: 151. Its young plants grow again in 6 days.") |
@@ -374,6 +378,7 @@ probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
 | `events-final-1` | copy `pbevents3` | **could not test**: crashed at load on another lane's new character attachment (`Characters/Pandaborn/Attachments/ConicalHat`, bundle `pandabornattachments`, which the copy lacked). `build.ps1` now copies every `pandaborn*` bundle the copy lacks from the last full build |
 | `events-final-2` | copy `pbevents3`: the square's `LanternRise` attachment (`Fireworks/Content/Sparks_Trail` on `#Finished`, until the model lane's node exists), crowd nearer, the panel layout fix, `BudsUseDetail` | **PASS, 0 own errors.** The farmhouse crew of 3 kept working; the 10 others all attended and spent the day at or walking to the square. **LanternRise:** the attachment played for each of the 24 lanterns (no comets in the sky); it shows as small pink sparks halfway up the pole (`ev_f_d1_h16_dusk_c.png`, `ev_f_d1_h17_dusk_d.png`). **Panel:** the bamboo line and its setting button no longer overlap (`ev_f_d0_inflower_panel.png`, `ev_f_d0_buds_plant.png`). **Buds:** not visible (`ev_f_d0_buds_plant.png`); see `events-buds-1` |
 | `events-buds-1` | copy `pbevents3`, short: a grown shoot-bamboo field, announcement, close-ups before and after; the probe lists each renderer under `Mature` with its material, `_EnableDetail` and detail textures | **PASS, 0 own errors. The switch works, the buds do not read.** Before the announcement the grown model's material (`PandabornShootBamboo - Uncolored21 (Instance)`, VegetationURP, re-created by the game's optimizer) has `_DetailMap PandabornPlants_Detail` and `_EnableDetail 0`; from the announcement on, `_EnableDetail 1` on every renderer under `Mature` (as the game's `GatherableModel` does). On screen the field looks the same before and after (`ev_b_before.png`, `ev_b_after.png`, `ev_b_after_field.png`): the bud clusters are too small and too close to the leaf green to see from the game camera. Art request to the plant lane: larger, paler (cream to white) clusters at the spray tips, or a pale tint over the upper sprays in the detail map. No code change is needed (why the plant lab's `buds` rule changed nothing is not known; the switch itself works) |
+| `events-crowd-1` | copy `pbevents4` (variant `crews`, no LanternRise attachment, so comets): 13 starting colonists plus 14 spawned adults (27), festival called; festival-goers onto the square's dance slots | **PASS, 0 own errors.** The square's 20 dance slots were full (20/20) for most of the festival day and from the show's start to its end at h22; the overflow (3–4) stood at the square's edges, the farmhouse crew (3) worked. 24 of 27 attended. From the normal camera the square is a full ring of dancing pandas round the lantern pole: dusk with the comets rising (`ev_cr_d1_h16_dusk_b.png`), night (`ev_cr_d1_h20_night.png`, `ev_cr_d1_h21_night_b.png`), day (`ev_cr_d1_h11_day.png`), the panel (`ev_cr_d1_h17_dusk_panel.png`). Both peoples' bodies carry the `Dancing` animation (adult and young, Inkpaw and Ringtail meshes) |
 
 ### Phase 1
 
@@ -396,10 +401,12 @@ probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
 
 ### The look of the festival (honest)
 
-Functional, not yet beautiful. At night the square itself looks good: its lantern strings glow red-orange over the
-pale paving, with a few pandas on it and the rest of the crowd around its edges (`ev_f_d1_h16_dusk_b.png`). The sky is the weak part. The vanilla comets read as
-rockets, gone in seconds; the `Sparks_Trail` stand-in on the attachment is a small pink sparkle at the pole, invisible
-from the normal camera. **Rising lanterns need their own art**: a small bundle prefab with one `ParticleSystem`
+The square now looks like a festival: at dusk and at night its lantern strings glow red-orange over the pale paving and
+twenty pandas dance in rings round the lantern pole, with the overflow close in at its edges
+(`events-crowd-1\ev_cr_d1_h20_night.png`; before the dance slots, `events-final-2\ev_f_d1_h16_dusk_b.png` showed three
+pandas on it and the rest scattered). The sky is the weak part. The vanilla comets read as rockets, gone in seconds; the
+`Sparks_Trail` stand-in tried on the attachment was a small pink sparkle at the pole, invisible from the normal camera,
+so until the lantern prefab exists the festival uses the comets from `#FireworkMount`. **Rising lanterns need their own art**: a small bundle prefab with one `ParticleSystem`
 (a warm, softly glowing paper-lantern quad, emission rate 0, played once per lantern; rises 1–1.5 m/s with a slow
 sideways drift and a gentle sway; 10–16 s life; fades in over 0.5 s and out over the last 3 s; additive or emissive
 warm orange, about 0.3 m), referenced by the square blueprint's `LanternRise` attachment on `#LanternRise`. Burst

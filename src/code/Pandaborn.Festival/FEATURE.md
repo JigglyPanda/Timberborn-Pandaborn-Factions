@@ -13,7 +13,10 @@ dawn to the dawn after:
 * `FestivalGoer`, a root behaviour on every colonist template with `PandabornFestivalGoerSpec`, sits just above
   `WorkerRootBehavior` (above `NeederRootBehavior` for the young). On the festival day nobody works except crews of the
   spec's `KeepWorkingTemplates` (pumps and lifts); by day the game's own need loop runs first, then colonists celebrate
-  at a random spot near the district's square (the game's `GetRandomDestinationInDistrict` around the square); from
+  at the district's square: on its own dance slots first (the Dance Hall basis' 20 `Dancing` slots, entered with the
+  game's `WalkInsideExecutor` as an attraction is, staying with `ApplyEffectExecutor` and the square's attraction
+  effects), and when the slots are full just outside its edge (a ring 3.2–3.8 m from its centre, else the nearest of a
+  few `GetRandomDestinationInDistrict` spots); from
   `ShowStartHours` to `ShowEndHours` everyone goes to the square first. Carrying, critical needs, death and stranding
   stay above it. A Ringtail's day rest (inserted in `InitializeEntity`) stays above it too, because the festival inserts
   in `PostInitializeEntity`: Ringtails sleep through the morning, then join.
@@ -81,6 +84,11 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `AsSingleton()`
   * method `AsTransient()`
 * type `Bindito.Core.ISingleBindingBuilder`1`
+
+**Timberborn.Attractions**
+
+* type `Timberborn.Attractions.Attraction`
+  * method `GetEfficiencyAdjustedEffects(System.Collections.Generic.List`1<Timberborn.Effects.ContinuousEffect>)`
 
 **Timberborn.BaseComponentSystem**
 
@@ -167,8 +175,17 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 **Timberborn.Effects**
 
+* type `Timberborn.Effects.ContinuousEffect`
 * type `Timberborn.Effects.InstantEffect`
   * method `.ctor(System.String, System.Single, System.Int32)`
+
+**Timberborn.EnterableSystem**
+
+* type `Timberborn.EnterableSystem.Enterable`
+  * method `get_CanReserveSlot()`
+* type `Timberborn.EnterableSystem.Enterer`
+  * method `get_CurrentBuilding()`
+  * method `get_IsInside()`
 
 **Timberborn.EntityPanelSystem**
 
@@ -270,6 +287,8 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 **Timberborn.NeedBehaviorSystem**
 
+* type `Timberborn.NeedBehaviorSystem.ApplyEffectExecutor`
+  * method `LaunchToTimestamp(System.Collections.Generic.IEnumerable`1<Timberborn.Effects.ContinuousEffect>, System.Single, System.String)`
 * type `Timberborn.NeedBehaviorSystem.NeederRootBehavior`
 
 **Timberborn.NeedSystem**
@@ -335,6 +354,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 * type `Timberborn.TimeSystem.DaytimeStartEvent`
 * type `Timberborn.TimeSystem.IDayNightCycle`
+  * method `DayNumberHoursFromNow(System.Single)`
   * method `get_DayNumber()`
   * method `get_HoursPassedToday()`
   * method `get_PartialDayNumber()`
@@ -349,6 +369,8 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 **Timberborn.WalkingSystem**
 
+* type `Timberborn.WalkingSystem.WalkInsideExecutor`
+  * method `Launch(Timberborn.EnterableSystem.Enterable)`
 * type `Timberborn.WalkingSystem.WalkToPositionExecutor`
   * method `Launch(UnityEngine.Vector3)`
 
@@ -388,7 +410,9 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `UnityEngine.Mathf`
   * method `CeilToInt(System.Single)`
   * method `Clamp(System.Single, System.Single, System.Single)`
+  * method `Cos(System.Single)`
   * method `Max(System.Single, System.Single)`
+  * method `Sin(System.Single)`
 * type `UnityEngine.Object`
   * method `get_name()`
   * method `op_Implicit(UnityEngine.Object)`

@@ -1,0 +1,89 @@
+{
+  "speed": 7,
+  "run": {
+    "inGameHours": 44
+  },
+  "buildings": [
+    "PandabornFestivalSquare.Inkpaws",
+    "EfficientFarmHouse.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
+  "events": {
+    "stock": {
+      "Water": 400,
+      "Log": 60,
+      "PandabornPaperLantern": 40,
+      "PandabornSteamedShoots": 70,
+      "PandabornPickles": 70,
+      "PandabornSteamedRice": 70
+    },
+    "actions": [
+      {
+        "atRunHour": 0.3,
+        "do": "spawnAdults",
+        "count": 14
+      },
+      {
+        "atRunHour": 3.0,
+        "do": "callFestival"
+      }
+    ],
+    "shots": [
+      {
+        "name": "cr_d1_h11_day",
+        "day": 1,
+        "hour": 11,
+        "select": "none"
+      },
+      {
+        "name": "cr_d1_h16_dusk_a",
+        "day": 1,
+        "hour": 16.0,
+        "select": "none"
+      },
+      {
+        "name": "cr_d1_h16_dusk_b",
+        "day": 1,
+        "hour": 16.6,
+        "select": "none"
+      },
+      {
+        "name": "cr_d1_h17_dusk_panel",
+        "day": 1,
+        "hour": 17.2,
+        "select": "square"
+      },
+      {
+        "name": "cr_d1_h20_night",
+        "day": 1,
+        "hour": 20.0,
+        "select": "none"
+      },
+      {
+        "name": "cr_d1_h21_night_b",
+        "day": 1,
+        "hour": 21.0,
+        "select": "none"
+      }
+    ]
+  }
+}

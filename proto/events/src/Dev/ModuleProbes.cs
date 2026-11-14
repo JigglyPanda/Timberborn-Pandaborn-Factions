@@ -97,10 +97,23 @@ namespace Pandaborn.Events.Dev
                 ["festiveMin"] = festiveN > 0 ? Math.Round(festiveMin, 3) : -1,
                 ["grandAvg"] = grandN > 0 ? Math.Round(grandSum / grandN, 3) : -1,
                 ["doing"] = doing,
+                ["onSquareSlots"] = OnSlots(f),
                 ["keepWorking"] = keep,
                 ["lockedByTradition"] = TraditionToolLocker.LockedCount,
                 ["panel"] = FestivalSquareFragment.ShownText
             };
+        }
+
+        /// <summary>Colonists inside each square (on its dance slots) / its capacity.</summary>
+        private static string OnSlots(FestivalService f)
+        {
+            string text = "";
+            for (int i = 0; i < f.Squares.Count; i++)
+            {
+                var e = f.Squares[i] ? f.Squares[i].Enterable : null;
+                text += (text.Length > 0 ? ", " : "") + (e ? e.NumberOfEnterersInside + "/" + e.Capacity : "no slots");
+            }
+            return text;
         }
 
         public static void Panels(JObject entry) => entry["festivalPanel"] = FestivalSquareFragment.ShownText;

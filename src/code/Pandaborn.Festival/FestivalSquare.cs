@@ -1,5 +1,7 @@
 using System;
+using Timberborn.Attractions;
 using Timberborn.BaseComponentSystem;
+using Timberborn.EnterableSystem;
 using Timberborn.BlockSystem;
 using Timberborn.EntitySystem;
 using Timberborn.GameDistricts;
@@ -46,10 +48,18 @@ namespace Pandaborn.Festival
 
         public Vector3 Center => _center ? _center.WorldCenterGrounded : Transform.position;
 
+        /// <summary>The square's dance floor (its basis' enterable slots), or null if its data has none.</summary>
+        public Enterable Enterable { get; private set; }
+
+        /// <summary>The square's attraction effects (Campfire), applied to festival dancers as to any visitor; or null.</summary>
+        public Attraction Attraction { get; private set; }
+
         public void Awake()
         {
             _districtBuilding = GetComponent<DistrictBuilding>();
             _center = GetComponent<BlockObjectCenter>();
+            Enterable = GetComponent<Enterable>();
+            Attraction = GetComponent<Attraction>();
         }
 
         public void OnEnterFinishedState()
