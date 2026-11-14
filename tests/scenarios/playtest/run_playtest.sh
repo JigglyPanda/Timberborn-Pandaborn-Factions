@@ -20,7 +20,7 @@ SECS=$(( DAYS * 75 + 300 ))
   cp "$REPO/catalogue/building_stats.toml" "$OUT/playtest_meta/" 2>/dev/null
 ) &
 SNAP=$!
-powershell -ExecutionPolicy Bypass -File tools/run_game_test.ps1 -Faction "$FACTION" -Map Plains -GameMode "$MODE" \
+powershell -ExecutionPolicy Bypass -File tools/run_game_test.ps1 -Faction "$FACTION" -Map "${MAP:-Plains}" -GameMode "$MODE" \
   -InGameDays "$DAYS" -RunSeconds "$SECS" -TimeoutSeconds $(( SECS + 600 )) -WaitForGameSeconds 10800 -NoBatchControl \
   -OnlyMods JigglyPanda.PandabornFactions -RequestJson "tests/scenarios/playtest/$SCEN.json" -RunId "$RUN" \
   > "/e/PandabornDev/build/test/$RUN.console.txt" 2>&1

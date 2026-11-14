@@ -311,7 +311,9 @@ namespace PandabornDevHarness
                 if (inputSpec == null) return null;
                 // the building's own transform (the WaterInput component computes the same in PostInitializeEntity)
                 var c = bo.TransformCoordinates(inputSpec.WaterInputCoordinates);
-                float depth = _waterMap.WaterDepth(c);
+                // the pipe reaches down from the intake (WaterInputPipeSpec.MaxDepth 2): take the deepest water it can reach
+                float depth = 0f;
+                for (int z = c.z + 1; z >= c.z - 3 && z >= 0; z--) depth = Mathf.Max(depth, _waterMap.WaterDepth(new Vector3Int(c.x, c.y, z)));
                 bool floorKnown = _waterMap.TryGetColumnFloor(c, out int floor);
                 if (_pumpDiagnostics.Count < 40)
                     _pumpDiagnostics.Add(new JObject
