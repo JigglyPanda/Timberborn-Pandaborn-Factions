@@ -38,6 +38,7 @@ namespace PandabornDevHarness
         private readonly JArray _deaths = new JArray();
         private readonly HashSet<Character> _known = new HashSet<Character>();
         private readonly List<Workplace> _workplaces = new List<Workplace>();
+        private readonly List<Dwelling> _dwellings = new List<Dwelling>();
         private float _workplacesAt = -1e9f;
         private readonly Dictionary<Workplace, WorkSample> _work = new Dictionary<Workplace, WorkSample>();
         private int _daysRecorded;
@@ -184,11 +185,14 @@ namespace PandabornDevHarness
             if (now - _workplacesAt < 6f) return;
             _workplacesAt = now;
             _workplaces.Clear();
+            _dwellings.Clear();
             foreach (var entity in _entityRegistry.Entities)
             {
                 if (!entity) continue;
                 var w = entity.GetComponent<Workplace>();
                 if (w != null) _workplaces.Add(w);
+                var d = entity.GetComponent<Dwelling>();
+                if (d != null) _dwellings.Add(d);
             }
         }
 
@@ -436,14 +440,16 @@ namespace PandabornDevHarness
         private (int beds, int free, int homeless) Housing()
         {
             int beds = 0, used = 0, homeless = 0;
-            foreach (var entity in _entityRegistry.Entities)
+            RefreshWorkplaces(Hours());
+            foreach (var dwelling in _dwellings)
             {
-                if (!entity) continue;
-                var dwelling = entity.GetComponent<Dwelling>();
-                if (dwelling == null) continue;
-                var bo = entity.GetComponent<BlockObject>();
+                if (!dwelling) continue;
+                var bo = dwelling.GetComponent<BlockObject>();
                 if (bo != null && bo.IsFinished) { beds += dwelling.MaxBeavers; used += dwelling.NumberOfDwellers; }
             }
+            // finished homes placed since the last refresh
+            foreach (var p in _placed.Values)
+                if (p.Bo && p.Bo.IsFinished && p.Bo.GetComponent<Dwelling>() is Dwelling d && !_dwellings.Contains(d)) { beds += d.MaxBeavers; used += d.NumberOfDwellers; }
             foreach (var c in _characterPopulation.Characters)
             {
                 if (!c) continue;

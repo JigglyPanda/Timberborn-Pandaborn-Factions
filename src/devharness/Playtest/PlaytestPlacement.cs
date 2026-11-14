@@ -35,6 +35,9 @@ namespace PandabornDevHarness
         private readonly Dictionary<Vector2Int, Vector3Int> _resourceCoords = new Dictionary<Vector2Int, Vector3Int>();
         private float _resourceIndexAt = -1e9f;
         private int _networkZ = int.MinValue;
+        private readonly JArray _pumpDiagnostics = new JArray();
+        private readonly HashSet<Vector3Int> _pendingPath = new HashSet<Vector3Int>();
+        private readonly Dictionary<string, int> _rejects = new Dictionary<string, int>();
 
         // ------------------------------------------------------------------ build
 
@@ -63,11 +66,12 @@ namespace PandabornDevHarness
             var anchor = Anchor(Request.Str(o, "near", "dc"));
             if (!anchor.HasValue) { step.Waiting = "anchor " + Request.Str(o, "near", "dc") + " not placed"; return false; }
             var sw = Stopwatch.StartNew();
+            _rejects.Clear();
             var result = PlaceBest(spec, anchor.Value, o, out string why, out int tried);
             if (result == null)
             {
                 step.Error = "no spot: " + why + " (" + tried + " candidates, " + sw.ElapsedMilliseconds + " ms)";
-                Event("placeFailed", step.Id, new JObject { ["template"] = template, ["why"] = step.Error });
+                Event("placeFailed", step.Id, new JObject { ["template"] = template, ["why"] = step.Error, ["rejects"] = JObject.FromObject(_rejects) });
                 return false;
             }
             string id = step.Max > 1 || step.Instances.Count > 0 ? step.Id + "." + (step.Instances.Count + 1) : step.Id;
@@ -232,6 +236,9 @@ namespace PandabornDevHarness
                         if (reject != null)
                         {
                             why = reject;
+                            string rk = reject.Split('(')[0].Trim();
+                            _rejects.TryGetValue(rk, out int rn);
+                            _rejects[rk] = rn + 1;
                             _entityService.Delete(bo);
                             continue;
                         }
@@ -261,12 +268,20 @@ namespace PandabornDevHarness
             }
             if (rule == "nearWater")
             {
-                var input = bo.GetComponent<WaterInput>();
-                if (input == null) return null;
-                var c = input.Coordinates;
-                float best = 0f;
-                for (int z = c.z; z >= c.z - 6 && z >= 0; z--) best = Mathf.Max(best, _waterMap.WaterDepth(new Vector3Int(c.x, c.y, z)));
-                if (best < minDepth) return "intake not over water deep enough (" + best.ToString("0.00") + ")";
+                var inputSpec = bo.GetComponent<WaterInputSpec>();
+                if (inputSpec == null) return null;
+                // the building's own transform (the WaterInput component computes the same in PostInitializeEntity)
+                var c = bo.TransformCoordinates(inputSpec.WaterInputCoordinates);
+                float depth = _waterMap.WaterDepth(c);
+                bool floorKnown = _waterMap.TryGetColumnFloor(c, out int floor);
+                if (_pumpDiagnostics.Count < 40)
+                    _pumpDiagnostics.Add(new JObject
+                    {
+                        ["at"] = new JArray(bo.Coordinates.x, bo.Coordinates.y, bo.Coordinates.z), ["o"] = bo.Orientation.ToString(),
+                        ["intake"] = new JArray(c.x, c.y, c.z), ["depth"] = Math.Round(depth, 2), ["floor"] = floorKnown ? floor : -1,
+                        ["terrain"] = _terrainService.GetTerrainHeightBelow(new Vector3Int(c.x, c.y, c.z + 6))
+                    });
+                if (depth < minDepth) return "intake not over water deep enough (" + depth.ToString("0.00") + ")";
             }
             return null;
         }
@@ -367,9 +382,53 @@ namespace PandabornDevHarness
             return false;
         }
 
+        /// <summary>
+        /// Writes playtest\map.txt: rows of the area around the district center, one character per cell. Digit = terrain height
+        /// relative to the center's level (0-9, 'A','B'.. one, two levels below), '~' water at least 0.3 deep (',' shallower), 'T' tree, 'b' bush,
+        /// '#' building or path, '@' the district center doorstep.
+        /// </summary>
+        private void DumpMap(int radius)
+        {
+            if (radius <= 0) return;
+            EnsureNetwork();
+            var dc = Anchor("dc");
+            if (!dc.HasValue) return;
+            RefreshResourceIndex(true);
+            var sb = new System.Text.StringBuilder();
+            sb.Append("# origin " + dc.Value + ", radius " + radius + "; north (y+) at the top\n");
+            for (int y = dc.Value.y + radius; y >= dc.Value.y - radius; y--)
+            {
+                for (int x = dc.Value.x - radius; x <= dc.Value.x + radius; x++)
+                {
+                    var xy = new Vector2Int(x, y);
+                    if (!_terrainService.Contains(xy)) { sb.Append(' '); continue; }
+                    var g = Ground(new Vector3Int(x, y, dc.Value.z + 8));
+                    char ch;
+                    float depth = _waterMap.WaterDepth(g);
+                    if (x == dc.Value.x && y == dc.Value.y) ch = '@';
+                    else if (depth >= 0.3f) ch = '~';
+                    else if (depth > 0.02f) ch = ',';
+                    else if (_resourceIndex.TryGetValue(xy, out var kind) && kind.StartsWith("tree:", StringComparison.Ordinal)) ch = 'T';
+                    else if (_resourceIndex.TryGetValue(xy, out kind) && kind.StartsWith("bush:", StringComparison.Ordinal)) ch = 'b';
+                    else if (_blockService.GetObjectsAt(g).Count > 0) ch = '#';
+                    else
+                    {
+                        int dz = g.z - dc.Value.z;
+                        ch = dz < 0 ? (dz < -9 ? '-' : (char)('A' + Math.Min(-dz, 25) - 1)) : (char)('0' + Math.Min(dz, 9));
+                    }
+                    sb.Append(ch);
+                }
+                sb.Append('\n');
+            }
+            System.IO.File.WriteAllText(System.IO.Path.Combine(_dir, "map.txt"), sb.ToString());
+        }
+
         // ------------------------------------------------------------------ paths
 
-        /// <summary>Breadth-first search on the network's level from a building entrance to the nearest network cell.</summary>
+        /// <summary>
+        /// Cheapest route on the network's level from a building entrance to the nearest network cell (Dijkstra: an open cell
+        /// costs 1, a cell holding a tree costs 4, as a player routes around a forest unless it is much shorter through it).
+        /// </summary>
         private List<Vector3Int> Route(Vector3Int from, int maxLength)
         {
             if (_networkZ == int.MinValue) return null;
@@ -380,24 +439,26 @@ namespace PandabornDevHarness
             if (pathSpec == null) return null;
             var placer = Placer(pathSpec);
             var previous = new Dictionary<Vector2Int, Vector2Int> { [start] = start };
-            var depth = new Dictionary<Vector2Int, int> { [start] = 0 };
-            var queue = new Queue<Vector2Int>();
-            queue.Enqueue(start);
-            bool Open(Vector2Int c)
+            var cost = new Dictionary<Vector2Int, int> { [start] = 0 };
+            var open = new SortedSet<(int cost, int x, int y)> { (0, start.x, start.y) };
+            int Cost(Vector2Int c)
             {
-                if (!_terrainService.Contains(c)) return false;
-                if (_reserved.Contains(c)) return false;
+                if (!_terrainService.Contains(c) || _reserved.Contains(c)) return -1;
                 var cell = new Vector3Int(c.x, c.y, _networkZ);
-                if (Ground(cell).z != _networkZ) return false;
-                if (IsPath(cell)) return true;
-                return Valid(placer, cell, Orientation.Cw0).HasValue;
+                if (Ground(cell).z != _networkZ) return -1;
+                if (IsPath(cell)) return 1;
+                if (Valid(placer, cell, Orientation.Cw0).HasValue) return 1;
+                return TreeAt(cell).HasValue ? 4 : -1;
             }
             try
             {
-                if (!Open(start) && !IsPath(new Vector3Int(start.x, start.y, _networkZ))) return null;
-                while (queue.Count > 0)
+                if (Cost(start) < 0) return null;
+                while (open.Count > 0)
                 {
-                    var c = queue.Dequeue();
+                    var top = open.Min;
+                    open.Remove(top);
+                    var c = new Vector2Int(top.x, top.y);
+                    if (top.cost > cost[c]) continue;
                     if (_network.Contains(c))
                     {
                         var route = new List<Vector3Int>();
@@ -408,15 +469,17 @@ namespace PandabornDevHarness
                         }
                         return route;
                     }
-                    if (depth[c] >= maxLength) continue;
+                    if (top.cost >= maxLength) continue;
                     foreach (var step in Steps4)
                     {
                         var n = c + step;
-                        if (previous.ContainsKey(n)) continue;
-                        if (!_network.Contains(n) && !Open(n)) continue;
+                        int w = _network.Contains(n) ? 1 : Cost(n);
+                        if (w < 0) continue;
+                        int nc = top.cost + w;
+                        if (cost.TryGetValue(n, out int known) && known <= nc) continue;
+                        cost[n] = nc;
                         previous[n] = c;
-                        depth[n] = depth[c] + 1;
-                        queue.Enqueue(n);
+                        open.Add((nc, n.x, n.y));
                     }
                 }
             }
@@ -424,33 +487,62 @@ namespace PandabornDevHarness
             return null;
         }
 
+        /// <summary>The coordinates of a living tree standing on this cell, if any.</summary>
+        private Vector3Int? TreeAt(Vector3Int cell)
+        {
+            foreach (var o in _blockService.GetObjectsAt(cell))
+                if (o && o.GetComponent<TreeComponent>() != null) return o.Coordinates;
+            return null;
+        }
+
+        /// <summary>
+        /// Lays finished path tiles along a route. A tile still holding a tree is marked for cutting and laid later, once the
+        /// lumberjacks have cleared it (LayPendingPaths), as a player would; the cell joins the network now so later routes use it.
+        /// </summary>
         private int LayPath(List<Vector3Int> route)
+        {
+            int laid = 0;
+            var trees = new List<Vector3Int>();
+            foreach (var cell in route)
+            {
+                var xy = new Vector2Int(cell.x, cell.y);
+                if (!IsPath(cell))
+                {
+                    if (TryLayPathTile(cell)) laid++;
+                    else if (TreeAt(cell) is Vector3Int tree) { trees.Add(tree); _pendingPath.Add(cell); }
+                }
+                _network.Add(xy);
+                _keepClear.Add(xy);
+            }
+            if (trees.Count > 0)
+            {
+                _treeCuttingArea.AddCoordinates(trees);
+                Event("pathThroughTrees", null, new JObject { ["trees"] = trees.Count });
+            }
+            return laid;
+        }
+
+        private bool TryLayPathTile(Vector3Int cell)
         {
             var pathSpec = FindSpec("Path");
             var placer = Placer(pathSpec);
-            int laid = 0;
             try
             {
-                foreach (var cell in route)
-                {
-                    var xy = new Vector2Int(cell.x, cell.y);
-                    if (!IsPath(cell))
-                    {
-                        var placement = Valid(placer, cell, Orientation.Cw0);
-                        if (placement.HasValue)
-                        {
-                            var builder = new EntitySetup.Builder(pathSpec.Blueprint);
-                            if (pathSpec.HasSpec<BuildingSpec>()) _constructionFactory.CreateAsFinished(builder, placement.Value);
-                            else _blockObjectPlacerService.GetMatchingPlacer(pathSpec.GetSpec<BlockObjectSpec>()).Place(builder, placement.Value);
-                            laid++;
-                        }
-                    }
-                    _network.Add(xy);
-                    _keepClear.Add(xy);
-                }
+                var placement = Valid(placer, cell, Orientation.Cw0);
+                if (!placement.HasValue) return false;
+                var builder = new EntitySetup.Builder(pathSpec.Blueprint);
+                if (pathSpec.HasSpec<BuildingSpec>()) _constructionFactory.CreateAsFinished(builder, placement.Value);
+                else _blockObjectPlacerService.GetMatchingPlacer(pathSpec.GetSpec<BlockObjectSpec>()).Place(builder, placement.Value);
+                return true;
             }
             finally { placer.HideAllPreviews(); }
-            return laid;
+        }
+
+        private void LayPendingPaths()
+        {
+            if (_pendingPath.Count == 0) return;
+            foreach (var cell in _pendingPath.ToList())
+                if (IsPath(cell) || TryLayPathTile(cell)) _pendingPath.Remove(cell);
         }
 
         private bool IsPath(Vector3Int cell)

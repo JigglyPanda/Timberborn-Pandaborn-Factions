@@ -122,7 +122,7 @@ namespace PandabornDevHarness
         private JObject _spec;
         private string _dir;
         private bool _started, _ended;
-        private float _startHours, _startReal, _nextEval;
+        private float _startHours, _startReal, _nextEval, _nextPathTry;
         private readonly List<Step> _steps = new List<Step>();
         private readonly Dictionary<string, Placed> _placed = new Dictionary<string, Placed>();   // instance id -> placed building
         private readonly JObject _names = new JObject();
@@ -239,6 +239,7 @@ namespace PandabornDevHarness
                 float now = Hours();
                 UpdateTelemetry(now);
                 ConfigureFinished(now);
+                if (now >= _nextPathTry) { _nextPathTry = now + 1f; LayPendingPaths(); }
                 if (now >= _nextEval)
                 {
                     _nextEval = now + 0.25f;
@@ -271,6 +272,8 @@ namespace PandabornDevHarness
             _state["startDay"] = Math.Round(_dayNightCycle.PartialDayNumber, 3);
             _state["startSpeed"] = speed >= 0f ? speed : Harness.Request.Speed;
             Event("start", null, new JObject { ["speed"] = _state["startSpeed"], ["workingHours"] = WorkingHours() });
+            try { DumpMap((int)Request.Num(_spec, "mapDumpRadius", 45f)); }
+            catch (Exception e) { Harness.Warn("playtest: map dump failed: " + e.Message); }
             BeginTelemetry();
         }
 
@@ -646,6 +649,7 @@ namespace PandabornDevHarness
             _state["stepStates"] = steps;
             _state["placed"] = placed;
             _state["realSeconds"] = Math.Round(Time.unscaledTime - _startReal, 1);
+            if (_pumpDiagnostics.Count > 0) _state["waterInputTries"] = _pumpDiagnostics;
             try { File.WriteAllText(Path.Combine(_dir, "state.json"), _state.ToString(Formatting.Indented)); }
             catch (Exception e) { Harness.Warn("playtest: writing state.json failed: " + e.Message); }
         }

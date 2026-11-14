@@ -1,7 +1,7 @@
 {
   "screenshots": [],
   "batchControl": false,
-  "speed": 7,
+  "speed": 30,
   "playtest": {
     "name": "folktails-careless",
     "note": "Typical new-player mistakes: no water storage at all, one crop only, too few homes (three), no second farm. Folktails: carrots only.",
@@ -47,8 +47,10 @@
         "op": "build",
         "template": "@pump",
         "rule": "nearWater",
-        "maxDistance": 30,
-        "priority": "VeryHigh"
+        "maxDistance": 40,
+        "priority": "VeryHigh",
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "lumber1",
@@ -273,10 +275,12 @@
         "template": "@pump",
         "rule": "nearWater",
         "near": "pump1",
-        "maxDistance": 20,
+        "maxDistance": 40,
         "when": {
           "population": 18
-        }
+        },
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "gears1",
@@ -342,6 +346,7 @@
           "day": 9
         }
       }
-    ]
+    ],
+    "speed": 30
   }
 }

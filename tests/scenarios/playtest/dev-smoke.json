@@ -1,23 +1,94 @@
 {
   "screenshots": [],
   "batchControl": false,
-  "speed": 7,
+  "speed": 30,
   "playtest": {
     "name": "dev-smoke",
     "shotsEveryDays": 1,
     "steps": [
-      { "id": "lumber1", "op": "build", "template": "LumberjackFlag.Folktails", "rule": "trees", "maxDistance": 25 },
-      { "id": "cut1", "op": "cut", "target": "lumber1", "count": 30, "when": { "after": ["lumber1"] } },
-      { "id": "pump1", "op": "build", "template": "WaterPump.Folktails", "rule": "nearWater", "maxDistance": 30, "priority": "VeryHigh" },
-      { "id": "gather1", "op": "build", "template": "GathererFlag.Folktails", "rule": "bushes", "maxDistance": 30 },
-      { "id": "farm1", "op": "build", "template": "EfficientFarmHouse.Folktails", "rule": "moist", "maxDistance": 30 },
-      { "id": "carrots", "op": "plant", "target": "farm1", "plant": "Carrot", "count": 30, "when": { "after": ["farm1"] } },
-      { "id": "lodge", "op": "build", "template": "Lodge.Folktails", "repeat": 3, "maxDistance": 15 },
-      { "id": "tank1", "op": "build", "template": "SmallTank.Folktails", "near": "pump1", "good": "Water", "maxDistance": 10, "when": { "after": ["pump1"] } },
-      { "id": "pile1", "op": "build", "template": "SmallPile.Folktails", "near": "dc", "good": "Log", "maxDistance": 12 },
-      { "id": "s15", "op": "speed", "speed": 15, "when": { "day": 2.0 } },
-      { "id": "s30", "op": "speed", "speed": 30, "when": { "day": 2.5 } },
-      { "id": "s60", "op": "speed", "speed": 60, "when": { "day": 3.0 } }
-    ]
+      {
+        "id": "lumber1",
+        "op": "build",
+        "template": "LumberjackFlag.Folktails",
+        "rule": "trees",
+        "maxDistance": 25
+      },
+      {
+        "id": "cut1",
+        "op": "cut",
+        "target": "lumber1",
+        "count": 30,
+        "when": {
+          "after": [
+            "lumber1"
+          ]
+        }
+      },
+      {
+        "id": "pump1",
+        "op": "build",
+        "template": "WaterPump.Folktails",
+        "rule": "nearWater",
+        "maxDistance": 40,
+        "priority": "VeryHigh",
+        "minDepth": 0.3,
+        "tries": 600
+      },
+      {
+        "id": "gather1",
+        "op": "build",
+        "template": "GathererFlag.Folktails",
+        "rule": "bushes",
+        "maxDistance": 30
+      },
+      {
+        "id": "farm1",
+        "op": "build",
+        "template": "EfficientFarmHouse.Folktails",
+        "rule": "moist",
+        "maxDistance": 30
+      },
+      {
+        "id": "carrots",
+        "op": "plant",
+        "target": "farm1",
+        "plant": "Carrot",
+        "count": 30,
+        "when": {
+          "after": [
+            "farm1"
+          ]
+        }
+      },
+      {
+        "id": "lodge",
+        "op": "build",
+        "template": "Lodge.Folktails",
+        "repeat": 3,
+        "maxDistance": 15
+      },
+      {
+        "id": "tank1",
+        "op": "build",
+        "template": "SmallTank.Folktails",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 10,
+        "when": {
+          "after": [
+            "pump1"
+          ]
+        }
+      },
+      {
+        "id": "pile1",
+        "op": "build",
+        "template": "SmallPile.Folktails",
+        "near": "dc",
+        "good": "Log",
+        "maxDistance": 12
+      }
+    ],
+    "speed": 30
   }
 }

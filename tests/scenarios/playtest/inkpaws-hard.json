@@ -1,7 +1,7 @@
 {
   "screenshots": [],
   "batchControl": false,
-  "speed": 7,
+  "speed": 30,
   "playtest": {
     "name": "inkpaws-hard",
     "note": "Inkpaws, the same quality of play, following DESIGN.md's first two hours: shoot bamboo and cabbage first, timber bamboo (forester) for poles, cisterns before the first drought, steamer then pickles, dens as beds run out, campfire, hammocks, ink studio. Working day left at 16 h: the rested bonus is not in the installed build. Hard difficulty: the same plan with water storage and the second staple brought forward, as a Hard player would.",
@@ -36,31 +36,10 @@
       "cooked": "PandabornSteamedShoots",
       "pickler": "PandabornPickleYard.Inkpaws",
       "pickles": "PandabornPickles",
-      "hammock": "PandabornHammock.Inkpaws"
+      "hammock": "PandabornHammock.Inkpaws",
+      "teahouse": "PandabornTeahouse.Inkpaws"
     },
     "steps": [
-      {
-        "id": "pilePoles",
-        "op": "build",
-        "template": "@pile",
-        "good": "Plank",
-        "maxDistance": 12,
-        "when": {
-          "day": 0.3
-        }
-      },
-      {
-        "id": "bootstrapPoles",
-        "op": "give",
-        "target": "pilePoles",
-        "good": "Plank",
-        "amount": 7,
-        "when": {
-          "finished": [
-            "pilePoles"
-          ]
-        }
-      },
       {
         "id": "builders",
         "op": "workers",
@@ -72,8 +51,10 @@
         "op": "build",
         "template": "@pump",
         "rule": "nearWater",
-        "maxDistance": 30,
-        "priority": "VeryHigh"
+        "maxDistance": 40,
+        "priority": "VeryHigh",
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "lumber1",
@@ -242,8 +223,7 @@
         "maxDistance": 15,
         "min": 25,
         "when": {
-          "day": 1.5,
-          "science": 30
+          "day": 1.5
         }
       },
       {
@@ -295,12 +275,24 @@
         "id": "hammock",
         "op": "build",
         "template": "@hammock",
-        "repeat": 3,
+        "repeat": 4,
         "everyHours": 2,
         "maxDistance": 12,
         "when": {
-          "day": 5,
-          "science": 120
+          "day": 5
+        }
+      },
+      {
+        "id": "teahouse1",
+        "op": "build",
+        "template": "@teahouse",
+        "maxDistance": 16,
+        "when": {
+          "day": 10,
+          "science": 150,
+          "stock": {
+            "Plank": 20
+          }
         }
       },
       {
@@ -347,7 +339,11 @@
         "maxDistance": 15,
         "recipe": "@cookRecipe",
         "when": {
-          "day": 3
+          "day": 3,
+          "science": 40,
+          "stock": {
+            "Plank": 5
+          }
         }
       },
       {
@@ -357,7 +353,11 @@
         "maxDistance": 15,
         "recipe": "@pickles",
         "when": {
-          "day": 5
+          "day": 5,
+          "science": 120,
+          "stock": {
+            "Plank": 15
+          }
         }
       },
       {
@@ -403,10 +403,12 @@
         "template": "@pump",
         "rule": "nearWater",
         "near": "pump1",
-        "maxDistance": 20,
+        "maxDistance": 40,
         "when": {
           "population": 18
-        }
+        },
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "tank3",
@@ -437,12 +439,10 @@
         "good": "Water",
         "maxDistance": 12,
         "when": {
-          "after": [
-            "gears1"
-          ],
-          "science": 120,
+          "day": 7,
+          "science": 100,
           "stock": {
-            "Gear": 10
+            "Plank": 30
           }
         }
       },
@@ -553,6 +553,7 @@
           "day": 9
         }
       }
-    ]
+    ],
+    "speed": 30
   }
 }

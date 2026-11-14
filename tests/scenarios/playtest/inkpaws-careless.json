@@ -1,7 +1,7 @@
 {
   "screenshots": [],
   "batchControl": false,
-  "speed": 7,
+  "speed": 30,
   "playtest": {
     "name": "inkpaws-careless",
     "note": "Typical new-player mistakes: no water storage at all, one crop only, too few homes (three), no second farm. Inkpaws: shoot bamboo only.",
@@ -36,31 +36,10 @@
       "cooked": "PandabornSteamedShoots",
       "pickler": "PandabornPickleYard.Inkpaws",
       "pickles": "PandabornPickles",
-      "hammock": "PandabornHammock.Inkpaws"
+      "hammock": "PandabornHammock.Inkpaws",
+      "teahouse": "PandabornTeahouse.Inkpaws"
     },
     "steps": [
-      {
-        "id": "pilePoles",
-        "op": "build",
-        "template": "@pile",
-        "good": "Plank",
-        "maxDistance": 12,
-        "when": {
-          "day": 0.3
-        }
-      },
-      {
-        "id": "bootstrapPoles",
-        "op": "give",
-        "target": "pilePoles",
-        "good": "Plank",
-        "amount": 7,
-        "when": {
-          "finished": [
-            "pilePoles"
-          ]
-        }
-      },
       {
         "id": "builders",
         "op": "workers",
@@ -72,8 +51,10 @@
         "op": "build",
         "template": "@pump",
         "rule": "nearWater",
-        "maxDistance": 30,
-        "priority": "VeryHigh"
+        "maxDistance": 40,
+        "priority": "VeryHigh",
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "lumber1",
@@ -206,8 +187,7 @@
         "maxDistance": 15,
         "min": 25,
         "when": {
-          "day": 1.5,
-          "science": 30
+          "day": 1.5
         }
       },
       {
@@ -259,12 +239,24 @@
         "id": "hammock",
         "op": "build",
         "template": "@hammock",
-        "repeat": 3,
+        "repeat": 4,
         "everyHours": 2,
         "maxDistance": 12,
         "when": {
-          "day": 5,
-          "science": 120
+          "day": 5
+        }
+      },
+      {
+        "id": "teahouse1",
+        "op": "build",
+        "template": "@teahouse",
+        "maxDistance": 16,
+        "when": {
+          "day": 10,
+          "science": 150,
+          "stock": {
+            "Plank": 20
+          }
         }
       },
       {
@@ -274,7 +266,11 @@
         "maxDistance": 15,
         "recipe": "@cookRecipe",
         "when": {
-          "day": 3
+          "day": 3,
+          "science": 40,
+          "stock": {
+            "Plank": 5
+          }
         }
       },
       {
@@ -296,10 +292,12 @@
         "template": "@pump",
         "rule": "nearWater",
         "near": "pump1",
-        "maxDistance": 20,
+        "maxDistance": 40,
         "when": {
           "population": 18
-        }
+        },
+        "minDepth": 0.3,
+        "tries": 600
       },
       {
         "id": "gears1",
@@ -365,6 +363,7 @@
           "day": 9
         }
       }
-    ]
+    ],
+    "speed": 30
   }
 }

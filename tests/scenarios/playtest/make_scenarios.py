@@ -17,7 +17,7 @@ INK_NAMES = {
     "shrub": "Shrub.Inkpaws", "staple": "PandabornShootBamboo.Inkpaws", "staple2": "PandabornCabbage.Inkpaws",
     "shoots": "PandabornBambooShoots", "cabbage": "PandabornCabbage", "tree1": "PandabornTimberBamboo.Inkpaws",
     "cook": "PandabornSteamer.Inkpaws", "cookRecipe": "PandabornSteamedShoots", "cooked": "PandabornSteamedShoots",
-    "pickler": "PandabornPickleYard.Inkpaws", "pickles": "PandabornPickles", "hammock": "PandabornHammock.Inkpaws",
+    "pickler": "PandabornPickleYard.Inkpaws", "pickles": "PandabornPickles", "hammock": "PandabornHammock.Inkpaws", "teahouse": "PandabornTeahouse.Inkpaws",
 }
 
 def step(**kw): return kw
@@ -39,13 +39,14 @@ def inkpaws(name, mode_note, bootstrap=True):
         if i == "whBerry2": s["good"] = "@shoots"
         if i == "mill1" or i == "pilePlank": continue          # no lumber mill: poles come from timber bamboo
         if i == "forester1":                                     # DESIGN: forester with timber bamboo on day 1-2
-            s["when"] = {"day": 1.5, "science": 30}
+            s["when"] = {"day": 1.5}
             s["near"] = "lumber1"
         if i == "field2":                                        # second farm: cabbage (second staple), not potatoes
             s["plant"] = "@staple2"
         if i == "field1b": s["plant"] = "@staple"
+        if i == "tankM1": s["when"] = {"day": 7, "science": 100, "stock": {"Plank": 30}}   # Inkpaws cistern: no gears
         if i == "field3": s["plant"] = "@staple2"
-        if i == "cook1": s["when"] = {"day": 3}                   # steamer cooks shoots, days 3-5
+        if i == "cook1": s["when"] = {"day": 3, "science": 40, "stock": {"Plank": 5}}   # steamer cooks shoots, days 3-5
         steps.append(s)
         if i == "field1":
             steps.append(step(id="field1c", op="plant", target="farm1", plant="@staple2", count=15, when={"after": ["field1"]}))
@@ -55,23 +56,25 @@ def inkpaws(name, mode_note, bootstrap=True):
             # pile once, the cost difference to the balance sheet's log-only forester.
             steps.insert(0, step(id="pilePoles", op="build", template="@pile", good="Plank", maxDistance=12, when={"day": 0.3}))
             steps.insert(1, step(id="bootstrapPoles", op="give", target="pilePoles", good="Plank", amount=7, when={"finished": ["pilePoles"]}))
+        if i == "forester1":
             steps.append(step(id="pilePoles2", op="build", template="@pileL", good="Plank", near="forester1", maxDistance=10, when={"after": ["forester1"], "day": 4}))
         if i == "cook1":
-            steps.append(step(id="pickler1", op="build", template="@pickler", maxDistance=15, recipe="@pickles", when={"day": 5}))
+            steps.append(step(id="pickler1", op="build", template="@pickler", maxDistance=15, recipe="@pickles", when={"day": 5, "science": 120, "stock": {"Plank": 15}}))
             steps.append(step(id="whPickles", op="build", template="@wh", good="@pickles", near="pickler1", maxDistance=8, when={"after": ["pickler1"]}))
             steps.append(step(id="whCabbage", op="build", template="@wh", good="@cabbage", near="farm1", maxDistance=10, when={"day": 4}))
         if i == "campfire1":
-            steps.append(step(id="hammock", op="build", template="@hammock", repeat=3, everyHours=2, maxDistance=12, when={"day": 5, "science": 120}))
+            steps.append(step(id="hammock", op="build", template="@hammock", repeat=4, everyHours=2, maxDistance=12, when={"day": 5}))
+            steps.append(step(id="teahouse1", op="build", template="@teahouse", maxDistance=16, when={"day": 10, "science": 150, "stock": {"Plank": 20}}))
     p["steps"] = steps
     return d
 
-std = inkpaws("inkpaws-standard", "Normal difficulty.")
+std = inkpaws("inkpaws-standard", "Normal difficulty.", bootstrap=False)
 save("inkpaws-standard.json", std)
 
-pure = inkpaws("inkpaws-pure", "No workaround: shows whether a colony can get its first pole.", bootstrap=False)
-save("inkpaws-pure.json", pure)
+# inkpaws-pure.json (the plan without any pole workaround) is now the same as inkpaws-standard: since the stat-sheet
+# import the Forester costs Log 12, so the first pole no longer depends on a pole. Kept as a file for the history.
 
-hard = inkpaws("inkpaws-hard", "Hard difficulty: the same plan with water storage and the second staple brought forward, as a Hard player would.")
+hard = inkpaws("inkpaws-hard", "Hard difficulty: the same plan with water storage and the second staple brought forward, as a Hard player would.", bootstrap=False)
 for s in hard["playtest"]["steps"]:
     w = s.get("when", {})
     if s["id"] in ("tank2", "tank3"): w["day"] = {"tank2": 2.5, "tank3": 3.5}[s["id"]]
