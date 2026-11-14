@@ -39,7 +39,11 @@ K.lathe(g, [(0.53, 1.84), (0.55, 1.87), (0.53, 1.9)], C, 10, BAMBOO_GOLD, cap_to
 K.tube(g, [C + [0, 1.1, 0], C + [0, 0.8, 0]], [0.035, 0.03], BAMBOO_GREEN, sides=5, caps=False)
 K.pole(g, C + [0.3, 0.75, -0.3], C + [0.36, 1.05, -0.36], r=0.012, material=BAMBOO_GOLD, sides=3, bend=0.0)
 K.lathe(g, [(0.0, 0.0), (0.04, 0.0), (0.045, 0.05)], C + [0.29, 0.68, -0.29], 6, BAMBOO_GREEN, cap_top=False)
+m.entrance(0, -1, 0)
+m.slot("Entrance", (0.5, 0.0, 0.12), yaw=180)    # a keeper tends it while the dew module is not in (staffed workshop)
 m.extra["access"] = {"X": 0.5, "Y": 0.0, "Z": 0.1}
 m.collider((0.5, 0.95, 0.5), (0.9, 1.9, 0.9))
-m.notes += ["Stand-in Small Tank for the model check only; the dew mechanic (water prototype) is a workshop."]
+m.notes += ["Stand-in Small Tank for the model check only; the dew mechanic (water prototype) is a workshop.",
+            "Entrance at the front cell and one #Slot#Entrance for the staffed-workshop stand-in; with the dew module "
+            "(no workers) both are simply unused."]
 m.build()

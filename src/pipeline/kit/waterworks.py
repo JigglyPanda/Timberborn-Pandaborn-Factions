@@ -70,3 +70,24 @@ def leg_frame(geo, y_top, z_pairs=((0.08, 0.92),), x_pair=(0.07, 0.93), material
                        bend=0.0, tags=tags, caps=False)
                 K.pole(geo, (x, y_top - 0.12, z0), (x, y_base + 0.08, z1), r=0.02, material=material, sides=4,
                        bend=0.0, tags=tags, caps=False)
+
+
+def cistern_vessel(geo, cx, cz, r, h, floor, sides=12, tags=()):
+    """A round open cistern for the vanilla tanks' liquid plane (which rises from `floor` to about `h`): a river-stone
+    foot, a rammed-earth lower wall, a lime-plastered upper wall with cane hoops and a timber rim, and the inside
+    (dark, down to `floor`) so the stored water's surface shows in the open top."""
+    c = np.array([cx, 0.0, cz])
+    K.stones(geo, cx - r - 0.02, cz - r - 0.02, cx + r + 0.02, cz + r + 0.02, y=-0.01, size=0.32, h=0.2, skip=0.1,
+             tags=set(tags) | {"base"})
+    split = min(0.9, h * 0.4)
+    K.lathe(geo, [(r * 1.02, 0.0), (r * 1.03, split)], c, sides, "Sand.Folktails", uv_region=(0.03, 0.03, 0.97, 0.97),
+            tags=set(tags) | {"base"}, cap_top=False)
+    K.lathe(geo, [(r * 1.01, split), (r, h * 0.7), (r * 1.01, h)], c, sides, "PlasteredWood_White.Folktails",
+            uv_region=(0.03, 0.03, 0.97, 0.97), tags=tags, cap_top=False)
+    K.lathe(geo, [(r - 0.07, h), (r - 0.07, h * 0.6), (r - 0.09, floor + 0.05), (0.0, floor)], c, sides,
+            "BaseMetal.Folktails", uv_region=(0.03, 0.03, 0.45, 0.45), tags=tags, cap_top=False)
+    K.lathe(geo, [(r + 0.04, h - 0.02), (r + 0.05, h + 0.04), (r - 0.09, h + 0.04), (r - 0.09, h - 0.02)], c, sides,
+            TIMBER, tags=tags, cap_top=False, strips=None)
+    for y in (split + 0.12, h * 0.75):
+        K.lathe(geo, [(r + 0.012, y - 0.03), (r + 0.025, y), (r + 0.012, y + 0.03)], c, sides, BAMBOO_GOLD, tags=tags,
+                cap_top=False)

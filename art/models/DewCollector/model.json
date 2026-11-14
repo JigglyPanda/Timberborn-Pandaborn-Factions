@@ -12,8 +12,22 @@
   "Z": 2
  },
  "blocks": null,
- "entrance": null,
- "slots": [],
+ "entrance": {
+  "X": 0,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 0.5,
+    "Y": 0.0,
+    "Z": 0.12
+   },
+   "yaw": 180
+  }
+ ],
  "animatedNodes": [],
  "colliders": [
   {
@@ -44,7 +58,8 @@
   "Plaster_White.Folktails"
  ],
  "notes": [
-  "Stand-in Small Tank for the model check only; the dew mechanic (water prototype) is a workshop."
+  "Stand-in Small Tank for the model check only; the dew mechanic (water prototype) is a workshop.",
+  "Entrance at the front cell and one #Slot#Entrance for the staffed-workshop stand-in; with the dew module (no workers) both are simply unused."
  ],
  "access": {
   "X": 0.5,

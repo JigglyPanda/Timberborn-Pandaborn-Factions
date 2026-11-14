@@ -17,6 +17,7 @@
  "animatedNodes": [
   {
    "node": "#KiteTower",
+   "driver": "WindRotationAnimatorSpec",
    "pivot": {
     "X": 1.5,
     "Y": 0.0,
@@ -36,6 +37,7 @@
   },
   {
    "node": "#KiteRotor",
+   "driver": "WindRotationAnimatorSpec",
    "pivot": {
     "X": 1.5,
     "Y": 1.0,

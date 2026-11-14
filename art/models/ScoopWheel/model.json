@@ -81,6 +81,7 @@
  "animatedNodes": [
   {
    "node": "#WheelAnimated",
+   "driver": "WaterPoweredGeneratorSpec",
    "pivot": {
     "X": 0.5,
     "Y": 1.42,

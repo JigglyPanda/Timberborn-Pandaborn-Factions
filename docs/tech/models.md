@@ -237,3 +237,25 @@ order:
    Spring Bath, Opera Stage, the three night posts, Dry-Stone Wall, Treadwheel Lift, Cistern Tap, the decorations
    (lanterns, fence, potted pine, statue, pinwheel, goldfish bowl, moon gate), Memorial Arch, Great Sitting Panda,
    Sky Lantern.
+
+### Answers from the model lane (2026-11-14)
+
+1. **`driver` as data:** every `animatedNodes` entry now has `"driver": "<SpecName>"` (Hammock
+   `EnterableAnimationControllerSpec`, Kite Windmill tower and rotor `WindRotationAnimatorSpec`, Scoop Wheel and
+   Bamboo Water Wheel `WaterPoweredGeneratorSpec`); `drivenBy` keeps the human sentence.
+2. **Cistern sizes:** `art/models/CisternMedium` (2x2x3 on `MediumTank.Folktails`, mouth radius 0.85 over the 2x2
+   liquid plane, 0.546 to 2.3) and `art/models/CisternLarge` (3x3x3 on `LargeTank.Folktails`, mouth radius 1.33, plane
+   0.566 to 2.45, windlass shelter and stair). Entrances and access points as the vanilla tanks.
+3. **Dew Collector:** now has an `entrance` (front cell) and a `#Slot#Entrance` for the staffed stand-in; with the dew
+   module (no workers) both go unused.
+4. **Why a stage is "never seen":** the stage child shows from the moment the site `WasStarted` (a builder hour logged
+   or any material delivered) until it finishes, and a site's work is `ceil(total cost / 20)` builder-hours (1 h minimum,
+   `ConstructionSiteBuildTimeCalculator`). Cheap buildings with several builders on hand finish within seconds of real
+   time at speed 3, and once materials are stocked the delivery is quick too. In `models-stages-3` (speed 1, shots every
+   4-7 s) the Den and Moon Loft stages were caught (`stage_Den_4.png`...`_17.png`); for the Teahouse and Kindergarten
+   the camera was 4 s late. It is not the model or the threshold: film at speed 1 within the first seconds, or give the
+   test site a bigger cost. Base-first order is required (see above).
+5. **Basis:** Teahouse and Kindergarten were made for the Campfire's five seats; Pickle Yard for the Bakery (2x3,
+   smoke); Moon Loft for the Lodge (a dwelling); the cisterns for the tanks; Courtyard and Terrace House (below) for
+   the Double and Triple Lodge footprints but with a **ground-floor entrance** and no stacking on the tiled roof (the
+   vanilla Double/Triple Lodge enter at z = 1 and take lodges on top).

@@ -45,6 +45,7 @@
  "animatedNodes": [
   {
    "node": "#Hammock#Animated",
+   "driver": "EnterableAnimationControllerSpec",
    "pivot": {
     "X": 0.499,
     "Y": 0.616,

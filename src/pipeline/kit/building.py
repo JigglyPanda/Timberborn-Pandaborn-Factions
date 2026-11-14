@@ -201,7 +201,8 @@ class Model:
             "slots": [{"node": "#Slot#" + s[0], "position": dict(zip("XYZ", s[1])), "yaw": s[2]} if not isinstance(s, dict)
                       else {"node": "#Slot#" + s["name"], "parent": s["parent"], "localPosition": s["local_pos"],
                             "localRotation": s["local_rot"]} for s in self.slots],
-            "animatedNodes": [{"node": k, "pivot": dict(zip("XYZ", v["pivot"])), "axis": dict(zip("XYZ", v["axis"])),
+            "animatedNodes": [{"node": k, "driver": _spec_name(v["driver"]),
+                               "pivot": dict(zip("XYZ", v["pivot"])), "axis": dict(zip("XYZ", v["axis"])),
                                "animation": "Default", "kind": v["kind"], "frames": v["frames"], "fps": v["fps"],
                                "turns": v["turns"],
                                "drivenBy": v["driver"]} for k, v in self.animated.items()],
@@ -214,6 +215,13 @@ class Model:
         }
         doc.update(self.extra)
         json.dump(doc, open(os.path.join(self.script_dir, "model.json"), "w"), indent=1)
+
+
+def _spec_name(text):
+    """The blueprint spec that drives an animated node, as data: the first '...Spec' word of the driver text."""
+    import re
+    m = re.search(r"[A-Za-z]+Spec", text or "")
+    return m.group(0) if m else ""
 
 
 def block(matter="GroundOrStackable", occ="Bottom, Top, Corners, Path, Middle", stackable="None"):
