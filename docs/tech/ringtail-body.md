@@ -200,3 +200,97 @@ Nothing here is wired into the faction yet; the art lane did not edit `catalogue
   eye position is the beaver's; the shorter red panda muzzle makes the face slightly flatter than a real red panda's.
 * **Back of the head** stays at the beaver's resolution (budget), so the crown silhouette is a little angular up close.
 * **Size**: +13 % (adult) and +12 % (kit) over the Inkpaw meshes, i.e. about +19 MB in the download.
+
+## 7. Pass 2 (coordinator review): tail, warmer coat, outfits, attachments, tail decals
+
+### 7.1 Tail: 16 sides, bushier, round tip
+
+`RedPandaBuilder.rebuild_tail` replaces the paddle-derived tube with a clean one: 16 sides x 14 rings (kit 12) and a
+pole at the tip, rings denser toward the tip. The beaver's tail UV islands are kept (top/bottom, plus left/right on
+the adult): each new vertex takes uv0, tangent sign, colour and parentage by barycentric lookup in its island's
+(t, angle) parameter space, so the coat painter, the fixed AO/normal maps and the bind all still work; the vertices
+welded to the body (the root hole) are kept and zipped to the first ring per island. Profile: radius 0.046 at the
+root swelling to 0.070 in the last third (kit 0.026 to 0.050), then a hemispherical tip (`tail_radius`, `swell`,
+`t_max`, `t_cap` in `rp_configs.py`). The path-following deformer is unchanged. Cost: adult 1,951 vertices (was
+1,931; 109.2 MB), kit 1,778 (was 1,790; 63.0 MB); the clean tube needs fewer vertices than the refined paddle did.
+
+### 7.2 Warmer adult coat
+
+Adults: the dark parts are blackish only on the legs and belly and warm to deep chestnut on the chest and forelegs
+(`dark_warm` per coat, blended by height), and the dark of the forelegs stops lower (`arm_reach` 0.055, was 0.075), so
+the russet wraps the shoulders and upper arms. Kits unchanged.
+
+### 7.3 Outfits
+
+How they work (game 1.1.2.8): a workplace names an outfit (`WorkplaceWorkerOutfitSpec.WorkerOutfit`); the worker gets
+the `WorkerOutfitSpec` with that `Id`, its own `WorkerType` and the faction's `FactionId` (a duplicate (Id, WorkerType)
+per faction throws). `DiffuseTexture` is alpha-blended over the coat in the beaver UV layout; `NormalTexture` is
+sampled as a normal map (vanilla packing R=255, G=B=y, A=x; a loose PNG needs `{"isNormalMap": true}` to load linear).
+`Attachments` lists `TemplateAttachmentsSpec` ids on the character template to show (hats, hammer, gatherer pack).
+
+**(a) Ringtail outfits** (`src/pipeline/characters/paint_outfits.py`, painted on the Ringtail's own surface; textures
+committed under `mod/PandabornFactions/Materials/Pandaborn/Outfits/Ringtail/`, each `_N` with its `.meta.json`):
+
+| Outfit Id (suggested; `WorkerType` `PandabornRingtail`, `FactionId` `Inkpaws`) | Workplace | Diffuse / Normal texture | Attachments | Look |
+|---|---|---|---|---|
+| `PandabornNightBuilder` | Night Builders' Post | `Materials/Pandaborn/Outfits/Ringtail/RingtailNightBuilder_D` / `_N` | `HammerBack.Beaver` (vanilla) | indigo head-wrap tied at the back, leather tool belt |
+| `PandabornNightCourier` | Night Courier Post | `.../RingtailNightCourier_D` / `_N` | none (goods ride on the vanilla `Backpack`) | woven back-basket straps, chest strap, rope belt |
+| `PandabornNightForager` | Night Forager's Post | `.../RingtailNightForager_D` / `_N` | `GathererBackpack` (vanilla) | green head-wrap, leather satchel strap, cloth waist band |
+| `PandabornStargazer` | Star Tower | `.../RingtailStargazer_D` / `_N` | none | night-blue shawl over shoulders and back, pale trim |
+| `PandabornOpera` | Opera Stage | `.../RingtailOpera_D` / `_N` | none | crimson sash, gold collar, black silk belt |
+
+Offline: `E:\PandabornDev\build\characters\prev\outf_front.png`, `outf_back.png`. In game the prototype's Ringtail
+`Hauler` and `Gatherer` outfits were pointed at the courier and forager textures by a merge in the test mod (§7.6).
+The other three need their workplaces (Ringtails lane). Weak spots: the normal maps are a mild emboss in UV axes
+(straps read raised, not modelled); head-wraps are painted, so they sit below the ears.
+
+**(b) The 12 Inkpaw outfits on the panda body** (7 `Beaver` outfits copied from Folktails plus 5 `Bot` ones; bots are
+not on the panda body), rendered on the Inkpaw body with every overlay and attachment hung on its node
+(`prev/ink_front.png`, `ink_back.png`, `hats_front.png`). The three strap overlays (`WorkerHammerStrings`,
+`HaulerBackpackStrings`, `LumberjackStrings`) follow the panda's chest and back because the UV layout is the beaver's;
+the farmer, forester and scavenger hats sit on the head (the Reskin's `#Head` +1 cm and x1.15 suit the giant panda);
+hammer and gatherer pack sit on the back. **No landing is bad enough to need a replacement overlay.** Two design
+notes instead: the Folktails farmer hat is a wide-brimmed straw hat, not the conical paddy hat the art direction asks
+for (new geometry, below); and on the **Ringtail** the vanilla hats collide with the tall ears (the scavenger hat
+sits low over the brow), so Ringtails get head-wraps (overlays), not hats.
+
+**(c) Hats and baskets as real geometry.** Per-outfit attachments are already data: `WorkerOutfitSpec.Attachments`
+names ids in the character's `TemplateAttachmentsSpec.Attachments` (`AttachmentId`, `Prefab`, `Parent` node such as
+`#Head`/`#Backpack`, `Position`/`Rotation`/`Scale`, `CreateInstantly`), shown and hidden by
+`WorkerOutfitAttachmentVisualizer`, per animation by `WorkerOutfitAnimationAttachmentVisibilitySpec`. The blocker is
+the asset: `Prefab` is an `AssetRef<GameObject>`, and a loose `.timbermesh` in a mod loads as `BinaryData`
+(`ModTimbermeshConverter`), not a GameObject. A mod **AssetBundle** can supply a GameObject
+(`ModAssetBundleProvider.TryLoad<T>` serves any asset type; the look lane already builds bundles,
+`tools/build_look.ps1`). So:
+* **Data-only route (recommended): a small attachments bundle.** Unity prefabs
+  `Characters/Pandaborn/Attachments/ConicalHat` and `.../BackBasket` (mesh + one material on a copy of the game's
+  shader, as the look bundle's materials are), shipped as `AssetBundles/pandabornattachments_win` / `_mac`; then pure
+  blueprint entries: `TemplateAttachmentsSpec.Attachments#append` on `InkpawAdult.Inkpaws` / `RingtailAdult.Inkpaws`
+  with `{"AttachmentId": "PandabornConicalHat", "Prefab": "Characters/Pandaborn/Attachments/ConicalHat", "Parent": "#Head"}`
+  and `{"AttachmentId": "PandabornBackBasket", "Prefab": "Characters/Pandaborn/Attachments/BackBasket", "Parent": "#Backpack"}`,
+  and the outfit's `"Attachments": ["PandabornConicalHat"]`. The basket must hide while goods ride on `#Backpack` (or
+  become the courier's backpack); `WorkerOutfitAnimationAttachmentVisibilitySpec` hides per animation. **Not proven in
+  game in this pass**: it needs its own Unity project and a modelled hat and basket; that is the next art task.
+* **Code route (only if bundles are unwanted):** a small component that, on an outfit change, instantiates a mesh
+  decoded from a loose `.timbermesh` under `#Head`/`#Backpack`. More code and risk than a bundle; not recommended.
+
+### 7.4 Tail decals
+
+Decals are per character but chosen from the **faction's** `Tails` set at a tail-painting building
+(`TailDecalApplier`, need `Detailer`), so Ringtails cannot have their own set by data. Decision: **one faction set of
+plain ribbons and bands** that suits both peoples (the faction needs a `Tails` set anyway). On the Ringtail's round
+tail uv1 runs root to tip along the top and is mirrored underneath, so a band across the decal becomes a ribbon tied
+around the tail; on the Inkpaw stub it is a stripe. Textures (`src/pipeline/characters/paint_tail_decals.py`,
+committed, 1024x1024 RGBA, no meta file needed):
+
+| Requested `DecalSpec` (`FactionId` `Inkpaws`, `Category` `Tails`) | `Texture` |
+|---|---|
+| crimson ribbon with gold edges | `Materials/Pandaborn/Decals/Tails/PandabornTailRibbon` |
+| two indigo bands | `Materials/Pandaborn/Decals/Tails/PandabornTailTwinBands` |
+| cream "dipped" tip | `Materials/Pandaborn/Decals/Tails/PandabornTailTipCream` |
+| braided cord with three wooden beads | `Materials/Pandaborn/Decals/Tails/PandabornTailBeadCord` |
+
+They would replace the copied Folktails emblems (a gold emblem on top of the rings reads as a sticker). Offline:
+`prev/decals.png`. Not seen in game (needs a tail-painting building and a visit).
+
+<!-- PASS2RUN -->

@@ -36,6 +36,9 @@ foreach ($sub in 'Ringtails', 'Outfits\Ringtail') {
         Put $f.FullName ("Materials\Pandaborn\$sub\" + $f.FullName.Substring($dir.Length + 1))
     }
 }
+# the attachments bundle (src/unity/PandabornAttachments, built into E:\PandabornDev\build\characters\attachments)
+$bundle = 'E:\PandabornDev\build\characters\attachments\pandabornattachments_win'
+if (Test-Path -LiteralPath $bundle) { Put $bundle 'AssetBundles\pandabornattachments_win' } else { Write-Warning "no attachments bundle at $bundle" }
 $project = Join-Path $here 'src\PandabornProtoRingtailBody.csproj'
 $log = & dotnet build $project -c Release -v q --nologo "-p:ModOut=$BuildDir" 2>&1
 if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Write-Host $_ -ForegroundColor Red }; throw 'probe build failed' }
