@@ -1,5 +1,5 @@
-﻿{
-  "buildings": [ "PandabornStage0Teahouse.Inkpaws", "LumberjackFlag.Folktails" ],
+{
+  "buildings": [ "PandabornStage0Teahouse.Inkpaws" ],
   "stage0": {
     "devSwitchNext": "",
     "dataAtRunHour": 0.5,
