@@ -1,0 +1,62 @@
+{
+ "id": "Flume",
+ "standIn": "ThrottlingValve.Folktails",
+ "generatedBy": "art/models/Flume/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "Flume.Model",
+  "constructionStage0": "Flume.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.2,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 0.4,
+    "Z": 1.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 140,
+  "constructionStage0": 168,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails"
+ ],
+ "notes": [
+  "Inner channel floor at y = 0.012, rims at about 0.36: water up to that depth shows in the channel."
+ ],
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  }
+ ],
+ "flow": "along +Y (grid) for orientation Cw0; upstream end at Y = 0"
+}

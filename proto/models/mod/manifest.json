@@ -1,0 +1,9 @@
+{
+  "Name": "Pandaborn Proto: Models (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoModels",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only prototype of the Pandaborn building kit: the Inkpaws' first identity models (Den, Village Hall, flumes, Scoop Wheel, Paddy Spout, Cistern, Hammock, Teahouse, Steamer, Moon Loft) on vanilla stand-in blueprints, added to Folktails and the Inkpaws. Never shipped. Models and code are AI-generated, made in code.",
+  "RequiredMods": [],
+  "OptionalMods": []
+}

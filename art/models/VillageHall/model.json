@@ -1,0 +1,114 @@
+{
+ "id": "VillageHall",
+ "standIn": "DistrictCenter.Folktails",
+ "generatedBy": "art/models/VillageHall/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "VillageHall.Model",
+  "constructionStage0": "VillageHall.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 5
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.5,
+    "Y": 0.18,
+    "Z": 0.44
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.8,
+    "Z": 1.75
+   },
+   "Size": {
+    "X": 2.6,
+    "Y": 1.3,
+    "Z": 2.0
+   }
+  },
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 1.9,
+    "Z": 1.75
+   },
+   "Size": {
+    "X": 2.4,
+    "Y": 0.9,
+    "Z": 1.8
+   }
+  },
+  {
+   "Center": {
+    "X": 2.62,
+    "Y": 1.7,
+    "Z": 2.86
+   },
+   "Size": {
+    "X": 0.3,
+    "Y": 3.0,
+    "Z": 0.3
+   }
+  }
+ ],
+ "attachments": [
+  {
+   "AttachmentId": "Fire",
+   "Position": {
+    "X": 2.62,
+    "Y": 3.16,
+    "Z": 2.86
+   },
+   "note": "district fire burns in the iron basket on the signal mast"
+  }
+ ],
+ "triangles": {
+  "finished": 3230,
+  "constructionStage0": 1184,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla District Center (3x3x5); the model rises to about 3.2.",
+  "The Fire attachment moves to the signal mast's basket; ConnectionAnchorPoint should move to connectionAnchor."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.18,
+  "Z": 0.9
+ },
+ "connectionAnchor": {
+  "X": 2.62,
+  "Y": 3.3000000000000003,
+  "Z": 2.86
+ }
+}

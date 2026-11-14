@@ -1,0 +1,55 @@
+{
+ "id": "Cistern",
+ "standIn": "SmallTank.Folktails",
+ "generatedBy": "art/models/Cistern/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "Cistern.Model",
+  "constructionStage0": "Cistern.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.75,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 1.5,
+    "Z": 0.9
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 502,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Small Tank (1x1x2)."
+ ],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": 0.1
+ },
+ "liquidPlane": "vanilla SmallTank StockpilePlaneVisualizer: y 0.546 to 1.42; jar mouth radius 0.39"
+}

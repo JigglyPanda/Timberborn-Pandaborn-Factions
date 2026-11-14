@@ -1,0 +1,99 @@
+{
+ "id": "FlumeCorner",
+ "standIn": "ThrottlingValve.Folktails",
+ "generatedBy": "art/models/FlumeCorner/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "FlumeCorner.Model",
+  "constructionStage0": "FlumeCorner.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 2,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 0.31,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 2.0,
+    "Y": 0.62,
+    "Z": 2.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 778,
+  "constructionStage0": 806,
+  "vanillaMedianForFootprint": 900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Moss.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [],
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  }
+ ],
+ "solidCells": [
+  {
+   "X": 1,
+   "Y": 0
+  },
+  {
+   "X": 0,
+   "Y": 1
+  },
+  {
+   "X": 1,
+   "Y": 1
+  }
+ ]
+}

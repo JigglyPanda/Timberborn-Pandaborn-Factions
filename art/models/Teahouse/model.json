@@ -1,0 +1,257 @@
+{
+ "id": "Teahouse",
+ "standIn": "Campfire.Folktails",
+ "generatedBy": "art/models/Teahouse/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "Teahouse.Model",
+  "constructionStage0": "Teahouse.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Ground",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Top, Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Seat1",
+   "position": {
+    "X": 0.44999999999999996,
+    "Y": 0.21000000000000002,
+    "Z": 0.62
+   },
+   "yaw": 90
+  },
+  {
+   "node": "#Slot#Seat2",
+   "position": {
+    "X": 1.45,
+    "Y": 0.21000000000000002,
+    "Z": 0.62
+   },
+   "yaw": -90
+  },
+  {
+   "node": "#Slot#Seat3",
+   "position": {
+    "X": 0.95,
+    "Y": 0.21000000000000002,
+    "Z": 1.04
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat4",
+   "position": {
+    "X": 1.5499999999999998,
+    "Y": 0.21000000000000002,
+    "Z": 1.75
+   },
+   "yaw": 90
+  },
+  {
+   "node": "#Slot#Seat5",
+   "position": {
+    "X": 2.55,
+    "Y": 0.21000000000000002,
+    "Z": 1.75
+   },
+   "yaw": -90
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.07,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 3.0,
+    "Y": 0.14,
+    "Z": 3.0
+   }
+  },
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 1.6,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 3.0,
+    "Y": 0.6,
+    "Z": 3.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2826,
+  "constructionStage0": 1186,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Moss.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Campfire's fire specs dropped (no fire node); windows and lanterns lit by EnterableIlluminatorSpec.",
+  "Upper blocks are the roof only (Top, Corners), the floor blocks walkable as the Campfire's."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.14,
+  "Z": 0.7
+ },
+ "removeSpecs": [
+  "AttractionFireSpec",
+  "FireSpec",
+  "IlluminatorLightObjectsSpec",
+  "TemplateAttachmentsSpec"
+ ],
+ "addSpecs": {
+  "EnterableIlluminatorSpec": {}
+ }
+}

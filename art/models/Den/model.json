@@ -1,0 +1,132 @@
+{
+ "id": "Den",
+ "standIn": "Lodge.Folktails",
+ "generatedBy": "art/models/Den/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "Den.Model",
+  "constructionStage0": "Den.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 2,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 0.55,
+    "Z": 1.1
+   },
+   "Size": {
+    "X": 1.7,
+    "Y": 1.1,
+    "Z": 1.5
+   }
+  },
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 1.35,
+    "Z": 1.1
+   },
+   "Size": {
+    "X": 1.9,
+    "Y": 0.6,
+    "Z": 1.4
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1848,
+  "constructionStage0": 928,
+  "vanillaMedianForFootprint": 900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Dwelling, 3 beds as the Lodge. Not stackable: the second block holds the roof.",
+  "Windows glow at night when someone is inside (EnterableIlluminatorSpec)."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.12,
+  "Z": 0.7
+ }
+}

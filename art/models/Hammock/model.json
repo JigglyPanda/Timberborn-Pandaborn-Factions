@@ -1,0 +1,127 @@
+{
+ "id": "Hammock",
+ "standIn": "Hammock.Folktails",
+ "generatedBy": "art/models/Hammock/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "Hammock.Model",
+  "constructionStage0": "Hammock.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 0,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Spot",
+   "parent": "#Hammock#Animated",
+   "localPosition": [
+    0.0,
+    -0.359,
+    -0.178
+   ],
+   "localRotation": [
+    0.0,
+    -0.966,
+    -0.26,
+    0.0
+   ]
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#Hammock#Animated",
+   "pivot": {
+    "X": 0.499,
+    "Y": 0.616,
+    "Z": 0.47
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 1.0
+   },
+   "animation": "Default",
+   "kind": "swing",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "EnterableAnimationControllerSpec (plays while someone lies in it)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.05,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.8,
+    "Y": 0.1,
+    "Z": 0.8
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.35,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.5,
+    "Y": 0.3,
+    "Z": 0.9
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.6,
+    "Z": 0.95
+   },
+   "Size": {
+    "X": 0.25,
+    "Y": 1.2,
+    "Z": 0.15
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 303,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails"
+ ],
+ "notes": [
+  "Pivot, swing axis, amplitude and the Spot slot copy the vanilla Hammock so the Swinging pose fits."
+ ],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": 0.0
+ }
+}

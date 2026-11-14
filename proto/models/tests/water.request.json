@@ -1,0 +1,549 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 900,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "PandabornModel"
+ ],
+ "water": {
+  "name": "models",
+  "speed": 7,
+  "area": [
+   28,
+   28
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     3,
+     27,
+     7
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     5,
+     27,
+     5
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     6,
+     15,
+     11
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     7,
+     14,
+     10
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelScoopWheel.PandabornProto",
+    "at": [
+     12,
+     5,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "scoop"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     14,
+     27,
+     26
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     17,
+     4,
+     21
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     8,
+     17,
+     9,
+     21
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     11,
+     15,
+     27,
+     26
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     16,
+     16,
+     23,
+     22
+    ],
+    "z": -1
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlumeGate.PandabornProto",
+    "at": [
+     5,
+     19,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "gate"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlume.PandabornProto",
+    "at": [
+     6,
+     19,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "f1"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlume.PandabornProto",
+    "at": [
+     7,
+     19,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "f2"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlumeBridge.PandabornProto",
+    "at": [
+     8,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "b1"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlumeBridge.PandabornProto",
+    "at": [
+     9,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "b2"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlume.PandabornProto",
+    "at": [
+     10,
+     19,
+     1
+    ],
+    "orientation": "Cw90",
+    "id": "f3"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlumeDrop.PandabornProto",
+    "at": [
+     11,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "drop"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlume.PandabornProto",
+    "at": [
+     13,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "f4"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelFlume.PandabornProto",
+    "at": [
+     14,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "f5"
+   },
+   {
+    "op": "place",
+    "template": "PandabornModelPaddySpout.PandabornProto",
+    "at": [
+     15,
+     19,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "spout"
+   },
+   {
+    "op": "shot",
+    "name": "line_setup",
+    "focus": [
+     11,
+     19,
+     0
+    ],
+    "distance": 22,
+    "pitch": 50,
+    "yaw": 15
+   },
+   {
+    "op": "shot",
+    "name": "scoop_setup",
+    "focus": [
+     12,
+     7,
+     0
+    ],
+    "distance": 14,
+    "pitch": 40,
+    "yaw": 25
+   },
+   {
+    "op": "water",
+    "id": "pond",
+    "at": [
+     2,
+     19,
+     0
+    ],
+    "rate": 1.2,
+    "maxDepth": 1.7
+   },
+   {
+    "op": "water",
+    "id": "fill",
+    "at": [
+     6,
+     5,
+     -2
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "wait",
+    "ticks": 150,
+    "capSeconds": 600
+   },
+   {
+    "op": "waterOff",
+    "id": "fill"
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     5,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     5,
+     -2
+    ],
+    "rate": -2.4
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 600
+   },
+   {
+    "op": "probe",
+    "label": "running",
+    "cells": [
+     [
+      5,
+      19,
+      1
+     ],
+     [
+      6,
+      19,
+      1
+     ],
+     [
+      7,
+      19,
+      1
+     ],
+     [
+      8,
+      19,
+      1
+     ],
+     [
+      9,
+      19,
+      1
+     ],
+     [
+      10,
+      19,
+      1
+     ],
+     [
+      11,
+      19,
+      1
+     ],
+     [
+      12,
+      19,
+      0
+     ],
+     [
+      13,
+      19,
+      0
+     ],
+     [
+      14,
+      19,
+      0
+     ],
+     [
+      15,
+      19,
+      0
+     ],
+     [
+      16,
+      19,
+      -1
+     ],
+     [
+      18,
+      19,
+      -1
+     ],
+     [
+      12,
+      5,
+      -2
+     ],
+     [
+      12,
+      7,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      7,
+      14,
+      10,
+      0
+     ],
+     [
+      16,
+      16,
+      23,
+      22,
+      -1
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "gate",
+     "drop",
+     "spout",
+     "b1"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "line_running",
+    "focus": [
+     11,
+     19,
+     0
+    ],
+    "distance": 20,
+    "pitch": 50,
+    "yaw": 15
+   },
+   {
+    "op": "shot",
+    "name": "line_close_gate",
+    "focus": [
+     6,
+     19,
+     1
+    ],
+    "distance": 7,
+    "pitch": 40,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "line_close_bridge",
+    "focus": [
+     9,
+     19,
+     1
+    ],
+    "distance": 7,
+    "pitch": 35,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "line_close_drop",
+    "focus": [
+     12,
+     19,
+     0
+    ],
+    "distance": 7,
+    "pitch": 40,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "line_close_spout",
+    "focus": [
+     15,
+     19,
+     0
+    ],
+    "distance": 7,
+    "pitch": 45,
+    "yaw": 30
+   },
+   {
+    "op": "shot",
+    "name": "scoop_a",
+    "focus": [
+     12,
+     6,
+     -1
+    ],
+    "distance": 11,
+    "pitch": 30,
+    "yaw": 20
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 60
+   },
+   {
+    "op": "shot",
+    "name": "scoop_b",
+    "focus": [
+     12,
+     6,
+     -1
+    ],
+    "distance": 11,
+    "pitch": 30,
+    "yaw": 20
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 60
+   },
+   {
+    "op": "shot",
+    "name": "scoop_c",
+    "focus": [
+     12,
+     6,
+     -1
+    ],
+    "distance": 11,
+    "pitch": 30,
+    "yaw": 20
+   },
+   {
+    "op": "expect",
+    "label": "scoop wheel lifts in a strong current",
+    "what": "flowRate",
+    "min": 0.01,
+    "id": "scoop"
+   }
+  ]
+ }
+}

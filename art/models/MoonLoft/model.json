@@ -1,0 +1,160 @@
+{
+ "id": "MoonLoft",
+ "standIn": "Lodge.Folktails",
+ "generatedBy": "art/models/MoonLoft/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "MoonLoft.Model",
+  "constructionStage0": "MoonLoft.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 2,
+  "Y": 2,
+  "Z": 3
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 1.45,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 1.9,
+    "Y": 0.9,
+    "Z": 1.6
+   }
+  },
+  {
+   "Center": {
+    "X": 1.0,
+    "Y": 2.2,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 2.0,
+    "Y": 0.6,
+    "Z": 1.6
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2062,
+  "constructionStage0": 958,
+  "vanillaMedianForFootprint": 900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Colonists enter at the foot of the ladder (the access point), as vanilla buildings swallow them at the door.",
+  "Windows (and the moon window) glow at night when someone is home (EnterableIlluminatorSpec)."
+ ],
+ "access": {
+  "X": 1.0,
+  "Y": 0.0,
+  "Z": -0.1
+ },
+ "walkUnder": "ground layer Occupations 'Corners' only (vanilla DoublePlatform lower block); paths fit under"
+}

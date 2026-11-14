@@ -1,0 +1,159 @@
+{
+ "id": "ScoopWheel",
+ "standIn": "WaterWheel.Folktails",
+ "generatedBy": "art/models/ScoopWheel/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "ScoopWheel.Model",
+  "constructionStage0": "ScoopWheel.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 3,
+  "Z": 3
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Corners, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Corners, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Corners, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [
+  {
+   "node": "#WheelAnimated",
+   "pivot": {
+    "X": 0.5,
+    "Y": 1.42,
+    "Z": 0.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 1.0
+   },
+   "animation": "Default",
+   "kind": "turn",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WaterPoweredGeneratorAnimator (WaterPoweredGeneratorSpec)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 1.42,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 2.4,
+    "Y": 2.6,
+    "Z": 0.5
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 2.35,
+    "Z": 1.7
+   },
+   "Size": {
+    "X": 0.6,
+    "Y": 0.3,
+    "Z": 2.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1550,
+  "constructionStage0": 760,
+  "vanillaMedianForFootprint": 900
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails"
+ ],
+ "notes": [
+  "The wheel overhangs the footprint by about 0.75 tile up- and downstream (it stands in the river).",
+  "Animation: '#WheelAnimated' turns about +z through the axle; bottom moves with the current (+x)."
+ ],
+ "waterOutput": {
+  "X": 0,
+  "Y": 2,
+  "Z": 2
+ },
+ "waterInput": {
+  "X": 0,
+  "Y": 0,
+  "Z": 0
+ },
+ "expectedWaterDirection": {
+  "X": 1.0,
+  "Y": 0.0
+ }
+}

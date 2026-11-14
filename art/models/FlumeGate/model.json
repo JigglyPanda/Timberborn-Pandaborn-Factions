@@ -1,0 +1,61 @@
+{
+ "id": "FlumeGate",
+ "standIn": "ThrottlingValve.Folktails",
+ "generatedBy": "art/models/FlumeGate/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "FlumeGate.Model",
+  "constructionStage0": "FlumeGate.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.55,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 1.1,
+    "Z": 1.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 202,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails"
+ ],
+ "notes": [],
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  }
+ ],
+ "flow": "along +Y (grid) for orientation Cw0; fixed inflow limit (0.3 in the water prototype)"
+}

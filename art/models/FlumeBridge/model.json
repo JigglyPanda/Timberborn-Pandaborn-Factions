@@ -1,0 +1,81 @@
+{
+ "id": "FlumeBridge",
+ "standIn": "ThrottlingValve.Folktails",
+ "generatedBy": "art/models/FlumeBridge/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "FlumeBridge.Model",
+  "constructionStage0": "FlumeBridge.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Corners",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 1.2,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 0.9,
+    "Y": 0.45,
+    "Z": 1.0
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.5,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 1.0,
+    "Z": 1.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 320,
+  "constructionStage0": 392,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails"
+ ],
+ "notes": [
+  "Walk-under: the lower block only occupies Corners, as the vanilla DoublePlatform's lower block."
+ ],
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 1
+  }
+ ],
+ "flow": "along +Y (grid) for orientation Cw0"
+}

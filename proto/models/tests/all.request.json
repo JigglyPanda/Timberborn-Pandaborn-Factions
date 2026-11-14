@@ -1,0 +1,263 @@
+{
+ "run": {
+  "inGameHours": 13.5,
+  "realSeconds": 420
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelVillageHall.PandabornProto",
+  "PandabornModelTeahouse.PandabornProto",
+  "PandabornModelSteamer.PandabornProto",
+  "PandabornModelMoonLoft.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelCistern.PandabornProto",
+  "PandabornModelScoopWheel.PandabornProto",
+  "PandabornModelPaddySpout.PandabornProto",
+  "PandabornModelFlumeGate.PandabornProto",
+  "PandabornModelFlume.PandabornProto",
+  "PandabornModelFlumeBridge.PandabornProto",
+  "PandabornModelFlumeDrop.PandabornProto",
+  "PandabornModelFlumeCorner.PandabornProto",
+  {
+   "template": "PandabornModelDen.PandabornProto",
+   "finished": false
+  },
+  {
+   "template": "PandabornModelMoonLoft.PandabornProto",
+   "finished": false
+  },
+  {
+   "template": "PandabornModelSteamer.PandabornProto",
+   "finished": false
+  },
+  {
+   "template": "PandabornModelTeahouse.PandabornProto",
+   "finished": false
+  },
+  "Lodge.Folktails",
+  "Grill.Folktails",
+  "Hammock.Folktails"
+ ],
+ "screenshots": [
+  {
+   "name": "day_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "Den_day",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "VillageHall_day",
+   "kind": "building",
+   "target": "PandabornModelVillageHall.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Teahouse_day",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Steamer_day",
+   "kind": "building",
+   "target": "PandabornModelSteamer.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "MoonLoft_day",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_day",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Cistern_day",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "ScoopWheel_day",
+   "kind": "building",
+   "target": "PandabornModelScoopWheel.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "PaddySpout_day",
+   "kind": "building",
+   "target": "PandabornModelPaddySpout.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeGate_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeGate.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Flume_day",
+   "kind": "building",
+   "target": "PandabornModelFlume.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeBridge_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeBridge.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeDrop_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeDrop.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeCorner_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeCorner.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "night_overview",
+   "kind": "overview",
+   "at": "end"
+  },
+  {
+   "name": "Den_night",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "VillageHall_night",
+   "kind": "building",
+   "target": "PandabornModelVillageHall.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Teahouse_night",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Steamer_night",
+   "kind": "building",
+   "target": "PandabornModelSteamer.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "MoonLoft_night",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_night",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Cistern_night",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "ScoopWheel_night",
+   "kind": "building",
+   "target": "PandabornModelScoopWheel.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "PaddySpout_night",
+   "kind": "building",
+   "target": "PandabornModelPaddySpout.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeGate_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeGate.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Flume_night",
+   "kind": "building",
+   "target": "PandabornModelFlume.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeBridge_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeBridge.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeDrop_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeDrop.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeCorner_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeCorner.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "ProtoModels",
+  "PandabornModel"
+ ]
+}

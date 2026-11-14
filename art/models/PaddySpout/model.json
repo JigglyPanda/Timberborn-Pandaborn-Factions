@@ -1,0 +1,74 @@
+{
+ "id": "PaddySpout",
+ "standIn": "FillValve.Folktails",
+ "generatedBy": "art/models/PaddySpout/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "PaddySpout.Model",
+  "constructionStage0": "PaddySpout.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 2,
+  "Z": 1
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.15,
+    "Z": 0.5
+   },
+   "Size": {
+    "X": 1.0,
+    "Y": 0.4,
+    "Z": 1.0
+   }
+  },
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.1,
+    "Z": 1.25
+   },
+   "Size": {
+    "X": 0.3,
+    "Y": 0.2,
+    "Z": 0.5
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 330,
+  "constructionStage0": 280,
+  "vanillaMedianForFootprint": 520
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "Sand.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Fill Valve (1x2x1, second cell 'Middle' only over the field).",
+  "The spout tip is at about y = 0.0 over the far cell: water seems to pour from it into the field."
+ ],
+ "outputCell": {
+  "X": 0,
+  "Y": 1,
+  "Z": 0
+ },
+ "waterCells": [
+  {
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  }
+ ]
+}
