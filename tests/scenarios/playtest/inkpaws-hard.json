@@ -54,15 +54,18 @@
         "maxDistance": 40,
         "priority": "VeryHigh",
         "minDepth": 0.3,
-        "tries": 600
+        "tries": 600,
+        "pathThroughTrees": true
       },
       {
         "id": "lumber1",
         "op": "build",
         "template": "@lumber",
         "rule": "trees",
-        "maxDistance": 25,
-        "priority": "High"
+        "maxDistance": 16,
+        "priority": "High",
+        "near": "pump1",
+        "minDistance": 3
       },
       {
         "id": "cut1",
@@ -73,7 +76,8 @@
         "when": {
           "after": [
             "lumber1"
-          ]
+          ],
+          "pathsClear": true
         }
       },
       {
@@ -149,7 +153,8 @@
         "when": {
           "after": [
             "lumber2"
-          ]
+          ],
+          "pathsClear": true
         }
       },
       {
@@ -408,7 +413,8 @@
           "population": 18
         },
         "minDepth": 0.3,
-        "tries": 600
+        "tries": 600,
+        "pathThroughTrees": true
       },
       {
         "id": "tank3",

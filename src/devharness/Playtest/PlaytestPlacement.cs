@@ -199,9 +199,12 @@ namespace PandabornDevHarness
             var placer = Placer(spec);
             try
             {
+                var clock = Stopwatch.StartNew();
+                long searchMs = (long)Request.Num(o, "searchMs", 4000f);
                 foreach (var (cell, _) in candidates)
                 {
                     if (tried >= budget) { why = "tried " + budget + " candidates; last: " + why; break; }
+                    if (clock.ElapsedMilliseconds > searchMs) { why = "search time out (" + searchMs + " ms); last: " + why; break; }
                     foreach (var orientation in orientations)
                     {
                         var target = new Vector3Int(cell.x, cell.y, cell.z - baseZ);
@@ -228,7 +231,8 @@ namespace PandabornDevHarness
                         int laid = 0;
                         if (reject == null && bo.HasEntrance)
                         {
-                            var route = Route(bo.PositionedEntrance.Coordinates, (int)Request.Num(o, "maxPath", 60f));
+                            // through trees only when the scenario says so (the lumberjacks must be able to clear them first)
+                            var route = Route(bo.PositionedEntrance.Coordinates, (int)Request.Num(o, "maxPath", 60f), Request.Bool(o, "pathThroughTrees", false));
                             if (route == null) reject = "no level path to the network";
                             else laid = LayPath(route);
                         }
@@ -429,7 +433,7 @@ namespace PandabornDevHarness
         /// Cheapest route on the network's level from a building entrance to the nearest network cell (Dijkstra: an open cell
         /// costs 1, a cell holding a tree costs 4, as a player routes around a forest unless it is much shorter through it).
         /// </summary>
-        private List<Vector3Int> Route(Vector3Int from, int maxLength)
+        private List<Vector3Int> Route(Vector3Int from, int maxLength, bool throughTrees)
         {
             if (_networkZ == int.MinValue) return null;
             var start = new Vector2Int(from.x, from.y);
@@ -447,8 +451,10 @@ namespace PandabornDevHarness
                 var cell = new Vector3Int(c.x, c.y, _networkZ);
                 if (Ground(cell).z != _networkZ) return -1;
                 if (IsPath(cell)) return 1;
+                if (!throughTrees) { if (Valid(placer, cell, Orientation.Cw0).HasValue) return 1; return -1; }
+                if (_pendingPath.Contains(cell)) return 3;      // already marked: its trees are coming down
                 if (Valid(placer, cell, Orientation.Cw0).HasValue) return 1;
-                return TreeAt(cell).HasValue ? 4 : -1;
+                return TreeAt(cell).HasValue ? 8 : -1;
             }
             try
             {
@@ -506,20 +512,53 @@ namespace PandabornDevHarness
             foreach (var cell in route)
             {
                 var xy = new Vector2Int(cell.x, cell.y);
-                if (!IsPath(cell))
-                {
-                    if (TryLayPathTile(cell)) laid++;
-                    else if (TreeAt(cell) is Vector3Int tree) { trees.Add(tree); _pendingPath.Add(cell); }
-                }
-                _network.Add(xy);
                 _keepClear.Add(xy);
+                bool already = IsPath(cell);
+                if (already || TryLayPathTile(cell))
+                {
+                    if (!already) laid++;
+                    _network.Add(xy);
+                    continue;
+                }
+                // a tree stands here: the tile joins the network only when it is laid (LayPendingPaths), so a building
+                // routed to it is not counted as connected before it really is
+                if (TreeAt(cell) is Vector3Int tree) { trees.Add(tree); _pendingPath.Add(cell); }
             }
+            RecomputeNetwork();
             if (trees.Count > 0)
             {
                 _treeCuttingArea.AddCoordinates(trees);
                 Event("pathThroughTrees", null, new JObject { ["trees"] = trees.Count });
             }
             return laid;
+        }
+
+        /// <summary>
+        /// The network is the set of laid path tiles joined to the district center's doorstep: tiles laid beyond a tree that
+        /// is still standing form an island, and a building routed to an island is not connected yet.
+        /// </summary>
+        private void RecomputeNetwork()
+        {
+            var dc = Anchor("dc");
+            if (!dc.HasValue) return;
+            var start = new Vector2Int(dc.Value.x, dc.Value.y);
+            var seen = new HashSet<Vector2Int> { start };
+            var queue = new Queue<Vector2Int>();
+            queue.Enqueue(start);
+            while (queue.Count > 0)
+            {
+                var c = queue.Dequeue();
+                foreach (var step in Steps4)
+                {
+                    var n = c + step;
+                    if (seen.Contains(n)) continue;
+                    if (!IsPath(new Vector3Int(n.x, n.y, _networkZ))) continue;
+                    seen.Add(n);
+                    queue.Enqueue(n);
+                }
+            }
+            _network.Clear();
+            foreach (var c in seen) _network.Add(c);
         }
 
         private bool TryLayPathTile(Vector3Int cell)
@@ -542,7 +581,8 @@ namespace PandabornDevHarness
         {
             if (_pendingPath.Count == 0) return;
             foreach (var cell in _pendingPath.ToList())
-                if (IsPath(cell) || TryLayPathTile(cell)) _pendingPath.Remove(cell);
+                if (IsPath(cell) || TryLayPathTile(cell)) { _pendingPath.Remove(cell); _network.Add(new Vector2Int(cell.x, cell.y)); }
+            RecomputeNetwork();
         }
 
         private bool IsPath(Vector3Int cell)

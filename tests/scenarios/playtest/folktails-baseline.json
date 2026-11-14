@@ -4,7 +4,7 @@
   "speed": 30,
   "playtest": {
     "name": "folktails-baseline",
-    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts).",
+    "note": "A standard Folktails opening and mid game on Plains, Normal: lumberjacks, pump, gatherer, carrots, lodges as beds run out, log and food storage, inventor, lumber mill, forester, potatoes and grill, tanks before the first drought, gears and a medium tank, hauling, campfire, shrubs and contemplation (no powered chain: the driver cannot yet lay shafts). The pump goes to the nearest shore with a path through the trees if needed; the lumberjacks start next to it and clear those trees before any other cutting.",
     "shotsEveryDays": 4,
     "names": {
       "lumber": "LumberjackFlag.Folktails",
@@ -50,15 +50,18 @@
         "maxDistance": 40,
         "priority": "VeryHigh",
         "minDepth": 0.3,
-        "tries": 600
+        "tries": 600,
+        "pathThroughTrees": true
       },
       {
         "id": "lumber1",
         "op": "build",
         "template": "@lumber",
         "rule": "trees",
-        "maxDistance": 25,
-        "priority": "High"
+        "maxDistance": 16,
+        "priority": "High",
+        "near": "pump1",
+        "minDistance": 3
       },
       {
         "id": "cut1",
@@ -69,7 +72,8 @@
         "when": {
           "after": [
             "lumber1"
-          ]
+          ],
+          "pathsClear": true
         }
       },
       {
@@ -133,7 +137,8 @@
         "when": {
           "after": [
             "lumber2"
-          ]
+          ],
+          "pathsClear": true
         }
       },
       {
@@ -341,7 +346,8 @@
           "population": 18
         },
         "minDepth": 0.3,
-        "tries": 600
+        "tries": 600,
+        "pathThroughTrees": true
       },
       {
         "id": "tank3",

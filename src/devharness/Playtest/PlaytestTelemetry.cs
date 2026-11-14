@@ -386,7 +386,7 @@ namespace PandabornDevHarness
                 if (site != null && waiting.Count < 12)
                     waiting.Add(new JObject { ["id"] = p.Id, ["materials"] = Math.Round(site.MaterialProgress, 2), ["built"] = Math.Round(site.BuildTimeProgress, 2) });
             }
-            o["sites"] = new JObject { ["unfinished"] = unfinished, ["list"] = waiting };
+            o["sites"] = new JObject { ["unfinished"] = unfinished, ["list"] = waiting, ["pathTilesWaitingForTrees"] = _pendingPath.Count };
 
             // plants by template: [alive, grown, dying, dead]
             var plants = new Dictionary<string, int[]>();
@@ -417,6 +417,12 @@ namespace PandabornDevHarness
 
             AppendLine("daily.jsonl", o);
             _daysRecorded++;
+            if (!final && adults + children == 0 && Request.Bool(_spec, "endWhenExtinct", true))
+            {
+                // nobody left: end the run now instead of idling to the planned day (the game driver reads this field)
+                Harness.Request.RunInGameHours = Mathf.Max(0.01f, Hours() - _gameDriverStartHours() + 0.05f);
+                Event("extinct", null, null);
+            }
             WriteState();
             if (!final)
                 Harness.Info("playtest: day " + o["day"] + " pop " + (adults + children) + " wb " + o["wellbeing"]["avg"] + " " + o["weather"]

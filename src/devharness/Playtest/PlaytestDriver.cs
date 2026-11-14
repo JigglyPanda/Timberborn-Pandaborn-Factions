@@ -291,6 +291,12 @@ namespace PandabornDevHarness
         }
 
         private float Hours() => _dayNightCycle.PartialDayNumber * 24f;
+        /// <summary>The hour the game driver started its run clock (result "run.startDay").</summary>
+        private float _gameDriverStartHours()
+        {
+            var run = Harness.Result["run"] as JObject;
+            return run != null && run["startDay"] != null ? (float)run["startDay"] * 24f : _startHours;
+        }
         private float Day() => _dayNightCycle.PartialDayNumber;
         private float WorkingHours() => (float)Math.Round(_workingHoursManager.WorkedPartOfDay * 24f, 2);
 
@@ -555,6 +561,9 @@ namespace PandabornDevHarness
                     case "hazardWithinDays":
                         if (_weatherService.IsHazardousWeather || _weatherService.HazardousWeatherStartCycleDay - _gameCycleService.PartialCycleDay > (float)v)
                         { waiting = "hazard within " + v + " days"; return false; }
+                        break;
+                    case "pathsClear":
+                        if (_pendingPath.Count > 0) { waiting = "path tiles waiting for trees: " + _pendingPath.Count; return false; }
                         break;
                     case "cycle":
                         if (_gameCycleService.Cycle < (int)v) { waiting = "cycle " + v; return false; }
