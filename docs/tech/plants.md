@@ -252,3 +252,29 @@ What the game shots showed and what changed after them:
   tops where the game camera sees them (212 triangles). Unripe: open green lobes on dark limbs; ripe: orange-topped.
 * Rice heads repainted as drooping golden clusters (a stem arching over, a dense tapering tassel of grains); two
   heads per hill instead of three so the paddy stays green-gold (162 triangles).
+* **Prototype mod after adoption:** the faction build now ships `pandabornplants_win`, the collection and the models.
+  `plants-pass2-1` crashed at load (*another AssetBundle with the same files is already loaded*) because the prototype
+  still carried its own copy. `gen_mod.py` now detects the adoption and writes only the plant lab DLL and the blueprint
+  merges (`--standalone` forces the old layout). Rule for every lane: **exactly one mod may ship a given bundle.**
+
+### Pass 2 run: `plants-pass2-2` (PASS, 0 errors)
+
+Against the adopted faction build (its own models and bundle, which matched the latest builds byte for byte) plus the
+plant lab. Shots in `E:\PandabornDev\build\test\plants-pass2-2\`.
+
+* **Persimmon** (`p2_persimmon_day.png`, default camera distance and pitch): the ripe orchard is unmistakably orange,
+  the unripe one is open, irregular green lobes on dark trunks, the dead trees bare dark forks. `p2_persimmon_close.png`.
+* **Rice heads** (`p2_rice_close.png`, `p2_rice_day.png`): drooping golden clusters over green hills; the paddy still
+  reads green-gold, not wheat-gold.
+* **Tea third ring** (`p2_tea_day.png`): domes closed to the ground, no gaps.
+* **Taller rice seedlings in 0.45 water** (`p2_rice_day.png`, right paddy): all 15 healthy; their tops stand clear
+  but the water tints most of the tuft: readable, faint. At the spout's 0.3 they are fully readable.
+* **Dead-tree colliders:** the merges with `Mature/#Dead` capsules loaded without error (not clicked in game).
+* **Real dry and dead, no forcing** (`p2_drying.png`, `p2_dead.png`; probes in result.json `water.probes`):
+  * a mature paddy drained at speed 7: 18 healthy at the start and after 6 h (the single drain cell empties slowly),
+    after 48 h **10 dying, 8 dead**: the straw dry model and the grey-brown dead model side by side in the field;
+  * tea planted on moist ground beside the paddies (the arid rule): dying from the start, after 48 h **4 dying,
+    4 dead** (`p2_dead.png`, the row of brown and straw domes);
+  * by-product for the design lane: tea on a bench **one level up and 4-8 tiles from 0.3-0.45 water** also started
+    dying (11 of the unforced row): moisture climbs one level and reaches that far. Tea gardens need more distance or
+    height from paddies than the terrace run's layout gave them (there, 7+ tiles and a ditch at -1 left all tea alive).
