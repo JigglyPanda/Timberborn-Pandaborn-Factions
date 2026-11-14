@@ -314,3 +314,9 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Poles are the vanilla plank under a new name, if the game allows a faction-only rename | Hundreds fewer cost edits, and other mods' buildings keep working |
 | 2026-11-14 | Art direction moved from lacquer red to Sichuan timber, plaster and grey tile; no writing on textures | Red and gold reads as Chinatown; generated characters are gibberish |
 | 2026-11-14 | Charcoal filter, crop rotation, raw-shoot penalty, lantern speed bonus dropped | Low value, a chore, extra walking, and nothing to remove |
+| 2026-11-14 | The rested bonus multiplies speed instead of adding to it | The colony model: game bonuses add together, so a flat bonus loses 8–17% against a long day once wellbeing is high |
+| 2026-11-14 | Inkpaws lift 18, Ringtails 14; Ringtails keep full speed when loaded | The model: this makes a night builder exactly as good as a day builder at twelve and twelve; equal lift would make Ringtails half as good again |
+| 2026-11-14 | Births, lifespan and childhood stay as vanilla | The model: slow breeding took 46 days to reach fifty colonists against 24, which is an hour of watching thirteen pandas |
+| 2026-11-14 | "Fast building in the first hour" withdrawn as a claim | The model: the first week is limited by logs, not builders. The smoother start is food: shoots on day 4.5 against carrots on day 5.9 |
+| 2026-11-14 | Dry-day tolerance set: shoot bamboo 5, cabbage 7, timber bamboo 7 | The model: shoots survive every first drought on Normal; on Hard cabbage is the staple |
+| 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
