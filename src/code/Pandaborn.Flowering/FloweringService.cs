@@ -7,6 +7,7 @@ using Pandaborn.Specs;
 using Timberborn.Beavers;
 using Timberborn.EntitySystem;
 using Timberborn.GameCycleSystem;
+using Timberborn.GameFactionSystem;
 using Timberborn.Growing;
 using Timberborn.Localization;
 using Timberborn.NaturalResources;
@@ -57,6 +58,7 @@ namespace Pandaborn.Flowering
         private readonly EventBus _eventBus;
         private readonly EntityService _entityService;
         private readonly NaturalResourceFactory _naturalResourceFactory;
+        private readonly FactionService _factionService;
 
         private readonly List<FloweringPlant> _plants = new List<FloweringPlant>();
         private readonly List<InFlowerPlant> _inFlower = new List<InFlowerPlant>();
@@ -66,7 +68,7 @@ namespace Pandaborn.Flowering
 
         public FloweringService(TemplateService templateService, TemplateNameMapper templateNameMapper, PandabornStore store, Messenger messenger,
                                 ILoc loc, IDayNightCycle dayNightCycle, GameCycleService gameCycleService, EventBus eventBus,
-                                EntityService entityService, NaturalResourceFactory naturalResourceFactory)
+                                EntityService entityService, NaturalResourceFactory naturalResourceFactory, FactionService factionService)
         {
             _templateService = templateService;
             _templateNameMapper = templateNameMapper;
@@ -78,6 +80,7 @@ namespace Pandaborn.Flowering
             _eventBus = eventBus;
             _entityService = entityService;
             _naturalResourceFactory = naturalResourceFactory;
+            _factionService = factionService;
         }
 
         public static FloweringService Current { get; private set; }
@@ -142,7 +145,13 @@ namespace Pandaborn.Flowering
                 Debug.LogError(Log + "reading the adult template failed; the Flowering is off: " + e);
                 Spec = null;
             }
-            if (!Active) return;
+            if (!Active)
+            {
+                if (_factionService.Current?.Id == FeatureNotices.FactionId)
+                    FeatureRegistry.ReportNoData("Flowering", "the faction's adult template has no PandabornFloweringSpec");
+                return;
+            }
+            if (!GrowthHold.Available) FeatureRegistry.ReportDegraded("Flowering", "young bamboo regrows at once after a Flowering (" + GrowthHold.Unavailable + ")");
             ReadState();
             _eventBus.Register(this);
         }

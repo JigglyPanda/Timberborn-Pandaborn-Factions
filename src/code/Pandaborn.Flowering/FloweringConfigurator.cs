@@ -10,7 +10,6 @@ namespace Pandaborn.Flowering
     {
         protected override void Configure()
         {
-            if (DevFlags.ForcedOff("Flowering")) return;   // only for test builds; the bootstrap never loads a forced-off module
             Bind<FloweringService>().AsSingleton();
             Bind<FloweringSettingDialog>().AsSingleton();
             Bind<FloweringIndicator>().AsSingleton();

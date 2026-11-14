@@ -1,8 +1,8 @@
 # Pandaborn.Festival - the Lantern Festival
 
-DESIGN.md Pillar 5; full design, player timeline and test results in `docs/tech/events.md`. **Status: built and tested
-through the events dev mod (`proto/events`); not yet in `Pandaborn.Code.sln` or `modules.txt`.** It does nothing until the
-catalogue carries its data (requests in `docs/tech/events.md`); wire it in together with that data.
+DESIGN.md Pillar 5; full design, player timeline and test results in `docs/tech/events.md`. **Status: in
+`Pandaborn.Code.sln` and `modules.txt`; ships when `catalogue/rules.toml [modules] Festival` is on** (the catalogue already
+carries its data behind that switch). Dev copies with the data switched on: `proto/events/build.ps1`.
 
 **What it does.** A Festival Square's panel shows what its district has in its ordinary stores towards a festival
 (paper lanterns, the cooked dishes with 20 or more each, fireworks), a Call button, an auto-call toggle, the cycle of the
@@ -21,6 +21,9 @@ dawn to the dawn after:
   drawn with the game's own firework entities (`FestivalFireworks`), from each finished square. Computed from the clock,
   so a reload never replays them. The square's model may carry `#FestivalLights` (shown from the call to the end),
   `#LanternRise` (a particle system played instead of a comet) and `#FireworkMount` (launch point).
+* Sounds (the sound lane's `pandabornsounds`, docs/tech/sound.md 8): `Environment.Pandaborn.Firecrackers` once when the
+  festival begins and at each square as the gathering starts, `Environment.Pandaborn.FestivalDrum` looped at each square
+  through the gathering. A clip that is not loaded is silent (`FestivalSounds`).
 * Rewards: the festive need (`FestiveNeedId`) is set to its maximum for a colonist when it first reaches the square and
   for everyone else when the festival ends; `GrandNeedId` too after a Grand Festival. Tradition rises by one.
 * `TraditionToolLocker` (an `IToolLocker`, the game's own toolbar lock) keeps decorations with
@@ -46,6 +49,10 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   the evening show, festive spirit and Tradition remain, and the panel says so.
 * `Timberborn.FireworkSystem.Firework.Launch` (public method of an internal type, reached by reflection) gone, or
   `simulate-missing-member: Festival.Fireworks`: no lanterns or fireworks in the sky; everything else runs.
+* Each fallback is reported once through `FeatureRegistry.ReportDegraded("Festival", ...)` (the feature report and one
+  notice); a game of our faction without the data gets `ReportNoData`.
+* Missing art degrades to nothing: no `#FestivalLights`, `#LanternRise` or `#FireworkMount` node means no toggle, comets
+  instead of lantern particles, and the square's centre as the launch point.
 * Interface pieces sit behind `SafeUi`.
 
 <!-- api:begin -->
@@ -183,6 +190,11 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `Timberborn.EntitySystem.LabeledEntitySpec`
   * method `get_DisplayNameLocKey()`
 
+**Timberborn.FactionSystem**
+
+* type `Timberborn.FactionSystem.FactionSpec`
+  * method `get_Id()`
+
 **Timberborn.FireworkSystem**
 
 * type `Timberborn.FireworkSystem.FireworkLimits`
@@ -206,6 +218,11 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `get_District()`
 * type `Timberborn.GameDistricts.DistrictCenter`
   * method `get_District()`
+
+**Timberborn.GameFactionSystem**
+
+* type `Timberborn.GameFactionSystem.FactionService`
+  * method `get_Current()`
 
 **Timberborn.Goods**
 
@@ -277,6 +294,16 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `Timberborn.SingletonSystem.OnEventAttribute`
   * method `.ctor()`
 
+**Timberborn.SoundSystem**
+
+* type `Timberborn.SoundSystem.AudioClipService`
+  * method `GetAudioClipNames(System.String)`
+* type `Timberborn.SoundSystem.ISoundSystem`
+  * method `LoopSingle3DSound(UnityEngine.GameObject, System.String, System.Int32)`
+  * method `PlaySound2D(UnityEngine.GameObject, System.String, System.Int32)`
+  * method `PlaySound3D(UnityEngine.GameObject, System.String, System.Int32)`
+  * method `StopSound(UnityEngine.GameObject, System.String)`
+
 **Timberborn.TemplateInstantiation**
 
 * type `Timberborn.TemplateInstantiation.TemplateModule`
@@ -346,6 +373,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
 * type `UnityEngine.GameObject`
+  * method `.ctor(System.String)`
   * method `GetComponentsInChildren<1>(System.Boolean)`
   * method `SetActive(System.Boolean)`
 * type `UnityEngine.Mathf`

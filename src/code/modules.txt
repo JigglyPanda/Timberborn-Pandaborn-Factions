@@ -8,3 +8,5 @@ Words  Pandaborn.Words.bin   Inkpaw words: in Inkpaws games, swaps the reviewed 
 Water  Pandaborn.Water.bin   The water toolkit: one-way flumes, Flume Gates (flow setting, badwater shut-off), status icons, solid caps, dew in drought, plain-words panels for spouts and wheels
 Ringtails  Pandaborn.Ringtails.bin  The Ringtails: a second people who work from the bell to dawn in their own night posts and live in Moon Lofts
 RingtailsFallback  Pandaborn.RingtailsFallback.bin  Night posts become ordinary Inkpaw workplaces when the Ringtails module is off or degraded
+Festival  Pandaborn.Festival.bin  The Lantern Festival: called from the Festival Square, a day and a night off, lanterns and fireworks, festive spirit and Tradition
+Flowering  Pandaborn.Flowering.bin  The Great Flowering: a bamboo flowers a cycle after it is announced, bears seed, dies, and rests before it regrows

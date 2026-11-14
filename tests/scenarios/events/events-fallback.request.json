@@ -1,26 +1,13 @@
 {
   "speed": 7,
   "run": { "inGameHours": 37 },
-  "buildings": [
-    "PandabornFestivalSquare.Inkpaws",
-    "EfficientFarmHouse.Inkpaws",
-    "LumberjackFlag.Inkpaws"
-  ],
+  "buildings": [ "PandabornFestivalSquare.Inkpaws", "EfficientFarmHouse.Inkpaws", "LumberjackFlag.Inkpaws" ],
   "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
-  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events" ],
+  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events", "pbevents" ],
   "checks": { "noOwnErrors": true },
   "events": {
-    "stock": {
-      "Water": 300,
-      "PandabornPaperLantern": 40,
-      "PandabornSteamedShoots": 25,
-      "PandabornPickles": 22,
-      "PandabornSteamedRice": 30,
-      "Fireworks": 20
-    },
-    "fields": [
-      { "template": "PandabornShootBamboo.Inkpaws", "count": 8, "near": "EfficientFarmHouse.Inkpaws", "grown": true, "mark": true, "radius": 5 }
-    ],
+    "stock": { "Water": 300, "PandabornPaperLantern": 40, "PandabornSteamedShoots": 25, "PandabornPickles": 22, "PandabornSteamedRice": 30, "Fireworks": 20 },
+    "fields": [ { "template": "PandabornShootBamboo.Inkpaws", "count": 8, "near": "EfficientFarmHouse.Inkpaws", "grown": true, "mark": true, "radius": 5 } ],
     "actions": [
       { "atRunHour": 0.5, "do": "flowerNow" },
       { "atRunHour": 0.8, "do": "seedlings", "template": "PandabornShootBamboo.Inkpaws", "count": 3, "near": "EfficientFarmHouse.Inkpaws", "radius": 8 },
@@ -34,7 +21,7 @@
     ],
     "reload": {
       "actions": [],
-      "shots": [ { "name": "fb_reload_overview", "atRunHour": 2, "select": "none" } ]
+      "shots": [ { "name": "fb_off_square", "atRunHour": 2, "select": "square" }, { "name": "fb_off_twin", "atRunHour": 3, "select": "plant:PandabornShootBambooInFlower.Inkpaws" } ]
     }
   }
 }

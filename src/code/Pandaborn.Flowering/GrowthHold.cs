@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Pandaborn.Core;
 using Timberborn.Growing;
 using Timberborn.NaturalResourcesLifecycle;
 using Timberborn.TimeSystem;
@@ -31,7 +32,7 @@ namespace Pandaborn.Flowering
                 if (!_checked)
                 {
                     _checked = true;
-                    if (DevFlags.SimulatesMissing("Flowering.GrowthHold")) _failure = "simulated missing Growable._timeTrigger (dev switch)";
+                    if (FeatureRegistry.DevFlag("simulate-missing-member", "Flowering.GrowthHold")) _failure = "simulated: Growable._timeTrigger missing";
                     else if (TimeTriggerField == null) _failure = "Growable._timeTrigger not found";
                     else if (!typeof(ITimeTrigger).IsAssignableFrom(TimeTriggerField.FieldType)) _failure = "Growable._timeTrigger is no longer an ITimeTrigger";
                     if (_failure != null)

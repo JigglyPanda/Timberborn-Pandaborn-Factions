@@ -1,8 +1,8 @@
 # Pandaborn.Flowering - the Great Flowering
 
 DESIGN.md Pillar 5; full design, player timeline, the fairness arithmetic and test results in `docs/tech/events.md`.
-**Status: built and tested through the events dev mod (`proto/events`); not yet in `Pandaborn.Code.sln` or
-`modules.txt`.** It does nothing until the catalogue carries its data (requests in `docs/tech/events.md`).
+**Status: in `Pandaborn.Code.sln` and `modules.txt`; ships when `catalogue/rules.toml [modules] Flowering` is on** (the
+catalogue already carries its data behind that switch). Dev copies: `proto/events/build.ps1`.
 
 **What it does.** One bamboo species flowers per Flowering, in the order of `PandabornFloweringSpec.Species`, alternating.
 
@@ -34,7 +34,8 @@ are not saved: the game saves growth progress as always, and the service holds t
   never die by themselves; young bamboo grows at once. The store entry is carried unchanged; when the module is back it
   picks up where the save left off (an announced Flowering whose date passed moves to the next cycle start).
 * `Growable._timeTrigger` (private) gone, or `simulate-missing-member: Flowering.GrowthHold`: young bamboo regrows at once
-  after a Flowering (milder, never harsher); one warning in the log.
+  after a Flowering (milder, never harsher); reported through `FeatureRegistry.ReportDegraded("Flowering", ...)`.
+* A game of our faction without the data gets `FeatureRegistry.ReportNoData`.
 * Interface pieces sit behind `SafeUi`.
 
 <!-- api:begin -->
@@ -129,6 +130,11 @@ are not saved: the game saves growth progress as always, and the service holds t
   * method `get_DisplayNameLocKey()`
   * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`
 
+**Timberborn.FactionSystem**
+
+* type `Timberborn.FactionSystem.FactionSpec`
+  * method `get_Id()`
+
 **Timberborn.Forestry**
 
 * type `Timberborn.Forestry.TreeComponentSpec`
@@ -141,6 +147,11 @@ are not saved: the game saves growth progress as always, and the service holds t
 * type `Timberborn.GameCycleSystem.GameCycleService`
   * method `get_Cycle()`
   * method `get_CycleDay()`
+
+**Timberborn.GameFactionSystem**
+
+* type `Timberborn.GameFactionSystem.FactionService`
+  * method `get_Current()`
 
 **Timberborn.Goods**
 

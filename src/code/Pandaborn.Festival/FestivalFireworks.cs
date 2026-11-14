@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Pandaborn.Core;
 using Timberborn.EntitySystem;
 using Timberborn.FireworkSystem;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace Pandaborn.Festival
         {
             _fireworkSpecService = fireworkSpecService;
             _entityService = entityService;
-            if (DevFlags.SimulatesMissing("Festival.Fireworks")) _failure = "simulated missing " + FireworkTypeName + ".Launch (dev switch)";
+            if (FeatureRegistry.DevFlag("simulate-missing-member", "Festival.Fireworks")) _failure = "simulated missing " + FireworkTypeName + ".Launch (dev switch)";
             else if (FireworkType == null) _failure = FireworkTypeName + " not found";
             else if (LaunchMethod == null) _failure = FireworkTypeName + ".Launch(Vector3, Quaternion, float) not found";
             if (_failure != null) Debug.LogWarning("[Pandaborn.Festival] fireworks are off: " + _failure + ". Festivals run without their show.");

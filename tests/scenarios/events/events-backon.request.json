@@ -1,0 +1,20 @@
+{
+  "speed": 7,
+  "run": { "inGameHours": 3 },
+  "buildings": [ "PandabornFestivalSquare.Inkpaws", "EfficientFarmHouse.Inkpaws", "PandabornGoldfishBowl.Inkpaws" ],
+  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
+  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events", "pbevents" ],
+  "checks": { "noOwnErrors": true },
+  "events": {
+    "fields": [ { "template": "PandabornShootBamboo.Inkpaws", "count": 8, "near": "EfficientFarmHouse.Inkpaws", "grown": true, "mark": true, "radius": 5 } ],
+    "actions": [
+      { "atRunHour": 0.5, "do": "fakeMidEvent", "festivalDayOffset": -1 },
+      { "atRunHour": 1.0, "do": "writeDevSwitch", "value": "# modules back on" }
+    ],
+    "shots": [ { "name": "bo_off_square", "atRunHour": 2.0, "select": "square" } ],
+    "reload": {
+      "actions": [],
+      "shots": [ { "name": "bo_on_square", "atRunHour": 1.0, "select": "square" }, { "name": "bo_on_twin", "atRunHour": 2.0, "select": "inflower" } ]
+    }
+  }
+}

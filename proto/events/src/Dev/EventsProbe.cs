@@ -7,13 +7,10 @@ using Bindito.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pandaborn.Core;
-using Pandaborn.Festival;
-using Pandaborn.Flowering;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BehaviorSystem;
 using Timberborn.BlockSystem;
 using Timberborn.Characters;
-using Timberborn.Common;
 using Timberborn.EntitySystem;
 using Timberborn.Forestry;
 using Timberborn.GameDistricts;
@@ -30,6 +27,7 @@ using Timberborn.TemplateSystem;
 using Timberborn.TerrainSystem;
 using Timberborn.TimeSystem;
 using Timberborn.UILayoutSystem;
+using Timberborn.WeatherSystem;
 using Timberborn.WorkSystem;
 using UnityEngine;
 
@@ -45,19 +43,17 @@ namespace Pandaborn.Events.Dev
     }
 
     /// <summary>
-    /// Dev only (never shipped). Drives and records the two events in a harness run, from the request's "events" section:
+    /// Dev only (never shipped). Drives and records the two events in a harness run, from the request's "events" section
+    /// ("reload" overrides it after a save is loaded):
     /// <code>
-    /// { "stock": { "PandabornPaperLantern": 40, ... },                       // given to the district center (first launch)
-    ///   "fields": [ { "template", "count", "near": "&lt;placed building template&gt;", "grown": true, "mark": true,
-    ///                 "cuttingArea": false, "radius": 5 } ],
-    ///   "actions": [ { "atRunHour": 0.5, "do": "flowerNow|announce|callFestival|resetCycleRule|jumpToHour|seedlings|setTradition|setSetting|autoCall",
-    ///                  "hour": 23.5, "template", "count", "near", "value" } ],
-    ///   "shots": [ { "name", "day": 1, "hour": 16.7, "select": "square|inflower|plant:&lt;template&gt;|colonist|none" } ],
-    ///   "reload": { ... same keys, used when the run loaded the save ... } }
+    /// { "stock": { good: amount },  "fields": [ { "template", "count", "near", "grown", "mark", "cuttingArea", "radius" } ],
+    ///   "actions": [ { "atRunHour" | "day"+"hour", "do": "...", ... } ],  "shots": [ { "name", time, "select" } ] }
     /// </code>
-    /// Times: "atRunHour" counts in-game hours from the probe's start; "day"/"hour" is the day index from the run's first day
-    /// (0 = the day the run started) and the hour of that day. Output: events.json (events_reload.json after a reload) in the
-    /// run folder, written every in-game hour, plus a summary in result.json under "events".
+    /// Actions: announce, flowerNow, setSetting, callFestival, autoCall, resetCycleRule, setTradition, stock, seedlings,
+    /// jumpToHour, startDrought, writeDevSwitch (pandaborn.dev.txt of the running copy, for the next launch), fakeMidEvent.
+    /// Everything that touches the Festival or Flowering module lives in FestivalProbe / FloweringProbe and is only called
+    /// when that module's assembly was loaded by the bootstrap, so the probe also runs with a module forced off.
+    /// Output: events.json (events_reload.json after a reload) in the run folder, every in-game hour.
     /// </summary>
     public class EventsProbe : ILoadableSingleton, IUpdatableSingleton
     {
@@ -72,6 +68,9 @@ namespace Pandaborn.Events.Dev
         private readonly ISoilMoistureService _soilMoistureService;
         private readonly ITerrainService _terrainService;
         private readonly PandabornStore _store;
+        private readonly WeatherService _weatherService;
+        private readonly WeatherFastForwarder _weatherFastForwarder;
+        private readonly EntityService _entityService;
 
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
@@ -81,8 +80,8 @@ namespace Pandaborn.Events.Dev
         private readonly List<JObject> _actions = new List<JObject>();
         private readonly List<JObject> _shots = new List<JObject>();
         private readonly Queue<JObject> _shotQueue = new Queue<JObject>();
-        private readonly List<Growable> _seedlings = new List<Growable>();
 
+        private readonly Dictionary<string, float> _actionDone = new Dictionary<string, float>(StringComparer.Ordinal);
         private bool _primaryUi;
         private float _primaryUiAt;
         private bool _started;
@@ -95,7 +94,8 @@ namespace Pandaborn.Events.Dev
 
         public EventsProbe(EventBus eventBus, IDayNightCycle dayNightCycle, DistrictCenterRegistry districtCenterRegistry, EntityRegistry entityRegistry,
                            EntitySelectionService entitySelectionService, NaturalResourceFactory naturalResourceFactory, PlantingService plantingService,
-                           TreeCuttingArea treeCuttingArea, ISoilMoistureService soilMoistureService, ITerrainService terrainService, PandabornStore store)
+                           TreeCuttingArea treeCuttingArea, ISoilMoistureService soilMoistureService, ITerrainService terrainService, PandabornStore store,
+                           WeatherService weatherService, WeatherFastForwarder weatherFastForwarder, EntityService entityService)
         {
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
@@ -108,8 +108,17 @@ namespace Pandaborn.Events.Dev
             _soilMoistureService = soilMoistureService;
             _terrainService = terrainService;
             _store = store;
+            _weatherService = weatherService;
+            _weatherFastForwarder = weatherFastForwarder;
+            _entityService = entityService;
             _config = HarnessBridge.Config;
         }
+
+        public static bool FestivalLoaded => Loaded("Pandaborn.Festival");
+
+        public static bool FloweringLoaded => Loaded("Pandaborn.Flowering");
+
+        private static bool Loaded(string name) => AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == name);
 
         public void Load()
         {
@@ -151,11 +160,6 @@ namespace Pandaborn.Events.Dev
             }
         }
 
-        // the modules may be forced off in a test launch: then their services do not exist
-        private static FestivalService Fest => FestivalService.Current != null && FestivalService.Current.Active ? FestivalService.Current : null;
-
-        private static FloweringService Flow => FloweringService.Current != null && FloweringService.Current.Active ? FloweringService.Current : null;
-
         private float RunHour => _dayNightCycle.PartialDayNumber * 24f - _startHours;
 
         private void Begin()
@@ -170,26 +174,27 @@ namespace Pandaborn.Events.Dev
             }
             else _store.Set("EventsProbe", 1, "startDay=" + _startDay.ToString(CultureInfo.InvariantCulture));
             _out["start"] = new JObject { ["day"] = _dayNightCycle.DayNumber, ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2), ["runStartDay"] = _startDay };
-            _out["features"] = new JObject
+            var features = new JObject
             {
-                ["festivalActive"] = Fest != null,
-                ["floweringActive"] = Flow != null,
-                ["fireworks"] = Fest?.FireworksStatus,
-                ["dayOff"] = FestivalGoer.InsertionError ?? "ok",
-                ["growthHold"] = GrowthHold.Available ? "ok" : GrowthHold.Unavailable,
-                ["features"] = string.Join("; ", FeatureRegistry.All.Select(s => s.ToString()))
+                ["festivalAssembly"] = FestivalLoaded,
+                ["floweringAssembly"] = FloweringLoaded,
+                ["features"] = string.Join("; ", FeatureRegistry.All.Select(s => s.ToString())),
+                ["degraded"] = string.Join("; ", FeatureRegistry.Degraded.Select(kv => kv.Key + ": " + kv.Value)),
+                ["noData"] = string.Join("; ", FeatureRegistry.NoData.Select(kv => kv.Key + ": " + kv.Value)),
+                ["owner"] = FeatureRegistry.Owner
             };
+            if (FestivalLoaded) FestivalProbe.Features(features);
+            if (FloweringLoaded) FloweringProbe.Features(features);
+            _out["features"] = features;
             if (!HarnessBridge.LoadSave)
             {
-                Stock();
+                Stock(_config["stock"] as JObject);
                 Fields();
             }
             HarnessBridge.Info("events probe started on day " + _dayNightCycle.DayNumber + " hour " + _dayNightCycle.HoursPassedToday.ToString("0.0"));
         }
 
         // ------------------------------------------------------------------ setup
-
-        private void Stock() => Stock(_config["stock"] as JObject);
 
         private void Stock(JObject stock)
         {
@@ -212,19 +217,13 @@ namespace Pandaborn.Events.Dev
             if (!(_config["fields"] is JArray fields)) return;
             foreach (var f in fields.OfType<JObject>())
             {
-                string template = (string)f["template"];
-                int count = f["count"]?.Value<int>() ?? 6;
-                bool grown = f["grown"]?.Value<bool>() ?? true;
-                bool mark = f["mark"]?.Value<bool>() ?? true;
-                bool cutting = f["cuttingArea"]?.Value<bool>() ?? false;
-                int radius = f["radius"]?.Value<int>() ?? 6;
-                var made = SpawnPlants(template, count, (string)f["near"], radius, grown, mark, cutting);
-                Event("field", template + ": " + made.Count + " planted near " + f["near"] + (grown ? " (grown)" : "") + "; moist "
-                               + made.Count(c => _soilMoistureService.SoilIsMoist(c)));
+                var made = SpawnPlants((string)f["template"], f["count"]?.Value<int>() ?? 6, (string)f["near"], f["radius"]?.Value<int>() ?? 6,
+                                       f["grown"]?.Value<bool>() ?? true, f["mark"]?.Value<bool>() ?? true, f["cuttingArea"]?.Value<bool>() ?? false);
+                Event("field", f["template"] + ": " + made.Count + " near " + f["near"] + "; moist " + made.Count(c => _soilMoistureService.SoilIsMoist(c)));
             }
         }
 
-        private List<Vector3Int> SpawnPlants(string template, int count, string near, int radius, bool grown, bool mark, bool cutting)
+        public List<Vector3Int> SpawnPlants(string template, int count, string near, int radius, bool grown, bool mark, bool cutting)
         {
             var made = new List<Vector3Int>();
             var anchor = FindBuilding(near);
@@ -249,7 +248,6 @@ namespace Pandaborn.Events.Dev
                 var plant = _naturalResourceFactory.SpawnIgnoringConstraints(template, c);
                 if (plant == null) continue;
                 if (grown) plant.GetComponent<Growable>()?.IncreaseGrowthProgress(1f);
-                else { var g = plant.GetComponent<Growable>(); if (g != null) _seedlings.Add(g); }
                 if (mark) _plantingService.SetPlantingCoordinates(c, template);
                 made.Add(c);
             }
@@ -257,7 +255,7 @@ namespace Pandaborn.Events.Dev
             return made;
         }
 
-        private BaseComponent FindBuilding(string template)
+        public BaseComponent FindBuilding(string template)
         {
             if (string.IsNullOrEmpty(template)) return null;
             return _entityRegistry.Entities.FirstOrDefault(e => e.GetComponent<TemplateSpec>()?.TemplateName == template);
@@ -277,11 +275,15 @@ namespace Pandaborn.Events.Dev
                 try { result = Do(what, a); }
                 catch (Exception e) { result = "threw " + e.GetType().Name + ": " + e.Message; Debug.LogError("[Pandaborn.Events.Dev] action " + what + ": " + e); }
                 Event("action:" + what, result);
+                if (a["id"] != null) _actionDone[(string)a["id"]] = _dayNightCycle.PartialDayNumber * 24f;
             }
         }
 
         private bool Due(JObject a)
         {
+            // "after": "<id of an earlier action>", "delayHours": h  (in-game hours after that action ran; survives time jumps)
+            if (a["after"] != null)
+                return _actionDone.TryGetValue((string)a["after"], out float at) && _dayNightCycle.PartialDayNumber * 24f >= at + (a["delayHours"]?.Value<float>() ?? 0f);
             if (a["atRunHour"] != null) return RunHour >= a["atRunHour"].Value<float>();
             if (a["day"] != null)
             {
@@ -293,50 +295,75 @@ namespace Pandaborn.Events.Dev
 
         private string Do(string what, JObject a)
         {
-            if (what == "writeDevSwitch")
-            {
-                string dir = EventsDevStarter.ModPath;
-                if (dir == null) return "mod path unknown";
-                File.WriteAllText(Path.Combine(dir, EventsDevStarter.FileName), ((string)a["value"] ?? "").Replace(';', '\n'));
-                return "written for the next launch: " + a["value"];
-            }
-            if (what == "stock") { Stock(a["goods"] as JObject); return "ok"; }
-            if (what == "jumpToHour")
-            {
-                float target = a["hour"]?.Value<float>() ?? 23.5f;
-                float delta = target - _dayNightCycle.HoursPassedToday;
-                if (delta <= 0f) return "already past " + target;
-                _dayNightCycle.JumpTimeInHours(delta);
-                return "jumped " + delta.ToString("0.00") + " h to day " + _dayNightCycle.DayNumber + " hour " + _dayNightCycle.HoursPassedToday.ToString("0.00");
-            }
-            if (what == "seedlings")
-            {
-                var made = SpawnPlants((string)a["template"], a["count"]?.Value<int>() ?? 4, (string)a["near"], a["radius"]?.Value<int>() ?? 8, false,
-                                       a["mark"]?.Value<bool>() ?? false, false);
-                return made.Count + " young " + a["template"];
-            }
-            if (Fest == null && Flow == null) return "modules off";
             switch (what)
             {
-                case "announce": Flow.DevAnnounce(); return Flow.Phase + " " + Flow.Species;
-                case "flowerNow": Flow.DevFlowerNow(); return Flow.Phase + " " + Flow.Species + "; twins " + Flow.TwinsMade + ", young died " + Flow.YoungKilled;
-                case "setSetting": Flow.SetSetting((string)a["value"]); return Flow.Setting + ", next " + Flow.NextCycle;
-                case "resetCycleRule": Fest.DevResetCycleRule(); return "ok";
-                case "setTradition": Fest.DevSetTradition(a["value"]?.Value<int>() ?? 0); return "Tradition " + Fest.Tradition;
-                case "autoCall": Fest.SetAutoCall(a["value"]?.Value<bool>() ?? true); return "auto " + Fest.AutoCall + ", phase " + Fest.Phase;
-                case "callFestival":
+                case "writeDevSwitch":
                 {
-                    var square = Fest.Squares.FirstOrDefault(s => s && s.IsFinished);
-                    if (square == null) return "no finished square";
-                    var stock = FestivalStock.Count(square.District, Fest.Spec);
-                    string why = Fest.WhyNot(square, stock);
-                    bool ok = Fest.Call(square, auto: false);
-                    return (ok ? "called for day " + Fest.FestivalDay + (Fest.Grand ? " (grand)" : "") : "refused: " + why)
-                           + "; stock lanterns " + stock.Lanterns + ", dishes " + string.Join(" ", stock.Dishes.Select(d => d.Key + "=" + d.Value))
-                           + ", fireworks " + stock.Fireworks;
+                    string file = Path.Combine(FeatureRegistry.Owner, "pandaborn.dev.txt");
+                    File.WriteAllText(file, ((string)a["value"] ?? "").Replace(';', '\n'));
+                    return "written for the next launch: " + file + ": " + a["value"];
                 }
-                default: return "unknown action";
+                case "stock": Stock(a["goods"] as JObject); return "ok";
+                case "setRecipe":
+                {
+                    var m = FindBuilding((string)a["building"])?.GetComponent<Timberborn.Workshops.Manufactory>();
+                    if (m == null) return "no such workshop";
+                    var r = m.ProductionRecipes.FirstOrDefault(x => x.Id == (string)a["recipe"]);
+                    if (r == null) return "no recipe " + a["recipe"] + " (has " + string.Join(", ", m.ProductionRecipes.Select(x => x.Id)) + ")";
+                    m.SetRecipe(r);
+                    return "recipe " + r.Id;
+                }
+                case "jumpToHour":
+                {
+                    float target = a["hour"]?.Value<float>() ?? 23.5f;
+                    float delta = target - _dayNightCycle.HoursPassedToday;
+                    if (delta <= 0f) return "already past " + target;
+                    _dayNightCycle.JumpTimeInHours(delta);
+                    return "jumped to day " + _dayNightCycle.DayNumber + " hour " + _dayNightCycle.HoursPassedToday.ToString("0.00");
+                }
+                case "startDrought":
+                {
+                    if (!_weatherService.IsHazardousWeather) _weatherFastForwarder.JumpToNextSeason();
+                    return "hazardous " + _weatherService.IsHazardousWeather + ", day " + _dayNightCycle.DayNumber + " hour " + _dayNightCycle.HoursPassedToday.ToString("0.0");
+                }
+                case "seedlings":
+                {
+                    var made = SpawnPlants((string)a["template"], a["count"]?.Value<int>() ?? 4, (string)a["near"], a["radius"]?.Value<int>() ?? 8, false,
+                                           a["mark"]?.Value<bool>() ?? false, false);
+                    return made.Count + " young " + a["template"];
+                }
             }
+            string result = null;
+            if (FestivalLoaded) result = FestivalProbe.Do(what, a, _dayNightCycle);
+            if (result == null && FloweringLoaded) result = FloweringProbe.Do(what, a, this);
+            if (result == null && what == "fakeMidEvent") result = FakeMidEvent(a);
+            return result ?? (FestivalLoaded || FloweringLoaded ? "unknown action" : "modules off");
+        }
+
+        /// <summary>
+        /// The state a save made mid-festival and mid-flowering carries, written while both modules are off (the Core store
+        /// keeps any feature's entry): a festival whose day ended yesterday (or runs today), shoot bamboo in flower since
+        /// half a day. For the "back on" load test.
+        /// </summary>
+        private string FakeMidEvent(JObject a)
+        {
+            int day = _dayNightCycle.DayNumber + (a["festivalDayOffset"]?.Value<int>() ?? -1);
+            _store.Set("Festival", 1, "phase=Running;day=" + day + ";grand=1;last=1;tradition=0;auto=0;count=0");
+            float flowered = _dayNightCycle.PartialDayNumber - 0.5f;
+            _store.Set("Flowering", 1, "setting=normal;phase=Flowering;next=8;nextSpecies=1;species=PandabornShootBamboo.Inkpaws;day="
+                                        + flowered.ToString("0.###", CultureInfo.InvariantCulture) + ";last=1");
+            int twins = 0;
+            foreach (var e in _entityRegistry.Entities.ToList())
+            {
+                if (Template(e) != "PandabornShootBamboo.Inkpaws") continue;
+                var g = e.GetComponent<Growable>();
+                if (g == null || !g.IsGrown) continue;
+                var c = e.GetComponent<BlockObject>().Coordinates;
+                _entityService.Delete(e);
+                var twin = _naturalResourceFactory.SpawnIgnoringConstraints("PandabornShootBambooInFlower.Inkpaws", c);
+                if (twin != null) { twin.GetComponent<Growable>()?.IncreaseGrowthProgress(1f); twins++; }
+            }
+            return "store set (festival day " + day + ", flowering since " + flowered.ToString("0.00") + "), twins " + twins;
         }
 
         // ------------------------------------------------------------------ samples
@@ -347,127 +374,76 @@ namespace Pandaborn.Events.Dev
             {
                 ["runHour"] = Math.Round(RunHour, 2),
                 ["day"] = _dayNightCycle.DayNumber - _startDay,
-                ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2)
+                ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2),
+                ["hazard"] = _weatherService.IsHazardousWeather,
+                ["raw"] = Raw()
             };
-            s["raw"] = Raw();
-            if (Fest != null)
-            {
-                var goers = Fest.Goers.Where(g => g).ToList();
-                var doing = new JObject();
-                var behaviors = new JObject();
-                foreach (var g in goers)
-                {
-                    string d = string.IsNullOrEmpty(g.Doing) ? "-" : g.Doing;
-                    if (!Fest.IsHoliday) d = "-";
-                    doing[d] = (doing[d]?.Value<int>() ?? 0) + 1;
-                    string b = Behavior(g);
-                    behaviors[b] = (behaviors[b]?.Value<int>() ?? 0) + 1;
-                }
-                string need = Fest.Spec.FestiveNeedId;
-                var festive = goers.Select(g => g.NeedPoints(need)).Where(p => p >= 0f).ToList();
-                s["festival"] = new JObject
-                {
-                    ["phase"] = Fest.Phase.ToString(),
-                    ["holiday"] = Fest.IsHoliday,
-                    ["show"] = Fest.IsShowTime,
-                    ["grand"] = Fest.Grand,
-                    ["tradition"] = Fest.Tradition,
-                    ["lanterns"] = Fest.LanternsLaunched,
-                    ["bursts"] = Fest.BurstsLaunched,
-                    ["goers"] = goers.Count,
-                    ["attended"] = goers.Count(g => Fest.HasAttended(g)),
-                    ["festiveAvg"] = festive.Count > 0 ? Math.Round(festive.Average(), 3) : -1,
-                    ["festiveMin"] = festive.Count > 0 ? Math.Round(festive.Min(), 3) : -1,
-                    ["doing"] = doing,
-                    ["behaviors"] = behaviors,
-                    ["working"] = goers.Count(g => IsWorking(g)),
-                    ["keepWorking"] = goers.Count(g => g.KeepsWorking),
-                    ["ringtails"] = goers.Count(g => Template(g).StartsWith("Ringtail", StringComparison.Ordinal)),
-                    ["ringtailsWorking"] = goers.Count(g => Template(g).StartsWith("Ringtail", StringComparison.Ordinal) && IsWorking(g)),
-                    ["lockedByTradition"] = TraditionToolLocker.LockedCount,
-                    ["panel"] = FestivalSquareFragment.ShownText
-                };
-            }
-            if (Flow != null)
-            {
-                var plants = Flow.Plants.Where(p => p).ToList();
-                var twins = Flow.InFlower.Where(t => t).ToList();
-                var byTemplate = new JObject();
-                foreach (var grp in plants.GroupBy(p => p.Species ?? "?"))
-                    byTemplate[grp.Key] = new JObject
-                    {
-                        ["alive"] = grp.Count(p => !p.IsDead), ["dead"] = grp.Count(p => p.IsDead), ["grown"] = grp.Count(p => p.IsGrown && !p.IsDead)
-                    };
-                s["flowering"] = new JObject
-                {
-                    ["setting"] = Flow.Setting,
-                    ["phase"] = Flow.Phase.ToString(),
-                    ["species"] = Flow.Species,
-                    ["nextCycle"] = Flow.NextCycle,
-                    ["twinsAlive"] = twins.Count(t => !t.IsDead),
-                    ["twinsDead"] = twins.Count(t => t.IsDead),
-                    ["seedOnPlants"] = twins.Sum(t => t.SeedLeft),
-                    ["seedCut"] = Flow.SeedCut,
-                    ["held"] = Flow.HeldNow,
-                    ["seedInStore"] = StoreAmount("PandabornBambooSeed"),
-                    ["plants"] = byTemplate,
-                    ["seedlings"] = new JArray(_seedlings.Where(g => g).Select(g => (object)(Template(g) + " " + g.GrowthProgress.ToString("0.000")
-                                                                                              + (g.GetComponent<LivingNaturalResource>().IsDead ? " dead" : ""))).ToArray()),
-                    ["young"] = new JArray(plants.Where(p => !p.IsGrown && !p.IsDead).Take(8)
-                                                  .Select(p => (object)(p.Species + " " + p.Growable.GrowthProgress.ToString("0.000"))).ToArray()),
-                    ["indicator"] = FloweringIndicator.ShownText,
-                    ["plantPanel"] = FloweringPlantFragment.ShownText
-                };
-            }
+            if (FestivalLoaded) FestivalProbe.Sample(s);
+            if (FloweringLoaded) FloweringProbe.Sample(s);
             s["store"] = new JArray(_store.Features.Where(f => f == "Festival" || f == "Flowering")
                                           .Select(f => { _store.TryGet(f, out int v, out string p); return (object)(f + "|" + v + "|" + p); }).ToArray());
             _samples.Add(s);
         }
 
-        /// <summary>State read without the modules: characters' behaviours, bamboo and twins by template, alive or dead.</summary>
+        /// <summary>State read without the modules: characters' behaviours and workplaces, bamboo by template, goods.</summary>
         private JObject Raw()
         {
             var behaviors = new JObject();
-            int characters = 0, working = 0;
+            var working = new JObject();
+            int characters = 0, ringtails = 0;
             var plants = new JObject();
             foreach (var e in _entityRegistry.Entities)
             {
                 if (e.GetComponent<Character>() != null)
                 {
                     characters++;
+                    string t = Template(e);
+                    if (t.StartsWith("Ringtail", StringComparison.Ordinal)) ringtails++;
                     string b = Behavior(e);
                     behaviors[b] = (behaviors[b]?.Value<int>() ?? 0) + 1;
-                    if (IsWorkingBehavior(b)) working++;
+                    var worker = e.GetComponent<Worker>();
+                    if (worker != null && worker.Employed && worker.Workplace && IsWorkingBehavior(b))
+                    {
+                        string w = Template(worker.Workplace) + (t.StartsWith("Ringtail", StringComparison.Ordinal) ? " (Ringtail)" : "");
+                        working[w] = (working[w]?.Value<int>() ?? 0) + 1;
+                    }
                     continue;
                 }
-                string t = Template(e);
-                if (!t.Contains("Bamboo")) continue;
+                string tp = Template(e);
+                if (!tp.Contains("Bamboo")) continue;
                 var living = e.GetComponent<LivingNaturalResource>();
                 if (living == null) continue;
-                var o = plants[t] as JObject ?? new JObject { ["alive"] = 0, ["dead"] = 0 };
-                o[living.IsDead ? "dead" : "alive"] = o[living.IsDead ? "dead" : "alive"].Value<int>() + 1;
-                plants[t] = o;
+                var g = e.GetComponent<Growable>();
+                string key = living.IsDead ? "dead" : g != null && !g.IsGrown ? "young" : "grown";
+                var o = plants[tp] as JObject ?? new JObject { ["grown"] = 0, ["young"] = 0, ["dead"] = 0 };
+                o[key] = o[key].Value<int>() + 1;
+                plants[tp] = o;
             }
-            return new JObject { ["characters"] = characters, ["working"] = working, ["behaviors"] = behaviors, ["plants"] = plants,
-                                 ["seedInStore"] = StoreAmount("PandabornBambooSeed") };
+            return new JObject
+            {
+                ["characters"] = characters, ["ringtails"] = ringtails, ["behaviors"] = behaviors, ["working"] = working, ["plants"] = plants,
+                ["stock"] = new JObject
+                {
+                    ["seed"] = StoreAmount("PandabornBambooSeed"), ["seedCakes"] = StoreAmount("PandabornBambooSeedCakes"),
+                    ["riceFlour"] = StoreAmount("PandabornRiceFlour"), ["lanterns"] = StoreAmount("PandabornPaperLantern"),
+                    ["fireworks"] = StoreAmount("Fireworks"), ["water"] = StoreAmount("Water")
+                }
+            };
         }
 
-        private static bool IsWorking(FestivalGoer g) => IsWorkingBehavior(Behavior(g));
+        public static bool IsWorkingBehavior(string b) =>
+            b.Contains("Workplace") || b.Contains("Build") || b.Contains("Haul") || b.Contains("Plant") || b.Contains("Cut")
+            || b.Contains("Gather") || b.Contains("Produce") || b.Contains("Labor") || b.Contains("Harvest") || b.Contains("Worker")
+            || b.Contains("Empty") || b.Contains("Fill") || b.Contains("Deliver") || b.Contains("Construct") || b.Contains("Retriev")
+            || b.Contains("Manufactory") || b.Contains("Yield");
 
-        private static bool IsWorkingBehavior(string b)
-        {
-            return b.Contains("Workplace") || b.Contains("Build") || b.Contains("Haul") || b.Contains("Plant") || b.Contains("Cut")
-                   || b.Contains("Gather") || b.Contains("Produce") || b.Contains("Labor") || b.Contains("Harvest") || b.Contains("Worker")
-                   || b.Contains("Empty") || b.Contains("Fill") || b.Contains("Deliver") || b.Contains("Construct");
-        }
-
-        private static string Behavior(BaseComponent c)
+        public static string Behavior(BaseComponent c)
         {
             try { return c.GetComponent<BehaviorManager>()?.RunningBehavior.Name ?? "-"; }
             catch (Exception) { return "?"; }
         }
 
-        private static string Template(BaseComponent c) => c.GetComponent<TemplateSpec>()?.TemplateName ?? "?";
+        public static string Template(BaseComponent c) => c ? c.GetComponent<TemplateSpec>()?.TemplateName ?? "?" : "?";
 
         private int StoreAmount(string goodId)
         {
@@ -507,8 +483,8 @@ namespace Pandaborn.Events.Dev
             {
                 case 0:
                     var target = FindTarget((string)_activeShot["select"] ?? "none");
-                    _shotsTaken.Add(new JObject { ["name"] = name, ["runHour"] = Math.Round(RunHour, 2), ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2),
-                                                  ["target"] = target ? Template(target) : null });
+                    _shotsTaken.Add(new JObject { ["name"] = name, ["runHour"] = Math.Round(RunHour, 2), ["day"] = _dayNightCycle.DayNumber - _startDay,
+                                                  ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2), ["target"] = target ? Template(target) : null });
                     if (target) _entitySelectionService.SelectAndFocusOn(target);
                     else _entitySelectionService.Unselect();
                     _shotWait = Time.unscaledTime + 1.5f;
@@ -519,9 +495,10 @@ namespace Pandaborn.Events.Dev
                     {
                         string file = Path.Combine(dir, "ev_" + name + ".png");
                         ScreenCapture.CaptureScreenshot(file);
-                        ((JObject)_shotsTaken.Last)["file"] = Path.GetFileName(file);
-                        ((JObject)_shotsTaken.Last)["festivalPanel"] = FestivalSquareFragment.ShownText;
-                        ((JObject)_shotsTaken.Last)["plantPanel"] = FloweringPlantFragment.ShownText;
+                        var entry = (JObject)_shotsTaken.Last;
+                        entry["file"] = Path.GetFileName(file);
+                        if (FestivalLoaded) FestivalProbe.Panels(entry);
+                        if (FloweringLoaded) FloweringProbe.Panels(entry);
                     }
                     _shotWait = Time.unscaledTime + 0.7f;
                     return;
@@ -536,22 +513,19 @@ namespace Pandaborn.Events.Dev
 
         private BaseComponent FindTarget(string what)
         {
-            if (Fest == null && Flow == null) return null;
-            if (what == "square") return Fest?.Squares.FirstOrDefault(s => s);
-            if (what == "inflower") return Flow?.InFlower.FirstOrDefault(t => t && !t.IsDead);
-            if (what == "colonist") return Fest == null ? null : Fest.Goers.FirstOrDefault(g => g && g.Doing.StartsWith("at the square", StringComparison.Ordinal)) ?? Fest.Goers.FirstOrDefault(g => g);
-            if (what.StartsWith("plant:", StringComparison.Ordinal))
-            {
-                string t = what.Substring(6);
-                return Flow?.Plants.Where(p => p && p.Species == t).OrderBy(p => p.IsGrown ? 1 : 0).FirstOrDefault();
-            }
             if (what.StartsWith("building:", StringComparison.Ordinal)) return FindBuilding(what.Substring(9));
-            return null;
+            if (what == "ringtail") return _entityRegistry.Entities.FirstOrDefault(e => Template(e).StartsWith("RingtailAdult", StringComparison.Ordinal));
+            BaseComponent target = null;
+            if (FestivalLoaded) target = FestivalProbe.FindTarget(what);
+            if (!target && FloweringLoaded) target = FloweringProbe.FindTarget(what);
+            if (!target && what == "square") target = FindBuilding("PandabornFestivalSquare.Inkpaws");
+            if (!target && what.StartsWith("plant:", StringComparison.Ordinal)) target = FindBuilding(what.Substring(6));
+            return target;
         }
 
         // ------------------------------------------------------------------ output
 
-        private void Event(string kind, string text)
+        public void Event(string kind, string text)
         {
             _events.Add(new JObject { ["runHour"] = _started ? Math.Round(RunHour, 2) : 0, ["day"] = _dayNightCycle.DayNumber - _startDay,
                                       ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2), ["kind"] = kind, ["text"] = text });

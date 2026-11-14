@@ -7,6 +7,7 @@ using Pandaborn.Specs;
 using Timberborn.Beavers;
 using Timberborn.GameCycleSystem;
 using Timberborn.GameDistricts;
+using Timberborn.GameFactionSystem;
 using Timberborn.Goods;
 using Timberborn.Localization;
 using Timberborn.SingletonSystem;
@@ -53,6 +54,9 @@ namespace Pandaborn.Festival
         private readonly WeatherService _weatherService;
         private readonly EventBus _eventBus;
         private readonly FestivalFireworks _fireworks;
+        private readonly FestivalSounds _sounds;
+        private readonly FactionService _factionService;
+        private bool _showSoundOn;
 
         private readonly List<FestivalSquare> _squares = new List<FestivalSquare>();
         private readonly List<FestivalGoer> _goers = new List<FestivalGoer>();
@@ -62,7 +66,8 @@ namespace Pandaborn.Festival
         private float _showClock = -1f;
 
         public FestivalService(TemplateService templateService, PandabornStore store, Messenger messenger, ILoc loc, IDayNightCycle dayNightCycle,
-                               GameCycleService gameCycleService, WeatherService weatherService, EventBus eventBus, FestivalFireworks fireworks)
+                               GameCycleService gameCycleService, WeatherService weatherService, EventBus eventBus, FestivalFireworks fireworks,
+                               FestivalSounds sounds, FactionService factionService)
         {
             _templateService = templateService;
             _store = store;
@@ -73,6 +78,8 @@ namespace Pandaborn.Festival
             _weatherService = weatherService;
             _eventBus = eventBus;
             _fireworks = fireworks;
+            _sounds = sounds;
+            _factionService = factionService;
         }
 
         /// <summary>The service of the running game (tests, other modules' optional integrations).</summary>
@@ -143,7 +150,17 @@ namespace Pandaborn.Festival
                 Debug.LogError(Log + "reading the adult template failed; festivals are off: " + e);
                 Spec = null;
             }
-            if (!Active) return;
+            if (!Active)
+            {
+                // shipped but its data not switched on: say so in the feature report (games of our faction only)
+                if (_factionService.Current?.Id == FeatureNotices.FactionId)
+                    FeatureRegistry.ReportNoData("Festival", "the faction's adult template has no PandabornFestivalSpec");
+                return;
+            }
+            var degraded = new List<string>();
+            if (FestivalGoer.CheckInsertion() != null) degraded.Add("no day off (" + FestivalGoer.InsertionError + ")");
+            if (!_fireworks.Available) degraded.Add("no lanterns or fireworks in the sky (" + _fireworks.Unavailable + ")");
+            if (degraded.Count > 0) FeatureRegistry.ReportDegraded("Festival", string.Join("; ", degraded));
             _keepWorking = new HashSet<string>(Spec.KeepWorkingTemplates.IsDefault ? Enumerable.Empty<string>() : Spec.KeepWorkingTemplates, StringComparer.Ordinal);
             ReadState();
             _eventBus.Register(this);
@@ -300,6 +317,7 @@ namespace Pandaborn.Festival
             Persist();
             Debug.Log(Log + "started (" + why + "), day " + FestivalDay + ", cycle " + LastCycle + (Grand ? ", grand" : ""));
             _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrand" : "Pandaborn.Festival.Message.Started"));
+            _sounds.Play2D(FestivalSounds.Firecrackers);
             foreach (var square in _squares) square.UpdateLights();
             Changed?.Invoke();
         }
@@ -341,8 +359,23 @@ namespace Pandaborn.Festival
 
         // ------------------------------------------------------------------ the show
 
+        /// <summary>The drum at each square through the gathering, firecrackers as it starts.</summary>
+        private void UpdateShowSounds()
+        {
+            bool on = IsShowTime;
+            if (on == _showSoundOn) return;
+            _showSoundOn = on;
+            foreach (var square in _squares)
+            {
+                if (!square || !square.IsFinished) continue;
+                if (on) _sounds.Play3D(square.GameObject, FestivalSounds.Firecrackers);
+                _sounds.Loop(square.GameObject, FestivalSounds.Drum, on);
+            }
+        }
+
         private void RunShow()
         {
+            UpdateShowSounds();
             if (!IsHoliday) { _showClock = -1f; return; }
             float now = HoursToday;
             if (_showClock < 0f) _showClock = now;

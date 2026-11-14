@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Pandaborn.Core;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BehaviorSystem;
 using Timberborn.Common;
@@ -95,12 +96,22 @@ namespace Pandaborn.Festival
             _festivalService.RemoveGoer(this);
         }
 
+        /// <summary>Checks the private member once, before any colonist needs it; null when the day off is available.</summary>
+        public static string CheckInsertion()
+        {
+            if (FeatureRegistry.DevFlag("simulate-missing-member", "Festival.RootBehaviors"))
+                InsertionError = "simulated: BehaviorManager._rootBehaviors missing";
+            else if (RootBehaviorsField == null || !typeof(List<RootBehavior>).IsAssignableFrom(RootBehaviorsField.FieldType))
+                InsertionError = "BehaviorManager._rootBehaviors (List<RootBehavior>) not found";
+            return InsertionError;
+        }
+
         private bool Insert()
         {
             try
             {
-                if (DevFlags.SimulatesMissing("Festival.RootBehaviors")) return Fail("simulated missing BehaviorManager._rootBehaviors (dev switch)");
-                if (RootBehaviorsField == null || !(RootBehaviorsField.GetValue(_behaviorManager) is List<RootBehavior> roots))
+                if (InsertionError != null) return Fail(InsertionError);
+                if (!(RootBehaviorsField.GetValue(_behaviorManager) is List<RootBehavior> roots))
                     return Fail("BehaviorManager._rootBehaviors (List<RootBehavior>) not found");
                 if (roots.Contains(this)) return true;
                 int index = roots.FindIndex(r => r is WorkerRootBehavior);

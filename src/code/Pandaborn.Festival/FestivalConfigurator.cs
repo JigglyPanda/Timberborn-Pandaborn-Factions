@@ -11,9 +11,9 @@ namespace Pandaborn.Festival
     {
         protected override void Configure()
         {
-            if (DevFlags.ForcedOff("Festival")) return;   // only for test builds; the bootstrap never loads a forced-off module
             Bind<FestivalService>().AsSingleton();
             Bind<FestivalFireworks>().AsSingleton();
+            Bind<FestivalSounds>().AsSingleton();
             Bind<FestivalSquareFragment>().AsSingleton();
             Bind<FestivalSquare>().AsTransient();
             Bind<FestivalGoer>().AsTransient();

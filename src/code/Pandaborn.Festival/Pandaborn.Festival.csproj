@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Feature module: the Lantern Festival (Modules\Pandaborn.Festival.bin). See FEATURE.md and docs/tech/events.md.
-       Not in Pandaborn.Code.sln or modules.txt yet: it does nothing until the catalogue carries its data (the requests in
-       docs/tech/events.md); wire it in together with that data. Build alone:
-         dotnet build src\code\Pandaborn.Festival\Pandaborn.Festival.csproj -c Release -p:ModOut=<folder>
-       Dev test build: proto/events/build.ps1. -->
+  <!-- Feature module: the Lantern Festival (Modules/Pandaborn.Festival.bin). See FEATURE.md and docs/tech/events.md.
+       Ships when catalogue/rules.toml [modules] Festival is on (its data); dev copies: proto/events/build.ps1. -->
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Pandaborn.Festival</AssemblyName>

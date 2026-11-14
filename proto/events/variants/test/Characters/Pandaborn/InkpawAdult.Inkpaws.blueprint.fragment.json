@@ -1,0 +1,4 @@
+{
+  "PandabornFloweringSpec": { "SeedDays": 2.0, "DormantDays": 1.5 },
+  "PandabornFestivalSpec": { "KeepWorkingTemplates#append": [ "LumberjackFlag.Inkpaws" ] }
+}
