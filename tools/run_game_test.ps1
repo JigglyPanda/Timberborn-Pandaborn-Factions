@@ -557,6 +557,8 @@ function Enter-GameLock([int]$timeoutSeconds, [string]$what) {
             $message = "Waiting for another game test to finish: $holder"
             if ($ahead.Count -gt 0) { $message = "Queued behind $($ahead.Count) earlier run(s); next: pid $($ahead[0].pid), $($ahead[0].what). Running now: $holder" }
         }
+        # tools\game_test_hold.ps1 pauses the queue while the owner uses the PC: held time does not count as waiting.
+        if (-not $owned -and (Test-Path (Join-Path $TestRoot 'HOLD'))) { $deadline = $deadline.AddSeconds(5) }
         if ((Get-Date) -gt $deadline) {
             Say "Gave up after $timeoutSeconds s. $message" 'Red'
             if ($myTicketPath) { try { Remove-Item -LiteralPath $myTicketPath -Force } catch { } }
