@@ -1,0 +1,522 @@
+{
+  "screenshots": [],
+  "batchControl": false,
+  "speed": 7,
+  "playtest": {
+    "name": "inkpaws-pure",
+    "note": "Inkpaws, the same quality of play, following DESIGN.md's first two hours: shoot bamboo and cabbage first, timber bamboo (forester) for poles, cisterns before the first drought, steamer then pickles, dens as beds run out, campfire, hammocks, ink studio. Working day left at 16 h: the rested bonus is not in the installed build. No workaround: shows whether a colony can get its first pole.",
+    "shotsEveryDays": 4,
+    "names": {
+      "lumber": "LumberjackFlag.Inkpaws",
+      "pump": "WaterPump.Inkpaws",
+      "gatherer": "GathererFlag.Inkpaws",
+      "farm": "EfficientFarmHouse.Inkpaws",
+      "home": "PandabornDen.Inkpaws",
+      "home2": "PandabornCourtyardHouse.Inkpaws",
+      "tank": "PandabornCisternSmall.Inkpaws",
+      "tankM": "PandabornCisternMedium.Inkpaws",
+      "pile": "SmallPile.Inkpaws",
+      "pileL": "LargePile.Inkpaws",
+      "wh": "SmallWarehouse.Inkpaws",
+      "whM": "MediumWarehouse.Inkpaws",
+      "inventor": "Inventor.Inkpaws",
+      "forester": "Forester.Inkpaws",
+      "campfire": "Campfire.Inkpaws",
+      "gears": "GearWorkshop.Inkpaws",
+      "hauling": "HaulingPost.Inkpaws",
+      "contemplation": "PandabornInkStudio.Inkpaws",
+      "shrub": "Shrub.Inkpaws",
+      "staple": "PandabornShootBamboo.Inkpaws",
+      "staple2": "PandabornCabbage.Inkpaws",
+      "shoots": "PandabornBambooShoots",
+      "cabbage": "PandabornCabbage",
+      "tree1": "PandabornTimberBamboo.Inkpaws",
+      "cook": "PandabornSteamer.Inkpaws",
+      "cookRecipe": "PandabornSteamedShoots",
+      "cooked": "PandabornSteamedShoots",
+      "pickler": "PandabornPickleYard.Inkpaws",
+      "pickles": "PandabornPickles",
+      "hammock": "PandabornHammock.Inkpaws"
+    },
+    "steps": [
+      {
+        "id": "builders",
+        "op": "workers",
+        "target": "dc",
+        "count": 3
+      },
+      {
+        "id": "pump1",
+        "op": "build",
+        "template": "@pump",
+        "rule": "nearWater",
+        "maxDistance": 30,
+        "priority": "VeryHigh"
+      },
+      {
+        "id": "lumber1",
+        "op": "build",
+        "template": "@lumber",
+        "rule": "trees",
+        "maxDistance": 25,
+        "priority": "High"
+      },
+      {
+        "id": "cut1",
+        "op": "cut",
+        "target": "lumber1",
+        "count": 40,
+        "radius": 14,
+        "when": {
+          "after": [
+            "lumber1"
+          ]
+        }
+      },
+      {
+        "id": "gather1",
+        "op": "build",
+        "template": "@gatherer",
+        "rule": "bushes",
+        "maxDistance": 30
+      },
+      {
+        "id": "farm1",
+        "op": "build",
+        "template": "@farm",
+        "rule": "moist",
+        "maxDistance": 30,
+        "min": 30
+      },
+      {
+        "id": "field1",
+        "op": "plant",
+        "target": "farm1",
+        "plant": "@staple",
+        "count": 45,
+        "when": {
+          "after": [
+            "farm1"
+          ]
+        }
+      },
+      {
+        "id": "field1c",
+        "op": "plant",
+        "target": "farm1",
+        "plant": "@staple2",
+        "count": 15,
+        "when": {
+          "after": [
+            "field1"
+          ]
+        }
+      },
+      {
+        "id": "tank1",
+        "op": "build",
+        "template": "@tank",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 10,
+        "when": {
+          "after": [
+            "pump1"
+          ]
+        }
+      },
+      {
+        "id": "lumber2",
+        "op": "build",
+        "template": "@lumber",
+        "rule": "trees",
+        "near": "lumber1",
+        "minDistance": 6,
+        "maxDistance": 20,
+        "when": {
+          "day": 1.4
+        }
+      },
+      {
+        "id": "cut2",
+        "op": "cut",
+        "target": "lumber2",
+        "count": 40,
+        "radius": 14,
+        "when": {
+          "after": [
+            "lumber2"
+          ]
+        }
+      },
+      {
+        "id": "home",
+        "op": "build",
+        "template": "@home",
+        "repeat": 14,
+        "everyHours": 3,
+        "maxDistance": 18,
+        "when": {
+          "freeBedsBelow": 2
+        }
+      },
+      {
+        "id": "pile1",
+        "op": "build",
+        "template": "@pile",
+        "good": "Log",
+        "maxDistance": 12,
+        "when": {
+          "day": 1.6
+        }
+      },
+      {
+        "id": "whBerry",
+        "op": "build",
+        "template": "@wh",
+        "good": "Berries",
+        "maxDistance": 12,
+        "when": {
+          "day": 1.8
+        }
+      },
+      {
+        "id": "whCarrot",
+        "op": "build",
+        "template": "@wh",
+        "good": "@shoots",
+        "near": "farm1",
+        "maxDistance": 10,
+        "when": {
+          "day": 2.0
+        }
+      },
+      {
+        "id": "inventor1",
+        "op": "build",
+        "template": "@inventor",
+        "maxDistance": 15,
+        "when": {
+          "day": 2.2
+        }
+      },
+      {
+        "id": "tank2",
+        "op": "build",
+        "template": "@tank",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 10,
+        "when": {
+          "day": 4
+        }
+      },
+      {
+        "id": "forester1",
+        "op": "build",
+        "template": "@forester",
+        "near": "lumber1",
+        "rule": "moist",
+        "maxDistance": 15,
+        "min": 25,
+        "when": {
+          "day": 1.5,
+          "science": 30
+        }
+      },
+      {
+        "id": "grove1",
+        "op": "plant",
+        "target": "forester1",
+        "plant": "@tree1",
+        "count": 30,
+        "when": {
+          "after": [
+            "forester1"
+          ]
+        }
+      },
+      {
+        "id": "groveCut",
+        "op": "cut",
+        "field": "grove1",
+        "when": {
+          "after": [
+            "grove1"
+          ]
+        }
+      },
+      {
+        "id": "campfire1",
+        "op": "build",
+        "template": "@campfire",
+        "maxDistance": 12,
+        "when": {
+          "day": 5
+        }
+      },
+      {
+        "id": "hammock",
+        "op": "build",
+        "template": "@hammock",
+        "repeat": 3,
+        "everyHours": 2,
+        "maxDistance": 12,
+        "when": {
+          "day": 5,
+          "science": 120
+        }
+      },
+      {
+        "id": "farm2",
+        "op": "build",
+        "template": "@farm",
+        "rule": "moist",
+        "near": "farm1",
+        "minDistance": 8,
+        "maxDistance": 30,
+        "min": 30,
+        "when": {
+          "day": 5.5
+        }
+      },
+      {
+        "id": "field2",
+        "op": "plant",
+        "target": "farm2",
+        "plant": "@staple2",
+        "count": 30,
+        "when": {
+          "after": [
+            "farm2"
+          ]
+        }
+      },
+      {
+        "id": "field1b",
+        "op": "plant",
+        "target": "farm2",
+        "plant": "@staple",
+        "count": 15,
+        "when": {
+          "after": [
+            "field2"
+          ]
+        }
+      },
+      {
+        "id": "cook1",
+        "op": "build",
+        "template": "@cook",
+        "maxDistance": 15,
+        "recipe": "@cookRecipe",
+        "when": {
+          "day": 3
+        }
+      },
+      {
+        "id": "pickler1",
+        "op": "build",
+        "template": "@pickler",
+        "maxDistance": 15,
+        "recipe": "@pickles",
+        "when": {
+          "day": 5
+        }
+      },
+      {
+        "id": "whPickles",
+        "op": "build",
+        "template": "@wh",
+        "good": "@pickles",
+        "near": "pickler1",
+        "maxDistance": 8,
+        "when": {
+          "after": [
+            "pickler1"
+          ]
+        }
+      },
+      {
+        "id": "whCabbage",
+        "op": "build",
+        "template": "@wh",
+        "good": "@cabbage",
+        "near": "farm1",
+        "maxDistance": 10,
+        "when": {
+          "day": 4
+        }
+      },
+      {
+        "id": "whCooked",
+        "op": "build",
+        "template": "@wh",
+        "good": "@cooked",
+        "near": "cook1",
+        "maxDistance": 8,
+        "when": {
+          "after": [
+            "cook1"
+          ]
+        }
+      },
+      {
+        "id": "pump2",
+        "op": "build",
+        "template": "@pump",
+        "rule": "nearWater",
+        "near": "pump1",
+        "maxDistance": 20,
+        "when": {
+          "population": 18
+        }
+      },
+      {
+        "id": "tank3",
+        "op": "build",
+        "template": "@tank",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 10,
+        "when": {
+          "day": 7
+        }
+      },
+      {
+        "id": "gears1",
+        "op": "build",
+        "template": "@gears",
+        "maxDistance": 18,
+        "when": {
+          "day": 8,
+          "science": 100
+        }
+      },
+      {
+        "id": "tankM1",
+        "op": "build",
+        "template": "@tankM",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 12,
+        "when": {
+          "after": [
+            "gears1"
+          ],
+          "science": 120,
+          "stock": {
+            "Gear": 10
+          }
+        }
+      },
+      {
+        "id": "pileLog2",
+        "op": "build",
+        "template": "@pileL",
+        "good": "Log",
+        "maxDistance": 14,
+        "when": {
+          "day": 9
+        }
+      },
+      {
+        "id": "hauling1",
+        "op": "build",
+        "template": "@hauling",
+        "maxDistance": 14,
+        "workers": 3,
+        "when": {
+          "day": 10,
+          "stock": {
+            "Plank": 10
+          }
+        }
+      },
+      {
+        "id": "whBerry2",
+        "op": "build",
+        "template": "@whM",
+        "good": "@shoots",
+        "maxDistance": 14,
+        "when": {
+          "day": 10
+        }
+      },
+      {
+        "id": "farm3",
+        "op": "build",
+        "template": "@farm",
+        "rule": "moist",
+        "near": "farm1",
+        "minDistance": 8,
+        "maxDistance": 35,
+        "min": 30,
+        "when": {
+          "day": 12,
+          "population": 20
+        }
+      },
+      {
+        "id": "field3",
+        "op": "plant",
+        "target": "farm3",
+        "plant": "@staple2",
+        "count": 30,
+        "when": {
+          "after": [
+            "farm3"
+          ]
+        }
+      },
+      {
+        "id": "contemplation1",
+        "op": "build",
+        "template": "@contemplation",
+        "maxDistance": 14,
+        "when": {
+          "day": 12,
+          "science": 100
+        }
+      },
+      {
+        "id": "tankM2",
+        "op": "build",
+        "template": "@tankM",
+        "near": "pump1",
+        "good": "Water",
+        "maxDistance": 14,
+        "when": {
+          "after": [
+            "tankM1"
+          ],
+          "day": 18
+        }
+      },
+      {
+        "id": "home2",
+        "op": "build",
+        "template": "@home2",
+        "repeat": 6,
+        "everyHours": 6,
+        "maxDistance": 22,
+        "when": {
+          "day": 14,
+          "science": 150,
+          "freeBedsBelow": 3
+        }
+      },
+      {
+        "id": "shrub",
+        "op": "build",
+        "template": "@shrub",
+        "repeat": 3,
+        "everyHours": 4,
+        "maxDistance": 12,
+        "when": {
+          "day": 9
+        }
+      }
+    ]
+  }
+}
