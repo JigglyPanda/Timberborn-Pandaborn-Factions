@@ -47,12 +47,12 @@ that reads specs per faction depends, directly or not, on `FactionService`. On l
 
 | Modifier (Inkpaws only) | Inkpaws game | Folktails game (same mods) |
 |---|---|---|
-| `Good.Plank`: name, plural, icon (a mod sprite), `Weight` 3 -> 2 | "Pole"/"Poles", our icon in the top bar, yield panel and stock; weight 2; sources `[Game, Faction modifier]` | see `s0-folktails-1` |
-| `Need.Beaver.Campfire` `DailyDelta` -0.1 -> -0.05 | -0.05 in `FactionNeedService` and on every colonist's `NeedManager` | |
-| `LumberMill.Folktails` cost Log 15 -> Plank 4 | Plank x4 | |
-| `Grill.Folktails` recipes minus spadderdock | GrilledPotato, GrilledChestnut | |
-| `BonusType.MovementSpeed` `MaximumValue` 2.0 -> 2.66 | 2.66 (and a colonist reached 2.261, above the vanilla cap) | |
-| 18 vanilla `Tutorials.*` switched off, ours switched on | see check 4 | |
+| `Good.Plank`: name, plural, icon (a mod sprite), `Weight` 3 -> 2 | "Pole"/"Poles", our icon in the top bar, yield panel and stock; weight 2; sources `[Game, Faction modifier]` | "Plank"/"Planks", vanilla icon, weight 3, sources `[Game]` |
+| `Need.Beaver.Campfire` `DailyDelta` -0.1 -> -0.05 | -0.05 in `FactionNeedService` and on every colonist's `NeedManager` | -0.1 |
+| `LumberMill.Folktails` cost Log 15 -> Plank 4 | Plank x4 | Log x15 |
+| `Grill.Folktails` recipes minus spadderdock | GrilledPotato, GrilledChestnut | all three |
+| `BonusType.MovementSpeed` `MaximumValue` 2.0 -> 2.66 | 2.66 (and a colonist reached 2.261, above the vanilla cap) | 2.0 |
+| 18 vanilla `Tutorials.*` switched off, ours switched on | see check 4 | vanilla tutorials intact (stages built), ours inert (0 stages) |
 
 **Save/load.** The save stores good, need and template ids, never the merged spec. After reload (`s0-inkpaws-1/reload`)
 every modifier was in force again (Pole, -0.05, Plank x4, cap 2.66), with no loading issue. Goods keep their vanilla id
@@ -80,7 +80,7 @@ of `s0-inkpaws-1`); the tree's panel shows the yield with the poles icon and amo
 assumes the yield is `Log`, with two side effects: the lumberjack's chipped-teeth effect (`YieldRemoverWorkplaceEffectsSpec`,
 `YieldGoodId: Log`) and the cutting-success chance bonus (`GoodId: Log`) do not apply to a plank yield (harmless or
 pleasant). A good stack of planks left on the ground shows no model (`GoodStackModel` has models for Log, Barrel, Box,
-Bag only). Builders: see `s0-inkpaws-2`.
+Bag only). **Builders** (`s0-inkpaws-2`): the vanilla Campfire, costed at Plank x4 for Inkpaws by a modifier and placed as a site, got its 4 planks from the lumberjack flag and was finished within four in-game hours. Folktails games cannot see the tree (it is in an Inkpaws-only collection).
 
 ### 3. Custom spec through the bootstrap; module forced off; save carried
 
@@ -94,7 +94,9 @@ Bag only). Builders: see `s0-inkpaws-2`.
   (Specs is always loaded) but no Pandaborn component was attached; colonists had vanilla speed (1.0/1.0) and kept
   their saved names; the teahouse was a plain campfire; the player got one notice per feature off (toast and log), and
   `Core.Notices` recorded it so it is not repeated in that save. The `Pandaborn.Store` singleton loaded from the save
-  with the Bell (`locked=16;suggested=1`) and Names entries and kept them while off.
+  with the Bell (`locked=16;suggested=1`) and Names entries and kept them while off. A save made in that state
+  (`s0-inkpaws-2/reload/resave.timber`, `world.json`) still holds `"Pandaborn.Store":{"Entries":["Bell|1|locked=16;suggested=1", "Core.Notices|1|...", "Names|1|..."]}`, so turning the module back on finds its state. Turning features on for a save
+  that never had them: `s0-inkpaws-3`.
 
 ### 4. Faction tutorial route: works with data alone
 
@@ -105,7 +107,7 @@ so it is inert in Folktails and Iron Teeth games). In game the Inkpaws tutorial 
 "PandabornStage0.Grove" (our intro text; step "place a lumberjack flag", achieved), `StartNextStage` moved it to
 "PandabornStage0.Afternoon" (step "Set working hours to 12", achieved when the probe set 12 h), and on reload the game
 fast-forwarded it and marked it finished. Note: the player's own "disable tutorial" setting hides the panel (it was on
-on this machine; see `s0-inkpaws-2` for the panel shown).
+on this machine). In `s0-inkpaws-2` the probe switched that setting off for two in-game hours and back: the tutorial panel showed our title "First days in the grove 1/1" (`s0_tutorial_stage1.png`), and the setting was restored to its prior value.
 
 Constraints: vanilla step types only (place/finish/connect buildings, mark trees or plantables, select an entity, set
 working hours, unlock or accumulate science, camera and speed); no "have N of a good" step without code (a small
