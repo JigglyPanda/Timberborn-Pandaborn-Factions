@@ -12,6 +12,7 @@ using Timberborn.CameraSystem;
 using Timberborn.Carrying;
 using Timberborn.CharacterModelSystem;
 using Timberborn.Characters;
+using Timberborn.Goods;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.Timbermesh;
@@ -49,6 +50,7 @@ namespace Pandaborn.RingtailBody
         private readonly IDayNightCycle _dayNightCycle;
         private readonly CharacterPopulation _characterPopulation;
         private readonly CameraService _cameraService;
+        private readonly Timberborn.SelectionSystem.EntitySelectionService _entitySelectionService;
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
         private readonly JArray _taken = new JArray();
@@ -58,12 +60,14 @@ namespace Pandaborn.RingtailBody
         private float _startHours = -1f;
         private float _nextTry;
 
-        public RingtailBodyProbe(EventBus eventBus, IDayNightCycle dayNightCycle, CharacterPopulation characterPopulation, CameraService cameraService)
+        public RingtailBodyProbe(EventBus eventBus, IDayNightCycle dayNightCycle, CharacterPopulation characterPopulation, CameraService cameraService,
+                                 Timberborn.SelectionSystem.EntitySelectionService entitySelectionService)
         {
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
             _characterPopulation = characterPopulation;
             _cameraService = cameraService;
+            _entitySelectionService = entitySelectionService;
             _config = HarnessBridge.Config;
         }
 
@@ -87,10 +91,13 @@ namespace Pandaborn.RingtailBody
 
         public void UpdateSingleton()
         {
+            if (_forced != null && Time.unscaledTime >= _forcedAt) { FinishForced(); return; }
+            if (_forced != null) return;
             if (!_primaryUi || _pending.Count == 0 || Time.unscaledTime < _nextTry) return;
             if (Time.unscaledTime - _primaryUiAt < (_config["startDelaySeconds"]?.Value<float>() ?? 25f)) return;
             if (_startHours < 0f) _startHours = Hours;
             _nextTry = Time.unscaledTime + 0.5f;
+            TrackMovement();
             float run = Hours - _startHours;
             for (int i = 0; i < _pending.Count; i++)
             {
@@ -132,6 +139,64 @@ namespace Pandaborn.RingtailBody
         }
 
         // ------------------------------------------------------------------ subjects
+
+        private readonly Dictionary<Character, Vector3> _lastPos = new Dictionary<Character, Vector3>();
+        private readonly HashSet<Character> _moving = new HashSet<Character>();
+        private Character _forced;
+        private JObject _forcedShot, _forcedEntry;
+        private float _forcedAt;
+
+        private void TrackMovement()
+        {
+            foreach (var c in Ringtails().ToList())
+            {
+                var p = c.GetComponent<CharacterModel>().Model.position;
+                if (_lastPos.TryGetValue(c, out var q) && (p - q).sqrMagnitude > 0.0025f) _moving.Add(c); else _moving.Remove(c);
+                _lastPos[c] = p;
+            }
+        }
+
+        /// <summary>True when nothing but the subject itself is between a camera at the given pose and the subject.</summary>
+        private static bool Unoccluded(Character c, float pitch, float heading, float dist)
+        {
+            var focus = c.GetComponent<CharacterModel>().Model.position + new Vector3(0f, 0.2f, 0f);
+            var rotation = Quaternion.Euler(pitch, heading, 0f);
+            var from = focus - rotation * Vector3.forward * dist;
+            if (!Physics.Raycast(from, focus - from, out var hit, dist - 0.35f)) return true;
+            var hitCharacter = hit.collider ? hit.collider.GetComponentInParent<Character>() : null;
+            return hitCharacter == c;
+        }
+
+        private Character PickRingtail(JObject s, Camera source)
+        {
+            float heading = (source ? source.transform.eulerAngles.y : 30f) + (s["yaw"]?.Value<float>() ?? 0f);
+            float pitch = s["pitch"]?.Value<float>() ?? 55f;
+            return Ringtails().OrderByDescending(IsCarrying)
+                .ThenByDescending(c => Unoccluded(c, pitch, heading, 6f))
+                .ThenByDescending(c => _moving.Contains(c)).FirstOrDefault();
+        }
+
+        private void FinishForced()
+        {
+            var c = _forced; var s = _forcedShot; var entry = _forcedEntry;
+            _forced = null;
+            try
+            {
+                var source = _cameraService.Transform ? _cameraService.Transform.GetComponent<Camera>() : Camera.main;
+                Game(s, (string)s["name"], entry, source, (string)s["kind"] == "group", c);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[Pandaborn.RingtailBody] forced shot failed: " + e);
+                entry["error"] = e.GetType().Name + ": " + e.Message;
+            }
+            finally
+            {
+                var carrier = c ? c.GetComponent<GoodCarrier>() : null;
+                if (carrier != null && carrier.IsCarrying && carrier.CarriedGoodId == ((string)s["good"] ?? "Log")) carrier.EmptyHands();
+                Write();
+            }
+        }
 
         private static string TemplateName(BaseComponent c) => c.GetComponent<TemplateSpec>()?.TemplateName;
 
@@ -187,9 +252,21 @@ namespace Pandaborn.RingtailBody
                 ["hourOfDay"] = Math.Round(_dayNightCycle.HoursPassedToday, 2), ["daytime"] = _dayNightCycle.IsDaytime
             };
             _taken.Add(entry);
+            try { _entitySelectionService.Unselect(); } catch (Exception) { }   // no selection tint in the pictures
             var source = _cameraService.Transform ? _cameraService.Transform.GetComponent<Camera>() : Camera.main;
-            if (kind == "lineup") Lineup(s, name, entry, source);
-            else Game(s, name, entry, source, kind == "group");
+            if (kind == "lineup") { Lineup(s, name, entry, source); HarnessBridge.Info("shot " + name + " taken"); return; }
+            var ringtail = PickRingtail(s, source);
+            if (ringtail && (s["force"]?.Value<bool>() ?? false) && !IsCarrying(ringtail))
+            {
+                // dev only: no Ringtail had goods during the window; hand one a good for the picture, take it back after
+                string good = (string)s["good"] ?? "Log";
+                ringtail.GetComponent<GoodCarrier>().PutGoodsInHands(new CarriedGood(new GoodAmount(good, 1), CarriedGoodType.Uncountable));
+                entry["forcedCarry"] = good;
+                _forced = ringtail; _forcedShot = s; _forcedEntry = entry;
+                _forcedAt = Time.unscaledTime + (s["forceSeconds"]?.Value<float>() ?? 1.2f);
+                return;
+            }
+            Game(s, name, entry, source, kind == "group", ringtail);
             HarnessBridge.Info("shot " + name + " taken");
         }
 
@@ -236,9 +313,9 @@ namespace Pandaborn.RingtailBody
             }
         }
 
-        private void Game(JObject s, string name, JObject entry, Camera source, bool group)
+        private void Game(JObject s, string name, JObject entry, Camera source, bool group, Character ringtail)
         {
-            var ringtail = Ringtails().OrderByDescending(IsCarrying).FirstOrDefault();
+            entry["moving"] = ringtail && _moving.Contains(ringtail);
             if (!ringtail) { entry["error"] = "no visible Ringtail"; return; }
             entry["subject"] = Describe(ringtail);
             var model = ringtail.GetComponent<CharacterModel>().Model;

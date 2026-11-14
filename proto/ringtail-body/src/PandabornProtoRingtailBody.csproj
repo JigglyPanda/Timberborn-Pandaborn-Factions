@@ -21,6 +21,7 @@
     <Reference Include="$(GameManaged)\UnityEngine.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.ImageConversionModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.PhysicsModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
     <Reference Include="$(GameManaged)\Newtonsoft.Json.dll" Private="false" />
     <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
