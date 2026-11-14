@@ -838,6 +838,9 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
 
 ### Not proven yet
 
+(As of phase 1. Phase 2 closed the dead-crop replanting, the dry crop on dry soil, the worked Cistern Tap, the crossing,
+save and reload and the TimberCommons question; what is left is under "Still not proven" at the end.)
+
 * Treadwheel with a Ringtail (or any faster/slower) worker: no Ringtail exists yet; the lift scales with the worker's
   `MovementSpeed` bonus multiplier (code).
 * Farmers clearing and replanting *dead* crops (in `district2` the shoot field never dried out: a full 12-tile basin
@@ -848,3 +851,231 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
   flume crossing *under* a Bridge.
 * Save and reload of flume limiters and gate state (the components re-apply on load by design; not run).
 * Behaviour with TimberCommons disabled (all runs had the owner's mods enabled, TimberCommons included).
+
+## Phase 2: the water module (2026-11-14)
+
+The prototype code now lives in the code foundation as **`src/code/Pandaborn.Water`** (feature id `Water`, one line in
+`src/code/modules.txt`); `src/scripts` is retired. Specs are in `src/code/Pandaborn.Specs/WaterSpecs.cs` (always loaded),
+the components, statuses and panels in the module (loaded only when its API list resolves). No Harmony, no private
+members (the generated API list in `src/code/Pandaborn.Water/FEATURE.md` is public types only). Panels run inside
+`SafeUi`. Gate settings are saved in the per-entity carrier (`PandabornEntityStateSpec`, entry `Water|1|flow=..;guard=..`).
+
+**Data alone behaves like vanilla.** Every flume piece carries a vanilla inert water obstacle over its flow cells
+(`WaterObstacleSpec` + `FinishableWaterObstacleSpec`), so with the module off it is a solid block that holds no water
+and floods nothing. With the module on, one tick after the piece is finished the module adds its direction limiters
+and lifts that obstacle with the public `WaterObstacle.RemoveFromWaterService()` (a closed gate puts it back with
+`AddToWaterService`). Full obstacles are not reference counted, so no other obstacle may share those cells (this is why
+the Bridge span has none, below). Per piece, with the module off (forced off, or its API check failing after a game
+update): Flume, Gate, Drop, Bridge = solid blocks; Bridge span = an empty trestle between solid neighbours; Corner =
+posts and one open cell between solid neighbours; Paddy Spout = the vanilla fill valve; Scoop Wheel, Treadwheel,
+Trip-Hammer = their vanilla mechanics without the info line and status; Dew Collector = full rate in all weather;
+Cistern Tap = vanilla discharge with its worker. Gate settings stay in the carrier and return with the module.
+
+### For the catalogue lane
+
+How to build each water piece in `catalogue/` so it works with the module and behaves like vanilla without it. This
+is exactly what `proto/water/tools/gen_blueprints.py` generates (the dev mod adds `.PandabornProto` templates to
+`Buildings.Inkpaws`; the catalogue should make the `.Inkpaws` ones). Costs, science and tool order: leave to
+`catalogue/building_stats.toml`. Cells are local (before rotation), `(X, Y, Z)`; Cw0 flows towards +Y. Every cell below
+matches the kit's `model.json` (`art/models/<Id>`); the model lane has the cap and span requests
+(`docs/tech/models.md`, "Requests from the water lane").
+
+**Flume pieces: basis `ThrottlingValve.Folktails`, delete `ThrottlingValveSpec`** (keeps the building shell, nav-mesh
+settings and `FinishableHorizontalWaterObstacleSpec`; the catalogue's `PoleBanner` basis has none of these). Every
+flume piece (the Corner aside) also gets `PandabornEntityStateSpec { Features ["Water"] }`: loading a save re-adds the
+inert obstacle for a tick, which deletes the water standing in the flow cells, and the module saves each cell's depth in
+that carrier and puts it back (without it a loaded line refills from its intake with a surge). Then set:
+
+| Piece | Model | `WaterObstacleSpec.Coordinates` / `FinishableWaterObstacleSpec.Height` (inert, module off) | `FinishableHorizontalWaterObstacleSpec.Obstacles` (floors) | `PandabornFlumeSegmentSpec.FlowCells` | `PandabornSolidCellsSpec.Cells` | Other |
+|---|---|---|---|---|---|---|
+| Flume | `Flume` (1x1x1) | `(0,0)` / 1.0 | `(0,0,0)` | `(0,0,0)` | none | block `Occupations "Bottom, Middle, Path"` (leaves the corners free for a span) |
+| Flume Gate | `FlumeGate` (1x1x1) | `(0,0)` / 1.0 | `(0,0,0)`, `(0,0,1)` | `(0,0,0)` | `(0,0,1)` (cap) | `PandabornFlumeGateSpec { DefaultFlow 0.3, MaxFlow 1.0, FlowStep 0.05, ContaminationShutoff 0.05 }` (its settings ride in the same carrier) |
+| Flume Drop | `FlumeDrop` (1x2x2) | `(0,0)` / 2.0 | `(0,0,1)`, `(0,1,0)` | `(0,0,1)`, `(0,1,0)` | `(0,0,0)` (solid leg) | |
+| Flume Bridge | `FlumeBridge` (1x1x2) | `(0,0)` / 2.0 | `(0,0,1)` | `(0,0,1)` | none | leg `Occupations "Corners, Bottom"`, so it cannot be built over a flume (two inert obstacles would share the cell) |
+| Flume Bridge span (crosses a flume) | `FlumeBridge` until a span model exists | **none** (the flume below already has one) | `(0,0,1)` | `(0,0,1)` | none | leg `Occupations "Corners"` (fits over a Flume). Not `None`: a leg that occupies nothing is deleted on load, "not supported by terrain physics" (run `water-w1-0809`) |
+| Flume Corner | `FlumeCorner` (2x2x1) | `(1,0)`, `(0,1)`, `(1,1)` / 2.0 (the posts; permanent) | `(0,0,0)`, `(0,0,1)` | none (an open cell) | `(0,0,1)` (cap) | `PlaceableBlockObjectSpec.CustomPivot.HasCustomPivot false` |
+| Covered Flume (optional) | `Flume` + a lid | `(0,0)` / 1.0 | `(0,0,0)`, `(0,0,1)` | `(0,0,0)` | `(0,0,1)` | top block `Stackable BlockObject` (a path on top) |
+
+**Other water buildings:**
+
+| Piece | Basis | Changes | Module off |
+|---|---|---|---|
+| Paddy Spout | `FillValve.Folktails` (not a flume piece), model `PaddySpout` | `FillValveSpec.DefaultTargetHeightOffset 0.3`, `DefaultTargetHeightEnabled true`; `PandabornPaddySpoutSpec {}`; `PandabornSolidCellsSpec { Cells [(0,0,1)] }` | a vanilla fill valve (no cap) |
+| Scoop Wheel | `WaterWheel.Folktails` (not `CompactMechanicalPump`), model `ScoopWheel` (1x3x3) | delete `FloodableBuildingSpec`, `BlockableFloodableObjectSpec`, `WaterObjectSpec`, `WaterWheelSpec`, `PowerGeneratorSoundsSpec`, `MechanicalNodeDescriptionSpec` and the `#Unfinished` child `ConstructionBase3x2WaterWheel#nested`; `MechanicalNodeSpec { PowerOutput 100, PowerInput 30, IsShaft false }`; `WaterPoweredGeneratorSpec { Blocks [(0,0)], ExpectedWaterDirection (1,0), MinRequiredOutflow 0.15 }`; `MechanicalBuildingSpec {}`; `TransputProviderSpec { Transputs [] }`; `WaterMoverSpec { WaterPerSecond 0.1 }`; `WaterInputSpec { WaterInputCoordinates (0,0,0) }`; `WaterInputFixedSpec {}`; `WaterOutputSpec { WaterCoordinates (0,2,2), DistanceToGroundOffset 0, OverflowAllowed false }`; `PandabornCurrentDrivenSpec {}` | lifts exactly the same (pure data); vanilla power numbers on the panel, vanilla "needs power" status |
+| Trip-Hammer Mill | `Gristmill.Folktails` as now (worker and recipe kept) | `MechanicalNodeSpec { PowerOutput 100, PowerInput 30, IsShaft false }`; add `WaterPoweredGeneratorSpec { Blocks [<the cell standing in the current>], ExpectedWaterDirection (1,0), MinRequiredOutflow 0.15 }`, `MechanicalBuildingSpec {}`, `TransputProviderSpec { Transputs [] }` (it joins no shafts), `PandabornCurrentDrivenSpec {}`. Workerless also works (`ProductionIncreaserSpec {}`, as the prototype) | runs on its own wheel exactly the same; vanilla power numbers |
+| Treadwheel Lift | `PowerWheel.Folktails` (not `WaterPump`) until it has a model | `MechanicalNodeSpec { PowerOutput 100, PowerInput 100, IsShaft false }`, `MechanicalBuildingSpec {}`, `TransputProviderSpec { Transputs [] }`, `WaterMoverSpec { 0.1 }`, `WaterInputSpec (0,1,-1)`, `WaterInputFixedSpec {}`, `WaterOutputSpec { (2,2,1), offset 0, overflow false }`, `PandabornTreadwheelSpec {}` | lifts the same while staffed |
+| Cistern Tap | `Discharge.Folktails` as now | delete `ManufactoryWaterContaminationProducerSpec`, `ManufactoryTogglableRecipesSpec`; `ManufactorySpec { ProductionRecipeIds ["FlowingWater"] }`; `PandabornCisternTapSpec {}`. **Keep the worker**: vanilla `WaterOutputManufactoryLimiter` reads `Workshop` without a null check (a workerless tap crashed the game) | the same tap, without our info line |
+| Dew Collector | model `DewCollector`; workerless | `ManufactorySpec { ["PandabornDewWater"] }`, `ProductionIncreaserSpec {}` (no workers needed, vanilla spec), `PandabornDewLimiterSpec { TemperateEfficiency 1.0, DroughtEfficiency 0.35 }`; remove `WorkplaceSpec`, `WorkshopSpec`, `EnterableSpec` and the slot/animation specs. Recipe `PandabornDewWater`: no ingredients, 1 Water per 4 h | makes water at full rate in all weather (the limiter is the only code) |
+
+Text: the module ships its own loc fragment (`src/code/Pandaborn.Water/mod/Localizations/enUS_PandabornWater.csv`,
+copied with the code): `Pandaborn.Water.Status.*`, `Pandaborn.Water.Gate.*`, `Pandaborn.Water.Info.*`. Building names
+and descriptions stay with the catalogue.
+
+**Tea and pepper: "about three wet days, growth paused, then death" is two fields.**
+
+* `AridNaturalResourceSpec.DaysToDieWet = 3.0` (the catalogue's `wet_days`, now 2.0). While the soil under the plant is
+  moist it is "dying": growth stops where it is, and it dies after `DaysToDieWet` x a per-plant random factor of 0.9 to
+  1.1 (2.7 to 3.3 days). When the soil is dry again the countdown resets fully and growth resumes (the same
+  `LivingWaterNaturalResource` reset measured on the bamboo).
+* `FloodableNaturalResourceSpec.DaysToDie` governs standing water *over* the tile (`MinWaterHeight 0`, `MaxWaterHeight 0`
+  means any water kills). Pepper copies the Sunflower's 0.66 days and tea the Blueberry's: set `flood_days = 3.0` on
+  both if a flood should be as forgiving as wet roots.
+* The wet-roots warning is free: the vanilla "dying" status and the plant's brown look show while the countdown runs.
+
+### Phase 2 runs (in game, Inkpaws, the generated faction build plus the module)
+
+The dev mod `JigglyPanda.PandabornProtoWater` is a private copy of the generated faction build with the runtime code and
+the water pieces (`proto/water/build.ps1`); the installed faction is switched off for each run and restored by the script
+(`-DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\water`). Scenarios
+`proto/water/tests/w1.json` … `w4.json` (generator `proto/water/tools/gen_tests.py`). Map Plains. Every run loaded the
+generated faction (145 buildings, its plants, goods, Ringtails, Look) with the water module **on** unless stated.
+
+**W1 (`water-w1-0809`, rerun `water-w1b-0934`): a working colony next to the district, saved and reloaded.**
+Two flume lines from two ponds: line L1 (Gate → 6 Flumes → Paddy Spout → rice paddy) and line L2 (Gate on a plateau →
+13 Flume Bridges, with a **Bridge span over L1**, pouring into a basin); a Scoop Wheel in a channel with a current; a
+staffed Cistern Tap; a Farmstead with a cabbage field flooded to kill it; gate L1 set to 0.45 m³/s with the badwater
+switch off before saving.
+
+* All placements valid, all first-launch checks passed: L1 carried water, its sides 0.000; **the crossing works**: L2
+  ran 0.09 deep on the span while L1 ran full underneath (1.0, capped by the span's floor), the bridge legs' cells dry;
+  L2 poured into its basin; the spout held 0.34; the wheel lifted 0.09–0.10 m³/s (current 0.26–0.31, "full speed at
+  0.30"). Panel texts read in game: gate "Lets through up to 0.30 m³/s.", spout "Keeps the field 0.30 deep. Now: 0.34.",
+  wheel "Current at the wheel: 0.27 (full speed at 0.30). Lifting 0.09 m³/s.", tap "Each 1 h of work pours 3 stored
+  Water out as 0.6 m³ of clean water."
+* A backed-up line can stand **above** its 1-block pieces without leaking: L1 rose to 1.78 above its bed while filling
+  (the pond surge) and settled at the pond level (0.8); the side cells stayed at 0.000 throughout. Direction limiters
+  hold the whole column, so only pieces with open tops beside fields (spout, corner, gate) need caps.
+* **Cistern Tap with a worker: works.** Haulers brought it Water from the district at a trickle (about 10 Water in the
+  first 20 h); handed 20 Water, the worker poured 18 in about 7 hours (3 per hour), the pit rose by 3.6 m³ (0.2 m³ per
+  Water). It idles with "Unable to get all required materials." when it has none.
+* **Farmers clear and replant dead crops: works**, once they can reach the field. Cabbage flooded 0.3 deep: dying from
+  the first day, 3 of 10 dead at 46 h, all dead at 56 h (`DaysToDie` 2 x 0.9–1.1). After the drain the Farmstead cleared
+  and replanted all 10 marked tiles within 10 h; they were growing healthily 22 h later. In the first run the field was
+  a pit one block deep with no stairs: the farmers said "Nothing to do in range" for the whole run and never replanted.
+  A field one block down needs stairs.
+* **Save and reload.** The gate's settings (0.45 m³/s, badwater switch off) came back from the carrier; the scoop wheel
+  lifted again; L2 crossed L1 again on the span; L1 sides stayed dry. Two things went wrong on the way:
+  1. The first span had a leg that occupied nothing; the game deleted it on load ("Loaded BlockObject
+     PandabornFlumeBridgeSpan… is not supported by terrain physics. Deleting it."). A deletion on load is a *loading
+     issue*, which the game reports to the player in a dialog that pauses the game: that is why the first reload never
+     ticked. Fixed by occupations (the span's leg on the cell corners, which the Flume leaves free); in
+     `water-w1b-0934` the span was kept and the reload ran. (The lab now also logs and closes a speed-locking panel.)
+  2. **Loading cut the water out of every flume** (the inert obstacle is re-added on load for one tick, deleting up to
+     one block of water per cell), and the refill from the pond then over-filled the paddy to 0.48 (target 0.30).
+     The module now saves each flow cell's depth and puts it back after the lift (see W4).
+
+**W2 (`water-w2-0809`): TimberCommons off, the dry-crop rule, and a save loaded with the module switched off.**
+`-DisableMods JigglyPanda.PandabornFactions,Timberborn.IgorZ.TimberCommons`; the reload launch had the dev switch
+`simulate-missing-api: Water` (the same path as a game update that breaks the module: it is not loaded).
+
+* Without TimberCommons: Flume Gate → 5 Flumes → Paddy Spout carried water (line backed up 1.68 deep at the spout),
+  sides dry (0.000), the Scoop Wheel lifted (basin full, 8.09 m³). Nothing in these pieces depends on TimberCommons.
+* **Dry-crop rule, measured** (test crop `AridNaturalResourceSpec.DaysToDieWet 3`, next to the catalogue's tea bush, `2`):
+
+  | Row | Roots | 3-day crop | Tea bush (2 days) |
+  |---|---|---|---|
+  | D1, 9+ tiles from any water | dry all run | healthy, grew 0 → 1.0 in 2.4 days | healthy, growing (0.9 at day 5) |
+  | D2, 2 tiles from a strip that ran 36 h, then drained | wet about 2 days | dying with growth frozen at 0.00; **recovered** about 12 h after the drain, then grew to 1.0 | **died** (first at 1.9 days, all 4 by 2.4 days) |
+  | D3, 2 tiles from a strip that ran all along | wet all run | **died** between 2.4 and 3.4 days | died between 1.4 and 2.4 days |
+
+  So the 3.0 value gives exactly "about three wet days, growth paused, then death", and the countdown resets when the
+  soil dries. With today's 2.0 the tea would die in the D2 case.
+* **Module off, save made with it on** (reload): the save loaded, the feature report said "Water toolkit is switched
+  off because this game version changed something it relies on ... Everything else works", every flume cell became a
+  solid block again (height −5, the inert obstacle), the pond held (0.85), nothing beside the gate or the flume got wet
+  (0.000), the gate and wheel showed no panel lines. One side effect: the water standing in the flume when the save
+  was made (about 3 m³ over 5 tiles) was pushed out of the cells that turned solid into the nearest open cell, the
+  spout, and ran into the paddy (0.34 → 0.68 deep). Harmless here; in general a full flume dumps its contents next to
+  itself once when the module goes off.
+* The reload's population check failed (0 adults at day 7.1): the test colony had no food production and starved;
+  not related to water.
+
+**W3 (`water-w3-0815`): the first drought, as the player meets it.** A Scoop Wheel in a 1-wide channel lifts into a
+small basin; a Flume Gate and 18 Flumes run to a Paddy Spout over a rice paddy; shoot bamboo, timber bamboo and cabbage
+1–5 tiles beside the flume. One day running, then the current stops and the weather turns to drought; 40 Water (one
+small cistern) handed to a staffed Cistern Tap on drought day 2.
+
+* Running: current 0.26 → "Current at the wheel: 0.26 (full speed at 0.30). Lifting 0.09 m³/s." The line filled and
+  **backed up** once the paddy was full: basin and all 18 flume tiles 0.88 deep, about 19 m³ standing in the line.
+* Drought (the game's first drought lasted under 3 days, as the Normal handicap gives: 5–9 days × 0.38):
+  1. **At once:** the Scoop Wheel stops (current 0.00) and says "No current at the wheel. It needs flowing water, and
+     works at full speed in a current of 0.30."
+  2. **Nothing else dries.** The backed-up line is itself a reservoir: it lost about 1.7 m³ a day (evaporation plus
+     the paddy, which the spout kept at 0.31 throughout), going 0.88 → 0.55 deep in 2 days and 0.08 deep 6 days after
+     the drought began. Soil beside the flume stayed moist the whole time (moisture 5 two tiles west, 3 five tiles
+     east, unchanged), the grove looked green on drought day 2 (screenshot `w3_drought_h48.png`; the plant-state probe
+     of this run only covered the paddy level, a scenario slip), the rice stayed healthy, and no flume status appeared
+     (the line never ran dry).
+  3. The **Cistern Tap** worker poured the 40 Water in about 12 hours of work (stock 40 → 28 → 7 → 1); the basin rose
+     from 11.4 to 13.2 m³ (8 m³ in, less what drained down the line), i.e. it topped up the line for about 5 more days.
+* So the first drought **teaches itself**: the only thing that changes is the wheel, and its status says why. It does
+  not teach the cistern, because the first drought does not need it; nothing in this run told the player the tap
+  exists. A one-line hint when the drought warning first appears is enough (proposed:
+  "Tip: a Cistern Tap at a Flume Gate pours stored Water into the flume, so the fields along it stay moist.").
+* Numbers for the design (one strip = a 1-wide flume or ditch kept 0.12–0.15 deep, which keeps 13 tiles across moist;
+  0.21 m³ per strip tile per day; 0.2 m³ per Water good; a staffed tap pours 0.6 m³ per working hour):
+
+  | Store | Water | 3-day drought | 6-day drought | 9-day drought |
+  |---|---|---|---|---|
+  | Small cistern | 40 (8 m³) | 13 strip tiles ≈ 165 farm tiles | 6 ≈ 83 | 4 ≈ 55 |
+  | Medium cistern | 300 (60 m³) | 95 ≈ 1,240 | 48 ≈ 620 | 32 ≈ 410 |
+  | Large cistern | 1,200 (240 m³) | 380 ≈ 4,950 | 190 ≈ 2,480 | 127 ≈ 1,650 |
+
+  A paddy costs 0.047 m³ per tile per day (small cistern: 57 paddy tiles for 3 days). A backed-up line is worth more
+  than the strip figure: a closed line holds about 0.9 m³ per tile and only evaporates from its surface. Because the
+  dying countdown resets fully whenever the soil is moist again, one tap pulse every few days (fill the line once) keeps
+  a grove alive for far less than continuous pouring; shoot bamboo (5 dry days) and cabbage and timber bamboo (7)
+  survive every first drought with no tap at all.
+
+**W4 (`water-w4-1155`, `water-w4c-1241`, `water-w4d-1252`, `water-w4e-*`): standing water across a save and load.**
+Run on a dev-mod copy built from the morning's faction build: the current faction build crashed on load with
+"Child #BotAssembler.Folktails.Progress0 not found in PandabornOxWorkshop.Inkpaws" (the models lane's, reported in
+`docs/tech/models.md`). Line A from a pond whose surface
+is 1.6 above the flume bed (the backed-up line stands 1.89 deep, more than its one-block pieces), line B crossing it on
+Bridges with a span. First attempt (water put back a tick after the lift): the water came back (1.93 deep a few ticks
+after loading, `RestoredWater` 1.0 per cell), but the part standing above the first block had sat on the re-solidified
+cells for two ticks and spilled sideways (0.25 deep beside the flume at tick 3, spread out by tick 33) and into the
+paddy (0.34 → 0.75). Lifting inside our own finished-state listener changed nothing (`water-w4c-1241`: on a load our
+listener runs before vanilla's add). Lifting in `PostLoadEntity` (after every entity's finished-state listeners, before
+the first water tick) worked (`water-w4d-1252`): **the line was whole at tick 1** (1.888 deep, as saved), nothing beside
+it or on top got wet, the crossing ran on. That run still put the saved depth back on top (doubling the line for a
+moment, 2.86 deep at tick 3, so the paddy over-filled to 0.65), so the put-back now adds only what is missing, three
+ticks after the load. The Flume Gate re-applies its saved flow once its settings are read. **`water-w4e-1448` passed every check** (exit 0): line whole at tick 1, sides and the cells on top dry, the paddy 0.36 before saving and 0.41 after (the put-back added 1.3 m³ in all, mostly into a cell that was sloshing at tick 3: it could compare the whole line instead of single cells), the crossing running, gate settings kept.
+
+### What must be true before the catalogue's `Water` switch is turned on
+
+The content lane's 834cf4a follows the hand-over as it stood before these runs. Before `catalogue/rules.toml`
+`Water = true`:
+
+1. **Ship the module.** The installed build's `Modules/modules.txt` has no `Water` line today (the repo's
+   `src/code/modules.txt` has it): the `code` stage must copy `Pandaborn.Water.bin`, its `.api.txt` and the loc fragment
+   `Localizations/enUS_PandabornWater.csv`, and list it in `modules.txt`. Check with the game log line
+   `[Pandaborn] features: ... Water: On`.
+2. **Catalogue changes from these runs** (the table above is updated):
+   * `PandabornEntityStateSpec = { Features = ["Water"] }` in `module_specs.Water` of **every** flume piece (Flume,
+     Drop, Bridge, Gate already has it), or a load cuts the water out of every flume.
+   * Flume block `Occupations "Bottom, Middle, Path"`; Bridge leg `Corners, Bottom`; a new **Flume Bridge span**
+     (`PandabornFlumeBridgeSpan`, same model, leg `Corners`, no `WaterObstacleSpec`/`FinishableWaterObstacleSpec`) —
+     without it a flume line can never cross another. New id: lock it.
+   * Dry crops: tea and Sichuan pepper `wet_days = 3.0` (W2: 2.0 kills tea after about two wet days, 3.0 gives the
+     three-day grace); optionally `flood_days = 3.0` on both.
+3. **One run of the real generated build with the switch on**: the grid scenario places every water template
+   (`PandabornFlume.Inkpaws` …); then a short line (pond → gate → flumes → spout → paddy, and a scoop wheel in a
+   current) on the `.Inkpaws` templates, saved and reloaded — `proto/water/tests/w4.json` with the template names
+   changed is that test. The `PandabornTripHammerMill`'s wheel cell (`WaterPoweredGeneratorSpec.Blocks` (0,1)) and the
+   `CisternTap` / `TripHammerMill` kit models have not been in a game yet.
+4. Not blocking, but worth knowing on the day: the gate, corner and spout caps sit in a cell that is not part of the
+   building (model request 1 in `docs/tech/models.md`); a module-off load pushes water standing above a flume's first
+   block off the block into the nearest open cell once (W2); the Treadwheel's kit model was made for a Water Pump basis.
+
+### Still not proven
+
+* The catalogue's own `.Inkpaws` water templates in a game (only the dev mod's `.PandabornProto` copies of the same
+  data have run; see the checklist).
+* A raised Bridge stepping straight down onto ground (only the Drop from ground level and the span crossing were run),
+  splitters, and a Corner after a Bridge.
+* Treadwheel with a Ringtail worker; Trip-Hammer Mill as the catalogue builds it (Gristmill shell, worker kept).
+* Badwater shut-off and dew limiter under the module architecture (both were proven in phase 1 with the same logic;
+  phase 2 ran their panels and statuses but no badwater or drought-dew case).
+* The status icons' texts on screen (the panel lines were read back from the fragments; the entity panel itself did not
+  show in the screenshots, which were taken without the camera on the building).
