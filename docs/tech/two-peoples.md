@@ -856,7 +856,12 @@ All interface code runs inside `SafeUi`; a failing piece switches itself off for
 |---|---|---|
 | `rt2-module1` | The module on the real generated build: Moon Loft → arrival, three night posts, badge, row, panel lines, statuses, 34 h | Passed, 0 errors from our code. Found and fixed: the arriving kit could not move in (the arrival runs before the loft has worked out its kit slots), an Inkpaw cub took the loft's kit slot (now moved to a cub slot elsewhere) |
 | `rt2-shelvesA/B/C` | Night couriers vs shelf size (§18.3) | Passed, 0 errors |
-| `rt2-forcedoff` | A save with Ringtails reloaded with `force-off: Ringtails` (the probe writes the dev switch for the relaunch only and removes it) | <!-- FORCEDOFF --> |
+| `rt2-forcedoff` | A save with Ringtails reloaded with `force-off: Ringtails` (the probe writes the dev switch for the relaunch only and removes it) | Passed (exit 0, 0 errors from our code). Before the save: 2 Ringtail adults at the Night Builders' Post and a kit,
+all living in the Moon Loft, three posts on the Ringtail type. After the relaunch with `force-off: Ringtails` (features
+line "Ringtails: ForcedOff; RingtailsFallback: On"): the same three colonists, same names ("Dan Xia (Red clouds)", "Zhu
+Guang (Candlelight)", "Hong Xia (Red sunset)") and the same loft home, now `InkpawAdult/InkpawChild.Inkpaws`; the
+fallback switched all three posts to `Beaver` and Inkpaws staffed them (4, 3 and 2 workers); 16 colonists before and
+after; the dev-switch file was removed by the reload |
 | `rt2-soak` | Five days (2.5 + save/reload + 2.5), Bell on with a 12-hour day, three posts, ten Moon Lofts requested, workshops, a post demolished on day 1 | <!-- SOAK --> |
 | `rt2-folktails` | Folktails with the module and test data | <!-- FOLKTAILS --> |
 

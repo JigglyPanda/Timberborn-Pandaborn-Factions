@@ -78,7 +78,7 @@ namespace Pandaborn.Ringtails
     /// The population valve (DESIGN.md: "kits are raised in the Moon Loft while there is work for them"). At every dawn, per
     /// district: open night jobs = desired workers of the finished, Ringtail-typed night posts minus Ringtail adults minus
     /// Ringtail kits already growing. While that is above zero, and no colonist in the district is critically hungry or
-    /// thirsty, each Moon Loft with a Ringtail adult living in it and a free kit slot raises one kit (KitsPerDay). So kits never
+    /// thirsty, and the district has a Ringtail adult, each Moon Loft with a free kit slot raises one kit (KitsPerDay). So kits never
     /// outnumber the jobs waiting for them, a demolished post stops births at once, and ten lofts raise no more Ringtails than
     /// one loft would. Ringtails left without a job (a post demolished) stay, rest and take leisure; they are shown as idle.
     /// </summary>
@@ -148,9 +148,12 @@ namespace Pandaborn.Ringtails
             if (lofts.Count == 0) return;
             int open = OpenNightJobs(district);
             bool starving = AnyoneStarving(district);
+            // parents: any Ringtail adult of the district (the first family fills its loft, so "a Ringtail lives here" would
+            // stop every other loft from ever raising a kit)
+            bool parents = district.DistrictPopulation.Adults.Any(b => RingtailService.IsRingtail(b));
             foreach (var loft in lofts)
             {
-                if (loft.RingtailAdultDwellers == 0) { loft.KitState = "Pandaborn.Ringtails.Loft.NoParents"; continue; }
+                if (!parents) { loft.KitState = "Pandaborn.Ringtails.Loft.NoParents"; continue; }
                 if (starving) { loft.KitState = "Pandaborn.Ringtails.Loft.Hungry"; continue; }
                 if (open <= 0) { loft.KitState = "Pandaborn.Ringtails.Loft.WaitingForJobs"; continue; }
                 if (!loft.Dwelling.HasFreeChildSlots || !loft.Dwelling.HasFreeSlots) { loft.KitState = "Pandaborn.Ringtails.Loft.NoRoom"; continue; }

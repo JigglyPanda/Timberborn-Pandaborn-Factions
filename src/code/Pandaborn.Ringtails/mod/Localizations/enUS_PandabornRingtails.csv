@@ -9,6 +9,6 @@ Pandaborn.Ringtails.Panel.NightPost,"Night post: Ringtails work here from the af
 Pandaborn.Ringtails.Panel.Loft,"Moon Loft: a home for Ringtails.",Line on a Moon Loft panel
 Pandaborn.Ringtails.Loft.Raising,"Kits: one is raised each morning while night jobs are open.",Moon Loft nursery state
 Pandaborn.Ringtails.Loft.WaitingForJobs,"Kits: waiting for open night jobs.",Moon Loft nursery state
-Pandaborn.Ringtails.Loft.NoParents,"Kits: no Ringtail lives here.",Moon Loft nursery state
+Pandaborn.Ringtails.Loft.NoParents,"Kits: no Ringtail adult in this district.",Moon Loft nursery state
 Pandaborn.Ringtails.Loft.NoRoom,"Kits: no room for a kit.",Moon Loft nursery state
 Pandaborn.Ringtails.Loft.Hungry,"Kits: none while anyone in the district is hungry or thirsty.",Moon Loft nursery state
