@@ -46,13 +46,15 @@ namespace PandabornDevHarness
         private readonly ResourceCountingService _resourceCountingService;
         private readonly EntityRegistry _entityRegistry;
         private readonly IDayNightCycle _dayNightCycle;
+        private readonly Timberborn.WorkSystem.WorkingHoursManager _workingHoursManager;
         private JArray _watch;
         private float _nextWatch = -1f;
 
         public GoodsProbe(EventBus eventBus, IGoodService goodService, TemplateService templateService,
                           ResourceCountingService resourceCountingService, EntityRegistry entityRegistry,
-                          IDayNightCycle dayNightCycle)
+                          IDayNightCycle dayNightCycle, Timberborn.WorkSystem.WorkingHoursManager workingHoursManager)
         {
+            _workingHoursManager = workingHoursManager;
             _eventBus = eventBus;
             _goodService = goodService;
             _templateService = templateService;
@@ -97,6 +99,36 @@ namespace PandabornDevHarness
                     templates[(string)token] = new JObject { ["finished"] = finished, ["unfinished"] = unfinished };
                 }
                 sample["templates"] = templates;
+                // "bonuses": [ "WorkingSpeed", "MovementSpeed" ]: mean multiplier per character template (the bell)
+                if (spec["bonuses"] is JArray bonusIds && bonusIds.Count > 0)
+                {
+                    var sums = new System.Collections.Generic.Dictionary<string, double[]>();
+                    var counts = new System.Collections.Generic.Dictionary<string, int>();
+                    foreach (var entity in _entityRegistry.Entities)
+                    {
+                        if (!entity) continue;
+                        var bm = entity.GetComponent<Timberborn.BonusSystem.BonusManager>();
+                        var ts = entity.GetComponent<TemplateSpec>();
+                        if (bm == null || ts == null) continue;
+                        if (!sums.TryGetValue(ts.TemplateName, out var acc))
+                        {
+                            acc = new double[bonusIds.Count];
+                            sums[ts.TemplateName] = acc;
+                            counts[ts.TemplateName] = 0;
+                        }
+                        for (int i = 0; i < bonusIds.Count; i++) acc[i] += bm.Multiplier((string)bonusIds[i]);
+                        counts[ts.TemplateName]++;
+                    }
+                    var bonuses = new JObject();
+                    foreach (var kv in sums)
+                    {
+                        var o = new JObject { ["count"] = counts[kv.Key] };
+                        for (int i = 0; i < bonusIds.Count; i++) o[(string)bonusIds[i]] = Math.Round(kv.Value[i] / counts[kv.Key], 4);
+                        bonuses[kv.Key] = o;
+                    }
+                    sample["bonuses"] = bonuses;
+                    sample["workingHours"] = Math.Round(_workingHoursManager.WorkedPartOfDay * 24f, 2);
+                }
                 _watch.Add(sample);
             }
             catch (Exception ex) { Harness.Warn("goods probe watch: " + ex.GetType().Name + ": " + ex.Message); }

@@ -134,9 +134,10 @@ note = "every Ringtail building, marked with the moon"
 [outfits]
 copy_faction = "Folktails"
 # the Ringtails' outfits: the Beaver ones for worker type PandabornRingtail; the builder wears the night builder overlay
-# (ringtail-body lane, proto/ringtail-body)
+# and the courier and forager their own overlays (ringtail-body lane, docs/tech/ringtail-body.md 7.3; head-wraps, never
+# vanilla hats: they clip the ears). Stargazer and Opera overlays wait for the Star Tower and Opera Stage.
 extra = [
   { copy = "Builder", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightBuilder_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightBuilder_N" } },
-  { copy = "Hauler", worker_type = "PandabornRingtail" },
-  { copy = "Gatherer", worker_type = "PandabornRingtail" },
+  { copy = "Hauler", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightCourier_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightCourier_N" } },
+  { copy = "Gatherer", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_N" } },
 ]
