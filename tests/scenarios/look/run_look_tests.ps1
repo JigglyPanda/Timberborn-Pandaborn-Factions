@@ -2,7 +2,11 @@
 # simulate-missing-api). Needs the shipping bundle (tools/build_look.ps1 -BundleName pandabornlook). Log: E:/PandabornDev/build/look/module_runs.txt
 # -Suffix names the runs (look-module-<case>-<Suffix>). -HarnessDir: an already built harness to use when the working
 # tree's harness does not build (other lanes' work in progress); otherwise the harness is built from src/devharness.
-param([string[]]$Only = @(), [string]$Suffix = '3', [string]$HarnessDir = '')
+# By default the installed faction build (which now ships the code modules and pandabornlook_win) is tested and the dev
+# switch reaches the game through the PANDABORN_DEV environment variable. -DevMod instead loads src/code as the dev-only
+# mod E:\PandabornDevuild\PandabornCodeDev (only when the faction build ships no code or bundle: two copies of the same
+# bundle cannot load together).
+param([string[]]$Only = @(), [string]$Suffix = '3', [string]$HarnessDir = '', [switch]$DevMod)
 $ErrorActionPreference = 'Continue'
 $repo = 'C:\Users\Israel Gonzalez\Desktop\Claude Projects\Claude Porjects\Timberborn-Pandaborn-Factions'
 Set-Location $repo
@@ -22,10 +26,18 @@ $runs = @(
 )
 foreach ($r in $runs) {
   if ($Only.Count -and $Only -notcontains $r.id) { continue }
-  & "$repo\tools\build_code_devmod.ps1" -DevSwitch $r.sw | Out-Host
+  $extra = @()
+  if ($DevMod) {
+    & "$repo\tools\build_code_devmod.ps1" -DevSwitch $r.sw | Out-Host
+    $extra = @('-ExtraMods', 'E:\PandabornDev\build\PandabornCodeDev')
+    $env:PANDABORN_DEV = ''
+  } else {
+    $env:PANDABORN_DEV = $r.sw          # read by the bootstrap of the installed faction build
+  }
   $start = Get-Date
-  & powershell -ExecutionPolicy Bypass -File "$repo\tools\run_game_test.ps1" -RequestJson $r.json -ExtraMods 'E:\PandabornDev\build\PandabornCodeDev' `
+  & powershell -ExecutionPolicy Bypass -File "$repo\tools\run_game_test.ps1" -RequestJson $r.json @extra `
       -RunId $r.id -NoBuild -HarnessDir $harness -WaitForGameSeconds 10800 -TimeoutSeconds $r.t -OwnPatterns $own *> "E:\PandabornDev\build\look\$($r.id).txt"
   $code = $LASTEXITCODE
   "{0} {1} exit {2} started {3} ended {4}" -f (Get-Date -Format s), $r.id, $code, $start.ToString('s'), (Get-Date).ToString('s') | Add-Content $summary
 }
+$env:PANDABORN_DEV = ''
