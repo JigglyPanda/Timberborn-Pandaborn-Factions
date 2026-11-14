@@ -1,0 +1,21 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.Folktails",
+    "Blueprints": [
+      "Buildings/Pandaborn/ProtoWater/Spout/PandabornSpout.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeValve/PandabornFlumeValve.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeValveOpen/PandabornFlumeValveOpen.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeValveGate/PandabornFlumeValveGate.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/Flume/PandabornFlume.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeLidded/PandabornFlumeLidded.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeRaised/PandabornFlumeRaised.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeStep/PandabornFlumeStep.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeStepOpen/PandabornFlumeStepOpen.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeGate/PandabornFlumeGate.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/FlumeTurn/PandabornFlumeTurn.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/Noria/PandabornNoria.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/Treadwheel/PandabornTreadwheel.PandabornProto.blueprint",
+      "Buildings/Pandaborn/ProtoWater/DewCollector/PandabornDewCollector.PandabornProto.blueprint"
+    ]
+  }
+}

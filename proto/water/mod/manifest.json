@@ -1,0 +1,9 @@
+{
+  "Name": "Pandaborn Proto: Water (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoWater",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only prototype of the Pandaborn water toolkit (flume, spout, noria, treadwheel lift, dew collector, crop-zone test plants). Vanilla models as stand-ins. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [],
+  "OptionalMods": []
+}
