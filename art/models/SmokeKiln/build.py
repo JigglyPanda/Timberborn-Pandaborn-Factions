@@ -50,6 +50,16 @@ for k in range(6):   # cured poles, smoke-darkened, waiting by the door
            0.38 + 0.07 * (k % 3)), r=0.03, material=BAMBOO_GOLD, sides=5, bend=0.0)
     for p in g.parts[n1:]:
         p.C = np.tile([0.62, 0.5, 0.36, 1.0], (len(p.P), 1))
+# the stoker's box bellows at the vault's mouth: its push handle rocks while the kiln works (the Wood Workshop's
+# WorkshopAnimationController needs an animated node: without one it throws when the building is finished)
+K.box(g, (0.25, B, 1.05), (0.55, 0.3, 1.3), TIMBER, WOOD_BLOCK, skip=(3,))
+K.tube(g, [(0.55, 0.2, 1.18), (0.72, 0.18, 1.25)], [0.03, 0.025], IRON, sides=5)
+BP = np.array([0.4, 0.32, 1.05])
+with g.node("#BellowsHandle"):
+    K.beam(g, BP, BP + [0.0, 0.0, -0.42], w=0.035, caps="end")
+    K.beam(g, BP + [-0.12, 0.0, -0.42], BP + [0.12, 0.0, -0.42], w=0.03, caps="end")
+m.animate("#BellowsHandle", BP, (1, 0, 0), kind="swing", amplitude=0.35, turns=1,
+          driver="WorkshopAnimationControllerSpec (plays while the kiln works)")
 m.blocks = solid_blocks(2, 4, 4)
 m.entrance(1, -1, 0)
 m.slot("Entrance", (1.0, B, 0.6), yaw=180)

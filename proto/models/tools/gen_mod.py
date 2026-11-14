@@ -234,9 +234,11 @@ def main():
         bp = copy.deepcopy(bp)
         if mid in EDITS:
             EDITS[mid](bp, mj)
-        if "ManufactorySpec" in bp:
+        if "ManufactorySpec" in bp and "ManufactoryTogglableRecipesSpec" not in bp:
             # the stand-in's recipes name Folktails goods, which the Inkpaws faction does not have (a missing good
-            # throws when the building is created); the model check needs no production
+            # throws when the building is created); the model check needs no production. Togglable-recipe buildings
+            # (the Discharge) index their recipe list on load and throw on an empty one (models-pass3-4): their
+            # recipes (water) stay
             bp["ManufactorySpec"]["ProductionRecipeIds"] = []
         # a second planter building for the same plants (the faction's own Paddy House) breaks the fields tool
         # ("Sequence contains more than one matching element", models-pass3-2): prototypes plant nothing

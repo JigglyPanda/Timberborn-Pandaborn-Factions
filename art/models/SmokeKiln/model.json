@@ -253,7 +253,28 @@
    "yaw": 180
   }
  ],
- "animatedNodes": [],
+ "animatedNodes": [
+  {
+   "node": "#BellowsHandle",
+   "driver": "WorkshopAnimationControllerSpec",
+   "pivot": {
+    "X": 0.4,
+    "Y": 0.32,
+    "Z": 1.05
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "swing",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "WorkshopAnimationControllerSpec (plays while the kiln works)"
+  }
+ ],
  "colliders": [
   {
    "Center": {
@@ -292,11 +313,12 @@
   }
  ],
  "triangles": {
-  "finished": 978,
+  "finished": 1024,
   "constructionStage0": 924,
   "vanillaMedianForFootprint": 1600
  },
  "materials": [
+  "BaseMetal.Folktails",
   "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
   "Plaster_White.Folktails",

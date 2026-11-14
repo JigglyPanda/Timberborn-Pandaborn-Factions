@@ -113,7 +113,10 @@
   },
   "WorkshopSpec": {},
   "ManufactorySpec": {
-    "ProductionRecipeIds": []
+    "ProductionRecipeIds": [
+      "FlowingWater",
+      "FlowingBadwater"
+    ]
   },
   "BlockObjectNavMeshSettingsSpec": {
     "NoAutoWalls": false,

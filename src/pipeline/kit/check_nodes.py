@@ -4,7 +4,8 @@
 
 Specs such as ManufactoryProgressVisualizerSpec, BotManufactoryAnimationControllerSpec, WindRotationAnimatorSpec or
 ObservatoryAnimatorSpec find transforms by name at run time; a missing one throws ("Child ... not found") and crashes
-the game when the building is created. This lists every '#Name' string in the stand-in's specs (outside Children and
+the game when the building is created. Workshop, enterable and wonder animation controllers also need the model
+to carry at least one animated node (they take its IAnimator and throw without one). This lists every '#Name' string in the stand-in's specs (outside Children and
 attachment parents) that the model lacks, unless model.json supplies a replacement spec block that names its own
 nodes (windRotationAnimator, observatoryAnimator, botManufactoryAnimation, surfaceName). Exit code 1 when a model
 misses a node.
@@ -24,7 +25,9 @@ MODELS = r"E:\PandabornDev\build\models"
 BP = r"E:\PandabornDev\reference\Blueprints"
 OVERRIDES = {"windRotationAnimator": "WindRotationAnimatorSpec", "observatoryAnimator": "ObservatoryAnimatorSpec",
              "botManufactoryAnimation": None, "surfaceName": "GoodConsumingAttractionSurfaceControllerSpec"}
-SKIP_SPECS = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec"}
+ANIMATOR_SPECS = ("WorkshopAnimationControllerSpec", "EnterableAnimationControllerSpec", "WonderAnimationControllerSpec")
+SKIP_SPECS = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec",
+              "BuildingModelSpec"}   # its node names are #Finished/#Unfinished children or optional (FindChildIfNameNotEmpty)
 
 
 def names(o, out):
@@ -78,9 +81,14 @@ def main():
             if os.path.exists(f):
                 have |= {n["name"] for n in tmio.load(f)}
         missing = sorted(n for n in wanted if n not in have)
+        # controllers that take the model's IAnimator (GetComponentInChildren<IAnimator>) and throw without one
+        needs_animator = [k for k in ANIMATOR_SPECS if k in bp and k not in removed]
+        if needs_animator and model_files and os.path.exists(model_files[0]):
+            if not any(n["nodeAnims"] for n in tmio.load(model_files[0])):
+                missing.append("an animated node (for " + ", ".join(needs_animator) + ")")
         if missing:
             bad += 1
-            print(f"{mid} ({mj['standIn']}): MISSING " + ", ".join(f"{n} (by {where.get(n, 'model.json')})" for n in missing))
+            print(f"{mid} ({mj['standIn']}): MISSING " + ", ".join(n if n.startswith("an animated") else f"{n} (by {where.get(n, 'model.json')})" for n in missing))
     print(f"{len(ids)} model(s) checked, {bad} missing named nodes")
     return 1 if bad else 0
 
