@@ -9,10 +9,11 @@ already defines one of these names.
 
 ### Game API this module references
 
-Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `PandabornNamePoolSpec`
+Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `PandabornCisternTapSpec`, `PandabornCurrentDrivenSpec`, `PandabornDewLimiterSpec`, `PandabornEntityStateSpec`, `PandabornFestivalGoerSpec`, `PandabornFestivalSpec`, `PandabornFestivalSquareSpec`, `PandabornFloweringPlantSpec`, `PandabornFloweringSpec`, `PandabornFlumeGateSpec`, `PandabornFlumeSegmentSpec`, `PandabornGoodAmountStepSpec`, `PandabornInFlowerSpec`, `PandabornMoonLoftSpec`, `PandabornNamePoolSpec`, `PandabornNightPostSpec`, `PandabornPaddySpoutSpec`, `PandabornRingtailSpec`, `PandabornRingtailsSpec`, `PandabornSolidCellsSpec`, `PandabornTraditionSpec`, `PandabornTreadwheelSpec`
 
 **Timberborn.BlueprintSystem**
 
+* type `Timberborn.BlueprintSystem.AssetRef`1`
 * type `Timberborn.BlueprintSystem.ComponentSpec`
   * method `.ctor()`
   * method `.ctor(Timberborn.BlueprintSystem.ComponentSpec)`
@@ -21,5 +22,11 @@ Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `Pa
   * method `PrintMembers(System.Text.StringBuilder)`
 * type `Timberborn.BlueprintSystem.SerializeAttribute`
   * method `.ctor()`
+
+**UnityEngine.CoreModule**
+
+* type `UnityEngine.Sprite`
+* type `UnityEngine.Texture2D`
+* type `UnityEngine.Vector3Int`
 
 <!-- api:end -->
