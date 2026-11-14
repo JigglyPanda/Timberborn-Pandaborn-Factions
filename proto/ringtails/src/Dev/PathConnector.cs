@@ -149,7 +149,11 @@ namespace Pandaborn.Ringtails.Dev
         {
             var origin = center.GetComponent<BlockObject>().PositionedEntrance.Coordinates;
             var used = new List<Vector3Int>();
-            int placed = 0, failed = 0;
+            int placed = 0, failed = 0, unconnected = 0;
+            var pathSpec = _templateService.GetAll<PlaceableBlockObjectSpec>().FirstOrDefault(s => s.GetSpec<TemplateSpec>()?.TemplateName == "Path");
+            var pathPlacer = _previewPlacerFactory.Create(pathSpec);
+            var network = new HashSet<Vector3Int> { origin };
+            var paths = new HashSet<Vector3Int>();
             var failures = new List<string>();
             foreach (var request in buildings)
             {
@@ -169,13 +173,17 @@ namespace Pandaborn.Ringtails.Dev
                                 if (_terrainService.GetTerrainHeightBelow(new Vector3Int(cell.x, cell.y, cell.z + 4)) != origin.z) continue;
                                 if (used.Any(u => Math.Abs(u.x - cell.x) < 4 && Math.Abs(u.y - cell.y) < 4)) continue;
                                 if (!ClearAround(cell, 1)) continue;   // keeps entrances off bushes and trees
+                                // only spots a path can reach from the district center (checked before placing: nothing is deleted)
+                                if (Search(pathPlacer, cell, network, paths, origin, radius) == null) continue;
                                 foreach (var o in new[] { Orientation.Cw0, Orientation.Cw90, Orientation.Cw180, Orientation.Cw270 })
                                 {
                                     var placement = placer.GetBuildableCoordinates(new[] { new Placement(cell, o, FlipMode.Unflipped) }).FirstOrDefault();
                                     if (placement.Coordinates != cell) continue;
                                     var builder = new EntitySetup.Builder(spec.Blueprint);
-                                    if (request.Value) _constructionFactory.CreateAsFinished(builder, placement);
-                                    else _constructionFactory.CreateAsUnfinished(builder, placement);
+                                    _canPlaceCache.Clear();
+                                    var building = request.Value ? _constructionFactory.CreateAsFinished(builder, placement)
+                                                                 : _constructionFactory.CreateAsUnfinished(builder, placement);
+                                    if (!ConnectOne(building, pathSpec, pathPlacer, network, paths, origin, radius)) unconnected++;
                                     used.Add(cell);
                                     placed++;
                                     done = true;
@@ -189,7 +197,35 @@ namespace Pandaborn.Ringtails.Dev
                 }
                 if (!done) { failed++; failures.Add(request.Key); }
             }
-            return "placed " + placed + ", not placed " + failed + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "");
+            pathPlacer.HideAllPreviews();
+            return "placed " + placed + " (" + unconnected + " without a path), not placed " + failed
+                   + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "") + ", path tiles " + paths.Count;
+        }
+
+        /// <summary>Lays a path from a building's entrance to the network, retrying around cells that refuse a path.</summary>
+        private bool ConnectOne(BlockObject building, PlaceableBlockObjectSpec pathSpec, PreviewPlacer placer, HashSet<Vector3Int> network,
+                                HashSet<Vector3Int> paths, Vector3Int origin, int radius)
+        {
+            if (building == null || !building.HasEntrance) return false;
+            var goal = building.PositionedEntrance.Coordinates;
+            for (int attempt = 0; attempt < 8; attempt++)
+            {
+                var route = Search(placer, goal, network, paths, origin, radius);
+                if (route == null) return false;
+                Vector3Int? refused = null;
+                foreach (var cell in route)
+                {
+                    if (network.Contains(cell) || paths.Contains(cell) || HasPath(cell)) continue;
+                    if (!Place(pathSpec, cell, paths)) { refused = cell; break; }
+                }
+                if (refused == null)
+                {
+                    foreach (var cell in route) network.Add(cell);
+                    return true;
+                }
+                _blocked.Add(refused.Value);
+            }
+            return false;
         }
 
         /// <summary>True when no object (bush, tree, building) stands within this many tiles at the cell's height.</summary>
@@ -227,7 +263,17 @@ namespace Pandaborn.Ringtails.Dev
             return string.Join(" ", parts);
         }
 
+        private readonly Dictionary<Vector3Int, bool> _canPlaceCache = new Dictionary<Vector3Int, bool>();
+
         private bool CanPlace(PreviewPlacer placer, Vector3Int cell)
+        {
+            if (_canPlaceCache.TryGetValue(cell, out bool cached)) return cached;
+            bool result = CanPlaceUncached(placer, cell);
+            _canPlaceCache[cell] = result;
+            return result;
+        }
+
+        private bool CanPlaceUncached(PreviewPlacer placer, Vector3Int cell)
         {
             if (_blocked.Contains(cell) || !_blockService.Contains(cell) || _blockService.AnyObjectAt(cell)) return false;
             // the preview check accepted paths floating one tile above lower ground; those fail validation when the save is
@@ -240,6 +286,7 @@ namespace Pandaborn.Ringtails.Dev
 
         private bool Place(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)
         {
+            _canPlaceCache.Clear();
             try { PlaceUnchecked(spec, cell, paths); return true; }
             catch (Exception e) { Debug.LogWarning("[Pandaborn.Ringtails] path at " + cell + " not placed: " + e.Message); return false; }
         }

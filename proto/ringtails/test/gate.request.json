@@ -82,16 +82,16 @@
       ]
     },
     "place": [
-      "Lodge.Folktails",
-      "Lodge.Folktails",
-      "Lodge.Folktails",
-      "Lodge.Folktails",
-      "RingtailLoft.Inkpaws",
-      "RingtailLoft.Inkpaws",
       "RingtailHaulingPost.Inkpaws",
       "RingtailGathererFlag.Inkpaws",
       "LumberjackFlag.Folktails",
       "GathererFlag.Folktails",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
       {
         "template": "Lodge.Folktails",
         "finished": false

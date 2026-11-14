@@ -1,6 +1,7 @@
 # Two peoples: technical design
 
-Status: feasibility study, 2026-11-14. Research only: nothing here has run in game yet.
+Status: feasibility study, 2026-11-14 (sections 1–16, research only). Section 17 has the results of the in-game
+prototype of the simplified design (Ringtails in their own buildings, no shift flipping): **go**.
 Game: Timberborn 1.1.2.8. All code paths are relative to `E:\PandabornDev\reference\decompiled` and were read
 for this note. Blueprint paths are relative to `E:\PandabornDev\reference\Blueprints`. Bindito internals were
 decompiled into a scratch folder (`Bindito.Core.dll`, not kept).
@@ -485,7 +486,22 @@ of Pillar 1 — Ringtails staff **their own** buildings and sleep through the mo
 
 ### 17.1 Verdict: GO, for the simplified design
 
-<!-- VERDICT -->
+**Go.** A second living colonist kind with its own worker type, its own buildings, its own hours, faster walk and
+lighter appetite works in Timberborn 1.1.2.8 **without Harmony**, with two private-field touches that fail safe, and
+survives save and reload. In three in-game days plus a reload:
+
+* Ringtails took only Ringtail jobs and Inkpaws never took them (0 violations in every hourly sample).
+* Ringtails were at work in the afternoon and all night, went home at dawn, slept ~2.5–3 h in their loft, ate, drank
+  and idled until 8 h after dawn, then went back to work — the same cycle every day, before and after the reload.
+* No Ringtail ever had a critical need; no exhaustion.
+* Inkpaws kept the vanilla day: work through the day, sleep before dawn.
+* Every colonist came back from the save with the same kind, template, job and home.
+* No exceptions from our code; every batch-control tab and every panel opened with Ringtails present.
+* A Folktails game with the prototype enabled is unchanged (same templates, no Ringtails, no errors).
+
+Conditions that come with the go: the vanilla population numbers do not count Ringtail crews (our own panel is
+required, 17.5); kind-specific housing is a correction rule, not a restriction (17.4); and the two private fields
+must be checked at load with a safe fallback (17.6). <!-- VERDICT-EXTRA -->
 
 ### 17.2 What was built
 
@@ -511,7 +527,64 @@ Total runtime code ≈ 640 lines including comments. Harness changes: none were 
 mod, so the shared harness files that two other agents are editing were not touched). `-ExtraMods`, the game queue and
 `-SaveAndReload` came from the other agents' script work.
 
-<!-- MEASURED -->
+### 17.3 Measured in game
+
+Runs (output in `E:\PandabornDev\build\test\<run>`; analysis `proto/ringtails/test/analyze.py` →
+`ringtails_report.json`): new Inkpaws game on Diorama (9 Inkpaw adults, 4 cubs), the probe adds 4 Ringtail adults and
+1 kit, places a Courier Loft, a Forager's Nest, an Inkpaw lumberjack and gatherer, 2 lofts, 4 lodges and 3 unfinished
+lodges on the district terrace and connects them with paths, stocks 400 water and 40 logs, then 72 in-game hours at
+speed 3, hourly samples of every colonist and workplace, panels and screenshots, batch-control tabs, save, relaunch
+into the save and 200 more real seconds (≈ 31 in-game hours).
+
+| Run | What it covered | Harness verdict |
+|---|---|---|
+| `rt-gate3` | 4 Ringtails at the Courier Loft, housed in lofts; no water stocked (Inkpaws went thirsty; test-map artefact, since fixed); first appetite version (wrong, see below) | PASS, both launches; reload did not advance time (a loading-issue dialog from a probe path bug paused it) |
+| `rt-gate4` | 1 Ringtail at the Forager's Nest (the Courier Loft could not be connected on that layout), Inkpaw lumberjack + gatherer + builders, water stocked, fixed appetite; reload ran 31 h | PASS, both launches, 0 errors from our code |
+| `rt-gate5` | <!-- GATE5 --> | |
+| `rt-fallback1` | Save with 3 Ringtails reloaded with the save registration switched off (17.7) | Ringtails loaded as Inkpaws; only our deliberate error logged |
+| `rt-folktails1` | Folktails game with the prototype enabled and asked to spawn Ringtails | No Ringtail created, template set identical to earlier Folktails runs (332 placeable / 368 templates), 0 errors; the Ringtail building is "not available to this faction" |
+
+**The daily cycle of an employed Ringtail** (identical every day; `rt-gate4`, day 3, Kaduvom at the Forager's Nest;
+hours after dawn; `rt-gate3` shows the same pattern for all 4 couriers):
+
+| Hours | Doing | Where | Sleep need |
+|---|---|---|---|
+| 0–1 | finishes the current job, walks home | workplace → loft | 0.27 (lowest of the day) |
+| 1–3 | **sleeps** (vanilla `SleepNeedBehavior`, home sleep effects) | loft | 0.41 → 0.79 |
+| 4–5 | eats and drinks at the district center (hunger 0.44 → 0.99, thirst 0.31 → 0.93) | district center | 0.78 |
+| 5–8 | leisure / wanders | outdoors | 0.75 → 0.68 |
+| 8/9–24 | **at work** (afternoon with the Inkpaws, then the whole night alone) | workplace | 0.65 → 0.30 |
+
+* Per Ringtail per day: **16 h at work, 2.5–3 h asleep at home, ~5 h needs and leisure**; never at work inside the
+  rest window except to finish a job already running at dawn.
+* Inkpaws, same days: at work through the day, home or wandering in the evening, asleep about 21 h → dawn (vanilla).
+  So the three acts happen as designed: morning = Inkpaws working while Ringtails sleep/eat, afternoon = both at work,
+  night = Ringtails only.
+* **Needs:** no Ringtail ever had a critical need in any run (lowest Sleep 0.27, never below 0; lowest Hunger 0.43,
+  Thirst 0.31 in `rt-gate4`). With the appetite fix the Ringtails' Hunger fell 0.025/h against the Inkpaws' 0.033/h:
+  0.75× as designed. Inkpaws did run short of food late in `rt-gate4`'s reload (Hunger critical in 11 Inkpaw samples:
+  the test colony lives on its starting berries and one gatherer); that is the test economy, not the Ringtails, which
+  eat the same stock more slowly. (The first appetite version gave points back every tick, which — because any applied effect
+  suppresses that tick's decay — stopped hunger entirely; found in `rt-gate3`, fixed.)
+* **Job exclusivity: 0 violations** in 72 + 31 hourly samples of every colonist and workplace, in every run: Ringtail
+  workplaces only ever held Ringtails, Inkpaws never took them, Ringtails never took an Inkpaw job (vanilla
+  `DistrictWorkplaceAssigner` keys workplaces and workers by worker type).
+* **Throughput:** <!-- THROUGHPUT -->
+* **Speed:** Ringtail base walking speed 3.51 vs Inkpaw 2.70 (×1.30); lifting 14 for both.
+* **Kits:** the kit grew into a Ringtail adult (`RingtailAdult.Inkpaws`, "… grew up" notification) in every run;
+  Inkpaw cubs kept growing into Inkpaws.
+* **Save and reload:** all colonists came back with the same kind, template, workplace and home (`rt-gate3`: 18 of
+  18; `rt-gate4`: 20 of 20; compared colonist by colonist), and after the reload the Ringtail kept the same cycle
+  (asleep at home at dawn, at work afternoon and night) for the 31 hours observed, with no exceptions.
+* **Population numbers shown to the player** (vanilla `PopulationDataCollector`, every hour): "adults" = Inkpaws +
+  Ringtails (14–16), bed counts correct (18 beds, 0 homeless once the rule ran), but workforce, employed and
+  unemployed count only `Beaver`-type workers: with 5 Ringtails at work the panel showed "employed 2–4, unemployed
+  5–9" — the Ringtail crews are invisible to the vanilla numbers (see 17.5).
+* **Errors:** none from our code in any gate run (only the game's 31 known `Assertion failed` lines at scene load).
+  Every batch-control tab, including Population, opened with Ringtails present.
+* Night screenshots: `rt-gate3\rt_d0_h21_night_ringtail.png` (Ringtail panel: "Lives in: Loft / Works at: Courier
+  Loft"), `rt-gate3\rt_d0_h18_night_courierLoft.png`, `rt-gate4\rt_d1_h19_night_foragersNest.png`,
+  `rt-gate3\rt_d1_h2_morning_loft.png` (three Ringtails in a loft at 03:13), plus `*_night_overview.png`.
 
 ### 17.4 Housing: what happens when both kinds compete for beds
 
