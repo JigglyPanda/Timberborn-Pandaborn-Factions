@@ -331,7 +331,7 @@
    "materials": [
     "IrregularPlanks_*"
    ],
-   "ourSet": "Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), WeaveMossy (Mossy)",
+   "ourSet": "Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), FlatTiles (Mossy: flat roofs, grey tile laid flat)",
    "regions": [
     {
      "rect": [
@@ -555,6 +555,24 @@
       1024
      ],
      "kind": "glass / light panel, vertical gradient"
+    },
+    {
+     "rect": [
+      964,
+      16,
+      1024,
+      80
+     ],
+     "kind": "LanternPaperRed: Inkpaws lantern paper, red-orange glow (240,70,22), paper (196,52,34) by day; not in vanilla (unused by vanilla Folktails UVs)"
+    },
+    {
+     "rect": [
+      964,
+      96,
+      1024,
+      160
+     ],
+     "kind": "LanternPaperAmber: Sky Lantern paper, amber glow (255,118,36), paper (226,146,66) by day; not in vanilla (unused by vanilla Folktails UVs)"
     },
     {
      "rect": [

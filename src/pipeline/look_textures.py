@@ -182,7 +182,7 @@ BAKE = "E:/PandabornDev/build/look/bake"
 LIGHT = np.array([-0.45, 0.55, 0.70]) / np.linalg.norm([-0.45, 0.55, 0.70])   # painted light: upper left
 
 
-def from_bake(name, smooth, metal=0.0, paint=0.55, ao_paint=0.5, crisp=0.8, light=None):
+def from_bake(name, smooth, metal=0.0, paint=0.55, ao_paint=0.5, crisp=0.8, light=None, flatten=1.0):
     """A set baked by src/pipeline/bake_sheets.py (Cycles passes of modelled geometry). The albedo gets a painted
     light (soft top-left key + AO), the way the vanilla sheets are hand-painted, so models do not look flatter than
     Folktails ones under the game's own lighting."""
@@ -192,6 +192,9 @@ def from_bake(name, smooth, metal=0.0, paint=0.55, ao_paint=0.5, crisp=0.8, ligh
     ao = np.clip(np.load(os.path.join(d, "ao.npy")).mean(2), 0, 1)
     ln = np.linalg.norm(nrm, axis=2, keepdims=True)
     nrm = nrm / np.maximum(ln, 1e-6)
+    if flatten != 1.0:                       # soften the relief the game's lights see (normal map only)
+        nrm = nrm * np.array([flatten, flatten, 1.0])
+        nrm = nrm / np.linalg.norm(nrm, axis=2, keepdims=True)
     lt = LIGHT if light is None else np.asarray(light) / np.linalg.norm(light)
     lam = np.clip((nrm * lt).sum(2), 0, 1)
     flat = lt[2]
@@ -219,7 +222,8 @@ def baked_or(name, fallback, smooth, keep_emission=False, crisp=None):
         if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
             print("  (from Blender bake)", flush=True)
             st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8),
-                           paint=0.65 if name in ("RoofTiles", "FlatTiles") else 0.55,
+                           paint=0.45 if name in ("RoofTiles", "FlatTiles") else 0.55,
+                           flatten=0.65 if name in ("RoofTiles", "FlatTiles") else 1.0,
                            light=(-0.75, 0.25, 0.6) if name in ("RoofTiles", "FlatTiles") else None)   # grazing: rounds the covers
             if keep_emission:
                 st.e = fallback().e
@@ -678,8 +682,26 @@ def make_windows():
     e[:] = (np.array([255, 216, 150]) / 255.0)[None, None, :]
     pane = np.where(glass, np.clip(0.92 + 0.1 * glow_soft, 0, 1), glow_soft)
     e *= (pane * (~(lattice & glass)))[..., None]
+    # lantern paper patches in the strip right of the long window, which vanilla Folktails UVs never sample
+    # (checked by rasterising every WindowsAtlas.Folktails triangle: only x 960-961 is touched, hence the 4 px gap).
+    # Emission ignores vertex colour, so each glow colour needs its own texels: the kit maps lantern paper here.
+    for (x0, y0, x1, y1), glow, paper, seed in LANTERN_PATCHES:
+        ph, pw = y1 - y0, x1 - x0
+        yy, xx = np.mgrid[0:ph, 0:pw].astype(np.float32)
+        ribs = np.exp(-((yy % 10) - 1.5) ** 2 / 1.2)                 # bamboo ribs every 10 px
+        fib = noise(seed, 3, 1.2, shape=(S, S))[:ph, :pw]
+        st.d[y0:y1, x0:x1] = (np.array(paper) / 255.0)[None, None, :] * (0.94 + 0.08 * fib[..., None]) * (1 - 0.22 * ribs[..., None])
+        st.h[y0:y1, x0:x1] = 0.35 + 0.12 * ribs + 0.02 * fib
+        e[y0:y1, x0:x1] = (np.array(glow) / 255.0)[None, None, :] * (0.95 + 0.05 * fib[..., None]) * (1 - 0.08 * ribs[..., None])
     st.e = e
     return st
+
+
+# lantern paper patches on the WindowsAtlas sheet: rect [x0, y0, x1, y1) px, _E glow, _D paper by day, noise seed
+LANTERN_PATCHES = [
+    ((964, 16, 1024, 80), (240, 70, 22), (196, 52, 34), 801),     # small lanterns: red-orange
+    ((964, 96, 1024, 160), (255, 118, 36), (226, 146, 66), 802),   # Sky Lantern: amber
+]
 
 
 def make_details():

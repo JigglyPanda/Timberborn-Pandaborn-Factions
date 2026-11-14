@@ -461,7 +461,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 Y(cy + rr * u * np.sin(2 * math.pi * v)), (10 + 2 * (1 - u)) / S + 0 * u, c[0], c[1], c[2]), mm)
 
 
-def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.22, tile_rgb=(88, 84, 81), seed=5):
+def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.22, tile_rgb=(84, 72, 60), seed=5):
     """Clay pan-and-cover tiles. Default: courses 256 px tall with their lower lip at y = 200 + 256k (the vanilla thatch
     rhythm), 16 pan/cover pairs across (64 px), three tiles per course with a small step at each tile's lower end.
     The flat-roof variant (FlatTiles) lays shorter, flatter courses with more moss."""
@@ -483,15 +483,15 @@ def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.2
                 r2 = random.Random(hash(key) & 0xFFFF)
                 c = jitter(tile, r2, 0.09)                             # per-tile value variation
                 if r2.random() < 0.03:
-                    c = jitter(srgb((70, 68, 66)), r2, 0.05)           # an odd newer, darker tile
+                    c = jitter(srgb((68, 60, 52)), r2, 0.05)           # an odd newer, darker tile
                 cx = col * pitch + pitch / 2
                 rise = 3 + rise_step * t                               # tiles further down a course sit higher
 
                 def fpan(u, v, cx=cx, ya=ya, yb=yb, c=c, rise=rise):
                     xx = cx - pitch / 2 + pitch * v - 0.5
                     yy = ya + (yb - ya) * u
-                    z = rise + 10 * u - 6 * np.sin(math.pi * v)          # concave channel, rising to its lip
-                    shade = (0.50 + 0.15 * u) * (0.75 + 0.25 * np.abs(np.cos(math.pi * v)))
+                    z = rise + 10 * u - 3.5 * np.sin(math.pi * v)        # shallow concave channel, rising to its lip
+                    shade = (0.86 + 0.08 * u) * (0.92 + 0.08 * np.abs(np.cos(math.pi * v)))   # low pan/cover contrast
                     return X(xx), Y(yy), z / S, c[0] * shade, c[1] * shade, c[2] * shade
 
                 surface("p%d_%d_%d" % (k, t, col), 24, 12, fpan, pan_m)
@@ -500,9 +500,9 @@ def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.2
                 def fcov(u, v, cx=cx + pitch / 2, ya=ya, yb=yb, c=c, rise=rise):
                     th = math.pi * v
                     yy = ya + (yb - ya) * u
-                    z = rise + 10 * u + 2 + rc * np.sin(th) * 0.9
-                    shade = (1.0 + 0.08 * u) * (0.95 + 0.12 * np.sin(th) ** 2)   # a soft crown, no hard streak
-                    return X(cx + rc * np.cos(th)), Y(yy), z / S, c[0] * shade, c[1] * shade, c[2] * shade
+                    z = rise + 10 * u + 2 + rc * np.sin(th) * 0.55            # flatter covers: rows catch less light
+                    shade = (0.80 + 0.05 * u) * (0.97 + 0.05 * np.sin(th) ** 2)   # covers a touch darker and warmer
+                    return X(cx + rc * np.cos(th)), Y(yy), z / S, c[0] * shade, c[1] * shade * 0.97, c[2] * shade * 0.92
 
                 cc = jitter(c, r2, 0.05)
                 surface("c%d_%d_%d" % (k, t, col), 24, 16, fcov, cov_m)
@@ -571,7 +571,7 @@ SETS = {
                                                                 srgb((112, 98, 74))], seed=4),
     # flat roofs (IrregularPlanks_Mossy: lodge, warehouse, mine roofs): grey clay tile laid flat, mossy
     "FlatTiles": lambda: set_tiles(course=128.0, edge0=0.0, per_course=2, rise_step=2.0, moss_p=0.45,
-                                   tile_rgb=(84, 81, 78), seed=9),
+                                   tile_rgb=(80, 69, 58), seed=9),
     "RoofTiles": set_tiles,
 }
 

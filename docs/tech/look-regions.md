@@ -92,7 +92,9 @@ Materials: `WindowsAtlas.Folktails`. Our texture sets: Windows. Density: `Window
 | 7 | [544, 256, 992, 496] | arched window with mullions |
 | 8 | [768, 512, 1024, 768] | porthole / round light in a dark frame |
 | 9 | [768, 768, 1024, 1024] | glass / light panel, vertical gradient |
-| 10 | [512, 512, 768, 1024] | plain wall |
+| 10 | [964, 16, 1024, 80] | LanternPaperRed: Inkpaws lantern paper, red-orange glow (240,70,22), paper (196,52,34) by day; not in vanilla (unused by vanilla Folktails UVs) |
+| 11 | [964, 96, 1024, 160] | LanternPaperAmber: Sky Lantern paper, amber glow (255,118,36), paper (226,146,66) by day; not in vanilla (unused by vanilla Folktails UVs) |
+| 12 | [512, 512, 768, 1024] | plain wall |
 | – | whole sheet | background = wall around windows (flat) |
 
 ## Details

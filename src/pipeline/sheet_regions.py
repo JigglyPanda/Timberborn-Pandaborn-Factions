@@ -105,6 +105,10 @@ def windows():
         {"rect": [544, 256, 992, 496], "kind": "arched window with mullions"},
         {"rect": [768, 512, 1024, 768], "kind": "porthole / round light in a dark frame"},
         {"rect": [768, 768, 1024, 1024], "kind": "glass / light panel, vertical gradient"},
+        {"rect": [964, 16, 1024, 80], "kind": "LanternPaperRed: Inkpaws lantern paper, red-orange glow (240,70,22), paper (196,52,34) by day; "
+                                            "not in vanilla (unused by vanilla Folktails UVs)"},
+        {"rect": [964, 96, 1024, 160], "kind": "LanternPaperAmber: Sky Lantern paper, amber glow (255,118,36), paper (226,146,66) by day; "
+                                            "not in vanilla (unused by vanilla Folktails UVs)"},
         {"rect": [512, 512, 768, 1024], "kind": "plain wall"},
         {"rect": [0, 0, 1024, 1024], "kind": "background = wall around windows (flat)", "background": True},
     ]
