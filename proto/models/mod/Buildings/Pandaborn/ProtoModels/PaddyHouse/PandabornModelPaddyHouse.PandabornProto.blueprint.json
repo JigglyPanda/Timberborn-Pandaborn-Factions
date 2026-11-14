@@ -182,9 +182,6 @@
     "CanBeAttachedToTerrainSide": false,
     "DevModeTool": false
   },
-  "PlanterBuildingSpec": {
-    "PlantableResourceGroup": "AquaticFarmhouse"
-  },
   "WorkplaceIlluminatorSpec": {},
   "SimpleOutputInventorySpec": {
     "Capacity": 50,
