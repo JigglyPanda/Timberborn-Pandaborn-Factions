@@ -74,11 +74,11 @@ add is a toolkit for shallow water at many heights.
 
 | Tool | What it does |
 |---|---|
-| Flume | An open bamboo aqueduct one tile wide. Water runs one way, along the arrow, level or downhill. It never climbs and never leaks |
+| Flume | An open bamboo aqueduct one tile wide. Water runs one way, along the arrow, level or downhill. It never climbs and never spills, and the ground beside it stays moist six tiles to each side |
 | Flume Corner, Drop, Bridge | Turn, step down, and cross above the ground |
 | Flume Gate | The intake. Sets the flow, and **shuts itself when the water turns bad** |
 | Paddy Spout | Keeps the field in front of it flooded to a shallow set depth |
-| Scoop Wheel | Sits in a current and lifts water with no workers |
+| Scoop Wheel | Sits in a current and lifts a steady trickle with no workers. Still water does not turn it |
 | Treadwheel Lift | Lifts water where there is no current, turned by a worker |
 | Trip-Hammer Mill | A mill driven straight from a flume or stream, with no shafts |
 | Dew Collector | A little drinking water each dawn, less in drought |
@@ -87,9 +87,14 @@ add is a toolkit for shallow water at many heights.
 Rules that keep it pleasant:
 
 * **A flume never fails silently.** A dry intake, a missing corner and a starved run each say so on the piece.
-* **The taught unit is flume, spout, pool.** A flume carries; the pool at its end is what waters a field.
-* **Bamboo along a flume is the first payoff**, reachable in the first hour: the strip beside a ground flume
-  is moist.
+* **A flume is an irrigation line.** Measured in game: a ground flume keeps a strip thirteen tiles wide moist,
+  and loses almost nothing over sixty tiles. So the first payoff, in the first hour, is a bamboo grove along
+  a flume, with no digging.
+* **A spout makes a paddy.** The pool at the end of a flume is for rice; spouts cascade down a staircase of
+  terraces, each feeding the next.
+* **Wheels and mills show the current they have**, not horsepower, and say "needs a current" when becalmed.
+* **Pieces are sealed.** A backed-up line never overtops its gate, corner or spout, and a raised piece stands
+  on solid legs, so a flume cannot flood the field it serves.
 * **Drought has its own moment.** Sources stop and scoop wheels fall still; a cistern tap keeps the best strip
   alive; when the water returns it races back down every flume.
 
@@ -102,7 +107,12 @@ Rules that keep it pleasant:
 | Dry | Tea bushes, Sichuan pepper |
 
 * Dry-ground plants are luxuries and ingredients, never staple calories.
-* Tea and pepper die if their roots get wet, and say so. A dry-stone wall keeps moisture out of a tea slope.
+* Tea and pepper want dry roots. Water reaches far through soil (six tiles from a flume, sixteen from a
+  paddy), so they go **a step above the water**: the top bench of a terrace. A dry-stone wall also keeps
+  moisture out of a slope.
+* Wet roots are a warning, not a sentence: a tea or pepper bush stops growing and says so, and dies only
+  after about three wet days.
+* Foresters replant dead trees by default, so a grove that dies in a long drought comes back by itself.
 
 ### Bamboo, as two ordinary plants
 
@@ -342,4 +352,7 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | The day's length is fixed at dawn: moving the bell shows "Rested +33%; tomorrow +0%" and takes effect next morning | Otherwise a player could work a long day and slide the bell back at dusk to keep the bonus |
 | 2026-11-14 | Inkpaws' top walking speed is raised (the game stops everyone at twice normal) | In game, the rested bonus stopped helping walkers above wellbeing 52; with the limit raised a twelve-hour day matches a sixteen-hour one at every wellbeing level |
 | 2026-11-14 | In an Inkpaws game the interface says "Inkpaw", "cub" and "panda" where vanilla says "beaver" and "kit", by code that only acts while an Inkpaws game is loaded | A panda faction whose every tooltip says "beavers" feels like a reskin; a text override file would have renamed beavers in Folktails games too |
+| 2026-11-14 | A flume waters the ground beside it; "flume, spout, pool" is no longer the taught unit | The water prototype measured six moist tiles to each side of a one-wide flume. The pool is for rice only |
+| 2026-11-14 | Tea and pepper survive about three wet days; they belong on the top bench | In the prototype a dry-ground crop died within a day anywhere near water, and moisture reaches sixteen tiles from a paddy |
+| 2026-11-14 | Inkpaw foresters replant dead trees by default | The vanilla default leaves a dead grove dead, which would end pole supply after one long drought |
 | 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
