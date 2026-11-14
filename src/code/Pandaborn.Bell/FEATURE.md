@@ -35,7 +35,7 @@ slider during the day changes nothing until the next morning).
 * **Shown** as a line under the working-hours panel ("Rested +33%", or "Rested +33%; tomorrow +0%" after the slider
   moved) with a tooltip; as a line on an Inkpaw's panel; and inside the vanilla wellbeing bonus totals.
 * **The shift bell**: when the Inkpaw working day ends and when it starts (`WorkingHoursTransitionedEvent`), the bell
-  rings once from the Village Hall (the first finished district center), 3D, on the game's Environment volume, at most
+  rings once, heard everywhere (2D; only when a Village Hall, the first finished district center, stands), at the game's sound volume, at most
   twice per game day, and silently does nothing when the clip is not loaded (`Pandaborn.Core.PandabornSounds`).
 * **Saved**: `PandabornStore` entry `Bell` v1, `locked=<hours>;suggested=<0|1>;settled=<0|1>`. Bonuses are not saved.
 * `IWorkdayClock` (Core): the locked day for other modules (the Ringtails' shift).
@@ -72,7 +72,6 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 * type `Timberborn.BaseComponentSystem.BaseComponent`
   * method `.ctor()`
   * method `GetComponent<1>()`
-  * method `get_GameObject()`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
 **Timberborn.Beavers**
@@ -215,7 +214,6 @@ markers are inert. Interface pieces sit behind `SafeUi`.
   * method `Log(System.Object)`
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
-* type `UnityEngine.GameObject`
 * type `UnityEngine.Mathf`
   * method `Abs(System.Single)`
   * method `CeilToInt(System.Single)`
