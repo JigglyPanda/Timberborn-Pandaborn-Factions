@@ -115,7 +115,12 @@ namespace PandabornDevHarness
             for (int i = _pending.Count - 1; i >= 0; i--)
             {
                 var a = _pending[i];
-                if (now < ((float?)a["at"] ?? 0f)) continue;
+                float at = (float?)a["at"] ?? 0f;
+                if (now < at) continue;
+                // a target building may not be placed yet (the harness places buildings a few seconds into the game):
+                // wait for it up to 90 s, then run anyway and log "target not found"
+                string target = (string)a["target"];
+                if (!string.IsNullOrEmpty(target) && now < at + 90f && (Time.frameCount % 15 != 0 || Find(target) == null)) continue;
                 _pending.RemoveAt(i);
                 Run(a, now);
             }
