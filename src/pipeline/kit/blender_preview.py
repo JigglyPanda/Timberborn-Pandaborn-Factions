@@ -60,6 +60,21 @@ def material(name, night):
     if name in MATS:
         return MATS[name]
     mat = bpy.data.materials.new(name)
+    if name.startswith("Unlit"):
+        # preview-only: the vertex colour as it is, unlit (painted scenery such as far hills)
+        mat.use_nodes = True
+        nt = mat.node_tree
+        for n in list(nt.nodes):
+            if n.type != "OUTPUT_MATERIAL":
+                nt.nodes.remove(n)
+        em = nt.nodes.new("ShaderNodeEmission")
+        vc = nt.nodes.new("ShaderNodeVertexColor")
+        vc.layer_name = "Col"
+        nt.links.new(vc.outputs["Color"], em.inputs["Color"])
+        em.inputs["Strength"].default_value = 1.0
+        nt.links.new(em.outputs["Emission"], nt.nodes["Material Output"].inputs["Surface"])
+        MATS[name] = mat
+        return mat
     mat.use_nodes = True
     nt = mat.node_tree
     bsdf = nt.nodes["Principled BSDF"]
@@ -296,6 +311,52 @@ def setup(night):
         mix.inputs[7].default_value = (*zn, 1)
         nt.links.new(mix.outputs[2], bg.inputs["Color"])
         bg.inputs["Strength"].default_value = st
+    if job.get("skyRamp"):
+        # a sky by stops over the view direction's height: job["skyRamp"] = [[z, [r, g, b]], ...] (z 0 = horizon,
+        # 1 = zenith), job["skyStrength"]; job["stars"] = [density scale, size, brightness] adds stars above the horizon
+        nt = w.node_tree
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(tc.outputs["Generated"], sep.inputs[0])
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        stops = job["skyRamp"]
+        els = ramp.color_ramp.elements
+        els[0].position, els[0].color = stops[0][0], (*stops[0][1], 1)
+        els[1].position, els[1].color = stops[-1][0], (*stops[-1][1], 1)
+        for z, c in stops[1:-1]:
+            e = els.new(z)
+            e.color = (*c, 1)
+        nt.links.new(sep.outputs[2], ramp.inputs["Fac"])
+        col = ramp.outputs["Color"]
+        if job.get("stars"):
+            scale, size, bright = job["stars"]
+            vor = nt.nodes.new("ShaderNodeTexVoronoi")
+            vor.inputs["Scale"].default_value = scale
+            nt.links.new(tc.outputs["Generated"], vor.inputs["Vector"])
+            lt = nt.nodes.new("ShaderNodeMath")
+            lt.operation = "LESS_THAN"
+            lt.inputs[1].default_value = size
+            nt.links.new(vor.outputs["Distance"], lt.inputs[0])
+            hz = nt.nodes.new("ShaderNodeMapRange")       # no stars near the horizon glow
+            hz.inputs["From Min"].default_value, hz.inputs["From Max"].default_value = 0.12, 0.35
+            nt.links.new(sep.outputs[2], hz.inputs["Value"])
+            m1 = nt.nodes.new("ShaderNodeMath")
+            m1.operation = "MULTIPLY"
+            nt.links.new(lt.outputs[0], m1.inputs[0])
+            nt.links.new(hz.outputs["Result"], m1.inputs[1])
+            m2 = nt.nodes.new("ShaderNodeMath")
+            m2.operation = "MULTIPLY"
+            m2.inputs[1].default_value = bright
+            nt.links.new(m1.outputs[0], m2.inputs[0])
+            add = nt.nodes.new("ShaderNodeMix")
+            add.data_type = "RGBA"
+            add.blend_type = "ADD"
+            add.inputs["Factor"].default_value = 1.0
+            nt.links.new(col, add.inputs[6])
+            nt.links.new(m2.outputs[0], add.inputs[7])
+            col = add.outputs[2]
+        nt.links.new(col, bg.inputs["Color"])
+        bg.inputs["Strength"].default_value = job.get("skyStrength", 1.0)
     if "sunEnergy" in job:
         sun.data.energy = job["sunEnergy"]
     for L in job.get("lights", []):
@@ -305,6 +366,8 @@ def setup(night):
         lo.data.color = L.get("color", (1.0, 0.6, 0.3))
         if hasattr(lo.data, "shadow_soft_size"):
             lo.data.shadow_soft_size = L.get("radius", 0.3)
+        if L.get("type") == "AREA":
+            lo.data.size = L.get("radius", 1.0)
 
 
 def camera(objs):

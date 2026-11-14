@@ -88,6 +88,14 @@ WIN_PANES = (0.672, 0.885, 0.915, 0.978)     # four-pane strip, glows
 WIN_TALL = (0.538, 0.865, 0.590, 0.990)      # tall narrow pane, glows
 WIN_ROUND = (0.755, 0.255, 0.994, 0.495)     # round cracked-ice window, glows
 LANTERN_GLOW = (0.76, 0.015, 0.84, 0.08)  # an even strip of the glass panel's paper cells (no dark gap): lantern paper
+# Warm lantern glow (pass 5): the WindowsAtlas glow map is one pale amber everywhere and the shader's emission ignores
+# vertex colour (EnvironmentURP: LightingMap x LightingColor x strength), so a lantern glows the colour of its patch of
+# the glow map. Requested from the look lane (models.md, "Lantern glow colour"): two plain patches in the atlas's free
+# right-hand column, red-orange [960,16,1024,80] and amber [960,96,1024,160] (pixels, y down). Until the sheet has
+# them, PB_LANTERN_WARM stays unset and lanterns keep LANTERN_GLOW (a patch still blank would not glow at all).
+LANTERN_RED = (0.9414, 0.9258, 0.9961, 0.9805)     # [964,20,1020,76]
+LANTERN_AMBER = (0.9414, 0.8477, 0.9961, 0.9023)   # [964,100,1020,156]
+WARM_LANTERNS = os.environ.get("PB_LANTERN_WARM") == "1"
 WIN_DARK = (0.02, 0.02, 0.48, 0.48)          # dark doorway (warm glow at night in the lower part)
 WIN_WALL = (0.52, 0.02, 0.73, 0.48)          # plain lime wall
 # Details sheet

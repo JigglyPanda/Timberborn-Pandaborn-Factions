@@ -27,7 +27,7 @@ import core  # noqa: E402
 from core import Geo, shade, write, TIMBER, BAMBOO_GOLD  # noqa: E402
 import parts as K  # noqa: E402
 
-OUT_ROOT = r"E:\PandabornDev\build\models"
+OUT_ROOT = os.environ.get("PB_MODELS_OUT", r"E:\PandabornDev\build\models")   # PB_MODELS_OUT: a trial build elsewhere
 
 # vanilla triangle counts by footprint area (tiles), p50 and p90 of the Folktails building models
 BUDGET = [(1, 300, 520), (2, 520, 660), (4, 900, 1200), (6, 1250, 1700), (9, 1600, 2200), (12, 1900, 2500),

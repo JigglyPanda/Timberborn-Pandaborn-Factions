@@ -40,7 +40,7 @@ def bounds_unity(path):
 
 
 def render(model, ref=None, out=OUT, name=None, yaw=25.0, pitch=55.0, size=(1200, 800), frame_anim=None,
-           slots=False, samples=48, night=True, extra=(), ppu=None):
+           slots=False, samples=48, night=True, extra=(), ppu=None, look=None):
     os.makedirs(out, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
     name = name or os.path.basename(model).split(".")[0]
@@ -63,7 +63,8 @@ def render(model, ref=None, out=OUT, name=None, yaw=25.0, pitch=55.0, size=(1200
     res = {"day": os.path.join(out, name + "_day.png")}
     if night:
         res["night"] = os.path.join(out, name + "_night.png")
-    job = {"items": items, "textures": os.path.join(LOOK, "Textures"), "spec": os.path.join(LOOK, "look_spec.json"),
+    look = look or LOOK
+    job = {"items": items, "textures": os.path.join(look, "Textures"), "spec": os.path.join(look, "look_spec.json"),
            "out": res, "size": list(size), "yaw": yaw, "pitch": pitch, "focal": 110, "samples": samples,
            "grid": grid, "showSlots": slots}
     if ppu:

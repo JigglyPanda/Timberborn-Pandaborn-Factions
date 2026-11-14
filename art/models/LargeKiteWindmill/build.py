@@ -50,7 +50,7 @@ with g.node("#KiteRotor"):
         w = 0.6
         sail = [base + [0, 1.1, 0] - t * 0.02, base + [0, 1.1, 0] - t * w, base + [0, 4.1, 0] - t * (w * 0.8),
                 base + [0, 4.1, 0] - t * 0.02]
-        K.cloth(g, sail, DETAILS, (0.03, 0.54, 0.09, 0.98), sag=0.0, nu=1,   # all indigo: dark from above, unlike the small one
+        K.cloth(g, sail, DETAILS, (0.53, 0.55, 0.72, 0.95) if k == 0 else (0.03, 0.54, 0.09, 0.98), sag=0.0, nu=1,   # indigo, one pale hemp sail so the turning shows
                 nv=3, wave=0.03)
         for j in range(5):
             y = 1.15 + 0.72 * j

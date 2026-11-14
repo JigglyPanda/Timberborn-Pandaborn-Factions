@@ -54,9 +54,10 @@ LC = C + np.array([0.0, HT + 0.15, 0.0])
 with g.node("#SkyLanternAnimated"):
     body = [(0.85, 0.0), (1.5, 0.55), (1.85, 1.6), (1.8, 2.6), (1.45, 3.3), (0.65, 3.7), (0.0, 3.78)]
     n0 = len(g.parts)
-    K.lathe(g, body, LC + [0, 0.35, 0], 12, WINDOWS, uv_region=LANTERN_GLOW, cap_top=False, tags={"glow"})
+    K.lathe(g, body, LC + [0, 0.35, 0], 12, WINDOWS, uv_region=LANTERN_AMBER if WARM_LANTERNS else LANTERN_GLOW,
+            cap_top=False, tags={"glow"})
     for p in g.parts[n0:]:
-        p.C = np.tile([1.0, 0.62, 0.36, 1.0], (len(p.P), 1))      # red-gold paper
+        p.C = np.tile([1.0, 1.0, 1.0, 1.0] if WARM_LANTERNS else [1.0, 0.62, 0.36, 1.0], (len(p.P), 1))   # red-gold paper
     # bamboo ribs over the paper, a hoop at the mouth, the fire tray hanging inside
     for k in range(8):
         a = 2 * math.pi * k / 8

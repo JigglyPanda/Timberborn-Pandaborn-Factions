@@ -32,7 +32,8 @@
   "PandabornModelTerraceHouse.PandabornProto",
   "PandabornModelFestivalSquare.PandabornProto",
   "PandabornModelLanternWorkshop.PandabornProto",
-  "PandabornModelBambooPinwheel.PandabornProto"
+  "PandabornModelBambooPinwheel.PandabornProto",
+  "PandabornModelLargeKiteWindmill.PandabornProto"
  ],
  "screenshots": [
   {
@@ -55,12 +56,56 @@
    "name": "BambooPinwheel_turn_1",
    "kind": "building",
    "target": "PandabornModelBambooPinwheel.PandabornProto",
-   "at": "9.5",
+   "at": "7.8",
    "front": true,
    "yaw": 20,
    "pitch": 45,
    "zoom": 1.0,
    "minDistance": 3.0
+  },
+  {
+   "name": "BambooPinwheel_turn_2",
+   "kind": "building",
+   "target": "PandabornModelBambooPinwheel.PandabornProto",
+   "at": "8.8",
+   "front": true,
+   "yaw": 20,
+   "pitch": 45,
+   "zoom": 1.0,
+   "minDistance": 3.0
+  },
+  {
+   "name": "LargeKiteWindmill_turn_0",
+   "kind": "building",
+   "target": "PandabornModelLargeKiteWindmill.PandabornProto",
+   "at": "13.6",
+   "front": true,
+   "yaw": 20,
+   "pitch": 50,
+   "zoom": 1.0,
+   "minDistance": 6.0
+  },
+  {
+   "name": "LargeKiteWindmill_turn_1",
+   "kind": "building",
+   "target": "PandabornModelLargeKiteWindmill.PandabornProto",
+   "at": "14.6",
+   "front": true,
+   "yaw": 20,
+   "pitch": 50,
+   "zoom": 1.0,
+   "minDistance": 6.0
+  },
+  {
+   "name": "LargeKiteWindmill_turn_2",
+   "kind": "building",
+   "target": "PandabornModelLargeKiteWindmill.PandabornProto",
+   "at": "15.6",
+   "front": true,
+   "yaw": 20,
+   "pitch": 50,
+   "zoom": 1.0,
+   "minDistance": 6.0
   },
   {
    "name": "MoonLoft_walk_0",
