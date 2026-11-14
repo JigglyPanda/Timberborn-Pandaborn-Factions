@@ -12,6 +12,10 @@
   "PandabornModelSteamer.PandabornProto",
   "PandabornModelMoonLoft.PandabornProto",
   "PandabornModelCistern.PandabornProto",
+  "PandabornModelKiteWindmill.PandabornProto",
+  "PandabornModelKindergarten.PandabornProto",
+  "PandabornModelPickleYard.PandabornProto",
+  "PandabornModelDewCollector.PandabornProto",
   "PandabornModelBambooWaterWheel.PandabornProto",
   "PandabornModelScoopWheel.PandabornProto",
   "PandabornModelPaddySpout.PandabornProto",
@@ -85,6 +89,34 @@
    "name": "Cistern_day",
    "kind": "building",
    "target": "PandabornModelCistern.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "KiteWindmill_day",
+   "kind": "building",
+   "target": "PandabornModelKiteWindmill.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Kindergarten_day",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "PickleYard_day",
+   "kind": "building",
+   "target": "PandabornModelPickleYard.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "DewCollector_day",
+   "kind": "building",
+   "target": "PandabornModelDewCollector.PandabornProto",
    "at": "start",
    "zoom": 1.5
   },
@@ -193,6 +225,34 @@
    "name": "Cistern_night",
    "kind": "building",
    "target": "PandabornModelCistern.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "KiteWindmill_night",
+   "kind": "building",
+   "target": "PandabornModelKiteWindmill.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Kindergarten_night",
+   "kind": "building",
+   "target": "PandabornModelKindergarten.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "PickleYard_night",
+   "kind": "building",
+   "target": "PandabornModelPickleYard.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "DewCollector_night",
+   "kind": "building",
+   "target": "PandabornModelDewCollector.PandabornProto",
    "at": "end",
    "zoom": 1.5
   },

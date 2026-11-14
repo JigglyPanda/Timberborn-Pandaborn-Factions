@@ -66,8 +66,8 @@ K.lathe(g, [(0.0, 0.0), (0.08, 0.0), (0.1, 0.07), (0.07, 0.13), (0.03, 0.15), (0
 K.tube(g, [(2.56, 0.52, 2.55), (2.56, 1.5, 2.6)], [0.05, 0.045], EARTH, sides=6)
 # lanterns at the front eave corners, a tea shrub in a pot by the steps
 K.lathe(g, [(0.0, 0.0), (0.12, 0.0), (0.15, 0.18), (0.16, 0.2)], (2.6, B, 0.45), 7, EARTH)
-for k in range(6):
-    a = k * 1.05
+for k in range(3):
+    a = k * 2.1
     K.lathe(g, [(0.0, 0.0), (0.11, 0.05), (0.07, 0.16), (0.0, 0.2)], (2.6 + 0.06 * np.cos(a), B + 0.22, 0.45 + 0.06 * np.sin(a)),
             5, MOSS)
 # five seats for the attraction (Campfire.Folktails has CapacityFinished 5)

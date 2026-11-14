@@ -250,11 +250,11 @@ class Geo:
 
 
 # ------------------------------------------------------------------------------------------- vertex colour
-def shade(parts, ground=0.0, seed=7, ao_height=0.7, ao_min=0.62, underside=0.72):
+def shade(parts, ground=0.0, seed=7, ao_height=0.7, ao_min=0.62, underside=0.72, baked=None, ao_floor=0.42):
     """Vertex colours: per-part brightness/hue jitter (hand-made look), ground occlusion near the base, darker
     undersides, and any colour a part already carries (tints, stones). White = unshaded."""
     rng = np.random.default_rng(seed)
-    for p in parts:
+    for i, p in enumerate(parts):
         base = np.ones((len(p.P), 4)) if p.C is None else p.C.copy()
         if "noshade" in p.tags:
             p.C = base
@@ -264,6 +264,8 @@ def shade(parts, ground=0.0, seed=7, ao_height=0.7, ao_min=0.62, underside=0.72)
         y = p.P[:, 1] - ground
         if "glow" in p.tags:
             occ = np.ones(len(p.P))
+        elif baked is not None:          # Cycles-baked occlusion (ao.py), softened so nothing goes black
+            occ = ao_floor + (1 - ao_floor) * np.clip(baked[i], 0, 1) ** 0.8
         else:
             occ = ao_min + (1 - ao_min) * np.clip(y / ao_height, 0, 1) ** 0.7
             occ *= np.where(p.N[:, 1] < -0.5, underside, 1.0)

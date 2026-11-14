@@ -39,13 +39,13 @@ for row, z in enumerate((0.42, 0.85, 1.28)):
             continue
         h = 0.32 + 0.05 * ((row + col) % 2)
         r = 0.15
-        prof = [(0.0, 0.0), (r * 0.7, 0.0), (r, h * 0.4), (r * 0.9, h * 0.8), (r * 0.62, h), (r * 0.65, h + 0.03)]
+        prof = [(r * 0.7, 0.0), (r, h * 0.4), (r * 0.9, h * 0.8), (r * 0.62, h)]
         n0 = len(g.parts)
-        K.lathe(g, prof, (x, B, z), 7, PLASTER, cap_top=True)
+        K.lathe(g, prof, (x, B, z), 6, PLASTER, cap_top=True)
         for part in g.parts[n0:]:      # body and mouth: glazed brown, each jar a little different
             part.C = np.tile(np.array(GLAZE) * (0.9 + 0.2 * ((row * 3 + col) % 3) / 2), (len(part.P), 1))
             part.C[:, 3] = 1
-        K.lathe(g, [(r * 0.75, 0.0), (r * 0.72, 0.03), (0.0, 0.05)], (x, B + h + 0.02, z), 7, BAMBOO_GOLD, cap_top=False)
+        K.lathe(g, [(r * 0.75, 0.0), (0.0, 0.05)], (x, B + h + 0.0, z), 6, BAMBOO_GOLD, cap_top=False)
         if (row + col) % 2 == 0:
             K.stones(g, x - 0.05, z - 0.05, x + 0.05, z + 0.05, y=B + h + 0.05, size=0.1, h=0.06, ring=False)
 # worktable with cabbages, and a drying rack of cabbages on strings

@@ -456,7 +456,7 @@ def _tile_patch(geo, E0, E1, R1, R0, rows, cols, sag, lift_fn, thick, rib=0.035,
 
 
 def roof(geo, x0, z0, x1, z1, y_eave, y_ridge, kind="gable", overhang=0.22, sag=0.07, lift=0.06, thick=0.07,
-         tile=0.26, course=0.3, ridge=True, ridge_ends=0.07, axis="x", tags=(), hip_inset=None):
+         tile=0.3, course=0.36, ridge=True, ridge_ends=0.07, axis="x", tags=(), hip_inset=None):
     """A grey clay tile roof over the rectangle x0..x1, z0..z1. kind: 'gable' (ridge along `axis`), 'hip',
     'lean' (single slope, high side at z1 or x1), 'pyramid' (hip with a point). Tile columns are about `tile`
     wide and courses `course` long. Returns the ridge's ends."""
@@ -684,13 +684,14 @@ def basket(geo, base, h=0.22, r=0.16, material="IrregularPlanks_LightBrown.Folkt
 def lantern(geo, at, r=0.09, h=0.2, hanging=True, tags=()):
     """A red paper lantern: glowing round body (window paper glows at night), red caps, a tassel."""
     at = V(at, float)
-    body = [(0.02, 0.0), (r * 0.7, 0.01), (r, h * 0.3), (r, h * 0.7), (r * 0.7, h * 0.99), (0.02, h)]
+    body = [(r * 0.62, 0.0), (r, h * 0.3), (r, h * 0.7), (r * 0.62, h)]
     lathe(geo, body, at - V([0, h, 0]) if hanging else at, 6, WINDOWS, uv_region=(0.80, 0.03, 0.95, 0.20),
           tags=set(tags) | {"glow"}, cap_top=False)
-    for y in ((0.0, 0.03), (h - 0.03, h + 0.005)):
+    for k, y in enumerate(((0.03, -0.0), (h - 0.03, h + 0.005))):
         base = (at - V([0, h, 0]) if hanging else at) + V([0, y[0], 0])
+        # red rings capping the body; closed on the outside so neither end shows a hole
         lathe(geo, [(r * 0.64, 0), (r * 0.64, y[1] - y[0])], base, 6, DETAILS,
-              uv_region=DET_RED, tags=tags, cap_top=False)
+              uv_region=DET_RED, tags=tags, cap_top=True)
     if hanging:
         beam(geo, at, at + V([0, 0.08, 0]), w=0.012, material=DETAILS, tags=tags)
 
@@ -774,8 +775,8 @@ def stones(geo, x0, z0, x1, z1, y=0.0, size=0.16, h=0.12, gap=0.02, ring=True, t
 def plinth(geo, x0, z0, x1, z1, h=0.14, tags=()):
     """A rammed-earth platform under a building, edged with river stones."""
     box(geo, (x0, 0, z0), (x1, h, z1), EARTH, (0.02, 0.02, 0.98, 0.98), tags=set(tags) | {"base"}, skip=(3,))
-    stones(geo, x0 + 0.04, z0 + 0.04, x1 - 0.04, z1 - 0.04, y=-0.02, size=0.26, h=h * 0.9, tags=set(tags) | {"base"},
-           skip=0.25)
+    stones(geo, x0 + 0.04, z0 + 0.04, x1 - 0.04, z1 - 0.04, y=-0.02, size=0.3, h=h * 0.9, tags=set(tags) | {"base"},
+           skip=0.35)
 
 
 def stairs(geo, a, b, width=0.5, steps=4, material=TIMBER, tags=()):

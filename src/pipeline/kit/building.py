@@ -163,11 +163,19 @@ class Model:
              "materials": sorted(tris)}
         return r
 
-    def build(self, write_json=True):
+    def build(self, write_json=True, ao=True):
         os.makedirs(self.out, exist_ok=True)
         stage = self._stage_parts()
-        shade(self.geo.parts, seed=zlib.crc32(self.id.encode()) % 1000)
-        shade(stage, seed=5)
+        baked = baked_stage = None
+        if ao:
+            import ao as AO
+            try:
+                baked = AO.bake(self.geo.parts)
+                baked_stage = AO.bake(stage)
+            except Exception as ex:  # noqa: BLE001 - fall back to the height-based guess
+                print("AO bake failed, using height occlusion:", str(ex)[:300])
+        shade(self.geo.parts, seed=zlib.crc32(self.id.encode()) % 1000, baked=baked)
+        shade(stage, seed=5, baked=baked_stage)
         fin_path = os.path.join(self.out, f"{self.id}.Model.timbermesh")
         st_path = os.path.join(self.out, f"{self.id}.ConstructionStage0.Model.timbermesh")
         write(fin_path, self.id, self.geo.parts, self.animated, self.slots)
