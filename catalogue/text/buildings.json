@@ -274,6 +274,12 @@
       "description": "Carries a flume above the ground on bamboo trestles, across dips and gaps.",
       "flavor": "Everyone who passes looks up at it. It has never dripped."
     },
+    "Flume Bridge Span": {
+      "id": "PandabornFlumeBridgeSpan", "basis": "new", "who": "-",
+      "name": "Flume Bridge Span",
+      "description": "Carries a flume over another flume.",
+      "flavor": "Two streams, one above the other, neither of them in a hurry."
+    },
     "Flume Gate": {
       "id": "PandabornFlumeGate", "basis": "new", "vanilla_basis": "FillValve", "who": "-",
       "name": "Flume Gate",

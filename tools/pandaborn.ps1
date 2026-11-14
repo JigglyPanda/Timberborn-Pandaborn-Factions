@@ -320,7 +320,7 @@ foreach ($s in $stages) {
         'gate' {
             if ($failed.Count -gt 0) { Say "gate: not run, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
             $hash = Get-StageHash $StageDir
-            $copy = 'pbgate'
+            $copy = 'pbgate-' + $hash.Substring(0, 8)   # one copy per staging content: two gates never share a folder
             & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'proto\foundation\build.ps1') -Name $copy -Source $StageDir | Out-Host
             if ($LASTEXITCODE -ne 0) { Say 'gate: the dev copy did not build' 'Red'; $failed += $s; break }
             $runId = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
