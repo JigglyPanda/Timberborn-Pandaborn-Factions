@@ -496,12 +496,43 @@ function Get-RunVerdict($run, [string]$label) {
 
 # ------------------------------------------------------------------ cross-process game lock
 # One test at a time per machine: a named mutex held for the whole run, plus no other Timberborn process.
+# Waiters are served first come, first served: each writes a ticket file (name sorts by arrival time) into
+# <TestRoot>\queue and only the oldest ticket whose process is still alive may try for the mutex. Without this,
+# whoever happened to poll first after a release won, and a run could wait hours behind later arrivals.
+function Get-QueueAhead([string]$queueDir, [string]$myTicket) {
+    $ahead = @()
+    foreach ($f in @(Get-ChildItem -LiteralPath $queueDir -Filter '*.json' -ErrorAction SilentlyContinue | Sort-Object Name)) {
+        if ($f.Name -eq $myTicket) { break }
+        $alive = $false; $t = $null
+        try {
+            $t = Get-Content -LiteralPath $f.FullName -Raw | ConvertFrom-Json
+            $p = Get-Process -Id ([int]$t.pid) -ErrorAction SilentlyContinue
+            # same pid and same start time = the same process (pids are reused)
+            if ($p -and ($p.StartTime.ToUniversalTime().ToString('o') -eq $t.processStartedUtc)) { $alive = $true }
+        } catch { }
+        if ($alive) { $ahead += $t } else { try { Remove-Item -LiteralPath $f.FullName -Force } catch { } }
+    }
+    return $ahead
+}
+
 function Enter-GameLock([int]$timeoutSeconds, [string]$what) {
     $mutex = New-Object System.Threading.Mutex($false, $mutexName)
     $deadline = (Get-Date).AddSeconds($timeoutSeconds)
     $owned = $false; $lastMessage = ''
+    $queueDir = Join-Path $TestRoot 'queue'
+    $myTicket = '{0}-{1:D6}.json' -f (Get-Date).ToUniversalTime().ToString('yyyyMMddHHmmssfff'), $PID
+    $myTicketPath = Join-Path $queueDir $myTicket
+    try {
+        New-Item -ItemType Directory -Force $queueDir | Out-Null
+        $ticket = [ordered]@{ pid = $PID; what = $what; queuedUtc = (Get-Date).ToUniversalTime().ToString('o')
+                              processStartedUtc = (Get-Process -Id $PID).StartTime.ToUniversalTime().ToString('o') }
+        [IO.File]::WriteAllText($myTicketPath, ($ticket | ConvertTo-Json), $utf8)
+    } catch { $myTicketPath = $null }   # no ticket: fall back to plain polling
+    $script:queueTicketPath = $myTicketPath   # also removed on every exit path of the script (main finally)
     while ($true) {
-        if (-not $owned) {
+        $ahead = @()
+        if (-not $owned -and $myTicketPath) { $ahead = @(Get-QueueAhead $queueDir $myTicket) }
+        if (-not $owned -and $ahead.Count -eq 0) {
             try { $owned = $mutex.WaitOne(0) }
             catch {
                 $inner = $_.Exception; while ($inner.InnerException) { $inner = $inner.InnerException }
@@ -516,6 +547,7 @@ function Enter-GameLock([int]$timeoutSeconds, [string]$what) {
                 $info = [ordered]@{ pid = $PID; what = $what; user = $env:USERNAME; startedUtc = (Get-Date).ToUniversalTime().ToString('o')
                                     command = [Environment]::CommandLine }
                 try { New-Item -ItemType Directory -Force $TestRoot | Out-Null; [IO.File]::WriteAllText($lockInfoPath, ($info | ConvertTo-Json), $utf8) } catch { }
+                if ($myTicketPath) { try { Remove-Item -LiteralPath $myTicketPath -Force } catch { } }
                 return $mutex
             }
             $message = "Waiting for Timberborn to close (pid $($procs.Id -join ', '); not started by a test run holding the lock)."
@@ -523,9 +555,11 @@ function Enter-GameLock([int]$timeoutSeconds, [string]$what) {
             $holder = '(unknown)'
             if (Test-Path $lockInfoPath) { try { $h = Get-Content $lockInfoPath -Raw | ConvertFrom-Json; $holder = "pid $($h.pid), $($h.what), since $($h.startedUtc)" } catch { } }
             $message = "Waiting for another game test to finish: $holder"
+            if ($ahead.Count -gt 0) { $message = "Queued behind $($ahead.Count) earlier run(s); next: pid $($ahead[0].pid), $($ahead[0].what). Running now: $holder" }
         }
         if ((Get-Date) -gt $deadline) {
             Say "Gave up after $timeoutSeconds s. $message" 'Red'
+            if ($myTicketPath) { try { Remove-Item -LiteralPath $myTicketPath -Force } catch { } }
             if ($owned) { $mutex.ReleaseMutex() }
             $mutex.Dispose()
             return $null
@@ -835,5 +869,6 @@ try {
         }
     }
     Exit-GameLock $lock
+    if ($script:queueTicketPath) { try { Remove-Item -LiteralPath $script:queueTicketPath -Force -ErrorAction SilentlyContinue } catch { } }
 }
 exit $exitCode
