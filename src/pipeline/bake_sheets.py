@@ -461,7 +461,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 Y(cy + rr * u * np.sin(2 * math.pi * v)), (10 + 2 * (1 - u)) / S + 0 * u, c[0], c[1], c[2]), mm)
 
 
-def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.22, tile_rgb=(84, 72, 60), seed=5):
+def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.22, tile_rgb=(80, 74, 67), seed=5):
     """Clay pan-and-cover tiles. Default: courses 256 px tall with their lower lip at y = 200 + 256k (the vanilla thatch
     rhythm), 16 pan/cover pairs across (64 px), three tiles per course with a small step at each tile's lower end.
     The flat-roof variant (FlatTiles) lays shorter, flatter courses with more moss."""
@@ -483,7 +483,7 @@ def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.2
                 r2 = random.Random(hash(key) & 0xFFFF)
                 c = jitter(tile, r2, 0.09)                             # per-tile value variation
                 if r2.random() < 0.03:
-                    c = jitter(srgb((68, 60, 52)), r2, 0.05)           # an odd newer, darker tile
+                    c = jitter(srgb((66, 62, 57)), r2, 0.05)           # an odd newer, darker tile
                 cx = col * pitch + pitch / 2
                 rise = 3 + rise_step * t                               # tiles further down a course sit higher
 
@@ -571,7 +571,7 @@ SETS = {
                                                                 srgb((112, 98, 74))], seed=4),
     # flat roofs (IrregularPlanks_Mossy: lodge, warehouse, mine roofs): grey clay tile laid flat, mossy
     "FlatTiles": lambda: set_tiles(course=128.0, edge0=0.0, per_course=2, rise_step=2.0, moss_p=0.45,
-                                   tile_rgb=(80, 69, 58), seed=9),
+                                   tile_rgb=(76, 71, 64), seed=9),
     "RoofTiles": set_tiles,
 }
 
