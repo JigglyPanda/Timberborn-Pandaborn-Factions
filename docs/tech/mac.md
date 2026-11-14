@@ -103,7 +103,17 @@ powershell -ExecutionPolicy Bypass -File tools\build_look.ps1 -Mac -BundleName p
 
 ## Results
 
-(filled in after the game run)
+`mac-bundles-1` (2026-11-14), Inkpaws on Plains, `-OnlyMods JigglyPanda.PandabornFactions`, 60 s, plus a dev-only mod
+`E:\PandabornDev\build\mac\PandabornMacBundleCheck` (`-ExtraMods`) whose `AssetBundles/` holds `pandabornlook_mac`
+and `pandabornplants_mac`. The installed faction itself already ships `pandabornlook_win` and
+`pandabornplants_win` and the code, so the older dev mods (code dev mod, plants prototype) could not be used: they would load
+the `_win` bundles a second time, which crashes (look.md problem 10). Because the loader decides per file, `_mac`
+files in a second mod's `AssetBundles` behave as they would beside the `_win` ones.
+**PASS**: verdict pass, 0 errors, 0 exceptions, no log issues from any mod. `result.json` lists all three mods loaded;
+`Pandaborn.Look` re-themed 19 materials and restored them on unload (the `_win` bundle in use); Inkpaw adults/children with their
+own meshes and coats; all 10 batch-control tabs opened. No log line mentions the `_mac` files. The faction's next
+regular build carries the `_mac` files itself (`Pandaborn.Look.csproj`, `tools/pandaborn.ps1 bundles`), which
+`tools/validate.py --release` already requires.
 
 ## What only a real Mac can verify
 
