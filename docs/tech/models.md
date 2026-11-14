@@ -174,6 +174,7 @@ and contact sheets `sheet_day.png`, `sheet_night.png`, `sheet_stage.png`.
 | `models-stages-1`, `models-water-2` | | nothing placed: the faction had switched to `Buildings.Inkpaws` (fixed: both collections) |
 | `models-stages-2` | unfinished buildings filmed during construction, Kite Windmill filmed 2 s apart | pass; Kite Windmill rotor visibly turned between frames; every unfinished building was built by the builders within 45 s (cost removed for tests) |
 | `models-water-3` | | **crash**: the Steamer's stand-in Grill recipes name Folktails goods the Inkpaws no longer have (fixed: recipes stripped in the prototype) |
+| `models-stages-3` | six unfinished buildings filmed every 4-7 s at speed 1 | pass; **construction proven**: the dirt base until builders start, then our stage model (timber skeleton on the plinth inside a lashed bamboo scaffold), then the finished model (`stage_Den_{start,4,8,12,17,23}.png`, `stage_MoonLoft_8.png`) |
 
 Lessons that bind the catalogue lane (who turns `model.json` into blueprints):
 
@@ -184,3 +185,24 @@ Lessons that bind the catalogue lane (who turns `model.json` into blueprints):
   building throws when it is created (here, in the placement preview).
 * Workshop smoke (`TemplateAttachmentsSpec` particles) makes the harness's framed close-up see the whole map; use the
   overview or a fixed camera for those buildings.
+
+### Verdicts (harsh, against the re-themed vanilla buildings in the same frames)
+
+| Model | Tris (vanilla stand-in) | In game | Verdict |
+|---|---|---|---|
+| Den | 1654 (Lodge 662) | built, finished, beside vanilla lodges | **Good**: the tile roof with real cover-tile ribs, ridge roll and chimney holds up at close range; reads as a house, not a dome. Front hides under the porch eave from the high camera |
+| Village Hall | 3008 (District Center 1788) | placed (water lab), district fire burns on the mast | **Good/fair**: distinct hip-and-gable hall, banners, fire mast; smaller-looking than the vanilla centre |
+| Moon Loft | 1910 (Lodge) | built on stilts, paths placed under it | **Good**: the clearest silhouette of the set |
+| Teahouse | 2616 (Campfire 1028) | built | **Good/fair**: the hip roof and indigo awning read; the roof hides the tables from above |
+| Steamer | 1250 (Grill 1191) | built | **Fair**: the steamer stack reads once out from under the roof; framed close-ups fail (smoke particles) |
+| Kite Windmill | 1280 (Wind Turbine 1650) | built, **rotor turns** | **Good**: unique vertical sail windmill |
+| Kindergarten | 1742 (Campfire) | built | **Good/fair**: playhouse, slide, swing, fence read; busy |
+| Pickle Yard | 2164 (Bakery 1703) | built | **Good/fair**: rows of glazed jars are an instant read |
+| Flume / Gate / Bridge / Drop | 192 / 254 / 372 / 502 (Throttling Valve 256) | all placed in a working line | **Fair**: clean and joined, but a plain half-pipe; water inside not yet seen deep enough to judge |
+| Flume Corner | ~800 | placed | **Weak/fair**: the solid cells still read as boxes |
+| Paddy Spout | 382 (Fill Valve 176) | placed at the line's end | **Fair** |
+| Scoop Wheel | ~1500 (Water Wheel 1212) | placed in a river, generator turning | **Fair**: spindly bamboo next to vanilla's chunky wheel (frame made chunkier after the run) |
+| Bamboo Water Wheel | 1288 (Water Wheel 1212) | placed in a river | **Fair**: reads as a cage from above |
+| Cistern | 502 (Small Tank 390) | built | **Fair**: a plain glazed jar |
+| Dew Collector | 677 | built | **Good**: the mesh funnel is unmistakable |
+| Hammock | 303 (Hammock 248) | built | **Fair**: small; the swing animation not yet seen with a sleeper |

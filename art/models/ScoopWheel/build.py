@@ -28,9 +28,9 @@ with g.node("#WheelAnimated"):
 with g.tagged("frame"):
     for z in (0.06, 0.94):
         for sx in (-1, 1):
-            K.pole(g, (0.5 + sx * 0.62, -0.05, z), (0.5 + sx * 0.05, C[1] + 0.12, z), r=0.042, material=BAMBOO_GOLD,
-                   sides=6, bend=0.012)
-        K.pole(g, (0.5 - 0.5, 0.45, z), (0.5 + 0.5, 0.45, z), r=0.03, material=BAMBOO_GOLD, sides=5, bend=0.0)
+            K.beam(g, (0.5 + sx * 0.66, -0.05, z), (0.5 + sx * 0.06, C[1] + 0.12, z), w=0.09, caps="end")
+        K.beam(g, (0.5 - 0.55, 0.45, z), (0.5 + 0.55, 0.45, z), w=0.07)
+        K.beam(g, (0.5 - 0.35, 0.95, z), (0.5 + 0.35, 0.95, z), w=0.06)
         K.lashing(g, (0.5, C[1] + 0.02, z), (0, 0, 1), r=0.07)
     K.tube(g, [(0.5, C[1], -0.06), (0.5, C[1], 1.06)], [0.045, 0.045], TIMBER, sides=6)
     # the near frame rises to carry the catch basin beside the top of the wheel
