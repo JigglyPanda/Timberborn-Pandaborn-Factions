@@ -259,3 +259,14 @@ order:
    smoke); Moon Loft for the Lodge (a dwelling); the cisterns for the tanks; Courtyard and Terrace House (below) for
    the Double and Triple Lodge footprints but with a **ground-floor entrance** and no stacking on the tiled roof (the
    vanilla Double/Triple Lodge enter at z = 1 and take lodges on top).
+6. **New since the requests:** `CourtyardHouse` (Double Lodge, six beds, L of two tiled wings round a gated
+   courtyard), `TerraceHouse` (Triple Lodge, nine beds, flat roof at y = 2 and top blocks Stackable `BlockObject` so it
+   stacks; drying mats on the roof), `CisternMedium`, `CisternLarge`, `StandingLantern`, `HangingLantern`,
+   `StringLanterns` (all three on the vanilla Lantern, whose `NightTimeLightControllerSpec` lights them at dusk; the
+   paper is the window glow region tinted red by vertex colour), `StarTower` (Observatory; `observatoryAnimator`
+   names `#StarDome` and `#StarTelescope` for its `ObservatoryAnimatorSpec`). Previews only; not yet in a game run.
+7. **Still missing** (in the coordinator's priority order): Paddy House, Festival Square, the three night posts,
+   Opera Stage, Hot Spring Bath, Ink Studio, Nap Platform, Slide and Swing, Large Kite Windmill, Tea Roastery,
+   Trip-Hammer Mill, Kitchen, Hot Pot Hall, Lantern Workshop, Smoke Kiln, Ox Workshop, Treadwheel Lift, Cistern Tap,
+   Dry-Stone Wall, Bamboo Fence (vanilla fences are modular: needs a look at `WoodFence`'s segment models first), Potted
+   Pine, Panda Statue, Pinwheel, Goldfish Bowl, Garden Moon Gate, Memorial Arch, Great Sitting Panda, Sky Lantern.
