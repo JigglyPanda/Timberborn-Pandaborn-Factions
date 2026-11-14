@@ -8,9 +8,9 @@
   * mirrors proto/sound/mod (manifest + same-path blueprint fragments) into -Out;
   * copies pandabornsounds_win (and _mac when built) from -Bundles into -Out\AssetBundles, unrenamed; -BuildBundle runs
     tools\build_sound.ps1 first;
-  * refuses when the installed faction mod already ships a pandabornsounds bundle: two enabled mods with the same
-    bundle crash every game ("another AssetBundle with the same files is already loaded"; docs/tech/look.md, problem 10).
-    It ships no DLL and no other bundle: the faction's code and bundles stay the faction's.
+  * ships no bundle when the installed faction mod already ships pandabornsounds (it does since commit b24e571): two
+    enabled mods with the same bundle crash every game ("another AssetBundle with the same files is already loaded";
+    docs/tech/look.md, problem 10). It never ships a DLL or another bundle.
   Test (one game at a time; the runner queues behind other lanes):
     & tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -RequestJson proto\sound\tests\sound.request.json `
         -OnlyMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\sound -WaitForGameSeconds 10800 `
@@ -31,8 +31,11 @@ $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 $shipped = @(Get-ChildItem -ErrorAction SilentlyContinue "$InstalledFaction\AssetBundles" -Filter "$BundleName*" |
              Where-Object { $_.Extension -ne '.manifest' })
-if ($shipped.Count -gt 0) {
-    throw "the installed faction already ships $($shipped.Name -join ', '): this prototype must not ship the bundle a second time"
+# Ship the bundle ONLY while the installed faction does not: two enabled mods with the same bundle crash every game
+# (run sound-1 did exactly that after the faction adopted pandabornsounds in commit b24e571). Fragments only otherwise.
+$shipBundle = $shipped.Count -eq 0
+if (-not $shipBundle) {
+    Write-Host "the installed faction ships $($shipped.Name -join ', '): the prototype carries blueprint fragments only"
 }
 
 if ($BuildBundle) {
@@ -48,11 +51,15 @@ if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
 $ab = Join-Path $Out 'AssetBundles'
 New-Item -ItemType Directory -Force $ab | Out-Null
 Get-ChildItem $ab | Remove-Item -Force
-# bundles only: the game would skip a *.manifest, but tools/validate.py reads every file as an asset and reports the
-# bundle and its .manifest as one duplicated path
-Copy-Item -Force $win $ab
-$mac = Join-Path $Bundles "$($BundleName)_mac"
-if (Test-Path $mac) { Copy-Item -Force $mac $ab } else { Write-Warning "$mac not built (Windows-only prototype)" }
+if ($shipBundle) {
+    # bundles only: the game would skip a *.manifest, but tools/validate.py reads every file as an asset and reports the
+    # bundle and its .manifest as one duplicated path
+    Copy-Item -Force $win $ab
+    $mac = Join-Path $Bundles "$($BundleName)_mac"
+    if (Test-Path $mac) { Copy-Item -Force $mac $ab } else { Write-Warning "$mac not built (Windows-only prototype)" }
+} else {
+    Remove-Item -Force $ab
+}
 Get-ChildItem -Recurse -File $Out | Select-Object @{ n = 'File'; e = { $_.FullName.Substring($Out.Length + 1) } }, Length |
     Format-Table -AutoSize | Out-String | Write-Host
 "prototype in $Out"
