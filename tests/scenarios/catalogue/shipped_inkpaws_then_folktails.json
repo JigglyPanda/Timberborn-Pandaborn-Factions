@@ -1,0 +1,64 @@
+{
+ "faction": "Inkpaws",
+ "run": {
+  "realSeconds": 40
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  "PandabornDen.Inkpaws",
+  "PandabornTeahouse.Inkpaws",
+  "PandabornSteamer.Inkpaws",
+  "PandabornCourtyardHouse.Inkpaws",
+  "PandabornStandingLantern.Inkpaws"
+ ],
+ "screenshots": [
+  {
+   "name": "inkpaws_screen",
+   "kind": "screen",
+   "at": "end"
+  },
+  {
+   "name": "inkpaws_overview",
+   "kind": "overview",
+   "at": "end"
+  }
+ ],
+ "checks": {
+  "materialMainTexPrefix": "PBLook_",
+  "pandabornFeatures": {
+   "Look": "on",
+   "Bell": "on",
+   "Names": "on"
+  }
+ },
+ "then": {
+  "name": "folktails",
+  "faction": "Folktails",
+  "checks": {
+   "materialMainTexNotPrefix": "PBLook_",
+   "pandabornFeatures": {
+    "Look": "on"
+   }
+  },
+  "buildings": [
+   "Lodge.Folktails",
+   "Campfire.Folktails",
+   "Grill.Folktails",
+   "LumberMill.Folktails",
+   "Lantern.Folktails"
+  ],
+  "screenshots": [
+   {
+    "name": "folktails_screen",
+    "kind": "screen",
+    "at": "end"
+   },
+   {
+    "name": "folktails_overview",
+    "kind": "overview",
+    "at": "end"
+   }
+  ]
+ }
+}

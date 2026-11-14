@@ -55,6 +55,7 @@ basis = "Characters/Beaver/BeaverAdult"
 template = "InkpawAdult.Inkpaws"
 path = "Characters/Pandaborn/InkpawAdult.Inkpaws"
 models = { "Model_Preserved" = "Characters/Pandaborn/InkpawAdult.Model" }
+name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -NoCode)
 # BaseLiftingCapacity 18 (vanilla 14): settled 2026-11-14 (balance model q1: 3 logs and 6 poles a trip)
 set = { "GoodCarrierSpec.BaseLiftingCapacity" = 18 }
 
@@ -63,6 +64,7 @@ basis = "Characters/Beaver/BeaverChild"
 template = "InkpawChild.Inkpaws"
 path = "Characters/Pandaborn/InkpawChild.Inkpaws"
 models = { "Model_Preserved" = "Characters/Pandaborn/InkpawChild.Model" }
+name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -NoCode)
 
 [characters.bot]
 # The Wooden Ox. Body, material and hats stay the Folktails bot's for now.

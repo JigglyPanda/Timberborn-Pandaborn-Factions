@@ -1,0 +1,569 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": true,
+ "run": {
+  "realSeconds": 3000,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "start_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  },
+  {
+   "name": "overview_end",
+   "kind": "overview",
+   "at": "end"
+  }
+ ],
+ "water": {
+  "name": "plants-nap-poles",
+  "speed": 3,
+  "area": [
+   34,
+   24
+  ],
+  "origin": {
+   "nearDistrict": true
+  },
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "pathFromDistrict",
+    "to": [
+     0,
+     10,
+     0
+    ]
+   },
+   {
+    "op": "placeLine",
+    "template": "Path",
+    "from": [
+     0,
+     10,
+     0
+    ],
+    "count": 34,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw0"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     1,
+     10,
+     3
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     12,
+     5,
+     33,
+     5
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "water",
+    "id": "paddy",
+    "at": [
+     6,
+     2,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "ditchW",
+    "at": [
+     12,
+     5,
+     -1
+    ],
+    "rate": 1.5,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "ditchE",
+    "at": [
+     33,
+     5,
+     -1
+    ],
+    "rate": 1.5,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "place",
+    "template": "EfficientFarmHouse.Inkpaws",
+    "at": [
+     2,
+     11,
+     0
+    ],
+    "id": "farm"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddyHouse.Inkpaws",
+    "at": [
+     6,
+     11,
+     0
+    ],
+    "id": "paddyhouse"
+   },
+   {
+    "op": "place",
+    "template": "Forester.Inkpaws",
+    "at": [
+     10,
+     11,
+     0
+    ],
+    "id": "forester"
+   },
+   {
+    "op": "place",
+    "template": "LumberjackFlag.Inkpaws",
+    "at": [
+     13,
+     11,
+     0
+    ],
+    "id": "lumber"
+   },
+   {
+    "op": "place",
+    "template": "GathererFlag.Inkpaws",
+    "at": [
+     15,
+     11,
+     0
+    ],
+    "id": "gatherer"
+   },
+   {
+    "op": "place",
+    "template": "PandabornHammock.Inkpaws",
+    "at": [
+     18,
+     11,
+     0
+    ],
+    "id": "hammock1"
+   },
+   {
+    "op": "place",
+    "template": "PandabornHammock.Inkpaws",
+    "at": [
+     19,
+     11,
+     0
+    ],
+    "id": "hammock2"
+   },
+   {
+    "op": "place",
+    "template": "PandabornHammock.Inkpaws",
+    "at": [
+     20,
+     11,
+     0
+    ],
+    "id": "hammock3"
+   },
+   {
+    "op": "place",
+    "template": "PandabornHammock.Inkpaws",
+    "at": [
+     21,
+     11,
+     0
+    ],
+    "id": "hammock4"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlume.Inkpaws",
+    "at": [
+     25,
+     11,
+     0
+    ],
+    "id": "flume1",
+    "finished": false
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlume.Inkpaws",
+    "at": [
+     26,
+     11,
+     0
+    ],
+    "id": "flume2",
+    "finished": false
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlume.Inkpaws",
+    "at": [
+     27,
+     11,
+     0
+    ],
+    "id": "flume3",
+    "finished": false
+   },
+   {
+    "op": "wait",
+    "hours": 3.0,
+    "speed": 7,
+    "capSeconds": 400
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     2,
+     1,
+     10,
+     2
+    ],
+    "z": -1
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     2,
+     1,
+     10,
+     2
+    ],
+    "z": -1,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     2,
+     3,
+     10,
+     3
+    ],
+    "z": -1
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     12,
+     6,
+     15,
+     8
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     12,
+     6,
+     15,
+     8
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     12,
+     3,
+     15,
+     4
+    ],
+    "z": 0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     17,
+     6,
+     20,
+     8
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     17,
+     6,
+     20,
+     8
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     17,
+     3,
+     20,
+     4
+    ],
+    "z": 0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     22,
+     6,
+     27,
+     8
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     22,
+     6,
+     27,
+     8
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markCut",
+    "rect": [
+     22,
+     6,
+     27,
+     8
+    ],
+    "z": 0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     22,
+     2,
+     27,
+     3
+    ],
+    "z": 0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "at": [
+     29,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "at": [
+     31,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     29,
+     7,
+     31,
+     7
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     29,
+     2,
+     31,
+     2
+    ],
+    "z": 0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     2,
+     18,
+     8,
+     18
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     2,
+     18,
+     8,
+     18
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     2,
+     20,
+     8,
+     20
+    ],
+    "z": 0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     10,
+     18,
+     14,
+     18
+    ],
+    "z": 0
+   },
+   {
+    "op": "grow",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     10,
+     18,
+     14,
+     18
+    ],
+    "z": 0,
+    "progress": 1.0
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     10,
+     20,
+     14,
+     20
+    ],
+    "z": 0
+   },
+   {
+    "op": "plants",
+    "label": "start",
+    "rect": [
+     0,
+     0,
+     33,
+     23
+    ]
+   },
+   {
+    "op": "wait",
+    "days": 3.0,
+    "speed": 3,
+    "capSeconds": 2400
+   },
+   {
+    "op": "plants",
+    "label": "end",
+    "rect": [
+     0,
+     0,
+     33,
+     23
+    ]
+   }
+  ]
+ },
+ "goodsProbe": {
+  "goods": [
+   "Plank",
+   "TreatedPlank"
+  ],
+  "templates": [
+   "PandabornTimberBamboo.Inkpaws",
+   "PandabornFlume.Inkpaws"
+  ],
+  "watch": {
+   "everySeconds": 20,
+   "goods": [
+    "Plank",
+    "Log",
+    "PandabornRice",
+    "PandabornBambooShoots",
+    "PandabornCabbage",
+    "PandabornPersimmons",
+    "PandabornBambooMushrooms",
+    "PandabornTeaLeaves",
+    "PandabornSichuanPepper"
+   ],
+   "templates": [
+    "PandabornFlume.Inkpaws",
+    "PandabornHammock.Inkpaws"
+   ]
+  }
+ },
+ "checks": {
+  "materialMainTexPrefix": "PBLook_",
+  "pandabornFeatures": {
+   "Look": "on",
+   "Bell": "on",
+   "Names": "on"
+  }
+ }
+}

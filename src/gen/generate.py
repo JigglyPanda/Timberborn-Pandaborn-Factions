@@ -54,6 +54,8 @@ def main(argv=None):
     ap.add_argument("--accept", action="store_true", help="pin: accept the current game as the new pin")
     ap.add_argument("--accept-pin", action="store_true", help="generate even if the game differs from the pin")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--no-code", action="store_true",
+                    help="data-only fallback build: leave out everything that needs the mod's code (e.g. name pools)")
     ap.add_argument("--plants", default=os.path.join(DEFAULT_BUILD, "plants"), help="built plant meshes and bundle")
     ap.add_argument("--models", default=os.path.join(DEFAULT_BUILD, "models"), help="built model meshes (models stage)")
     a = ap.parse_args(argv)
@@ -87,6 +89,7 @@ def generate(a, v):
     cat = Catalogue(a.catalogue)
     g = Generator(cat, v)
     g.mesh_dir = a.models
+    g.code_enabled = not a.no_code
     g.plant_dir = a.plants
     g.run()
     files = g.files()

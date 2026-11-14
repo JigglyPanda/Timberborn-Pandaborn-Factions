@@ -38,6 +38,7 @@ class Generator:
         self.material_collections = {}   # generated material collection id -> material asset paths (plant bundle)
         self.bundles_needed = set()      # asset bundles the adopted models need (the bundles stage provides them)
         self.plant_dir = None
+        self.code_enabled = True  # False for the -NoCode fallback: no spec of the mod's own code may appear
         self.code_waits = {}      # code module -> buildings that are vanilla-behaving stand-ins until it ships
         self.rules = catalogue["rules"]
         self.suffix = self.rules.get("names", {}).get("template_suffix", ".Inkpaws")
@@ -137,9 +138,27 @@ class Generator:
             self.set_template(data, c["template"], c.get("aliases"), item)
             self.apply_models(data, c.get("models"), item)
             self.apply_set(data, c.get("set"), item)
+            if c.get("name_pool"):
+                self.apply_name_pool(data, c["name_pool"], item)
             coll.append(self.emit(c["path"], data, item, "character", key))
         if coll:
             self.collections["Characters." + self.faction_id] = coll
+
+    def apply_name_pool(self, data, pool, item):
+        """Colonist names from text/names.json[pool] through the Names module (PandabornNamePoolSpec, src/code). The
+        spec belongs to the mod's code, so the -NoCode fallback build leaves it out (vanilla names)."""
+        if not self.code_enabled:
+            self.note(item, "name pool %s left out: data-only build (vanilla names)" % pool)
+            return
+        names = (self.cat.text.get("names") or {}).get(pool)
+        if not names:
+            raise GenError("%s: name_pool %s: no list %r in text/names.json" % (item, pool, pool))
+        key = "Pandaborn.NamePool.%s" % pool[:1].upper() + pool[1:]
+        text = "\n".join(n["display"] for n in names)
+        if key not in self.loc.get("Faction", {}):
+            self.add_loc("Faction", key, text, "Colonist names, one per line: pinyin and an English gloss, shown as "
+                         "written. Keep each line; translate only the gloss in brackets.", item)
+        data["PandabornNamePoolSpec"] = {"NamePoolLocKey": key}
 
     def gen_shaft_parts(self):
         s = self.cat["faction"].get("shaft_parts")

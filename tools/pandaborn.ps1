@@ -153,7 +153,7 @@ foreach ($s in $stages) {
         'generate' {
             $a = @((Join-Path $repo 'src\gen\generate.py'), '--out', $GenDir)
             if ($Catalogue) { $a += @('--catalogue', $Catalogue) }
-            if ($Lock) { $a += '--lock' }; if ($DryRun) { $a += '--dry-run' }; if ($AcceptPin -or $Accept) { $a += '--accept-pin' }
+            if ($Lock) { $a += '--lock' }; if ($DryRun) { $a += '--dry-run' }; if ($NoCode) { $a += '--no-code' }; if ($AcceptPin -or $Accept) { $a += '--accept-pin' }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
         }
         'models' {

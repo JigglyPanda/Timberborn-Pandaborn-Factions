@@ -4,7 +4,12 @@ using Bindito.Core;
 using Newtonsoft.Json.Linq;
 using Timberborn.BlueprintSystem;
 using Timberborn.Buildings;
+using Timberborn.BlockSystem;
+using Timberborn.EntitySystem;
 using Timberborn.Goods;
+using Timberborn.ResourceCountingSystem;
+using Timberborn.TimeSystem;
+using UnityEngine;
 using Timberborn.Cutting;
 using Timberborn.Gathering;
 using Timberborn.SingletonSystem;
@@ -33,17 +38,68 @@ namespace PandabornDevHarness
     /// Result under "goodsProbe": per good { inFaction, name, plural, icon, weight }; per template { found, costs: [{ id, amount,
     /// name }], cutYield, gatherYield }. Written once the game is playable.
     /// </summary>
-    public class GoodsProbe : ILoadableSingleton
+    public class GoodsProbe : ILoadableSingleton, IUpdatableSingleton
     {
         private readonly EventBus _eventBus;
         private readonly IGoodService _goodService;
         private readonly TemplateService _templateService;
+        private readonly ResourceCountingService _resourceCountingService;
+        private readonly EntityRegistry _entityRegistry;
+        private readonly IDayNightCycle _dayNightCycle;
+        private JArray _watch;
+        private float _nextWatch = -1f;
 
-        public GoodsProbe(EventBus eventBus, IGoodService goodService, TemplateService templateService)
+        public GoodsProbe(EventBus eventBus, IGoodService goodService, TemplateService templateService,
+                          ResourceCountingService resourceCountingService, EntityRegistry entityRegistry,
+                          IDayNightCycle dayNightCycle)
         {
             _eventBus = eventBus;
             _goodService = goodService;
             _templateService = templateService;
+            _resourceCountingService = resourceCountingService;
+            _entityRegistry = entityRegistry;
+            _dayNightCycle = dayNightCycle;
+        }
+
+        /// <summary>
+        /// "watch": { "everySeconds": 20, "goods": [ ids ], "templates": [ names ] }: a sample every N real seconds of each
+        /// good's global stock (stockpiled + buffered output + on its way to storage) and how many of each template exist
+        /// finished and unfinished; under "goodsProbe.watch".
+        /// </summary>
+        public void UpdateSingleton()
+        {
+            if (_nextWatch < 0f || Harness.Finished || Time.unscaledTime < _nextWatch) return;
+            var spec = (JObject)((JObject)Harness.Request.Raw["goodsProbe"])["watch"];
+            _nextWatch = Time.unscaledTime + Request.Num(spec, "everySeconds", 20f);
+            try
+            {
+                var sample = new JObject { ["realSeconds"] = Math.Round(Time.unscaledTime, 1),
+                                           ["day"] = Math.Round(_dayNightCycle.PartialDayNumber, 3) };
+                var goods = new JObject();
+                foreach (var token in (spec["goods"] as JArray) ?? new JArray())
+                {
+                    var c = _resourceCountingService.GetGlobalResourceCount((string)token);
+                    goods[(string)token] = c.StockpiledStock + c.BufferedOutputStock + c.CarriedToStockpilesStock;
+                }
+                sample["goods"] = goods;
+                var templates = new JObject();
+                foreach (var token in (spec["templates"] as JArray) ?? new JArray())
+                {
+                    int finished = 0, unfinished = 0;
+                    foreach (var entity in _entityRegistry.Entities)
+                    {
+                        if (!entity) continue;
+                        var ts = entity.GetComponent<TemplateSpec>();
+                        if (ts == null || ts.TemplateName != (string)token) continue;
+                        var bo = entity.GetComponent<BlockObject>();
+                        if (bo != null && bo.IsFinished) finished++; else unfinished++;
+                    }
+                    templates[(string)token] = new JObject { ["finished"] = finished, ["unfinished"] = unfinished };
+                }
+                sample["templates"] = templates;
+                _watch.Add(sample);
+            }
+            catch (Exception ex) { Harness.Warn("goods probe watch: " + ex.GetType().Name + ": " + ex.Message); }
         }
 
         public void Load()
@@ -98,6 +154,12 @@ namespace PandabornDevHarness
                 Harness.Error("goods probe failed", ex);
             }
             Harness.Result["goodsProbe"] = output;
+            if (spec["watch"] is JObject)
+            {
+                _watch = new JArray();
+                output["watch"] = _watch;
+                _nextWatch = Time.unscaledTime + 1f;
+            }
         }
 
         private JObject Describe(string id)

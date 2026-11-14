@@ -1,0 +1,10 @@
+{
+ "checks": {
+  "materialMainTexPrefix": "PBLook_",
+  "pandabornFeatures": {
+   "Look": "on",
+   "Bell": "on",
+   "Names": "on"
+  }
+ }
+}

@@ -11,7 +11,7 @@ BUILDING_FIELDS = {
     "disallow_other_workers", "recipes", "capacity", "tool_group", "tool_order", "models", "icon", "retire", "aliases",
     "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects", "model", "waits_for",
 }
-CHARACTER_FIELDS = {"basis", "template", "path", "models", "set", "note"}
+CHARACTER_FIELDS = {"basis", "template", "path", "models", "set", "note", "name_pool"}
 GOOD_FIELDS = {"basis", "vanilla", "text", "icon", "weight", "good_type", "group", "order", "consumption", "set",
                "delete", "aliases", "note", "provenance", "container", "path"}
 NEED_FIELDS = {"basis", "vanilla", "text", "group", "daily_delta", "favorable_wellbeing", "unfavorable_wellbeing",
