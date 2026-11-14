@@ -21,7 +21,6 @@
     "SmallWarehouse.Inkpaws",
     "MediumWarehouse.Inkpaws",
     "Inventor.Inkpaws",
-    "PandabornKitchen.Inkpaws",
     {
       "template": "PandabornTerraceHouse.Inkpaws",
       "finished": false
@@ -133,13 +132,6 @@
       "name": "day_medwarehouse",
       "kind": "building",
       "target": "MediumWarehouse.Inkpaws",
-      "at": "start",
-      "pitch": 38
-    },
-    {
-      "name": "day_kitchen",
-      "kind": "building",
-      "target": "PandabornKitchen.Inkpaws",
       "at": "start",
       "pitch": 38
     },
@@ -258,14 +250,6 @@
       "name": "night_medwarehouse",
       "kind": "building",
       "target": "MediumWarehouse.Inkpaws",
-      "at": "end",
-      "pitch": 38,
-      "lit": true
-    },
-    {
-      "name": "night_kitchen",
-      "kind": "building",
-      "target": "PandabornKitchen.Inkpaws",
       "at": "end",
       "pitch": 38,
       "lit": true

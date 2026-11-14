@@ -22,7 +22,6 @@
     "SmallWarehouse.Inkpaws",
     "MediumWarehouse.Inkpaws",
     "Inventor.Inkpaws",
-    "PandabornKitchen.Inkpaws",
     {
       "template": "PandabornTerraceHouse.Inkpaws",
       "finished": false
