@@ -315,7 +315,9 @@ rb-5 (mods loaded: Pandaborn (Reskin) 7.0.0, Pandaborn - Factions, the Ringtail 
   shells from that character's own mesh with the giant panda's UV fur mask. Up close the Ringtail looks furry and the
   tail (the paddle's UV region, "longest fur" in the mask) bushier. One artefact: from above, a pale patch with a blue
   rim shows on the Ringtail's crown in the game-camera shots with the Reskin on (`rb-5\reload\rb_reload_game_d3.png`,
-  `rb-5\rb_carry_night_d3.png`); it is absent without the Reskin and in offline renders of the outfits. Not traced.
+  `rb-5\rb_carry_night_d3.png`). **Traced in pass 3 (§8.1): it is not on the crown but the front face of the far ear**,
+  seen from above: the pass-2 coat painted it pale (white rim and tufts), the Reskin's shells (the giant-panda mask gives the
+  ear region longer fur than the rest of the head: 0.49 against 0.37 of full length, sampled on the Ringtail's UVs) thickened it into a fuzzy pale disc, and at night the moonlight turns it blue.
 * **Meshes untouched.** The Reskin overrides only `Characters/Beaver/...`; Ringtails and Inkpaws use
   `Characters/Pandaborn/...` (1,951 and 1,716 vertices in every sample).
 * Suggested Reskin update (for the coordinator): skip `PandabornFactionSkins` for the `Inkpaws` faction (it already has
@@ -339,3 +341,86 @@ both launches PASS, 0 errors and 0 log issues from any mod, all batch-control ta
   (`E:\PandabornDev\build\characters\prev\zip_side_pass2.png`).
 * Other pictures: `rb-5\rb_lineup1_front/back.png` (Reskin fur on both peoples), `rb_group_day_d3.png` (Ringtail with
   poles on its back-frame, a kit, two Inkpaws, two cubs), `rb_carry_night_d3.png` (night, with the crown artefact).
+
+## 8. Pass 3: the Reskin alongside, hats and baskets, tail UVs, the Wooden Ox
+
+### 8.1 Playing with the Reskin enabled
+
+**What the Reskin does** (`..\Timberborn-Pandaborn-Reskin\src\scripts\PandaColonistsFur.cs`, namespace
+`PandaColonistsV6`; the V5 DLL and `PandaReskin.dll` are 3 KB stubs):
+* `PandabornFactionSkins` (on `FactionService` load) rewrites every non-vanilla `FactionSpec`'s `Textures`,
+  `ChildTextures`, `Avatar`, `ChildAvatar`, `ContaminatedAdultAvatar`, `ContaminatedChildAvatar` and
+  `NewGameFullAvatar` to the look `FactionLooks.For(id)` picks: `faction.<id>` in `PandaFurSettings.txt`, else
+  `otherfactions` (default `giant`). The Inkpaw coats are byte-identical to the Reskin's Folktails coats (same md5), so
+  in practice only the **avatars** visibly change; the Inkpaws' own coat list is still replaced.
+* `PandaFurAttacher` decorates **every** `BeaverSpec` character (Ringtails included) with `PandaFurRenderer`: shells and
+  silhouette fins built from that character's own mesh, coloured every frame from the character's own `_BaseMap`
+  (so Ringtails get red-panda-coloured fur), with fur **length** from the bundle material's `_FurMask` (R = length,
+  G = AO) painted for the **giant panda's** UV layout. A Ringtail keeps the beaver UV islands, so the mask lands, but
+  its distribution is the panda's: ear region longer than the head (0.49 vs 0.37), eye/nose holes at the panda's
+  landmarks. That is the "giant-panda fur on Ringtails".
+* The crown patch: §7.5 (the far ear's front face; pale in the pass-2 coat, thickened by the shells, blue at night).
+
+**(b) Fix from our side, no Reskin change.** There is no data-only way to keep the Reskin from rewriting a faction it
+does not know (it reads `FactionSpec` after load and owns the decision), and we must not reference its DLL. What we
+did and can do:
+1. The Ringtail ear front is no longer pale (coat change in `paint_ringtail.py`: the white rim narrower, `ear_edge`
+   0.78 -> 0.84; the pale tufts weaker, `ear_tuft` 0.5 -> 0.28, 0.8 -> 0.45 on adult coat 3 and kit coat 3), so the
+   shells thicken a brown-grey ear, not a white disc (`E:\PandabornDev\build\characters\prev\pass3_top.png`).
+2. We ship `Characters/Pandaborn/RingtailAdult.Model.FurMask.png` / `RingtailChild.Model.FurMask.png`
+   (`src/pipeline/characters/make_furmask.py`, linear, R = Ringtail fur length: none on eyes, nose, pads and teeth,
+   short face, short velvet ears, the longest fur on the tail; G = the Ringtail AO). Inert today; the compat Reskin uses
+   them (c).
+3. Proposal for the code lane (no Reskin reference, works whatever the Reskin does): an Inkpaw coat component like
+   `RingtailCoat` (pick the coat from an Inkpaw-only spec after `BeaverTextureSetter`) and the Inkpaw avatar through
+   the same `IEntityBadge` the Ringtails use. Then the Reskin's faction rewrite has nothing left to change.
+
+**(c) The proper fix in the Reskin** (branch `factions-compat` in `..\Timberborn-Pandaborn-Reskin`, local only, one
+commit `fc8e25d` on top of `main` `b6cc714`; not pushed; `main`, the installed Reskin and the Workshop item untouched).
+`src/scripts/PandaColonistsFur.cs`, +30/-1:
+* `FactionLooks.OwnPandaFactions = { "Inkpaws" }`: `For(id)` returns `Own` for them (after a player's explicit
+  `faction.<id>` setting, before `otherfactions`), so `PandabornFactionSkins` writes the faction's original specs back:
+  Inkpaws keep their coats and avatars. Fur still applies and takes its colour from the Inkpaw coat.
+* `PandaFurAttacher.PostInitializeEntity`: reads the character's model asset (`TimbermeshDescription.ModelName`); if an
+  asset `<model>.NoFur` exists the character gets no fur; if `<model>.FurMask` (a Texture2D) exists, the fur material is
+  a cached copy of the adult/child template with that `_FurMask` (`MaskedTemplate`, one per template and mask). The
+  Reskin's own and vanilla bodies have neither file, so they are unchanged (two `LoadSafe` misses per character spawn).
+* Build: `csc` (Roslyn from SDK 9.0.203) against `Timberborn_Data\Managed`, response file
+  `E:\PandabornDev\build\reskin-compat-dll\build.rsp` -> `E:\PandabornDev\build\reskin-compat-dll\PandaColonistsFurV6.dll`
+  (24,576 bytes; the released one is 23,552).
+* Dev copy for tests: `E:\PandabornDev\build\reskin-compat\PandabornReskinCompat` = the installed Reskin's
+  `AssetBundles`, `Characters`, `Materials`, `Scripts`, `Sprites`, `PandaFurSettings.txt` with the new V6 DLL, manifest
+  Id `JigglyPanda.PandabornReskinCompatDev`, and **without** `Scripts\PandabornSettings.bin` (its Mod Settings page is
+  keyed to `JigglyPanda.Pandaborn`). Run with `-OnlyMods JigglyPanda.PandabornFactions` (the released Reskin off) and
+  `-ExtraMods` this folder: the bundles `pandacolonistsv5_win`/`v6_win` then load once, from the copy only (two enabled
+  copies would crash on the bundles, CLAUDE.md), and the assembly name `PandaColonistsFurV6` loads once.
+
+### 8.2 The conical hat and the back-basket (real geometry)
+
+`src/pipeline/characters/make_attachments.py` models and paints both (deterministic, numpy); the Unity builder
+`src/unity/PandabornAttachments/Editor/PandabornAttachmentsBuilder.cs` turns them into prefabs; one command builds a
+bundle: `powershell -File src\unity\PandabornAttachments\build.ps1` (`_win`, project
+`E:\PandabornDev\unity\PandabornAttachments`) and `... build.ps1 -Mac` (`_mac`, its own project
+`E:\PandabornDev\unity\PandabornAttachments-mac`, editor from `tools\unity_editor.ps1` with Mac Build Support, as
+`tools\build_look.ps1 -Mac` does). Output `E:\PandabornDev\build\characters\attachments\pandabornattachments_win`
+(2.15 MB) and `pandabornattachments_mac` (2.22 MB, built for StandaloneOSX); both hold
+`Characters/Pandaborn/Attachments/ConicalHat` and `.../BackBasket` (checked with UnityPy).
+
+| Prefab | Geometry | Materials (URP Lit, 1024 px colour + normal map) |
+|---|---|---|
+| `ConicalHat` (#Head frame, y up) | nón lá: slightly convex cone, 15 cm brim radius, 8 cm high, sitting 4.6 cm below the node; the brim wavy and ragged (noise in radius and droop) with a cut-out fringe of frayed leaf ends; a bamboo hoop under the rim, a head ring inside, a knot at the apex; both faces of the shell modelled (no two-sided shader). 1,912 vertices | `PandabornHatLeaf` (palm-leaf strips, stitched concentric binding rings, weathering; alpha cut-out for the fringe), `PandabornCord` |
+| `BackBasket` (#Backpack frame, +y away from the back, -z up the spine) | bei lou: rounded-square, tapered (wider at the top), 22 cm tall, open top with a rolled rim, four corner ribs, a woven base, two shoulder straps and two waist straps leading into the body. 1,166 vertices | `PandabornWeave` (over-under split-bamboo weave), `PandabornCord`, `PandabornStrap` (plaited hemp) |
+
+Offline on both peoples: `E:\PandabornDev\build\characters\prev\attach\attach_front.png`, `attach_back.png`,
+`attach_side.png` (Inkpaw with the hat, Ringtail and Inkpaw with the basket, in idle, walk, carrying and cutting).
+The Ringtail keeps its painted head-wraps (no hat: the tall ears).
+
+### 8.3 Status of the in-game proof (pass 3)
+
+Two runs are queued (hidden desktop, behind the owner's hold): `rb-p3a` (released Reskin + faction + Ringtail
+prototype + this test mod: people/gear line-ups day and night, Ringtail and Wooden Ox game-camera shots, hat/basket
+group shots, save and reload; request `proto/ringtail-body/test/pass3_reskin.request.json`) and `rb-p3b` (the compat
+Reskin dev copy instead of the released one, Inkpaws day and night, then a chained Folktails game with bots; request
+`pass3_compat.request.json`). Output: `E:\PandabornDev\build\test\rb-p3a\`, `rb-p3b\` (`ringtailBody.json` lists per
+character the template, model asset, coat, shown attachments, fur components and the fur mask in use). Until they
+have run, everything in §8 about the game is unproven; the offline renders are listed in each section.
