@@ -1,0 +1,3575 @@
+{
+ "faction": "Folktails",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 4200,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.Water",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "combo",
+  "speed": 7,
+  "area": [
+   40,
+   48
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     29,
+     27,
+     33
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     31,
+     27,
+     31
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     32,
+     15,
+     37
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     33,
+     14,
+     36
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.PandabornProto",
+    "at": [
+     12,
+     31,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "scoop"
+   },
+   {
+    "op": "place",
+    "template": "PandabornTripHammer.PandabornProto",
+    "at": [
+     20,
+     31,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "hammer"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     39,
+     27,
+     41
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     40,
+     27,
+     40
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     41,
+     15,
+     45
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     10,
+     42,
+     14,
+     44
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     3,
+     41,
+     8,
+     43
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     42,
+     9,
+     42
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornScoopWheel.PandabornProto",
+    "at": [
+     12,
+     40,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "loopScoop"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     9,
+     42,
+     0
+    ],
+    "orientation": "Cw270",
+    "id": "loopGate"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     8,
+     42,
+     0
+    ],
+    "count": 4,
+    "step": [
+     -1,
+     0,
+     0
+    ],
+    "orientation": "Cw270"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeCorner.PandabornProto",
+    "at": [
+     4,
+     42,
+     0
+    ],
+    "orientation": "Cw270",
+    "id": "loopCorner"
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlume.PandabornProto",
+    "at": [
+     4,
+     41,
+     0
+    ],
+    "orientation": "Cw180",
+    "id": "loopOut"
+   },
+   {
+    "op": "place",
+    "template": "PandabornDewCollector.PandabornProto",
+    "at": [
+     22,
+     35,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "dew"
+   },
+   {
+    "op": "shot",
+    "name": "scoop_setup",
+    "focus": [
+     12,
+     36,
+     0
+    ],
+    "distance": 28,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "water",
+    "id": "fill",
+    "at": [
+     6,
+     31,
+     -2
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "fillB",
+    "at": [
+     20,
+     40,
+     -2
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "wait",
+    "ticks": 150,
+    "capSeconds": 900
+   },
+   {
+    "op": "waterOff",
+    "id": "fill"
+   },
+   {
+    "op": "waterOff",
+    "id": "fillB"
+   },
+   {
+    "op": "wait",
+    "ticks": 100,
+    "capSeconds": 900
+   },
+   {
+    "op": "series",
+    "id": "scoop",
+    "every": 20,
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ],
+     [
+      12,
+      40,
+      -2
+     ],
+     [
+      4,
+      40,
+      -2
+     ],
+     [
+      6,
+      42,
+      0
+     ],
+     [
+      12,
+      42,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop"
+    ]
+   },
+   {
+    "op": "wait",
+    "ticks": 200,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0",
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     31,
+     -2
+    ],
+    "rate": 0.3,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     31,
+     -2
+    ],
+    "rate": -0.44999999999999996
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0.3",
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     31,
+     -2
+    ],
+    "rate": 0.8,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     31,
+     -2
+    ],
+    "rate": -1.2000000000000002
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow0.8",
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     31,
+     -2
+    ],
+    "rate": 1.6,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     31,
+     -2
+    ],
+    "rate": -2.4000000000000004
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow1.6",
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "water",
+    "id": "in",
+    "at": [
+     1,
+     31,
+     -2
+    ],
+    "rate": 3.0,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "out",
+    "at": [
+     26,
+     31,
+     -2
+    ],
+    "rate": -4.5
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "flow3.0",
+    "cells": [
+     [
+      12,
+      31,
+      -2
+     ],
+     [
+      6,
+      31,
+      -2
+     ],
+     [
+      20,
+      31,
+      -2
+     ],
+     [
+      12,
+      33,
+      0
+     ],
+     [
+      12,
+      35,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "scoop_running",
+    "focus": [
+     12,
+     32,
+     -1
+    ],
+    "distance": 16,
+    "pitch": 45,
+    "yaw": 60
+   },
+   {
+    "op": "expect",
+    "label": "scoop wheel lifts in a strong current",
+    "what": "flowRate",
+    "min": 0.01,
+    "id": "scoop"
+   },
+   {
+    "op": "waterOff",
+    "id": "in"
+   },
+   {
+    "op": "waterOff",
+    "id": "out"
+   },
+   {
+    "op": "water",
+    "id": "kickIn",
+    "at": [
+     1,
+     40,
+     -2
+    ],
+    "rate": 1.5,
+    "maxDepth": 1.6
+   },
+   {
+    "op": "water",
+    "id": "kickOut",
+    "at": [
+     26,
+     40,
+     -2
+    ],
+    "rate": -2.0
+   },
+   {
+    "op": "wait",
+    "ticks": 250,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_kicked",
+    "cells": [
+     [
+      12,
+      40,
+      -2
+     ],
+     [
+      4,
+      40,
+      -2
+     ],
+     [
+      6,
+      42,
+      0
+     ],
+     [
+      12,
+      42,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "waterOff",
+    "id": "kickIn"
+   },
+   {
+    "op": "waterOff",
+    "id": "kickOut"
+   },
+   {
+    "op": "wait",
+    "ticks": 300,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_t300",
+    "cells": [
+     [
+      12,
+      40,
+      -2
+     ],
+     [
+      4,
+      40,
+      -2
+     ],
+     [
+      6,
+      42,
+      0
+     ],
+     [
+      12,
+      42,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "ticks": 500,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "loop_t800",
+    "cells": [
+     [
+      12,
+      40,
+      -2
+     ],
+     [
+      4,
+      40,
+      -2
+     ],
+     [
+      6,
+      42,
+      0
+     ],
+     [
+      12,
+      42,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      10,
+      33,
+      14,
+      36,
+      0
+     ],
+     [
+      10,
+      42,
+      14,
+      44,
+      0
+     ]
+    ],
+    "objects": [
+     "scoop",
+     "hammer",
+     "loopScoop",
+     "loopGate",
+     "loopOut",
+     "dew"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "scoop_loop",
+    "focus": [
+     8,
+     41,
+     0
+    ],
+    "distance": 18,
+    "pitch": 50,
+    "yaw": 20
+   },
+   {
+    "op": "note",
+    "text": "--- crops part ---"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     -1,
+     11,
+     4
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     0,
+     10,
+     3
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     4,
+     6,
+     4
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     5,
+     13,
+     8
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     9,
+     6,
+     9
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     10,
+     13,
+     13
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     14,
+     6,
+     14
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     15,
+     13,
+     17
+    ],
+    "z": -3
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     24,
+     22,
+     33,
+     22
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     6,
+     4,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "spout1"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     6,
+     9,
+     -1
+    ],
+    "orientation": "Cw0",
+    "id": "spout2"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     6,
+     14,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "spout3"
+   },
+   {
+    "op": "place",
+    "template": "PandabornCisternTapAuto.PandabornProto",
+    "at": [
+     34,
+     16,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "tap"
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "water",
+    "id": "reservoir",
+    "at": [
+     6,
+     1,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "water",
+    "id": "strip",
+    "at": [
+     24,
+     22,
+     -1
+    ],
+    "rate": 0.5,
+    "maxDepth": 0.15
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     3,
+     6,
+     4,
+     7,
+     -1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "rect": [
+     8,
+     6,
+     9,
+     7,
+     -1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "rect": [
+     11,
+     6,
+     12,
+     7,
+     -1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     4,
+     11,
+     5,
+     12,
+     -2
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     4,
+     16,
+     5,
+     16,
+     -3
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     15,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     15,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     15,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     17,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     17,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     17,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     19,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     19,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     19,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     22,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     22,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     22,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "rect": [
+     32,
+     18,
+     33,
+     18,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "rect": [
+     32,
+     20,
+     37,
+     20,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     36,
+     18,
+     37,
+     18,
+     0
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_setup",
+    "focus": [
+     16,
+     10,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "series",
+    "id": "paddies",
+    "every": 40,
+    "cells": [
+     [
+      6,
+      5,
+      -1
+     ],
+     [
+      3,
+      7,
+      -1
+     ],
+     [
+      13,
+      8,
+      -1
+     ],
+     [
+      6,
+      10,
+      -2
+     ],
+     [
+      3,
+      12,
+      -2
+     ],
+     [
+      6,
+      15,
+      -3
+     ],
+     [
+      3,
+      17,
+      -3
+     ],
+     [
+      6,
+      2,
+      0
+     ],
+     [
+      28,
+      22,
+      -1
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "tap"
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "zones_d0",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_d0",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_d0",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_d0",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_d0",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_h12",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_h12",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_h12",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_h12",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_h12",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_h12",
+    "focus": [
+     8,
+     10,
+     -1
+    ],
+    "distance": 22,
+    "pitch": 55,
+    "yaw": 0
+   },
+   {
+    "op": "wait",
+    "hours": 60,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_wet",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_wet",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_wet",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_wet",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_wet",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "expect",
+    "label": "paddy 1 held at spout depth",
+    "what": "depth",
+    "at": [
+     3,
+     7,
+     -1
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "paddy 2 held by cascade spout",
+    "what": "depth",
+    "at": [
+     3,
+     12,
+     -2
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "paddy 3 held by cascade spout",
+    "what": "depth",
+    "at": [
+     3,
+     16,
+     -3
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "paddy crop healthy in paddy",
+    "what": "healthy",
+    "min": 4,
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     3,
+     6,
+     4,
+     7,
+     -1
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_wet",
+    "focus": [
+     16,
+     10,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "crops_wet_paddy",
+    "focus": [
+     8,
+     10,
+     -1
+    ],
+    "distance": 16,
+    "pitch": 50,
+    "yaw": 0
+   },
+   {
+    "op": "waterOff",
+    "id": "reservoir"
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "water",
+    "id": "drain0",
+    "at": [
+     2,
+     5,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain1",
+    "at": [
+     13,
+     8,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain2",
+    "at": [
+     8,
+     7,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain3",
+    "at": [
+     2,
+     10,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain4",
+    "at": [
+     13,
+     13,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain5",
+    "at": [
+     2,
+     15,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain6",
+    "at": [
+     13,
+     17,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "wait",
+    "hours": 6,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_dry_h6",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_dry_h6",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_dry_h6",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_dry_h6",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_dry_h6",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 42,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_dry",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_dry",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_dry",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_dry",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_dry",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_dry",
+    "focus": [
+     16,
+     10,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "waterOff",
+    "id": "drain0"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain1"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain2"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain3"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain4"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain5"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain6"
+   },
+   {
+    "op": "water",
+    "id": "reservoir",
+    "at": [
+     6,
+     1,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 0.8
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "wait",
+    "hours": 36.0,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_rewet",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_rewet",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_rewet",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_rewet",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_rewet",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "waterOff",
+    "id": "reservoir"
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "water",
+    "id": "drain0",
+    "at": [
+     2,
+     5,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain1",
+    "at": [
+     13,
+     8,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain2",
+    "at": [
+     8,
+     7,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain3",
+    "at": [
+     2,
+     10,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain4",
+    "at": [
+     13,
+     13,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain5",
+    "at": [
+     2,
+     15,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain6",
+    "at": [
+     13,
+     17,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "wait",
+    "hours": 8,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_redry_h8",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_redry_h8",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_redry_h8",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_redry_h8",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_redry_h8",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "giveGoods",
+    "id": "tap",
+    "good": "Water",
+    "amount": 120
+   },
+   {
+    "op": "wait",
+    "hours": 36.0,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_tap",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_tap",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_tap",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_tap",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_tap",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_end",
+    "focus": [
+     16,
+     10,
+     0
+    ],
+    "distance": 36,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "shot",
+    "name": "crops_end_dry",
+    "focus": [
+     35,
+     19,
+     0
+    ],
+    "distance": 14,
+    "pitch": 50,
+    "yaw": 0
+   }
+  ]
+ }
+}

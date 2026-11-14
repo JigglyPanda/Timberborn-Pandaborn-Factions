@@ -406,6 +406,40 @@ def dew():
     request("dew", s, [10, 10], speed=10)
 
 
+# ---------------------------------------------------------------------------------------------------------------- combo
+def shift(steps, dy):
+    """Moves every coordinate in a step list by dy tiles along y (to put two scenarios in one test area)."""
+    out = []
+    for st in steps:
+        st = json.loads(json.dumps(st))
+        for k in ("at", "from", "focus"):
+            if k in st:
+                st[k][1] += dy
+        if "rect" in st:
+            st["rect"][1] += dy
+            st["rect"][3] += dy
+        for k in ("cells", "contamination"):
+            for c in st.get(k, []):
+                c[1] += dy
+        for v in st.get("volumes", []):
+            v[1] += dy
+            v[3] += dy
+        for k in ("rows", "moistRows"):
+            for r in st.get(k, []):
+                r[0] += dy
+        out.append(st)
+    return out
+
+
+def combo():
+    """The scoop-wheel scenario (without its dew part) and the crops scenario in one game, to need one test slot."""
+    sc = json.load(open(os.path.join(OUT, "scoop.json"), encoding="utf-8"))["water"]["steps"]
+    cut = next(i for i, st in enumerate(sc) if st.get("label") == "dew_t0")
+    cr = json.load(open(os.path.join(OUT, "crops.json"), encoding="utf-8"))["water"]["steps"]
+    steps = shift(sc[:cut], 26) + [{"op": "note", "text": "--- crops part ---"}] + cr
+    request("combo", steps, [40, 48], real_seconds=4200)
+
+
 if __name__ == "__main__":
     flume()
     longrun()
@@ -414,4 +448,5 @@ if __name__ == "__main__":
     crops()
     district()
     dew()
+    combo()
     print("wrote", sorted(os.listdir(OUT)))
