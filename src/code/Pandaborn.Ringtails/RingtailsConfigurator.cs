@@ -16,6 +16,8 @@ namespace Pandaborn.Ringtails
             Bind<LoftNursery>().AsSingleton();
             Bind<RingtailsPopulationRow>().AsSingleton();
             Bind<RingtailsBuildingFragment>().AsSingleton();
+            Bind<RingtailClockArc>().AsSingleton();
+            Bind<RingtailSounds>().AsSingleton();
             Bind<RingtailRestRootBehavior>().AsTransient();
             Bind<RingtailCoat>().AsTransient();
             Bind<RingtailGrowth>().AsTransient();

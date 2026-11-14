@@ -1,0 +1,129 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 0,
+    "place": [
+      "PandabornNightBuildersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws"
+    ],
+    "stock": {
+      "Water": 900,
+      "Berries": 1200,
+      "Log": 150,
+      "Plank": 150
+    },
+    "laterPlace": [
+      {
+        "day": 3,
+        "hour": 3,
+        "place": [
+          "PandabornNightCourierPost.Inkpaws"
+        ]
+      }
+    ],
+    "laterGoods": [
+      {
+        "day": 1,
+        "hour": 2,
+        "set": {
+          "Water": 0
+        },
+        "afterReload": true
+      },
+      {
+        "day": 3,
+        "hour": 3,
+        "set": {
+          "Water": 600
+        },
+        "afterReload": true
+      }
+    ],
+    "shots": [
+      {
+        "name": "br_d0_h6_overview",
+        "day": 0,
+        "hour": 6,
+        "select": "districtCenter"
+      },
+      {
+        "name": "br_d1_h1_loft",
+        "day": 1,
+        "hour": 1,
+        "select": "loft"
+      },
+      {
+        "name": "br_d2_h1_loft_waiting",
+        "day": 2,
+        "hour": 1,
+        "select": "loft"
+      },
+      {
+        "name": "br_d4_h1_loft_after_new_post",
+        "day": 4,
+        "hour": 1,
+        "select": "loft"
+      },
+      {
+        "name": "br_d6_h21_night_post",
+        "day": 6,
+        "hour": 21,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "br_r0_h4_reload_loft",
+        "day": 0,
+        "hour": 4,
+        "select": "loft",
+        "afterReload": true
+      },
+      {
+        "name": "br_r3_h1_loft_hungry",
+        "day": 3,
+        "hour": 1,
+        "select": "loft",
+        "afterReload": true
+      },
+      {
+        "name": "br_r4_h1_loft_after_water",
+        "day": 4,
+        "hour": 1,
+        "select": "loft",
+        "afterReload": true
+      },
+      {
+        "name": "br_r5_h21_night_post",
+        "day": 5,
+        "hour": 21,
+        "select": "ringtailWorkplace",
+        "afterReload": true
+      },
+      {
+        "name": "br_r5_h22_ringtail",
+        "day": 5,
+        "hour": 22,
+        "select": "ringtail",
+        "afterReload": true
+      }
+    ]
+  }
+}

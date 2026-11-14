@@ -1,42 +1,42 @@
-# Ringtails prototype (dev only, never shipped)
+# Ringtails test probe (dev only, never shipped)
 
-Go/no-go prototype of a second colonist kind for the Inkpaws faction: **Ringtails** (red pandas). Results and the
-verdict are in [docs/tech/two-peoples.md](../../docs/tech/two-peoples.md), section "Prototype results".
+The Ringtails (red pandas, the Inkpaws' second people) ship in the faction mod: code in `src/code/Pandaborn.Ringtails`
+and `src/code/Pandaborn.RingtailsFallback`, data generated from the catalogue (templates, worker type, outfits, night
+posts, Moon Loft, name pool). Design, results and history: [docs/tech/two-peoples.md](../../docs/tech/two-peoples.md).
 
-Manifest Id `JigglyPanda.PandabornProtoRingtails`; requires `JigglyPanda.PandabornFactions`. Built to
-`E:\PandabornDev\build\proto\ringtails`; it is only ever installed for a test run (`run_game_test.ps1 -ExtraMods`).
-
-## What is in it
-
-| Piece | Where | Kind |
-|---|---|---|
-| Ringtail adult and kit templates (hidden: in no template collection) | `mod/Characters/Pandaborn/Ringtail*.Inkpaws` (generated) | Data |
-| Worker type `PandabornRingtail` (ignores working hours) | `mod/WorkerTypes/Pandaborn` | Data |
-| Ringtail-only Courier Loft (hauling post) and Forager's Nest (gatherer flag), Loft (home) | `mod/Buildings/Pandaborn/Ringtails` (generated), collection `Buildings.PandabornRingtails` appended to the Inkpaws faction | Data |
-| Save fallback alias: the Inkpaw templates answer to the Ringtail names | `mod/Characters/Pandaborn/Inkpaw*.Inkpaws` (merge) | Data |
-| Outfits for the Ringtail worker type | `mod/WorkerOutfits/Pandaborn` (generated) | Data |
-| Feature switch, factory, save/load registration | `src/RingtailService.cs` | Code, 1 private field |
-| Day rest: dawn until the bell (Inkpaw working-hours end), clamped 4–16 h; to bed first thing unless nearly rested | `src/RingtailRestRootBehavior.cs` | Code, 1 private field |
-| Coat | `src/RingtailCoat.cs` | Code |
-| Kit grows into a Ringtail adult | `src/RingtailGrowth.cs` | Code |
-| Inkpaw walking speed, never slowed by a load (`BaseSlowedSpeed = BaseWalkingSpeed`), lifting 14, equal appetite | template data | Data |
-| Housing rule (Ringtails end up in lofts) | `src/LoftHousingRule.cs` | Code |
-| Test probe (spawn, hourly log, panels, screenshots) | `src/Dev/*` (inert without a harness request) | Dev code |
+This folder used to be the go/no-go prototype and carried its own copy of the data; since the content lane adopted
+§18.1 into the catalogue (phase 3) it is only the **test probe**: a dev mod (`JigglyPanda.PandabornProtoRingtails`,
+built to `E:\PandabornDev\build\proto\ringtails`) whose `Scripts\` DLL is inert without a harness request. It reaches
+the module by reflection (`src/Dev/ModuleBridge.cs`), so it has no compile-time reference to it.
 
 ## Build and test
 
 ```powershell
-python proto\ringtails\tools\derive.py                    # regenerate the blueprint copies (after a game update)
 powershell -ExecutionPolicy Bypass -File proto\ringtails\build.ps1
-powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -InGameDays 3 -Speed 3 `
-    -ExtraMods E:\PandabornDev\build\proto\ringtails -RequestJson proto\ringtails\test\gate.request.json `
-    -SaveAndReload -ReloadSeconds 150 -TimeoutSeconds 1500
+# against the installed faction build:
+powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -InGameDays 2.4 -Speed 3 `
+    -ExtraMods E:\PandabornDev\build\proto\ringtails -RequestJson proto\ringtails\test\ui.request.json -TimeoutSeconds 1500
+# against a dev copy carrying code under test (proto/foundation/build.ps1 -Name rtdev):
+    ... -DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\rtdev,E:\PandabornDev\build\proto\ringtails
 python proto\ringtails\test\analyze.py E:\PandabornDev\build\test\<run id>
+python proto\ringtails\test\births.py E:\PandabornDev\build\test\<run id>
 ```
 
-The probe writes `ringtails.json` (hourly samples) and `rt_*.png` (panels and night shots) next to `result.json`.
+The probe writes `ringtails.json` (hourly samples: colonists, workplaces, lofts and their nursery state, player numbers,
+UI and sound state) and `rt_*.png` (panels and night shots) next to `result.json`.
 
-For other agents using this build with `-ExtraMods`: template names (`RingtailAdult|RingtailChild.Inkpaws`,
-`RingtailHaulingPost|RingtailGathererFlag|RingtailLoft.Inkpaws`), the worker type `PandabornRingtail` and the request
-section `"ringtails": { spawn, spawnKits, kitGrowth, place, stock, connectPaths, housingRule, shots, reload,
-disableTemplateRegistration }` are stable. The runtime code is being moved to `src/code/Pandaborn.Ringtails`.
+## Request section `"ringtails"`
+
+| Key | Meaning |
+|---|---|
+| `place` | templates (or `{template, finished}`) placed on the district's terrace, then joined with paths (`connectPaths`, default on) |
+| `stock`, `storage`, `recipes`, `workingHours` | district-center goods; stockpile goods; workshop recipes; the slider |
+| `spawn`, `spawnKits`, `kitGrowth` | Ringtail adults/kits created at once (dev only; the game itself gets them from the Moon Loft) |
+| `laterPlace`, `laterDelete`, `laterGoods` | timed placement, demolition, goods (`"set": {"Water": 0}` empties every inventory of it; a positive number gives the district center that much) |
+| `shots` | `{name, day, hour, select}`: select `ringtail`, `ringtailWorkplace`, `inkpaw`, `inkpawWorkplace`, `loft`, `districtCenter` or `none`, centre and capture |
+| `afterReload` | on any timed item or shot: only in the reload launch of a `-SaveAndReload` run (day 0 = its first day); timed items without it run only in the first launch |
+| `devSwitchNextLaunch` | dev switch lines for the reload launch (e.g. `force-off: Ringtails`) |
+
+Requests in `test/`: `ui` (clock arc, sun and moon marks, clapper, "no room"), `breeding` (ten lofts on Plains, the
+population valve, save and reload, the thirst drain), `module`, `soak`, `forcedoff`, `folktails`, `workshops*`,
+`throughput` (phase 2; see two-peoples.md §18).

@@ -239,17 +239,27 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 
 * **Small Festival**, reachable in the second cycle: paper lanterns and any three cooked dishes.
 * **Grand Festival**: adds fireworks. Two tiers only; bamboo-seed cakes simply count as a dish.
-* The player calls it from the Festival Square, at most once per cycle, or lets it call itself when stocked.
-* Everyone takes a day and a night off: dancing, rising lanterns, fireworks. The cost is a day's work.
-* Rewards: festive spirit that lasts most of a cycle, and one step of **Tradition**, which unlocks decorations.
+* The player calls it from the Festival Square, at most once per cycle, or lets it call itself when stocked
+  (it only calls itself in fair weather). The square's panel shows what the district has in its ordinary
+  storage and exactly what is still missing; the goods are taken from storage when the festival is called.
+* The festival runs from the next dawn to the dawn after. Everyone takes the day and the night off: dancing,
+  rising lanterns at dusk, fireworks at a Grand Festival. Pump and lift crews stay at their posts, so a
+  festival never costs the village its water. The cost is a day's work.
+* Rewards: everyone ends festive for about twenty days (a Grand Festival a little more), and one step of
+  **Tradition**, which unlocks decorations at no science cost.
 
 ### The Great Flowering
 
-* Never before a set cycle, never in a drought or badtide, and announced a full cycle ahead with visible buds.
-* One of the two bamboos flowers, drops its seed and dies across the map. Shoot bamboo means a food season to
-  bridge; timber bamboo means building material to have stocked.
-* The fallen **bamboo seed** is a large one-time harvest and makes the best food in the mod. It is a windfall
-  to prepare for, not only a loss.
+* Never before cycle 6, always on the first day of a cycle (so never in a drought or badtide), and announced
+  a full cycle ahead: a notice, a line in the top bar with advice, and buds on the plants. Forecasts name
+  the cycle, not a number of days.
+* One of the two bamboos flowers across the map. Every grown plant becomes a flowering plant whose harvest is
+  **bamboo seed**, gathered by the same farmers or woodcutters over three days before it dies. Young plants
+  die at once, and that bamboo rests for nine days before it grows again; planting marks stay, so fields
+  replant themselves. Shoot bamboo means a food gap of about twelve days to bridge; timber bamboo means
+  building material to have stocked (the Pole Mill covers it).
+* Bamboo seed is a large one-time harvest and makes the best food in the mod. It is a windfall to prepare
+  for, not only a loss.
 * A setting offers off, rare or normal.
 
 ## Pillar 6 — Late game
@@ -390,3 +400,5 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Wooden Ox lifts 30 and lasts ninety days; the faction uses its own tail and banner decals | "Strong" oxen lifted about what a panda does, and beaver tails showed on panda banners |
 | 2026-11-14 | Inkpaw workplaces hold three working days of inputs and outputs (was "about a day"), set by one number | Measured: day-sized shelves gave the couriers 24 goods to move in two nights; three-day shelves gave 107 and 46% more produced, and without Ringtails they changed nothing for the worse. To be re-checked for workshops hoarding scarce logs and poles early |
 | 2026-11-14 | The first Moon Loft brings two adults and a kit to its door and unlocks the night posts free; a loft says in its panel why it is or is not raising a kit | The Ringtail module passed a five-day soak with a reload. If the module is switched off or a game update breaks it, the same colonists load as Inkpaws and the posts become ordinary workplaces |
+| 2026-11-14 | Festival goods stay in ordinary storage and are taken at the call; the festival starts at the next dawn; pump and lift crews keep working; everyone ends festive | The events prototype: colonists eat from any storage a building holds, a festival must never strand the water supply, and a reward only for those who reached the square punishes big villages |
+| 2026-11-14 | The Flowering's seed is the dying plant's own harvest, and the bamboo rests nine days (was "until the next temperate season") | Dropped goods rot and are slow to collect; the colony model had 19 to 40 of 60 starving after a fifteen-day gap and none after twelve |

@@ -1,11 +1,9 @@
 {
-  "Name": "Pandaborn - Ringtails prototype (dev only)",
-  "Version": "0.0.1",
+  "Name": "Pandaborn - Ringtails test probe (dev only)",
+  "Version": "0.0.2",
   "Id": "JigglyPanda.PandabornProtoRingtails",
   "MinimumGameVersion": "1.1.0.0",
-  "Description": "Development-only go/no-go prototype of the Ringtails, a second colonist kind for the Inkpaws faction of Pandaborn - Factions. Never shipped. Art and code are AI-generated.",
-  "RequiredMods": [
-    { "Id": "JigglyPanda.PandabornFactions" }
-  ],
+  "Description": "Development-only test probe for the Ringtails of Pandaborn - Factions: places buildings, spawns, samples and takes screenshots for the automated in-game test. Inert without a test request. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [],
   "OptionalMods": []
 }

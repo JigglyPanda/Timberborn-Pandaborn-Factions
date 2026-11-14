@@ -94,11 +94,24 @@ namespace Pandaborn.Ringtails.Dev
         }
 
         /// <summary>The text a module UI piece last showed (its static ShownText).</summary>
-        public static string Shown(string typeName)
+        public static string Shown(string typeName) => Static(typeName, "ShownText")?.ToString();
+
+        /// <summary>Any public static property of a module type (tests read the UI and sound pieces' last state).</summary>
+        public static object Static(string typeName, string property)
         {
             Resolve();
             var t = _service?.Assembly.GetType("Pandaborn.Ringtails." + typeName);
-            return t?.GetProperty("ShownText", BindingFlags.Public | BindingFlags.Static)?.GetValue(null) as string;
+            return t?.GetProperty(property, BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+        }
+
+        /// <summary>A Moon Loft's nursery state (its loc key, "" before the first dawn after load).</summary>
+        public static string LoftKitState(BaseComponent loft)
+        {
+            Resolve();
+            var t = _service?.Assembly.GetType("Pandaborn.Ringtails.MoonLoft");
+            if (t == null || !loft) return null;
+            var component = loft.AllComponents.FirstOrDefault(c => c != null && c.GetType() == t);
+            return component == null ? null : t.GetProperty("KitState")?.GetValue(component) as string;
         }
     }
 }

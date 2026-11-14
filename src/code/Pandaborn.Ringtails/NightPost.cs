@@ -43,8 +43,7 @@ namespace Pandaborn.Ringtails
         {
             get
             {
-                float end = Math.Min(Math.Max(_workday.WorkdayHours, 4f), 16f);
-                return _workday.HoursSinceDawn < end;
+                return _workday.HoursSinceDawn < _workday.ShiftStartHours;
             }
         }
 

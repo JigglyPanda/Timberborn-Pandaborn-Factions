@@ -1,18 +1,48 @@
 # Two peoples: technical design
 
-Status: feasibility study, 2026-11-14 (sections 1–16, research only). Section 17 has the results of the in-game
-prototype of the simplified design (Ringtails in their own buildings, no shift flipping): **go**.
-Game: Timberborn 1.1.2.8. All code paths are relative to `E:\PandabornDev\reference\decompiled` and were read
-for this note. Blueprint paths are relative to `E:\PandabornDev\reference\Blueprints`. Bindito internals were
-decompiled into a scratch folder (`Bindito.Core.dll`, not kept).
+Game: Timberborn 1.1.2.8. Code paths in the study (§1–16) are relative to `E:\PandabornDev\reference\decompiled`;
+blueprint paths to `E:\PandabornDev\reference\Blueprints`.
 
-The design target is Pillar 1 as rewritten on 2026-11-14: **Inkpaws work the day, Ringtails work the night**,
-with automatic day and night crews on every workplace, Ringtails arriving with the first loft, and an optional
-"Long Nap" bet. The earlier three-way toggle model is covered too, as fallback rung 2.
+**How to read this document.** §0 is the design as built and shipping, in one page: read it first. §17–19 are the
+results that prove it (prototype, shipping module, phase 3), newest last. §1–16 are the original feasibility study
+(research only, written before any code ran). They are **superseded**: kept because their facts about the game code
+are still correct and still cited, but their *plan* (shift flipping on shared workplaces, crews, litters, a per-kind
+appetite, Long Nap, a crew panel) is not what was built. Where §1–16 and §0 disagree, §0 is right.
 
 ---
 
-## 1. Verdict
+## 0. The design as built
+
+**One sentence.** Inkpaws work the day; once the first Moon Loft is finished a Ringtail family moves in, and
+Ringtails work the night in their **own** night posts, from the afternoon bell to dawn, and sleep through the morning.
+
+| Topic | As built | Where proven |
+|---|---|---|
+| Two kinds | Ringtail adult and kit are hidden templates (in no template collection), so the vanilla factory still finds one adult; our factory creates them; one reflection write registers them in `TemplateNameMapper` for saves | §17.3, §18.6 |
+| Work | Worker type `PandabornRingtail` (`IgnoresWorkingHours`). Three night posts (Builders', Courier, Foragers') keep `Beaver` in data; the module switches them to Ringtails. **No shift flipping, no shared workplaces, no crews.** Inkpaw workplaces stay Inkpaw | §17.1, §18 |
+| Hours | Shift start = the bell (the first Core `IWorkdayClock` with a locked day, i.e. Bell's; else the working-hours slider), clamped to 4 h .. nightfall. Rest from dawn to the shift start: a root behaviour inserted by reflection above the worker behaviour | §17.3, §18.6 |
+| Stats | Data only: Inkpaw walking speed, never slowed by a load, lifting 14. Same needs, appetite and wellbeing tables as Inkpaws (the per-kind appetite was dropped) | §17.8 |
+| Arrival | Once per save, when the first Moon Loft is finished: 2 adults and 1 kit at its door, the night posts unlock for free, one message, the red panda twitter | §18.6, §19 |
+| Births | `LoftNursery`, each dawn, per loft: one kit while the district has a Ringtail adult (any loft), open night jobs (Ringtail-typed posts' desired workers minus Ringtail adults and kits), nobody critically hungry or thirsty, and a free kit slot. Kits grow into Ringtail adults. Population follows **night jobs**, not beds | §19 |
+| Housing | Lofts are Ringtail homes (`LoftHousingRule` swaps an Inkpaw out for a Ringtail); Inkpaws may use spare loft beds; Inkpaw cubs leave a loft only for a free cub slot | §17.4, §18 |
+| Interface | Ringtail badge; a second population row; sun mark on every Inkpaw workplace, moon mark on night posts, nursery line on lofts; "Closed for the day" status on posts; moon arc on the day clock. All behind `SafeUi` | §18.5, §19 |
+| Sound | Night clapper when the shift starts (2.5 s after the bell), only with Ringtails; twitter at arrival; silent if a clip is missing | §19 |
+| Saved | The arrival flag in `PandabornStore`. Nothing per colonist or building (no `PandabornEntityState` needed) | §19 |
+| Without the module | Data alone: saved Ringtails load as Inkpaws (permanent alias), night posts become Inkpaw workplaces (`Pandaborn.RingtailsFallback`), lofts are plain homes | §18.2, §18.6 |
+| Data | Generated from the catalogue (§18.1 adopted); `proto/ringtails` is only the test probe | §19 |
+| Not built (bets) | Long Nap, Wooden Oxen as a crew setting, crews per shift, walking in from the map edge, a toolbar moon mark (art) | — |
+
+---
+
+# Part B: feasibility study (superseded, see §0)
+
+Original status line: feasibility study, 2026-11-14 (research only). The design target then was Pillar 1 as first
+rewritten: automatic day and night crews on every workplace, Ringtails arriving with the first loft, and an optional
+"Long Nap" bet.
+
+---
+
+## 1. Verdict (study, superseded)
 
 * **Two living kinds in one faction is buildable without Harmony.** The way in is a *hidden second template*:
   the Ringtail adult and child blueprints carry the same `BeaverSpec`/`AdultSpec`/`ChildSpec` as any beaver but are
@@ -38,7 +68,7 @@ with automatic day and night crews on every workplace, Ringtails arriving with t
 
 ---
 
-## 2. Facts checked (the brief's "already found" list)
+## 2. Facts checked (the brief's "already found" list) (study, superseded)
 
 | Claim | Result |
 |---|---|
@@ -75,7 +105,7 @@ New facts that matter:
 
 ---
 
-## 3. Architecture for two living kinds
+## 3. Architecture for two living kinds (study, superseded)
 
 ### Options compared
 
@@ -123,7 +153,7 @@ so this is a normal state for the game.
 
 ---
 
-## 4. Day and night crews on one workplace
+## 4. Day and night crews on one workplace (study, superseded)
 
 ### What assumes one kind per workplace
 
@@ -199,7 +229,7 @@ components of one type (`ComponentCache.GetCachedComponent`), and dozens of syst
 
 ---
 
-## 5. Night workers: sleep, beds, leisure, day stage
+## 5. Night workers: sleep, beds, leisure, day stage (study, superseded)
 
 How beavers decide (verified):
 
@@ -234,7 +264,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 6. Per-kind stats and appetite
+## 6. Per-kind stats and appetite (study, superseded)
 
 | Stat | Two templates (A2) | Notes |
 |---|---|---|
@@ -249,7 +279,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 7. Housing, births, arrival, Long Nap
+## 7. Housing, births, arrival, Long Nap (study, superseded)
 
 * **Vanilla procreation** (`Reproduction/ProcreationHouse`): on `Enterable.EntererAdded`, if the home has a free
   child slot (`Dwelling.HasFreeChildSlots && UnderpopulatedByChildren`; child slots = ⌊capacity/3⌋, desired
@@ -281,7 +311,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 8. Appearance
+## 8. Appearance (study, superseded)
 
 * **Own mesh:** Ringtail blueprint `Children.Model_Preserved.TimbermeshSpec.Model` → own `.timbermesh`. Must keep the
   node names the blueprint uses (`#Backpack`, `#CarriedInHands`, `#Head`, `#Collider`, `#ZiplineHarness`,
@@ -303,7 +333,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 9. UI
+## 9. UI (study, superseded)
 
 | Element | Vanilla | Plan |
 |---|---|---|
@@ -317,7 +347,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 10. Tutorial and messages
+## 10. Tutorial and messages (study, superseded)
 
 * `TutorialSystem/TutorialService.GetConfigurations` and `TutorialTriggers.Load` run tutorials **only if the
   current `FactionSpec` has `StartingFactionSpec`**. `TutorialSpec` blueprints are global and the vanilla ones are
@@ -335,7 +365,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 11. Bots ("Wooden Oxen")
+## 11. Bots ("Wooden Oxen") (study, superseded)
 
 * **Minimum for working bots:** one template with `BotSpec` in the faction collections (`BotFactory.Load` →
   `GetSingle<BotSpec>`; the mod has `Characters/Pandaborn/Bot.Inkpaws.blueprint.json` already), `WorkerSpec.WorkerType
@@ -352,7 +382,7 @@ Untested: whether a Sleep-satisfying attraction is picked over the essential beh
 
 ---
 
-## 12. Data, code, reflection, Harmony
+## 12. Data, code, reflection, Harmony (study, superseded)
 
 | Item | Kind |
 |---|---|
@@ -381,7 +411,7 @@ without them.
 
 ---
 
-## 13. Risks, ranked
+## 13. Risks, ranked (study, superseded)
 
 1. **Day sleep for Ringtails** (reflection insert + custom root behaviour). If wrong, Ringtails collapse from
    exhaustion mid-shift and wellbeing sinks. Highest gameplay risk; prototype first.
@@ -401,7 +431,7 @@ without them.
 
 ---
 
-## 14. Staged plan
+## 14. Staged plan (study, superseded)
 
 **Stage 0 — fixes and mechanism checks (no new gameplay).** Fix the Inkpaw `EntityNameLocKey`. In the dev harness:
 check custom spec types load, a `BlueprintModifiers` entry changes `Need.Beaver.Hunger` for Inkpaws only, and the
@@ -446,7 +476,7 @@ Oxen-only-on-haulers rule, optional vanilla-toggle hiding.
 
 ---
 
-## 15. Fallback ladder
+## 15. Fallback ladder (study, superseded)
 
 | Rung | What the player gets | Code | Reflection | Harmony | Robustness across updates |
 |---|---|---|---|---|---|
@@ -460,7 +490,7 @@ Rung 3 is the safe floor.
 
 ---
 
-## 16. Design changes suggested by the code
+## 16. Design changes suggested by the code (study, superseded)
 
 1. **Housing decides the kind of baby, not who lives there.** The game has no hook to restrict dwellers by kind;
    any adult can sleep in any home. Keep "dens raise Inkpaws, lofts raise Ringtails", drop "Inkpaws live in dens".
@@ -477,6 +507,8 @@ Rung 3 is the safe floor.
    penalty. Make lanterns a wellbeing/decoration effect instead.
 
 ---
+
+# Part C: results (current)
 
 ## 17. Prototype results
 
@@ -746,8 +778,8 @@ spec records, proposed in `proposed/RingtailSpecs.cs`, are added to `Pandaborn.S
 
 Status: 2026-11-14. The Ringtails are a feature module of the faction's runtime code (`src/code/Pandaborn.Ringtails`,
 `src/code/Pandaborn.RingtailsFallback`, specs in `src/code/Pandaborn.Specs/RingtailSpecs.cs`), wired into
-`Pandaborn.Code.sln` and `modules.txt`. Until the catalogue lane adopts the data below, the data rides in the dev mod
-`proto/ringtails` (`tools/derive.py`), on top of the generated Inkpaws build.
+`Pandaborn.Code.sln` and `modules.txt`. The data below was carried by the dev mod `proto/ringtails` during phase 2;
+the catalogue lane has since adopted it (§19), and that copy is retired.
 
 ### 18.1 For the catalogue lane
 
@@ -843,10 +875,10 @@ their output store should hold a day's harvest, so the night couriers clear it.
 |---|---|
 | Ringtail badge (portrait, "Ringtail, age N", district link) | Done (`RingtailBadge`, priority 11 over the vanilla 10); seen in game, also used by the workplace worker list |
 | Population panel second row (total, working, idle) | Done (`RingtailsPopulationRow`, a copy of the working-hours panel frame under the population panel), follows the selected district |
-| Moon line on night posts and lofts | Done as a panel line (`RingtailsBuildingFragment`) |
+| Moon line on night posts and lofts | Done as a panel line (`RingtailsBuildingFragment`); phase 3 adds the drawn sun/moon mark and the day-shift line (§19) |
 | "Closed for the day" status | Done (`NightPost`, normal status, reuses the vanilla `NoUnemployed` icon) |
-| Moon mark in the toolbar, moon arc on the clock | Not done: the toolbar icons are art (the kit's icons are moon-marked); the clock arc needs UI work |
-| Ringtail names | Not done in data: the templates need `PandabornNamePoolSpec` with `Pandaborn.Ringtail.NamePool` (names.json); until then Ringtails get vanilla beaver names |
+| Moon mark in the toolbar, moon arc on the clock | Toolbar mark: art (the kit's icons are moon-marked). Clock arc: done in phase 3 (§19) |
+| Ringtail names | Done: the generated templates carry `PandabornNamePoolSpec` with `Pandaborn.NamePool.Ringtails` |
 
 All interface code runs inside `SafeUi`; a failing piece switches itself off for the session.
 
@@ -879,7 +911,7 @@ asked for 2 adults and a kit, 332 placeable / 368 templates, identical to every 
 Ringtail names work with the pool from `names.json` (test data: key `Pandaborn.NamePool.Ringtails`; seen in game:
 "Dan Xia (Red clouds)", "Ma La (Numbing and hot)").
 
-Unproven: kits being raised in game (see the soak: the blocking rule is fixed in code but not yet run); ten Moon Lofts
+Unproven at the end of phase 2 (see §19 for what phase 3 proved): kits being raised in game (see the soak: the blocking rule is fixed in code but not yet run); ten Moon Lofts
 (three fitted); walking in from the map edge (they appear at the loft); the toolbar moon
 mark and the clock arc; the Night Builders' Post actually raising sites at night (it needs sites queued after the bell
 in a layout with room; the soak queues dens after the bell); births over many days (one kit per loft per dawn was seen

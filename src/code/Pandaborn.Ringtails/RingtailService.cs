@@ -94,6 +94,9 @@ namespace Pandaborn.Ringtails
 
         public event Action ArrivedChanged;
 
+        /// <summary>The family has moved into this loft (sounds, tests).</summary>
+        public event Action<MoonLoft> FamilyArrived;
+
         public void Load()
         {
             Current = this;
@@ -173,6 +176,7 @@ namespace Pandaborn.Ringtails
             UnlockNightPosts();
             _messenger.Post(_loc.T("Pandaborn.Ringtails.Arrived", string.Join(", ", names)));
             ArrivedChanged?.Invoke();
+            FamilyArrived?.Invoke(loft);
         }
 
         private void UnlockNightPosts()

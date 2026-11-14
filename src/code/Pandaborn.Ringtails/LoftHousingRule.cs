@@ -96,7 +96,8 @@ namespace Pandaborn.Ringtails
 
         /// <summary>
         /// The young: a loft's kit slot is where its nursery raises the next kit, so an Inkpaw cub in a loft moves to a free
-        /// cub slot in another home (never to nowhere), and a Ringtail kit without a loft home takes a free loft kit slot.
+        /// cub slot in a home that wants a cub (never to nowhere), and a homeless Ringtail kit takes a free loft kit slot. A kit
+        /// that vanilla moved to a den to live with adults stays there (kits are born in lofts, not confined to them).
         /// </summary>
         private void SortKits(DistrictPopulation population, List<Dwelling> dwellings)
         {
@@ -107,13 +108,14 @@ namespace Pandaborn.Ringtails
                 bool ringtail = RingtailService.IsRingtail(child);
                 if (!ringtail && dweller.HasHome && IsLoft(dweller.Home))
                 {
-                    var den = dwellings.FirstOrDefault(d => !IsLoft(d) && d.HasFreeSlots && d.HasFreeChildSlots);
+                    // only to a home that wants a cub (vanilla would otherwise move it straight back)
+                    var den = dwellings.FirstOrDefault(d => !IsLoft(d) && d.HasFreeChildSlots && d.UnderpopulatedByChildren);
                     if (den == null) continue;
                     dweller.Home.UnassignDweller(dweller);
                     den.AssignDweller(dweller);
                     CubsMovedOut++;
                 }
-                else if (ringtail && (!dweller.HasHome || !IsLoft(dweller.Home)))
+                else if (ringtail && !dweller.HasHome)
                 {
                     var loft = dwellings.FirstOrDefault(d => IsLoft(d) && d.HasFreeSlots && d.HasFreeChildSlots);
                     if (loft == null) continue;

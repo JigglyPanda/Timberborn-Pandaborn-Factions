@@ -117,7 +117,7 @@ namespace Pandaborn.Ringtails.Dev
             _out["feature"] = FeatureState();
             HandleNextLaunchDevSwitch();
             if (_config["shots"] is JArray shots)
-                foreach (var s in shots.OfType<JObject>()) _pendingShots.Add(s);
+                foreach (var s in shots.OfType<JObject>().Where(s => s["afterReload"] == null || ForThisLaunch(s))) _pendingShots.Add(s);
             HarnessBridge.Info("probe loaded; module " + (ModuleBridge.Loaded ? "loaded" : "NOT loaded"));
         }
 
@@ -403,8 +403,29 @@ namespace Pandaborn.Ringtails.Dev
             sample["workerHoursSinceLastSample"] = hoursByBehavior;
             _behaviorHours.Clear();
 
+            var lofts = new JArray();
+            foreach (var d in _entityRegistry.Entities.Select(e => e.GetComponent<Dwelling>()).Where(d => d && ModuleBridge.IsMoonLoft(d)))
+            {
+                lofts.Add(new JObject
+                {
+                    ["id"] = Id(d),
+                    ["kitState"] = ModuleBridge.LoftKitState(d),
+                    ["adults"] = d.NumberOfAdultDwellers,
+                    ["children"] = d.NumberOfChildDwellers,
+                    ["kinds"] = new JArray(d.AdultDwellers.Concat(d.ChildDwellers).Select(x => x.GetComponent<Character>()).Where(x => x).Select(x => (object)Kind(x)).ToArray())
+                });
+            }
+            sample["lofts"] = lofts;
             sample["playerNumbers"] = PlayerNumbers();
-            sample["ui"] = new JObject { ["populationRow"] = ModuleBridge.Shown("RingtailsPopulationRow"), ["buildingFragment"] = ModuleBridge.Shown("RingtailsBuildingFragment") };
+            sample["ui"] = new JObject
+            {
+                ["populationRow"] = ModuleBridge.Shown("RingtailsPopulationRow"),
+                ["buildingFragment"] = ModuleBridge.Shown("RingtailsBuildingFragment"),
+                ["buildingMark"] = ModuleBridge.Static("RingtailsBuildingFragment", "ShownMark")?.ToString(),
+                ["clockArc"] = ModuleBridge.Static("RingtailClockArc", "Shown")?.ToString(),
+                ["clapper"] = ModuleBridge.Static("RingtailSounds", "LastClapper")?.ToString(),
+                ["clappersPlayed"] = ModuleBridge.Static("RingtailSounds", "ClappersPlayed") is int n ? n : -1
+            };
             sample["feature"] = FeatureState();
             _samples.Add(sample);
             Write();
@@ -498,7 +519,7 @@ namespace Pandaborn.Ringtails.Dev
             if (!_laterLoaded)
             {
                 _laterLoaded = true;
-                if (!HarnessBridge.LoadSave && _config["laterPlace"] is JArray later) _laterPlace.AddRange(later.OfType<JObject>());
+                if (_config["laterPlace"] is JArray later) _laterPlace.AddRange(later.OfType<JObject>().Where(ForThisLaunch));
             }
             for (int i = _laterPlace.Count - 1; i >= 0; i--)
             {
@@ -526,7 +547,7 @@ namespace Pandaborn.Ringtails.Dev
             if (!_laterDeleteLoaded)
             {
                 _laterDeleteLoaded = true;
-                if (!HarnessBridge.LoadSave && _config["laterDelete"] is JArray later) _laterDelete.AddRange(later.OfType<JObject>());
+                if (_config["laterDelete"] is JArray later) _laterDelete.AddRange(later.OfType<JObject>().Where(ForThisLaunch));
             }
             for (int i = _laterDelete.Count - 1; i >= 0; i--)
             {
@@ -542,11 +563,67 @@ namespace Pandaborn.Ringtails.Dev
             }
         }
 
+        /// <summary>Timed items run in the launch they belong to: "afterReload": true only in the reload launch of a
+        /// save-and-reload run (day 0 = the reload's first day), otherwise only in the first launch.</summary>
+        private static bool ForThisLaunch(JObject item) => (item["afterReload"]?.Value<bool>() ?? false) == HarnessBridge.LoadSave;
+
+        private readonly List<JObject> _laterGoods = new List<JObject>();
+        private bool _laterGoodsLoaded;
+
+        /// <summary>"laterGoods": [ { "day": 4, "hour": 1, "set": { "Water": 0 }, "afterReload": false } ]: 0 takes every
+        /// unreserved unit of the good out of every inventory (district centers, stockpiles, warehouses, workshops) to make the
+        /// colonists go hungry or thirsty; a positive value gives the district center that much more.</summary>
+        private void GoodsDueLater(float runHour)
+        {
+            if (!_laterGoodsLoaded)
+            {
+                _laterGoodsLoaded = true;
+                if (_config["laterGoods"] is JArray later) _laterGoods.AddRange(later.OfType<JObject>().Where(ForThisLaunch));
+            }
+            for (int i = _laterGoods.Count - 1; i >= 0; i--)
+            {
+                var item = _laterGoods[i];
+                float due = (item["day"]?.Value<float>() ?? 0f) * 24f + (item["hour"]?.Value<float>() ?? 0f) - (float)Math.Floor(_firstSampleSinceDawn);
+                if (runHour < due) continue;
+                _laterGoods.RemoveAt(i);
+                if (!(item["set"] is JObject set)) continue;
+                var report = new List<string>();
+                foreach (var p in set.Properties())
+                {
+                    int value = p.Value.Value<int>();
+                    if (value <= 0)
+                    {
+                        int taken = 0;
+                        foreach (var inventories in _entityRegistry.Entities.Select(e => e.GetComponent<Timberborn.InventorySystem.Inventories>()).Where(x => x))
+                            foreach (var inventory in inventories.EnabledInventories)
+                            {
+                                int amount = inventory.UnreservedAmountInStock(p.Name);
+                                if (amount <= 0) continue;
+                                inventory.TakeExisting(new Timberborn.Goods.GoodAmount(p.Name, amount));
+                                taken += amount;
+                            }
+                        report.Add(p.Name + ": took " + taken);
+                    }
+                    else
+                    {
+                        var center = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
+                        var inventory = center?.GetComponent<Timberborn.InventorySystem.Inventories>()?.EnabledInventories
+                            .FirstOrDefault(x => x.Takes(p.Name) || x.Gives(p.Name));
+                        if (inventory == null) { report.Add(p.Name + ": no inventory"); continue; }
+                        inventory.GiveExistingIgnoringCapacity(new Timberborn.Goods.GoodAmount(p.Name, value));
+                        report.Add(p.Name + ": gave " + value + " -> " + inventory.AmountInStock(p.Name));
+                    }
+                }
+                Event("laterGoods", string.Join(", ", report));
+            }
+        }
+
         private void QueueDueShots()
         {
             float runHour = _dayNightCycle.PartialDayNumber * 24f - _firstSampleHours;
             PlaceDueLater(runHour);
             DeleteDueLater(runHour);
+            GoodsDueLater(runHour);
             for (int i = _pendingShots.Count - 1; i >= 0; i--)
             {
                 var s = _pendingShots[i];

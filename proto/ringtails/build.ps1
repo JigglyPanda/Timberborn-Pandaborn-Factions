@@ -1,45 +1,31 @@
 <#
 .SYNOPSIS
-  Builds the Ringtails test mod (dev only) into E:\PandabornDev\build\proto\ringtails.
+  Builds the Ringtails test probe (dev only) into E:\PandabornDev\build\proto\ringtails.
 .DESCRIPTION
-  The Ringtails code ships in the faction mod (src/code/Pandaborn.Ringtails, Pandaborn.RingtailsFallback). This mod carries
-  only what the catalogue lane will own later (Ringtail templates, worker type, outfits, merges onto the generated night
-  posts, Moon Loft and Inkpaw templates), the red panda body meshes, and the dev-only test probe (Scripts\, inert without a
-  harness request). It rides on the installed faction build (Buildings.Inkpaws).
-  1. Mirrors proto/ringtails/mod into the build folder.
-  2. Copies the Ringtail body meshes (not in git) from the ringtail-body lane's output, only when they changed.
-  3. Builds the probe (proto/ringtails/src) into <build>\Scripts.
-  4. Removes stale files. Never touches the Mods folder (run_game_test.ps1 -ExtraMods junctions it for a run).
+  Everything the Ringtails need ships in the faction mod: the code (src/code/Pandaborn.Ringtails, Pandaborn.RingtailsFallback)
+  and the data (catalogue: Ringtail templates, worker type, outfits, night posts, Moon Loft, name pool; body meshes from the
+  ringtail-body lane via assemble). This mod carries only the dev-only test probe (Scripts\, inert without a harness
+  request), which reaches the module by reflection. It rides on the installed faction build or a dev copy of it
+  (proto/foundation/build.ps1).
+  1. Copies proto/ringtails/mod (the manifest) into the build folder.
+  2. Builds the probe (proto/ringtails/src) into <build>\Scripts.
+  3. Removes stale files (the data this mod used to carry). Never touches the Mods folder (run_game_test.ps1 -ExtraMods
+     junctions it for a run).
 #>
 [CmdletBinding()]
 param(
-    [string]$BuildDir = 'E:\PandabornDev\build\proto\ringtails',
-    [string]$MeshSource = 'E:\PandabornDev\build\characters\out'
+    [string]$BuildDir = 'E:\PandabornDev\build\proto\ringtails'
 )
 $ErrorActionPreference = 'Stop'
 $here = $PSScriptRoot
 $source = Join-Path $here 'mod'
 New-Item -ItemType Directory -Force $BuildDir | Out-Null
 $expected = @{}
-function Copy-IfChanged([string]$from, [string]$to) {
-    $src = Get-Item -LiteralPath $from
-    if (Test-Path -LiteralPath $to) {
-        $dst = Get-Item -LiteralPath $to
-        if ($dst.Length -eq $src.Length -and $dst.LastWriteTimeUtc -eq $src.LastWriteTimeUtc) { return }
-    }
-    New-Item -ItemType Directory -Force (Split-Path $to -Parent) | Out-Null
-    Copy-Item -LiteralPath $from -Destination $to -Force
-}
 foreach ($f in Get-ChildItem -LiteralPath $source -Recurse -File) {
     $rel = $f.FullName.Substring($source.Length + 1)
-    Copy-IfChanged $f.FullName (Join-Path $BuildDir $rel)
-    $expected[$rel.ToLowerInvariant()] = $true
-}
-foreach ($name in 'RingtailAdult', 'RingtailChild') {
-    $from = Join-Path $MeshSource "$name.Model.timbermesh"
-    if (-not (Test-Path -LiteralPath $from)) { throw "Ringtail body mesh missing: $from (ringtail-body lane: src/pipeline/characters/make_ringtails.py)" }
-    $rel = "Characters\Pandaborn\$name.Model.timbermesh"
-    Copy-IfChanged $from (Join-Path $BuildDir $rel)
+    $to = Join-Path $BuildDir $rel
+    New-Item -ItemType Directory -Force (Split-Path $to -Parent) | Out-Null
+    Copy-Item -LiteralPath $f.FullName -Destination $to -Force
     $expected[$rel.ToLowerInvariant()] = $true
 }
 $project = Join-Path $here 'src\PandabornProtoRingtails.csproj'

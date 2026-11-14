@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Pandaborn.Core;
 using Timberborn.TimeSystem;
 using Timberborn.WorkSystem;
@@ -8,28 +8,22 @@ using Timberborn.WorkSystem;
 namespace Pandaborn.Ringtails
 {
     /// <summary>
-    /// When the Ringtails' shift starts: the bell, i.e. the end of the Inkpaw working day, in hours after dawn.
-    /// With Pandaborn.Bell on, the day length Bell locked at dawn (so both modules agree, and moving the slider changes
-    /// tomorrow, as for the Inkpaws); otherwise the live working-hours slider.
-    ///
-    /// Bell is reached without a compile-time reference: by name, through its public static BellService.Current.LockedHours.
-    /// Proposed replacement (src/code/README.md terms): a Core interface
-    ///   namespace Pandaborn.Core { public interface IWorkdayClock { bool HasLockedDay { get; } int LockedWorkdayHours { get; } } }
-    /// bound by Bell with MultiBind&lt;IWorkdayClock&gt;(); Ringtails would take IEnumerable&lt;IWorkdayClock&gt; and fall back to the
-    /// slider when it is empty. Until Core has it, this bridge reads Bell by name and falls back silently.
+    /// When the Ringtails' shift starts: the bell, i.e. the end of the Inkpaw working day, in hours after dawn. Uses the first
+    /// Core IWorkdayClock with a locked day (Pandaborn.Bell registers one: the day length it locked at dawn, so both peoples
+    /// agree and moving the slider changes tomorrow); otherwise the live working-hours slider. The shift start itself is
+    /// clamped to [4 h, nightfall] by the callers (PandabornRingtailSpec.RestMinEndHours / RestMaxEndHours).
     /// </summary>
     public class RingtailWorkday
     {
         private readonly IDayNightCycle _dayNightCycle;
         private readonly WorkingHoursManager _workingHoursManager;
-        private PropertyInfo _bellCurrent;
-        private PropertyInfo _bellLocked;
-        private bool _resolved;
+        private readonly List<IWorkdayClock> _clocks;
 
-        public RingtailWorkday(IDayNightCycle dayNightCycle, WorkingHoursManager workingHoursManager)
+        public RingtailWorkday(IDayNightCycle dayNightCycle, WorkingHoursManager workingHoursManager, IEnumerable<IWorkdayClock> clocks)
         {
             _dayNightCycle = dayNightCycle;
             _workingHoursManager = workingHoursManager;
+            _clocks = clocks.ToList();
         }
 
         public float Dawn => _dayNightCycle.BoundsInHours(TimeOfDay.Daytime).start;
@@ -43,41 +37,32 @@ namespace Pandaborn.Ringtails
             }
         }
 
+        private IWorkdayClock Locked
+        {
+            get
+            {
+                foreach (var clock in _clocks)
+                {
+                    try { if (clock.HasLockedDay) return clock; }
+                    catch (Exception) { }
+                }
+                return null;
+            }
+        }
+
         /// <summary>Length of the Inkpaw working day in hours (the bell, measured from dawn).</summary>
         public float WorkdayHours
         {
             get
             {
-                int locked = BellLockedHours();
-                if (locked >= 0) return locked;
-                return _workingHoursManager.EndHours - Dawn;
+                var clock = Locked;
+                return clock != null ? clock.LockedWorkdayHours : _workingHoursManager.EndHours - Dawn;
             }
         }
 
-        public string Source => BellLockedHours() >= 0 ? "bell" : "slider";
+        /// <summary>The Ringtails' shift start in hours after dawn (the bell clamped to 4 h .. nightfall).</summary>
+        public float ShiftStartHours => Math.Min(Math.Max(WorkdayHours, 4f), _dayNightCycle.DaytimeLengthInHours);
 
-        private int BellLockedHours()
-        {
-            try
-            {
-                if (!FeatureRegistry.IsOn("Bell")) return -1;
-                if (!_resolved)
-                {
-                    _resolved = true;
-                    var type = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Pandaborn.Bell")
-                        ?.GetType("Pandaborn.Bell.BellService");
-                    _bellCurrent = type?.GetProperty("Current", BindingFlags.Public | BindingFlags.Static);
-                    _bellLocked = type?.GetProperty("LockedHours", BindingFlags.Public | BindingFlags.Instance);
-                }
-                var bell = _bellCurrent?.GetValue(null);
-                var active = bell?.GetType().GetProperty("Active")?.GetValue(bell) as bool?;
-                if (bell == null || active != true || _bellLocked == null) return -1;
-                return (int)_bellLocked.GetValue(bell);
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
+        public string Source => Locked != null ? "locked" : "slider";
     }
 }
