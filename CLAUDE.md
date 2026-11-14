@@ -137,7 +137,16 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   only, and throws on a duplicate name. So a faction-only collection may hold bundle materials *named* like
   vanilla ones (e.g. `BaseWood_Brown.Folktails`), provided the faction does not also list the `Folktails`
   collection. Every vanilla Folktails model then renders with our materials in an Inkpaws game only.
-  *Untested in game.*
+  **Proven in game, but the data-only form is unsafe with other mods:** ChooChoo loads its own copy of the
+  Folktails materials into any faction that does not list `Folktails` ("already loaded" crash), and building
+  mods such as KnatteAnka Staircase need materials that live in the `Folktails` collection ("not found"
+  crash). **Use the swap form instead:** the faction keeps listing `Folktails`, and a small class copies our
+  bundle materials' properties into the same-named vanilla materials when an Inkpaws game loads and restores
+  them on unload (`src/code/Pandaborn.Look`; passed with all 35 of the owner's mods, including an Inkpaws game
+  followed by a Folktails game in one session). If the bundle is missing the faction simply looks like Folktails.
+  The bundle file must keep the name it was built with (`tools\build_look.ps1 -BundleName pandabornlook`): a
+  hand-renamed copy crashes on return to the main menu. Details in `docs/tech/look.md`; sheet regions for
+  modellers in `docs/tech/look-regions.md`.
 * Global, not per faction: game modes, starting goods (hardcoded Berries and Water), wellbeing tiers, bottom-bar tool
   groups, achievements. The name pool (`Beaver.NamePool`) is global, but an `IEntityNamer` with priority above 20
   decorated on a faction-only spec names that faction's colonists (`Pandaborn.Names`, verified; glosses like
