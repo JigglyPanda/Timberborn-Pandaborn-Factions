@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "space between comma and quote"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

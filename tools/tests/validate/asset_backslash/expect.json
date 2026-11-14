@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "uses a backslash"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

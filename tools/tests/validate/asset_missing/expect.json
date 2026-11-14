@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "Sprites/Pandaborn/Fixture/NoSuchIcon does not resolve"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

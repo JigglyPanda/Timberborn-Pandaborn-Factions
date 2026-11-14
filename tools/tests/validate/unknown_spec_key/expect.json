@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "unknown spec key BuildingSpecc"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

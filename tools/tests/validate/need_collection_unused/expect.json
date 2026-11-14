@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "need collection PandabornFixtureNeeds is used by no faction"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

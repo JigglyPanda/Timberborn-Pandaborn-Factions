@@ -1,0 +1,12 @@
+{
+  "errors": [
+    "GoodSpec id Plank is also a vanilla id"
+  ],
+  "args": [
+    "--id-prefix",
+    "",
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

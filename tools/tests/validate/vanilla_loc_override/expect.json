@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "loc key Good.Plank.DisplayName overrides vanilla text"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

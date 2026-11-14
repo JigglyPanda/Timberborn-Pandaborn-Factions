@@ -1,0 +1,8 @@
+{
+  "NeedCollectionSpec": {
+    "CollectionId": "PandabornFixtureNeeds",
+    "Needs": [
+      "PandabornFixtureNeed"
+    ]
+  }
+}

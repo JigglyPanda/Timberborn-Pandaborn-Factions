@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "vector3 needs exactly the keys X, Y, Z"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

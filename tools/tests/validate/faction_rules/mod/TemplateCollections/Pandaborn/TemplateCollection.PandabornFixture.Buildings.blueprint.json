@@ -1,0 +1,8 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "PandabornFixture.Buildings",
+    "Blueprints": [
+      "Buildings/Pandaborn/Fixture/Bench.PandabornFixture.blueprint"
+    ]
+  }
+}

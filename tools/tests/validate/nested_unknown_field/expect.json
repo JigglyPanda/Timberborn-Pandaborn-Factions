@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "unknown field Amout"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

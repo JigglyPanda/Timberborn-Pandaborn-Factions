@@ -1,0 +1,12 @@
+{
+  "errors": [
+    "clashes with a vanilla template"
+  ],
+  "args": [
+    "--template-suffix",
+    ".Folktails",
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

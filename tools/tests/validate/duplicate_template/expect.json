@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "template name Bench.PandabornFixture is also used by"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

@@ -1,0 +1,470 @@
+{
+  "_note": "Append-only register of every id this mod has ever shipped or generated (docs/ENGINEERING.md). Never delete or rename an entry: a removed id breaks saves. A replaced id stays here and lives on as an alias (BackwardCompatibleTemplateNames / BackwardCompatibleIds); a retired building keeps its template. src/gen adds new ids only with --lock; tools/validate.py checks the build against this file and this file against its committed version.",
+  "ids": {
+    "faction": {
+      "Inkpaws": {
+        "since": "2026-11-14"
+      }
+    },
+    "template": {
+      "Airlock.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "AquiferDrill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "BadwaterDome.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "BadwaterPump.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "BadwaterRig.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Bench.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Bot.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "BotPartFactory.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "BuildersHut.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Campfire.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Centrifuge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Chronometer.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Clutch.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "CompactMechanicalPump.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ContaminationBarrier.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ContaminationSensor.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Dam.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DepthSensor.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Detonator.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DirtExcavator.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Discharge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DistrictCrossing.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DoubleDynamite.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DoubleFloodgate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "DoublePlatform.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Dynamite.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "EfficientFarmHouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ExplosivesFactory.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "FillValve.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "FireworkLauncher.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Floodgate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "FlowSensor.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Forester.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Gate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "GathererFlag.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "GearWorkshop.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "GravityBattery.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "HaulingPost.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Hedge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Herbalist.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "HttpAdapter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "HttpLever.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ImpermeableFloor.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ImpermeablePowerShaft.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Indicator.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "InkpawAdult.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "InkpawChild.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Inventor.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "LargePile.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "LargeWarehouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "LargeWaterPump.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Levee.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Lever.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "LumberMill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "LumberjackFlag.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "MechanicalPump.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "MedicalBed.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "MediumWarehouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Memory.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "MetalPlatform3x3.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "MetalPlatform5x5.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Mine.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Overhang2x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Overhang3x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Overhang4x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Overhang5x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Overhang6x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornBambooFence.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornBambooPinwheel.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornBambooWaterWheel.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornCisternLarge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornCisternMedium.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornCisternSmall.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornCourtyardHouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornDen.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornGreatSittingPanda.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornHammock.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornHotSpringBath.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornInkStudio.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornKindergarten.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornKitchen.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornKiteWindmill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornLargeKiteWindmill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornMemorialArch.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornNapPlatform.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornOperaStage.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornOxWorkshop.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornPaddyHouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornPandaStatue.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornSkyLantern.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornSlideAndSwing.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornSmokeKiln.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornStandingLantern.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornSteamer.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornTeahouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornTerraceHouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornTripHammerMill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornVillageHall.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PaperMill.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Platform.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PoleBanner.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PopulationCounter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PowerMeter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PowerShaft.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PowerWheel.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Relay.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ResourceCounter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Roof1x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Roof1x2.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Roof2x2.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Roof2x3.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Roof3x2.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Scarecrow.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ScavengerFlag.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ScienceCounter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Shower.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Shrub.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SmallPile.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SmallWarehouse.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Smelter.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Speaker.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SpiralStairs.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SquareBanner.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Stairs.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "StreamGauge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge1x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge2x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge3x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge4x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge5x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "SuspensionBridge6x1.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "TeethGrindstone.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "TerrainBlock.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ThrottlingValve.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Timer.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "TripleDynamite.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "TripleFloodgate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "TriplePlatform.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Tunnel.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "UndergroundPile.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "VerticalPowerShaft.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "WaterPump.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "WeatherStation.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ZiplineBeam.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ZiplinePylon.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ZiplineStation.Inkpaws": {
+        "since": "2026-11-14"
+      }
+    },
+    "template_alias": {},
+    "collection": {
+      "Buildings.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "Characters.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "ModularShaftParts.Inkpaws": {
+        "since": "2026-11-14"
+      }
+    },
+    "good": {},
+    "need": {},
+    "need_group": {},
+    "recipe": {},
+    "worker_type": {},
+    "spec_class": {},
+    "save_key": {},
+    "bundle": {}
+  }
+}

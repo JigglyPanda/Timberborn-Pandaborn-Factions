@@ -1,0 +1,13 @@
+{
+  "ids": {
+    "template": {
+      "Bench.PandabornFixture": {
+        "since": "2026-11-14"
+      },
+      "Gone.PandabornFixture": {
+        "since": "2026-11-14"
+      }
+    },
+    "good": {}
+  }
+}

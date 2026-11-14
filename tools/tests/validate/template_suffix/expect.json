@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "template name Bench.Folktails2 must end in .PandabornFixture"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

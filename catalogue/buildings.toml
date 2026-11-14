@@ -1,0 +1,187 @@
+# Every Inkpaws building. One line each where possible. Format and every field: catalogue/README.md.
+#
+#   Id = {}                              re-themed: a copy of <Id>.Folktails as template <Id>.Inkpaws, vanilla names
+#                                        and stats (the material swap gives it the Inkpaw look)
+#   Id = { basis = "Grill.Folktails" }   a building of our own on a vanilla stand-in (model and behaviour of the basis
+#                                        until its own model and numbers arrive); Id is its frozen template base name
+#   fields: basis, archetype, text, cost, science, workers, worker_type, disallow_other_workers, recipes, capacity,
+#           tool_group, tool_order, models, icon, retire, aliases, set, standin, needs_code, note
+#
+# Text (names, descriptions, flavor) comes from text/buildings.json, matched by "id" (or by `text = "<id>"`).
+# Every building lands in the template collection Buildings.Inkpaws in the order written here.
+
+[buildings]
+# ------------------------------------------------------------------ village and logistics (CONTENT: Village)
+PandabornVillageHall = { basis = "DistrictCenter.Folktails", standin = "art/models/VillageHall" }
+BuildersHut = {}
+HaulingPost = {}
+DistrictCrossing = {}
+
+# ------------------------------------------------------------------ homes (all "new" in CONTENT; vanilla stand-ins)
+PandabornDen = { basis = "Lodge.Folktails", standin = "art/models/Den" }
+PandabornCourtyardHouse = { basis = "DoubleLodge.Folktails", standin = "new model" }
+PandabornTerraceHouse = { basis = "TripleLodge.Folktails", standin = "new model" }
+
+# ------------------------------------------------------------------ food
+GathererFlag = {}
+EfficientFarmHouse = { text = "PandabornFarmstead", note = "CONTENT's Farmstead; keeps the vanilla name Farmhouse (coordinator, 2026-11-14)" }
+PandabornSteamer = { basis = "Grill.Folktails", standin = "art/models/Steamer", note = "vanilla Grill recipes until the Inkpaw goods exist" }
+PandabornPaddyHouse = { basis = "AquaticFarmhouse.Folktails", standin = "new model" }
+PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", needs_code = "water-driven: until then a vanilla gristmill" }
+PandabornKitchen = { basis = "Bakery.Folktails", standin = "new model" }
+
+# ------------------------------------------------------------------ wood and materials
+LumberjackFlag = {}
+Forester = {}
+LumberMill = { retire_when = "timber bamboo yields poles (planks) directly", note = "not in CONTENT; the only plank source until timber bamboo exists" }
+GearWorkshop = {}
+PaperMill = {}
+PandabornSmokeKiln = { basis = "WoodWorkshop.Folktails", standin = "new model", note = "vanilla treated planks recipe; pine resin has no source yet" }
+ExplosivesFactory = {}
+
+# ------------------------------------------------------------------ metal
+ScavengerFlag = {}
+Smelter = {}
+Mine = {}
+
+# ------------------------------------------------------------------ water
+WaterPump = {}
+LargeWaterPump = {}
+MechanicalPump = {}
+CompactMechanicalPump = {}
+AquiferDrill = {}
+BadwaterPump = {}
+Discharge = {}
+Centrifuge = {}
+BadwaterDome = {}
+BadwaterRig = {}
+PandabornCisternSmall = { basis = "SmallTank.Folktails", standin = "art/models/Cistern" }
+PandabornCisternMedium = { basis = "MediumTank.Folktails", standin = "art/models/Cistern" }
+PandabornCisternLarge = { basis = "LargeTank.Folktails", standin = "art/models/Cistern" }
+StreamGauge = { note = "not named in CONTENT; kept as a water instrument next to the automation set" }
+
+# ------------------------------------------------------------------ landscaping
+Levee = {}
+Dam = {}
+Floodgate = {}
+DoubleFloodgate = {}
+TripleFloodgate = {}
+FillValve = {}
+ThrottlingValve = {}
+ImpermeableFloor = {}
+ContaminationBarrier = {}
+Dynamite = {}
+DoubleDynamite = { text = "Dynamite" }
+TripleDynamite = { text = "Dynamite" }
+Tunnel = {}
+DirtExcavator = {}
+TerrainBlock = {}
+
+# ------------------------------------------------------------------ power
+PowerWheel = {}
+PowerShaft = {}
+ImpermeablePowerShaft = {}
+VerticalPowerShaft = { text = "PowerShaft" }
+Clutch = {}
+GravityBattery = {}
+PandabornBambooWaterWheel = { basis = "WaterWheel.Folktails", standin = "art/models/BambooWaterWheel" }
+PandabornKiteWindmill = { basis = "WindTurbine.Folktails", standin = "art/models/KiteWindmill" }
+PandabornLargeKiteWindmill = { basis = "LargeWindTurbine.Folktails", standin = "art/models/KiteWindmill" }
+DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGenerator.blueprint" }
+
+# ------------------------------------------------------------------ science and Wooden Oxen
+Inventor = {}
+PandabornOxWorkshop = { basis = "BotAssembler.Folktails", standin = "new model", note = "vanilla bot recipe (needs bot parts) until the ox recipe is set" }
+BotPartFactory = { retire_when = "the Ox Workshop recipe no longer needs bot parts", note = "not in CONTENT; ox parts were cut, kept until the ox recipe changes" }
+
+# ------------------------------------------------------------------ storage
+SmallWarehouse = {}
+MediumWarehouse = {}
+LargeWarehouse = {}
+SmallPile = {}
+LargePile = { text = "SmallPile" }
+UndergroundPile = { text = "SmallPile" }
+
+# ------------------------------------------------------------------ paths and getting around
+Stairs = {}
+SpiralStairs = {}
+Platform = {}
+DoublePlatform = { text = "Platform" }
+TriplePlatform = {}
+Overhang2x1 = { text = "Overhang" }
+Overhang3x1 = { text = "Overhang" }
+Overhang4x1 = { text = "Overhang" }
+Overhang5x1 = { text = "Overhang" }
+Overhang6x1 = { text = "Overhang" }
+SuspensionBridge1x1 = { text = "SuspensionBridge" }
+SuspensionBridge2x1 = { text = "SuspensionBridge" }
+SuspensionBridge3x1 = { text = "SuspensionBridge" }
+SuspensionBridge4x1 = { text = "SuspensionBridge" }
+SuspensionBridge5x1 = { text = "SuspensionBridge" }
+SuspensionBridge6x1 = { text = "SuspensionBridge" }
+MetalPlatform3x3 = { text = "MetalPlatform" }
+MetalPlatform5x5 = { text = "MetalPlatform" }
+Gate = {}
+Airlock = {}
+ZiplineStation = {}
+ZiplinePylon = {}
+ZiplineBeam = {}
+DevWaterSource = { vanilla = "Buildings/Water/DevWaterSource/DevWaterSource.blueprint" }
+
+# ------------------------------------------------------------------ leisure and care
+Campfire = {}
+PandabornHammock = { basis = "Hammock.Folktails", standin = "art/models/Hammock", note = "vanilla decoration until the Nap need exists" }
+PandabornNapPlatform = { basis = "RooftopTerrace.Folktails", standin = "new model" }
+PandabornTeahouse = { basis = "DomedGarden.Folktails", standin = "art/models/Teahouse" }
+PandabornSlideAndSwing = { basis = "Lido.Folktails", standin = "new model" }
+PandabornKindergarten = { basis = "Agora.Folktails", standin = "art/models/Kindergarten" }
+PandabornInkStudio = { basis = "ContemplationSpot.Folktails", standin = "new model" }
+PandabornHotSpringBath = { basis = "MudPit.Folktails", standin = "new model" }
+PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_code = "run by Ringtails" }
+TeethGrindstone = {}
+MedicalBed = {}
+Herbalist = {}
+Shower = {}
+
+# ------------------------------------------------------------------ decoration
+PandabornStandingLantern = { basis = "Lantern.Folktails", standin = "new model" }
+PandabornBambooFence = { basis = "WoodFence.Folktails", standin = "new model" }
+Hedge = {}
+Shrub = {}
+PandabornPandaStatue = { basis = "BeaverStatue.Folktails", standin = "new model" }
+PandabornBambooPinwheel = { basis = "Weathervane.Folktails", standin = "new model" }
+Scarecrow = {}
+Bench = {}
+PoleBanner = {}
+SquareBanner = {}
+Roof1x1 = { text = "Roof" }
+Roof1x2 = { text = "Roof" }
+Roof2x2 = { text = "Roof" }
+Roof2x3 = { text = "Roof" }
+Roof3x2 = { text = "Roof" }
+
+# ------------------------------------------------------------------ monuments and the wonder
+PandabornMemorialArch = { basis = "BrazierOfBonding.Folktails", standin = "new model" }
+PandabornGreatSittingPanda = { basis = "HallOfAbundance.Folktails", standin = "new model" }
+PandabornSkyLantern = { basis = "EarthRecultivator.Folktails", standin = "new model" }
+
+# ------------------------------------------------------------------ automation (all nineteen, re-themed)
+Chronometer = { text = "Automation" }
+ContaminationSensor = { text = "Automation" }
+DepthSensor = { text = "Automation" }
+Detonator = { text = "Automation" }
+FireworkLauncher = { text = "Automation" }
+FlowSensor = { text = "Automation" }
+HttpAdapter = { text = "Automation" }
+HttpLever = { text = "Automation" }
+Indicator = { text = "Automation" }
+Lever = { text = "Automation" }
+Memory = { text = "Automation" }
+PopulationCounter = { text = "Automation" }
+PowerMeter = { text = "Automation" }
+Relay = { text = "Automation" }
+ResourceCounter = { text = "Automation" }
+ScienceCounter = { text = "Automation" }
+Speaker = { text = "Automation" }
+Timer = { text = "Automation" }
+WeatherStation = { text = "Automation" }

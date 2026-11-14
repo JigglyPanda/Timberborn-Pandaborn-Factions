@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "has no {\"isSprite\": true} meta file"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

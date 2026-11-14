@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "NeedSpec PandabornFixtureNeed is in no need collection"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

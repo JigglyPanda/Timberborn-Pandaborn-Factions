@@ -1,0 +1,83 @@
+# The Inkpaws faction: the faction blueprint, the characters, the bot, the shaft parts, decals and worker outfits.
+# Generated into Factions/Pandaborn/, Characters/Pandaborn/, Buildings/Pandaborn/PowerShaft/, Decals/Pandaborn/,
+# WorkerOutfits/Pandaborn/ and TemplateCollections/Pandaborn/. Format: catalogue/README.md.
+
+[faction]
+id = "Inkpaws"                       # frozen: written into every save
+order = 2
+avatar = "Sprites/Pandaborn/Avatars/InkpawsAdult"
+child_avatar = "Sprites/Pandaborn/Avatars/InkpawsChild"
+bot_avatar = "Sprites/Avatars/FolktailsBot"
+contaminated_adult_avatar = "Sprites/Pandaborn/Avatars/InkpawsContaminatedAdult"
+contaminated_child_avatar = "Sprites/Pandaborn/Avatars/InkpawsContaminatedChild"
+logo = "Sprites/Pandaborn/Avatars/InkpawsLogo"
+new_game_full_avatar = "Sprites/Pandaborn/Avatars/InkpawsFullNewGame"
+textures = [
+  "Materials/Pandaborn/Inkpaws/Adult/InkpawAdult1",
+  "Materials/Pandaborn/Inkpaws/Adult/InkpawAdult2",
+  "Materials/Pandaborn/Inkpaws/Adult/InkpawAdult3",
+  "Materials/Pandaborn/Inkpaws/Adult/InkpawAdult4",
+  "Materials/Pandaborn/Inkpaws/Adult/InkpawAdult5",
+]
+child_textures = [
+  "Materials/Pandaborn/Inkpaws/Child/InkpawChild1",
+  "Materials/Pandaborn/Inkpaws/Child/InkpawChild2",
+  "Materials/Pandaborn/Inkpaws/Child/InkpawChild3",
+]
+# Keep listing Folktails: the look is applied by the material swap in code (CLAUDE.md, docs/tech/look.md).
+material_collections = ["Folktails"]
+# Collections this catalogue generates (Buildings.Inkpaws, Characters.Inkpaws, ModularShaftParts.Inkpaws) plus vanilla
+# ones still borrowed. Order is kept as written.
+template_collections = ["Buildings.Inkpaws", "Characters.Inkpaws", "ModularShaftParts.Inkpaws", "NaturalResources.Folktails"]
+need_collections = ["Folktails"]
+good_collections = ["Folktails"]
+path_material = "Buildings/Paths/Path/Path.Folktails"
+base_wood_material = "Materials/UberAtlas/Materials/Folktails/BaseWood_White.Folktails"
+starting_building = "PandabornVillageHall"   # a building id from buildings.toml
+sound_id = "Common"
+# Loc keys of the faction texts; the texts themselves are in text/faction.json ("core").
+display_name = "Faction.Inkpaws.DisplayName"
+description = "Faction.Inkpaws.Description"
+game_over_message = "Faction.Inkpaws.GameOver.Message"
+game_over_flavor = "Faction.Inkpaws.GameOver.Flavor"
+
+[faction.wonder]
+completion_image = "UI/Images/WonderCompletion/wonder-completion-folktails"
+launch_sound = "UI.Buildings.Wonder.EarthRecultivator"
+completion_flavor = "Faction.Inkpaws.WonderCompletionFlavor"
+completion_message = "Faction.Inkpaws.WonderCompletionMessage"
+
+# ------------------------------------------------------------------------------------------------- characters
+# basis: vanilla blueprint path or template name. path: where the copy goes (no .blueprint.json).
+# SimpleLabeledEntitySpec keeps the vanilla label keys on purpose (CharacterBatchControlTab.GetSortingKey throws on
+# any other key; the validator enforces it).
+[characters.adult]
+basis = "Characters/Beaver/BeaverAdult"
+template = "InkpawAdult.Inkpaws"
+path = "Characters/Pandaborn/InkpawAdult.Inkpaws"
+models = { "Model_Preserved" = "Characters/Pandaborn/InkpawAdult.Model" }
+
+[characters.child]
+basis = "Characters/Beaver/BeaverChild"
+template = "InkpawChild.Inkpaws"
+path = "Characters/Pandaborn/InkpawChild.Inkpaws"
+models = { "Model_Preserved" = "Characters/Pandaborn/InkpawChild.Model" }
+
+[characters.bot]
+# The Wooden Ox. Body, material and hats stay the Folktails bot's for now.
+basis = "Bot.Folktails"
+template = "Bot.Inkpaws"
+path = "Characters/Pandaborn/Bot.Inkpaws"
+set = { "NumberedEntityNamerSpec.FormatLocKey" = "Bot.DisplayName.Inkpaws" }
+
+[shaft_parts]
+basis = "Buildings/Power/PowerShaft/Models/ModularShaftParts.Folktails"
+path = "Buildings/Pandaborn/PowerShaft/ModularShaftParts.Inkpaws"
+
+# ------------------------------------------------------------------------------- faction-keyed copies
+# Every vanilla DecalSpec / WorkerOutfitSpec of this faction is copied with FactionId = Inkpaws.
+[decals]
+copy_faction = "Folktails"
+
+[outfits]
+copy_faction = "Folktails"

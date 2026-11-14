@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "Construction/NoSuch.blueprint does not resolve"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

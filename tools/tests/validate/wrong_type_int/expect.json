@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "ScienceCost: expected an integer"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

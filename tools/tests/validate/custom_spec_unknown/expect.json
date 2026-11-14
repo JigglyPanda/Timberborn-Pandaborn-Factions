@@ -1,0 +1,11 @@
+{
+  "errors": [
+    "unknown spec key PandabornFixtureSpec",
+    "pass --mod-schema"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

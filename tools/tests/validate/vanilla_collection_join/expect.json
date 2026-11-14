@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "adds to vanilla template collection Buildings.Folktails"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

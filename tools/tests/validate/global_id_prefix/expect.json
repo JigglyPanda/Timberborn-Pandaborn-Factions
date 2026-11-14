@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "global id Grapes must start with Pandaborn"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

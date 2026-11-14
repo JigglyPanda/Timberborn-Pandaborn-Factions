@@ -1,0 +1,22 @@
+# Rules applied to every item the generator writes. Format: catalogue/README.md.
+
+[names]
+template_suffix = ".Inkpaws"          # every generated template name ends with this
+source_faction = "Folktails"          # re-themed buildings are copies of this faction's blueprints
+
+[poles]
+# How poles exist. One line decides it:
+#   "plank"  - planks stay planks (Folktails names and icons). Current setting, until the owner decides.
+#   "rename" - poles ARE the vanilla Plank good, renamed and re-iconed for Inkpaws only through a faction blueprint
+#              modifier (proven in game, docs/tech/stage0.md). Nothing is recosted; other mods' buildings keep working.
+#   "good"   - poles are a new good (goods.toml, id below) and every cost and ingredient Plank is rewritten to it
+#              through [costs].substitute. Needs the PandabornPole good to exist in goods.toml.
+mode = "plank"
+good = "PandabornPole"                # used by mode "good"
+rename_text = "Poles"                 # entry in text/goods.json used by mode "rename"
+rename_icon = "Sprites/Pandaborn/Goods/PandabornPolesIcon"
+
+[costs]
+# Applied to every building cost and every recipe ingredient and product the generator writes. A pair maps a vanilla
+# good id to the good the Inkpaws pay instead. mode = "good" above adds Plank -> PandabornPole automatically.
+substitute = {}

@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "file sits on a vanilla asset path"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

@@ -1,0 +1,15 @@
+{
+  "errors": [
+    "costs TreatedPlank, which is not in the faction's good collections",
+    "drops the Folktails material collection but uses Folktails models",
+    "need PandabornFixtureNeed is not in a need collection this mod's faction always lists",
+    "adds to vanilla need collection Folktails"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture",
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

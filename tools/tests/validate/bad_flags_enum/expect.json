@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "'Topp' is not a value of BlockOccupations"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

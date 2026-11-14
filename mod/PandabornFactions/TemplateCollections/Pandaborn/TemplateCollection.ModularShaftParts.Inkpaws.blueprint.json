@@ -1,8 +1,0 @@
-{
-  "TemplateCollectionSpec": {
-    "CollectionId": "ModularShaftParts.Inkpaws",
-    "Blueprints": [
-      "Buildings/Pandaborn/PowerShaft/ModularShaftParts.Inkpaws.blueprint"
-    ]
-  }
-}

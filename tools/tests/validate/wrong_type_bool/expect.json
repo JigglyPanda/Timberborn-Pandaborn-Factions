@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "PlaceFinished: expected true or false"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

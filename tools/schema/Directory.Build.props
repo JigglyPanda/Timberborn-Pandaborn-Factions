@@ -1,0 +1,7 @@
+<Project>
+  <!-- keep intermediate and output build files off C: and out of the repo -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\schema\obj\</BaseIntermediateOutputPath>
+    <BaseOutputPath>E:\PandabornDev\build\obj\schema\bin\</BaseOutputPath>
+  </PropertyGroup>
+</Project>

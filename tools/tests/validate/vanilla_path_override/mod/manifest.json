@@ -1,0 +1,9 @@
+{
+  "Name": "Validator fixture",
+  "Version": "0.0.1",
+  "Id": "Test.PandabornFixture",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "validator fixture",
+  "RequiredMods": [],
+  "OptionalMods": []
+}

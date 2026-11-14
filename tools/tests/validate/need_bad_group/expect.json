@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "has NeedGroupId PandabornNoSuchGroup, which does not exist"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

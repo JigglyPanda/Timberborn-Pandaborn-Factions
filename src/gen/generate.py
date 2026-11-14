@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""Catalogue -> mod data. Python 3.11+ (tomllib), standard library only.
+
+    python src/gen/generate.py [--out DIR] [--dry-run] [--lock] [--accept-pin]
+    python src/gen/generate.py pin [--accept]
+
+generate (default):
+  Reads catalogue/*.toml and catalogue/text/*.json and the vanilla blueprint dump, and writes the generated part of
+  the mod into --out (default E:\\PandabornDev\\build\\gen\\PandabornFactions): blueprints, collections, faction-scoped
+  modifiers and loc fragments. Next to it, <out>.provenance.json records for every file its vanilla source path and
+  sha256, the catalogue item, and its own sha256; <out>.report.json lists stand-ins, retire plans and code needs; and
+  <out>.grid.json is a ready "grid" test request listing every placeable template. Output is deterministic: running
+  twice gives identical bytes. Files in --out that the catalogue no longer produces are removed (only there).
+  --dry-run   write nothing; print what would be added, removed and changed (with a short diff per changed file).
+  --lock      append ids that are new to catalogue/ids.lock.json (without it, a new id is an error).
+  The run refuses to start if the vanilla dump differs from catalogue/vanilla.pin.json, unless --accept-pin.
+
+pin:
+  Compares the installed game, its Unity version and the vanilla dump with catalogue/vanilla.pin.json. --accept
+  rewrites the pin to the current state.
+
+Exit codes: 0 ok, 1 catalogue error (message says what to change), 2 pin mismatch.
+"""
+import argparse
+import difflib
+import os
+import shutil
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from pbgen import lock as lockmod  # noqa: E402
+from pbgen.catalogue import Catalogue  # noqa: E402
+from pbgen.generate import Generator  # noqa: E402
+from pbgen.util import (DEFAULT_BLUEPRINTS, DEFAULT_BUILD, DEFAULT_GAME, DEFAULT_LOCALIZATIONS, REPO, GenError,  # noqa: E402
+                        dumps, read_bytes, write_text)
+from pbgen.vanilla import Vanilla  # noqa: E402
+
+DEFAULT_OUT = os.path.join(DEFAULT_BUILD, "gen", "PandabornFactions")
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("command", nargs="?", default="generate", choices=("generate", "pin"))
+    ap.add_argument("--catalogue", default=os.path.join(REPO, "catalogue"))
+    ap.add_argument("--blueprints", default=DEFAULT_BLUEPRINTS)
+    ap.add_argument("--localizations", default=DEFAULT_LOCALIZATIONS)
+    ap.add_argument("--game", default=DEFAULT_GAME)
+    ap.add_argument("--schema-dir", default=os.path.join(REPO, "schema"))
+    ap.add_argument("--out", default=DEFAULT_OUT)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--lock", action="store_true")
+    ap.add_argument("--accept", action="store_true", help="pin: accept the current game as the new pin")
+    ap.add_argument("--accept-pin", action="store_true", help="generate even if the game differs from the pin")
+    ap.add_argument("--quiet", action="store_true")
+    a = ap.parse_args(argv)
+    try:
+        v = Vanilla(a.blueprints, a.localizations)
+        cur = lockmod.current_pin(v, a.game, a.schema_dir)
+        diffs = lockmod.check_pin(a.catalogue, cur)
+        if a.command == "pin":
+            if a.accept:
+                lockmod.write_pin(a.catalogue, cur)
+                print("pin: wrote catalogue/vanilla.pin.json (game %s, Unity %s, %d blueprints)"
+                      % (cur["gameVersion"], cur["unityVersion"], cur["blueprintDump"]["files"]))
+                return 0
+            if diffs:
+                print("pin: the game differs from catalogue/vanilla.pin.json:\n  " + "\n  ".join(diffs))
+                return 2
+            print("pin: game %s, Unity %s, %d vanilla blueprints match the pin"
+                  % (cur["gameVersion"], cur["unityVersion"], cur["blueprintDump"]["files"]))
+            return 0
+        if diffs and not a.accept_pin:
+            print("generate: refusing to run, the game differs from catalogue/vanilla.pin.json:\n  " + "\n  ".join(diffs)
+                  + "\nReview with tools/game_diff.py, then rerun with --accept-pin (or pin --accept).")
+            return 2
+        return generate(a, v)
+    except GenError as e:
+        print("generate: ERROR " + str(e))
+        return 1
+
+
+def generate(a, v):
+    cat = Catalogue(a.catalogue)
+    g = Generator(cat, v).run()
+    files = g.files()
+    lock = lockmod.read_lock(a.catalogue)
+    new, missing = lockmod.check_and_extend(lock, g.ids, allow_new=a.lock or a.dry_run)
+    if missing:
+        print("generate: WARNING ids in the lock that the catalogue no longer produces (retire them with an alias):")
+        for kind, i in missing:
+            print("   ", kind, i)
+    prov = g.provenance(files)
+    report = {"notes": [{"item": i, "note": n} for i, n in g.notes],
+              "counts": {k: len(x) for k, x in sorted(g.ids.items())}}
+    placeable = []
+    for p, o in g.outputs.items():
+        if o.kind == "building" and "PlaceableBlockObjectSpec" in o.data and not o.data[
+                "PlaceableBlockObjectSpec"].get("DevModeTool"):
+            placeable.append(o.data["TemplateSpec"]["TemplateName"])
+    grid = {"grid": {"templates": placeable}}
+
+    existing = {}
+    if os.path.isdir(a.out):
+        for dp, _, names in os.walk(a.out):
+            for n in names:
+                ab = os.path.join(dp, n)
+                existing[os.path.relpath(ab, a.out).replace("\\", "/")] = ab
+    added = sorted(set(files) - set(existing))
+    removed = sorted(set(existing) - set(files))
+    changed = sorted(p for p in set(files) & set(existing) if read_bytes(existing[p]) != files[p])
+    print("generate: %d files (%d blueprints, %d loc fragments); %d new, %d changed, %d removed vs %s"
+          % (len(files), len(g.outputs), len(g.loc), len(added), len(changed), len(removed), a.out))
+    if a.dry_run:
+        for p in added:
+            print("  + " + p)
+        for p in removed:
+            print("  - " + p)
+        for p in changed:
+            print("  ~ " + p)
+            old = read_bytes(existing[p]).decode("utf-8").splitlines()
+            new_ = files[p].decode("utf-8").splitlines()
+            d = list(difflib.unified_diff(old, new_, "old", "new", n=1, lineterm=""))
+            for line in d[2:40]:
+                print("      " + line)
+            if len(d) > 40:
+                print("      ... (%d more diff lines)" % (len(d) - 40))
+        if new:
+            print("generate: %d id(s) would be new to the lock (rerun with --lock to freeze them)" % len(new))
+        return 0
+    for p in removed:
+        os.remove(existing[p])
+    for p in added + changed:
+        target = os.path.join(a.out, *p.split("/"))
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        with open(target, "wb") as f:
+            f.write(files[p])
+    for dp, dirs, names in sorted(os.walk(a.out, topdown=False), reverse=False):
+        if dp != a.out and not os.listdir(dp):
+            shutil.rmtree(dp)
+    write_text(a.out + ".provenance.json", dumps(prov))
+    write_text(a.out + ".report.json", dumps(report))
+    write_text(a.out + ".grid.json", dumps(grid))
+    if new:
+        lockmod.write_lock(a.catalogue, lock)
+        print("generate: appended %d id(s) to catalogue/ids.lock.json" % len(new))
+    if not a.quiet:
+        for i, n in g.notes:
+            pass
+        print("generate: %d templates, %d stand-ins/notes (see %s.report.json)"
+              % (len(g.ids.get("template", {})), len(g.notes), a.out))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

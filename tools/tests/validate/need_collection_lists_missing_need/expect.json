@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "lists need PandabornGhostNeed, which does not exist"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

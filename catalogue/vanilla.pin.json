@@ -1,0 +1,10 @@
+{
+  "gameVersion": "1.1.2.8",
+  "unityVersion": "6000.5.11f1",
+  "blueprintDump": {
+    "path": "E:\\PandabornDev\\reference\\Blueprints",
+    "files": 1067,
+    "sha256": "b620dee8f6bd129df17a281a556112a2be7607bee9dabe7cc1960181f2b7357d"
+  },
+  "schema": "schema/1.1.2.8.json"
+}

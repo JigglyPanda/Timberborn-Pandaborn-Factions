@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "'Groundd' is not a value of BlockStackable"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

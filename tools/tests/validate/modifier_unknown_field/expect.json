@@ -1,0 +1,11 @@
+{
+  "errors": [
+    "unknown field Weigth",
+    "did you mean Weight"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}
