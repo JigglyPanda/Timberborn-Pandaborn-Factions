@@ -1,6 +1,6 @@
 # The Ringtail body (red panda)
 
-Status: built and tested in game (runs rb-1 to rb-4), 2026-11-14 (game 1.1.2.8). Art lane. Replaces the prototype's stand-in (the Inkpaw
+Status: built and tested in game (runs rb-1 to rb-5, pass 3: rb-p3a, rb-p3b), 2026-11-14 (game 1.1.2.8). Art lane. Replaces the prototype's stand-in (the Inkpaw
 body scaled to 0.82 with a recoloured coat, `proto/ringtails`, two-peoples.md §17).
 
 ## 1. What was built
@@ -346,6 +346,27 @@ both launches PASS, 0 errors and 0 log issues from any mod, all batch-control ta
 
 ### 8.1 Playing with the Reskin enabled
 
+> **For the owner: the Reskin decision in short.**
+> * **Today, with both mods** (released Reskin 7.0.0 + Pandaborn - Factions, run `rb-p3a`): every colonist looks
+>   right and nothing breaks, but the Reskin treats the Inkpaws as an unknown modded faction. Inkpaw adults and cubs
+>   wear the Reskin's **Folktails** panda coats (`BeaverAdultN.Folktails`; they happen to be byte-identical to ours) and
+>   the faction's **portraits are replaced** by the Reskin's Folktails ones. Ringtails keep their own red-panda coats and
+>   portraits, and everyone gets the Reskin's shell fur, but the Ringtails' fur follows the **giant panda's** fur
+>   pattern (longer on the ears than the head, panda eye/nose holes). The old pale "crown patch" on Ringtails is gone
+>   after our coat change.
+> * **What the `factions-compat` branch changes** (one file, `src/scripts/PandaColonistsFur.cs`, +30/-1 lines, one
+>   local commit `fc8e25d`, not pushed): (1) the Inkpaws keep their own coats and portraits (a player can still force
+>   a look with `faction.inkpaws = giant` in `PandaFurSettings.txt`); (2) any body may ship its own fur mask next to its
+>   mesh (`<model>.FurMask`) or opt out of fur (`<model>.NoFur`); the Ringtails ship one. Vanilla factions are untouched.
+> * **Proven** in run `rb-p3b` (compat dev copy, released Reskin off): Inkpaws wear `InkpawAdultN`/`InkpawChildN` with fur,
+>   Ringtails use `RingtailAdult.Model.FurMask`, and a Folktails game in the same launch loads the Reskin's panda bodies,
+>   coats, fur masks and the vanilla bot exactly as the released Reskin does (0 errors).
+> * **Build and test it:** check out `factions-compat` in `..\Timberborn-Pandaborn-Reskin`; compile with the response
+>   file `E:\PandabornDev\build\reskin-compat-dll\build.rsp` (`dotnet "C:/Program Files/dotnet/sdk/9.0.203/Roslyn/bincore/csc.dll" @build.rsp`)
+>   or the Reskin's own `tools/build_dlls.sh`; the dev copy for tests is `E:\PandabornDev\build\reskin-compat\PandabornReskinCompat`
+>   (`tools\run_game_test.ps1 ... -OnlyMods JigglyPanda.PandabornFactions -ExtraMods <that folder>`). Releasing it is
+>   only: put the new `PandaColonistsFurV6.dll` in the Reskin's `Scripts` folder and publish a Reskin update.
+
 **What the Reskin does** (`..\Timberborn-Pandaborn-Reskin\src\scripts\PandaColonistsFur.cs`, namespace
 `PandaColonistsV6`; the V5 DLL and `PandaReskin.dll` are 3 KB stubs):
 * `PandabornFactionSkins` (on `FactionService` load) rewrites every non-vanilla `FactionSpec`'s `Textures`,
@@ -415,12 +436,129 @@ Offline on both peoples: `E:\PandabornDev\build\characters\prev\attach\attach_fr
 `attach_side.png` (Inkpaw with the hat, Ringtail and Inkpaw with the basket, in idle, walk, carrying and cutting).
 The Ringtail keeps its painted head-wraps (no hat: the tall ears).
 
-### 8.3 Status of the in-game proof (pass 3)
 
-Two runs are queued (hidden desktop, behind the owner's hold): `rb-p3a` (released Reskin + faction + Ringtail
-prototype + this test mod: people/gear line-ups day and night, Ringtail and Wooden Ox game-camera shots, hat/basket
-group shots, save and reload; request `proto/ringtail-body/test/pass3_reskin.request.json`) and `rb-p3b` (the compat
-Reskin dev copy instead of the released one, Inkpaws day and night, then a chained Folktails game with bots; request
-`pass3_compat.request.json`). Output: `E:\PandabornDev\build\test\rb-p3a\`, `rb-p3b\` (`ringtailBody.json` lists per
-character the template, model asset, coat, shown attachments, fur components and the fur mask in use). Until they
-have run, everything in §8 about the game is unproven; the offline renders are listed in each section.
+### 8.3 In game: runs rb-p3a and rb-p3b (2026-11-14, hidden desktop)
+
+Both PASS, 0 errors from any mod, all batch-control tabs opened, mod flags restored. Per character the probe wrote
+template, model asset, vertex count, coat, shown attachments and fur components with the fur mask in use
+(`ringtailBody.json` in each folder). T = `E:\PandabornDev\build\test`.
+
+* **rb-p3a**: mods `JigglyPanda.Pandaborn` (released Reskin 7.0.0), `PandabornFactions`, `PandabornProtoRingtails`,
+  `PandabornProtoRingtailBody`, harness. Inkpaws, Diorama, 1 in-game day, 3 bots spawned, then save and reload. 25
+  characters (9 Inkpaw adults, 4 cubs, 6 Ringtail adults, 3 kits, 3 Wooden Oxen) before and after the reload.
+* **rb-p3b**: the compat dev copy `JigglyPanda.PandabornReskinCompatDev` instead of the released Reskin, Inkpaws 1 day
+  with 2 bots, then (same launch) a Folktails game with 2 bots (`rb-p3b\folktails\`).
+
+**With the released Reskin** (rb-p3a):
+* **Crown patch: gone.** Top-down day and night line-ups and game-camera night shots show the Ringtail's ears as
+  brown-grey with a thin pale rim, no pale or blue disc (`T\rb-p3a\rb_people_day_top.png`, `rb_people_night_top.png`,
+  `rb_ringtail_night_d3.png`).
+* **Coats:** Inkpaw adults and cubs wear the Reskin's `BeaverAdult1/3/4/5.Folktails` and `BeaverChild2.Folktails`
+  (the faction coat list is rewritten); they look like our giant pandas because the files are identical. Ringtails
+  wear `RingtailAdultCoat1/2/3` and `RingtailChildCoat2/3`.
+* **Portraits:** not photographed by the probe. From the code, the Inkpaw portraits are replaced by the Reskin's
+  Folktails ones and the Ringtail portraits (badge code) are untouched.
+* **Fur:** every Inkpaw and Ringtail has `PandaFurRenderer` with the Reskin's masks (`PandaFurAdult [mask
+  FurMaskAdult]`, `PandaFurChild [mask FurMaskChild]`), i.e. the giant-panda pattern on Ringtails; bots have none.
+  It reads as soft fur on both peoples (`rb_people_day_front.png`, `rb_gear_day_front.png`).
+
+**With the compat build** (rb-p3b):
+* **Inkpaws keep their own coats, with fur:** `InkpawAdult2`/`InkpawAdult4`, `InkpawChild1` in every sample, each with
+  `PandaFurRenderer` (`T\rb-p3b\rb_people_day_front.png`, `rb_inkpaw_day_d2.5.png`, `rb_people_night_front.png`).
+  Portraits: the code path now writes back the faction's own avatars (`Own`); not photographed.
+* **Ringtails take the Ringtail mask:** `PandaFurAdult+RingtailAdult.Model.FurMask [mask RingtailAdult.Model.FurMask]`
+  and `PandaFurChild+RingtailChild.Model.FurMask` on every Ringtail adult and kit (`rb_people_day_top.png`,
+  `rb_ringtail_day_d2.5.png`, `rb_ringtail_night_d2.5.png`, `rb_family_night_d3.png`).
+* **Folktails game as with the released Reskin:** `BeaverAdult` / `BeaverChild` on the Reskin's `Characters/Beaver/...`
+  meshes (1,716 / 1,608 vertices), Reskin coats (`BeaverAdult1/5.Folktails`, `BeaverChild3.Folktails`, a brown
+  Qinling panda among them), the Reskin's own masks (`FurMaskAdult`/`FurMaskChild`), vanilla `Bot.Folktails` (1,655
+  vertices, no fur) (`T\rb-p3b\folktails\rb_ft_people_front.png`, `rb_ft_beaver_d2.5.png`, `rb_ft_bot_d2.5.png`). That
+  is what the released Reskin does (same code path: the Folktails meshes have no `.FurMask`/`.NoFur`); no
+  released-Reskin Folktails game was run side by side in this pass.
+
+**Hats and baskets** (rb-p3a, both peoples in frame):
+* An Inkpaw farmer wears `ConicalHat(Clone)`; an Inkpaw gatherer and the Ringtail foragers wear `BackBasket(Clone)`
+  (`T\rb-p3a\rb_gear_day_front.png`, `_back.png`, `_side.png`, `_top.png`; groups with the ox and a cub:
+  `rb_gear_group_day_d3.png`, `rb_gear_group_night_d3.png`). Ringtails keep their head-wraps. The hat sits on the
+  panda's crown with the ears under the brim; the basket sits between the shoulders.
+* **Survives save and reload:** `T\rb-p3a\reload\rb_reload_gear_front.png` (hat, both baskets, kit, ox).
+* **Clash with goods on the back: not seen.** Gatherers and foragers carry their yield as a crate in their hands
+  (`Berries x3`; `rb_gear_day_front.png`, `rb_ringtail_night_d3.png`, `rb-p3b\rb_ringtail_night_d2.5.png`): the
+  basket stays on the back, the crate in front, no overlap. No basket wearer carried goods on its back in either run
+  (the Ringtail with logs on its back in `rb_ringtail_day_d3.png` had no basket outfit at that moment). If a gatherer
+  ever carries logs on its back, the log frame and the basket share `#Backpack` and would overlap; the fix is a
+  `WorkerOutfitAnimationAttachmentVisibilitySpec` entry hiding `PandabornBackBasket` in the `walk_log` animations.
+
+### 8.4 Tail UV folds
+
+Fixed: tail UVs are a least-squares fit per UV island with clamped island ranges (`redpanda.py`); 0 folded tail
+triangles for adult and kit; QA passes. Clean rings offline (`E:\PandabornDev\build\characters\prev\pass3_tail_side.png`,
+`pass3_tail_back.png`) and in game (`T\rb-p3a\rb_gear_day_back.png`, `rb-p3b\rb_people_day_front.png`). The faction
+build already ships these meshes (same positions, UVs and frames as this rebuild).
+
+### 8.5 The Wooden Ox
+
+`src/pipeline/characters/build_ox.py` (parts split by `ox_analyze.py`) reshapes the vanilla Folktails bot into an
+upright ox-headed automaton: broader head with a muzzle block, nostrils and a nose ring, pale-tipped horns, ear flaps,
+goggle eyes on the sides, the beaver teeth flattened into a smile plate, the tail a thin rod with a tuft, blunt hooves.
+Every node, all 48 animations (1,921 frames), the material `Bot.Folktails` and every UV island are kept; each vanilla
+part keeps its exact motion (blinking lids too) and the new parts ride on the head. Mesh
+`E:\PandabornDev\build\characters\out\WoodenOx.Model.timbermesh` (2,012 vertices, vanilla 1,655; 39.6 MB). The biped
+rig stays: an ox-headed automaton, not the four-legged ox of the icon (accepted).
+
+In game (rb-p3a):
+* **Looks right** at studio and game distance, day and night (`T\rb-p3a\rb_gear_day_front.png`, `rb_people_day_top.png`,
+  `rb_ox_day_d2.5.png`, `rb_ox_day_d5.png`, `rb_ox_night_d2.5.png`). Weak spot: in idle the bot's tail stands up
+  behind the back, so the tuft shows as a small pale hump behind the head from above.
+* **Works:** 3 bots made by the game's `BotFactory`, all `Bot.Inkpaws` on `Characters/Pandaborn/WoodenOx.Model`; the
+  Lumberjack Flag was switched to bots (`LumberjackFlag.Inkpaws -> Bot`) and they took the jobs
+  (`bot:WaitInsideIdlyWorkplaceBehavior` 64 samples, `bot:WalkToPositionExecutor` 33), but no trees were marked for
+  cutting, so **no cutting was seen**.
+* **Carries:** a log in its hands at night and after the reload (forced by the dev probe for the picture:
+  `rb_ox_night_d2.5.png`, `reload\rb_reload_ox_d2.5.png`). No hauling job was seen.
+* **Save and reload:** all 3 oxen came back on the ox mesh (`reload\rb_reload_gear_front.png`, `rb_reload_ox_d5.png`).
+* **Folktails bots unchanged:** `Bot.Folktails` on `Characters/Bot/Bot.Folktails.Model`, 1,655 vertices (rb-p3b
+  Folktails game, `T\rb-p3b\folktails\rb_ft_bot_d2.5.png`, `rb_ft_people_front.png`).
+* **Horns and vanilla bot hats: not seen in game** (the lumberjack bot outfit has no hat). Offline the farmer bot hat
+  sits between the horns and the horns pass through its brim (`E:\PandabornDev\build\characters\ox\ox_final_34.png`):
+  acceptable; if not, give the Inkpaw bot outfits no hat.
+* **Zipline:** offline only (`ox_final_side.png`); no zipline in the test colony.
+
+**Bot avatar:** `mod/PandabornFactions/Sprites/Pandaborn/Avatars/InkpawsBot.png` is now a render of the real ox mesh
+in the avatar style (`src/pipeline/characters/make_ox_portrait.py`: the same studio lights and teal plate as the
+Ringtail and Inkpaw avatars, 512 px; meta kept). It replaces the icon lane's four-legged plank ox
+(`src/pipeline/icons/ox_avatar.py`, which would overwrite it if rerun; the earlier picture is kept at
+`E:\PandabornDev\build\characters\portraits\InkpawsBot_icon_lane_old.png`).
+
+### 8.6 For the catalogue lane
+
+All shapes below were proven in rb-p3a/rb-p3b as merges in the dev mod `proto/ringtail-body/mod`.
+
+1. **Wooden Ox model.** `catalogue/faction.toml` `[characters.bot]`:
+   `models = { "Model_Preserved" = "Characters/Pandaborn/WoodenOx.Model" }` (the material stays `Bot.Folktails`; nothing
+   else changes). `tools/pandaborn.ps1`, next to `$ringtailMeshes` (source `$RingtailMeshSource` =
+   `E:\PandabornDev\build\characters\out`), shipped always, not only with Ringtails:
+   `'Characters\Pandaborn\WoodenOx.Model.timbermesh' = Join-Path $RingtailMeshSource 'WoodenOx.Model.timbermesh'`.
+   Rebuild: `python -I src/pipeline/characters/build_ox.py E:\PandabornDev\reference\vanilla-bot\Bot.Folktails.Model.timbermesh E:\PandabornDev\build\characters\out\WoodenOx.Model.timbermesh`.
+2. **Attachments on both adults** (`InkpawAdult.Inkpaws` and `RingtailAdult.Inkpaws`), appended to the copied
+   `TemplateAttachmentsSpec.Attachments` (the generator's `set` replaces lists, so this needs an append):
+   ```json
+   {"AttachmentId": "PandabornConicalHat", "Prefab": "Characters/Pandaborn/Attachments/ConicalHat", "Parent": "#Head",
+    "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Rotation": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+    "Scale": {"X": 1.0, "Y": 1.0, "Z": 1.0}, "CreateInstantly": false},
+   {"AttachmentId": "PandabornBackBasket", "Prefab": "Characters/Pandaborn/Attachments/BackBasket", "Parent": "#Backpack",
+    "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Rotation": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+    "Scale": {"X": 1.0, "Y": 1.0, "Z": 1.0}, "CreateInstantly": false}
+   ```
+3. **Three outfit overrides** (`WorkerOutfitSpec.Attachments`, replacing the copied list):
+   * `WorkerOutfit.Farmer.Beaver.Inkpaws`: `["PandabornConicalHat"]` (was `FarmerHat.Beaver.Folktails`; the Paddy House
+     and the Efficient Farm House both use the `Farmer` outfit).
+   * `WorkerOutfit.Gatherer.Beaver.Inkpaws`: `["PandabornBackBasket"]` (was `GathererBackpack`).
+   * `WorkerOutfit.Gatherer.PandabornRingtail.Inkpaws`: `["PandabornBackBasket"]`: in `[outfits] extra` the Gatherer
+     entry's `set` gains `Attachments = ["PandabornBackBasket"]`. The first two are copies of Folktails outfits, which
+     `[outfits]` cannot override yet.
+4. **Bundles stage:** add `E:\PandabornDev\build\characters\attachments` to `-BundleDirs` in `tools/pandaborn.ps1`, so
+   `pandabornattachments_win` and `pandabornattachments_mac` are copied unrenamed into `AssetBundles/`. Rebuild with
+   `src\unity\PandabornAttachments\build.ps1` and `... build.ps1 -Mac`.
+5. **Fur masks:** nothing to do; `mod/PandabornFactions/Characters/Pandaborn/RingtailAdult|RingtailChild.Model.FurMask.png`
+   (+ meta) are hand-written mod files and already assembled. They only matter with a Reskin that has the compat change.

@@ -63,41 +63,51 @@ vg = ob.vertex_groups.new(name='fur')
 W = D['W']
 for i, wv in enumerate(W):
     vg.add([i], float(wv), 'REPLACE')
+HARD = bool(S.get('hard'))   # a hard-surface body (the Wooden Ox): flat faces, no subdivision, no hair
+if HARD:
+    bsdf.inputs['Roughness'].default_value = 0.6
+    for k in ('Sheen Weight',):
+        try:
+            bsdf.inputs[k].default_value = 0.0
+        except Exception:
+            pass
 # weld UV-seam duplicates (vertex groups follow the merged vertex), then subdivide: a soft, round animal
 bm = bmesh.new(); bm.from_mesh(ob.data)
-bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+if not HARD:
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
 bm.to_mesh(ob.data); bm.free()
 for poly in ob.data.polygons:
-    poly.use_smooth = True
-sub = ob.modifiers.new('sub', 'SUBSURF'); sub.levels = 2; sub.render_levels = 2
-ps = ob.modifiers.new('hair', 'PARTICLE_SYSTEM').particle_system
-st = ps.settings
-st.type = 'HAIR'; st.count = 60000; st.hair_length = S['hair_len']
-st.child_type = 'INTERPOLATED'; st.rendered_child_count = 6; st.child_percent = 6
-st.clump_factor = 0.15; st.roughness_2 = 0.002; st.roughness_endpoint = 0.004
-st.use_advanced_hair = False
-st.root_radius = S['root_radius']; st.tip_radius = 0.0; st.radius_scale = 1.0
-try:
-    st.display_step = 3; st.render_step = 4
-except Exception:
-    pass
-ps.vertex_group_density = 'fur'; ps.vertex_group_length = 'fur'
-hm = bpy.data.materials.new('hair'); hm.use_nodes = True
-hn = hm.node_tree; hb = hn.nodes['Principled BSDF']
-hb.inputs['Roughness'].default_value = 0.7
-try:
-    hb.inputs['Specular IOR Level'].default_value = 0.15
-except Exception:
-    pass
-huv = hn.nodes.new('ShaderNodeUVMap'); huv.uv_map = 'uv0'
-ht = hn.nodes.new('ShaderNodeTexImage'); ht.image = img
-hn.links.new(huv.outputs['UV'], ht.inputs['Vector'])
-hi = hn.nodes.new('ShaderNodeHairInfo'); mix = hn.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
-ramp = hn.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = (0.72, 0.72, 0.72, 1); ramp.color_ramp.elements[1].color = (1.05, 1.05, 1.05, 1)
-hn.links.new(hi.outputs['Intercept'], ramp.inputs['Fac'])
-hn.links.new(ht.outputs['Color'], mix.inputs[6]); hn.links.new(ramp.outputs['Color'], mix.inputs[7]); mix.inputs['Factor'].default_value = 1.0
-hn.links.new(mix.outputs[2], hb.inputs['Base Color'])
-ob.data.materials.append(hm); st.material = 2
+    poly.use_smooth = not HARD
+if not HARD:
+    sub = ob.modifiers.new('sub', 'SUBSURF'); sub.levels = 2; sub.render_levels = 2
+    ps = ob.modifiers.new('hair', 'PARTICLE_SYSTEM').particle_system
+    st = ps.settings
+    st.type = 'HAIR'; st.count = 60000; st.hair_length = S['hair_len']
+    st.child_type = 'INTERPOLATED'; st.rendered_child_count = 6; st.child_percent = 6
+    st.clump_factor = 0.15; st.roughness_2 = 0.002; st.roughness_endpoint = 0.004
+    st.use_advanced_hair = False
+    st.root_radius = S['root_radius']; st.tip_radius = 0.0; st.radius_scale = 1.0
+    try:
+        st.display_step = 3; st.render_step = 4
+    except Exception:
+        pass
+    ps.vertex_group_density = 'fur'; ps.vertex_group_length = 'fur'
+    hm = bpy.data.materials.new('hair'); hm.use_nodes = True
+    hn = hm.node_tree; hb = hn.nodes['Principled BSDF']
+    hb.inputs['Roughness'].default_value = 0.7
+    try:
+        hb.inputs['Specular IOR Level'].default_value = 0.15
+    except Exception:
+        pass
+    huv = hn.nodes.new('ShaderNodeUVMap'); huv.uv_map = 'uv0'
+    ht = hn.nodes.new('ShaderNodeTexImage'); ht.image = img
+    hn.links.new(huv.outputs['UV'], ht.inputs['Vector'])
+    hi = hn.nodes.new('ShaderNodeHairInfo'); mix = hn.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
+    ramp = hn.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = (0.72, 0.72, 0.72, 1); ramp.color_ramp.elements[1].color = (1.05, 1.05, 1.05, 1)
+    hn.links.new(hi.outputs['Intercept'], ramp.inputs['Fac'])
+    hn.links.new(ht.outputs['Color'], mix.inputs[6]); hn.links.new(ramp.outputs['Color'], mix.inputs[7]); mix.inputs['Factor'].default_value = 1.0
+    hn.links.new(mix.outputs[2], hb.inputs['Base Color'])
+    ob.data.materials.append(hm); st.material = 2
 
 tz = S['tz']
 
