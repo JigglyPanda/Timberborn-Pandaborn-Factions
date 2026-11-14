@@ -1,8 +1,0 @@
-{
-  "TemplateCollectionSpec": {
-    "CollectionId": "Buildings.Folktails",
-    "Blueprints": [
-      "Buildings/Pandaborn/Fixture/Bench.PandabornFixture.blueprint"
-    ]
-  }
-}

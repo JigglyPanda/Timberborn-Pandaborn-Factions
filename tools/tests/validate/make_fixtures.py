@@ -4,8 +4,9 @@ expect.json naming the error the validator must report. Run `python tools/valida
 
     python tools/tests/validate/make_fixtures.py [--blueprints E:\\PandabornDev\\reference\\Blueprints]
 
-Fixtures are built from small vanilla blueprints (Bench, Good.Plank) so they track the game; the files are committed so
-the suite runs without regenerating. Standard library only.
+Fixtures are built from small vanilla blueprints (Bench, Good.Plank) so they track the game. They are copies of game
+files, so they never enter git (CLAUDE.md: no game files in git): `validate.py --self-test` writes them into
+E:\\PandabornDev\\build\\validate-fixtures before every run. Standard library only.
 """
 import argparse
 import copy
@@ -41,10 +42,12 @@ def write(root, rel, data):
             f.write(json.dumps(data, indent=2) + "\n")
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--blueprints", default=r"E:\PandabornDev\reference\Blueprints")
-    a = ap.parse_args()
+    ap.add_argument("--out", default=r"E:\PandabornDev\build\validate-fixtures")
+    a = ap.parse_args(argv)
+    out = os.path.abspath(a.out)
     bench = load(a.blueprints, "Buildings/Decoration/Bench/Bench.Folktails.blueprint.json")
     bench["TemplateSpec"]["TemplateName"] = "Bench" + SUFFIX
     bench["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
@@ -206,12 +209,13 @@ def main():
                            "adds to vanilla need collection Folktails"],
          fx, args=["--template-suffix", SUFFIX])
 
-    for name in os.listdir(HERE):
-        p = os.path.join(HERE, name)
+    os.makedirs(out, exist_ok=True)
+    for name in os.listdir(out):
+        p = os.path.join(out, name)
         if os.path.isdir(p):
             shutil.rmtree(p)
     for name, (errors, files, args, clean) in sorted(cases.items()):
-        root = os.path.join(HERE, name)
+        root = os.path.join(out, name)
         mod = os.path.join(root, "mod")
         write(mod, "manifest.json", MANIFEST)
         for rel, data in files.items():
@@ -220,9 +224,10 @@ def main():
             else:
                 write(mod, rel, data)
         args = [x.replace("{case}", root.replace("\\", "/")) for x in args]
-        args = [x.replace(HERE.replace("\\", "/"), "{fixtures}") for x in args]
+        args = [x.replace(out.replace("\\", "/"), "{fixtures}") for x in args]
         write(root, "expect.json", {"errors": errors, "args": args, "clean": clean})
-    print("wrote %d fixtures in %s" % (len(cases), HERE))
+    print("wrote %d fixtures in %s" % (len(cases), out))
+    return out
 
 
 if __name__ == "__main__":

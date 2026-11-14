@@ -306,7 +306,9 @@ def main(argv=None):
     ap.add_argument("--release", action="store_true",
                     help="release rules: a missing _mac bundle twin is an error (dev builds only warn)")
     ap.add_argument("--quiet", action="store_true", help="only print problems and the summary")
-    ap.add_argument("--self-test", action="store_true", help="run the broken-fixture suite in tools/tests/validate")
+    ap.add_argument("--self-test", action="store_true", help="run the broken-fixture suite (written from the vanilla "
+                    "dump by tools/tests/validate/make_fixtures.py into --fixtures-dir)")
+    ap.add_argument("--fixtures-dir", default=r"E:\PandabornDev\build\validate-fixtures")
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test(a)
@@ -1851,9 +1853,21 @@ def check_modules(c):
 # ------------------------------------------------------------------------------------------------ self test
 
 def self_test(a):
-    """Every folder in tools/tests/validate/<case>/ holds mod/ and expect.json:
-    {"errors": [substrings each found in an ERROR line], "args": [extra validate args], "clean": bool}."""
-    root = os.path.join(REPO, "tools", "tests", "validate")
+    """tools/tests/validate/make_fixtures.py writes one folder per case (mod/ and expect.json: {"errors": [substrings
+    each found in an ERROR line], "args": [extra validate args], "clean": bool}) from the vanilla dump into the build
+    area first: the fixtures are copies of game files, so they stay out of git."""
+    sys.path.insert(0, os.path.join(REPO, "tools", "tests", "validate"))
+    try:
+        import make_fixtures
+    finally:
+        sys.path.pop(0)
+    buf = io.StringIO()
+    old = sys.stdout
+    sys.stdout = buf
+    try:
+        root = make_fixtures.main(["--blueprints", a.blueprints, "--out", a.fixtures_dir])
+    finally:
+        sys.stdout = old
     failed = 0
     cases = sorted(d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d)))
     for case in cases:
