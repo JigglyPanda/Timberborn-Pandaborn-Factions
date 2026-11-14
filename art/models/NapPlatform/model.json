@@ -1,0 +1,132 @@
+{
+ "id": "NapPlatform",
+ "standIn": "RooftopTerrace.Folktails",
+ "generatedBy": "art/models/NapPlatform/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "NapPlatform.Model",
+  "constructionStage0": "NapPlatform.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 2,
+  "Z": 1
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Seat1",
+   "position": {
+    "X": 0.45,
+    "Y": 0.13999999999999999,
+    "Z": 0.45
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat2",
+   "position": {
+    "X": 1.05,
+    "Y": 0.13999999999999999,
+    "Z": 0.45
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat3",
+   "position": {
+    "X": 1.9,
+    "Y": 0.13999999999999999,
+    "Z": 0.45
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat4",
+   "position": {
+    "X": 2.45,
+    "Y": 0.13999999999999999,
+    "Z": 0.5
+   },
+   "yaw": 180
+  },
+  {
+   "node": "#Slot#Seat5",
+   "position": {
+    "X": 0.5,
+    "Y": 0.13999999999999999,
+    "Z": 1.4
+   },
+   "yaw": 0
+  },
+  {
+   "node": "#Slot#Seat6",
+   "position": {
+    "X": 1.05,
+    "Y": 0.13999999999999999,
+    "Z": 1.55
+   },
+   "yaw": 0
+  },
+  {
+   "node": "#Slot#Seat7",
+   "position": {
+    "X": 1.8,
+    "Y": 0.13999999999999999,
+    "Z": 1.55
+   },
+   "yaw": 0
+  },
+  {
+   "node": "#Slot#Seat8",
+   "position": {
+    "X": 2.45,
+    "Y": 0.13999999999999999,
+    "Z": 1.4
+   },
+   "yaw": 0
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.08,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 3.0,
+    "Y": 0.16,
+    "Z": 2.0
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 612,
+  "constructionStage0": 554,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Sand.Folktails"
+ ],
+ "notes": [
+  "Blocks as the vanilla Rooftop Terrace (MatterBelow Stackable: it goes on roofs, e.g. a Terrace House); eight Seat slots on the mats (Sitting, as vanilla)."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.12,
+  "Z": 0.4
+ }
+}
