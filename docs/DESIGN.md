@@ -110,11 +110,13 @@ Rules that keep it pleasant:
 * Tea and pepper grow on **brown ground**: the dry land every other faction leaves empty. The rule a player
   needs is the one the map already paints: green ground for bamboo and cabbage, brown ground for tea.
   Water reaches far through soil (six tiles from a flume, sixteen from a paddy, and up a terrace step), so
-  a tea garden goes out past the green, not beside the paddies. A dry-stone wall keeps moisture out of a
-  slope where the player wants tea closer in.
+  a tea garden goes out past the green, not beside the paddies. A dry-stone wall stops moisture creeping
+  sideways through the soil where the player wants tea closer in; it costs logs and poles only.
 * Dry-ground plants need no water at all, so they are the one harvest a drought cannot touch.
 * Wet roots are a warning, not a sentence: a tea or pepper bush stops growing and says so, and dies only
   after about three wet days.
+* **Tea and pepper are bushes, handled like vanilla berries**: the Forester plants them and gatherers pick
+  them. They never appear in the Farmstead's crop list, so nobody plants tea in a wet field by reflex.
 * Foresters replant dead trees by default, so a grove that dies in a long drought comes back by itself.
 
 ### Bamboo, as two ordinary plants
@@ -126,8 +128,12 @@ before it bore a shoot, and one drought would end food and construction together
   in about three days, and is the starter crop. A vanilla player's first reflex — farmhouse and the first
   crop on the list — is exactly right.
 * **Timber bamboo is a fast tree.** The forester plants it and woodcutters cut it for **poles**.
-* **Poles are the Inkpaws' planks: no mill, no power.** Poles are light, so builders carry more per trip.
-* Both shrug off a short drought and die in a long one. Cabbage is a second raw staple, so the colony never
+* **Poles are the Inkpaws' planks.** Cut bamboo is already a pole: no mill, no power. Poles are light, so
+  builders carry more per trip.
+* **A Pole Mill splits logs into poles**, as a lumber mill makes planks (a worker and power). It supplies the
+  first days, before any bamboo has grown, and it is the fallback when a long drought kills the groves.
+  Bamboo is the better source, never the only one.
+* Both shrug off a short drought and die in a long one (timber bamboo lasts ten dry days). Cabbage is a second raw staple, so the colony never
   rests on one plant.
 * Bamboo mushrooms grow in standing timber groves and are foraged.
 
@@ -142,17 +148,18 @@ before it bore a shoot, and one drought would end food and construction together
 
 | Ritual | Building | How often |
 |---|---|---|
-| Tea | Teahouse | Daily |
-| A nap in the sun | Hammock, Nap Platform | Daily |
+| Tea | Teahouse, which serves roasted tea and water from its own stock | Daily |
+| A nap in the sun | Hammock (one napper), Nap Platform (several; on the ground or on a roof) | Daily |
 | Play | Slide and Swing | Every few days |
-| Watching the cubs | Panda Kindergarten | Every few days |
+| Watching the young | Kindergarten | Every few days |
 | A soak | Hot Spring Bath | Every few days |
 | Ink painting | Ink Studio | Weekly |
 
 * **Decorate the workplace.** Decorations reach pandas at work. Each kind of decoration is its own small need,
   as in vanilla.
-* **Cooking is the ladder.** Each dish is a recognisable Sichuan food and a step up in wellbeing. Tea also
-  quenches thirst, three cups from one measure of water.
+* **Cooking is the ladder.** Each dish is a recognisable Sichuan food and a step up in wellbeing.
+* **Tea is drunk at the Teahouse, nowhere else.** There is one need called Tea and one place to meet it; a
+  cup also takes the edge off thirst. Roasted tea is a dry good and stores in a warehouse.
 * **Cubs are a joy.** Adults gain wellbeing from the Kindergarten.
 
 ## Pillar 4 — Two peoples, one village
@@ -179,7 +186,7 @@ The village's **Night Watch**, its stargazers and its artists. Not helpers.
 |---|---|
 | Night Builders' Post | Sites are stocked and raised overnight. The first Ringtail workplace, because it is the one a player sees |
 | Night Courier Post | Restocks every workshop and clears every flag overnight, so Inkpaws spend the day working instead of carrying. Inkpaw workplaces hold about a day's goods to make that possible; without couriers, workers fetch their own as in vanilla |
-| Night Forager's Post | Gathers bamboo mushrooms and wild food |
+| Night Gatherers' Post | Gathers bamboo mushrooms and wild food |
 | Star Tower | Science from the night sky |
 | Opera Stage | Face-changing opera for whoever is off duty |
 
@@ -245,22 +252,26 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 
 ## Pillar 6 — Late game
 
-* **Wooden Oxen** are the faction's bots: tireless, strong and slow.
+* **Wooden Oxen** are the faction's bots: tireless, strong and slow. An ox lifts 30 (an Inkpaw lifts 18) and
+  lasts ninety days.
 * **Kite windmills** and **bamboo water wheels** replace fuel engines.
 * **Bamboo scaffolding and rope bridges** make tall building cheap and light.
 * **The Great Sitting Panda**, a freestanding cliff carving with water at its feet and both peoples on it, is
   the top monument.
-* **The wonder** is a colossal sky lantern that carries seeds over the wasteland.
+* **The wonder** is a colossal sky lantern that carries seeds over the wasteland. It is launched with the
+  village's own paper lanterns, and the awe it leaves lasts as long as any vanilla wonder's.
+* **Paper lanterns always have a use**: lantern decorations are built from them, the festival burns them, and
+  the wonder needs hundreds.
 
 ## The first two hours (Normal difficulty)
 
 | When | What the player does | The new idea |
 |---|---|---|
 | First minutes | Water pump, forager, woodcutter, Farmstead with shoot bamboo | None: the vanilla reflexes work |
-| Day 1–2 | Forester with timber bamboo; dens from logs | Poles come from bamboo and need no mill |
-| Days 3–5 | First shoots and poles. Steamer cooks shoots. Hammock and Teahouse | Dishes; afternoon rituals |
+| Day 1–2 | Pole Mill on a power wheel; forester with timber bamboo; dens from logs | None yet: the mill is a lumber mill |
+| Days 3–5 | First shoots. Steamer cooks shoots. Hammock and Teahouse | Dishes; afternoon rituals |
 | Around day 5 | The game suggests a shorter day | The afternoon bell |
-| Days 5–8 | A scoop wheel and a short flume water a second grove | Leading water |
+| Days 5–8 | The first bamboo is cut: poles with no mill. A scoop wheel (logs and poles, no gears) and a short flume water a second grove | Bamboo poles; leading water |
 | First drought | Bamboo browns and survives; cisterns carry the village | Droughts are survivable |
 | End of cycle 1 | First Moon Loft: the Ringtails arrive, and building continues overnight | The one rule |
 | Cycle 2 | Paddy spout and rice; pickles; lanterns; the Small Festival | Flooded fields; the festival |
@@ -306,6 +317,10 @@ Every step ends in a mod that could be released.
 | F. Release | Balance on every difficulty, soak tests, compatibility, Mac, store pages |
 
 ## Quality bar for every step
+
+* **Nothing in the toolbar lies.** A building appears only when it does what its text says. A building that
+  waits for a code module is left out of the faction's lists until that module and its data ship, and comes
+  back by itself when they do. The same goes for a need nothing can satisfy and a good nothing uses.
 
 * The automated test starts a new Inkpaws game on each difficulty, runs it for days, and finds no errors.
 * Folktails and Iron Teeth games with the mod enabled are unchanged.
@@ -361,3 +376,13 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Night couriers restock workshops for the coming day; Inkpaw workplaces hold about a day's inputs and outputs | In the prototype the couriers made no hauls at all: builders, not haulers, supply sites, and nothing was left to carry at night. A day-sized shelf gives the night real work and takes carrying off the day crew, and changes nothing for a village without Ringtails |
 | 2026-11-14 | Ringtails walk at Inkpaw speed and keep it when loaded, by data alone | The game has a separate "carrying" speed per character; setting it equal to the walking speed is the whole feature |
 | 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
+| 2026-11-14 | Buildings that wait for code are hidden until the code's data ships; a release build fails if one is visible without it | The independent review found twenty-three buildings whose text promised one thing while a vanilla stand-in did another (a flume that was a banner pole, a scoop wheel that asked for power) |
+| 2026-11-14 | A Pole Mill splits logs into poles; timber bamboo lasts ten dry days instead of seven | The review: bamboo was the only source of poles, the first poles came on day seven, and one long drought ended poles, gears, paper and building together |
+| 2026-11-14 | Tea and pepper are planted by the Forester and picked by gatherers, like berries | They were offered in the farm's crop list, died in the wet field within days, and were harvested by a different building than the one that planted them |
+| 2026-11-14 | One Tea need, met at the Teahouse, which uses up roasted tea and water. Tea is no longer drunk from storage, and is a dry good | Two rows named "Tea" and "Teahouse", and a teahouse with no tea in it. Pandas gathered over tea is also the picture the faction wants |
+| 2026-11-14 | The Nap Platform stands on the ground or on a roof and takes several nappers | It could only be placed on a roof, and a daily nap for fifty colonists meant a wall of single hammocks |
+| 2026-11-14 | The Hot Spring Bath uses water, not dirt; the Dry-Stone Wall blocks moisture sideways and costs logs and poles | Both were copies of vanilla buildings that need a late-game dirt excavator, and the wall's copied setting did not stop moisture at all |
+| 2026-11-14 | The wonder is launched with paper lanterns and its awe lasts as a vanilla wonder's does; lantern decorations cost paper lanterns | Its reward faded in three days, and paper lanterns had no use anywhere |
+| 2026-11-14 | Scoop Wheel costs logs and poles, no gears | The "days 5-8" flume beat was not reachable before day thirteen |
+| 2026-11-14 | Wellbeing total at least matches the Folktails': the Nap Platform keeps the rooftop effect, and the goldfish bowl, moon gate and string lanterns are each their own small need | Reachable wellbeing was about nine below the Folktails', with rows that could never fill |
+| 2026-11-14 | Wooden Ox lifts 30 and lasts ninety days; the faction uses its own tail and banner decals | "Strong" oxen lifted about what a panda does, and beaver tails showed on panda banners |
