@@ -658,6 +658,26 @@ would not glow at all). Before and after, rendered with a trial texture set
 * Kit: `blender_preview` gains `skyRamp`, `stars`, area lights and an `Unlit` preview material; `preview.render(look=)`
   renders with another texture set; `building.OUT_ROOT` honours `PB_MODELS_OUT` (trial builds elsewhere).
 
+### Pass 5 in game: `models-proof2-1`
+
+Hidden desktop, Diorama, the proof subjects only; 12 of 13 placed (the Moon Loft's fallback copy, by design),
+**0 errors from our mods**, 47 of 47 shots, ended at day 1.844 in the dark. PNGs:
+`E:\PandabornDev\build\test\models-proof2-1\`; summary sheet `E:\PandabornDev\build\models\preview\proof2_sheet.png`.
+
+| Item | Result | Evidence |
+|---|---|---|
+| Lit windows with occupants at night, unforced | **proven**: a Den's big front lattice window glows at night with nobody forcing it (behind the hammock); the Festival Square's lanterns glow unforced at night (the Dance Hall's NightTimeLightController) | `Hammock_night.png`, `FestivalSquare_night.png` |
+| Hammock in use | **proven**: an adult lies in it in three of the ten leisure frames, a kit in one | `Hammock_leisure_02/06/08/09.png` |
+| A colonist under the Moon Loft | **proven**: one stands on the path beneath the loft floor, behind the ladder (the first path tile from the district centre's door lies under the loft) | `MoonLoft_walk_6.png` |
+| Pinwheel turning | **proven**: the red blades sit at different angles in three frames | `BambooPinwheel_turn_0..2.png` |
+| Large Kite Windmill turning | **proven**: the new pale sail moves round between frames | `LargeKiteWindmill_turn_1/2.png` |
+| Trip-Hammer Mill animating | wheel **proven** turning (played by the harness, as WorkshopAnimationController would while working); the hammer beams are too small to compare at this zoom | `TripHammerMill_work_0..3.png` |
+| Trip-Hammer and Treadwheel staffed | **not testable in the prototype**: the mill needs power and the faction's own recipes, the lift needs water under its intake; it needs the catalogue lane's real buildings in a water/power test | |
+
+**Still unproven:** hammock swing visible as motion (stills only show it in use), the trip hammers' fall, the
+Treadwheel Lift's axle, the Festival Square's `#FestivalLights` switching (needs the events module), the
+`#LanternRise` attachment with a real prefab, warm lantern glow in game (needs the look lane's two patches).
+
 ### Adoption list for pass 5
 
 * Regenerate FlumeGate, PaddySpout (meshes; blocks unchanged), LargeKiteWindmill (mesh).
