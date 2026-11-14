@@ -143,7 +143,7 @@ class RingtailPainter(paint.Painter):
         ef = r['ear_front'][..., 0]
         ec = r['ear_cos'][..., 0]
         on_ear = (er < 0.995) * (head > 0.3) * (1 - smoothstep(0.82, 0.97, er))
-        ee = var.get('ear_edge', 0.78)
+        ee = var.get('ear_edge', 0.84)
         edge = smoothstep(ee - 0.08, ee + 0.04, ec + jag * 3)
         tipz = 1 - smoothstep(0.10, 0.24, er + jag * 2)
         frontf = (ef > 0).astype(float)
@@ -151,7 +151,7 @@ class RingtailPainter(paint.Painter):
         rim_back = smoothstep(0.90, 0.97, ec + jag * 2) * (1 - frontf)
         rim = np.maximum(rim_front, rim_back) * on_ear
         inner = (1 - edge) * (1 - tipz) * frontf * on_ear
-        tuft = inner * smoothstep(0.40, 0.75, er + fbm(P * 400, 2, 3) * 0.15) * var.get('ear_tuft', 0.5)
+        tuft = inner * smoothstep(0.40, 0.75, er + fbm(P * 400, 2, 3) * 0.15) * var.get('ear_tuft', 0.28)
         back = (1 - frontf) * on_ear * (1 - rim_back)
         # tail rings along t, slightly wavy; the first ring starts where the tail leaves the body
         tt = r['tail_t'][..., 0]
@@ -278,7 +278,7 @@ ADULT_COATS = [
     dict(name=3, seed=43, red=(0.72, 0.36, 0.12), dark=(0.12, 0.07, 0.045), dark_warm=(0.25, 0.115, 0.06), white=(0.95, 0.93, 0.87),
          ginger=(0.08, 0.05, 0.0), ring_col=(0.88, 0.66, 0.38), ring_contrast=0.75, rings=5, ring_width=0.50,
          cheek=(1.58, 0.00, 0.88, 0.70), brow=(0.88, 1.58, 0.42, 0.20), muzzle=(0.0, -0.14, 0.98, 0.76),
-         tear_col=(0.42, 0.16, 0.06), tear_w=0.17, tip_dark=0.45, ear_tuft=0.8),
+         tear_col=(0.42, 0.16, 0.06), tear_w=0.17, tip_dark=0.45, ear_tuft=0.45),
     # an older individual: frosted muzzle, dusky back, nine fine rings
     dict(name=4, seed=44, red=(0.55, 0.22, 0.085), dark=(0.08, 0.055, 0.045), dark_warm=(0.18, 0.085, 0.055), white=(0.86, 0.84, 0.79),
          ring_col=(0.76, 0.52, 0.30), rings=8, ring_width=0.40, ring_contrast=0.85, back_deep=0.26, frost=0.10,
@@ -296,7 +296,7 @@ CHILD_COATS = [
          cheek=(1.50, -0.04, 0.74, 0.56), tear_w=0.24),
     dict(name=3, seed=53, red=(0.76, 0.42, 0.18), dark=(0.18, 0.11, 0.07), white=(0.96, 0.94, 0.90),
          ring_col=(0.92, 0.70, 0.44), rings=6, ring_contrast=0.65, fur_detail=0.16,
-         cheek=(1.60, 0.0, 0.90, 0.72), muzzle=(0.0, -0.14, 0.98, 0.76), tear_w=0.16, ear_tuft=0.8),
+         cheek=(1.60, 0.0, 0.90, 0.72), muzzle=(0.0, -0.14, 0.98, 0.76), tear_w=0.16, ear_tuft=0.45),
 ]
 
 

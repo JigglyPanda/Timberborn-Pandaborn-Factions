@@ -306,6 +306,18 @@ class RedPandaBuilder(panda.PandaBuilder):
             ww = np.clip(w[k], 0, None); ww /= ww.sum()
             return ts[k], ww
 
+        # smooth uv0 per island: least-squares bicubic in (t, angle) over the old paddle-tube vertices; unlike a
+        # barycentric lookup in the irregular paddle triangulation it cannot fold (pass 3: no slanted ring patches)
+        def feats(t, q):
+            t = np.asarray(t, float); q = np.asarray(q, float)
+            return np.stack([np.ones_like(t), t, t * t, t ** 3, q, q * t, q * t * t, q * q, q * q * t, q ** 3, q * t ** 3,
+                             q * q * t * t], -1)
+        uvfit = {}
+        for I in islands:
+            vi = np.nonzero((isl == I) & tail & ~hole)[0]
+            F = feats(tt[vi], [phid_of(v, I) / 180.0 for v in vi])
+            uvfit[I] = np.linalg.lstsq(F, A['at_uv0'][vi], rcond=None)[0]
+
         K = tc.get('rings', 14)
         t0 = t_ring + tc.get('first_ring', 0.05)
         s = np.linspace(0, 1, K)
@@ -330,6 +342,8 @@ class RedPandaBuilder(panda.PandaBuilder):
                     new[k].append(pos)
                 elif k == 'at_N':
                     new[k].append(nrm)
+                elif k == 'at_uv0':
+                    new[k].append(feats(min(t, 1.0), ph / 180.0) @ uvfit[I])
                 elif k in ('teeth', 'arm', 'sole', 'ear_mask'):
                     new[k].append(False)
                 elif k == 'tail':

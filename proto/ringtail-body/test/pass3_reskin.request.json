@@ -1,0 +1,71 @@
+{
+  "buildings": [],
+  "screenshots": [
+    { "name": "overview_start", "kind": "overview", "at": "start" },
+    { "name": "bot_end", "kind": "bot", "at": "end" },
+    { "name": "screen_end", "kind": "screen", "at": "end" }
+  ],
+  "checks": { "botTemplate": "Bot.Inkpaws", "minBots": 1 },
+  "ringtails": {
+    "spawn": 4,
+    "spawnKits": 2,
+    "kitGrowth": 0.05,
+    "housingRule": true,
+    "place": [
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "EfficientFarmHouse.Inkpaws",
+      "PandabornPaddyHouse.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      { "template": "PandabornDen.Inkpaws", "finished": false },
+      { "template": "PandabornDen.Inkpaws", "finished": false }
+    ],
+    "stock": { "Water": 400, "Log": 60, "Plank": 40 }
+  },
+  "ringtailBody": {
+    "startDelaySeconds": 30,
+    "spawnBots": 3,
+    "botWork": [ "LumberjackFlag.Inkpaws" ],
+    "shots": [
+      { "name": "people_day", "kind": "lineup", "window": [ 8.6, 15.5 ],
+        "lineup": [ "InkpawAdult.Inkpaws", "InkpawChild.Inkpaws", "RingtailAdult.Inkpaws", "RingtailChild.Inkpaws", "bot" ] },
+      { "name": "gear_day", "kind": "lineup", "window": [ 9.5, 15.5 ],
+        "lineup": [ "InkpawAdult.Inkpaws:ConicalHat", "InkpawAdult.Inkpaws:BackBasket", "RingtailAdult.Inkpaws:BackBasket", "RingtailAdult.Inkpaws", "bot" ] },
+      { "name": "ringtail_day", "kind": "game", "window": [ 10, 13 ], "prefer": "carrying", "force": true, "good": "Log",
+        "pitch": 55, "distances": [ 3, 6, 12 ] },
+      { "name": "ox_day", "kind": "game", "subject": "bot", "window": [ 10.5, 14 ], "prefer": "carrying", "force": true,
+        "good": "Log", "pitch": 50, "distances": [ 2.5, 5, 10 ] },
+      { "name": "gear_group_day", "kind": "group", "subject": "InkpawAdult.Inkpaws:ConicalHat", "window": [ 11, 15.5 ],
+        "companions": [ "RingtailAdult.Inkpaws:BackBasket", "InkpawAdult.Inkpaws:BackBasket", "bot", "InkpawChild.Inkpaws" ],
+        "pitch": 50, "distances": [ 3, 6 ] },
+      { "name": "family_day", "kind": "group", "window": [ 12, 15.8 ], "pitch": 55, "distances": [ 3, 7 ] },
+      { "name": "people_night", "kind": "lineup", "window": [ 19.5, 23.8 ],
+        "lineup": [ "InkpawAdult.Inkpaws", "InkpawChild.Inkpaws", "RingtailAdult.Inkpaws", "RingtailChild.Inkpaws", "bot" ] },
+      { "name": "ringtail_night", "kind": "game", "window": [ 19, 23 ], "prefer": "carrying", "force": true,
+        "forceSeconds": 0.6, "good": "Log", "pitch": 55, "distances": [ 3, 6, 12 ] },
+      { "name": "gear_group_night", "kind": "group", "subject": "RingtailAdult.Inkpaws:BackBasket", "window": [ 20, 23.8 ],
+        "companions": [ "InkpawAdult.Inkpaws:ConicalHat", "InkpawAdult.Inkpaws:BackBasket", "bot", "RingtailChild.Inkpaws" ],
+        "pitch": 50, "distances": [ 3, 6 ] },
+      { "name": "ox_night", "kind": "game", "subject": "bot", "window": [ 20.5, 23.8 ], "force": true, "forceSeconds": 0.6,
+        "good": "Log", "pitch": 50, "distances": [ 2.5, 5 ] }
+    ],
+    "reload": {
+      "startDelaySeconds": 30,
+      "spawnBots": 0,
+      "botWork": [],
+      "shots": [
+        { "name": "reload_gear", "kind": "lineup", "window": [ 0, 24 ],
+          "lineup": [ "InkpawAdult.Inkpaws:ConicalHat", "InkpawAdult.Inkpaws:BackBasket", "RingtailAdult.Inkpaws:BackBasket", "RingtailChild.Inkpaws", "bot" ] },
+        { "name": "reload_ox", "kind": "game", "subject": "bot", "window": [ 0, 24 ], "force": true, "forceSeconds": 0.6,
+          "good": "Log", "pitch": 50, "distances": [ 2.5, 5 ] },
+        { "name": "reload_ringtail", "kind": "game", "window": [ 0, 24 ], "pitch": 55, "distances": [ 3, 6 ] }
+      ]
+    }
+  }
+}

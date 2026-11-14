@@ -1,0 +1,71 @@
+{
+  "buildings": [],
+  "screenshots": [
+    { "name": "overview_start", "kind": "overview", "at": "start" },
+    { "name": "adult_end", "kind": "adult", "at": "end" },
+    { "name": "child_end", "kind": "child", "at": "end" },
+    { "name": "screen_end", "kind": "screen", "at": "end" }
+  ],
+  "ringtails": {
+    "spawn": 4,
+    "spawnKits": 2,
+    "kitGrowth": 0.05,
+    "housingRule": true,
+    "place": [
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornNightForagersPost.Inkpaws",
+      "PandabornNightCourierPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "EfficientFarmHouse.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws"
+    ],
+    "stock": { "Water": 400, "Log": 60, "Plank": 40 }
+  },
+  "ringtailBody": {
+    "startDelaySeconds": 30,
+    "spawnBots": 2,
+    "botWork": [ "LumberjackFlag.Inkpaws" ],
+    "shots": [
+      { "name": "people_day", "kind": "lineup", "window": [ 8.6, 15.5 ],
+        "lineup": [ "InkpawAdult.Inkpaws", "InkpawChild.Inkpaws", "RingtailAdult.Inkpaws", "RingtailChild.Inkpaws", "bot" ] },
+      { "name": "ringtail_day", "kind": "game", "window": [ 10, 13.5 ], "prefer": "carrying", "force": true, "good": "Log",
+        "pitch": 55, "distances": [ 2.5, 6, 12 ] },
+      { "name": "inkpaw_day", "kind": "game", "subject": "InkpawAdult.Inkpaws", "window": [ 11, 14.5 ], "pitch": 55,
+        "distances": [ 2.5, 6, 12 ] },
+      { "name": "family_day", "kind": "group", "window": [ 12, 15.8 ], "pitch": 55, "distances": [ 3, 7 ] },
+      { "name": "people_night", "kind": "lineup", "window": [ 19.5, 23.8 ],
+        "lineup": [ "InkpawAdult.Inkpaws", "InkpawChild.Inkpaws", "RingtailAdult.Inkpaws", "RingtailChild.Inkpaws", "bot" ] },
+      { "name": "ringtail_night", "kind": "game", "window": [ 19, 23 ], "prefer": "carrying", "force": true,
+        "forceSeconds": 0.6, "good": "Log", "pitch": 55, "distances": [ 2.5, 6, 12 ] },
+      { "name": "family_night", "kind": "group", "window": [ 20.5, 23.8 ], "pitch": 55, "distances": [ 3, 7 ] }
+    ]
+  },
+  "then": {
+    "name": "folktails",
+    "faction": "Folktails",
+    "run": { "inGameHours": 10 },
+    "screenshots": [
+      { "name": "overview_start", "kind": "overview", "at": "start" },
+      { "name": "adult_end", "kind": "adult", "at": "end" },
+      { "name": "child_end", "kind": "child", "at": "end" },
+      { "name": "bot_end", "kind": "bot", "at": "end" },
+      { "name": "screen_end", "kind": "screen", "at": "end" }
+    ],
+    "checks": { "botTemplate": "Bot.Folktails" },
+    "ringtails": { "spawn": 0, "spawnKits": 0, "place": [], "stock": {} },
+    "ringtailBody": {
+      "startDelaySeconds": 30,
+      "spawnBots": 2,
+      "botWork": [ "LumberjackFlag.Folktails" ],
+      "shots": [
+        { "name": "ft_people", "kind": "lineup", "window": [ 0, 24 ], "lineup": [ "BeaverAdult", "BeaverChild", "bot" ] },
+        { "name": "ft_beaver", "kind": "game", "subject": "BeaverAdult", "window": [ 0, 24 ], "pitch": 55, "distances": [ 2.5, 6 ] },
+        { "name": "ft_bot", "kind": "game", "subject": "bot", "window": [ 0, 24 ], "pitch": 50, "distances": [ 2.5, 5 ] }
+      ]
+    }
+  }
+}

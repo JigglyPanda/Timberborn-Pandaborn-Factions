@@ -28,7 +28,11 @@ function Put([string]$from, [string]$rel) {
     $script:expected[$rel.ToLowerInvariant()] = $true
 }
 foreach ($f in Get-ChildItem -LiteralPath $source -Recurse -File) { Put $f.FullName $f.FullName.Substring($source.Length + 1) }
-foreach ($m in 'RingtailAdult.Model.timbermesh', 'RingtailChild.Model.timbermesh') { Put (Join-Path $MeshDir $m) "Characters\Pandaborn\$m" }
+foreach ($m in 'RingtailAdult.Model.timbermesh', 'RingtailChild.Model.timbermesh', 'WoodenOx.Model.timbermesh') { Put (Join-Path $MeshDir $m) "Characters\Pandaborn\$m" }
+# the Ringtail fur masks for the Reskin's factions-compat branch (<model asset>.FurMask), with their meta files
+foreach ($f in Get-ChildItem -LiteralPath (Join-Path $repo 'mod\PandabornFactions\Characters\Pandaborn') -File | Where-Object { $_.Name -like '*.FurMask.png*' }) {
+    Put $f.FullName "Characters\Pandaborn\$($f.Name)"
+}
 foreach ($sub in 'Ringtails', 'Outfits\Ringtail') {
     $dir = Join-Path $repo "mod\PandabornFactions\Materials\Pandaborn\$sub"
     if (-not (Test-Path -LiteralPath $dir)) { continue }
