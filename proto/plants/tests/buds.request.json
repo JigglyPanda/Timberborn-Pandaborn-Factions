@@ -1,0 +1,192 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 600,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoPlants",
+  "PandabornPlants",
+  "PandabornProtoEvents"
+ ],
+ "water": {
+  "name": "plants-buds",
+  "speed": 5,
+  "area": [
+   20,
+   6
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     5
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     5
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     5
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     5
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     19,
+     5
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     19,
+     5
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "wait",
+    "hours": 0.3,
+    "speed": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "shot",
+    "name": "bud_game",
+    "focus": [
+     9.5,
+     2.5,
+     0
+    ],
+    "distance": 26,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "bud_game_far",
+    "focus": [
+     9.5,
+     2.5,
+     0
+    ],
+    "distance": 36,
+    "pitch": 58,
+    "yaw": 15,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "bud_close",
+    "focus": [
+     9.5,
+     2.5,
+     0
+    ],
+    "distance": 14,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   }
+  ]
+ },
+ "plantLab": {
+  "rules": [
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     5
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     5
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     5
+    ],
+    "state": "buds"
+   },
+   {
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     19,
+     5
+    ],
+    "state": "alive"
+   }
+  ]
+ }
+}

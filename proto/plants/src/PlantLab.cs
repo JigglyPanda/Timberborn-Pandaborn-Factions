@@ -50,6 +50,7 @@ namespace Pandaborn.PlantsProto
         private float _next;
         private int _passes;
         private readonly HashSet<int> _done = new HashSet<int>();
+        private readonly Dictionary<string, int> _changedTotal = new Dictionary<string, int>();
 
         public PlantLab(IBlockService blockService)
         {
@@ -114,6 +115,7 @@ namespace Pandaborn.PlantsProto
             string state = (string)rule["state"] ?? "alive";
             var plants = PlantsIn((JArray)rule["rect"], origin, template).ToList();
             int changed = 0;
+            var diag = new JObject();
             foreach (var p in plants)
             {
                 int id = p.GetHashCode();
@@ -146,15 +148,16 @@ namespace Pandaborn.PlantsProto
                     }
                     case "buds":
                     {
-                        // what the Flowering module does a cycle ahead (BudsUseDetail): the detail map on the grown model
-                        var mature = p.GameObject.transform.Find("#Models/Mature") ?? FindDeep(p.GameObject.transform, "Mature");
-                        if (grown && mature != null)
-                            foreach (var r in mature.GetComponentsInChildren<MeshRenderer>(true))
-                                if (r.material.HasProperty(EnableDetailId) && r.material.GetFloat(EnableDetailId) < 0.5f)
-                                {
-                                    r.material.SetFloat(EnableDetailId, 1f);
-                                    changed++;
-                                }
+                        // what the Flowering module does a cycle ahead (BudsUseDetail): the detail map on every renderer
+                        // under the grown model, through renderer.material as the game's GatherableModel does
+                        var mature = FindDeep(p.GameObject.transform, "Mature");
+                        if (!grown || mature == null) { diag["budsNoMature"] = (int?)diag["budsNoMature"] + 1 ?? 1; break; }
+                        foreach (var r in mature.GetComponentsInChildren<MeshRenderer>(true))
+                        {
+                            var mat = r.material;
+                            if (!mat.HasProperty(EnableDetailId)) { diag["budsNoProperty"] = mat.shader ? mat.shader.name : "?"; continue; }
+                            if (mat.GetFloat(EnableDetailId) < 0.5f) { mat.SetFloat(EnableDetailId, 1f); changed++; }
+                        }
                         break;
                     }
                     case "cut":
@@ -171,6 +174,9 @@ namespace Pandaborn.PlantsProto
                 }
             }
             var entry = new JObject { ["template"] = template, ["state"] = state, ["plants"] = plants.Count, ["changedThisPass"] = changed };
+            if (diag.Count > 0) entry["diagnostics"] = diag;
+            if (changed > 0) _changedTotal[template + "/" + state] = (_changedTotal.TryGetValue(template + "/" + state, out var n) ? n : 0) + changed;
+            if (_changedTotal.TryGetValue(template + "/" + state, out var tot)) entry["changedTotal"] = tot;
             if (plants.Count > 0) entry["sample"] = Describe(plants[0]);
             return entry;
         }
@@ -222,6 +228,7 @@ namespace Pandaborn.PlantsProto
                     ["shader"] = mat && mat.shader ? mat.shader.name : null,
                     ["mainTex"] = mat && mat.HasProperty("_MainTex") && mat.GetTexture("_MainTex") ? mat.GetTexture("_MainTex").name : null,
                     ["enableDetail"] = mat && mat.HasProperty(EnableDetailId) ? Math.Round(mat.GetFloat(EnableDetailId), 2) : (double?)null,
+                    ["detailMap"] = mat && mat.HasProperty("_DetailMap") && mat.GetTexture("_DetailMap") ? mat.GetTexture("_DetailMap").name : null,
                     ["vertices"] = mf && mf.sharedMesh ? mf.sharedMesh.vertexCount : 0,
                     ["uv2"] = mf && mf.sharedMesh ? mf.sharedMesh.uv3 != null && mf.sharedMesh.uv3.Length > 0 : false
                 });

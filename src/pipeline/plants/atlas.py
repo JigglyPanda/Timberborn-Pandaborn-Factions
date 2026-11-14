@@ -71,10 +71,12 @@ DETAIL_REGIONS = {
     "tea_flush_top": (512, 256, 768, 512),  # over tea_top
     "mushrooms": (512, 512, 768, 768),      # bamboo fungus (white lace veils) at the culm bases
     "mushrooms_b": (768, 512, 1024, 768),
-    # buds a cycle before the Great Flowering, laid over the shoot bamboo's leaf sprays (uv2; never the bottom-left
-    # corner, where UV2_NONE samples)
-    "bamboo_buds": (256, 768, 512, 1024),
-    "bamboo_buds_b": (512, 768, 768, 1024),
+    # buds a cycle before the Great Flowering, laid over the shoot bamboo's leaf sprays (uv2): one per spray sprite
+    # (bamboo_spray_c|d|e, same 256 px size), painted from that sprite's own leaf mask so the cream wash and the bud
+    # clusters never cover anything outside the leaves. Never the bottom-left corner, where UV2_NONE samples.
+    "bamboo_buds_c": (256, 768, 512, 1024),
+    "bamboo_buds_d": (512, 768, 768, 1024),
+    "bamboo_buds_e": (768, 768, 1024, 1024),
 }
 
 

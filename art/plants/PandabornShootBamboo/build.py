@@ -57,7 +57,7 @@ def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size, buds=False,
             card(m, p, az, rng.uniform(0.2, 0.6), s, s, A.uv(["bamboo_spray_c", "bamboo_spray_d", "bamboo_spray_e"][j % 3]
                                                                if state != "dead" else "bamboo_dry"),
                  leaf_c(rng, state), back_offset=0.03, sway=(0.5, 1.0),
-                 uv2=A.duv("bamboo_buds" if j % 2 == 0 else "bamboo_buds_b") if buds else None)
+                 uv2=A.duv("bamboo_buds_" + "cde"[j % 3]) if buds else None)
         if look:
             look["plume"](m, rng, state, top, a, H)
     for k in range(4):        # low leaf fans on the ground around the clump

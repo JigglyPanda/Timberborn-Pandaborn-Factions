@@ -574,21 +574,41 @@ def bamboo_flower(cv, name, seed, n=3):
                         blob(cv, gp + np.array([0, 6]), 1.6, 2.4, np.array([0.45, 0.32, 0.26]), spec=0.0, shadow=0.0)
 
 
-def bamboo_buds(cv, name, seed, n):
-    """Buds a cycle before flowering: small pale yellow-green spikelet buds in twos and threes, scattered so they sit
-    among the leaves of the spray cards they overlay."""
+def bamboo_buds(cv, name, seed, main, spray):
+    """Buds a cycle before the Great Flowering, made to read across a field: over the spray sprite's own leaf mask
+    (copied from the main atlas, eroded a pixel) a pale cream wash that grows toward the leaf tips, and plump
+    cream-white bud clusters at the tips. Detail alpha stays inside the leaves (alpha = max(albedo, detail) would
+    otherwise show the card's square), so a budding field turns paler and speckled, still green and leafy: never the
+    flowering's hanging straw plumes."""
     rng = np.random.default_rng(seed)
     x0, y0, W, H = region_origin(name, atlas.DETAIL_REGIONS)
-    bud = np.array([0.86, 0.88, 0.58])
-    for k in range(n):
-        p = np.array([x0 + W * rng.uniform(0.1, 0.9), y0 + H * rng.uniform(0.08, 0.85)])
-        a = rng.uniform(0, 2 * math.pi)
-        for j in range(int(rng.integers(2, 4))):
-            aa = a + (j - 1) * 0.45
-            q = p + np.array([math.cos(aa), math.sin(aa)]) * 7
-            stroke(cv, [p, q], 1.5, 1.2, value=0.5, color=np.array([0.55, 0.6, 0.32]), shadow=0.0)
-            blob(cv, q + np.array([math.cos(aa), math.sin(aa)]) * 6, 8.5, 3.6, bud * rng.uniform(0.92, 1.06),
-                 angle=aa, spec=0.2, shadow=0.35, h=0.8)
+    sx0, sy0, sx1, sy1 = atlas.REGIONS[spray]
+    mask = main.a[sy0:sy1, sx0:sx1].copy()
+    if mask.shape != (H, W):
+        mask = ndimage.zoom(mask, (H / mask.shape[0], W / mask.shape[1]), order=1)
+    mask = ndimage.grey_erosion(np.clip(mask, 0, 1), size=(3, 3))
+    X, Y = grid(0, 0, W, H)
+    # the sprite's twig base is at its bottom centre: tips are far from it
+    dist = np.sqrt((X - W / 2) ** 2 + (Y - H * 0.97) ** 2) / H
+    wash = np.clip((dist - 0.2) / 0.55, 0, 1) * 0.5 + 0.2
+    cream = np.array([0.94, 0.91, 0.74])
+    col = np.ones((H, W, 3), np.float32) * cream * (0.92 + 0.08 * value_noise((H, W), 6, seed, 2))[..., None]
+    cv.put(x0, y0, (mask * wash).astype(np.float32), col.astype(np.float32), np.zeros((H, W), np.float32))
+    # bud clusters at the outer leaf tips, kept inside the (slightly dilated) leaf mask
+    keep = ndimage.grey_dilation(np.clip(main.a[sy0:sy1, sx0:sx1], 0, 1), size=(5, 5))
+    ys, xs = np.nonzero((mask > 0.9) & (dist > 0.42))
+    if len(xs):
+        for k in rng.choice(len(xs), size=min(46, len(xs)), replace=False):
+            p = np.array([x0 + xs[k], y0 + ys[k]], float)
+            a = rng.uniform(0, 2 * math.pi)
+            for j in range(int(rng.integers(2, 4))):
+                aa = a + (j - 1) * 0.5
+                q = p + np.array([math.cos(aa), math.sin(aa)]) * 4
+                blob(cv, q, 7.0, 4.2, np.array([0.97, 0.95, 0.84]) * rng.uniform(0.95, 1.03), angle=aa, spec=0.25,
+                     shadow=0.2, h=0.8)
+    # nothing outside the leaves
+    sl = (slice(y0, y0 + H), slice(x0, x0 + W))
+    cv.a[sl] *= keep
 
 
 def pepper_cluster(cv, name, seed, n):
@@ -815,7 +835,7 @@ def bamboo_spray_small_low(cv, name, seed):
              bend=0.25 * (1 if math.cos(a) > 0 else -1), rng=rng, veins=False, midrib=0.1, midrib_w=0.08, shadow=0.35)
 
 
-def paint_detail(size=atlas.DETAIL):
+def paint_detail(size=atlas.DETAIL, main=None):
     cv = Canvas(size)
     CURRENT[:] = [cv]
     persimmon_fruit(cv, "persimmon_fruit_a", 91, 3)
@@ -825,8 +845,9 @@ def paint_detail(size=atlas.DETAIL):
     tea_flush(cv, "tea_flush_top", 95, 30)
     mushrooms(cv, "mushrooms", 96, 3)
     mushrooms(cv, "mushrooms_b", 97, 2)
-    bamboo_buds(cv, "bamboo_buds", 98, 30)
-    bamboo_buds(cv, "bamboo_buds_b", 99, 24)
+    if main is not None:
+        for k, sp in enumerate("cde"):
+            bamboo_buds(cv, "bamboo_buds_" + sp, 98 + k, main, "bamboo_spray_" + sp)
     return cv
 
 
@@ -913,7 +934,7 @@ def main():
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     main_cv = paint_main()
-    det = paint_detail()
+    det = paint_detail(main=main_cv)
     d_png = os.path.join(a.out, "PandabornPlants_D.png")
     n_png = os.path.join(a.out, "PandabornPlants_N.png")
     x_png = os.path.join(a.out, "PandabornPlants_Detail.png")

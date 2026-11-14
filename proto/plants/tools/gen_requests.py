@@ -246,9 +246,39 @@ def flowering():
     }
 
 
+def buds():
+    """Pass 4: budding shoot bamboo next to a normal field and a flowering one, from the game camera. The plant lab
+    switches the detail map on the middle field exactly as the Flowering module does at the announcement
+    (renderer.material _EnableDetail = 1, proven by the events lane in events-buds-1); before/after = the left and
+    middle fields of one shot (same model, same light). Needs the events prototype for the flowering twin."""
+    I = ".Inkpaws"
+    SB, SF = "PandabornShootBamboo" + I, "PandabornShootBambooInFlower" + I
+    blocks = [(SB, [0, 0, 5, 5], ["alive"]), (SB, [7, 0, 12, 5], ["alive", "buds"]), (SF, [14, 0, 19, 5], ["alive"])]
+    steps, rules = [], []
+    for t, rect, states_ in blocks:
+        steps.append({"op": "plant", "template": t, "rect": rect})
+        steps.append({"op": "grow", "template": t, "rect": rect, "progress": 1.0})
+        for st in states_:
+            rules.append({"template": t, "rect": rect, "state": st})
+    steps.append({"op": "wait", "hours": 0.3, "speed": 3, "capSeconds": 300})
+    steps += [shot("bud_game", [9.5, 2.5, 0], 26, pitch=55),
+              shot("bud_game_far", [9.5, 2.5, 0], 36, pitch=58, yaw=15),
+              shot("bud_close", [9.5, 2.5, 0], 14, pitch=48)]
+    return {
+        "faction": "Inkpaws", "map": "Plains", "speed": 0, "batchControl": False,
+        "run": {"realSeconds": 600, "settleSeconds": 2},
+        "screenshots": [{"name": "screen_end", "kind": "screen", "at": "end"}],
+        "ownPatterns": OWN + ["PandabornProtoEvents"],
+        "water": {"name": "plants-buds", "speed": 5, "area": [20, 6], "origin": "auto", "flattenMargin": 2,
+                  "steps": steps},
+        "plantLab": {"rules": rules},
+    }
+
+
 def main():
     os.makedirs(TESTS, exist_ok=True)
-    for name, fn in (("states", states), ("terrace", terrace), ("pass2", pass2), ("flowering", flowering)):
+    for name, fn in (("states", states), ("terrace", terrace), ("pass2", pass2), ("flowering", flowering),
+                     ("buds", buds)):
         p = os.path.join(TESTS, name + ".request.json")
         json.dump(fn(), open(p, "w"), indent=1)
         print(p)

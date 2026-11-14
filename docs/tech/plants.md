@@ -344,3 +344,22 @@ the plant lab (the events lane proves the Flowering itself).
   found in this run), so the buds are proven in the preview only (`shoot_buds.png`): uv2 and the sprite are in the
   model and the shipped atlas, and the same switch (`_EnableDetail` from game code) is proven in game for ripe tea,
   persimmons and bamboo fungus. The real proof is the events lane's Flowering announcement once `BudsUseDetail = true`.
+
+### 2026-11-14, pass 4: buds that read across a field
+
+`events-buds-1` proved the switch (the Flowering announcement sets `_EnableDetail` 1 on the shoot bamboo's grown model)
+but nothing showed. That run used a faction copy whose bundle and shoot-bamboo model predate the buds; but the pass-3
+buds were also too small and too green to read from the game camera. Now:
+
+* **A cream wash over the spray's own leaves plus plump cream-white bud clusters at the leaf tips**, painted from each
+  spray sprite's leaf mask (`bamboo_buds_c|d|e` in the detail sheet, one per `bamboo_spray_c|d|e`, same 256 px; the wash
+  grows from 0.2 at the twig to 0.7 at the tips; nothing outside the leaves, so the card's square never shows). A
+  budding field turns visibly paler and white-speckled next to a normal one, still green and leafy, unlike the
+  flowering's hanging straw-gold plumes (`E:\PandabornDev\build\plants\preview\shoot_buds_compare.png`: normal,
+  budding, in flower).
+* **Regions renamed** (`bamboo_buds`, `bamboo_buds_b` -> `bamboo_buds_c|d|e`): the shoot bamboo's Mature model and the
+  bundle must be installed together (`pandaborn.ps1 all -Plants`); the pass-3 model with the pass-4 bundle would put
+  the wrong masks on two of the three sprays.
+* Checked: in the detail sheet the persimmons, tea flush and bamboo fungus are pixel-identical where visible (only the
+  invisible colour bleed around them changed); the main atlas is byte-identical; the UV2_NONE texel stays transparent.
+* `pandabornplants_win` and `_mac` rebuilt (the Mac one with its own texture paint; its project's textures checked equal).
