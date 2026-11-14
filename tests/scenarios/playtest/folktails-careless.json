@@ -52,17 +52,17 @@
         "minDepth": 0.15,
         "tries": 600,
         "pathThroughTrees": true,
-        "maxPath": 120
+        "maxPath": 120,
+        "searchMs": 8000
       },
       {
         "id": "lumber1",
         "op": "build",
         "template": "@lumber",
         "rule": "trees",
-        "maxDistance": 16,
+        "maxDistance": 20,
         "priority": "High",
-        "near": "pump1",
-        "minDistance": 3
+        "near": "dc"
       },
       {
         "id": "cut1",
@@ -288,7 +288,8 @@
         "minDepth": 0.15,
         "tries": 600,
         "pathThroughTrees": true,
-        "maxPath": 120
+        "maxPath": 120,
+        "searchMs": 8000
       },
       {
         "id": "gears1",

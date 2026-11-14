@@ -38,6 +38,7 @@ namespace PandabornDevHarness
         private int _networkZ = int.MinValue;
         private readonly JArray _pumpDiagnostics = new JArray();
         private readonly HashSet<Vector3Int> _pendingPath = new HashSet<Vector3Int>();
+        private readonly Dictionary<Vector2Int, int> _pathCostCache = new Dictionary<Vector2Int, int>();
         private readonly Dictionary<string, int> _rejects = new Dictionary<string, int>();
 
         // ------------------------------------------------------------------ build
@@ -199,6 +200,8 @@ namespace PandabornDevHarness
             if (candidates.Count == 0) { why = "no cell within " + minD + "-" + maxD + " tiles meets rule " + rule; return null; }
 
             var placer = Placer(spec);
+            var intakeSpec = rule == "nearWater" ? spec.Blueprint.GetSpec<WaterInputSpec>() : null;
+            _pathCostCache.Clear();
             try
             {
                 var clock = Stopwatch.StartNew();
@@ -218,6 +221,13 @@ namespace PandabornDevHarness
                     foreach (var orientation in orientations)
                     {
                         var target = new Vector3Int(cell.x, cell.y, cell.z - baseZ);
+                        // a water intake must land on water: predict it before asking the game (the post-check confirms)
+                        if (intakeSpec != null)
+                        {
+                            var turned = Rotate(new Vector2Int(intakeSpec.WaterInputCoordinates.x, intakeSpec.WaterInputCoordinates.y), orientation);
+                            var at = Ground(new Vector3Int(cell.x + turned.x, cell.y + turned.y, cell.z));
+                            if (_waterMap.WaterDepth(at) < minDepth) continue;
+                        }
                         var placement = Valid(placer, target, orientation);
                         if (!placement.HasValue) continue;
                         tried++;
@@ -266,6 +276,19 @@ namespace PandabornDevHarness
             finally { placer.HideAllPreviews(); }
             if (tried == 0) why = "no candidate passed the game's placement check (" + candidates.Count + " cells)";
             return null;
+        }
+
+        /// <summary>A footprint offset turned like the building tool turns it (clockwise; matches the game's transform for
+        /// offsets on the pivot column, which is where water intakes sit).</summary>
+        private static Vector2Int Rotate(Vector2Int v, Orientation o)
+        {
+            switch (o)
+            {
+                case Orientation.Cw90: return new Vector2Int(v.y, -v.x);
+                case Orientation.Cw180: return new Vector2Int(-v.x, -v.y);
+                case Orientation.Cw270: return new Vector2Int(-v.y, v.x);
+                default: return v;
+            }
         }
 
         private string PostCheck(BlockObject bo, string rule, float minDepth)
@@ -474,12 +497,17 @@ namespace PandabornDevHarness
             {
                 if (!_terrainService.Contains(c) || _reserved.Contains(c)) return -1;
                 var cell = new Vector3Int(c.x, c.y, _networkZ);
-                if (Ground(cell).z != _networkZ) return -1;
-                if (IsPath(cell)) return 1;
-                if (!throughTrees) { if (Valid(placer, cell, Orientation.Cw0).HasValue) return 1; return -1; }
-                if (_pendingPath.Contains(cell)) return 3;      // already marked: its trees are coming down
-                if (Valid(placer, cell, Orientation.Cw0).HasValue) return 1;
-                return TreeAt(cell).HasValue ? 8 : -1;
+                // open / blocked / tree, cached for one placement search (the expensive part is the game's path check)
+                if (!_pathCostCache.TryGetValue(c, out int kind))
+                {
+                    if (Ground(cell).z != _networkZ) kind = -1;
+                    else if (IsPath(cell) || Valid(placer, cell, Orientation.Cw0).HasValue) kind = 1;
+                    else if (_pendingPath.Contains(cell)) kind = 3;
+                    else kind = TreeAt(cell).HasValue ? 8 : -1;
+                    _pathCostCache[c] = kind;
+                }
+                if (kind > 1 && !throughTrees) return -1;
+                return kind;
             }
             try
             {
