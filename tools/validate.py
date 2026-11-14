@@ -1642,6 +1642,16 @@ def check_models(c):
             # stage, models.md pass 3)
             fin = [m for child, m in meshes if model_of(m)[1] == mid]
             nodes = set()
+            finished_animated = None   # None: the finished mesh was not read
+            for child, m in meshes:
+                if model_of(m)[1] != mid or ref_key(m) not in c.keys:
+                    continue
+                try:
+                    _, mesh_nodes = read_timbermesh(c.files[c.keys[ref_key(m)][0]])
+                except Exception:  # noqa: BLE001
+                    continue   # reported below
+                if child.startswith("/#Finished"):
+                    finished_animated = bool(finished_animated) or any(n["nodeAnimations"] for n in mesh_nodes)
             for m in fin:
                 if ref_key(m) in c.keys:
                     try:
@@ -1662,6 +1672,14 @@ def check_models(c):
                 for n in sorted(wanted - nodes - child_names):
                     R.error("%s: a spec looks up node %s, which the model's meshes lack (\"Child not found\" crashes the "
                             "game): add the node to the model or drop the spec with removeSpecs" % (where, n))
+                # controllers that take the model's IAnimator (GetComponentInChildren<IAnimator>) throw without an
+                # animated node (Smoke Kiln, 2026-11-14); a wonder gets its animation controller from WonderSpec
+                needs_animator = [k for k in ANIMATOR_SPECS if k in bp]
+                if "WonderSpec" in bp:
+                    needs_animator.append("WonderSpec (its WonderAnimationController)")
+                if needs_animator and finished_animated is False:
+                    R.error("%s: %s needs an animated node in the finished model and the model has none (it throws "
+                            "when the building is finished and on every speed change)" % (where, ", ".join(needs_animator)))
                 for slot in (bp.get("TransformSlotInitializerSpec") or {}).get("Slots", []):
                     kw = slot.get("SlotKeyword")
                     if kw and not any(n.startswith("#Slot#" + kw) for n in nodes):
@@ -1690,7 +1708,9 @@ MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "Pandabo
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
-NODE_CHECK_SKIP = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec"}
+# BuildingModelSpec names are blueprint children or optional (FindChildIfNameNotEmpty): src/pipeline/kit/check_nodes.py
+NODE_CHECK_SKIP = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec", "BuildingModelSpec"}
+ANIMATOR_SPECS = ("WorkshopAnimationControllerSpec", "EnterableAnimationControllerSpec", "WonderAnimationControllerSpec")
 
 
 def hash_names(o, out):
