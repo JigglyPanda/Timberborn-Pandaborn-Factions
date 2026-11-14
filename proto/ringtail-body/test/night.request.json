@@ -1,0 +1,138 @@
+{
+  "buildings": [],
+  "screenshots": [
+    {
+      "name": "overview_start",
+      "kind": "overview",
+      "at": "start"
+    },
+    {
+      "name": "screen_end",
+      "kind": "screen",
+      "at": "end"
+    }
+  ],
+  "ringtails": {
+    "spawn": 4,
+    "spawnKits": 2,
+    "kitGrowth": 0.05,
+    "housingRule": true,
+    "shots": [
+      {
+        "name": "d0_h10_ringtail",
+        "day": 0,
+        "hour": 10,
+        "select": "ringtail"
+      },
+      {
+        "name": "d0_h20_night_ringtail",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtail"
+      }
+    ],
+    "place": [
+      "RingtailHaulingPost.Inkpaws",
+      "RingtailGathererFlag.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      }
+    ],
+    "stock": {
+      "Water": 400,
+      "Log": 40
+    }
+  },
+  "ringtailBody": {
+    "startDelaySeconds": 30,
+    "shots": [
+      {
+        "name": "carry_dusk",
+        "kind": "game",
+        "window": [
+          15.0,
+          17.5
+        ],
+        "prefer": "carrying",
+        "force": true,
+        "forceSeconds": 0.6,
+        "good": "Log",
+        "pitch": 55,
+        "distances": [
+          3,
+          6,
+          12
+        ]
+      },
+      {
+        "name": "carry_night",
+        "kind": "game",
+        "window": [
+          18,
+          20.5
+        ],
+        "prefer": "carrying",
+        "force": true,
+        "forceSeconds": 0.6,
+        "good": "Log",
+        "pitch": 55,
+        "distances": [
+          3,
+          6,
+          12
+        ]
+      },
+      {
+        "name": "group_night",
+        "kind": "group",
+        "window": [
+          20.5,
+          22.5
+        ],
+        "prefer": "carrying",
+        "force": true,
+        "forceSeconds": 0.6,
+        "good": "Plank",
+        "pitch": 55,
+        "distances": [
+          3,
+          6
+        ]
+      },
+      {
+        "name": "carry_night2",
+        "kind": "game",
+        "window": [
+          22.5,
+          23.9
+        ],
+        "prefer": "carrying",
+        "force": true,
+        "forceSeconds": 0.6,
+        "good": "Log",
+        "pitch": 62,
+        "distances": [
+          4,
+          8
+        ]
+      }
+    ]
+  }
+}

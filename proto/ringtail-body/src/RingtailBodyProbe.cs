@@ -172,7 +172,7 @@ namespace Pandaborn.RingtailBody
             float heading = (source ? source.transform.eulerAngles.y : 30f) + (s["yaw"]?.Value<float>() ?? 0f);
             float pitch = s["pitch"]?.Value<float>() ?? 55f;
             return Ringtails().OrderByDescending(IsCarrying)
-                .ThenByDescending(c => Unoccluded(c, pitch, heading, 6f))
+                .ThenByDescending(c => Enumerable.Range(0, 8).Any(k => Unoccluded(c, pitch, heading + 45f * k, 4f)))
                 .ThenByDescending(c => _moving.Contains(c)).FirstOrDefault();
         }
 
@@ -322,9 +322,20 @@ namespace Pandaborn.RingtailBody
             var moved = new List<(Transform t, Vector3 p, Quaternion r)>();
             try
             {
+                // the game camera's heading if the Ringtail can be seen from there, else the first of 7 other headings
+                // (45 degree steps) with nothing in the way at the closest distance
+                float pitch = s["pitch"]?.Value<float>() ?? 55f;
+                float baseHeading = (source ? source.transform.eulerAngles.y : 30f) + (s["yaw"]?.Value<float>() ?? 0f);
+                float near = s["distances"] is JArray dd && dd.Count > 0 ? dd[0].Value<float>() : 5f;
+                float heading = baseHeading;
+                for (int k = 0; k < 8; k++)
+                {
+                    float h = baseHeading + 45f * k;
+                    if (Unoccluded(ringtail, pitch, h, near)) { heading = h; entry["headingSearch"] = k; break; }
+                }
                 if (group)
                 {
-                    float heading0 = source ? source.transform.eulerAngles.y : 30f;
+                    float heading0 = heading;
                     var right = Quaternion.Euler(0f, heading0, 0f) * Vector3.right;
                     var companions = new JArray();
                     var others = new[] { ("InkpawAdult.Inkpaws", -0.75f), ("RingtailChild.Inkpaws", 0.6f), ("InkpawChild.Inkpaws", 1.1f) };
@@ -339,8 +350,6 @@ namespace Pandaborn.RingtailBody
                     }
                     entry["companions"] = companions;
                 }
-                float heading = (source ? source.transform.eulerAngles.y : 30f) + (s["yaw"]?.Value<float>() ?? 0f);
-                float pitch = s["pitch"]?.Value<float>() ?? 55f;
                 var distances = s["distances"] is JArray d ? d.Select(x => x.Value<float>()).ToArray() : new[] { 5f, 11f };
                 var files = new JArray();
                 foreach (float dist in distances)
