@@ -39,6 +39,7 @@ using Timberborn.WeatherSystem;
 using Timberborn.Workshops;
 using Timberborn.StatusSystem;
 using Timberborn.Goods;
+using Timberborn.InventorySystem;
 using Timberborn.WorkSystem;
 using Timberborn.EnterableSystem;
 using Timberborn.ResourceCountingSystem;
@@ -770,6 +771,8 @@ namespace PandabornDevHarness
                 if (step["limitEnabled"] != null) valve.SetOutflowLimitEnabled((bool)step["limitEnabled"]);
                 if (step["limit"] != null) valve.SetOutflowLimit((float)step["limit"]);
             }
+            var allower = bo.GetComponent<SingleGoodAllower>();
+            if (allower != null && step["allowGood"] != null) allower.Allow((string)step["allowGood"]);
             var forester = bo.GetComponent<Forester>();
             if (forester != null && step["replantDeadTrees"] != null) forester.SetReplantDeadTrees((bool)step["replantDeadTrees"]);
             var fill = bo.GetComponent<FillValve>();

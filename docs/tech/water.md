@@ -660,3 +660,38 @@ icons are enough to stop silent failure.
   correctly showed the vanilla "not connected" status).
 * Rule: one collector keeps about 2 pandas in water in good weather (vanilla beavers drink ≈ 2–3 per day; to be
   balanced) and a third of that in drought. The weather scaling costs one ~40-line component.
+
+### Plants: what the game did (run `water-district-0608`, with beavers; settings below)
+
+Test plants (stand-ins on vanilla models): **Shoot Bamboo** = field crop on the carrot model (moist soil,
+`DaysToDieDry` 2, growth 2 days); **Timber Bamboo** = tree on the birch model (`DaysToDieDry` 2, growth 3 days,
+`ReproductionChance` 0.1, cut for 1 Log); combined **Bamboo** = birch tree that is both cuttable (1 Log) and gatherable
+(1 Berries every 2 days), `ReproductionChance` 0.25, `DaysToDieDry` 6. Soil kept moist by a water strip for 2 days,
+then dry for 3 days, then wet again.
+
+* **Growth pauses while a plant is dying and resumes where it stopped.** E.g. a bamboo sapling at growth 0.344 stayed
+  at 0.344 for the whole dry spell and went on to 0.585 12 h after the soil was wet again.
+* **The dying countdown resets fully when water returns** (code: `LivingWaterNaturalResource.StopDying` →
+  `Reset`). The 6-day bamboo survived a 3-day dry spell and was healthy 12 h after rewetting; the 2-day crop and tree
+  died between 44 h and 68 h after the water was cut (the soil itself stays moist for a while after the water goes).
+* **Dead trees and the forester.** Dead Timber Bamboo on planting-marked tiles outside any cutting area was cleared and
+  replanted by the forester within 12 h of the soil turning moist again, **but only because "Replant dead trees" was
+  switched on** (`Forester.ReplantDeadTrees`; it is off by default and only applies outside cutting areas). The dead
+  unmarked (wild) tree stayed dead. With the toggle off a dead tree stands until a lumberjack cuts it (it keeps its log
+  yield, so it never becomes overridable). Design: default the Inkpaw forester's toggle to on, or explain it.
+* **Dead crops** lose their yield on death and become overridable (code: `EmptyDeadNaturalResourceOverrider`), so a
+  farmer can plant over them. Not observed yet: in this run no yield worker did anything ("Nothing to do in range"),
+  because the district had no storage for the goods (rerun `district2` with storages).
+* **Wild spreading (combined bamboo, chance 0.25, unmarked, inside a cutting area that no lumberjack worked).** Two
+  parents became 3 after 12 h, 5 after 48 h, 7 after 60 h, 11 after 168 h (with the 3 dry days in between, during which
+  nothing spread: dying parents are reproduction-blocked). Growing saplings do not spread until grown. Spawns only on the
+  4 neighbours at the same height, on moist free tiles.
+* **Planted (marked) parents never spread** (`reproBlocked` true for every Timber Bamboo on planting-marked tiles,
+  confirmed in game); the new trees on the second marked row were planted by the forester, not spawned.
+* **Cutting** (code, `Cuttable.Cut`): cutting always kills the plant (`LivingNaturalResource.Die`); `RemoveOnCut:false`
+  only leaves the dead stump standing (overridable). There is no "cut and regrow" in vanilla; it would need a small
+  component (on `WasCut`: `ReverseDeath`, `Yielder.ResetYield`, own regrow timer). A gatherable on the same plant stops
+  yielding once it is cut. This is why splitting shoots (crop) from poles (tree) is right.
+* Workers: the treadwheel got its worker and the walker generator gave output multiplier 1.0 (one Folktails worker at
+  normal speed), but it lifted nothing: its outlet sat on the ledge floor (no space, see Scoop Wheel). Fixed geometry is in
+  `district2`.

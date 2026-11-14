@@ -441,6 +441,61 @@ def combo():
     request("combo", steps, [40, 48], real_seconds=4200)
 
 
+# ---------------------------------------------------------------------------------------------------------------- district2
+def district2():
+    """Second district run, fixing the first: storages for Log, Berries and Carrot (yield workers idle without them),
+    the water strip north of the plants (y=10) so the fields are reachable from the path, and the Treadwheel ledge one
+    block below its outlet. Same plants and phases, shorter: wet to h24, dry to h96, rewet to h144."""
+    s = [{"op": "pathFromDistrict", "to": [1, 1, 0]},
+         {"op": "placeLine", "template": "Path", "from": [1, 1, 0], "count": 30, "step": [1, 0, 0], "orientation": "Cw0"},
+         flat(3, 3, 8, 7, 1), flat(4, 4, 7, 6, 0), flat(3, 3, 3, 3, -2), flat(9, 10, 30, 10, -1), wait(3),
+         place("PandabornTreadwheel", [3, 2, 0], "Cw0", id="tread"),
+         water("pit", [3, 3, -2], 1.0, 1.5), water("strip", [20, 10, -1], 1.0, 0.5),
+         place("LumberjackFlag.Folktails", [10, 2, 0], "Cw0", id="lumberjack"),
+         place("GathererFlag.Folktails", [13, 2, 0], "Cw0", id="gatherer"),
+         place("EfficientFarmHouse.Folktails", [16, 2, 0], "Cw0", id="farm"),
+         place("Forester.Folktails", [22, 2, 0], "Cw0", id="forester"),
+         {"op": "set", "id": "forester", "replantDeadTrees": True},
+         place("SmallWarehouse.Folktails", [26, 2, 0], "Cw0", id="storeCarrot"), {"op": "set", "id": "storeCarrot", "allowGood": "Carrot"},
+         place("SmallWarehouse.Folktails", [27, 2, 0], "Cw0", id="storeBerries"), {"op": "set", "id": "storeBerries", "allowGood": "Berries"},
+         place("SmallPile.Folktails", [28, 2, 0], "Cw0", id="storeLog"), {"op": "set", "id": "storeLog", "allowGood": "Log"},
+         {"op": "plant", "template": BAMBOO, "cells": [[11, 7, 0], [13, 7, 0]]},
+         {"op": "markCut", "rect": [10, 6, 14, 9, 0]},
+         {"op": "markPlant", "template": SHOOT, "rect": [16, 7, 19, 8, 0]},
+         {"op": "plant", "template": SHOOT, "rect": [16, 7, 19, 7, 0]},
+         {"op": "markPlant", "template": TIMBER, "rect": [22, 7, 24, 8, 0]},
+         {"op": "plant", "template": TIMBER, "rect": [22, 7, 24, 7, 0]},
+         {"op": "plant", "template": TIMBER, "at": [28, 7, 0]},
+         {"op": "grow", "rect": [9, 6, 30, 9, 0], "progress": 1.0}]
+    objs = ["tread", "lumberjack", "gatherer", "farm", "forester"]
+    field = {"rect": [9, 5, 30, 9, 0]}
+    goods = ["Log", "Berries", "Carrot"]
+    s += [{"op": "series", "id": "tread", "every": 40, "cells": [[3, 3, -2], [5, 4, 0]], "volumes": [[4, 4, 7, 6, 0]], "objects": ["tread"]},
+          shot("district2_setup", [14, 5, 0], 32), {"op": "plants", "label": "plants_h0", **field},
+          {"op": "probe", "label": "h0", "objects": objs, "goods": goods}]
+    t = 0
+    for h in (4, 8, 12, 24):
+        s += [wait_hours(h - t), {"op": "probe", "label": f"h{h}", "objects": objs, "goods": goods, "volumes": [[4, 4, 7, 6, 0]]},
+              {"op": "plants", "label": f"plants_h{h}", **field}]
+        t = h
+        if h == 8:
+            s += [shot("district2_h8", [8, 4, 0], 16, 45, 10), shot("district2_grove_h8", [12, 7, 0], 12, 45, 200)]
+    s += [expect("treadwheel lifted water", "volume", rect=[4, 4, 7, 6, 0], mn=0.05)]
+    s += off("strip") + [water("stripDrain", [20, 10, -1], -2.0)]
+    for h in (48, 72, 96):
+        s += [wait_hours(h - t), {"op": "plants", "label": f"plants_h{h}", **field},
+              {"op": "probe", "label": f"h{h}", "objects": objs, "goods": goods}]
+        t = h
+    s += [shot("district2_dead", [20, 6, 0], 22)]
+    s += off("stripDrain") + [water("strip", [20, 10, -1], 1.0, 0.5)]
+    for h in (108, 120, 144):
+        s += [wait_hours(h - t), {"op": "plants", "label": f"plants_h{h}", **field},
+              {"op": "probe", "label": f"h{h}", "objects": objs, "goods": goods}]
+        t = h
+    s += [shot("district2_end", [20, 6, 0], 22)]
+    request("district2", s, [32, 12], speed=5, real_seconds=3600, origin={"nearDistrict": True})
+
+
 if __name__ == "__main__":
     flume()
     longrun()
@@ -450,4 +505,5 @@ if __name__ == "__main__":
     district()
     dew()
     combo()
+    district2()
     print("wrote", sorted(os.listdir(OUT)))

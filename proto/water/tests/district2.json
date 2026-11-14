@@ -1,0 +1,841 @@
+{
+ "faction": "Folktails",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 3600,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.Water",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "district2",
+  "speed": 5,
+  "area": [
+   32,
+   12
+  ],
+  "origin": {
+   "nearDistrict": true
+  },
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "pathFromDistrict",
+    "to": [
+     1,
+     1,
+     0
+    ]
+   },
+   {
+    "op": "placeLine",
+    "template": "Path",
+    "from": [
+     1,
+     1,
+     0
+    ],
+    "count": 30,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw0"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     3,
+     3,
+     8,
+     7
+    ],
+    "z": 1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     4,
+     4,
+     7,
+     6
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     3,
+     3,
+     3,
+     3
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     9,
+     10,
+     30,
+     10
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 900
+   },
+   {
+    "op": "place",
+    "template": "PandabornTreadwheel.PandabornProto",
+    "at": [
+     3,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "tread"
+   },
+   {
+    "op": "water",
+    "id": "pit",
+    "at": [
+     3,
+     3,
+     -2
+    ],
+    "rate": 1.0,
+    "maxDepth": 1.5
+   },
+   {
+    "op": "water",
+    "id": "strip",
+    "at": [
+     20,
+     10,
+     -1
+    ],
+    "rate": 1.0,
+    "maxDepth": 0.5
+   },
+   {
+    "op": "place",
+    "template": "LumberjackFlag.Folktails",
+    "at": [
+     10,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "lumberjack"
+   },
+   {
+    "op": "place",
+    "template": "GathererFlag.Folktails",
+    "at": [
+     13,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "gatherer"
+   },
+   {
+    "op": "place",
+    "template": "EfficientFarmHouse.Folktails",
+    "at": [
+     16,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "farm"
+   },
+   {
+    "op": "place",
+    "template": "Forester.Folktails",
+    "at": [
+     22,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "forester"
+   },
+   {
+    "op": "set",
+    "id": "forester",
+    "replantDeadTrees": true
+   },
+   {
+    "op": "place",
+    "template": "SmallWarehouse.Folktails",
+    "at": [
+     26,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "storeCarrot"
+   },
+   {
+    "op": "set",
+    "id": "storeCarrot",
+    "allowGood": "Carrot"
+   },
+   {
+    "op": "place",
+    "template": "SmallWarehouse.Folktails",
+    "at": [
+     27,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "storeBerries"
+   },
+   {
+    "op": "set",
+    "id": "storeBerries",
+    "allowGood": "Berries"
+   },
+   {
+    "op": "place",
+    "template": "SmallPile.Folktails",
+    "at": [
+     28,
+     2,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "storeLog"
+   },
+   {
+    "op": "set",
+    "id": "storeLog",
+    "allowGood": "Log"
+   },
+   {
+    "op": "plant",
+    "template": "PandabornBamboo.PandabornProto",
+    "cells": [
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      13,
+      7,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "markCut",
+    "rect": [
+     10,
+     6,
+     14,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornShootBamboo.PandabornProto",
+    "rect": [
+     16,
+     7,
+     19,
+     8,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.PandabornProto",
+    "rect": [
+     16,
+     7,
+     19,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "markPlant",
+    "template": "PandabornTimberBamboo.PandabornProto",
+    "rect": [
+     22,
+     7,
+     24,
+     8,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.PandabornProto",
+    "rect": [
+     22,
+     7,
+     24,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.PandabornProto",
+    "at": [
+     28,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "grow",
+    "rect": [
+     9,
+     6,
+     30,
+     9,
+     0
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "series",
+    "id": "tread",
+    "every": 40,
+    "cells": [
+     [
+      3,
+      3,
+      -2
+     ],
+     [
+      5,
+      4,
+      0
+     ]
+    ],
+    "volumes": [
+     [
+      4,
+      4,
+      7,
+      6,
+      0
+     ]
+    ],
+    "objects": [
+     "tread"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "district2_setup",
+    "focus": [
+     14,
+     5,
+     0
+    ],
+    "distance": 32,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "plants",
+    "label": "plants_h0",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h0",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 4,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "h4",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ],
+    "volumes": [
+     [
+      4,
+      4,
+      7,
+      6,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "plants_h4",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 4,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "h8",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ],
+    "volumes": [
+     [
+      4,
+      4,
+      7,
+      6,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "plants_h8",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "district2_h8",
+    "focus": [
+     8,
+     4,
+     0
+    ],
+    "distance": 16,
+    "pitch": 45,
+    "yaw": 10
+   },
+   {
+    "op": "shot",
+    "name": "district2_grove_h8",
+    "focus": [
+     12,
+     7,
+     0
+    ],
+    "distance": 12,
+    "pitch": 45,
+    "yaw": 200
+   },
+   {
+    "op": "wait",
+    "hours": 4,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "h12",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ],
+    "volumes": [
+     [
+      4,
+      4,
+      7,
+      6,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "plants_h12",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "h24",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ],
+    "volumes": [
+     [
+      4,
+      4,
+      7,
+      6,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "plants_h24",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "expect",
+    "label": "treadwheel lifted water",
+    "what": "volume",
+    "min": 0.05,
+    "rect": [
+     4,
+     4,
+     7,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "waterOff",
+    "id": "strip"
+   },
+   {
+    "op": "water",
+    "id": "stripDrain",
+    "at": [
+     20,
+     10,
+     -1
+    ],
+    "rate": -2.0
+   },
+   {
+    "op": "wait",
+    "hours": 24,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h48",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h48",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 24,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h72",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h72",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 24,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h96",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h96",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "district2_dead",
+    "focus": [
+     20,
+     6,
+     0
+    ],
+    "distance": 22,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "waterOff",
+    "id": "stripDrain"
+   },
+   {
+    "op": "water",
+    "id": "strip",
+    "at": [
+     20,
+     10,
+     -1
+    ],
+    "rate": 1.0,
+    "maxDepth": 0.5
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h108",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h108",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h120",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h120",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "wait",
+    "hours": 24,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "plants_h144",
+    "rect": [
+     9,
+     5,
+     30,
+     9,
+     0
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "h144",
+    "objects": [
+     "tread",
+     "lumberjack",
+     "gatherer",
+     "farm",
+     "forester"
+    ],
+    "goods": [
+     "Log",
+     "Berries",
+     "Carrot"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "district2_end",
+    "focus": [
+     20,
+     6,
+     0
+    ],
+    "distance": 22,
+    "pitch": 55,
+    "yaw": 20
+   }
+  ]
+ }
+}
