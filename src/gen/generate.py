@@ -23,6 +23,7 @@ Exit codes: 0 ok, 1 catalogue error (message says what to change), 2 pin mismatc
 """
 import argparse
 import difflib
+import json
 import os
 import shutil
 import sys
@@ -146,6 +147,23 @@ def generate(a, v):
     write_text(a.out + ".provenance.json", dumps(prov))
     write_text(a.out + ".report.json", dumps(report))
     write_text(a.out + ".grid.json", dumps(grid))
+    # a ready test request for the adopted models: each placed and finished (grid), one unfinished copy per model
+    # started so its construction stage shows, close-ups of both (src/devharness/ModelShots.cs)
+    adopted = []
+    for p_, o in g.outputs.items():
+        mesh = (((o.data.get("Children") or {}).get("#Finished") or {}).get("TimbermeshSpec") or {}).get("Model", "")
+        if o.kind == "building" and mesh.startswith("Buildings/Pandaborn/Models/"):
+            adopted.append(o.data["TemplateSpec"]["TemplateName"])
+    adopted.sort()
+    staged = [t for t in adopted if "DistrictCenterSpec" not in json.dumps(g.outputs_by_template(t))]
+    model_request = {
+        "grid": {"templates": adopted},
+        "buildings": [{"template": t, "finished": False} for t in staged],
+        "modelShots": {"afterGrid": True, "stage": staged,
+                       "shots": [{"template": t, "finished": True, "name": "model_" + t.split(".")[0]} for t in adopted]
+                                + [{"template": t, "finished": False, "name": "stage_" + t.split(".")[0]} for t in staged]},
+    }
+    write_text(a.out + ".models.request.json", dumps(model_request))
     # meshes of adopted models: assemble copies them into the mod (built by the models stage, never in git)
     missing = sorted(src for src in g.model_files.values() if not os.path.isfile(src))
     write_text(a.out + ".models.json", dumps({"files": dict(sorted(g.model_files.items())),

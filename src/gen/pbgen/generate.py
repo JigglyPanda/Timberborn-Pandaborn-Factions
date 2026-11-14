@@ -548,6 +548,12 @@ class Generator:
             raise GenError("%s: no text in text/faction.json core for %s" % (item, ", ".join(sorted(wanted))))
 
     # ------------------------------------------------------------------------------------------------- results
+    def outputs_by_template(self, name):
+        for o in self.outputs.values():
+            if (o.data.get("TemplateSpec") or {}).get("TemplateName") == name:
+                return o.data
+        return {}
+
     def files(self):
         """rel path -> bytes, for every generated file (blueprints and loc fragments)."""
         out = {p: dumps(o.data).encode("utf-8") for p, o in self.outputs.items()}
