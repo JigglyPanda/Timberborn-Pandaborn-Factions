@@ -74,6 +74,7 @@ gather_days = 3.0
 gather_hours = 0.6
 planter = "Forester"
 wet_days = 3.0
+flood_days = 3.0   # standing water over the tile as forgiving as wet roots (docs/tech/water.md)
 reproduction = 0
 src = { Yield = "M q4", GrowthTimeInDays = "G", PlantTimeInHours = "V", Water = "design" }
 
@@ -88,6 +89,7 @@ gather_days = 3.0
 gather_hours = 0.6
 planter = "Forester"
 wet_days = 3.0
+flood_days = 3.0   # standing water over the tile as forgiving as wet roots (docs/tech/water.md)
 reproduction = 0
 src = { Yield = "M q3", GrowthTimeInDays = "V (Sunflower)", Planter = "design 2026-11-14", DaysToDieWet = "design 2026-11-14" }
 [plants.PandabornPersimmonTree]
