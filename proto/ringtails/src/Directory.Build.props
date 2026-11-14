@@ -1,0 +1,6 @@
+<Project>
+  <!-- keep intermediate build files off C: and out of the repo -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\proto-ringtails\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

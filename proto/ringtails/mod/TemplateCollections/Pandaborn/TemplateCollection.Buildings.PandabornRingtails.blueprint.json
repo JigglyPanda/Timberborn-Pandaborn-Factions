@@ -1,0 +1,10 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.PandabornRingtails",
+    "Blueprints": [
+      "Buildings/Pandaborn/Ringtails/RingtailHaulingPost.Inkpaws.blueprint",
+      "Buildings/Pandaborn/Ringtails/RingtailGathererFlag.Inkpaws.blueprint",
+      "Buildings/Pandaborn/Ringtails/RingtailLoft.Inkpaws.blueprint"
+    ]
+  }
+}
