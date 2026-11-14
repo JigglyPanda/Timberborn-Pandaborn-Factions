@@ -155,14 +155,18 @@ A building is a short script, `art/models/<Id>/build.py`, that composes parts an
 E:\PandabornDev\tools\venv\Scripts\python.exe art\models\Den\build.py
 E:\PandabornDev\tools\venv\Scripts\python.exe -I src\pipeline\kit\preview_all.py [Id ...]     # sheets in E:\PandabornDev\build\models\preview
 E:\PandabornDev\tools\venv\Scripts\python.exe -I proto\models\tools\gen_mod.py                 # prototype mod -> E:\PandabornDev\build\proto\models
-powershell -File tools\run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods "E:\PandabornDev\build\proto\look-swap,E:\PandabornDev\build\proto\models" -RequestJson proto\models\tests\all.request.json -WaitForGameSeconds 10800
+E:\PandabornDev\tools\venv\Scripts\python.exe -I src\pipeline\kit\game_zoom.py [Id ...]       # fixed-scale game-camera sheet (sheet_gamezoom.png)
+powershell -File tools\run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods "E:\PandabornDev\build\proto\models" -RequestJson proto\models\tests\pass3.request.json -WaitForGameSeconds 10800
 ```
 
 ## Results
 
-All runs: `tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods look-swap,models` (the faction's swapped
-materials active), screenshots in `E:\PandabornDevuild	est\<run>\`. Previews (Blender, faction textures, beside
-the vanilla stand-in, day / night / construction stage) in `E:\PandabornDevuild\models\preview\<Id>_{day,night,stage}.png`
+All runs: `tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods E:\PandabornDev\build\proto\models` (the
+installed faction ships the Look code and the `pandabornlook` bundle itself: never add `proto/look-swap` or
+`PandabornCodeDev`, which apply the swap twice or crash on the duplicate bundle; passes 1 and 2 used them before the
+faction shipped the look), screenshots in `E:\PandabornDev\build\test\<run>\`. Previews (Blender, faction textures,
+beside the vanilla stand-in, day / night / construction stage) in
+`E:\PandabornDev\build\models\preview\<Id>_{day,night,stage}.png`
 and contact sheets `sheet_day.png`, `sheet_night.png`, `sheet_stage.png`.
 
 | Run | What | Result |
@@ -427,3 +431,95 @@ setup error) and `models-pass3-2` (Paddy House planter crash, fixed).
 
 **Not built yet:** Trip-Hammer Mill, Kitchen, Ox Workshop, Treadwheel Lift, Cistern Tap, Dry-Stone Wall, Large Kite
 Windmill, Flume Bridge Span, and the water lane's two-block caps on the Flume Gate, Flume Corner and Paddy Spout.
+
+## Pass 4 (2026-11-14)
+
+### Readability from the game camera
+
+`src/pipeline/kit/game_zoom.py` renders every model at one fixed scale (orthographic, 110 px per tile, pitch 55,
+day) grouped so look-alikes sit side by side: `E:\PandabornDev\build\models\preview\sheet_gamezoom.png` (per model
+in `preview\gamezoom\`). Before this pass five workplaces were the same charcoal gable on posts. Each workplace now
+has one mark that reads from above:
+
+| Workplace | Its mark at game zoom |
+|---|---|
+| Steamer | a tower of five big bamboo steamer baskets and a cone lid, through and above the lean-to |
+| Pickle Yard | six fat brown jars with red cloth tied over their mouths |
+| Tea Roastery | two stepped tiers of wide, shallow pale trays of green and roasted leaf, tilted to the street, outside the roofline |
+| Lantern Workshop | a bamboo mast with four strings of big red lanterns running down to the eaves and yard |
+| Hot Pot Hall | open front; the red pot under its own tiered "lantern roof" with a vent, chillies on every eave |
+| Kitchen (new) | end-on gable, tall white chimney, a round grey hand mill and trays of white rice balls |
+| Trip-Hammer Mill (new) | paddle wheel in a stone race, two long hammer beams over stone mortars |
+| Ox Workshop (new) | a great round turntable with a red-lacquered rim in a timber yard |
+| Paddy House | the only rice-straw thatch roof (gold where all the others are charcoal) |
+| Smoke Kiln | the earthen vault (unchanged) |
+| Night Builders' Post | tall bamboo shear legs with a hoisted bundle of poles; moon plaque |
+| Night Courier Post | white wall with the moon gate (unchanged) |
+| Large Kite Windmill (new) | all-indigo sails, taller, a gear house; the small one keeps alternating hemp and indigo |
+
+Still close at game zoom: Flume Gate and Paddy Spout (both one cell with a little hood; they stand in different
+places, gate on a line, spout at a field edge).
+
+### Weak models fixed
+
+* Tea Roastery: the drum-like trays replaced by wide shallow trays (kit `tray`) on a rack outside the roofline.
+* Hot Pot Hall: rebuilt open on the entrance side; the big red-lacquered pot (red and pale broth) under a raised
+  lantern roof whose vent carries the Bakery smoke as steam; chilli strings on the pavilion and hall eaves.
+* Memorial Arch: posts slimmed (0.16 to 0.11), plaster panels removed, a light two-tier roof (thin hipped eave and a
+  small raised gable), a blank lacquered name board in a red frame (no writing) under the front beam; `Fire` kept.
+
+### New models
+
+| Model | Basis | Notes | Tris |
+|---|---|---|---|
+| TripHammerMill | Gristmill (3x2x3) | `#MillWheel` turns, `#Hammer1/2` trip (new kit kind `trip`: slow lift, quick fall, half a lift apart); all played by the Gristmill's WorkshopAnimationController. The wheel turns in a stone race over cells (0,0) and (0,1): `wheelCells` in model.json for the water module's WaterPoweredGeneratorSpec | 2013 |
+| Kitchen | Bakery (2x3x4) | smoke at the chimney | 2482 |
+| OxWorkshop | BotAssembler (3x3x1) | `#OxTurntable` (RingName, turns about up) and `#OxAuger` (DrillName, turns about forward): set `BotManufactoryAnimationControllerSpec` from `botManufactoryAnimation`; front centre clear for the driveway | 2204 |
+| TreadwheelLift | WaterPump (2x3x3, BaseZ 1) | the square-pallet chain pump: trough from the intake column (0,2) at y = -1 up to a sprocket; `#TreadAxle` turns while working. Drop the WaterPump's `WaterInputPipeSpec` when adopting (the trough is the intake) | 2306 |
+| CisternTap | Discharge (1x2x1) | celadon vat, plug tap, plank catwalk over the second cell, spout; `Water` drops at the spout tip | 682 |
+| DryStoneWall | Levee (1x1x1) | stacked stone courses over an earth core, mossy cap; stackable on itself (`BlockObject`) as the Levee | 554 |
+| LargeKiteWindmill | LargeWindTurbine (3x3x5) | ten indigo sails; `windRotationAnimator` names `#KiteRotor`/`#KiteTower` | 2206 |
+| FlumeBridgeSpan | ThrottlingValve (1x1x2) | the water lane's span: lower block `Occupations None`, water cell (0,0,1), stringers resting on the neighbours, nothing in the cell below | 508 |
+
+**Water caps** (the water lane's request 1): Flume Gate (1x1x2), Flume Corner (2x2x2) and Paddy Spout (1x2x2) are
+two blocks tall; the cap block over the water cell is occupied (`Bottom, Top, Corners, Path, Middle`, MatterBelow Any)
+and holds a little tiled hood (gate, spout) or pavilion roof (corner); `capCells` in model.json. The Flume Corner's
+solid L is two blocks tall too (bamboo clump and lantern post). The Paddy Spout's cap layer leaves (0,1,1) free.
+
+**Nap Platform:** stands on the ground or a roof (blocks MatterBelow `GroundOrStackable`), deck on short legs over
+stone pads (0.26 high), five mats with cushions and five `#Slot#Seat` nodes; capacity 5.
+
+**Night windows** (look lane: glow needs the building lit and big glass): the Den's front lattice window enlarged
+(0.42 x 0.40 to 0.44 x 0.54), the Courtyard House's front window enlarged. Lantern paper now uses an even strip of
+the glass panel (`LANTERN_GLOW`, no dark gap: the old region put a black streak across every lantern and the Sky
+Lantern's great lantern).
+
+### Wonder-completion picture
+
+`src/pipeline/kit/wonder_image.py` renders the faction's picture in Blender from our own models: night, the Sky
+Lantern's great lantern risen above the village (Village Hall, Star Tower, homes with lit windows, string and standing
+lanterns), sixteen small sky lanterns drifting up, far hills, a deep blue sky, no characters. Same format as the
+vanilla `wonder-completion-folktails` (1514 x 348, RGB, no mipmaps; read from the game's resources.assets header,
+not copied): `mod/PandabornFactions/Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws.png` + `.meta.json`
+(`isSprite`).
+
+### Harness (additive, `src/devharness`)
+
+* Buildings may be placed `"relativeTo": "districtEntrance"` (the offset counts from the cell in front of the
+  district centre's door, where every connecting path starts) or `"previous"` (from the last placed building: rows of
+  fences).
+* `"animations": [{"target", "at", "name", "speed", "looped", "backwards"}]` plays a placed building's animation as
+  WonderAnimationController does on activation, without activating the wonder (no wonder events, no achievements).
+
+### Catalogue adoption list for pass 4
+
+* Regenerate every adopted model: meshes changed (lantern paper region) and these model.json files changed:
+  Steamer (Smoke attachment now at the cone's vent, y 1.96), Pickle Yard, Tea Roastery, Lantern Workshop, Hot Pot
+  Hall (Smoke at the vent (1.0, 2.5, 0.92), access z 0.2, colliders), Memorial Arch (colliders), Paddy House (thatch),
+  Night Builders' Post, Den, Courtyard House, Nap Platform (blocks GroundOrStackable, access y 0.26, five seats:
+  `EnterableSpec.CapacityFinished` 5), Flume Gate, Flume Corner, Paddy Spout (two blocks; `capCells`).
+  The faction's own validator flags Steamer and Nap Platform until regenerated.
+* New: TripHammerMill (Gristmill), Kitchen (Bakery), OxWorkshop (BotAssembler; RingName/DrillName), TreadwheelLift
+  (WaterPump; drop WaterInputPipeSpec), CisternTap (Discharge), DryStoneWall (Levee), LargeKiteWindmill
+  (LargeWindTurbine; WindRotationAnimatorSpec), FlumeBridgeSpan (water module).
+* Faction: `FactionSpec.WonderCompletionImage` = `Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws`.
