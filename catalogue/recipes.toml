@@ -1,0 +1,129 @@
+# Inkpaws recipes (imported from the stat sheet, see goods.toml). basis = the vanilla recipe copied.
+# Name and icon follow the first product. Plank and TreatedPlank are the poles and cured poles (rules.toml [poles]).
+
+
+[recipes.PandabornSteamedShoots]
+basis = "GrilledPotato"
+cycle_hours = 0.5
+ingredients = { PandabornBambooShoots = 1 }
+products = { PandabornSteamedShoots = 2 }
+capacity = 30
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "M q1/q3 (ratio) · V (Grill: fuel, buffer) (building: Steamer)"
+
+[recipes.PandabornSteamedRice]
+basis = "Bread"
+cycle_hours = 1.0
+ingredients = { PandabornRice = 1 }
+products = { PandabornSteamedRice = 4 }
+capacity = 30
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "M q3 · V (Bread) (building: Steamer)"
+
+[recipes.PandabornPickles]
+basis = "Paper"
+cycle_hours = 1.0
+ingredients = { PandabornCabbage = 1 }
+products = { PandabornPickles = 3 }
+capacity = 20
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "M q3 (one cabbage makes several) (building: Pickle Yard)"
+
+[recipes.PandabornRiceFlour]
+basis = "WheatFlour"
+cycle_hours = 0.5
+ingredients = { PandabornRice = 1 }
+products = { PandabornRiceFlour = 1 }
+capacity = 20
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "V (Gristmill) (building: Trip-Hammer Mill)"
+
+[recipes.PandabornSweetRiceBalls]
+basis = "MaplePastry"
+cycle_hours = 1.0
+ingredients = { PandabornRiceFlour = 1, PandabornPersimmons = 1 }
+products = { PandabornSweetRiceBalls = 5 }
+capacity = 20
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "V (Maple Pastry shape) · M q3 (building: Kitchen)"
+
+[recipes.PandabornBambooSeedCakes]
+basis = "MaplePastry"
+cycle_hours = 1.5
+ingredients = { PandabornBambooSeed = 1, PandabornRiceFlour = 1 }
+products = { PandabornBambooSeedCakes = 4 }
+capacity = 20
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "M q7 (building: Kitchen)"
+
+[recipes.PandabornHotPot]
+basis = "MaplePastry"
+cycle_hours = 1.5
+ingredients = { PandabornCabbage = 1, PandabornSichuanPepper = 1, PandabornBambooMushrooms = 1 }
+products = { PandabornHotPot = 8 }
+capacity = 15
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "M q3 (building: Hot Pot Hall)"
+
+[recipes.PandabornTea]
+basis = "Paper"
+cycle_hours = 0.75
+ingredients = { PandabornTeaLeaves = 1, Water = 1 }
+products = { PandabornTea = 3 }
+capacity = 20
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "design (3 cups per water) · M q4 (building: Tea Roastery)"
+
+[recipes.PandabornPaper]
+basis = "Paper"
+cycle_hours = 1.56
+ingredients = { Plank = 1 }
+products = { Paper = 2 }
+capacity = 10
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "V (Paper, pole for log) (building: Paper Mill)"
+
+[recipes.PandabornPaperLantern]
+basis = "Paper"
+cycle_hours = 1.5
+ingredients = { Paper = 2, Plank = 1 }
+products = { PandabornPaperLantern = 2 }
+capacity = 10
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "M q7 (Small Festival in cycle 2) (building: Lantern Workshop)"
+
+[recipes.PandabornCuredPole]
+basis = "TreatedPlank"
+cycle_hours = 3.0
+ingredients = { Plank = 1 }
+products = { TreatedPlank = 1 }
+capacity = 10
+fuel = "Log"
+cycles_fuel_lasts = 4
+src = "V (Treated Plank: 3 h) · M q8 (log smoke instead of resin and 250 hp) (building: Smoke Kiln)"
+
+[recipes.PandabornWoodenOx]
+basis = "Bot.Folktails"
+cycle_hours = 72.0
+ingredients = { TreatedPlank = 10, Gear = 15, MetalBlock = 2 }
+products = {  }
+capacity = 1
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "M q8 (vanilla bot parts, one building) (building: Ox Workshop)"

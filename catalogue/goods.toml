@@ -1,0 +1,146 @@
+# Inkpaws goods. Numbers imported from the balance model's stat sheet (tools/sim/out/statsheet.json) on 2026-11-14;
+# this file is now the source of truth (src/gen/import_statsheet.py --check reports drift from the latest sheet).
+# src = where each number comes from: M model (tools/sim, question), V vanilla analogue, G guess.
+# basis = the vanilla good copied for look, carrying and stockpile; fields: catalogue/README.md.
+# Poles and cured poles exist as goods only with rules.toml [poles] mode = "good" (when_poles).
+
+[collection]
+id = "Goods.Inkpaws"
+# vanilla goods the Inkpaws keep beyond the Common collection (logs, planks, gears, water, berries, metal...)
+vanilla = ["Paper", "Antidote", "Dandelion", "TreatedPlank"]
+
+
+[goods.PandabornBambooShoots]
+basis = "Carrot"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3 }
+src = "V (Berries): the raw staple carries no dish need"
+
+[goods.PandabornCabbage]
+basis = "Carrot"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornCabbage = 0.2 }
+src = "V (Carrot)"
+
+[goods.PandabornPersimmons]
+basis = "Carrot"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornPersimmons = 0.2 }
+src = "V (Carrot)"
+
+[goods.PandabornBambooMushrooms]
+basis = "Carrot"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornBambooMushrooms = 0.2 }
+src = "V"
+
+[goods.PandabornSteamedShoots]
+basis = "GrilledPotato"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornSteamedShoots = 0.2 }
+src = "M q3"
+
+[goods.PandabornPickles]
+basis = "GrilledPotato"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornPickles = 0.2 }
+src = "V (Grilled Potato)"
+
+[goods.PandabornSteamedRice]
+basis = "Bread"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornSteamedRice = 0.2 }
+src = "V (Bread)"
+
+[goods.PandabornSweetRiceBalls]
+basis = "CattailCracker"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornSweetRiceBalls = 0.2 }
+src = "V (Cattail Cracker)"
+
+[goods.PandabornHotPot]
+basis = "MaplePastry"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornHotPot = 0.2 }
+src = "V (Maple Pastry)"
+
+[goods.PandabornBambooSeedCakes]
+basis = "MaplePastry"
+good_type = "Box"
+weight = 1
+consumption = { Hunger = 0.3, PandabornBambooSeedCakes = 0.2 }
+src = "M q7"
+
+[goods.PandabornTea]
+basis = "MapleSyrup"
+good_type = "Liquid"
+weight = 2
+consumption = { Thirst = 0.2, PandabornTea = 0.3 }
+src = "M q4 (Tea need non-wastable: about 2 cups a day)"
+
+[goods.PandabornRice]
+basis = "Wheat"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "V (Wheat)"
+
+[goods.PandabornRiceFlour]
+basis = "WheatFlour"
+good_type = "Box"
+weight = 2
+consumption = {  }
+src = "V (Wheat Flour)"
+
+[goods.PandabornSichuanPepper]
+basis = "Wheat"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "M q3: never edible"
+
+[goods.PandabornTeaLeaves]
+basis = "Wheat"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "V"
+
+[goods.PandabornBambooSeed]
+basis = "SunflowerSeeds"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "M q7"
+
+[goods.PandabornPole]
+basis = "Plank"
+good_type = "Pileable"
+weight = 3
+consumption = {  }
+when_poles = "good"
+src = "V (Plank): keeps the rename option open; lift 18 makes it light"
+
+[goods.PandabornCuredPole]
+basis = "TreatedPlank"
+good_type = "Pileable"
+weight = 4
+consumption = {  }
+when_poles = "good"
+src = "V (Treated Plank)"
+
+[goods.PandabornPaperLantern]
+basis = "Book"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "G"

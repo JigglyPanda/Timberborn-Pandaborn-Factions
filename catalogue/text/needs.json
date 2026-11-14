@@ -95,7 +95,7 @@
     },
     "Cub-watching": {
       "id": "PandabornCubWatching", "group": "SocialLife",
-      "name": "Cub-watching", "name_key": "own",
+      "name": "Watching the young", "name_key": "own",
       "tooltip": "An hour at the Panda Kindergarten every few days, watching cubs and kits play.",
       "recommended_name": "Watching the young",
       "recommended_reason": "Cubs and kits share one kindergarten. 'Cub-watching' names only the Inkpaws' young.",
@@ -109,14 +109,14 @@
     },
     "Contemplation": {
       "id": "PandabornContemplation", "group": "Fun",
-      "name": "Contemplation", "name_key": "own",
+      "name": "Ink painting", "name_key": "own",
       "tooltip": "A quiet hour of ink painting at the Ink Studio, about once a week.",
       "recommended_name": "Ink painting",
       "recommended_reason": "The afternoon ritual in DESIGN.md is 'Ink painting'. It says what the panda is doing, and it avoids a near-match with the vanilla building name 'Contemplation Spot'."
     },
     "Performance": {
       "id": "PandabornPerformance", "group": "Fun",
-      "name": "Performance", "name_key": "own",
+      "name": "Opera", "name_key": "own",
       "tooltip": "A visit to the Opera Stage, about once a week, while the Ringtail performers are at work.",
       "recommended_name": "Opera",
       "recommended_reason": "Shorter, and it names the one thing that satisfies it."

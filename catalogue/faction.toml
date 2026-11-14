@@ -26,11 +26,10 @@ child_textures = [
 ]
 # Keep listing Folktails: the look is applied by the material swap in code (CLAUDE.md, docs/tech/look.md).
 material_collections = ["Folktails"]
-# Collections this catalogue generates (Buildings.Inkpaws, Characters.Inkpaws, ModularShaftParts.Inkpaws) plus vanilla
-# ones still borrowed. Order is kept as written.
-template_collections = ["Buildings.Inkpaws", "Characters.Inkpaws", "ModularShaftParts.Inkpaws", "NaturalResources.Folktails"]
-need_collections = ["Folktails"]
-good_collections = ["Folktails"]
+# Collections this catalogue generates (buildings.toml, plants.toml, the characters below). Order is kept.
+template_collections = ["Buildings.Inkpaws", "Characters.Inkpaws", "ModularShaftParts.Inkpaws", "NaturalResources.Inkpaws"]
+need_collections = ["Needs.Inkpaws"]    # needs.toml [collection]
+good_collections = ["Goods.Inkpaws"]    # goods.toml [collection]
 path_material = "Buildings/Paths/Path/Path.Folktails"
 base_wood_material = "Materials/UberAtlas/Materials/Folktails/BaseWood_White.Folktails"
 starting_building = "PandabornVillageHall"   # a building id from buildings.toml

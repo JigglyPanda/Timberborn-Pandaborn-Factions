@@ -6,9 +6,11 @@ provenance (vanilla source path and its sha256, catalogue item). Nothing is gues
 template the faction does not have, a loc key that would overwrite vanilla text, a duplicate id all raise GenError.
 """
 import copy
+import os
 import re
 
-from .util import GenError, dumps, sha256_bytes
+from . import content
+from .util import REPO, GenError, dumps, sha256_bytes
 
 LOC_COMMENT_MAX = 400
 MARKER_RE = re.compile(r"\[(sun|moon)\]")
@@ -22,9 +24,14 @@ class Output:
 
 
 class Generator:
-    def __init__(self, catalogue, vanilla):
+    def __init__(self, catalogue, vanilla, mod_src=None):
         self.cat = catalogue
         self.v = vanilla
+        self.mod_src = mod_src or os.path.join(REPO, "mod", "PandabornFactions")
+        self.good_plural = {}   # generated good id -> plural name loc key
+        self.good_icon = {}
+        self.building_name_key = {}   # building id -> display name loc key
+        self.generated_collections = {"good": set(), "need": set()}
         self.rules = catalogue["rules"]
         self.suffix = self.rules.get("names", {}).get("template_suffix", ".Inkpaws")
         self.source_faction = self.rules.get("names", {}).get("source_faction", "Folktails")
@@ -43,6 +50,16 @@ class Generator:
             raise GenError("catalogue/rules.toml [poles] mode must be plank, rename or good, not %r" % self.pole_mode)
         if self.pole_mode == "good":
             self.substitute.setdefault("Plank", poles.get("good", "PandabornPole"))
+            self.substitute.setdefault("TreatedPlank", poles.get("cured_good", "PandabornCuredPole"))
+
+    def sub_goods(self, value):
+        """Applies [costs].substitute to a good id, a list of {Id, Amount} or a {good: n} table."""
+        if isinstance(value, str):
+            return self.substitute.get(value, value)
+        if isinstance(value, list):
+            return [dict(x, Id=self.substitute.get(x["Id"], x["Id"])) if isinstance(x, dict) and "Id" in x else x
+                    for x in value]
+        return value
 
     # ------------------------------------------------------------------------------------------------- plumbing
     def add_id(self, kind, value, item):
@@ -92,7 +109,11 @@ class Generator:
         self.gen_shaft_parts()
         self.gen_faction_keyed("Decals", "DecalSpec", self.cat["faction"].get("decals", {}))
         self.gen_faction_keyed("WorkerOutfits", "WorkerOutfitSpec", self.cat["faction"].get("outfits", {}))
+        content.gen_goods(self)
         self.gen_buildings()
+        content.gen_needs(self)
+        content.gen_recipes(self)
+        content.gen_plants(self)
         self.gen_poles()
         self.gen_collections()
         self.gen_faction()
@@ -181,7 +202,7 @@ class Generator:
                 prev = self.template_map[vname]
                 if not b.get("basis"):
                     self.template_map[vname] = template
-                elif prev.split(".")[0] != vname.split(".")[0]:
+                elif prev is None or prev.split(".")[0] != vname.split(".")[0]:
                     self.template_map[vname] = None  # ambiguous; only an error if something refers to it
             else:
                 self.template_map[vname] = template
@@ -198,6 +219,8 @@ class Generator:
                 continue
             key = p["key"]
             data = self.v.copy(key)
+            if b.get("archetype"):
+                b = self.with_archetype(b, data, item)
             self.set_template(data, p["template"], b.get("aliases"), item)
             self.remap_template_refs(data, item)
             self.apply_building_text(data, bid, b, text, item)
@@ -205,6 +228,19 @@ class Generator:
             self.apply_workplace(data, b, item)
             if "recipes" in b:
                 self.require(data, "ManufactorySpec", item, "recipes")["ProductionRecipeIds"] = list(b["recipes"])
+            if "needs_map" in b:
+                self.retarget_needs(data, b["needs_map"], item)
+            if "effects" in b:
+                spec = next((x for x in ("AttractionSpec", "ContinuousEffectBuildingSpec") if x in data), None)
+                if spec is None:
+                    raise GenError("%s: effects needs an AttractionSpec or ContinuousEffectBuildingSpec on the basis "
+                                   "(pick an attraction or decoration basis or archetype)" % item)
+                data[spec]["Effects"] = [{"NeedId": n, "PointsPerHour": float(v), "SatisfyToMaxValue": False}
+                                         for n, v in b["effects"].items()]
+            for spec, body in (b.get("add") or {}).items():
+                if spec in data:
+                    raise GenError("%s: add %s: the basis already has it" % (item, spec))
+                data[spec] = body
             if "capacity" in b:
                 self.apply_capacity(data, b["capacity"], item)
             pb = data.get("PlaceableBlockObjectSpec")
@@ -216,8 +252,13 @@ class Generator:
                 if not pb:
                     raise GenError("%s: retire needs a PlaceableBlockObjectSpec" % item)
                 pb["DevModeTool"] = True   # still loads (saved instances survive), hidden from the toolbar
-            if "icon" in b:
-                self.require(data, "LabeledEntitySpec", item, "icon")["Icon"] = b["icon"]
+            icon = b.get("icon") or (content.find_icon(self, "building", bid, None) if bid.startswith("Pandaborn") else None)
+            if icon:
+                self.require(data, "LabeledEntitySpec", item, "icon")["Icon"] = icon
+            elif bid.startswith("Pandaborn"):
+                self.note(item, "no icon Sprites/Pandaborn/Buildings/%sIcon; keeps the %s icon" % (bid, p["vname"]))
+            if data.get("LabeledEntitySpec", {}).get("DisplayNameLocKey"):
+                self.building_name_key[bid] = data["LabeledEntitySpec"]["DisplayNameLocKey"]
             self.apply_models(data, b.get("models"), item)
             self.apply_set(data, b.get("set"), item)
             self.apply_delete(data, b.get("delete"), item)
@@ -232,6 +273,21 @@ class Generator:
                 self.note(item, "temporary; retire when " + b["retire_when"])
         if coll:
             self.collections["Buildings." + self.faction_id] = coll
+
+    def with_archetype(self, b, data, item):
+        """An archetype (catalogue/archetypes.toml) is a named set of defaults on a vanilla basis that has the right
+        specs: the building's own fields win; `requires` lists specs the (possibly overridden) basis must have."""
+        arch = self.cat["archetypes"]["archetypes"][b["archetype"]]
+        for spec in arch.get("requires") or []:
+            if spec not in data:
+                raise GenError("%s: archetype %s needs %s, which the basis lacks" % (item, b["archetype"], spec))
+        merged = {k: v for k, v in arch.items() if k not in ("basis", "requires", "about", "fields")}
+        for k, v in b.items():
+            if isinstance(v, dict) and isinstance(merged.get(k), dict):
+                merged[k] = dict(merged[k], **v)
+            else:
+                merged[k] = v
+        return merged
 
     def set_template(self, data, name, aliases, item):
         ts = data.get("TemplateSpec")
@@ -302,6 +358,27 @@ class Generator:
             comment = entry.get("translator_comment") or ("%s of the Inkpaws building %s" % (field, entry["_english"]))
             self.add_loc("Buildings", key, value, comment, item)
 
+    def retarget_needs(self, data, mapping, item):
+        """Every NeedId equal to a key of mapping becomes its value (a stand-in attraction or decoration that should
+        satisfy one of our needs instead of the vanilla one). A mapping that matches nothing is an error."""
+        hits = set()
+
+        def walk(o):
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    if k == "NeedId" and v in mapping:
+                        o[k] = mapping[v]
+                        hits.add(v)
+                    else:
+                        walk(v)
+            elif isinstance(o, list):
+                for x in o:
+                    walk(x)
+        walk(data)
+        missing = set(mapping) - hits
+        if missing:
+            raise GenError("%s: needs_map: the basis has no NeedId %s" % (item, ", ".join(sorted(missing))))
+
     def require(self, data, spec, item, field):
         if spec not in data:
             raise GenError("%s: field %s needs a %s on the basis, which has none" % (item, field, spec))
@@ -315,8 +392,7 @@ class Generator:
         if "science" in b:
             self.require(data, "BuildingSpec", item, "science")["ScienceCost"] = int(b["science"])
         if bs and self.substitute:
-            for c in bs.get("BuildingCost", []):
-                c["Id"] = self.substitute.get(c["Id"], c["Id"])
+            bs["BuildingCost"] = self.sub_goods(bs.get("BuildingCost", []))
 
     def apply_workplace(self, data, b, item):
         if "workers" in b:
@@ -369,24 +445,36 @@ class Generator:
 
     # -------------------------------------------------------------------------------------------------- poles
     def gen_poles(self):
-        if self.pole_mode != "rename":
-            if self.pole_mode == "good" and "PandabornPole" not in (self.cat["goods"].get("goods") or {}):
-                raise GenError("catalogue/rules.toml: poles mode is 'good' but goods.toml has no PandabornPole")
-            return
+        """rules.toml [poles]: "plank" changes nothing; "good" needs the pole goods in goods.toml (costs and recipes
+        are rewritten through [costs].substitute); "rename" turns the vanilla Plank / TreatedPlank into poles / cured
+        poles for this faction only, through faction blueprint modifiers (name, plural, icon; the id stays)."""
         poles = self.rules["poles"]
         item = "catalogue/rules.toml [poles]"
-        goods = self.cat.text_items("goods")
-        entry = goods.get(poles.get("rename_text", "Poles"))
-        if not entry:
-            raise GenError("%s: text/goods.json has no entry %r" % (item, poles.get("rename_text")))
-        stem = entry["id"][len("Pandaborn"):] if entry["id"].startswith("Pandaborn") else entry["id"]
-        k1, k2 = "Pandaborn.Good.%s.DisplayName" % stem, "Pandaborn.Good.%s.PluralDisplayName" % stem
-        self.add_loc("Goods", k1, entry["singular"], entry.get("translator_comment"), item)
-        self.add_loc("Goods", k2, entry["plural"], entry.get("translator_comment"), item)
-        spec = {"DisplayNameLocKey": k1, "PluralDisplayNameLocKey": k2}
-        if poles.get("rename_icon"):
-            spec["Icon"] = poles["rename_icon"]
-        self.add_modifier(self.v.key_of("Goods/Good.Plank.blueprint"), "Good.Plank", {"GoodSpec": spec}, item)
+        if self.pole_mode == "good":
+            goods = self.cat["goods"].get("goods") or {}
+            for gid in (poles.get("good", "PandabornPole"), poles.get("cured_good", "PandabornCuredPole")):
+                if gid not in goods:
+                    raise GenError("%s: mode is 'good' but goods.toml has no %s" % (item, gid))
+            return
+        if self.pole_mode != "rename":
+            return
+        text = self.cat.text_items("goods")
+        for vanilla_id, english in (poles.get("rename") or {"Plank": "Poles", "TreatedPlank": "Cured poles"}).items():
+            entry = text.get(english)
+            if not entry:
+                raise GenError("%s: text/goods.json has no entry %r" % (item, english))
+            st = entry["id"][len("Pandaborn"):] if entry["id"].startswith("Pandaborn") else entry["id"]
+            k1, k2 = "Pandaborn.Good.%s.DisplayName" % st, "Pandaborn.Good.%s.PluralDisplayName" % st
+            self.add_loc("Goods", k1, entry["singular"], entry.get("translator_comment"), item)
+            self.add_loc("Goods", k2, entry["plural"], entry.get("translator_comment"), item)
+            spec = {"DisplayNameLocKey": k1, "PluralDisplayNameLocKey": k2}
+            icon = content.find_icon(self, "good", entry["id"], None)
+            if icon:
+                spec["Icon"] = icon
+            key = self.v.ids["GoodSpec"].get(vanilla_id)
+            if key is None:
+                raise GenError("%s: rename: %s is not a vanilla good" % (item, vanilla_id))
+            self.add_modifier(key, "Good." + vanilla_id, {"GoodSpec": spec}, item)
 
     def add_modifier(self, original_key, name, data, item):
         path = self.emit("Modifiers/Pandaborn/%s.optional" % name, data, item, "modifier", original_key)
@@ -411,6 +499,11 @@ class Generator:
         for cid in f["template_collections"]:
             if cid not in self.collections and cid not in self.v.collections["TemplateCollectionSpec"]:
                 raise GenError("%s: template collection %s is neither generated nor vanilla" % (item, cid))
+        for field, kind, spec in (("good_collections", "good", "GoodCollectionSpec"),
+                                  ("need_collections", "need", "NeedCollectionSpec")):
+            for cid in f[field]:
+                if cid not in self.generated_collections[kind] and cid not in self.v.collections[spec]:
+                    raise GenError("%s: %s %s is neither generated nor vanilla" % (item, field, cid))
         missing = [c for c in self.collections if c not in f["template_collections"]]
         if missing:
             raise GenError("%s: generated collections %s are not listed in template_collections" % (item, missing))

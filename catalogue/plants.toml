@@ -1,0 +1,98 @@
+# Inkpaws plants (imported from the stat sheet, see goods.toml). basis = the vanilla plant copied: its model
+# is the stand-in until the growth-stage models exist. planter = PlantableSpec.ResourceGroup (Farmhouse, Forester,
+# AquaticFarmhouse). wet_days adds the arid rule (dies on moist soil) and drops WateredNaturalResourceSpec.
+
+[collection]
+id = "NaturalResources.Inkpaws"
+# vanilla plants kept beyond the Common collection (birch, oak, pine, blueberry, succulent): dandelion feeds the antidote
+vanilla = ["Dandelion"]
+
+
+[plants.PandabornShootBamboo]
+basis = "Carrot"
+plant_hours = 0.2
+growth_days = 3
+cut_yield = { PandabornBambooShoots = 2 }
+cut_hours = 1.0
+dry_days = 5
+flood_min = 0
+flood_max = 0
+flood_days = 2.0
+src = { GrowthTimeInDays = "M q1", Yield = "M q1", DaysToDieDry = "M q1/q4", PlantTimeInHours = "V", RemovalTimeInHours = "G", Water = "V" }
+
+[plants.PandabornCabbage]
+basis = "Carrot"
+plant_hours = 0.2
+growth_days = 5
+cut_yield = { PandabornCabbage = 3 }
+cut_hours = 1.2
+dry_days = 7
+flood_min = 0
+flood_max = 0
+flood_days = 2.0
+src = { GrowthTimeInDays = "M q3", Yield = "M q3", DaysToDieDry = "M q1", PlantTimeInHours = "V", RemovalTimeInHours = "V" }
+
+[plants.PandabornTimberBamboo]
+basis = "ChestnutTree"
+plant_hours = 0.5
+growth_days = 5
+cut_yield = { Plank = 2 }
+cut_hours = 1.5
+gather_yield = { PandabornBambooMushrooms = 2 }
+gather_days = 3.0
+gather_hours = 0.5
+dry_days = 7
+flood_min = 0
+flood_max = 0
+flood_days = 8.0
+reproduction = 0.03
+src = { GrowthTimeInDays = "M q1", Yield = "M q1/q8", DaysToDieDry = "M q1", PlantTimeInHours = "V", RemovalTimeInHours = "M q8", Mushrooms = "G", ReproductionChance = "V" }
+
+[plants.PandabornRice]
+basis = "Cattail"
+plant_hours = 0.2
+growth_days = 8
+cut_yield = { PandabornRice = 3 }
+cut_hours = 1.2
+dry_days = 1
+flood_min = 1
+flood_max = 1
+flood_days = 1.5
+src = { GrowthTimeInDays = "V (Cattail)", Yield = "V", Water = "M q4" }
+
+[plants.PandabornTeaBush]
+basis = "BlueberryBush"
+plant_hours = 0.4
+growth_days = 6
+gather_yield = { PandabornTeaLeaves = 3 }
+gather_days = 3.0
+gather_hours = 0.6
+planter = "Farmhouse"
+wet_days = 2.0
+reproduction = 0
+src = { Yield = "M q4", GrowthTimeInDays = "G", PlantTimeInHours = "V", Water = "design" }
+
+[plants.PandabornSichuanPepper]
+basis = "Sunflower"
+plant_hours = 0.2
+growth_days = 5
+cut_yield = { PandabornSichuanPepper = 2 }
+cut_hours = 1.2
+wet_days = 2.0
+src = { Yield = "M q3", GrowthTimeInDays = "V (Sunflower)" }
+
+[plants.PandabornPersimmonTree]
+basis = "ChestnutTree"
+plant_hours = 0.75
+growth_days = 14
+gather_yield = { PandabornPersimmons = 3 }
+gather_days = 6.0
+gather_hours = 1.0
+cut_yield = { Log = 3 }
+cut_hours = 1.2
+dry_days = 10
+flood_min = 0
+flood_max = 0
+flood_days = 10.0
+reproduction = 0.01
+src = { all = "V (Chestnut) with growth M q3" }

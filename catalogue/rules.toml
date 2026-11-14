@@ -12,11 +12,13 @@ source_faction = "Folktails"          # re-themed buildings are copies of this f
 #   "good"   - poles are a new good (goods.toml, id below) and every cost and ingredient Plank is rewritten to it
 #              through [costs].substitute. Needs the PandabornPole good to exist in goods.toml.
 mode = "plank"
-good = "PandabornPole"                # used by mode "good"
-rename_text = "Poles"                 # entry in text/goods.json used by mode "rename"
-rename_icon = "Sprites/Pandaborn/Goods/PandabornPolesIcon"
+good = "PandabornPole"                # mode "good": the goods.toml ids that replace Plank and TreatedPlank
+cured_good = "PandabornCuredPole"
+rename = { Plank = "Poles", TreatedPlank = "Cured poles" }   # mode "rename": vanilla good -> entry in text/goods.json
+                                                             # (icon by the naming rule, Sprites/Pandaborn/Goods/<id>sIcon)
 
 [costs]
 # Applied to every building cost and every recipe ingredient and product the generator writes. A pair maps a vanilla
-# good id to the good the Inkpaws pay instead. mode = "good" above adds Plank -> PandabornPole automatically.
+# good id to the good the Inkpaws pay instead. mode = "good" above adds Plank -> PandabornPole and
+# TreatedPlank -> PandabornCuredPole automatically.
 substitute = {}

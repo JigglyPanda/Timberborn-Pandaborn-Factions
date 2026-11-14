@@ -45,6 +45,7 @@ param(
     [switch]$WithCode,
     [switch]$WithBundles,
     [switch]$NoLink,
+    [string]$Catalogue = '',
     [string]$GenDir = 'E:\PandabornDev\build\gen\PandabornFactions',
     [string]$StageDir = 'E:\PandabornDev\build\stage\PandabornFactions',
     [string]$InstallDir = 'E:\PandabornDev\build\PandabornFactions',
@@ -145,6 +146,7 @@ foreach ($s in $stages) {
         }
         'generate' {
             $a = @((Join-Path $repo 'src\gen\generate.py'), '--out', $GenDir)
+            if ($Catalogue) { $a += @('--catalogue', $Catalogue) }
             if ($Lock) { $a += '--lock' }; if ($DryRun) { $a += '--dry-run' }; if ($AcceptPin -or $Accept) { $a += '--accept-pin' }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
         }
@@ -185,8 +187,11 @@ foreach ($s in $stages) {
         }
         'validate' {
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
+            if ($Catalogue) { $a += @('--lock', (Join-Path $Catalogue 'ids.lock.json')) }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
             $validated = $true
+            # report only: numbers in the balance model's stat sheet the catalogue has not carried over
+            $null = Invoke-Py @((Join-Path $repo 'src\gen\import_statsheet.py'), '--check')
         }
         'install' {
             if ($failed.Count -gt 0) { Say "install: refused, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }

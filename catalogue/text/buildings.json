@@ -100,7 +100,7 @@
     },
     "Farmstead": {
       "id": "PandabornFarmstead", "basis": "new", "vanilla_basis": "EfficientFarmhouse", "who": "I",
-      "name": "Farmstead",
+      "name": null,
       "description": "Employs farmers who plant and harvest crops: shoot bamboo and cabbage on moist ground, tea and Sichuan pepper on dry ground.",
       "flavor": "A field is planted in the morning and admired in the afternoon.",
       "note": "CONTENT.md marks it re-themed, but the name is new, so all three strings are new."
@@ -647,7 +647,7 @@
     },
     "Panda Kindergarten": {
       "id": "PandabornKindergarten", "basis": "new", "vanilla_basis": "Agora", "who": "-",
-      "name": "Panda Kindergarten",
+      "name": "Kindergarten",
       "description": "Where cubs and kits play together. Adults come to watch them, and it does the adults a great deal of good.",
       "flavor": "Officially, the adults are here to supervise.",
       "see": ["young.kindergarten_playing", "young.kindergarten_watching"]
@@ -711,7 +711,7 @@
     },
     "Night Forager's Post": {
       "id": "PandabornNightForagersPost", "basis": "new", "vanilla_basis": "GathererFlag", "who": "R",
-      "name": "Night Forager's Post",
+      "name": "Night Gatherers' Post",
       "description": "Employs Ringtail foragers who gather bamboo mushrooms and wild food from the afternoon bell to dawn.",
       "flavor": "Bamboo mushrooms are easiest to find by lantern light, or so the foragers insist.",
       "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]

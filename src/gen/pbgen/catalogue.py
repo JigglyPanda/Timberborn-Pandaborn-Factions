@@ -9,7 +9,7 @@ from .util import GenError, load_json
 BUILDING_FIELDS = {
     "basis", "archetype", "vanilla", "text", "template", "cost", "science", "workers", "default_workers", "worker_type",
     "disallow_other_workers", "recipes", "capacity", "tool_group", "tool_order", "models", "icon", "retire", "aliases",
-    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "effects", "params",
+    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects",
 }
 CHARACTER_FIELDS = {"basis", "template", "path", "models", "set", "note"}
 GOOD_FIELDS = {"basis", "vanilla", "text", "icon", "weight", "good_type", "group", "order", "consumption", "set",
@@ -58,14 +58,7 @@ class Catalogue:
             _fields(b, BUILDING_FIELDS, self.where("buildings", "buildings." + bid))
         for cid, c in (self.data["faction"].get("characters") or {}).items():
             _fields(c, CHARACTER_FIELDS, self.where("faction", "characters." + cid))
-        for gid, g in (self.data["goods"].get("goods") or {}).items():
-            _fields(g, GOOD_FIELDS, self.where("goods", "goods." + gid))
-        for nid, n in (self.data["needs"].get("needs") or {}).items():
-            _fields(n, NEED_FIELDS, self.where("needs", "needs." + nid))
-        for rid, r in (self.data["recipes"].get("recipes") or {}).items():
-            _fields(r, RECIPE_FIELDS, self.where("recipes", "recipes." + rid))
-        for pid, p in (self.data["plants"].get("plants") or {}).items():
-            _fields(p, PLANT_FIELDS, self.where("plants", "plants." + pid))
+        # goods, needs, recipes and plants are checked field by field in pbgen/content.py
 
     # ---------------------------------------------------------------------------------------------- text lookup
     def text_items(self, kind):

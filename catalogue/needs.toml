@@ -1,0 +1,231 @@
+# Inkpaws needs (imported from the stat sheet, see goods.toml). basis = the vanilla need copied;
+# name_from = own (text/needs.json) | good:<id> (the good's plural name) | building:<id> (the building's name).
+
+[collection]
+id = "Needs.Inkpaws"
+# vanilla needs kept beyond the Common collection (hunger, thirst, sleep, shelter, wet fur, injury, contamination,
+# teeth, campfire, lantern, roof, rooftop terrace, shrub)
+vanilla = ["Antidote", "Scarecrow"]
+
+
+[needs.PandabornNap]
+basis = "RooftopTerrace"
+name_from = "own"
+group = "Fun"
+daily_delta = -0.6
+favorable_wellbeing = 2
+importance = 1.2
+wastable = false
+src = "M q2"
+
+[needs.PandabornTea]
+basis = "Bread"
+name_from = "good:PandabornTea"
+group = "Nutrition"
+daily_delta = -0.6
+favorable_wellbeing = 2
+importance = 1.0
+wastable = false
+src = "M q4"
+
+[needs.PandabornTeahouse]
+basis = "DomedGarden"
+name_from = "building:PandabornTeahouse"
+group = "SocialLife"
+daily_delta = -0.15
+favorable_wellbeing = 2
+importance = 1.0
+wastable = false
+src = "V (Domed Garden) · M q2 capacity"
+
+[needs.PandabornPlay]
+basis = "Lido"
+name_from = "own"
+group = "Fun"
+daily_delta = -0.2
+favorable_wellbeing = 2
+importance = 1.0
+wastable = false
+src = "V (Lido) · M"
+
+[needs.PandabornCubWatching]
+basis = "Agora"
+name_from = "own"
+group = "SocialLife"
+daily_delta = -0.2
+favorable_wellbeing = 3
+importance = 1.0
+wastable = false
+src = "V (Agora) · M"
+
+[needs.PandabornSoak]
+basis = "MudPit"
+name_from = "own"
+group = "Fun"
+daily_delta = -0.2
+favorable_wellbeing = 3
+importance = 1.0
+wastable = false
+src = "V (Mud Pit) · M"
+
+[needs.PandabornContemplation]
+basis = "ContemplationSpot"
+name_from = "own"
+group = "Fun"
+daily_delta = -0.12
+favorable_wellbeing = 2
+importance = 1.0
+wastable = false
+src = "V (Contemplation Spot)"
+
+[needs.PandabornPerformance]
+basis = "DanceHall"
+name_from = "own"
+group = "Fun"
+daily_delta = -0.12
+favorable_wellbeing = 5
+importance = 1.0
+wastable = false
+src = "V (Dance Hall)"
+
+[needs.PandabornCabbage]
+basis = "Bread"
+name_from = "good:PandabornCabbage"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 1
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornPersimmons]
+basis = "Bread"
+name_from = "good:PandabornPersimmons"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 1
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornBambooMushrooms]
+basis = "Bread"
+name_from = "good:PandabornBambooMushrooms"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 1
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornSteamedShoots]
+basis = "Bread"
+name_from = "good:PandabornSteamedShoots"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 1
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornPickles]
+basis = "Bread"
+name_from = "good:PandabornPickles"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 2
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornSteamedRice]
+basis = "Bread"
+name_from = "good:PandabornSteamedRice"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 2
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornSweetRiceBalls]
+basis = "Bread"
+name_from = "good:PandabornSweetRiceBalls"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 2
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornHotPot]
+basis = "Bread"
+name_from = "good:PandabornHotPot"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 3
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornBambooSeedCakes]
+basis = "Bread"
+name_from = "good:PandabornBambooSeedCakes"
+group = "Nutrition"
+daily_delta = -0.05
+favorable_wellbeing = 3
+importance = 1.0
+wastable = true
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+
+[needs.PandabornFestive]
+basis = "Bread"
+name_from = "own"
+group = "Boosts"
+daily_delta = -0.05
+favorable_wellbeing = 4
+importance = 1.0
+wastable = true
+src = "M q7"
+
+[needs.PandabornMemorialArch]
+basis = "BrazierOfBonding"
+name_from = "building:PandabornMemorialArch"
+group = "Awe"
+daily_delta = -0.3
+favorable_wellbeing = 6
+importance = 1.0
+wastable = true
+src = "V (Awe) · M q8"
+
+[needs.PandabornGreatSittingPanda]
+basis = "HallOfAbundance"
+name_from = "building:PandabornGreatSittingPanda"
+group = "Awe"
+daily_delta = -0.3
+favorable_wellbeing = 12
+importance = 1.0
+wastable = true
+src = "V (Awe) · M q8"
+
+[needs.PandabornSkyLantern]
+basis = "EarthRecultivator"
+name_from = "building:PandabornSkyLantern"
+group = "Awe"
+daily_delta = -0.3
+favorable_wellbeing = 10
+importance = 1.0
+wastable = true
+src = "V (Awe) · M q8"
+
+[needs.PandabornPandaStatue]
+basis = "BeaverStatue"
+name_from = "building:PandabornPandaStatue"
+not_in_sheet = true
+src = "V (BeaverStatue): not in the stat sheet"
+
+[needs.PandabornBambooPinwheel]
+basis = "Weathervane"
+name_from = "building:PandabornBambooPinwheel"
+not_in_sheet = true
+src = "V (Weathervane): not in the stat sheet"

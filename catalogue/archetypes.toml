@@ -1,0 +1,74 @@
+# Archetypes: a fully new building in one line. An archetype names a vanilla basis that already has the right specs
+# (its model is the stand-in until ours exists) plus defaults; the building's own fields win.
+#
+#   PandabornDumplingHouse = { archetype = "workshop", recipes = ["PandabornDumplings"], workers = 2 }
+#   PandabornReadingNook   = { archetype = "attraction", effects = { PandabornReading = 0.6 }, capacity = 6 }
+#
+# `basis` in the building replaces the archetype's basis (a better stand-in model); `requires` is then checked on it.
+# Fields every archetype understands: cost, science, workers, worker_type, disallow_other_workers, recipes, capacity,
+# effects, needs_map, tool_group, tool_order, models, icon, set, add, delete (catalogue/README.md).
+
+[archetypes.workshop]
+about = "Workers turn ingredients into products (recipes). Fuel comes from the recipe."
+basis = "Grill.Folktails"
+requires = ["ManufactorySpec", "WorkplaceSpec", "WorkshopSpec"]
+
+[archetypes.powered_workshop]
+about = "A workshop on the power network."
+basis = "LumberMill.Folktails"
+requires = ["ManufactorySpec", "WorkplaceSpec", "MechanicalNodeSpec"]
+
+[archetypes.farmhouse]
+about = "Plants and harvests every crop whose PlantableSpec.ResourceGroup is Farmhouse."
+basis = "EfficientFarmHouse.Folktails"
+requires = ["FarmHouseSpec", "PlanterBuildingSpec", "WorkplaceSpec"]
+
+[archetypes.aquatic_farmhouse]
+about = "Plants and harvests the AquaticFarmhouse group (flooded crops)."
+basis = "AquaticFarmhouse.Folktails"
+requires = ["PlanterBuildingSpec", "WorkplaceSpec"]
+
+[archetypes.dwelling]
+about = "A home; capacity = beds. Breeding comes with ProcreationHouseSpec on the basis."
+basis = "Lodge.Folktails"
+requires = ["DwellingSpec", "EnterableSpec"]
+
+[archetypes.attraction]
+about = "Colonists visit it to raise needs (effects = { Need = points per hour }); capacity = seats."
+basis = "Agora.Folktails"
+requires = ["AttractionSpec", "EnterableSpec"]
+
+[archetypes.decoration]
+about = "Raises a need in range while colonists pass (effects; radius with set RangedEffectBuildingSpec.EffectRadius)."
+basis = "BeaverStatue.Folktails"
+requires = ["ContinuousEffectBuildingSpec", "RangedEffectBuildingSpec"]
+
+[archetypes.monument]
+about = "A large ranged decoration for an Awe need."
+basis = "BrazierOfBonding.Folktails"
+requires = ["ContinuousEffectBuildingSpec", "RangedEffectBuildingSpec"]
+
+[archetypes.storage]
+about = "Stores goods; capacity = units."
+basis = "SmallWarehouse.Folktails"
+requires = ["StockpileSpec"]
+
+[archetypes.liquid_storage]
+about = "Stores liquids (water, tea); capacity = units."
+basis = "SmallTank.Folktails"
+requires = ["StockpileSpec"]
+
+[archetypes.power_generator]
+about = "Makes power from flowing water."
+basis = "WaterWheel.Folktails"
+requires = ["MechanicalNodeSpec", "WaterPoweredGeneratorSpec"]
+
+[archetypes.wind_generator]
+about = "Makes power from wind."
+basis = "WindTurbine.Folktails"
+requires = ["MechanicalNodeSpec"]
+
+[archetypes.water_building]
+about = "Workers lift water into storage (recipes with a water input)."
+basis = "WaterPump.Folktails"
+requires = ["ManufactorySpec", "WaterInputSpec"]
