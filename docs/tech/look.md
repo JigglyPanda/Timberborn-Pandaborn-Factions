@@ -237,6 +237,20 @@ the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\lo
   and the Roof pieces), so a town/country roof contrast would need new models or a new material name. Close-ups of the Steamer, Pickle Yard and Kitchen framed the whole map (their smoke
   particles inflated the bounds; harness fixed in `a6f6299`, not re-shot).
 
+### Pass 3c (roof at night, lantern glow)
+
+* Roofs were still the brightest thing at night in real colonies: a neutral grey returns the blue moonlight, the
+  Folktails thatch (yellow-brown) absorbs it. The tile is now a warm brown-charcoal: pans (84,72,60), covers a touch
+  darker and warmer, low pan/cover contrast, shallower geometry and normals flattened to 0.65 so each row catches less
+  light; flat tiles (80,69,58). Texture means: pitched (71,61,50), flat (67,58,48); lime plaster (185,180,167).
+* Lantern paper patches (see the table above) for the kit's `PB_LANTERN_WARM=1`.
+* Evidence (`look-close-inkpaws-9`, the faction with this bundle as a dev copy `proto/foundation/build.ps1 -Name pblook`):
+  `E:\PandabornDevuild\look\preview\p5_tiles.png` (Folktails | 3b tile | 3c tile; night rows first) and
+  `p5_village_night.png` (16 of our buildings, wide night view). At night the roofs are now dull and dark, no brighter
+  than the plaster walls and paths beneath them, and calmer than the 3b tile. By day they read as a dark brown-grey
+  tile with visible course rows; on large pagoda roofs the warm brown is noticeable (if it ever reads as wood, the knob
+  is `tile_rgb` in `src/pipeline/bake_sheets.py`: less red/blue difference = greyer by day, bluer at night).
+
 ## Pandaborn.Look module
 
 The swap variant is now the faction's base layer: `src/code/Pandaborn.Look` (see its `FEATURE.md` and
@@ -299,7 +313,7 @@ frame lines, plate seams).
 | `LatticePaper` → Paper | painter, frame lines from the vanilla sheet | paper panels in dark timber frames, lantern-frame lattice |
 | `Iron` → BaseMetal | painter, plate seams and rivets from the vanilla normal map | soot-dark forged iron, rust in the seams |
 | `Banded` → PaintedMetal | painter, stripes from the vanilla sheet | straw-gold cane binding over black iron (no red) |
-| `Windows` → WindowsAtlas | painter: glass = vanilla `_LightingMap` mask, frames = non-wall non-glass | dark timber frames, paper on a cracked-ice lattice, lime wall; `_LightingMap` = flat, strong warm lamplight across each pane, cut by the lattice |
+| `Windows` → WindowsAtlas (also the Inkpaws **lantern paper**: `LanternPaperRed` [964,16,1024,80) glow (240,70,22), `LanternPaperAmber` [964,96,1024,160) glow (255,118,36), ribbed paper by day; emission ignores vertex colour, so every glow colour needs its own texels; vanilla Folktails UVs touch only x 960-961 of that strip) | painter: glass = vanilla `_LightingMap` mask, frames = non-wall non-glass | dark timber frames, paper on a cracked-ice lattice, lime wall; `_LightingMap` = flat, strong warm lamplight across each pane, cut by the lattice |
 | `Details` → Details | painter, regions by position | indigo banner with ink-painted bamboo; hemp sack; straw rope; plain colour labels with pictures; bamboo crates with cane lashing |
 | `RammedEarth` → Sand, `Moss` → Moss | painter | layered rammed earth with pebbles; tea-green moss |
 
