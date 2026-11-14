@@ -6,12 +6,12 @@ source_faction = "Folktails"          # re-themed buildings are copies of this f
 
 [poles]
 # How poles exist. One line decides it:
-#   "plank"  - planks stay planks (Folktails names and icons). Current setting, until the owner decides.
-#   "rename" - poles ARE the vanilla Plank good, renamed and re-iconed for Inkpaws only through a faction blueprint
+#   "plank"  - planks stay planks (Folktails names and icons).
+#   "rename" - (chosen 2026-11-14, docs/DESIGN.md) poles ARE the vanilla Plank good, renamed and re-iconed for Inkpaws only through a faction blueprint
 #              modifier (proven in game, docs/tech/stage0.md). Nothing is recosted; other mods' buildings keep working.
 #   "good"   - poles are a new good (goods.toml, id below) and every cost and ingredient Plank is rewritten to it
 #              through [costs].substitute. Needs the PandabornPole good to exist in goods.toml.
-mode = "plank"
+mode = "rename"
 good = "PandabornPole"                # mode "good": the goods.toml ids that replace Plank and TreatedPlank
 cured_good = "PandabornCuredPole"
 rename = { Plank = "Poles", TreatedPlank = "Cured poles" }   # mode "rename": vanilla good -> entry in text/goods.json

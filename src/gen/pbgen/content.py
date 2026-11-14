@@ -122,15 +122,17 @@ def find_icon(gen, kind, ident, explicit):
         rel = "Sprites/Pandaborn/%s/%sIcon" % (folder, name)
         png = os.path.join(gen.mod_src, *rel.split("/")) + ".png"
         if os.path.isfile(png):
-            # an icon is a Sprite asset: the game loads a PNG as a sprite only with {"isSprite": true} in its meta
+            # The game makes a Sprite of any PNG asked for as one (ModSpriteConverter); "isSprite" is only a texture
+            # preset. Goods icons carry mipmap settings instead (drawn small in the world; BerryJam does the same).
+            # Either kind of meta is accepted; a bare PNG is not (same rule as tools/validate.py).
             try:
                 meta = load_json(png + ".meta.json")
             except (OSError, ValueError):
                 meta = {}
-            if meta.get("isSprite") is True:
+            if meta.get("isSprite") is True or meta.get("generateMipmap") is True:
                 return rel
-            gen.note("icons", "%s.png exists but its .meta.json lacks \"isSprite\": true, so the game cannot load it "
-                              "as an icon; using the basis icon until the icon pipeline writes it" % rel)
+            gen.note("icons", "%s.png exists but has no usable .meta.json ({\"isSprite\": true}, or mipmap settings "
+                              "for goods icons); using the basis icon until the icon pipeline writes it" % rel)
             return None
     return None
 

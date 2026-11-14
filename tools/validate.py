@@ -525,12 +525,18 @@ def resolve(c, value, where, kind=None):
             R.error("%s: %s is not a .timbermesh" % (where, value))
         if kind == "sprite":
             meta = c.files.get(rel + ".meta.json")
+            # The game turns any PNG into a Sprite when one is asked for (ModSpriteConverter); "isSprite" is only
+            # a texture preset (no mipmaps, clamped). Goods icons are drawn small in the world, so they carry
+            # mipmap settings instead, as the official BerryJam example does. House rule: every icon has a meta
+            # file stating one or the other, because a bare PNG loads mipmapped with repeat wrapping.
             try:
-                is_sprite = bool(meta) and load_json(meta).get("isSprite") is True
+                m = load_json(meta) if meta else None
+                has_settings = isinstance(m, dict) and (m.get("isSprite") is True or m.get("generateMipmap") is True)
             except Exception:  # noqa: BLE001 - unparsable meta is reported by the JSON check
-                is_sprite = False
-            if not is_sprite:
-                R.error("%s: %s is used as a sprite but has no {\"isSprite\": true} meta file" % (where, value))
+                has_settings = False
+            if not has_settings:
+                R.error("%s: %s is used as a sprite but has no {\"isSprite\": true} meta file "
+                        "(or mipmap settings, for goods icons)" % (where, value))
         if kind in ("sprite", "texture") and png_size(c.files[rel]) is None and ext.endswith(".png"):
             R.error("%s: %s is not a valid PNG" % (where, value))
         return "mod"
