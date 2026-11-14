@@ -1,0 +1,141 @@
+{
+ "id": "StarTower",
+ "standIn": "Observatory.Folktails",
+ "generatedBy": "art/models/StarTower/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "StarTower.Model",
+  "constructionStage0": "StarTower.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 3,
+  "Z": 5
+ },
+ "blocks": null,
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.5,
+    "Y": 0.14,
+    "Z": 0.5
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#StarDome",
+   "driver": "ObservatoryAnimatorSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 3.05,
+    "Z": 1.5
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ObservatoryAnimatorSpec.DomeName (turns about y)"
+  },
+  {
+   "node": "#StarTelescope",
+   "driver": "ObservatoryAnimatorSpec",
+   "pivot": {
+    "X": 1.5,
+    "Y": 3.65,
+    "Z": 1.6
+   },
+   "axis": {
+    "X": 1.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "ObservatoryAnimatorSpec.TelescopeName (tilts about x)"
+  }
+ ],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.6,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 2.0,
+    "Y": 1.2,
+    "Z": 1.9
+   }
+  },
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 2.3,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 1.3,
+    "Y": 1.6,
+    "Z": 1.3
+   }
+  },
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 3.4,
+    "Z": 1.5
+   },
+   "Size": {
+    "X": 1.3,
+    "Y": 0.8,
+    "Z": 1.3
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 2170,
+  "constructionStage0": 1196,
+  "vanillaMedianForFootprint": 1600
+ },
+ "materials": [
+  "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks and workplace as the vanilla Observatory; its ObservatoryAnimatorSpec must name #StarDome and #StarTelescope (observatoryAnimator). Windows light at night while the Ringtail watchers work."
+ ],
+ "observatoryAnimator": {
+  "DomeName": "#StarDome",
+  "TelescopeName": "#StarTelescope"
+ },
+ "access": {
+  "X": 1.5,
+  "Y": 0.14,
+  "Z": 0.75
+ }
+}

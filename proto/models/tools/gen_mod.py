@@ -169,6 +169,7 @@ EDITS = {
     "FlumeCorner": lambda bp, mj: (edit_flume(bp, mj, lid=True), bp.pop("ThrottlingValveSpec")),  # unlimited cell: water turns
     "FlumeGate": lambda bp, mj: edit_flume(bp, mj, lid=True, limit=0.3),
     "ScoopWheel": edit_scoop,
+    "StarTower": lambda bp, mj: bp.__setitem__("ObservatoryAnimatorSpec", mj["observatoryAnimator"]),
     "KiteWindmill": lambda bp, mj: bp.__setitem__("WindRotationAnimatorSpec", mj["windRotationAnimator"]),
     "PaddySpout": edit_spout,
 }
