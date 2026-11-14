@@ -50,6 +50,7 @@ STAND_IN = {   # stand-in vanilla template -> blueprint path under BP
     "EarthRecultivator.Folktails": "Buildings/Monuments/EarthRecultivator/EarthRecultivator.Folktails.blueprint.json",
     "AquaticFarmhouse.Folktails": "Buildings/Food/AquaticFarmhouse/AquaticFarmhouse.Folktails.blueprint.json",
     "DanceHall.Folktails": "Buildings/Wellbeing/DanceHall/DanceHall.Folktails.blueprint.json",
+    "WoodFence.Folktails": "Buildings/Decoration/WoodFence/WoodFence.Folktails.blueprint.json",
     "Lido.Folktails": "Buildings/Wellbeing/Lido/Lido.Folktails.blueprint.json",
     "RooftopTerrace.Folktails": "Buildings/Wellbeing/RooftopTerrace/RooftopTerrace.Folktails.blueprint.json",
     "Hammock.Folktails": "Buildings/Decoration/Hammock/Hammock.Folktails.blueprint.json",
@@ -102,7 +103,16 @@ def apply_model(bp, mj):
         bp["BuildingAccessibleSpec"]["LocalAccess"] = mj["access"]
     ch = bp["Children"]
     fin = ch["#Finished"]
-    fin["TimbermeshSpec"] = {"Model": model_path(mid, mj["models"]["finished"])}
+    if mj["models"].get("finished"):
+        fin["TimbermeshSpec"] = {"Model": model_path(mid, mj["models"]["finished"])}
+    mm = mj.get("mergeableObjectModel")
+    if mm:   # modular fences: the #Finished children are the variants, named prefix + code
+        bp["MergeableObjectModelSpec"]["ModelNamePrefix"] = mm["ModelNamePrefix"]
+        old = fin.get("Children", {})
+        colliders = next(iter(old.values()), {}).get("CollidersSpec") if old else None
+        fin["Children"] = {name: dict({"TimbermeshSpec": {"Model": model_path(mid, model)}},
+                                      **({"CollidersSpec": colliders} if colliders else {}))
+                           for name, model in mm["children"].items()}
     if mj.get("colliders"):
         fin["CollidersSpec"] = {"BoxColliders": mj["colliders"], "SphereColliders": [], "CapsuleColliders": []}
     unf = ch.get("#Unfinished", {}).get("Children", {})

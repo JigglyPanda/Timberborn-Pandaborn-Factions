@@ -1,0 +1,55 @@
+{
+ "id": "BambooFence",
+ "standIn": "WoodFence.Folktails",
+ "generatedBy": "art/models/BambooFence/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": null,
+  "constructionStage0": "BambooFence.ConstructionStage0.Model",
+  "mergeableVariants": {
+   "0000": "BambooFence0000.Model",
+   "0001": "BambooFence0001.Model",
+   "1010": "BambooFence1010.Model",
+   "0011": "BambooFence0011.Model",
+   "0111": "BambooFence0111.Model",
+   "1111": "BambooFence1111.Model"
+  }
+ },
+ "mergeableObjectModel": {
+  "ModelNamePrefix": "BambooFence",
+  "children": {
+   "BambooFence0000": "BambooFence0000.Model",
+   "BambooFence0001": "BambooFence0001.Model",
+   "BambooFence1010": "BambooFence1010.Model",
+   "BambooFence0011": "BambooFence0011.Model",
+   "BambooFence0111": "BambooFence0111.Model",
+   "BambooFence1111": "BambooFence1111.Model"
+  }
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 1
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [],
+ "animatedNodes": [],
+ "colliders": [],
+ "attachments": [],
+ "triangles": {
+  "finished": 214,
+  "constructionStage0": null,
+  "vanillaMedianForFootprint": 300,
+  "perVariant": {
+   "0000": 76,
+   "0001": 76,
+   "1010": 122,
+   "0011": 122,
+   "0111": 168,
+   "1111": 214
+  }
+ },
+ "notes": [
+  "Replace the vanilla Wood Fence's six #Finished children WoodFence<code> with BambooFence<code> (same codes) and set MergeableObjectModelSpec.ModelNamePrefix to 'BambooFence'."
+ ]
+}
