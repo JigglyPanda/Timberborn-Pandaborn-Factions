@@ -100,7 +100,18 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   assemblies loaded with `Assembly.Load(bytes)` inside a mod starter get their configurators bound and their spec
   records registered with no extra step. `src/code`'s bootstrap does exactly this, after resolving each module's
   required-API list. A second enabled copy of a mod runs its starter too (`MarkDuplicatedIds` only works within one
-  source), so the bootstrap loads each assembly once per AppDomain and reports the duplicate.
+  source), so the bootstrap loads each assembly once per AppDomain and reports the duplicate. Two enabled copies also
+  crash every game on their asset bundles (Unity refuses a bundle with the same files twice; `ModAssetBundleLoader`
+  throws; verified): the duplicate copy's starter moves its own `AssetBundles` to `AssetBundles.parked` (mod starters
+  run before the bundle loader) and the owner moves its own back.
+* **Texts can be swapped per game without Harmony** (verified): `ILoc.Initialize(Dictionary)` is public and clears the
+  cache; the live dictionary is `Loc._localization` (private). `Pandaborn.Words` swaps a reviewed table in Inkpaws games
+  before the first blueprint is read and restores the original on unload. `Phrase` objects cache their text for the
+  whole session, so keys read through `Phrase.New` must not be swapped; `LocalizedText` in specs resolves when the spec is
+  deserialised (per game).
+* Testing code changes now that the installed mod ships a bootstrap: `proto/foundation/build.ps1 -Name <copy>` and
+  `-DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\<copy>` (a layered dev mod with its
+  own bootstrap would only be the duplicate).
 * **Faction blueprint modifiers** (`FactionSpec.BlueprintModifiers`, `[{Original, Modifier}]`, both blueprint asset
   paths without `.json`) work for every blueprint except the faction files themselves: in a new Inkpaws game only the 3
   faction blueprints are read before `FactionService.Load` initialises them; goods, needs, templates, recipes, bonus

@@ -197,3 +197,27 @@ other factions alone; it also lets very happy Inkpaws on long days walk past 2.0
 * **The bell**: the code is done and multiplies as the balance model requires; raise the walking cap for Inkpaws
   with the `BonusType.MovementSpeed` modifier so long-game short days do not lose on walking jobs.
 * **Code architecture**: as ENGINEERING.md describes, verified; other agents can add modules now (src/code/README.md).
+
+## Code phase 2 (2026-11-14): carrier, words, report, duplicates
+
+Runs on `proto/foundation` dev copies of the installed mod (`-DisableMods JigglyPanda.PandabornFactions -ExtraMods
+E:\PandabornDev\build\proto\<copy>`), because the installed mod now carries its own bootstrap.
+
+* **Per-entity carrier** (`fd-carrier-1`). First launch with `force-off: DevCarrier` (a dev module that keeps
+  per-entity state) and `simulate-missing-member: Words`: the probe wrote a `DevCarrier` entry into the Core carrier of
+  all 13 colonists while the feature was off; the game was saved. Reload with everything on: all 13 carriers loaded from
+  the save (`loadedFromSave`), and the module read every entry back
+  (`Xiao Shan (Little mountain)|True|1|writtenWhileOff=1;name=...`).
+* **Words** (`fd-words-1`, Inkpaws game then a Folktails game in the same launch). Inkpaws: 106 texts swapped, none
+  skipped; Population tab headers "Inkpaw adult (9)" / "Inkpaw cub (4)" (`f_population_tab.png`), population tooltip
+  rows "Adults / Cubs", "No unemployed Inkpaw can reach this dwelling.", "Inkpaw-only: Only Inkpaws are allowed...",
+  "Inkpaw is injured", building descriptions with pandas; kept texts unchanged ("Beaver Statue"). Folktails afterwards:
+  every one of those texts vanilla again ("Beaver adult/child", `folktails/f_population_tab.png`). The swap happens
+  before the first blueprint is read: `WordsService` is constructed as a dependency of SpecService's modifier providers,
+  so its Load runs first. The district panel and the migration tab contain no beaver words in either game. The top-bar
+  tooltip could not be screenshotted (the game draws tooltips at the real mouse position); its texts are the probe's.
+* **Fallback** (`fd-carrier-1` first launch, `simulate-missing-member: Words`): vanilla words, the feature report reads
+  "Inkpaw words: on with plain-game fallback (simulated: Loc._localization missing)", plus one warning notice.
+* **Feature report**: one notification-log entry per save in Inkpaws games, e.g. "Pandaborn - Factions features: The
+  afternoon bell (rested Inkpaws): on; Inkpaw names: on; The Inkpaws building look: on; Inkpaw words: on; DevCarrier:
+  off (developer setting)" (visible top left in every screenshot of those runs).
