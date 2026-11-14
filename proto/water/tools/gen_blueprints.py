@@ -359,7 +359,7 @@ def paddy(bp):
 
 
 def moist(bp):
-    # cabbage stand-in on the kohlrabi model: moist soil, survives a long time dry (paused, browned)
+    # cabbage stand-in on the potato model (Kohlrabi is Iron Teeth: its materials are missing in a Folktails game): moist soil, survives a long time dry (paused, browned)
     bp["WateredNaturalResourceSpec"] = {"DaysToDieDry": 30.0}
     bp["FloodableNaturalResourceSpec"] = {"MinWaterHeight": 0, "MaxWaterHeight": 0, "DaysToDie": 1.0}
     bp["GrowableSpec"]["GrowthTimeInDays"] = 3.0
@@ -419,7 +419,7 @@ def main():
     cistern_tap()
     trip_hammer()
     plant("NaturalResources/Crops/Wheat/Wheat.blueprint.json", "PaddyCrop", "Paddy crop", paddy)
-    plant("NaturalResources/Crops/Kohlrabi/Kohlrabi.blueprint.json", "MoistCrop", "Moist crop", moist)
+    plant("NaturalResources/Crops/Potato/Potato.blueprint.json", "MoistCrop", "Moist crop", moist)
     plant("NaturalResources/Crops/Sunflower/Sunflower.blueprint.json", "DryCrop", "Dry-ground crop", dry)
     plant("NaturalResources/Trees/Birch/Birch.blueprint.json", "Bamboo", "Bamboo (tree stand-in)", bamboo)
     plant("NaturalResources/Crops/Carrot/Carrot.blueprint.json", "ShootBamboo", "Shoot Bamboo", shoot_bamboo)

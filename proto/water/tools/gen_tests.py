@@ -283,7 +283,7 @@ def crops(days_wet=3, days_dry=2, days_rewet=1.5, days_tap=1.5):
     """
     s = [flat(1, -1, 11, 4, 2), flat(2, 0, 10, 3, 0), flat(6, 4, 6, 4, 0),
          flat(2, 5, 13, 8, -1), flat(6, 9, 6, 9, -1), flat(2, 10, 13, 13, -2), flat(6, 14, 6, 14, -2), flat(2, 15, 13, 17, -3),
-         flat(24, 22, 33, 22, -1), wait(3),
+         flat(24, 22, 33, 22, -1), flat(34, 17, 34, 17, -1), wait(3),
          place("PandabornPaddySpout", [6, 4, 0], "Cw0", id="spout1"),
          place("PandabornPaddySpout", [6, 9, -1], "Cw0", id="spout2"),
          place("PandabornPaddySpout", [6, 14, -2], "Cw0", id="spout3"),

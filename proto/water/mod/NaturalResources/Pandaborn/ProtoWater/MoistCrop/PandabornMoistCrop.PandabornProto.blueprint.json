@@ -33,7 +33,7 @@
     "DisablingFeatureToggle": ""
   },
   "NaturalResourceSpec": {
-    "Order": 1
+    "Order": 3
   },
   "CropSpec": {},
   "GrowableSpec": {
@@ -57,15 +57,15 @@
     "Yielder": {
       "YielderComponentName": "Cuttable",
       "Yield": {
-        "Id": "Kohlrabi",
-        "Amount": 2
+        "Id": "Potato",
+        "Amount": 1
       },
       "RemovalTimeInHours": 1.2,
       "ResourceGroup": "Farmhouse"
     }
   },
   "PlantablePreviewModelSpec": {
-    "Model": "NaturalResources\\Crops\\Kohlrabi\\KohlrabiMature"
+    "Model": "NaturalResources/Crops/Potato/PotatoMature"
   },
   "WateredNaturalResourceSpec": {
     "DaysToDieDry": 30.0
@@ -74,7 +74,7 @@
     "DisplayNameLocKey": "NaturalResource.PandabornMoistCrop.DisplayName",
     "DescriptionLocKey": "",
     "FlavorDescriptionLocKey": "",
-    "Icon": "NaturalResources/Crops/Kohlrabi/KohlrabiIcon"
+    "Icon": "NaturalResources/Crops/Potato/PotatoIcon"
   },
   "FloodableNaturalResourceSpec": {
     "MinWaterHeight": 0,
@@ -96,19 +96,19 @@
           "Children": {
             "#Alive": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiSeedling"
+                "Model": "NaturalResources/Crops/Potato/PotatoSeedling"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.05,
+                      "Y": 0.1,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.1,
+                      "Y": 0.2,
                       "Z": 1.0
                     }
                   }
@@ -119,19 +119,19 @@
             },
             "#Dead": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiSeedlingDead"
+                "Model": "NaturalResources/Crops/Potato/PotatoSeedlingDead"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.05,
+                      "Y": 0.1,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.1,
+                      "Y": 0.2,
                       "Z": 1.0
                     }
                   }
@@ -142,19 +142,19 @@
             },
             "#Dying": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiSeedlingDry"
+                "Model": "NaturalResources/Crops/Potato/PotatoSeedlingDry"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.05,
+                      "Y": 0.1,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.1,
+                      "Y": 0.2,
                       "Z": 1.0
                     }
                   }
@@ -169,19 +169,19 @@
           "Children": {
             "#Alive": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiMature"
+                "Model": "NaturalResources/Crops/Potato/PotatoMature"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.1,
+                      "Y": 0.15,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.2,
+                      "Y": 0.3,
                       "Z": 1.0
                     }
                   }
@@ -192,19 +192,19 @@
             },
             "#Dead": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiMatureDead"
+                "Model": "NaturalResources/Crops/Potato/PotatoMatureDead"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.1,
+                      "Y": 0.15,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.2,
+                      "Y": 0.3,
                       "Z": 1.0
                     }
                   }
@@ -215,19 +215,19 @@
             },
             "#Dying": {
               "TimbermeshSpec": {
-                "Model": "NaturalResources/Crops/Kohlrabi/KohlrabiMatureDry"
+                "Model": "NaturalResources/Crops/Potato/PotatoMatureDry"
               },
               "CollidersSpec": {
                 "BoxColliders": [
                   {
                     "Center": {
                       "X": 0.5,
-                      "Y": 0.1,
+                      "Y": 0.15,
                       "Z": 0.5
                     },
                     "Size": {
                       "X": 1.0,
-                      "Y": 0.2,
+                      "Y": 0.3,
                       "Z": 1.0
                     }
                   }
