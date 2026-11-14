@@ -20,7 +20,7 @@ import atlas as A  # noqa: E402
 from plant import Plant, card, state_tint, jitter, ambient, auto_sway, upright  # noqa: E402
 
 ID = "PandabornRice"
-YOUNG = np.array([0.42, 0.66, 0.22])
+YOUNG = np.array([0.46, 0.72, 0.24])
 RIPE = np.array([0.66, 0.68, 0.30])
 GOLD = np.array([1.0, 0.97, 0.9])
 GRID = [(1 / 6 + i / 3, 1 / 6 + j / 3) for i in range(3) for j in range(3)]
@@ -69,7 +69,7 @@ def seedling(m, state):
     for i, (x, z) in enumerate(GRID):
         p = np.array([x + rng.uniform(-0.02, 0.02), 0.0, z + rng.uniform(-0.02, 0.02)])
         H = rng.uniform(0.48, 0.56) * (0.7 if state == "dead" else 1.0)
-        hill(m, rng, p, H, 0.26, tuft, col(rng, YOUNG, state), rng.uniform(0, math.pi), arching=2)
+        hill(m, rng, p, H, 0.3, tuft, col(rng, YOUNG, state), rng.uniform(0, math.pi), arching=3)
     ambient(m, 0.4, floor=0.7)
     auto_sway(m, 0.6, seed=2)
 

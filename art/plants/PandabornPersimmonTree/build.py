@@ -54,7 +54,7 @@ def crown(m, rng, state, centre, R, Hc, n, fruit):
             cards.append((phi + rng.uniform(-0.1, 0.1), 2 * math.pi * (j + rng.uniform(-0.25, 0.25)) / k + phi))
     cards.sort(key=lambda c: -c[0])          # lowest first; upper cards overlap them
     for phi, th in cards:
-        size = R * rng.uniform(0.62, 0.78) * (1.15 if phi > 1.2 else 1.0)
+        size = R * rng.uniform(0.78, 0.95) * (1.12 if phi > 1.2 else 1.0)
         spr = LEAVES[0] if rng.random() < 0.65 else LEAVES[int(rng.integers(1, 3))]
         shingle(m, centre, (R, Hc * 0.5, R), phi, th, size, size, A.uv(spr), leaf_colour(rng, state, light=phi < 0.7),
                 inset=0.45, sway=(0.6, 1.0))
@@ -83,19 +83,25 @@ def mature(m, state):
 
 
 def seedling(m, state):
+    """A sapling: a thin dark stem forking into three twigs, each with a few broad leaves."""
     rng = np.random.default_rng(9)
     bark = state_tint(BARK, state, dry_to=[0.95, 0.9, 0.85], dead_to=[0.85, 0.82, 0.8])
-    top = C + np.array([0.02, 0.62, 0.0])
-    stem(m, C, top, 0.03, 0.015, A.uv("bark"), bark, sides=4, segments=1, v_range=(0.0, 0.4))
-    if state != "dead":
-        for k in range(6):
-            a = 2 * math.pi * k / 6 + rng.uniform(-0.3, 0.3)
-            p = C + np.array([0, 0.3 + 0.32 * k / 6, 0])
-            s = rng.uniform(0.26, 0.34)
-            card(m, p, a, rng.uniform(-0.3, 0.35), s, s, A.uv(LEAVES[int(rng.integers(1, 3))]), leaf_colour(rng, state),
-                 back_offset=0.04, sway=(0.4, 1.0))
-    else:
-        upright(m, C, 0.4, 0.5, 0.4, A.uv("persimmon_branch"), [0.9, 0.88, 0.85])
+    fork = C + np.array([0.01, 0.38, 0.0])
+    stem(m, C, fork, 0.032, 0.022, A.uv("bark"), bark, sides=5, segments=1, v_range=(0.0, 0.3))
+    for k in range(3):
+        a = 2 * math.pi * k / 3 + rng.uniform(-0.3, 0.3)
+        tip = fork + np.array([math.cos(a) * 0.14, rng.uniform(0.2, 0.3), math.sin(a) * 0.14])
+        stem(m, fork, tip, 0.016, 0.007, A.uv("bark"), bark, sides=4, segments=1, v_range=(0.3, 0.5))
+        if state == "dead":
+            continue
+        for j in range(3):
+            th = a + (j - 1) * 0.9 + rng.uniform(-0.2, 0.2)
+            s = rng.uniform(0.2, 0.26)
+            card(m, tip - np.array([0, 0.05 * j, 0]), th, rng.uniform(-0.35, 0.2), s, s,
+                 A.uv(LEAVES[int(rng.integers(1, 3))]), leaf_colour(rng, state, light=j == 0), back_offset=0.03,
+                 sway=(0.5, 1.0))
+    if state == "dead":
+        upright(m, fork - np.array([0, 0.1, 0]), 0.4, 0.45, 0.4, A.uv("persimmon_branch"), [0.9, 0.88, 0.85])
     ambient(m, 0.6, floor=0.6)
     auto_sway(m, 0.8, seed=2)
 

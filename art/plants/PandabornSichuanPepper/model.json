@@ -19,82 +19,82 @@
  "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornSichuanPepper",
  "stats": {
   "PandabornSichuanPepperSeedling": {
-   "triangles": 32,
-   "vertices": 49,
+   "triangles": 29,
+   "vertices": 46,
    "bboxMin": [
-    0.18,
+    0.32,
     -0.0,
-    0.196
+    0.305
    ],
    "bboxMax": [
-    0.82,
+    0.7,
     0.32,
-    0.804
+    0.695
    ]
   },
   "PandabornSichuanPepperSeedlingDry": {
-   "triangles": 32,
-   "vertices": 49,
+   "triangles": 29,
+   "vertices": 46,
    "bboxMin": [
-    0.18,
+    0.32,
     -0.0,
-    0.196
+    0.305
    ],
    "bboxMax": [
-    0.82,
+    0.7,
     0.32,
-    0.804
+    0.695
    ]
   },
   "PandabornSichuanPepperSeedlingDead": {
-   "triangles": 20,
-   "vertices": 25,
+   "triangles": 17,
+   "vertices": 22,
    "bboxMin": [
-    0.18,
+    0.32,
     -0.0,
-    0.196
+    0.305
    ],
    "bboxMax": [
-    0.82,
+    0.764,
     0.3,
-    0.804
+    0.718
    ]
   },
   "PandabornSichuanPepperMature": {
-   "triangles": 108,
-   "vertices": 139,
+   "triangles": 115,
+   "vertices": 156,
    "bboxMin": [
-    -0.001,
+    -0.129,
     0.0,
-    0.006
+    -0.085
    ],
    "bboxMax": [
-    1.016,
+    1.097,
     0.84,
-    0.981
+    1.052
    ]
   },
   "PandabornSichuanPepperMatureDry": {
-   "triangles": 108,
-   "vertices": 139,
+   "triangles": 115,
+   "vertices": 156,
    "bboxMin": [
-    -0.001,
+    -0.129,
     0.0,
-    0.006
+    -0.085
    ],
    "bboxMax": [
-    1.016,
+    1.097,
     0.84,
-    0.981
+    1.052
    ]
   },
   "PandabornSichuanPepperMatureDead": {
-   "triangles": 86,
-   "vertices": 95,
+   "triangles": 83,
+   "vertices": 92,
    "bboxMin": [
-    0.1,
+    0.148,
     0.0,
-    0.12
+    0.148
    ],
    "bboxMax": [
     1.059,

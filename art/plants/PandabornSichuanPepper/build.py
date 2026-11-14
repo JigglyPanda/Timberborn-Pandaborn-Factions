@@ -28,7 +28,7 @@ def col(rng, base, state):
 
 
 def shrub(m, rng, state, stems, H, crown_r, berries, leaf_cards):
-    mound(m, C, 0.4, 0.012, A.uv("soil_mound_dry"), [0.95, 0.95, 0.95])
+    mound(m, C, 0.22, 0.01, A.uv("soil_mound_dry"), [0.95, 0.95, 0.95], 7)
     tips = []
     for k in range(stems):
         a = 2 * math.pi * k / stems + rng.uniform(-0.3, 0.3)
@@ -44,9 +44,9 @@ def shrub(m, rng, state, stems, H, crown_r, berries, leaf_cards):
         for j in range(leaf_cards):
             top, a = tips[j % len(tips)]
             az = a + rng.uniform(-0.9, 0.9)
-            p = top - np.array([0, rng.uniform(0.05, 0.25), 0]) * (j // len(tips) + 1)
-            s = rng.uniform(0.34, 0.44)
-            card(m, p, az, math.radians(rng.uniform(15, 40)), s, s, A.uv("pepper_leaves"), col(rng, LEAF, state),
+            p = top - np.array([0, rng.uniform(0.08, 0.2), 0]) * (j // len(tips))
+            s = rng.uniform(0.42, 0.52)
+            card(m, p, az, math.radians(rng.uniform(-25, 30)), s, s, A.uv("pepper_leaves"), col(rng, LEAF, state),
                  back_offset=s * 0.45, sway=(0.6, 1.0))
         for j in range(berries):
             top, a = tips[j % len(tips)]
@@ -63,14 +63,14 @@ def shrub(m, rng, state, stems, H, crown_r, berries, leaf_cards):
 
 def mature(m, state):
     rng = np.random.default_rng(31)
-    shrub(m, rng, state, stems=4, H=0.8, crown_r=0.36, berries=5 if state != "dead" else 0, leaf_cards=8)
+    shrub(m, rng, state, stems=4, H=0.8, crown_r=0.36, berries=6 if state != "dead" else 0, leaf_cards=12)
     ambient(m, 0.7, floor=0.55)
     auto_sway(m, 0.9, seed=1)
 
 
 def seedling(m, state):
     rng = np.random.default_rng(32)
-    mound(m, C, 0.32, 0.012, A.uv("soil_mound_dry"), [0.95, 0.95, 0.95])
+    mound(m, C, 0.2, 0.01, A.uv("soil_mound_dry"), [0.95, 0.95, 0.95], 7)
     stem(m, C, C + np.array([0.01, 0.3, 0]), 0.012, 0.006, A.uv("pepper_stem"), STEM, sides=4, segments=1)
     if state != "dead":
         crossed(m, C, rng.uniform(0, 3), 0.32, 0.26, A.uv("seedling_sprig"), col(rng, LEAF * 1.15, state))

@@ -70,7 +70,7 @@ def seedling(m, state):
     stem(m, C, C + np.array([0, 0.18, 0]), 0.012, 0.008, A.uv("culm_thin"), [0.5, 0.42, 0.32], sides=4, segments=1)
     for k in range(6):
         th = 2 * math.pi * k / 6 + rng.uniform(-0.2, 0.2)
-        shingle(m, C + np.array([0, 0.04, 0]), (0.16, 0.2, 0.16), rng.uniform(0.5, 1.1), th, 0.2, 0.2,
+        shingle(m, C + np.array([0, 0.04, 0]), (0.2, 0.24, 0.2), rng.uniform(0.5, 1.1), th, 0.26, 0.26,
                 A.uv("tea_leaves"), col(rng, LEAF, state), inset=0.4)
     if state != "dead":
         crossed(m, C, rng.uniform(0, 3), 0.28, 0.2, A.uv("seedling_sprig"), col(rng, TOP, state))

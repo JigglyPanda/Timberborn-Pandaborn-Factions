@@ -20,73 +20,73 @@
  "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornPersimmonTree",
  "stats": {
   "PandabornPersimmonTreeSeedling": {
-   "triangles": 20,
-   "vertices": 34,
+   "triangles": 52,
+   "vertices": 78,
    "bboxMin": [
-    0.194,
+    0.223,
     -0.001,
-    0.189
+    0.148
    ],
    "bboxMax": [
-    0.778,
-    0.62,
-    0.831
+    0.894,
+    0.671,
+    0.838
    ]
   },
   "PandabornPersimmonTreeSeedlingDry": {
-   "triangles": 20,
-   "vertices": 34,
+   "triangles": 52,
+   "vertices": 78,
    "bboxMin": [
-    0.194,
+    0.223,
     -0.001,
-    0.189
+    0.148
    ],
    "bboxMax": [
-    0.778,
-    0.62,
-    0.831
+    0.894,
+    0.671,
+    0.838
    ]
   },
   "PandabornPersimmonTreeSeedlingDead": {
-   "triangles": 12,
-   "vertices": 18,
+   "triangles": 38,
+   "vertices": 50,
    "bboxMin": [
-    0.316,
+    0.326,
     -0.001,
-    0.422
+    0.364
    ],
    "bboxMax": [
-    0.684,
-    0.62,
-    0.578
+    0.694,
+    0.73,
+    0.623
    ]
   },
   "PandabornPersimmonTreeMature": {
    "triangles": 164,
    "vertices": 283,
    "bboxMin": [
-    -0.306,
+    -0.37,
     -0.007,
-    -0.298
+    -0.346
    ],
    "bboxMax": [
-    1.259,
-    2.047,
-    1.273
+    1.298,
+    2.06,
+    1.311
    ]
   },
   "PandabornPersimmonTreeMatureDry": {
    "triangles": 132,
    "vertices": 219,
    "bboxMin": [
-    -0.306,
+    -0.37,
     -0.007,
-    -0.298
+    -0.346
    ],
    "bboxMax": [
-    1.259,
-    2.047,
-    1.273
+    1.298,
+    2.06,
+    1.311
    ]
   },
   "PandabornPersimmonTreeMatureDead": {

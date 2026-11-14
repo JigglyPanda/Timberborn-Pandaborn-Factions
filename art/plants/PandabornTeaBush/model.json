@@ -22,42 +22,42 @@
    "triangles": 28,
    "vertices": 50,
    "bboxMin": [
-    0.314,
+    0.26,
     0.0,
-    0.287
+    0.226
    ],
    "bboxMax": [
-    0.694,
-    0.28,
-    0.71
+    0.748,
+    0.306,
+    0.77
    ]
   },
   "PandabornTeaBushSeedlingDry": {
    "triangles": 28,
    "vertices": 50,
    "bboxMin": [
-    0.314,
+    0.26,
     0.0,
-    0.287
+    0.226
    ],
    "bboxMax": [
-    0.694,
-    0.28,
-    0.71
+    0.748,
+    0.306,
+    0.77
    ]
   },
   "PandabornTeaBushSeedlingDead": {
    "triangles": 20,
    "vertices": 34,
    "bboxMin": [
-    0.314,
+    0.26,
     0.0,
-    0.287
+    0.226
    ],
    "bboxMax": [
-    0.694,
-    0.259,
-    0.71
+    0.748,
+    0.306,
+    0.77
    ]
   },
   "PandabornTeaBushMature": {
