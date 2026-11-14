@@ -1,0 +1,21 @@
+{
+  "RecipeSpec": {
+    "Id": "PandabornTripHammerTest",
+    "BackwardCompatibleIds": [],
+    "DisplayLocKey": "Good.Plank.PluralDisplayName",
+    "CycleDurationInHours": 2.0,
+    "Ingredients": [],
+    "Products": [
+      {
+        "Id": "Plank",
+        "Amount": 1
+      }
+    ],
+    "ProducedSciencePoints": 0,
+    "Fuel": "",
+    "CyclesFuelLasts": 0,
+    "FuelCapacity": 0,
+    "CyclesCapacity": 30,
+    "Icon": "Sprites/Goods/PlankIcon"
+  }
+}

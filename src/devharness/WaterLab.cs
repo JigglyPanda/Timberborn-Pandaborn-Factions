@@ -37,6 +37,8 @@ using Timberborn.WaterBuildings;
 using Timberborn.WaterSystem;
 using Timberborn.WeatherSystem;
 using Timberborn.Workshops;
+using Timberborn.StatusSystem;
+using Timberborn.Goods;
 using Timberborn.WorkSystem;
 using Timberborn.EnterableSystem;
 using Timberborn.ResourceCountingSystem;
@@ -219,7 +221,7 @@ namespace PandabornDevHarness
                 else
                 {
                     // drain: never ask for more than is there (the snapshot is one tick old)
-                    float available = _waterMap.WaterDepth(s.Cell);
+                    float available = _waterMap.WaterDepth(s.Cell) - Mathf.Max(0f, s.MaxDepth);   // maxDepth on a drain = level kept
                     float take = Mathf.Min(amount, available);
                     if (take > 0f) { _waterService.RemoveCleanWater(s.Cell, take); s.Total -= take; }
                 }
@@ -575,6 +577,16 @@ namespace PandabornDevHarness
                     Note("marked for planting " + template + ": " + n + " cells");
                     break;
                 }
+                case "giveGoods":
+                {
+                    string id = Request.Str(step, "id", null);
+                    var manufactory = id != null && _objects.TryGetValue(id, out var gbo) && gbo ? gbo.GetComponent<Manufactory>() : null;
+                    if (manufactory?.Inventory == null) { Note("giveGoods: no manufactory " + id); break; }
+                    int amount = (int)Request.Num(step, "amount", 1f);
+                    manufactory.Inventory.GiveExistingIgnoringCapacity(new GoodAmount(Request.Str(step, "good", "Water"), amount));
+                    Note("gave " + amount + " " + Request.Str(step, "good", "Water") + " to " + id + "; stock " + manufactory.Inventory.TotalAmountInStock);
+                    break;
+                }
                 case "pathFromDistrict":
                     PathFromDistrict(Rel(step["to"]));
                     break;
@@ -838,6 +850,13 @@ namespace PandabornDevHarness
             if (workplace != null) { o["workers"] = workplace.NumberOfAssignedWorkers; o["maxWorkers"] = workplace.MaxWorkers; }
             var enterable = bo.GetComponent<Enterable>();
             if (enterable != null) o["inside"] = enterable.NumberOfEnterersInside;
+            var statusSubject = bo.GetComponent<StatusSubject>();
+            if (statusSubject != null && statusSubject.ActiveStatuses.Count > 0)
+            {
+                var st = new JArray();
+                foreach (var status in statusSubject.ActiveStatuses) st.Add(status.StatusDescription);
+                o["statuses"] = st;
+            }
             var valve = bo.GetComponent<ThrottlingValve>();
             if (valve != null) o["valveCurrentLimit"] = valve.CurrentOutflowLimit.HasValue ? (JToken)R(valve.CurrentOutflowLimit.Value) : null;
             var fill = bo.GetComponent<FillValve>();
@@ -984,6 +1003,7 @@ namespace PandabornDevHarness
                 case "depth": value = _waterMap.WaterDepth(Rel(step["at"])); break;
                 case "height": value = _waterMap.WaterHeightOrFloor(Rel(step["at"])) - _origin.z; break;
                 case "moisture": value = Moisture(Rel(step["at"])); break;
+                case "contamination": value = _waterMap.ColumnContamination(Rel(step["at"])); break;
                 case "volume":
                 {
                     var r = (JArray)step["rect"];

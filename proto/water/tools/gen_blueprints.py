@@ -96,7 +96,7 @@ def spout():
     bp = load("Buildings/Landscaping/FillValve/FillValve.Folktails.blueprint.json")
     bp["FillValveSpec"]["DefaultTargetHeightOffset"] = 0.3
     bp["FillValveSpec"]["DefaultTargetHeightEnabled"] = True
-    name_building(bp, "Spout", "Bamboo spout",
+    name_building(bp, "PaddySpout", "Paddy Spout",
                   "Holds the pool in front of it at a set shallow depth (default 0.3). Water comes in from behind.",
                   "Landscaping", 36)
 
@@ -134,18 +134,18 @@ def flumes():
     # straight segment on the ground, open top
     bp = flume_base()
     one_by_one(bp)
-    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": -1.0}
+    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": -1.0, "ContaminationShutoff": 0.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0)]
-    name_building(bp, "Flume", "Bamboo flume",
+    name_building(bp, "Flume", "Flume",
                   "Carries water one way along the arrow, level or downhill. Water never leaks out of the sides.",
                   "Landscaping", 38)
 
     # lidded: depth capped at one block, a path or platform can sit on top
     bp = flume_base()
     one_by_one(bp)
-    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": -1.0}
+    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": -1.0, "ContaminationShutoff": 0.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
-    name_building(bp, "FlumeLidded", "Bamboo flume (lidded)",
+    name_building(bp, "FlumeLidded", "Flume (covered)",
                   "A covered flume segment. Holds at most one block of water; a path can be built on top.",
                   "Landscaping", 39)
 
@@ -155,9 +155,9 @@ def flumes():
         (0, 0, 0): block("GroundOrStackable", "Corners"),
         (0, 0, 1): block("Any", "Bottom, Top, Corners, Path, Middle", "BlockObject"),
     })
-    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 1)], "InflowLimit": -1.0}
+    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 1)], "InflowLimit": -1.0, "ContaminationShutoff": 0.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 1)]
-    name_building(bp, "FlumeRaised", "Bamboo flume on trestle",
+    name_building(bp, "FlumeBridge", "Flume Bridge",
                   "A flume segment one block above the ground on a trestle.", "Landscaping", 40)
 
     # step-down: upper cell at z+1, lower cell at z, one tile further along the flow
@@ -167,24 +167,25 @@ def flumes():
         (0, 0, 1): block("Any", "Bottom, Top, Corners, Path, Middle", "BlockObject"),
         (0, 1, 0): block("GroundOrStackable", "Bottom, Top, Corners, Path, Middle", "BlockObject"),
     })
-    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 1), v3(0, 1, 0)], "InflowLimit": -1.0}
+    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 1), v3(0, 1, 0)], "InflowLimit": -1.0, "ContaminationShutoff": 0.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 1), v3(0, 1, 0)]
     open_step = copy.deepcopy(bp)
     # sealed: the cell under the upper half is solid, so floodwater under it cannot enter the lower flume from behind
     bp["WaterObstacleSpec"] = {"Coordinates": [{"X": 0, "Y": 0}]}
     bp["FinishableWaterObstacleSpec"] = {"Height": 1.0}
-    name_building(bp, "FlumeStep", "Bamboo flume step-down",
+    name_building(bp, "FlumeDrop", "Flume Drop",
                   "Drops a flume one level: water enters at the top and leaves one block lower.", "Landscaping", 41)
-    name_building(open_step, "FlumeStepOpen", "Bamboo flume step-down (open leg, test)",
+    name_building(open_step, "FlumeDropOpen", "Flume Drop (open leg, test)",
                   "Test variant whose leg cell is open to water.", "Landscaping", 41)
 
     # gate: our segment plus a fixed inflow limit (code route); adjustable gate is the valve route above
     bp = flume_base()
     one_by_one(bp)
-    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": 0.3}
+    bp["PandabornFlumeSegmentSpec"] = {"FlowCells": [v3(0, 0, 0)], "InflowLimit": 0.3, "ContaminationShutoff": 0.05}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
-    name_building(bp, "FlumeGate", "Bamboo flume intake gate",
-                  "The intake of a flume. Lets at most 0.3 cubic metres per second through.", "Landscaping", 42)
+    name_building(bp, "FlumeGate", "Flume Gate",
+                  "The intake of a flume. Lets at most 0.3 cubic metres per second through, and shuts by itself while "
+                  "the water at the intake is contaminated.", "Landscaping", 42)
 
 
 # ------------------------------------------------------------------ 2c. turning box (pure data, both routes)
@@ -199,7 +200,7 @@ def turning_box():
     bp["FinishableWaterObstacleSpec"] = {"Height": 1.0}
     bp["FinishableHorizontalWaterObstacleSpec"]["Obstacles"] = [v3(0, 0, 0), v3(0, 0, 1)]
     bp["PlaceableBlockObjectSpec"]["CustomPivot"] = {"HasCustomPivot": False, "Coordinates": {"X": 0.0, "Y": 0.0, "Z": 0.0}}
-    name_building(bp, "FlumeTurn", "Flume turning box",
+    name_building(bp, "FlumeCorner", "Flume Corner",
                   "A corner for flumes: one open water cell with posts on two sides. Flumes enter and leave through "
                   "the two open faces.", "Landscaping", 43)
 
@@ -235,7 +236,7 @@ def noria():
     bp["WaterInputSpec"] = {"WaterInputCoordinates": v3(0, 0, 0)}
     bp["WaterOutputSpec"] = {"WaterCoordinates": v3(0, 2, LIFT), "DistanceToGroundOffset": 0.0, "OverflowAllowed": False}
     bp["Children"]["#Unfinished"]["Children"].pop("ConstructionBase3x2WaterWheel#nested", None)
-    name_building(bp, "Noria", "Noria",
+    name_building(bp, "ScoopWheel", "Scoop Wheel",
                   f"Stands in a current and lifts water {LIFT} levels onto the bank behind it, with no workers. "
                   "Lifts more in faster water (needs at least 0.15).", "Water", 60,
                   [{"Id": "Log", "Amount": 10}])
@@ -273,6 +274,50 @@ def dew_collector():
         "CycleDurationInHours": 4.0, "Ingredients": [], "Products": [{"Id": "Water", "Amount": 1}],
         "ProducedSciencePoints": 0, "Fuel": "", "CyclesFuelLasts": 0, "FuelCapacity": 0, "CyclesCapacity": 30,
         "Icon": "Sprites/Goods/WaterIcon"}})
+
+
+# ------------------------------------------------------------------ 4b. cistern tap and trip-hammer
+def cistern_tap():
+    base = load("Buildings/Water/Discharge/Discharge.Folktails.blueprint.json")
+    for k in ("ManufactoryWaterContaminationProducerSpec", "ManufactoryTogglableRecipesSpec"):
+        base.pop(k, None)
+    base["ManufactorySpec"] = {"ProductionRecipeIds": ["FlowingWater"]}
+    bp = copy.deepcopy(base)
+    name_building(bp, "CisternTap", "Cistern Tap",
+                  "A worker pours stored Water into the basin or flume in front: 3 Water per hour becomes 0.6 cubic "
+                  "metres of clean water.", "Water", 63)
+    # test variant without a worker (the harness puts Water goods into it)
+    for k in ("WorkplaceSpec", "EnterableSpec", "TransformSlotInitializerSpec", "WorkplaceSlotManagerSpec",
+              "WorkshopSpec", "WorkplaceIlluminatorSpec", "WorkshopWorkerHiderSpec", "WorkshopParticleControllerSpec"):
+        base.pop(k, None)
+    base["ProductionIncreaserSpec"] = {}
+    name_building(base, "CisternTapAuto", "Cistern Tap (no worker, test)", "Test variant of the Cistern Tap.", "Water", 64)
+
+
+def trip_hammer():
+    """A workshop driven straight by the current under it: one mechanical node that is both the water-wheel generator
+    and the consumer, no shafts. Test recipe without ingredients so production speed can be read on its own."""
+    bp = load("Buildings/Power/WaterWheel/WaterWheel.Folktails.blueprint.json")
+    for k in ("FloodableBuildingSpec", "BlockableFloodableObjectSpec", "WaterObjectSpec", "WaterWheelSpec",
+              "PowerGeneratorSoundsSpec", "MechanicalNodeDescriptionSpec"):
+        bp.pop(k, None)
+    cells = {(0, 0, z): block("Any" if z else "GroundOrStackable", "Corners, Middle") for z in range(2)}
+    bp["BlockObjectSpec"] = blocks_spec((1, 1, 2), cells)
+    bp["MechanicalNodeSpec"] = {"PowerOutput": 100, "PowerInput": 100, "IsShaft": False}
+    bp["WaterPoweredGeneratorSpec"] = {"Blocks": [{"X": 0, "Y": 0}], "ExpectedWaterDirection": {"X": 1.0, "Y": 0.0},
+                                       "MinRequiredOutflow": 0.15}
+    bp["MechanicalBuildingSpec"] = {}
+    bp["TransputProviderSpec"] = {"Transputs": [], "IgnoreRotation": False}
+    bp["ManufactorySpec"] = {"ProductionRecipeIds": ["PandabornTripHammerTest"]}
+    bp["ProductionIncreaserSpec"] = {}
+    bp["Children"]["#Unfinished"]["Children"].pop("ConstructionBase3x2WaterWheel#nested", None)
+    name_building(bp, "TripHammer", "Water Trip-Hammer",
+                  "A mill driven by the current it stands in, with no shafts. Works faster in faster water.", "Water", 65)
+    write("Recipes/Pandaborn/Recipe.PandabornTripHammerTest.blueprint.json", {"RecipeSpec": {
+        "Id": "PandabornTripHammerTest", "BackwardCompatibleIds": [], "DisplayLocKey": "Good.Plank.PluralDisplayName",
+        "CycleDurationInHours": 2.0, "Ingredients": [], "Products": [{"Id": "Plank", "Amount": 1}],
+        "ProducedSciencePoints": 0, "Fuel": "", "CyclesFuelLasts": 0, "FuelCapacity": 0, "CyclesCapacity": 30,
+        "Icon": "Sprites/Goods/PlankIcon"}})
 
 
 # ------------------------------------------------------------------ 5. crop-zone test plants
@@ -327,6 +372,21 @@ def bamboo(bp):
         "RemovalTimeInHours": 0.5, "ResourceGroup": "Gatherable"}}
 
 
+def shoot_bamboo(bp):
+    # field crop planted and harvested by the farmhouse (carrot model stand-in); moist soil; fast
+    bp["WateredNaturalResourceSpec"] = {"DaysToDieDry": 2.0}
+    bp["FloodableNaturalResourceSpec"] = {"MinWaterHeight": 0, "MaxWaterHeight": 0, "DaysToDie": 1.0}
+    bp["GrowableSpec"]["GrowthTimeInDays"] = 2.0
+
+
+def timber_bamboo(bp):
+    # plain fast tree planted by the forester, cut for logs (poles stand-in), spreads when unmarked
+    bp["GrowableSpec"]["GrowthTimeInDays"] = 3.0
+    bp["ReproducibleSpec"] = {"ReproductionChance": 0.1}
+    bp["WateredNaturalResourceSpec"] = {"DaysToDieDry": 2.0}
+    bp["CuttableSpec"]["Yielder"]["Yield"] = {"Id": "Log", "Amount": 1}
+
+
 def main():
     if not os.path.isdir(BP):
         sys.exit("vanilla blueprint dump not found: " + BP)
@@ -344,15 +404,26 @@ def main():
     noria()
     treadwheel()
     dew_collector()
+    cistern_tap()
+    trip_hammer()
     plant("NaturalResources/Crops/Wheat/Wheat.blueprint.json", "PaddyCrop", "Paddy crop", paddy)
     plant("NaturalResources/Crops/Kohlrabi/Kohlrabi.blueprint.json", "MoistCrop", "Moist crop", moist)
     plant("NaturalResources/Crops/Sunflower/Sunflower.blueprint.json", "DryCrop", "Dry-ground crop", dry)
     plant("NaturalResources/Trees/Birch/Birch.blueprint.json", "Bamboo", "Bamboo (tree stand-in)", bamboo)
+    plant("NaturalResources/Crops/Carrot/Carrot.blueprint.json", "ShootBamboo", "Shoot Bamboo", shoot_bamboo)
+    plant("NaturalResources/Trees/Birch/Birch.blueprint.json", "TimberBamboo", "Timber Bamboo", timber_bamboo)
     # appended by CollectionId: Folktails and (for now) Inkpaws both use these collections
     write("TemplateCollections/Pandaborn/TemplateCollection.Buildings.ProtoWater.blueprint.json",
           {"TemplateCollectionSpec": {"CollectionId": "Buildings.Folktails", "Blueprints": buildings}})
     write("TemplateCollections/Pandaborn/TemplateCollection.NaturalResources.ProtoWater.blueprint.json",
           {"TemplateCollectionSpec": {"CollectionId": "NaturalResources.Folktails", "Blueprints": plants}})
+    loc.extend([
+        ("Status.Pandaborn.Flume.Blocked", "Blocked: the tile ahead is solid. Water cannot leave this flume."),
+        ("Status.Pandaborn.Flume.Misaligned", "Misaligned: the flume next to this one runs another way. A bend needs a Flume Corner."),
+        ("Status.Pandaborn.Flume.IntakeDry", "No water can enter: the water behind the intake is below the flume bed."),
+        ("Status.Pandaborn.Flume.EndDry", "No water is reaching the end of this flume."),
+        ("Status.Pandaborn.Flume.BadwaterClosed", "Closed: the water at the intake is contaminated."),
+    ])
     path = os.path.join(MOD, "Localizations", "enUS_PandabornProtoWater.csv")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as f:

@@ -1,0 +1,830 @@
+{
+ "faction": "Folktails",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 1500,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.Water",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "longrun",
+  "speed": 7,
+  "area": [
+   70,
+   20
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     0,
+     5,
+     4
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     1,
+     4,
+     3
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     5,
+     2,
+     5,
+     2
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     5,
+     2,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "gateL10"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     6,
+     2,
+     0
+    ],
+    "count": 10,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "L10_"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     16,
+     1,
+     18,
+     3
+    ],
+    "z": -1
+   },
+   {
+    "op": "water",
+    "id": "pondL10",
+    "at": [
+     2,
+     2,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.0
+   },
+   {
+    "op": "water",
+    "id": "sinkL10",
+    "at": [
+     16,
+     2,
+     -1
+    ],
+    "rate": -3.0
+   },
+   {
+    "op": "series",
+    "id": "L10",
+    "every": 30,
+    "cells": [
+     [
+      6,
+      2,
+      0
+     ],
+     [
+      8,
+      2,
+      0
+     ],
+     [
+      11,
+      2,
+      0
+     ],
+     [
+      13,
+      2,
+      0
+     ],
+     [
+      15,
+      2,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     5,
+     5,
+     9
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     6,
+     4,
+     8
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     5,
+     7,
+     5,
+     7
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     5,
+     7,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "gateL20"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     6,
+     7,
+     0
+    ],
+    "count": 20,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "L20_"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     26,
+     6,
+     28,
+     8
+    ],
+    "z": -1
+   },
+   {
+    "op": "water",
+    "id": "pondL20",
+    "at": [
+     2,
+     7,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.0
+   },
+   {
+    "op": "water",
+    "id": "sinkL20",
+    "at": [
+     26,
+     7,
+     -1
+    ],
+    "rate": -3.0
+   },
+   {
+    "op": "series",
+    "id": "L20",
+    "every": 30,
+    "cells": [
+     [
+      6,
+      7,
+      0
+     ],
+     [
+      11,
+      7,
+      0
+     ],
+     [
+      16,
+      7,
+      0
+     ],
+     [
+      21,
+      7,
+      0
+     ],
+     [
+      25,
+      7,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     10,
+     5,
+     14
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     11,
+     4,
+     13
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     5,
+     12,
+     5,
+     12
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     5,
+     12,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "gateL40"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     6,
+     12,
+     0
+    ],
+    "count": 40,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "L40_"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     46,
+     11,
+     48,
+     13
+    ],
+    "z": -1
+   },
+   {
+    "op": "water",
+    "id": "pondL40",
+    "at": [
+     2,
+     12,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.0
+   },
+   {
+    "op": "water",
+    "id": "sinkL40",
+    "at": [
+     46,
+     12,
+     -1
+    ],
+    "rate": -3.0
+   },
+   {
+    "op": "series",
+    "id": "L40",
+    "every": 30,
+    "cells": [
+     [
+      6,
+      12,
+      0
+     ],
+     [
+      16,
+      12,
+      0
+     ],
+     [
+      26,
+      12,
+      0
+     ],
+     [
+      36,
+      12,
+      0
+     ],
+     [
+      45,
+      12,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     0,
+     15,
+     5,
+     19
+    ],
+    "z": 2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     1,
+     16,
+     4,
+     18
+    ],
+    "z": 0
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     5,
+     17,
+     5,
+     17
+    ],
+    "z": 0
+   },
+   {
+    "op": "place",
+    "template": "PandabornFlumeGate.PandabornProto",
+    "at": [
+     5,
+     17,
+     0
+    ],
+    "orientation": "Cw90",
+    "id": "gateL60"
+   },
+   {
+    "op": "placeLine",
+    "template": "PandabornFlume.PandabornProto",
+    "from": [
+     6,
+     17,
+     0
+    ],
+    "count": 60,
+    "step": [
+     1,
+     0,
+     0
+    ],
+    "orientation": "Cw90",
+    "idPrefix": "L60_"
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     66,
+     16,
+     68,
+     18
+    ],
+    "z": -1
+   },
+   {
+    "op": "water",
+    "id": "pondL60",
+    "at": [
+     2,
+     17,
+     0
+    ],
+    "rate": 2.0,
+    "maxDepth": 1.0
+   },
+   {
+    "op": "water",
+    "id": "sinkL60",
+    "at": [
+     66,
+     17,
+     -1
+    ],
+    "rate": -3.0
+   },
+   {
+    "op": "series",
+    "id": "L60",
+    "every": 30,
+    "cells": [
+     [
+      6,
+      17,
+      0
+     ],
+     [
+      21,
+      17,
+      0
+     ],
+     [
+      36,
+      17,
+      0
+     ],
+     [
+      51,
+      17,
+      0
+     ],
+     [
+      65,
+      17,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "longrun_setup",
+    "focus": [
+     36,
+     10,
+     0
+    ],
+    "distance": 60,
+    "pitch": 60,
+    "yaw": 0
+   },
+   {
+    "op": "wait",
+    "ticks": 400,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "t400"
+   },
+   {
+    "op": "wait",
+    "ticks": 800,
+    "capSeconds": 900
+   },
+   {
+    "op": "probe",
+    "label": "t1200",
+    "rows": [
+     [
+      0,
+      0,
+      69,
+      0
+     ],
+     [
+      1,
+      0,
+      69,
+      0
+     ],
+     [
+      2,
+      0,
+      69,
+      0
+     ],
+     [
+      3,
+      0,
+      69,
+      0
+     ],
+     [
+      4,
+      0,
+      69,
+      0
+     ],
+     [
+      5,
+      0,
+      69,
+      0
+     ],
+     [
+      6,
+      0,
+      69,
+      0
+     ],
+     [
+      7,
+      0,
+      69,
+      0
+     ],
+     [
+      8,
+      0,
+      69,
+      0
+     ],
+     [
+      9,
+      0,
+      69,
+      0
+     ],
+     [
+      10,
+      0,
+      69,
+      0
+     ],
+     [
+      11,
+      0,
+      69,
+      0
+     ],
+     [
+      12,
+      0,
+      69,
+      0
+     ],
+     [
+      13,
+      0,
+      69,
+      0
+     ],
+     [
+      14,
+      0,
+      69,
+      0
+     ],
+     [
+      15,
+      0,
+      69,
+      0
+     ],
+     [
+      16,
+      0,
+      69,
+      0
+     ],
+     [
+      17,
+      0,
+      69,
+      0
+     ],
+     [
+      18,
+      0,
+      69,
+      0
+     ],
+     [
+      19,
+      0,
+      69,
+      0
+     ],
+     [
+      20,
+      0,
+      69,
+      0
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      69,
+      0
+     ],
+     [
+      1,
+      0,
+      69,
+      0
+     ],
+     [
+      2,
+      0,
+      69,
+      0
+     ],
+     [
+      3,
+      0,
+      69,
+      0
+     ],
+     [
+      4,
+      0,
+      69,
+      0
+     ],
+     [
+      5,
+      0,
+      69,
+      0
+     ],
+     [
+      6,
+      0,
+      69,
+      0
+     ],
+     [
+      7,
+      0,
+      69,
+      0
+     ],
+     [
+      8,
+      0,
+      69,
+      0
+     ],
+     [
+      9,
+      0,
+      69,
+      0
+     ],
+     [
+      10,
+      0,
+      69,
+      0
+     ],
+     [
+      11,
+      0,
+      69,
+      0
+     ],
+     [
+      12,
+      0,
+      69,
+      0
+     ],
+     [
+      13,
+      0,
+      69,
+      0
+     ],
+     [
+      14,
+      0,
+      69,
+      0
+     ],
+     [
+      15,
+      0,
+      69,
+      0
+     ],
+     [
+      16,
+      0,
+      69,
+      0
+     ],
+     [
+      17,
+      0,
+      69,
+      0
+     ],
+     [
+      18,
+      0,
+      69,
+      0
+     ],
+     [
+      19,
+      0,
+      69,
+      0
+     ],
+     [
+      20,
+      0,
+      69,
+      0
+     ]
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "longrun_t1200",
+    "focus": [
+     36,
+     10,
+     0
+    ],
+    "distance": 60,
+    "pitch": 60,
+    "yaw": 0
+   },
+   {
+    "op": "shot",
+    "name": "longrun_far_end",
+    "focus": [
+     62,
+     17,
+     0
+    ],
+    "distance": 14,
+    "pitch": 50,
+    "yaw": 0
+   }
+  ]
+ }
+}

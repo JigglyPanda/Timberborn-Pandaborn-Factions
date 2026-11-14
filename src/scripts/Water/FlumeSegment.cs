@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BlockSystem;
@@ -20,6 +21,10 @@ namespace Pandaborn.Water
 
         [Serialize]
         public float InflowLimit { get; init; }
+
+        /// <summary>&gt; 0: the first cell shuts (a full obstacle) while the water behind it is more contaminated than this.</summary>
+        [Serialize]
+        public float ContaminationShutoff { get; init; }
     }
 
     /// <summary>
@@ -32,6 +37,27 @@ namespace Pandaborn.Water
         private BlockObject _blockObject;
         private PandabornFlumeSegmentSpec _spec;
         private bool _applied;
+        private readonly List<Vector3Int> _worldCells = new List<Vector3Int>();
+
+        /// <summary>World coordinates of the flow cells (valid once finished).</summary>
+        public IReadOnlyList<Vector3Int> WorldFlowCells => _worldCells;
+
+        /// <summary>One tile along the flow.</summary>
+        public Vector3Int Offset => OffsetOf(_blockObject.Orientation.ToFlowDirection());
+
+        public PandabornFlumeSegmentSpec Spec => _spec;
+
+        public static Vector3Int OffsetOf(FlowDirection direction)
+        {
+            switch (direction)
+            {
+                case FlowDirection.Top: return new Vector3Int(0, 1, 0);
+                case FlowDirection.Right: return new Vector3Int(1, 0, 0);
+                case FlowDirection.Bottom: return new Vector3Int(0, -1, 0);
+                case FlowDirection.Left: return new Vector3Int(-1, 0, 0);
+                default: return Vector3Int.zero;
+            }
+        }
 
         public FlumeSegment(IWaterService waterService)
         {
@@ -48,6 +74,8 @@ namespace Pandaborn.Water
         {
             if (_applied) return;
             var direction = _blockObject.Orientation.ToFlowDirection();
+            _worldCells.Clear();
+            foreach (var c in _spec.FlowCells) _worldCells.Add(_blockObject.TransformCoordinates(c));
             for (int i = 0; i < _spec.FlowCells.Length; i++)
             {
                 var cell = _blockObject.TransformCoordinates(_spec.FlowCells[i]);

@@ -67,20 +67,103 @@
      2,
      5,
      13,
+     8
+    ],
+    "z": -1
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     9,
+     6,
      9
     ],
     "z": -1
    },
    {
+    "op": "flatten",
+    "rect": [
+     2,
+     10,
+     13,
+     13
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     6,
+     14,
+     6,
+     14
+    ],
+    "z": -2
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     2,
+     15,
+     13,
+     17
+    ],
+    "z": -3
+   },
+   {
+    "op": "flatten",
+    "rect": [
+     24,
+     22,
+     33,
+     22
+    ],
+    "z": -1
+   },
+   {
     "op": "place",
-    "template": "PandabornSpout.PandabornProto",
+    "template": "PandabornPaddySpout.PandabornProto",
     "at": [
      6,
      4,
      0
     ],
     "orientation": "Cw0",
-    "id": "spout"
+    "id": "spout1"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     6,
+     9,
+     -1
+    ],
+    "orientation": "Cw0",
+    "id": "spout2"
+   },
+   {
+    "op": "place",
+    "template": "PandabornPaddySpout.PandabornProto",
+    "at": [
+     6,
+     14,
+     -2
+    ],
+    "orientation": "Cw0",
+    "id": "spout3"
+   },
+   {
+    "op": "place",
+    "template": "PandabornCisternTapAuto.PandabornProto",
+    "at": [
+     34,
+     16,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "tap"
    },
    {
     "op": "water",
@@ -94,12 +177,23 @@
     "maxDepth": 0.8
    },
    {
+    "op": "water",
+    "id": "strip",
+    "at": [
+     24,
+     22,
+     -1
+    ],
+    "rate": 0.5,
+    "maxDepth": 0.15
+   },
+   {
     "op": "plant",
     "template": "PandabornPaddyCrop.PandabornProto",
     "rect": [
      3,
-     7,
-     5,
+     6,
+     4,
      7,
      -1
     ]
@@ -109,7 +203,7 @@
     "template": "PandabornMoistCrop.PandabornProto",
     "rect": [
      8,
-     7,
+     6,
      9,
      7,
      -1
@@ -120,7 +214,7 @@
     "template": "PandabornDryCrop.PandabornProto",
     "rect": [
      11,
-     7,
+     6,
      12,
      7,
      -1
@@ -130,10 +224,129 @@
     "op": "plant",
     "template": "PandabornPaddyCrop.PandabornProto",
     "rect": [
-     3,
+     4,
      11,
      5,
-     11,
+     12,
+     -2
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "rect": [
+     4,
+     16,
+     5,
+     16,
+     -3
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     15,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     15,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     15,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     17,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     17,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     17,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     19,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     19,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     19,
+     7,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornMoistCrop.PandabornProto",
+    "at": [
+     22,
+     5,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornDryCrop.PandabornProto",
+    "at": [
+     22,
+     6,
+     0
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPaddyCrop.PandabornProto",
+    "at": [
+     22,
+     7,
      0
     ]
    },
@@ -141,175 +354,34 @@
     "op": "plant",
     "template": "PandabornMoistCrop.PandabornProto",
     "rect": [
-     8,
-     11,
-     9,
-     11,
+     32,
+     18,
+     33,
+     18,
      0
     ]
    },
    {
     "op": "plant",
     "template": "PandabornDryCrop.PandabornProto",
-    "rect": [
-     11,
-     11,
-     12,
-     11,
-     0
-    ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornPaddyCrop.PandabornProto",
     "rect": [
      32,
      20,
-     34,
-     20,
-     0
-    ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornMoistCrop.PandabornProto",
-    "rect": [
-     35,
-     20,
-     36,
-     20,
-     0
-    ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornDryCrop.PandabornProto",
-    "rect": [
      37,
      20,
-     38,
-     20,
      0
     ]
    },
    {
     "op": "plant",
-    "template": "PandabornBamboo.PandabornProto",
-    "cells": [
-     [
-      17,
-      6,
-      0
-     ],
-     [
-      17,
-      8,
-      0
-     ]
-    ]
-   },
-   {
-    "op": "markPlant",
-    "template": "PandabornBamboo.PandabornProto",
+    "template": "PandabornPaddyCrop.PandabornProto",
     "rect": [
-     19,
-     5,
-     21,
-     9,
-     0
-    ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornBamboo.PandabornProto",
-    "cells": [
-     [
-      20,
-      6,
-      0
-     ],
-     [
-      20,
-      8,
-      0
-     ]
-    ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornBamboo.PandabornProto",
-    "cells": [
-     [
-      17,
-      12,
-      0
-     ],
-     [
-      17,
-      14,
-      0
-     ]
-    ]
-   },
-   {
-    "op": "markPlant",
-    "template": "PandabornBamboo.PandabornProto",
-    "rect": [
-     16,
-     11,
+     36,
      18,
-     11,
-     0
-    ]
-   },
-   {
-    "op": "markPlant",
-    "template": "PandabornBamboo.PandabornProto",
-    "rect": [
-     16,
-     15,
+     37,
      18,
-     15,
      0
     ]
-   },
-   {
-    "op": "plant",
-    "template": "PandabornBamboo.PandabornProto",
-    "cells": [
-     [
-      21,
-      12,
-      0
-     ],
-     [
-      21,
-      14,
-      0
-     ]
-    ]
-   },
-   {
-    "op": "markCut",
-    "rect": [
-     20,
-     11,
-     22,
-     15,
-     0
-    ]
-   },
-   {
-    "op": "grow",
-    "template": "PandabornBamboo.PandabornProto",
-    "rect": [
-     15,
-     4,
-     23,
-     16,
-     0
-    ],
-    "progress": 1.0
    },
    {
     "op": "shot",
@@ -319,13 +391,13 @@
      10,
      0
     ],
-    "distance": 34,
+    "distance": 36,
     "pitch": 55,
     "yaw": 20
    },
    {
     "op": "series",
-    "id": "paddy",
+    "id": "paddies",
     "every": 40,
     "cells": [
      [
@@ -340,50 +412,48 @@
      ],
      [
       13,
-      9,
+      8,
       -1
+     ],
+     [
+      6,
+      10,
+      -2
+     ],
+     [
+      3,
+      12,
+      -2
+     ],
+     [
+      6,
+      15,
+      -3
+     ],
+     [
+      3,
+      17,
+      -3
      ],
      [
       6,
       2,
       0
+     ],
+     [
+      28,
+      22,
+      -1
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "tap"
     ]
    },
    {
     "op": "plants",
-    "label": "plants_d0",
-    "rect": [
-     0,
-     0,
-     39,
-     23,
-     0
-    ],
-    "detail": true
-   },
-   {
-    "op": "plants",
-    "label": "paddy_d0",
-    "rect": [
-     2,
-     5,
-     13,
-     9,
-     -1
-    ]
-   },
-   {
-    "op": "wait",
-    "hours": 12,
-    "capSeconds": 600
-   },
-   {
-    "op": "plants",
-    "label": "plants_h12",
+    "label": "zones_d0",
     "rect": [
      0,
      0,
@@ -394,36 +464,58 @@
    },
    {
     "op": "plants",
-    "label": "paddy_h12",
+    "label": "p1_d0",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_d0",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_d0",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
     ]
    },
    {
     "op": "probe",
-    "label": "water_h12",
+    "label": "water_d0",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -573,8 +665,248 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
+   },
+   {
+    "op": "wait",
+    "hours": 12,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_h12",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_h12",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_h12",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_h12",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_h12",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "crops_h12",
+    "focus": [
+     8,
+     10,
+     -1
+    ],
+    "distance": 22,
+    "pitch": 55,
+    "yaw": 0
    },
    {
     "op": "wait",
@@ -583,7 +915,7 @@
    },
    {
     "op": "plants",
-    "label": "plants_wet",
+    "label": "zones_wet",
     "rect": [
      0,
      0,
@@ -594,13 +926,35 @@
    },
    {
     "op": "plants",
-    "label": "paddy_wet",
+    "label": "p1_wet",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_wet",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_wet",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
     ]
    },
    {
@@ -608,22 +962,22 @@
     "label": "water_wet",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -773,12 +1127,15 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
    },
    {
     "op": "expect",
-    "label": "paddy held at spout depth",
+    "label": "paddy 1 held at spout depth",
     "what": "depth",
     "at": [
      3,
@@ -790,14 +1147,38 @@
    },
    {
     "op": "expect",
+    "label": "paddy 2 held by cascade spout",
+    "what": "depth",
+    "at": [
+     3,
+     12,
+     -2
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
+    "label": "paddy 3 held by cascade spout",
+    "what": "depth",
+    "at": [
+     3,
+     16,
+     -3
+    ],
+    "min": 0.2,
+    "max": 0.45
+   },
+   {
+    "op": "expect",
     "label": "paddy crop healthy in paddy",
     "what": "healthy",
-    "min": 3,
+    "min": 4,
     "template": "PandabornPaddyCrop.PandabornProto",
     "rect": [
      3,
-     7,
-     5,
+     6,
+     4,
      7,
      -1
     ]
@@ -810,7 +1191,7 @@
      10,
      0
     ],
-    "distance": 34,
+    "distance": 36,
     "pitch": 55,
     "yaw": 20
    },
@@ -819,10 +1200,10 @@
     "name": "crops_wet_paddy",
     "focus": [
      8,
-     8,
+     10,
      -1
     ],
-    "distance": 14,
+    "distance": 16,
     "pitch": 50,
     "yaw": 0
    },
@@ -832,7 +1213,17 @@
    },
    {
     "op": "set",
-    "id": "spout",
+    "id": "spout1",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout3",
     "targetDepth": 0.0
    },
    {
@@ -850,7 +1241,7 @@
     "id": "drain1",
     "at": [
      13,
-     9,
+     8,
      -1
     ],
     "rate": -1.0
@@ -870,8 +1261,8 @@
     "id": "drain3",
     "at": [
      2,
-     9,
-     -1
+     10,
+     -2
     ],
     "rate": -1.0
    },
@@ -880,19 +1271,39 @@
     "id": "drain4",
     "at": [
      13,
-     5,
-     -1
+     13,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain5",
+    "at": [
+     2,
+     15,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain6",
+    "at": [
+     13,
+     17,
+     -3
     ],
     "rate": -1.0
    },
    {
     "op": "wait",
     "hours": 6,
-    "capSeconds": 600
+    "capSeconds": 900
    },
    {
     "op": "plants",
-    "label": "plants_dry_h6",
+    "label": "zones_dry_h6",
     "rect": [
      0,
      0,
@@ -903,13 +1314,35 @@
    },
    {
     "op": "plants",
-    "label": "paddy_dry_h6",
+    "label": "p1_dry_h6",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_dry_h6",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_dry_h6",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
     ]
    },
    {
@@ -917,22 +1350,22 @@
     "label": "water_dry_h6",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -1082,7 +1515,10 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
    },
    {
@@ -1092,7 +1528,7 @@
    },
    {
     "op": "plants",
-    "label": "plants_dry",
+    "label": "zones_dry",
     "rect": [
      0,
      0,
@@ -1103,13 +1539,35 @@
    },
    {
     "op": "plants",
-    "label": "paddy_dry",
+    "label": "p1_dry",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_dry",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_dry",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
     ]
    },
    {
@@ -1117,22 +1575,22 @@
     "label": "water_dry",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -1282,7 +1740,10 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
    },
    {
@@ -1293,7 +1754,7 @@
      10,
      0
     ],
-    "distance": 34,
+    "distance": 36,
     "pitch": 55,
     "yaw": 20
    },
@@ -1318,6 +1779,14 @@
     "id": "drain4"
    },
    {
+    "op": "waterOff",
+    "id": "drain5"
+   },
+   {
+    "op": "waterOff",
+    "id": "drain6"
+   },
+   {
     "op": "water",
     "id": "reservoir",
     "at": [
@@ -1330,7 +1799,17 @@
    },
    {
     "op": "set",
-    "id": "spout",
+    "id": "spout1",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.3
+   },
+   {
+    "op": "set",
+    "id": "spout3",
     "targetDepth": 0.3
    },
    {
@@ -1340,7 +1819,7 @@
    },
    {
     "op": "plants",
-    "label": "plants_rewet",
+    "label": "zones_rewet",
     "rect": [
      0,
      0,
@@ -1351,13 +1830,35 @@
    },
    {
     "op": "plants",
-    "label": "paddy_rewet",
+    "label": "p1_rewet",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_rewet",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_rewet",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
     ]
    },
    {
@@ -1365,22 +1866,22 @@
     "label": "water_rewet",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -1530,27 +2031,109 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
    },
    {
+    "op": "waterOff",
+    "id": "reservoir"
+   },
+   {
+    "op": "set",
+    "id": "spout1",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout2",
+    "targetDepth": 0.0
+   },
+   {
+    "op": "set",
+    "id": "spout3",
+    "targetDepth": 0.0
+   },
+   {
     "op": "water",
-    "id": "irrigate",
+    "id": "drain0",
     "at": [
-     36,
-     21,
-     0
+     2,
+     5,
+     -1
     ],
-    "rate": 0.05
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain1",
+    "at": [
+     13,
+     8,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain2",
+    "at": [
+     8,
+     7,
+     -1
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain3",
+    "at": [
+     2,
+     10,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain4",
+    "at": [
+     13,
+     13,
+     -2
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain5",
+    "at": [
+     2,
+     15,
+     -3
+    ],
+    "rate": -1.0
+   },
+   {
+    "op": "water",
+    "id": "drain6",
+    "at": [
+     13,
+     17,
+     -3
+    ],
+    "rate": -1.0
    },
    {
     "op": "wait",
-    "hours": 48,
+    "hours": 8,
     "capSeconds": 900
    },
    {
     "op": "plants",
-    "label": "plants_irrigated",
+    "label": "zones_redry_h8",
     "rect": [
      0,
      0,
@@ -1561,36 +2144,58 @@
    },
    {
     "op": "plants",
-    "label": "paddy_irrigated",
+    "label": "p1_redry_h8",
     "rect": [
      2,
      5,
      13,
-     9,
+     8,
      -1
     ]
    },
    {
+    "op": "plants",
+    "label": "p2_redry_h8",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_redry_h8",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
     "op": "probe",
-    "label": "water_irrigated",
+    "label": "water_redry_h8",
     "rows": [
      [
-      5,
+      6,
       0,
       14,
       -1
      ],
      [
-      7,
+      11,
       0,
       14,
-      -1
+      -2
      ],
      [
-      9,
+      16,
       0,
       14,
-      -1
+      -3
      ]
     ],
     "moistRows": [
@@ -1740,7 +2345,241 @@
      ]
     ],
     "objects": [
-     "spout"
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
+    ]
+   },
+   {
+    "op": "giveGoods",
+    "id": "tap",
+    "good": "Water",
+    "amount": 120
+   },
+   {
+    "op": "wait",
+    "hours": 36.0,
+    "capSeconds": 900
+   },
+   {
+    "op": "plants",
+    "label": "zones_tap",
+    "rect": [
+     0,
+     0,
+     39,
+     23,
+     0
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p1_tap",
+    "rect": [
+     2,
+     5,
+     13,
+     8,
+     -1
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p2_tap",
+    "rect": [
+     2,
+     10,
+     13,
+     13,
+     -2
+    ]
+   },
+   {
+    "op": "plants",
+    "label": "p3_tap",
+    "rect": [
+     2,
+     15,
+     13,
+     17,
+     -3
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "water_tap",
+    "rows": [
+     [
+      6,
+      0,
+      14,
+      -1
+     ],
+     [
+      11,
+      0,
+      14,
+      -2
+     ],
+     [
+      16,
+      0,
+      14,
+      -3
+     ]
+    ],
+    "moistRows": [
+     [
+      0,
+      0,
+      39,
+      0
+     ],
+     [
+      1,
+      0,
+      39,
+      0
+     ],
+     [
+      2,
+      0,
+      39,
+      0
+     ],
+     [
+      3,
+      0,
+      39,
+      0
+     ],
+     [
+      4,
+      0,
+      39,
+      0
+     ],
+     [
+      5,
+      0,
+      39,
+      0
+     ],
+     [
+      6,
+      0,
+      39,
+      0
+     ],
+     [
+      7,
+      0,
+      39,
+      0
+     ],
+     [
+      8,
+      0,
+      39,
+      0
+     ],
+     [
+      9,
+      0,
+      39,
+      0
+     ],
+     [
+      10,
+      0,
+      39,
+      0
+     ],
+     [
+      11,
+      0,
+      39,
+      0
+     ],
+     [
+      12,
+      0,
+      39,
+      0
+     ],
+     [
+      13,
+      0,
+      39,
+      0
+     ],
+     [
+      14,
+      0,
+      39,
+      0
+     ],
+     [
+      15,
+      0,
+      39,
+      0
+     ],
+     [
+      16,
+      0,
+      39,
+      0
+     ],
+     [
+      17,
+      0,
+      39,
+      0
+     ],
+     [
+      18,
+      0,
+      39,
+      0
+     ],
+     [
+      19,
+      0,
+      39,
+      0
+     ],
+     [
+      20,
+      0,
+      39,
+      0
+     ],
+     [
+      21,
+      0,
+      39,
+      0
+     ],
+     [
+      22,
+      0,
+      39,
+      0
+     ],
+     [
+      23,
+      0,
+      39,
+      0
+     ]
+    ],
+    "objects": [
+     "spout1",
+     "spout2",
+     "spout3",
+     "tap"
     ]
    },
    {
@@ -1751,7 +2590,7 @@
      10,
      0
     ],
-    "distance": 34,
+    "distance": 36,
     "pitch": 55,
     "yaw": 20
    },
@@ -1760,7 +2599,7 @@
     "name": "crops_end_dry",
     "focus": [
      35,
-     20,
+     19,
      0
     ],
     "distance": 14,

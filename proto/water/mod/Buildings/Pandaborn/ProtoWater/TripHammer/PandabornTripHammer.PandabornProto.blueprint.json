@@ -5,7 +5,7 @@
     "BuildingCost": [
       {
         "Id": "Log",
-        "Amount": 10
+        "Amount": 2
       }
     ],
     "ScienceCost": 0,
@@ -22,7 +22,7 @@
     "UndergroundModelDepth": 0
   },
   "TemplateSpec": {
-    "TemplateName": "PandabornNoria.PandabornProto",
+    "TemplateName": "PandabornTripHammer.PandabornProto",
     "BackwardCompatibleTemplateNames": [],
     "RequiredFeatureToggle": "",
     "DisablingFeatureToggle": ""
@@ -37,62 +37,13 @@
   "BlockObjectSpec": {
     "Size": {
       "X": 1,
-      "Y": 3,
-      "Z": 3
+      "Y": 1,
+      "Z": 2
     },
     "Blocks": [
       {
         "MatterBelow": "GroundOrStackable",
         "Occupations": "Corners, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "None",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "None",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Corners, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "None",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "None",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Corners, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "None",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -129,7 +80,7 @@
   "MechanicalBuildingSpec": {},
   "PlaceableBlockObjectSpec": {
     "ToolGroupId": "Water",
-    "ToolOrder": 60,
+    "ToolOrder": 65,
     "ToolShape": "Square",
     "Layout": "Single",
     "CustomPivot": {
@@ -157,8 +108,8 @@
     "MinRequiredOutflow": 0.15
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornNoria.DisplayName",
-    "DescriptionLocKey": "Building.PandabornNoria.Description",
+    "DisplayNameLocKey": "Building.PandabornTripHammer.DisplayName",
+    "DescriptionLocKey": "Building.PandabornTripHammer.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Power/WaterWheel/WaterWheelIcon"
   },
@@ -234,24 +185,10 @@
       }
     }
   },
-  "WaterMoverSpec": {
-    "WaterPerSecond": 0.1
+  "ManufactorySpec": {
+    "ProductionRecipeIds": [
+      "PandabornTripHammerTest"
+    ]
   },
-  "WaterInputFixedSpec": {},
-  "WaterInputSpec": {
-    "WaterInputCoordinates": {
-      "X": 0,
-      "Y": 0,
-      "Z": 0
-    }
-  },
-  "WaterOutputSpec": {
-    "WaterCoordinates": {
-      "X": 0,
-      "Y": 2,
-      "Z": 2
-    },
-    "DistanceToGroundOffset": 0.0,
-    "OverflowAllowed": false
-  }
+  "ProductionIncreaserSpec": {}
 }

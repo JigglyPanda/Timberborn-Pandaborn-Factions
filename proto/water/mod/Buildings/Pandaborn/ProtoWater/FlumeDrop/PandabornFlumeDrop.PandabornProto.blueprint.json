@@ -22,22 +22,22 @@
     "UndergroundModelDepth": 0
   },
   "TemplateSpec": {
-    "TemplateName": "PandabornFlumeTurn.PandabornProto",
+    "TemplateName": "PandabornFlumeDrop.PandabornProto",
     "BackwardCompatibleTemplateNames": [],
     "RequiredFeatureToggle": "",
     "DisablingFeatureToggle": ""
   },
   "BlockObjectSpec": {
     "Size": {
-      "X": 2,
+      "X": 1,
       "Y": 2,
-      "Z": 1
+      "Z": 2
     },
     "Blocks": [
       {
         "MatterBelow": "GroundOrStackable",
-        "Occupations": "Bottom, Top, Corners, Path, Middle",
-        "Stackable": "BlockObject",
+        "Occupations": "Corners",
+        "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
@@ -49,16 +49,16 @@
         "Underground": false
       },
       {
-        "MatterBelow": "GroundOrStackable",
+        "MatterBelow": "Any",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
         "Stackable": "BlockObject",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
-        "MatterBelow": "GroundOrStackable",
-        "Occupations": "Bottom, Top, Corners, Path, Middle",
-        "Stackable": "BlockObject",
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       }
@@ -84,14 +84,14 @@
   },
   "PlaceableBlockObjectSpec": {
     "ToolGroupId": "Landscaping",
-    "ToolOrder": 43,
+    "ToolOrder": 41,
     "ToolShape": "Square",
     "Layout": "SideLine",
     "CustomPivot": {
-      "HasCustomPivot": false,
+      "HasCustomPivot": true,
       "Coordinates": {
-        "X": 0.0,
-        "Y": 0.0,
+        "X": 0.5,
+        "Y": 0.5,
         "Z": 0.0
       }
     },
@@ -99,8 +99,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornFlumeTurn.DisplayName",
-    "DescriptionLocKey": "Building.PandabornFlumeTurn.Description",
+    "DisplayNameLocKey": "Building.PandabornFlumeDrop.DisplayName",
+    "DescriptionLocKey": "Building.PandabornFlumeDrop.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/ThrottlingValve/ThrottlingValveIcon"
   },
@@ -109,12 +109,12 @@
       {
         "X": 0,
         "Y": 0,
-        "Z": 0
+        "Z": 1
       },
       {
         "X": 0,
-        "Y": 0,
-        "Z": 1
+        "Y": 1,
+        "Z": 0
       }
     ]
   },
@@ -126,7 +126,7 @@
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/Landscaping/Levee/Levee.Folktails.Model"
+        "Model": "Buildings/Landscaping/ImpermeableFloor/ImpermeableFloor.Folktails.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
@@ -178,19 +178,27 @@
       }
     }
   },
-  "WaterObstacleSpec": {
-    "Coordinates": [
+  "PandabornFlumeSegmentSpec": {
+    "FlowCells": [
       {
-        "X": 1,
-        "Y": 0
+        "X": 0,
+        "Y": 0,
+        "Z": 1
       },
       {
         "X": 0,
-        "Y": 1
-      },
+        "Y": 1,
+        "Z": 0
+      }
+    ],
+    "InflowLimit": -1.0,
+    "ContaminationShutoff": 0.0
+  },
+  "WaterObstacleSpec": {
+    "Coordinates": [
       {
-        "X": 1,
-        "Y": 1
+        "X": 0,
+        "Y": 0
       }
     ]
   },

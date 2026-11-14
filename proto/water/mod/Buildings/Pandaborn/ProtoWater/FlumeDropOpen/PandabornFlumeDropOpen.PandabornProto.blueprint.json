@@ -22,7 +22,7 @@
     "UndergroundModelDepth": 0
   },
   "TemplateSpec": {
-    "TemplateName": "PandabornFlumeStep.PandabornProto",
+    "TemplateName": "PandabornFlumeDropOpen.PandabornProto",
     "BackwardCompatibleTemplateNames": [],
     "RequiredFeatureToggle": "",
     "DisablingFeatureToggle": ""
@@ -99,8 +99,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornFlumeStep.DisplayName",
-    "DescriptionLocKey": "Building.PandabornFlumeStep.Description",
+    "DisplayNameLocKey": "Building.PandabornFlumeDropOpen.DisplayName",
+    "DescriptionLocKey": "Building.PandabornFlumeDropOpen.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/ThrottlingValve/ThrottlingValveIcon"
   },
@@ -191,17 +191,7 @@
         "Z": 0
       }
     ],
-    "InflowLimit": -1.0
-  },
-  "WaterObstacleSpec": {
-    "Coordinates": [
-      {
-        "X": 0,
-        "Y": 0
-      }
-    ]
-  },
-  "FinishableWaterObstacleSpec": {
-    "Height": 1.0
+    "InflowLimit": -1.0,
+    "ContaminationShutoff": 0.0
   }
 }

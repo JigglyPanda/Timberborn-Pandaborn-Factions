@@ -22,7 +22,7 @@
     "UndergroundModelDepth": 0
   },
   "TemplateSpec": {
-    "TemplateName": "PandabornSpout.PandabornProto",
+    "TemplateName": "PandabornPaddySpout.PandabornProto",
     "BackwardCompatibleTemplateNames": [],
     "RequiredFeatureToggle": "",
     "DisablingFeatureToggle": ""
@@ -85,8 +85,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornSpout.DisplayName",
-    "DescriptionLocKey": "Building.PandabornSpout.Description",
+    "DisplayNameLocKey": "Building.PandabornPaddySpout.DisplayName",
+    "DescriptionLocKey": "Building.PandabornPaddySpout.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/FillValve/FillValveIcon"
   },

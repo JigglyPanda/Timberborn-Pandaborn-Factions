@@ -22,7 +22,7 @@
     "UndergroundModelDepth": 0
   },
   "TemplateSpec": {
-    "TemplateName": "PandabornFlumeRaised.PandabornProto",
+    "TemplateName": "PandabornFlumeBridge.PandabornProto",
     "BackwardCompatibleTemplateNames": [],
     "RequiredFeatureToggle": "",
     "DisablingFeatureToggle": ""
@@ -85,8 +85,8 @@
     "DevModeTool": false
   },
   "LabeledEntitySpec": {
-    "DisplayNameLocKey": "Building.PandabornFlumeRaised.DisplayName",
-    "DescriptionLocKey": "Building.PandabornFlumeRaised.Description",
+    "DisplayNameLocKey": "Building.PandabornFlumeBridge.DisplayName",
+    "DescriptionLocKey": "Building.PandabornFlumeBridge.Description",
     "FlavorDescriptionLocKey": "",
     "Icon": "Buildings/Landscaping/ThrottlingValve/ThrottlingValveIcon"
   },
@@ -167,6 +167,7 @@
         "Z": 1
       }
     ],
-    "InflowLimit": -1.0
+    "InflowLimit": -1.0,
+    "ContaminationShutoff": 0.0
   }
 }
