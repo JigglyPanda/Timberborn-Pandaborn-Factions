@@ -65,7 +65,8 @@ namespace PandabornDevHarness
             _lastScience = _scienceService.SciencePoints;
             _lastDayReal = Time.unscaledTime;
             _nextSample = Hours();
-            WriteDaily(false);   // day-0 baseline
+            try { WriteDaily(false); }   // day-0 baseline
+            catch (Exception e) { Harness.Error("playtest: first telemetry failed", e); }
         }
 
         private void EndTelemetry()
@@ -360,9 +361,10 @@ namespace PandabornDevHarness
             var invs = new List<Timberborn.InventorySystem.Inventory>();
             foreach (var entity in _entityRegistry.Entities)
             {
-                if (!entity || entity.GetComponent<Timberborn.InventorySystem.Inventory>() == null) continue;
+                if (!entity) continue;
                 invs.Clear();
-                entity.GetComponents(invs);
+                entity.GetComponents(invs);   // never GetComponent<Inventory>: it throws on a building with two inventories
+                if (invs.Count == 0) continue;
                 string t = entity.GetComponent<TemplateSpec>()?.TemplateName ?? "?";
                 foreach (var good in holderGoods.Split(','))
                     foreach (var inv in invs)

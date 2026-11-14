@@ -232,7 +232,8 @@ namespace PandabornDevHarness
             {
                 // the game driver starts the run (and the clock) after its settle phase and start shots
                 if (Harness.Result["run"] == null) return;
-                Begin();
+                try { Begin(); }
+                catch (Exception e) { Harness.Error("playtest: start failed", e); }
             }
             try
             {
