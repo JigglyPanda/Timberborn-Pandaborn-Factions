@@ -758,3 +758,75 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
   (vanilla `WaterOutputManufactoryLimiter` reads the `Workshop` component without a null check). So one worker running
   a tap 4 hours a day (12 Water goods) keeps a 10-tile strip, i.e. about 130 tiles of moist farmland, alive through a
   drought. A workerless tap would need our own small water-producer component. The worked tap was not run in game.
+
+### Verdicts after the prototype
+
+| Tool | Verdict | Key numbers |
+|---|---|---|
+| Flume (component route) | **Works** | 0.36 m³/s at gate "0.3"; −0.0005 m³/s per level tile; 60 level tiles deliver 92 %; sides and back watertight |
+| Flume Corner (2x2) | **Works** | turns twice, posts dry |
+| Flume Drop | **Works only with a solid leg** | open leg leaks backwards and floods in |
+| Flume Bridge | **Works** | carries 0.1–0.12 deep over a contaminated puddle with zero mixing |
+| Covered Flume | **Works** (with cap) | carries water under a path |
+| Flume Gate + badwater shut-off | **Works** | closes at contamination 0.05, reopens when clean; paddy stayed at 0.000 |
+| Flume status icons | **Works** | blocked / misaligned / intake dry / end dry / closed by badwater |
+| Paddy Spout | **Works** (with cap) | holds 0.30–0.33; cascades down a staircase |
+| Scoop Wheel | **Works with caveats** | 0 in still water; 0.025–0.038 m³/s in currents of 0.25–0.37; outlet must hang above the basin |
+| Treadwheel lift | **Not proven** | worker walks it (multiplier 1.0, efficiency 1.0) but the first layout had no outlet space; rerun pending/`district2` |
+| Water Trip-Hammer | **Works** | speed = current at its wheel (36–52 % in a 1-wide channel) |
+| Dew Collector | **Works** | 6.0 Water per temperate day, 2.1 per drought day |
+| Cistern Tap | **Data only, with a worker**; workerless crashes | 3 Water/h → 0.6 m³/h |
+| Paddy / moist / dry crops | **Works**; dry-ground thriving not yet shown | see crop section |
+| Wild spreading, dead-tree replanting | **Works as vanilla** | 2 → 11 bamboo in 7 days at chance 0.25; replant needs the forester toggle |
+
+### Player-facing rules that follow (for the design)
+
+* **Flume.** Water runs one way along the arrows; it never leaks from the sides and never runs back, even through a
+  flooded field. It can run level for 60+ tiles (it loses about 1.5 % of its flow per 10 tiles to evaporation) or step
+  down any number of levels with Flume Drops; it never climbs. A gate passes up to its setting (about 0.36 m³/s at the
+  prototype's "0.3"). Turn with a Flume Corner. A flume on the ground keeps the soil moist **6 tiles to each side**.
+* **Heads.** The water feeding a flume may stand at most 2 blocks above the flume bed (1 without the caps), or it runs
+  over gates, corners and spouts when the line backs up.
+* **Paddies.** One Paddy Spout holds a whole level paddy at its depth (default 0.3) — there is no "spout every N
+  tiles" limit on level ground; terraces need one spout per step, set at the lower edge of the paddy above. A paddy
+  deeper than 1 block kills rice. A paddy keeps the ground moist 16 tiles around it, so tea and pepper fields must sit
+  at least 17 tiles away or behind an irrigation barrier.
+* **Drought.** Moist soil stays moist for about 1–2 days after its water goes (longer near big pools), then crops go
+  brown; anything with a dying timer longer than the drought recovers fully when the water returns. A 10-tile strip
+  needs about 2 m³ (10 Water goods) a day to stay wet.
+* **Badwater.** Flume Gates close by themselves at 5 % contamination at the intake and show it; they reopen when the
+  intake is clean.
+* **Scoop Wheel / Trip-Hammer.** They work only where the current at the wheel is at least 0.15 and work harder in
+  faster water; they cannot run on water they lift themselves.
+* **Dew Collector.** About 6 Water a day in good weather, 2 in drought, no workers.
+
+### Recommended changes to this study and the design
+
+* Replace the study's moisture estimate (1–2 tiles beside a flume) with the measured 6 tiles per side and 16 tiles
+  around a 50-tile paddy. Pillar 3's "dry, near irrigation but not on it" needs explicit dry pockets (irrigation
+  barriers) or longer distances than the design assumes.
+* Build the flume as our component, not as restyled valves (identical physics, no ticking, no panel per tile, and only
+  the component can make Drops, Bridges and caps). Keep restyled valves only for an automatable gate.
+* Every lidded piece, gate, corner and spout gets a solid cap one block above its lid (now in the prototype); every
+  raised piece followed by a ground piece needs a solid leg (Flume Drop).
+* The Scoop Wheel and Trip-Hammer should be rated for ~0.3 current (consumer 30), have their power numbers relabelled
+  as current, and get our own "needs a current" status instead of vanilla's "connect it to a generator". Their outlets
+  hang one block above the basin floor (also required for compatibility with TimberCommons).
+* Default the Inkpaw forester's "replant dead trees" to on (vanilla default is off), or teach it.
+* A Paddy Spout's depth is measured from the field below at the moment it is built; show it on the panel.
+* Flume Gate shut-off: add the panel toggle (one checkbox); threshold 0.05 matches vanilla's own beaver-contamination
+  threshold.
+* Test plants must use models whose materials are in the faction's material collections (an Iron Teeth model in a
+  Folktails game threw "Material Kohlrabi not found").
+
+### Not proven yet
+
+* Treadwheel actually lifting water (pending `district2`); with a Ringtail worker (no Ringtail exists yet).
+* Lumberjack and gatherer working the same bamboo; farmers clearing and replanting dead crops (needs storages in the
+  district: `district2`).
+* A dry-ground crop thriving on truly dry soil next to a wet zone.
+* Cistern Tap run in game with a worker and hauled Water goods.
+* Raised/trestle step-down from a Bridge straight onto ground (only Drop from ground level tested), splitters, and a
+  flume crossing *under* a Bridge.
+* Save and reload of flume limiters and gate state (the components re-apply on load by design; not run).
+* Behaviour with TimberCommons disabled (all runs had the owner's mods enabled, TimberCommons included).
