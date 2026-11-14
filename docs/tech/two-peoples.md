@@ -739,4 +739,3 @@ Code: roughly 1,000–1,500 lines on top of the prototype's 640, all without Har
 (the prototype's runtime code ported as a feature module with the load-time compatibility check; not wired until its
 spec records, proposed in `proposed/RingtailSpecs.cs`, are added to `Pandaborn.Specs`).
 
-<!-- RESULTS -->
