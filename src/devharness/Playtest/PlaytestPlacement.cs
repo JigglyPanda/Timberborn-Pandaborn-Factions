@@ -11,6 +11,7 @@ using Timberborn.Coordinates;
 using Timberborn.EntitySystem;
 using Timberborn.Forestry;
 using Timberborn.Gathering;
+using Timberborn.Growing;
 using Timberborn.NaturalResourcesLifecycle;
 using Timberborn.PrioritySystem;
 using Timberborn.ScienceSystem;
@@ -517,11 +518,20 @@ namespace PandabornDevHarness
             return null;
         }
 
-        /// <summary>The coordinates of a living tree standing on this cell, if any.</summary>
+        /// <summary>
+        /// The coordinates of a tree a lumberjack can clear from this cell: grown (a sapling cannot be cut and would block the
+        /// tile for days), or dead with logs still on it. Null for no tree or a tree that cannot be cut yet.
+        /// </summary>
         private Vector3Int? TreeAt(Vector3Int cell)
         {
             foreach (var o in _blockService.GetObjectsAt(cell))
-                if (o && o.GetComponent<TreeComponent>() != null) return o.Coordinates;
+            {
+                if (!o || o.GetComponent<TreeComponent>() == null) continue;
+                var growable = o.GetComponent<Growable>();
+                var living = o.GetComponent<LivingNaturalResource>();
+                if (living != null && !living.IsDead && growable != null && !growable.IsGrown) return null;
+                return o.Coordinates;
+            }
             return null;
         }
 
