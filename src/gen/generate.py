@@ -94,7 +94,7 @@ def generate(a, v):
     g.run()
     files = g.files()
     lock = lockmod.read_lock(a.catalogue)
-    new, missing = lockmod.check_and_extend(lock, g.ids, allow_new=a.lock or a.dry_run)
+    new, missing, lock_changed = lockmod.check_and_extend(lock, g.ids, allow_new=a.lock or a.dry_run, gated=g.gated)
     if missing:
         print("generate: WARNING ids in the lock that the catalogue no longer produces (retire them with an alias):")
         for kind, i in missing:
@@ -103,6 +103,9 @@ def generate(a, v):
     report = {"adoptedModels": dict(sorted(g.adopted_models.items())),
               "standIns": sorted({i for i, n in g.notes if n.startswith("stand-in on")}),
               "waitingForCode": {k: v for k, v in sorted(g.code_waits.items())},
+              "modules": {"shipped": sorted(g.shipped_modules), "switches": g.module_switch,
+                          "on": sorted(m for m in g.shipped_modules if g.module_switch.get(m))},
+              "leftOut": {k: dict(sorted(v.items())) for k, v in sorted(g.gated.items())},
               "notes": [{"item": i, "note": n} for i, n in g.notes],
               "counts": {k: len(x) for k, x in sorted(g.ids.items())}}
     placeable = []
@@ -178,7 +181,7 @@ def generate(a, v):
     if missing:
         print("generate: WARNING %d model mesh(es) not built yet (run: tools/pandaborn.ps1 models): %s"
               % (len(missing), ", ".join(missing[:5])))
-    if new:
+    if new or (lock_changed and not a.dry_run):
         lockmod.write_lock(a.catalogue, lock)
         print("generate: appended %d id(s) to catalogue/ids.lock.json" % len(new))
     if not a.quiet:

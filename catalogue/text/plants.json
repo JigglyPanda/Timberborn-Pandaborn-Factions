@@ -47,7 +47,7 @@
     "Shoot bamboo": {
       "id": "PandabornShootBamboo",
       "name": "Shoot Bamboo",
-      "description": "A fast field crop, planted and harvested by the Farmstead. Its shoots can be eaten raw. Moist ground: it survives a short drought and dies in a long one.",
+      "description": "A fast field crop, planted and harvested by the Farmhouse. Its shoots can be eaten raw. Moist ground: it survives a short drought and dies in a long one.",
       "soil_rule": "Moist ground: it survives a short drought and dies in a long one.",
       "soil_keyword": "moist_ground",
       "flavor": "It grows fast enough to watch, and several villagers do."
@@ -79,7 +79,7 @@
     "Tea bush": {
       "id": "PandabornTeaBush",
       "name": "Tea Bush",
-      "description": "A lasting bush whose leaves are picked again and again. Planted by the Farmstead. Dry ground only: roots rot if they get wet.",
+      "description": "A lasting bush, planted by the Forester. Gatherers pick its leaves again and again. Dry ground only: roots rot if they get wet.",
       "soil_rule": "Dry ground only: roots rot if they get wet.",
       "soil_keyword": "dry_ground",
       "flavor": "The best leaves grow on the driest slope. The tea pickers mention this on every climb."
@@ -87,7 +87,7 @@
     "Sichuan pepper": {
       "id": "PandabornSichuanPepper",
       "name": "Sichuan Pepper",
-      "description": "A spice crop for hot pot, planted by the Farmstead. It is not a food on its own. Dry ground only: roots rot if they get wet.",
+      "description": "A spice bush for hot pot, planted by the Forester and picked by gatherers. Dry ground only: roots rot if they get wet.",
       "soil_rule": "Dry ground only: roots rot if they get wet.",
       "soil_keyword": "dry_ground",
       "flavor": "It does not burn the tongue. It makes the tongue forget where it is."

@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "kind": "tutorial",
+    "language": "enUS",
+    "status": "written by an AI for catalogue/tutorial.toml, not yet reviewed by the owner",
+    "keys": "tutorials: Pandaborn.Tutorial.<tutorial id> (the tutorial's name); stages: Pandaborn.Tutorial.<stage id> (the stage's intro). Step texts are the game's own.",
+    "style": "Vanilla tutorial intros are one or two short sentences that say why, not how (the step line says how)."
+  },
+  "tutorials": {
+    "PandabornBasics": "Basics",
+    "PandabornWaterAndFood": "Water and food",
+    "PandabornPoles": "Poles",
+    "PandabornHomes": "Homes",
+    "PandabornCooking": "Cooking",
+    "PandabornAfternoon": "The afternoon",
+    "PandabornFlumes": "Flumes",
+    "PandabornRingtails": "The Ringtails"
+  },
+  "stages": {
+    "PandabornTutorial.Water": "Every village starts at the water. A Water Pump fills the stores with clean water.",
+    "PandabornTutorial.Gatherer": "Gatherers pick wild food until the first fields are ready.",
+    "PandabornTutorial.ShootBamboo": "Shoot bamboo is the first crop: a Farmhouse plants it on moist ground, and its shoots are ready in three days.",
+    "PandabornTutorial.Lumberjack": "Lumberjacks cut trees for logs, and timber bamboo for poles.",
+    "PandabornTutorial.PoleMill": "Until the first bamboo has grown, a Pole Mill splits logs into poles. It needs power: a Power Wheel will do.",
+    "PandabornTutorial.TimberBamboo": "Timber bamboo is cut straight into poles, with no mill. A Forester plants it; it is ready within a week.",
+    "PandabornTutorial.Dens": "A Den houses a small family. Finish two before the village grows.",
+    "PandabornTutorial.Steamer": "Steamed shoots fill a villager better than raw ones and bring their own wellbeing.",
+    "PandabornTutorial.Hammock": "Afternoons are for naps. A Hammock gives one villager a nap in the sun.",
+    "PandabornTutorial.Bell": "Inkpaws work a short day and work it well. With a twelve-hour day, they work and walk a third faster.",
+    "PandabornTutorial.ScoopWheel": "A Scoop Wheel sits in a current and lifts water into a flume.",
+    "PandabornTutorial.Flume": "Flumes carry water downhill, one way, to fields and groves far from the river.",
+    "PandabornTutorial.MoonLoft": "Your first Moon Loft invites a Ringtail family. Ringtails work from the afternoon bell to dawn."
+  }
+}

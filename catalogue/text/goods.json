@@ -120,8 +120,8 @@
       "id": "PandabornTea",
       "singular": "Tea", "plural": "Tea",
       "eaten_raw": false,
-      "tooltip": "A drink with its own need. It also quenches some thirst: one measure of water makes three cups.",
-      "translator_comment": "Brewed tea, a drink. Also the name of the need satisfied by drinking it."
+      "tooltip": "Roasted tea leaves. Served with water at the Teahouse.",
+      "translator_comment": "Roasted (dry) tea leaves, ready to brew. Also the name of the need met at the Teahouse."
     },
     "Persimmons": {
       "id": "PandabornPersimmons",

@@ -7,7 +7,7 @@ id = "Inkpaws"                       # frozen: written into every save
 order = 2
 avatar = "Sprites/Pandaborn/Avatars/InkpawsAdult"
 child_avatar = "Sprites/Pandaborn/Avatars/InkpawsChild"
-bot_avatar = "Sprites/Avatars/FolktailsBot"
+bot_avatar = "Sprites/Pandaborn/Avatars/InkpawsBot"
 contaminated_adult_avatar = "Sprites/Pandaborn/Avatars/InkpawsContaminatedAdult"
 contaminated_child_avatar = "Sprites/Pandaborn/Avatars/InkpawsContaminatedChild"
 logo = "Sprites/Pandaborn/Avatars/InkpawsLogo"
@@ -58,6 +58,9 @@ models = { "Model_Preserved" = "Characters/Pandaborn/InkpawAdult.Model" }
 name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -NoCode)
 # BaseLiftingCapacity 18 (vanilla 14): settled 2026-11-14 (balance model q1: 3 logs and 6 poles a trip)
 set = { "GoodCarrierSpec.BaseLiftingCapacity" = 18 }
+# The afternoon bell (src/code/Pandaborn.Bell, DESIGN.md pillar 3): +33% work and walk at a 12 h day or shorter, none at 16 h.
+# Proven in stage 0 (docs/tech/stage0.md); the Inkpaws-only MovementSpeed cap is in modifiers.toml.
+module_specs = { Bell = { PandabornBellSpec = { WorkingSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], MovementSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], SuggestionDay = 4, SuggestionLocKey = "Pandaborn.Bell.Suggestion" } } }
 
 [characters.child]
 basis = "Characters/Beaver/BeaverChild"
@@ -71,7 +74,8 @@ name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -
 basis = "Bot.Folktails"
 template = "Bot.Inkpaws"
 path = "Characters/Pandaborn/Bot.Inkpaws"
-set = { "NumberedEntityNamerSpec.FormatLocKey" = "Bot.DisplayName.Inkpaws" }
+# lift 30 (vanilla 20) and 90 days before it wears out (vanilla 70): settled 2026-11-14 (DESIGN.md, the Wooden Ox)
+set = { "NumberedEntityNamerSpec.FormatLocKey" = "Bot.DisplayName.Inkpaws", "GoodCarrierSpec.BaseLiftingCapacity" = 30, "DeteriorableSpec.DeteriorationInDays" = 90 }
 
 [shaft_parts]
 basis = "Buildings/Power/PowerShaft/Models/ModularShaftParts.Folktails"
@@ -80,7 +84,19 @@ path = "Buildings/Pandaborn/PowerShaft/ModularShaftParts.Inkpaws"
 # ------------------------------------------------------------------------------- faction-keyed copies
 # Every vanilla DecalSpec / WorkerOutfitSpec of this faction is copied with FactionId = Inkpaws.
 [decals]
-copy_faction = "Folktails"
+# The faction's own tails and banners (DESIGN.md 2026-11-14: no beaver tails on panda banners). A decal's id is its
+# texture's asset name; every PNG in the folder becomes one DecalSpec for Inkpaws.
+own = { Tails = "Materials/Pandaborn/Decals/Tails", Banners = "Materials/Pandaborn/Decals/Banners" }
+
+# ------------------------------------------------------------------------------------------ tool groups
+# Bottom-bar groups of our own (BlockObjectToolGroupSpec; empty groups are hidden by the game). name_key = an entry of
+# text/faction.json "toolbar" (by suggested_key). The icon comes from the icons lane (docs/tech/icons.md).
+[tool_groups.PandabornNightWatch]
+order = 105                                   # after Wellbeing (100), before Monuments (120)
+name_key = "Pandaborn.ToolGroups.NightWatch"
+icon = "Sprites/Pandaborn/ToolGroups/PandabornNightWatch"
+waits_for = "Ringtails"
+note = "every Ringtail building, marked with the moon"
 
 [outfits]
 copy_faction = "Folktails"

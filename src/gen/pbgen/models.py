@@ -194,7 +194,10 @@ def apply_plant_model(gen, data, mid, item):
             tree["#Leftover"] = node
             continue
         stage, state = key.split("/")
-        if stage in col:
+        # colliders per state ("Mature/#Dead", docs/tech/plants.md) win over colliders per stage ("Mature")
+        if key in col:
+            node["CollidersSpec"] = _colliders(col[key])
+        elif stage in col:
             node["CollidersSpec"] = _colliders(col[stage])
         tree.setdefault(stage, {"Children": {}})["Children"][state] = node
     if "#Models" not in (data.get("Children") or {}):

@@ -101,7 +101,7 @@
     "Farmstead": {
       "id": "PandabornFarmstead", "basis": "new", "vanilla_basis": "EfficientFarmhouse", "who": "I",
       "name": null,
-      "description": "Employs farmers who plant and harvest crops: shoot bamboo and cabbage on moist ground, tea and Sichuan pepper on dry ground.",
+      "description": "Employs farmers who plant and harvest shoot bamboo and cabbage on moist ground.",
       "flavor": "A field is planted in the morning and admired in the afternoon.",
       "note": "CONTENT.md marks it re-themed, but the name is new, so all three strings are new."
     },
@@ -127,7 +127,7 @@
     "Tea Roastery": {
       "id": "PandabornTeaRoastery", "basis": "new", "who": "I",
       "name": "Tea Roastery",
-      "description": "Roasts tea leaves and brews them with water. One measure of water makes three cups of tea.",
+      "description": "Roasts tea leaves. Roasted tea keeps in any warehouse.",
       "flavor": "The smell reaches the fields well before the bell does."
     },
     "Trip-Hammer Mill": {
@@ -160,7 +160,7 @@
     "Forester": {
       "id": "Forester", "basis": "rethemed", "vanilla_id": "Forester", "who": "I",
       "name": null,
-      "description": "Plants timber bamboo, trees and bushes.",
+      "description": "Plants timber bamboo, trees and bushes, including tea and Sichuan pepper.",
       "flavor": "Timber bamboo is ready before the forester has finished admiring it.",
       "why": "Names timber bamboo; vanilla flavor mentions beaver society."
     },
@@ -181,8 +181,15 @@
     "Lantern Workshop": {
       "id": "PandabornLanternWorkshop", "basis": "new", "who": "I",
       "name": "Lantern Workshop",
-      "description": "Makes paper lanterns from paper and poles, for the Lantern Festival and for decoration.",
+      "description": "Makes paper lanterns from paper and poles.",
       "flavor": "Every lantern is tested once, at dusk, by whoever made it. This is not officially part of the job."
+    },
+    "Pole Mill": {
+      "id": "PandabornPoleMill", "basis": "new", "vanilla_basis": "LumberMill", "who": "I",
+      "name": "Pole Mill",
+      "description": "Splits logs into poles.",
+      "flavor": "Bamboo grows back in a week. The mill keeps the builders busy until it does.",
+      "note": "DESIGN.md 2026-11-14: the vanilla lumber mill (LumberMill.Inkpaws) with its own name; poles are the renamed Plank."
     },
     "Smoke Kiln": {
       "id": "PandabornSmokeKiln", "basis": "new", "vanilla_basis": "WoodWorkshop", "who": "I",
@@ -425,7 +432,7 @@
     "Dry-Stone Wall": {
       "id": "PandabornDryStoneWall", "basis": "new", "vanilla_basis": "Levee", "who": "-",
       "name": "Dry-Stone Wall",
-      "description": "A stone wall that stops moisture from spreading through the ground past it. Keeps a tea slope dry beside wet fields.",
+      "description": "Stops moisture from spreading through the ground past it.",
       "flavor": "No mortar and no hurry. Each stone was turned over twice before it was placed."
     },
 
@@ -630,13 +637,13 @@
     "Nap Platform": {
       "id": "PandabornNapPlatform", "basis": "new", "vanilla_basis": "RooftopTerrace", "who": "-",
       "name": "Nap Platform",
-      "description": "A raised deck where several villagers can nap at once. Can be stacked.",
+      "description": "A deck where several villagers nap at once, on the ground or on a roof.",
       "flavor": "There is room for several. Whoever arrives last naps on the stairs."
     },
     "Teahouse": {
       "id": "PandabornTeahouse", "basis": "new", "vanilla_basis": "DomedGarden", "who": "-",
       "name": "Teahouse",
-      "description": "A place to drink tea in good company. Keeps a stock of tea for its guests.",
+      "description": "Serves roasted tea and water to villagers off duty. Closed while it has none.",
       "flavor": "Inkpaws fill it in the afternoon and Ringtails in the morning. The kettle never cools."
     },
     "Slide and Swing": {
@@ -648,7 +655,7 @@
     "Panda Kindergarten": {
       "id": "PandabornKindergarten", "basis": "new", "vanilla_basis": "Agora", "who": "-",
       "name": "Kindergarten",
-      "description": "Where cubs and kits play together. Adults come to watch them, and it does the adults a great deal of good.",
+      "description": "A quiet place to watch the young. It does adults a great deal of good.",
       "flavor": "Officially, the adults are here to supervise.",
       "see": ["young.kindergarten_playing", "young.kindergarten_watching"]
     },
@@ -661,7 +668,7 @@
     "Hot Spring Bath": {
       "id": "PandabornHotSpringBath", "basis": "new", "vanilla_basis": "MudPit", "who": "-",
       "name": "Hot Spring Bath",
-      "description": "A warm pool for a long soak. It also wets the fur.",
+      "description": "A warm pool for a long soak. Uses water, and wets the fur.",
       "flavor": "Getting in takes a moment. Getting out takes resolve."
     },
     "Opera Stage": {
@@ -712,7 +719,7 @@
     "Night Forager's Post": {
       "id": "PandabornNightForagersPost", "basis": "new", "vanilla_basis": "GathererFlag", "who": "R",
       "name": "Night Gatherers' Post",
-      "description": "Employs Ringtail foragers who gather bamboo mushrooms and wild food from the afternoon bell to dawn.",
+      "description": "Employs Ringtail gatherers who forage from the afternoon bell to dawn.",
       "flavor": "Bamboo mushrooms are easiest to find by lantern light, or so the foragers insist.",
       "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]
     },
@@ -826,7 +833,7 @@
     "Sky Lantern": {
       "id": "PandabornSkyLantern", "basis": "new", "vanilla_basis": "EarthRecultivator", "who": "-",
       "name": "Sky Lantern",
-      "description": "A colossal sky lantern that carries seeds over the wasteland. When released, makes the villagers in the area extra happy.",
+      "description": "A colossal sky lantern, launched with paper lanterns. When released, makes the villagers in the area extra happy.",
       "flavor": "It rises slowly, the way everything here does, and then it is gone over the hills.",
       "see": ["wonder.release_button", "wonder.not_enough_goods", "wonder.not_enough_workers"],
       "note": "The game adds the vanilla wonder keyword lines (Buildings.Wonder, Buildings.Wonder.Description) by itself. Buildings.Wonder says 'The pinnacle of beaver engineering'; see messages.json 'vanilla_lines_that_say_beaver'."

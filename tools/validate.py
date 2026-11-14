@@ -488,6 +488,7 @@ def load_blueprints(c):
                        "need the merged result (validate the base mod with this one installed)" % c.keys[key][0])
     if not c.factions and c.profile == "pandaborn":
         R.error("no FactionSpec in the mod")
+    c.tutorial_factions = sorted(f for f, bp in c.factions.items() if "StartingFactionSpec" in bp)
 
 
 def vanilla_bp(c, key):
@@ -634,7 +635,7 @@ def check_template_names(c):
             R.error("%s: template name %s must end in %s (collision-proof names; docs/ENGINEERING.md)"
                     % (rel, n, " or ".join(suffixes)))
         for al in ts.get("BackwardCompatibleTemplateNames") or []:
-            if al in vanilla_names:
+            if al in vanilla_names and not (al in TUTORIAL_ALIASES and c.tutorial_factions):
                 R.error("%s: alias %s clashes with a vanilla template name or alias" % (rel, al))
             aliases.setdefault(al, []).append(rel)
     for al, rels in sorted(aliases.items()):
@@ -702,8 +703,8 @@ def check_faction(c, fid, bp):
     where = "Faction %s" % fid
     if "FactionWonderSpec" not in bp:
         R.error(where + ": FactionWonderSpec missing (the UI sound controller reads it without a null check)")
-    if "StartingFactionSpec" in bp:
-        R.warn(where + ": StartingFactionSpec is tutorial-only")
+    if "StartingFactionSpec" in bp and not any(r.lower().startswith("tutorials/") for r in c.files):
+        R.warn(where + ": StartingFactionSpec switches the tutorial system on, but the mod ships no tutorial")
     if "UnlockableFactionSpec" in bp:
         R.warn(where + ": UnlockableFactionSpec makes the faction locked at start")
     check_sound(c, "UI.Beavers.%s.Selected.Adult_Content" % fs.get("SoundId", ""), where + " SoundId")
@@ -1427,14 +1428,16 @@ def check_bundles(c):
 
 def produced_ids(c):
     out = {k: set() for k in ("faction", "template", "template_alias", "collection", "good", "need", "need_group",
-                              "recipe", "worker_type")}
+                              "recipe", "worker_type", "tool_group", "tutorial")}
     for key, bp in c.mod_bp.items():
         ts = bp.get("TemplateSpec")
         if ts:
             out["template"].add(ts.get("TemplateName"))
             out["template_alias"].update(ts.get("BackwardCompatibleTemplateNames") or [])
         for spec, kind in (("FactionSpec", "faction"), ("GoodSpec", "good"), ("NeedSpec", "need"),
-                           ("NeedGroupSpec", "need_group"), ("RecipeSpec", "recipe"), ("WorkerTypeSpec", "worker_type")):
+                           ("NeedGroupSpec", "need_group"), ("RecipeSpec", "recipe"), ("WorkerTypeSpec", "worker_type"),
+                           ("BlockObjectToolGroupSpec", "tool_group"), ("TutorialSpec", "tutorial"),
+                           ("TutorialStageSpec", "tutorial")):
             if spec in bp:
                 out[kind].add(bp[spec].get("Id"))
                 if kind in ("good", "need", "recipe"):
@@ -1463,7 +1466,7 @@ def check_lock(c):
     aliases = prod["template_alias"]
     for kind, entries in ids.items():
         for v, meta in entries.items():
-            if meta.get("retired") or meta.get("external"):
+            if meta.get("retired") or meta.get("external") or meta.get("gatedBy"):
                 continue
             if v not in prod.get(kind, set()) and not (kind == "template" and v in aliases):
                 R.error("locked %s id %s is no longer produced: saves that contain it lose it. Keep it, or give its "
@@ -1601,6 +1604,9 @@ MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "Pandabo
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
+# vanilla template names a tutorial faction must answer to (StairsUnlockedTrigger asks for Stairs.Folktails by name in
+# any faction with StartingFactionSpec; docs/tech/tutorial.md): an alias for one of them is required, not a clash
+TUTORIAL_ALIASES = {"Stairs.Folktails"}
 
 
 def gate(c, msg):

@@ -222,9 +222,9 @@ science = 80
 src = "G · design"
 
 [stats.PandabornScoopWheel]
-cost = { Log = 20, Plank = 30, Gear = 5 }
-science = 250
-src = "G (prototype measures)"
+cost = { Log = 20, Plank = 30 }
+science = 150
+src = "G · design 2026-11-14 (logs and poles, no gears: reachable in the first days)"
 
 [stats.PandabornPaddySpout]
 cost = { Plank = 6 }
@@ -248,9 +248,9 @@ workers = 1
 src = "G"
 
 [stats.PandabornDryStoneWall]
-cost = { Log = 4, Dirt = 2 }
+cost = { Log = 4, Plank = 2 }
 science = 120
-src = "G"
+src = "G · design 2026-11-14 (logs and poles only)"
 
 [stats.PandabornBambooWaterWheel]
 cost = { Log = 30, Plank = 15 }
@@ -354,7 +354,7 @@ science = 200
 src = "V"
 
 [stats.PandabornHotSpringBath]
-cost = { Log = 60, TreatedPlank = 30, Dirt = 20 }
+cost = { Log = 80, TreatedPlank = 30 }
 science = 1500
 src = "V"
 
@@ -372,3 +372,20 @@ src = "M q8 (labour of Fountain + Hall)"
 cost = { Gear = 2400, TreatedPlank = 2400, MetalBlock = 1800, Paper = 500 }
 science = 20000
 src = "V · M q8"
+
+[stats.Indicator]
+cost = { ScrapMetal = 2, Plank = 1 }
+science = 400
+src = "V, pine resin -> pole (the Inkpaws grow no pines)"
+
+[stats.PandabornStandingLantern]
+cost = { Plank = 2, PandabornPaperLantern = 1 }
+src = "design 2026-11-14 (lantern decorations are built from paper lanterns)"
+
+[stats.PandabornHangingLantern]
+cost = { Plank = 2, PandabornPaperLantern = 1 }
+src = "design 2026-11-14"
+
+[stats.PandabornStringLanterns]
+cost = { Plank = 2, PandabornPaperLantern = 3 }
+src = "design 2026-11-14"

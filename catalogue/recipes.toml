@@ -34,6 +34,7 @@ fuel_capacity = 0
 src = "M q3 (one cabbage makes several) (building: Pickle Yard)"
 
 [recipes.PandabornRiceFlour]
+waits_for = "Water"
 basis = "WheatFlour"
 cycle_hours = 0.5
 ingredients = { PandabornRice = 1 }
@@ -45,6 +46,7 @@ fuel_capacity = 0
 src = "V (Gristmill) (building: Trip-Hammer Mill)"
 
 [recipes.PandabornSweetRiceBalls]
+waits_for = "Water"
 basis = "MaplePastry"
 cycle_hours = 1.0
 ingredients = { PandabornRiceFlour = 1, PandabornPersimmons = 1 }
@@ -55,6 +57,7 @@ cycles_fuel_lasts = 10
 src = "V (Maple Pastry shape) · M q3 (building: Kitchen)"
 
 [recipes.PandabornBambooSeedCakes]
+waits_for = "Flowering"
 basis = "MaplePastry"
 cycle_hours = 1.5
 ingredients = { PandabornBambooSeed = 1, PandabornRiceFlour = 1 }
@@ -77,13 +80,13 @@ src = "M q3 (building: Hot Pot Hall)"
 [recipes.PandabornTea]
 basis = "Paper"
 cycle_hours = 0.75
-ingredients = { PandabornTeaLeaves = 1, Water = 1 }
-products = { PandabornTea = 3 }
+ingredients = { PandabornTeaLeaves = 1 }
+products = { PandabornTea = 2 }
 capacity = 20
 fuel = ""
 cycles_fuel_lasts = 0
 fuel_capacity = 0
-src = "design (3 cups per water) · M q4 (building: Tea Roastery)"
+src = "design 2026-11-14: roasting only; the Teahouse adds the water · M q4 (building: Tea Roastery)"
 
 [recipes.PandabornPaper]
 basis = "Paper"

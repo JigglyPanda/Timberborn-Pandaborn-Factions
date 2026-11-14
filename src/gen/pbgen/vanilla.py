@@ -9,6 +9,7 @@ from .util import GenError, asset_key, load_json, read_bytes, sha256_bytes
 ID_SPECS = {
     "GoodSpec": "Id", "NeedSpec": "Id", "NeedGroupSpec": "Id", "RecipeSpec": "Id", "WorkerTypeSpec": "Id",
     "GoodGroupSpec": "Id", "ToolGroupSpec": "Id", "BonusTypeSpec": "Id", "FactionSpec": "Id",
+    "BlockObjectToolGroupSpec": "Id", "TutorialSpec": "Id", "TutorialStageSpec": "Id",
 }
 COLLECTION_SPECS = ("TemplateCollectionSpec", "MaterialCollectionSpec", "NeedCollectionSpec", "GoodCollectionSpec")
 

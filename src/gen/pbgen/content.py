@@ -47,6 +47,7 @@ PLANT_FIELDS = {
     "demolish_hours": ("DemolishableSpec.DemolishTimeInHours", "float"),
 }
 COMMON_FIELDS = {"basis", "text", "icon", "set", "add", "delete", "aliases", "note", "src", "when_poles", "path", "not_in_sheet",
+                 "waits_for",
                  "name", "template", "standin", "models"}
 ICON_DIRS = {"good": "Goods", "plant": "Plants", "building": "Buildings"}
 
@@ -147,6 +148,8 @@ def gen_goods(gen):
     members = list(coll.get("vanilla") or [])
     for gid, g in goods.items():
         item = gen.cat.where("goods", "goods." + gid)
+        if gen.skip_for_module("good", gid, g):
+            continue
         if g.get("when_poles") and g["when_poles"] != gen.pole_mode:
             continue
         key = gen.v.ids["GoodSpec"].get(g.get("basis"))
@@ -191,6 +194,8 @@ def gen_needs(gen):
     members = list(coll.get("vanilla") or [])
     for nid, n in needs.items():
         item = gen.cat.where("needs", "needs." + nid)
+        if gen.skip_for_module("need", nid, n):
+            continue
         key = gen.v.ids["NeedSpec"].get(n.get("basis"))
         if key is None:
             raise GenError("%s: basis %r is not a vanilla need id" % (item, n.get("basis")))
@@ -239,6 +244,8 @@ def gen_recipes(gen):
     recipes = gen.cat["recipes"].get("recipes") or {}
     for rid, r in recipes.items():
         item = gen.cat.where("recipes", "recipes." + rid)
+        if gen.skip_for_module("recipe", rid, r):
+            continue
         key = gen.v.ids["RecipeSpec"].get(r.get("basis"))
         if key is None:
             raise GenError("%s: basis %r is not a vanilla recipe id" % (item, r.get("basis")))
@@ -277,6 +284,8 @@ def gen_plants(gen):
         members.append(gen.v.rel(gen.vanilla_template_key(v, "catalogue/plants.toml [collection]")))
     for pid, p in plants.items():
         item = gen.cat.where("plants", "plants." + pid)
+        if gen.skip_for_module("template", (p.get("template") or pid + gen.suffix), p):
+            continue
         key = gen.vanilla_template_key(p.get("basis", ""), item)
         data = gen.v.copy(key)
         template = p.get("template") or pid + gen.suffix

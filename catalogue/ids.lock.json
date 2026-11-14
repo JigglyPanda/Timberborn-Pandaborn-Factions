@@ -169,7 +169,7 @@
       },
       "LumberMill.Inkpaws": {
         "since": "2026-11-14",
-        "retired": "2026-11-14: never released; timber bamboo yields poles directly and the Wooden Ox recipe needs no bot parts"
+        "revived": "2026-11-14: the Pole Mill (DESIGN.md: logs to poles)"
       },
       "LumberjackFlag.Inkpaws": {
         "since": "2026-11-14"
@@ -232,7 +232,8 @@
         "since": "2026-11-14"
       },
       "PandabornCisternTap.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornCourtyardHouse.Inkpaws": {
         "since": "2026-11-14"
@@ -241,28 +242,35 @@
         "since": "2026-11-14"
       },
       "PandabornDewCollector.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornDryStoneWall.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornFestivalSquare.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Festival"
       },
       "PandabornFlume.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornFlumeBridge.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornFlumeCorner.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornFlumeDrop.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornFlumeGate.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornGardenMoonGate.Inkpaws": {
         "since": "2026-11-14"
@@ -292,7 +300,8 @@
         "since": "2026-11-14"
       },
       "PandabornKitchen.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornKiteWindmill.Inkpaws": {
         "since": "2026-11-14"
@@ -307,22 +316,27 @@
         "since": "2026-11-14"
       },
       "PandabornMoonLoft.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornNapPlatform.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornNightBuildersPost.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornNightCourierPost.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornNightForagersPost.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornOperaStage.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornOxWorkshop.Inkpaws": {
         "since": "2026-11-14"
@@ -331,7 +345,8 @@
         "since": "2026-11-14"
       },
       "PandabornPaddySpout.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornPandaStatue.Inkpaws": {
         "since": "2026-11-14"
@@ -349,7 +364,8 @@
         "since": "2026-11-14"
       },
       "PandabornScoopWheel.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornShootBamboo.Inkpaws": {
         "since": "2026-11-14"
@@ -370,7 +386,8 @@
         "since": "2026-11-14"
       },
       "PandabornStarTower.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornSteamer.Inkpaws": {
         "since": "2026-11-14"
@@ -394,10 +411,12 @@
         "since": "2026-11-14"
       },
       "PandabornTreadwheelLift.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornTripHammerMill.Inkpaws": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornVillageHall.Inkpaws": {
         "since": "2026-11-14"
@@ -547,7 +566,11 @@
         "since": "2026-11-14"
       }
     },
-    "template_alias": {},
+    "template_alias": {
+      "Stairs.Folktails": {
+        "since": "2026-11-14"
+      }
+    },
     "collection": {
       "Buildings.Inkpaws": {
         "since": "2026-11-14"
@@ -576,10 +599,12 @@
         "since": "2026-11-14"
       },
       "PandabornBambooSeed": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
       },
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
       },
       "PandabornBambooShoots": {
         "since": "2026-11-14"
@@ -603,7 +628,8 @@
         "since": "2026-11-14"
       },
       "PandabornRiceFlour": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornSichuanPepper": {
         "since": "2026-11-14"
@@ -615,7 +641,8 @@
         "since": "2026-11-14"
       },
       "PandabornSweetRiceBalls": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -632,7 +659,8 @@
         "since": "2026-11-14"
       },
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
       },
       "PandabornCabbage": {
         "since": "2026-11-14"
@@ -644,6 +672,13 @@
         "since": "2026-11-14"
       },
       "PandabornFestive": {
+        "since": "2026-11-14",
+        "gatedBy": "Festival"
+      },
+      "PandabornGardenMoonGate": {
+        "since": "2026-11-14"
+      },
+      "PandabornGoldfishBowl": {
         "since": "2026-11-14"
       },
       "PandabornGreatSittingPanda": {
@@ -662,7 +697,8 @@
         "since": "2026-11-14"
       },
       "PandabornPerformance": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
       },
       "PandabornPersimmons": {
         "since": "2026-11-14"
@@ -685,20 +721,26 @@
       "PandabornSteamedShoots": {
         "since": "2026-11-14"
       },
-      "PandabornSweetRiceBalls": {
+      "PandabornStringLanterns": {
         "since": "2026-11-14"
+      },
+      "PandabornSweetRiceBalls": {
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornTea": {
         "since": "2026-11-14"
       },
       "PandabornTeahouse": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "retired": "2026-11-14: merged into PandabornTea (one Tea need, met at the Teahouse); never released"
       }
     },
     "need_group": {},
     "recipe": {
       "PandabornBambooSeedCakes": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
       },
       "PandabornCuredPole": {
         "since": "2026-11-14"
@@ -719,7 +761,8 @@
         "since": "2026-11-14"
       },
       "PandabornRiceFlour": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornSteamedRice": {
         "since": "2026-11-14"
@@ -728,7 +771,8 @@
         "since": "2026-11-14"
       },
       "PandabornSweetRiceBalls": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "gatedBy": "Water"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -740,6 +784,82 @@
     "worker_type": {},
     "spec_class": {},
     "save_key": {},
-    "bundle": {}
+    "bundle": {},
+    "tool_group": {
+      "PandabornNightWatch": {
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
+      }
+    },
+    "tutorial": {
+      "PandabornAfternoon": {
+        "since": "2026-11-14"
+      },
+      "PandabornBasics": {
+        "since": "2026-11-14"
+      },
+      "PandabornCooking": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlumes": {
+        "since": "2026-11-14",
+        "gatedBy": "Water"
+      },
+      "PandabornHomes": {
+        "since": "2026-11-14"
+      },
+      "PandabornPoles": {
+        "since": "2026-11-14"
+      },
+      "PandabornRingtails": {
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
+      },
+      "PandabornTutorial.Bell": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Dens": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Flume": {
+        "since": "2026-11-14",
+        "gatedBy": "Water"
+      },
+      "PandabornTutorial.Gatherer": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Hammock": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Lumberjack": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.MoonLoft": {
+        "since": "2026-11-14",
+        "gatedBy": "Ringtails"
+      },
+      "PandabornTutorial.PoleMill": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.ScoopWheel": {
+        "since": "2026-11-14",
+        "gatedBy": "Water"
+      },
+      "PandabornTutorial.ShootBamboo": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Steamer": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.TimberBamboo": {
+        "since": "2026-11-14"
+      },
+      "PandabornTutorial.Water": {
+        "since": "2026-11-14"
+      },
+      "PandabornWaterAndFood": {
+        "since": "2026-11-14"
+      }
+    }
   }
 }

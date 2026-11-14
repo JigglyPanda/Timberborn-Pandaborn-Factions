@@ -178,6 +178,27 @@ foreach ($s in $stages) {
             $log = & dotnet build (Join-Path $repo 'src\code\Pandaborn.Code.sln') -c Release -v q --nologo "-p:ModOut=$codeOut" 2>&1
             if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Say "  $_" 'Red' }; $failed += $s; break }
             Say "code: built into $codeOut"
+            # ship only the modules whose data the catalogue has switched on (rules.toml [modules]); a module without
+            # its data would do nothing, and validate --release refuses it
+            $reportFile = "$GenDir.report.json"
+            if (Test-Path -LiteralPath $reportFile) {
+                $on = @((Get-Content -LiteralPath $reportFile -Raw | ConvertFrom-Json).modules.on)
+                $mt = Join-Path $codeOut 'Modules\modules.txt'
+                if (Test-Path -LiteralPath $mt) {
+                    $kept = @(); $dropped = @()
+                    foreach ($line in Get-Content -LiteralPath $mt) {
+                        $id = ($line -split '\s+')[0]
+                        if ($line.Trim() -eq '' -or $line.TrimStart().StartsWith('#') -or $on -contains $id) { $kept += $line; continue }
+                        $dropped += $id
+                        $file = ($line -split '\s+')[1]
+                        foreach ($f in @($file, ($file -replace '\.bin$', '.api.txt'))) {
+                            $pth = Join-Path $codeOut ('Modules\' + $f); if (Test-Path -LiteralPath $pth) { Remove-Item -LiteralPath $pth -Force }
+                        }
+                    }
+                    [IO.File]::WriteAllLines($mt, [string[]]$kept)
+                    if ($dropped) { Say "code: modules left out until their data is switched on: $($dropped -join ', ')" 'DarkYellow' }
+                }
+            }
             # the mod's own spec classes, for the validator (.bin files are assemblies loaded from bytes)
             $dlls = Join-Path (Split-Path $codeOut -Parent) 'code-dlls'
             if (Test-Path $dlls) { Remove-Item -Recurse -Force $dlls }

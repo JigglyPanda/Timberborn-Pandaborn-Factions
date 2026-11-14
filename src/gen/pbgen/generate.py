@@ -70,6 +70,38 @@ class Generator:
         return value
 
     # ------------------------------------------------------------------------------------------------- plumbing
+    # ------------------------------------------------------------------------------------------------- modules
+    def load_modules(self):
+        """A code module is on when it ships (src/code/modules.txt, unless the build has no code) and the catalogue
+        says its data is ready (rules.toml [modules]). Items that wait for a module that is not on are left out of the
+        build entirely (DESIGN.md: nothing in the toolbar lies); their ids stay locked."""
+        self.shipped_modules = set()
+        mt = os.path.join(REPO, "src", "code", "modules.txt")
+        if self.code_enabled and os.path.isfile(mt):
+            for line in open(mt, encoding="utf-8"):
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    self.shipped_modules.add(line.split()[0])
+        self.module_switch = dict(self.rules.get("modules") or {})
+        self.gated = {}   # kind -> {id: module}
+        # known up front, so buildings can drop recipes and need effects that are left out
+        for kind, file, table in (("good", "goods", "goods"), ("need", "needs", "needs"), ("recipe", "recipes", "recipes")):
+            for ident, entry in (self.cat[file].get(table) or {}).items():
+                self.skip_for_module(kind, ident, entry)
+
+    def module_on(self, module):
+        if module not in self.module_switch:
+            raise GenError("waits_for = %r: catalogue/rules.toml [modules] has no switch for that module" % module)
+        return module in self.shipped_modules and bool(self.module_switch[module])
+
+    def skip_for_module(self, kind, ident, entry):
+        """True (and recorded) if this item waits for a module that is off."""
+        mod = entry.get("waits_for") if isinstance(entry, dict) else None
+        if mod and not self.module_on(mod):
+            self.gated.setdefault(kind, {})[ident] = mod
+            return True
+        return False
+
     def add_id(self, kind, value, item):
         bucket = self.ids.setdefault(kind, {})
         if value in bucket and bucket[value] != item:
@@ -112,17 +144,23 @@ class Generator:
 
     # ---------------------------------------------------------------------------------------------------- run
     def run(self):
+        self.load_modules()
         self.plan_buildings()
         self.gen_characters()
         self.gen_shaft_parts()
         self.gen_faction_keyed("Decals", "DecalSpec", self.cat["faction"].get("decals", {}))
+        self.gen_own_decals(self.cat["faction"].get("decals", {}))
+        self.gen_tool_groups()
         self.gen_faction_keyed("WorkerOutfits", "WorkerOutfitSpec", self.cat["faction"].get("outfits", {}))
         content.gen_goods(self)
         self.gen_buildings()
         content.gen_needs(self)
+        self.plan_pole_rename()
         content.gen_recipes(self)
         content.gen_plants(self)
         self.gen_poles()
+        self.gen_modifiers()
+        self.gen_tutorial()
         self.gen_collections()
         self.gen_faction()
         return self
@@ -140,6 +178,9 @@ class Generator:
             self.apply_set(data, c.get("set"), item)
             if c.get("name_pool"):
                 self.apply_name_pool(data, c["name_pool"], item)
+            for spec, body in (c.get("add") or {}).items():
+                data[spec] = copy.deepcopy(body)
+            self.apply_module_specs(data, c.get("module_specs"), item)
             coll.append(self.emit(c["path"], data, item, "character", key))
         if coll:
             self.collections["Characters." + self.faction_id] = coll
@@ -147,8 +188,8 @@ class Generator:
     def apply_name_pool(self, data, pool, item):
         """Colonist names from text/names.json[pool] through the Names module (PandabornNamePoolSpec, src/code). The
         spec belongs to the mod's code, so the -NoCode fallback build leaves it out (vanilla names)."""
-        if not self.code_enabled:
-            self.note(item, "name pool %s left out: data-only build (vanilla names)" % pool)
+        if not self.module_on("Names"):
+            self.note(item, "name pool %s left out: the Names module is off (vanilla names)" % pool)
             return
         names = (self.cat.text.get("names") or {}).get(pool)
         if not names:
@@ -160,6 +201,43 @@ class Generator:
                          "written. Keep each line; translate only the gloss in brackets.", item)
         data["PandabornNamePoolSpec"] = {"NamePoolLocKey": key}
 
+    def apply_module_specs(self, data, module_specs, item):
+        """module_specs = { Module = { Spec = {...} } }: specs of the mod's own code, added only when that module is on
+        (with the module off the item stays a plain vanilla-behaving one, and no unknown spec ever ships)."""
+        for module, specs in (module_specs or {}).items():
+            if not self.module_on(module):
+                self.note(item, "%s left out: module %s is off" % (", ".join(sorted(specs)), module))
+                continue
+            for spec, body in specs.items():
+                if spec in data:
+                    raise GenError("%s: module_specs %s: the basis already has %s" % (item, module, spec))
+                data[spec] = copy.deepcopy(body)
+
+    def gen_modifiers(self):
+        """catalogue/modifiers.toml: faction-scoped blueprint modifiers (FactionSpec.BlueprintModifiers), each written as
+        Modifiers/Pandaborn/<Id>.optional.blueprint.json (never indexed; docs/tech/stage0.md)."""
+        for mid, m in (self.cat["modifiers"].get("modifiers") or {}).items():
+            item = self.cat.where("modifiers", "modifiers." + mid)
+            unknown = set(m) - {"original", "set", "data", "waits_for", "note"}
+            if unknown:
+                raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
+            if m.get("waits_for") and not self.module_on(m["waits_for"]):
+                self.gated.setdefault("modifier", {})[mid] = m["waits_for"]
+                continue
+            key = self.vanilla_template_key(m["original"], item)
+            data = copy.deepcopy(m.get("data") or {})
+            for path, value in (m.get("set") or {}).items():
+                node = data
+                parts = path.split(".")
+                for p_ in parts[:-1]:
+                    node = node.setdefault(p_, {})
+                node[parts[-1]] = copy.deepcopy(value)
+            base = self.v.get(key)
+            for spec in data:
+                if spec not in base:
+                    raise GenError("%s: %s has no %s to modify" % (item, m["original"], spec))
+            self.add_modifier(key, mid, data, item)
+
     def gen_shaft_parts(self):
         s = self.cat["faction"].get("shaft_parts")
         if not s:
@@ -168,6 +246,46 @@ class Generator:
         key = self.vanilla_template_key(s["basis"], item)
         data = self.v.copy(key)
         self.collections["ModularShaftParts." + self.faction_id] = [self.emit(s["path"], data, item, "shaft", key)]
+
+    def gen_own_decals(self, conf):
+        """[decals] own = { <Category> = "<folder under mod/PandabornFactions>" }: one DecalSpec per PNG in the folder.
+        A decal's id is its texture's asset name (duplicates in a category are dropped silently by the game)."""
+        item = self.cat.where("faction", "decals")
+        for category, folder in sorted((conf.get("own") or {}).items()):
+            d = os.path.join(self.mod_src, *folder.split("/"))
+            names = sorted(f[:-4] for f in os.listdir(d) if f.lower().endswith(".png")) if os.path.isdir(d) else []
+            if not names:
+                raise GenError("%s: own %s: no PNG in mod/PandabornFactions/%s" % (item, category, folder))
+            for name in names:
+                if not name.startswith("Pandaborn"):
+                    raise GenError("%s: decal texture %s must start with Pandaborn" % (item, name))
+                self.emit("Decals/Pandaborn/Decal.%s.%s" % (name, self.faction_id),
+                          {"DecalSpec": {"FactionId": self.faction_id, "Category": category,
+                                         "Texture": "%s/%s" % (folder, name)}}, item, "decals")
+
+    def gen_tool_groups(self):
+        """catalogue/faction.toml [tool_groups.<Id>]: bottom-bar groups of our own. An empty group is hidden by the
+        game, and the Id is global, so it is Pandaborn-scoped and locked (kind tool_group)."""
+        for gid, g in (self.cat["faction"].get("tool_groups") or {}).items():
+            item = self.cat.where("faction", "tool_groups." + gid)
+            unknown = set(g) - {"order", "name_key", "icon", "waits_for", "note"}
+            if unknown:
+                raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
+            if not gid.startswith("Pandaborn"):
+                raise GenError("%s: a tool group id is global; start it with Pandaborn" % item)
+            if g.get("waits_for") and not self.module_on(g["waits_for"]):
+                self.gated.setdefault("tool_group", {})[gid] = g["waits_for"]
+                continue
+            text = ((self.cat.text.get("faction") or {}).get("toolbar") or {})
+            entry = next((e for e in text.values() if isinstance(e, dict) and e.get("suggested_key") == g["name_key"]),
+                         None)
+            if not entry:
+                raise GenError("%s: no text/faction.json toolbar entry with suggested_key %s" % (item, g["name_key"]))
+            self.add_loc("Faction", g["name_key"], entry["text"], entry.get("note"), item)
+            self.add_id("tool_group", gid, item)
+            self.emit("BlockObjectToolGroups/Pandaborn/BlockObjectToolGroup.%s" % gid,
+                      {"BlockObjectToolGroupSpec": {"Id": gid, "Order": int(g["order"]), "NameLocKey": g["name_key"],
+                                                    "Icon": g["icon"], "FallbackGroup": False}}, item, "tool_group")
 
     def gen_faction_keyed(self, folder, spec, conf):
         src = conf.get("copy_faction")
@@ -206,6 +324,8 @@ class Generator:
                     self.available_vanilla.add(ts["TemplateName"])
         for bid, b in self.building_items().items():
             item = self.cat.where("buildings", "buildings." + bid)
+            if self.skip_for_module("template", b.get("template") or bid + self.suffix, b):
+                continue
             if b.get("vanilla"):
                 key = self.vanilla_template_key(b["vanilla"], item)
                 self.plan[bid] = {"vanilla": key, "item": item}
@@ -264,6 +384,8 @@ class Generator:
             raise GenError("catalogue/building_stats.toml has numbers for buildings that buildings.toml does not "
                            "have: %s" % ", ".join(orphans))
         for bid, b in self.building_items().items():
+            if bid not in self.plan:
+                continue   # waits for a module that is off
             p = self.plan[bid]
             item = p["item"]
             if "vanilla" in p:
@@ -282,8 +404,13 @@ class Generator:
             self.apply_costs(data, b, item)
             self.apply_workplace(data, b, item)
             if "recipes" in b:
-                self.require(data, "ManufactorySpec", item, "recipes")["ProductionRecipeIds"] = list(b["recipes"])
+                kept = [r for r in b["recipes"] if r not in self.gated.get("recipe", {})]
+                self.require(data, "ManufactorySpec", item, "recipes")["ProductionRecipeIds"] = kept
             if "needs_map" in b:
+                gone = [n for n in b["needs_map"].values() if n in self.gated.get("need", {})]
+                if gone:
+                    raise GenError("%s: needs_map targets %s, which wait for a module that is off; give the building the "
+                                   "same waits_for" % (item, ", ".join(gone)))
                 self.retarget_needs(data, b["needs_map"], item)
             if "effects" in b:
                 spec = next((x for x in ("AttractionSpec", "ContinuousEffectBuildingSpec") if x in data), None)
@@ -317,6 +444,7 @@ class Generator:
             self.apply_models(data, b.get("models"), item)
             self.apply_set(data, b.get("set"), item)
             self.apply_delete(data, b.get("delete"), item)
+            self.apply_module_specs(data, b.get("module_specs"), item)
             category = self.v.rel(key).split("/")[1] if self.v.rel(key).startswith("Buildings/") else "Misc"
             path = b.get("path") or "Buildings/Pandaborn/%s/%s/%s" % (category, bid, p["template"])
             coll.append(self.emit(path, data, item, "building", key))
@@ -517,23 +645,169 @@ class Generator:
             return
         if self.pole_mode != "rename":
             return
+        for vanilla_id, (key, k1, k2, icon, entry) in self.pole_renames.items():
+            self.add_loc("Goods", k1, entry["singular"], entry.get("translator_comment"), item)
+            self.add_loc("Goods", k2, entry["plural"], entry.get("translator_comment"), item)
+            spec = {"DisplayNameLocKey": k1, "PluralDisplayNameLocKey": k2}
+            if icon:
+                spec["Icon"] = icon
+            self.add_modifier(key, "Good." + vanilla_id, {"GoodSpec": spec}, item)
+        # vanilla recipes that make a renamed good (the Pole Mill's Plank recipe) show its new name and icon too
+        renamed = set(self.pole_renames)
+        for rkey in sorted(set(self.v.ids["RecipeSpec"].values())):
+            rs = self.v.get(rkey)["RecipeSpec"]
+            products = [p["Id"] for p in rs.get("Products") or []]
+            if products and products[0] in renamed:
+                _, _, k2, icon, _ = self.pole_renames[products[0]]
+                body = {"DisplayLocKey": k2}
+                if icon:
+                    body["Icon"] = icon
+                self.add_modifier(rkey, "Recipe." + rs["Id"], {"RecipeSpec": body}, item)
+
+    def plan_pole_rename(self):
+        """Poles mode "rename": vanilla good -> (blueprint key, name key, plural key, icon, text entry). Known before
+        recipes are written, so a recipe that makes Plank shows "Poles" and the pole icon (docs/tech/icons.md)."""
+        self.pole_renames = {}
+        if self.pole_mode != "rename":
+            return
+        poles = self.rules["poles"]
+        item = "catalogue/rules.toml [poles]"
         text = self.cat.text_items("goods")
         for vanilla_id, english in (poles.get("rename") or {"Plank": "Poles", "TreatedPlank": "Cured poles"}).items():
             entry = text.get(english)
             if not entry:
                 raise GenError("%s: text/goods.json has no entry %r" % (item, english))
-            st = entry["id"][len("Pandaborn"):] if entry["id"].startswith("Pandaborn") else entry["id"]
-            k1, k2 = "Pandaborn.Good.%s.DisplayName" % st, "Pandaborn.Good.%s.PluralDisplayName" % st
-            self.add_loc("Goods", k1, entry["singular"], entry.get("translator_comment"), item)
-            self.add_loc("Goods", k2, entry["plural"], entry.get("translator_comment"), item)
-            spec = {"DisplayNameLocKey": k1, "PluralDisplayNameLocKey": k2}
-            icon = content.find_icon(self, "good", entry["id"], None)
-            if icon:
-                spec["Icon"] = icon
             key = self.v.ids["GoodSpec"].get(vanilla_id)
             if key is None:
                 raise GenError("%s: rename: %s is not a vanilla good" % (item, vanilla_id))
-            self.add_modifier(key, "Good." + vanilla_id, {"GoodSpec": spec}, item)
+            st = entry["id"][len("Pandaborn"):] if entry["id"].startswith("Pandaborn") else entry["id"]
+            k1, k2 = "Pandaborn.Good.%s.DisplayName" % st, "Pandaborn.Good.%s.PluralDisplayName" % st
+            icon = content.find_icon(self, "good", entry["id"], None)
+            self.pole_renames[vanilla_id] = (key, k1, k2, icon, entry)
+            self.good_plural[vanilla_id] = k2
+            if icon:
+                self.good_icon[vanilla_id] = icon
+
+    # ------------------------------------------------------------------------------------------------ tutorial
+    STEP_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
+
+    def gen_tutorial(self):
+        """catalogue/tutorial.toml (docs/tech/tutorial.md). Every vanilla TutorialSpec is switched off for Inkpaws games,
+        ours are dormant base files switched on by Inkpaws modifiers, and no stage names a template the build lacks
+        (TutorialService.Load builds every stage eagerly and throws on a missing template)."""
+        self.tutorial_on = False
+        conf = self.cat["tutorial"]
+        if not (conf.get("tutorial") or {}).get("enabled"):
+            return
+        self.tutorial_on = True
+        text = self.cat.text.get("tutorial") or {}
+        shipped = set(self.ids.get("template", {})) | set(self.ids.get("template_alias", {})) | self.available_vanilla
+        shipped.add("Path")
+
+        def names_in(o, out):
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    if k in self.STEP_TEMPLATE_FIELDS:
+                        out.update(v if isinstance(v, list) else [v])
+                    else:
+                        names_in(v, out)
+            elif isinstance(o, list):
+                for x in o:
+                    names_in(x, out)
+            return out
+
+        stages = conf.get("stages") or {}
+        kept_stages = {}
+        for sid, st in stages.items():
+            item = self.cat.where("tutorial", 'stages."%s"' % sid)
+            unknown = set(st) - {"steps", "waits_for", "note"}
+            if unknown:
+                raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
+            if not sid.startswith("PandabornTutorial."):
+                raise GenError("%s: our stage ids start with PandabornTutorial." % item)
+            if st.get("waits_for") and not self.module_on(st["waits_for"]):
+                self.gated.setdefault("tutorial", {})[sid] = st["waits_for"]
+                continue
+            missing = sorted(n for n in names_in(st.get("steps") or [], set()) if n not in shipped)
+            if missing:
+                self.note(item, "stage left out: the build does not ship %s" % ", ".join(missing))
+                mods = sorted(set(self.gated.get("template", {}).get(n, "") for n in missing))
+                self.gated.setdefault("tutorial", {})[sid] = mods[0] if len(mods) == 1 and mods[0] else                     "templates " + ", ".join(missing)
+                continue
+            intro = (text.get("stages") or {}).get(sid)
+            if not intro:
+                raise GenError("%s: no intro in text/tutorial.json stages" % item)
+            key = "Pandaborn.Tutorial.%s" % sid[len("PandabornTutorial."):]
+            self.add_loc("Tutorial", key, intro, "Tutorial stage intro (Inkpaws)", item)
+            data = {"TutorialStageSpec": {"Id": sid, "IntroLocKey": key},
+                    "Children": {"Step%d" % (i + 1): dict(step) for i, step in enumerate(st.get("steps") or [])}}
+            if not data["Children"]:
+                raise GenError("%s: a stage needs at least one step" % item)
+            self.add_id("tutorial", sid, item)
+            self.emit("Tutorials/Pandaborn/Stages/%s" % sid, data, item, "tutorial")
+            kept_stages[sid] = True
+        tutorials = conf.get("tutorials") or {}
+        kept = {}
+        for tid, t in tutorials.items():
+            item = self.cat.where("tutorial", "tutorials." + tid)
+            unknown = set(t) - {"order", "after", "stages", "waits_for", "note"}
+            if unknown:
+                raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
+            if not tid.startswith("Pandaborn"):
+                raise GenError("%s: a tutorial id is global; start it with Pandaborn" % item)
+            if t.get("waits_for") and not self.module_on(t["waits_for"]):
+                self.gated.setdefault("tutorial", {})[tid] = t["waits_for"]
+                continue
+            st_ids = []
+            for sid in t.get("stages") or []:
+                if sid in stages:
+                    if sid in kept_stages:
+                        st_ids.append(sid)
+                    continue
+                vkey = self.v.ids["TutorialStageSpec"].get(sid)
+                if vkey is None:
+                    raise GenError("%s: stage %s is neither in [stages] nor a vanilla stage" % (item, sid))
+                missing = sorted(n for n in names_in(self.v.get(vkey), set()) if n not in shipped)
+                if missing:
+                    raise GenError("%s: vanilla stage %s names %s, which the build does not ship" % (item, sid,
+                                   ", ".join(missing)))
+                st_ids.append(sid)
+            if not st_ids:
+                self.gated.setdefault("tutorial", {})[tid] = "no stage left"
+                continue
+            kept[tid] = (t, st_ids, item)
+        # chains skip over left-out tutorials: an "after" that is gone is replaced by what it came after
+        def resolve(tid, seen=()):
+            out = []
+            for a in tutorials[tid].get("after") or []:
+                if a not in tutorials:
+                    raise GenError("tutorial %s: after %s, which tutorial.toml does not have" % (tid, a))
+                if a in kept:
+                    out.append(a)
+                elif a not in seen:
+                    out += resolve(a, seen + (a,))
+            return sorted(set(out))
+        for tid, (t, st_ids, item) in kept.items():
+            name = (text.get("tutorials") or {}).get(tid)
+            if not name:
+                raise GenError("%s: no name in text/tutorial.json tutorials" % item)
+            nkey = "Pandaborn.Tutorial.%s" % tid
+            self.add_loc("Tutorial", nkey, name, "Tutorial name (Inkpaws)", item)
+            self.add_id("tutorial", tid, item)
+            base = self.emit("Tutorials/Pandaborn/Tutorials.%s" % tid, {"TutorialSpec": {
+                "Id": tid, "NameLocKey": nkey, "RequiredTutorialIds": ["PandabornNever"], "SkipIfTutorialFinished": "",
+                "SortOrder": 1000 + int(t.get("order", 0)), "Stages": []}}, item, "tutorial")
+            mod = self.emit("Modifiers/Pandaborn/Tutorials.%s.optional" % tid, {"TutorialSpec": {
+                "RequiredTutorialIds": resolve(tid), "Stages": st_ids}}, item, "modifier")
+            self.modifiers.append((base, mod))
+        # every vanilla tutorial off in Inkpaws games
+        for key in sorted(set(self.v.ids["TutorialSpec"].values())):
+            ts = self.v.get(key)["TutorialSpec"]
+            self.add_modifier(key, "TutorialOff." + ts["Id"], {"TutorialSpec": {
+                "RequiredTutorialIds": ["PandabornNever"], "Stages": []}}, "catalogue/tutorial.toml (vanilla off)")
+        if "Stairs.Folktails" not in shipped:
+            raise GenError("catalogue/tutorial.toml: a tutorial faction needs a template answering to Stairs.Folktails "
+                           "(StairsUnlockedTrigger throws otherwise): give Stairs aliases = [\"Stairs.Folktails\"]")
 
     def add_modifier(self, original_key, name, data, item):
         path = self.emit("Modifiers/Pandaborn/%s.optional" % name, data, item, "modifier", original_key)
@@ -593,6 +867,8 @@ class Generator:
             "WonderCompletionImage": w["completion_image"], "WonderLaunchSound": w["launch_sound"],
             "WonderCompletionFlavorLocKey": w["completion_flavor"],
             "WonderCompletionMessageLocKey": w["completion_message"]}}
+        if getattr(self, "tutorial_on", False):
+            data["StartingFactionSpec"] = {}   # the game's tutorial system runs only for such factions
         self.add_id("faction", f["id"], item)
         self.emit("Factions/Pandaborn/Faction.%s" % f["id"], data, item, "faction")
         # faction texts from text/faction.json "core"
@@ -601,7 +877,14 @@ class Generator:
                   fs["GameOverFlavorLocKey"], w["completion_flavor"], w["completion_message"]}
         for e in core.values():
             if isinstance(e, dict) and e.get("key"):
-                self.add_loc("Faction", e["key"], e["text"], e.get("translator_comment"), "catalogue/text/faction.json")
+                # "when_modules": [{"modules": [...], "text": ...}]: the first variant whose modules are all on wins,
+                # so the text never promises what the build leaves out
+                txt = e["text"]
+                for v in e.get("when_modules") or []:
+                    if all(self.module_on(m) for m in v["modules"]):
+                        txt = v["text"]
+                        break
+                self.add_loc("Faction", e["key"], txt, e.get("translator_comment"), "catalogue/text/faction.json")
                 wanted.discard(e["key"])
         if wanted:
             raise GenError("%s: no text in text/faction.json core for %s" % (item, ", ".join(sorted(wanted))))

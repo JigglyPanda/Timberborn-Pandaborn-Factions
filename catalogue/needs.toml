@@ -13,37 +13,28 @@ basis = "RooftopTerrace"
 name_from = "own"
 group = "Fun"
 daily_delta = -0.6
-favorable_wellbeing = 2
+favorable_wellbeing = 3
 importance = 1.2
 wastable = false
 src = "M q2"
 
 [needs.PandabornTea]
-basis = "Bread"
-name_from = "good:PandabornTea"
-group = "Nutrition"
-daily_delta = -0.6
-favorable_wellbeing = 2
-importance = 1.0
-wastable = false
-src = "M q4"
-
-[needs.PandabornTeahouse]
+# One Tea need, met only at the Teahouse (DESIGN.md 2026-11-14): replaces the drunk-from-storage Tea (2) and the
+# Teahouse need (2, retired). About forty minutes at the Teahouse a day; five seats serve ~25 villagers.
 basis = "DomedGarden"
-name_from = "building:PandabornTeahouse"
+name_from = "good:PandabornTea"
 group = "SocialLife"
-daily_delta = -0.15
-favorable_wellbeing = 2
+daily_delta = -0.4
+favorable_wellbeing = 5
 importance = 1.0
 wastable = false
-src = "V (Domed Garden) · M q2 capacity"
-
+src = "design 2026-11-14 (one Tea need at the Teahouse) · wellbeing 5 = old Tea 2 + Teahouse 2 + 1 for the goods it uses"
 [needs.PandabornPlay]
 basis = "Lido"
 name_from = "own"
 group = "Fun"
 daily_delta = -0.2
-favorable_wellbeing = 2
+favorable_wellbeing = 3
 importance = 1.0
 wastable = false
 src = "V (Lido) · M"
@@ -53,7 +44,7 @@ basis = "Agora"
 name_from = "own"
 group = "SocialLife"
 daily_delta = -0.2
-favorable_wellbeing = 3
+favorable_wellbeing = 4
 importance = 1.0
 wastable = false
 src = "V (Agora) · M"
@@ -73,12 +64,13 @@ basis = "ContemplationSpot"
 name_from = "own"
 group = "Fun"
 daily_delta = -0.12
-favorable_wellbeing = 2
+favorable_wellbeing = 3
 importance = 1.0
 wastable = false
 src = "V (Contemplation Spot)"
 
 [needs.PandabornPerformance]
+waits_for = "Ringtails"   # only the Opera Stage raises it, and the Ringtails run it
 basis = "DanceHall"
 name_from = "own"
 group = "Fun"
@@ -123,7 +115,7 @@ basis = "Bread"
 name_from = "good:PandabornSteamedShoots"
 group = "Nutrition"
 daily_delta = -0.05
-favorable_wellbeing = 1
+favorable_wellbeing = 2
 importance = 1.0
 wastable = true
 src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
@@ -143,12 +135,13 @@ basis = "Bread"
 name_from = "good:PandabornSteamedRice"
 group = "Nutrition"
 daily_delta = -0.05
-favorable_wellbeing = 2
+favorable_wellbeing = 3
 importance = 1.0
 wastable = true
 src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
 
 [needs.PandabornSweetRiceBalls]
+waits_for = "Water"   # rice flour comes from the Trip-Hammer Mill, which waits for the water module
 basis = "Bread"
 name_from = "good:PandabornSweetRiceBalls"
 group = "Nutrition"
@@ -163,12 +156,13 @@ basis = "Bread"
 name_from = "good:PandabornHotPot"
 group = "Nutrition"
 daily_delta = -0.05
-favorable_wellbeing = 3
+favorable_wellbeing = 4
 importance = 1.0
 wastable = true
 src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
 
 [needs.PandabornBambooSeedCakes]
+waits_for = "Flowering"   # seed cakes need bamboo seed, left by a Great Flowering
 basis = "Bread"
 name_from = "good:PandabornBambooSeedCakes"
 group = "Nutrition"
@@ -179,6 +173,7 @@ wastable = true
 src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
 
 [needs.PandabornFestive]
+waits_for = "Festival"   # only a Lantern Festival raises it
 basis = "Bread"
 name_from = "own"
 group = "Boosts"
@@ -193,7 +188,7 @@ basis = "BrazierOfBonding"
 name_from = "building:PandabornMemorialArch"
 group = "Awe"
 daily_delta = -0.3
-favorable_wellbeing = 6
+favorable_wellbeing = 8
 importance = 1.0
 wastable = true
 src = "V (Awe) · M q8"
@@ -212,11 +207,11 @@ src = "V (Awe) · M q8"
 basis = "EarthRecultivator"
 name_from = "building:PandabornSkyLantern"
 group = "Awe"
-daily_delta = -0.3
+daily_delta = -0.01
 favorable_wellbeing = 10
 importance = 1.0
 wastable = true
-src = "V (Awe) · M q8"
+src = "V (Earth Recultivator: the awe lasts as a vanilla wonder's does, DESIGN.md 2026-11-14)"
 
 [needs.PandabornPandaStatue]
 basis = "BeaverStatue"
@@ -229,3 +224,22 @@ basis = "Weathervane"
 name_from = "building:PandabornBambooPinwheel"
 not_in_sheet = true
 src = "V (Weathervane): not in the stat sheet"
+
+[needs.PandabornGoldfishBowl]
+# own decoration needs (DESIGN.md 2026-11-14: each kind of decoration is its own small need, as in vanilla)
+basis = "BeaverStatue"
+name_from = "building:PandabornGoldfishBowl"
+not_in_sheet = true
+src = "V (Beaver Statue: wellbeing 2)"
+
+[needs.PandabornGardenMoonGate]
+basis = "BeaverStatue"
+name_from = "building:PandabornGardenMoonGate"
+not_in_sheet = true
+src = "V (Beaver Statue: wellbeing 2)"
+
+[needs.PandabornStringLanterns]
+basis = "Lantern"
+name_from = "building:PandabornStringLanterns"
+not_in_sheet = true
+src = "V (Lantern: wellbeing 1)"

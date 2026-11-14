@@ -22,3 +22,18 @@ rename = { Plank = "Poles", TreatedPlank = "Cured poles" }   # mode "rename": va
 # good id to the good the Inkpaws pay instead. mode = "good" above adds Plank -> PandabornPole and
 # TreatedPlank -> PandabornCuredPole automatically.
 substitute = {}
+
+[modules]
+# A code module is on when it ships (src/code/modules.txt) AND its data is ready here. Every catalogue item with
+# waits_for = "<Module>" is left out of the build until then (DESIGN.md: nothing in the toolbar lies); its ids stay
+# locked and the lock marks them gatedBy. Switch a module on only when its lane has handed over and its data is in
+# the catalogue; tools/validate.py fails a release whose shipped modules and data disagree.
+Bell = true
+Names = true
+Look = true
+Words = true
+Water = false        # data shapes in buildings.toml follow docs/tech/water.md "For the catalogue lane"
+Ringtails = false    # docs/tech/two-peoples.md 18.1
+RingtailsFallback = false
+Festival = false     # docs/tech/events.md 8 (no Festival module in src/code yet)
+Flowering = false

@@ -1,0 +1,11 @@
+# Faction-scoped blueprint modifiers: vanilla blueprints changed for Inkpaws games only (FactionSpec.BlueprintModifiers,
+# docs/tech/stage0.md). Each entry becomes Modifiers/Pandaborn/<id>.optional.blueprint.json and a {Original, Modifier}
+# pair on the faction. Fields: original (vanilla blueprint path or template name), set ("Spec.Field" = value) or data
+# (whole spec objects, merged by the game's JSON rules), waits_for (a module in rules.toml [modules]), note.
+# The poles rename (rules.toml [poles]) and the tutorial switch-offs are written by the generator, not listed here.
+
+[modifiers.BellMovementSpeedCap]
+original = "BonusTypes/BonusType.MovementSpeed"
+set = { "BonusTypeSpec.MaximumValue" = 2.66 }
+waits_for = "Bell"
+note = "vanilla cap 2.0 would cut the bell's walking half above about wellbeing 50 (2.0 x 1.33)"

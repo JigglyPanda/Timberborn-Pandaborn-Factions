@@ -60,6 +60,7 @@ consumption = { Hunger = 0.3, PandabornSteamedRice = 0.2 }
 src = "V (Bread)"
 
 [goods.PandabornSweetRiceBalls]
+waits_for = "Water"   # made from rice flour (Trip-Hammer Mill)
 basis = "CattailCracker"
 good_type = "Box"
 weight = 1
@@ -74,6 +75,7 @@ consumption = { Hunger = 0.3, PandabornHotPot = 0.2 }
 src = "V (Maple Pastry)"
 
 [goods.PandabornBambooSeedCakes]
+waits_for = "Flowering"
 basis = "MaplePastry"
 good_type = "Box"
 weight = 1
@@ -81,12 +83,12 @@ consumption = { Hunger = 0.3, PandabornBambooSeedCakes = 0.2 }
 src = "M q7"
 
 [goods.PandabornTea]
-basis = "MapleSyrup"
-good_type = "Liquid"
-weight = 2
-consumption = { Thirst = 0.2, PandabornTea = 0.3 }
-src = "M q4 (Tea need non-wastable: about 2 cups a day)"
-
+# roasted tea: a dry good, kept in any warehouse and used up at the Teahouse with water; nobody drinks it from storage
+basis = "WheatFlour"
+good_type = "Box"
+weight = 1
+consumption = {  }
+src = "design 2026-11-14 (one Tea need at the Teahouse; tea is a dry good)"
 [goods.PandabornRice]
 basis = "Wheat"
 good_type = "Box"
@@ -95,6 +97,7 @@ consumption = {  }
 src = "V (Wheat)"
 
 [goods.PandabornRiceFlour]
+waits_for = "Water"   # only the Trip-Hammer Mill grinds it
 basis = "WheatFlour"
 good_type = "Box"
 weight = 2
@@ -116,6 +119,7 @@ consumption = {  }
 src = "V"
 
 [goods.PandabornBambooSeed]
+waits_for = "Flowering"
 basis = "SunflowerSeeds"
 good_type = "Box"
 weight = 1

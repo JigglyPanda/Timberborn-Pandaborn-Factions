@@ -25,7 +25,11 @@
     },
     "description": {
       "key": "Faction.Inkpaws.Description",
-      "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well. When the afternoon bell rings, the Ringtails of the Night Watch take over the village until dawn.\nTheir motto: <i>Work well, rest well.</i>",
+      "text": "The Inkpaws grow bamboo, rice and tea on terraced hillsides. They work a short day and work it well, and spend the afternoon over tea, naps and company.\nTheir motto: <i>Work well, rest well.</i>",
+      "when_modules": [
+        { "modules": ["Water", "Ringtails"], "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well. When the afternoon bell rings, the Ringtails of the Night Watch take over the village until dawn.\nTheir motto: <i>Work well, rest well.</i>" },
+        { "modules": ["Water"], "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well, and spend the afternoon over tea.\nTheir motto: <i>Work well, rest well.</i>" }
+      ],
       "translator_comment": "Faction description on the new game screen. Inkpaws are giant pandas; Ringtails are red pandas who live in the same village and work at night. A flume is an open bamboo aqueduct."
     },
     "game_over_message": {

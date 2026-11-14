@@ -8,7 +8,7 @@ import subprocess
 from .util import GenError, REPO, dumps, load_json
 
 LOCK_KINDS = ("faction", "template", "template_alias", "collection", "good", "need", "need_group", "recipe",
-              "worker_type", "spec_class", "save_key", "bundle")
+              "worker_type", "spec_class", "save_key", "bundle", "tool_group", "tutorial")
 LOCK_NOTE = ("Append-only register of every id this mod has ever shipped or generated (docs/ENGINEERING.md). Never "
              "delete or rename an entry: a removed id breaks saves. A replaced id stays here and lives on as an alias "
              "(BackwardCompatibleTemplateNames / BackwardCompatibleIds); a retired building keeps its template. "
@@ -30,10 +30,28 @@ def read_lock(cat_dir):
     return data
 
 
-def check_and_extend(lock, produced, allow_new, today=None):
-    """produced: kind -> {id: item}. Returns (new ids, missing ids). Raises if new ids appear without allow_new."""
+def check_and_extend(lock, produced, allow_new, today=None, gated=None):
+    """produced: kind -> {id: item}; gated: kind -> {id: module} (left out until that module is on). Returns (new ids,
+    missing ids, changed). Raises if new ids appear without allow_new. Gated ids are marked "gatedBy" in the lock
+    (and must already be locked); the mark goes when they are produced again."""
     today = today or datetime.date.today().isoformat()
     new, missing = [], []
+    changed = False
+    for kind, ids in (gated or {}).items():
+        for i, module in ids.items():
+            meta = lock["ids"].get(kind, {}).get(i)
+            if meta is None:
+                new.append((kind, i, "waits for " + module))
+                continue
+            if meta.get("gatedBy") != module:
+                meta["gatedBy"] = module
+                changed = True
+    for kind, ids in produced.items():
+        for i in ids:
+            meta = lock["ids"].get(kind, {}).get(i)
+            if meta and "gatedBy" in meta:
+                del meta["gatedBy"]
+                changed = True
     for kind, ids in produced.items():
         if kind not in lock["ids"]:
             raise GenError("ids.lock.json has no kind %s" % kind)
@@ -42,7 +60,8 @@ def check_and_extend(lock, produced, allow_new, today=None):
                 new.append((kind, i, ids[i]))
     for kind, entries in lock["ids"].items():
         for i, meta in entries.items():
-            if i not in produced.get(kind, {}) and not meta.get("retired") and not meta.get("external"):
+            if i not in produced.get(kind, {}) and not meta.get("retired") and not meta.get("external") \
+                    and not meta.get("gatedBy"):
                 missing.append((kind, i))
     if new and not allow_new:
         lines = "\n".join("  %s %s (%s)" % n for n in new[:40])
@@ -51,7 +70,9 @@ def check_and_extend(lock, produced, allow_new, today=None):
                        % (len(new), lines, "\n  ..." if len(new) > 40 else ""))
     for kind, i, item in new:
         lock["ids"][kind][i] = {"since": today}
-    return new, missing
+        if item.startswith("waits for "):
+            lock["ids"][kind][i]["gatedBy"] = item[len("waits for "):]
+    return new, missing, changed
 
 
 def write_lock(cat_dir, lock):
