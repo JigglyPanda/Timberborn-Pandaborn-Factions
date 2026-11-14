@@ -1,0 +1,23 @@
+{
+  "Children": {
+    "Model_Preserved": {
+      "TimbermeshSpec": {
+        "Model": "Characters/Pandaborn/RingtailChild.Model"
+      },
+      "TransformSpec": {
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        }
+      }
+    }
+  },
+  "PandabornRingtailSpec": {
+    "Textures": [
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat1",
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat2",
+      "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat3"
+    ]
+  }
+}

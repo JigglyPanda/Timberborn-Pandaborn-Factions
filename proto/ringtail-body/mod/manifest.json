@@ -1,0 +1,11 @@
+{
+  "Name": "Pandaborn - Ringtail body test (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoRingtailBody",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only test of the red panda body for the Ringtails of Pandaborn - Factions: merges the new body, size and coats onto the Ringtail prototype's templates and takes test pictures. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [
+    { "Id": "JigglyPanda.PandabornProtoRingtails" }
+  ],
+  "OptionalMods": []
+}
