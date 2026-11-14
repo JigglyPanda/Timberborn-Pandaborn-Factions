@@ -175,7 +175,7 @@ The village's **Night Watch**, its stargazers and its artists. Not helpers.
 | Building | What it does |
 |---|---|
 | Night Builders' Post | Sites are stocked and raised overnight. The first Ringtail workplace, because it is the one a player sees |
-| Night Courier Post | Hauling through the evening and night |
+| Night Courier Post | Restocks every workshop and clears every flag overnight, so Inkpaws spend the day working instead of carrying. Inkpaw workplaces hold about a day's goods to make that possible; without couriers, workers fetch their own as in vanilla |
 | Night Forager's Post | Gathers bamboo mushrooms and wild food |
 | Star Tower | Science from the night sky |
 | Opera Stage | Face-changing opera for whoever is off duty |
@@ -355,4 +355,6 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | A flume waters the ground beside it; "flume, spout, pool" is no longer the taught unit | The water prototype measured six moist tiles to each side of a one-wide flume. The pool is for rice only |
 | 2026-11-14 | Tea and pepper survive about three wet days; they belong on the top bench | In the prototype a dry-ground crop died within a day anywhere near water, and moisture reaches sixteen tiles from a paddy |
 | 2026-11-14 | Inkpaw foresters replant dead trees by default | The vanilla default leaves a dead grove dead, which would end pole supply after one long drought |
+| 2026-11-14 | Night couriers restock workshops for the coming day; Inkpaw workplaces hold about a day's inputs and outputs | In the prototype the couriers made no hauls at all: builders, not haulers, supply sites, and nothing was left to carry at night. A day-sized shelf gives the night real work and takes carrying off the day crew, and changes nothing for a village without Ringtails |
+| 2026-11-14 | Ringtails walk at Inkpaw speed and keep it when loaded, by data alone | The game has a separate "carrying" speed per character; setting it equal to the walking speed is the whole feature |
 | 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
