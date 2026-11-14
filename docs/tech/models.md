@@ -270,3 +270,38 @@ order:
    Trip-Hammer Mill, Kitchen, Hot Pot Hall, Lantern Workshop, Smoke Kiln, Ox Workshop, Treadwheel Lift, Cistern Tap,
    Dry-Stone Wall, Bamboo Fence (vanilla fences are modular: needs a look at `WoodFence`'s segment models first), Potted
    Pine, Panda Statue, Pinwheel, Goldfish Bowl, Garden Moon Gate, Memorial Arch, Great Sitting Panda, Sky Lantern.
+
+## Pass 2 (2026-11-14)
+
+Test setup: the re-theme now comes from the `Pandaborn.Look` code module: `-ExtraMods
+E:\PandabornDev\build\PandabornCodeDev,E:\PandabornDev\build\proto\models` (never together with `proto/look-swap`).
+
+| Model | Change | Triangles |
+|---|---|---|
+| Village Hall | hall widened to the full 3x3 and raised (walls 1.62, ridge 2.7); **open bell tower** at the front-left corner, four braced timber legs, one small pyramid roof, a bronze bell (lime sheet painted bronze) on a yoke with its rope down to the veranda (`bell` in model.json marks it for a future sound or swing); signal mast with the district fire kept at the back right | 3842 |
+| Flume | split culm **weathered by height** (dark green-brown at the waterline, fresh toward the rims), two proud culm nodes, lighter split-culm rims, a rope-bound **sleeve at the upstream joint**, a pair of leaning stakes lashed to the rims with a tie across | 404 |
+| Flume Bridge | two lashed bamboo **X-trestles** at the cell's front and back edges with head beams | 528 |
+| Flume Drop | dry-stone step, upper culm narrowing into a lipped **spout** over a flat-stone splash basin, lower run on stakes | 718 |
+| Flume Corner | an **open junction**: stone-floored basin, stone kerbs, bamboo lips and posts; the three solid cells a heap of rubble stones with a bamboo clump and a lantern post (no box) | 976 |
+| Flume Gate | iron-banded **sluice board** in a timber frame, raised by a rope from a long bamboo **lever** with a stone counterweight | 498 |
+| Paddy Spout | inherits the new culm | 594 |
+| Cistern small / medium / large | **glazed stoneware vats**: full-bellied body on a stone plinth, dark-brown (small, large) or celadon (medium) glaze by vertex colour with a lighter glaze-pool band at the shoulder, rolled lip, planked wooden lid over the back of the mouth, ladder or stair | 520 / 798 / 1414 |
+| Night Builders' Post (new) | Builders' Hut: open lean-to shed of building stores; **moon window** in the back wall and a glowing moon plaque on a pole above the roof | ~1300 |
+| Night Courier Post (new) | Hauling Post: plaster wall pierced by a **moon gate**, back-baskets on a rack behind; moon plaque above | ~1400 |
+| Night Gatherers' Post (new) | Gatherer Flag: moon plaque and crescent on a bamboo pole, mushroom basket, back-basket | ~520 |
+
+The moon mark (kit `moon_window`: the round cracked-ice window region in a lime disc with a timber ring) is shared
+by all Ringtail buildings, glows at night, and sits high enough to read from the game camera.
+
+### What the catalogue lane must change to adopt pass 2 and the new models
+
+* Village Hall: nothing new in the blueprint; colliders changed (four boxes now), `bell` is informational.
+* Flume set, Paddy Spout: the water pieces still wait for the water module; when adopted, take `waterCells` and
+  `solidCells` from model.json (unchanged from pass 1).
+* Cistern, CisternMedium, CisternLarge: re-run the generator (meshes and colliders changed; footprints unchanged).
+* New models, each with its stand-in as basis: `CourtyardHouse` (DoubleLodge; **entrance at z = 0**, not the
+  vanilla Double Lodge's z = 1), `TerraceHouse` (TripleLodge; entrance z = 0, top blocks Stackable `BlockObject`),
+  `StarTower` (Observatory; set `ObservatoryAnimatorSpec` from `observatoryAnimator`), `NapPlatform`
+  (RooftopTerrace; eight `#Slot#Seat` nodes), `StandingLantern`, `HangingLantern`, `StringLanterns` (Lantern),
+  `NightBuildersPost` (BuildersHut), `NightCourierPost` (HaulingPost), `NightForagersPost` (GathererFlag; keeps the
+  `Seat` slot keyword), `DewCollector` (entrance and `#Slot#Entrance` added).
