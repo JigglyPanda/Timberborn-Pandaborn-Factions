@@ -13,7 +13,8 @@ namespace Pandaborn.Ringtails
     /// filter dwellers without patching AutoAssignableDwelling.CanAssignDweller). This rule only corrects afterwards, with public
     /// API, and never changes how many dwellers a home has, so vanilla's own "move to an emptier home" logic has nothing to undo:
     ///   * a Ringtail in a non-loft home and an Inkpaw in a loft swap homes;
-    ///   * a homeless Ringtail takes a free loft bed.
+    ///   * a homeless Ringtail takes a free loft bed, or else a loft bed held by an Inkpaw (who moves to a free non-loft bed,
+    ///     or becomes homeless when there is none: loft beds belong to Ringtails).
     /// Runs every few ticks, a handful of moves at a time. Off unless the Ringtail feature is on.
     /// </summary>
     public class LoftHousingRule : ITickableSingleton, ILoadableSingleton
@@ -28,6 +29,7 @@ namespace Pandaborn.Ringtails
 
         public int Swaps { get; private set; }
         public int MovesIntoLofts { get; private set; }
+        public int Evictions { get; private set; }
 
         public LoftHousingRule(RingtailService ringtailService, DistrictCenterRegistry districtCenterRegistry)
         {
@@ -66,25 +68,28 @@ namespace Pandaborn.Ringtails
                 int n = System.Math.Min(ringtailsOutside.Count, inkpawsInLofts.Count);
                 for (int i = 0; i < n; i++) Swap(ringtailsOutside[i], inkpawsInLofts[i]);
             }
-            if (homelessRingtails != null)
-            {
-                var freeLofts = FreeLofts(population);
-                if (freeLofts == null) return;
-                foreach (var dweller in homelessRingtails)
-                {
-                    var loft = freeLofts.FirstOrDefault(d => d.HasFreeSlots);
-                    if (loft == null) break;
-                    loft.AssignDweller(dweller);
-                    MovesIntoLofts++;
-                }
-            }
-        }
-
-        private List<Dwelling> FreeLofts(DistrictPopulation population)
-        {
+            if (homelessRingtails == null) return;
             var registry = population.GetComponent<DistrictBuildingRegistry>();
-            if (registry == null) return null;
-            return registry.GetEnabledBuildingsInstant<Dwelling>().Where(d => IsLoft(d) && d.HasFreeSlots).ToList();
+            if (registry == null) return;
+            var dwellings = registry.GetEnabledBuildingsInstant<Dwelling>().ToList();
+            int next = 0;
+            foreach (var dweller in homelessRingtails)
+            {
+                var loft = dwellings.FirstOrDefault(d => IsLoft(d) && d.HasFreeSlots);
+                if (loft == null && inkpawsInLofts != null && next < inkpawsInLofts.Count)
+                {
+                    // a loft bed held by an Inkpaw: move the Inkpaw to a free non-loft bed, or (none free) out; lofts are Ringtail homes
+                    var inkpaw = inkpawsInLofts[next++];
+                    loft = inkpaw.Home;
+                    var den = dwellings.FirstOrDefault(d => !IsLoft(d) && d.HasFreeSlots);
+                    loft.UnassignDweller(inkpaw);
+                    if (den != null) den.AssignDweller(inkpaw);
+                    else Evictions++;
+                }
+                if (loft == null) break;
+                loft.AssignDweller(dweller);
+                MovesIntoLofts++;
+            }
         }
 
         private void Swap(Dweller ringtail, Dweller inkpaw)

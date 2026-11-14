@@ -1,0 +1,19 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 3,
+    "reload": {
+      "disableTemplateRegistration": true
+    },
+    "place": [
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "RingtailHaulingPost.Inkpaws",
+      "RingtailGathererFlag.Inkpaws"
+    ]
+  }
+}

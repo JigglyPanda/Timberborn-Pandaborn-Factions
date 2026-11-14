@@ -26,10 +26,15 @@ namespace Pandaborn.Ringtails.Dev
         private readonly ConstructionFactory _constructionFactory;
         private readonly ITerrainService _terrainService;
         private readonly EntityRegistry _entityRegistry;
+        private readonly IBlockService _blockService;
+        private readonly EntityService _entityService;
 
         public PathConnector(TemplateService templateService, PreviewPlacerFactory previewPlacerFactory, ConstructionFactory constructionFactory,
-                             ITerrainService terrainService, EntityRegistry entityRegistry)
+                             ITerrainService terrainService, EntityRegistry entityRegistry, IBlockService blockService,
+                             EntityService entityService)
         {
+            _entityService = entityService;
+            _blockService = blockService;
             _templateService = templateService;
             _previewPlacerFactory = previewPlacerFactory;
             _constructionFactory = constructionFactory;
@@ -44,32 +49,37 @@ namespace Pandaborn.Ringtails.Dev
                 .FirstOrDefault(s => s.GetSpec<TemplateSpec>()?.TemplateName == "Path");
             if (pathSpec == null) return "no Path template";
             var placer = _previewPlacerFactory.Create(pathSpec);
-            var origin = center.CenterCoordinates;
+            // PositionedEntrance.Coordinates is the tile just outside the door (DoorstepCoordinates is the tile inside it)
+            var origin = center.GetComponent<BlockObject>().PositionedEntrance.Coordinates;
             var paths = new HashSet<Vector3Int>();
             var network = new HashSet<Vector3Int> { origin };
-            if (CanPlace(placer, origin)) Place(pathSpec, origin, paths);
-            int connected = 0, failed = 0;
+            if (!HasPath(origin) && CanPlace(placer, origin)) Place(pathSpec, origin, paths);
+            string diagnostics = "origin " + origin + " " + Diagnose(placer, origin);
+            int connected = 0, failed = 0, relocated = 0;
             var failures = new List<string>();
+            var unconnected = new List<BlockObject>();
             try
             {
                 var targets = _entityRegistry.Entities
                     .Select(e => e.GetComponent<BlockObject>())
                     .Where(b => b && b.HasEntrance && b.GetComponent<DistrictCenter>() == null && b.GetComponent<DistrictBuilding>() != null)
-                    .OrderBy(b => (b.PositionedEntrance.DoorstepCoordinates - origin).sqrMagnitude)
+                    .OrderBy(b => (b.PositionedEntrance.Coordinates - origin).sqrMagnitude)
                     .ToList();
                 foreach (var target in targets)
                 {
-                    var goal = target.PositionedEntrance.DoorstepCoordinates;
+                    var goal = target.PositionedEntrance.Coordinates;
                     var route = Search(placer, goal, network, paths, origin, radius);
                     if (route == null)
                     {
+                        if (failed < 3) diagnostics += "; goal " + goal + " " + Diagnose(placer, goal);
                         failed++;
                         failures.Add(target.GetComponent<TemplateSpec>()?.TemplateName);
+                        unconnected.Add(target);
                         continue;
                     }
                     foreach (var cell in route)
                     {
-                        if (!paths.Contains(cell)) Place(pathSpec, cell, paths);
+                        if (!paths.Contains(cell) && !HasPath(cell) && CanPlace(placer, cell)) Place(pathSpec, cell, paths);
                         network.Add(cell);
                     }
                     connected++;
@@ -79,15 +89,15 @@ namespace Pandaborn.Ringtails.Dev
             {
                 placer.HideAllPreviews();
             }
-            return "connected " + connected + ", not connected " + failed + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "")
-                   + ", path tiles " + paths.Count;
+            return "connected " + connected + ", relocated and connected " + relocated + ", not connected " + failed + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "")
+                   + ", path tiles " + paths.Count + " [" + diagnostics + "]";
         }
 
         private List<Vector3Int> Search(PreviewPlacer placer, Vector3Int goal, HashSet<Vector3Int> network, HashSet<Vector3Int> paths,
                                         Vector3Int origin, int radius)
         {
             if (network.Contains(goal)) return new List<Vector3Int>();
-            if (!paths.Contains(goal) && !CanPlace(placer, goal)) return null;
+            if (!paths.Contains(goal) && !HasPath(goal) && !CanPlace(placer, goal)) return null;
             var previous = new Dictionary<Vector3Int, Vector3Int> { [goal] = goal };
             var queue = new Queue<Vector3Int>();
             queue.Enqueue(goal);
@@ -111,7 +121,7 @@ namespace Pandaborn.Ringtails.Dev
                     if (previous.ContainsKey(next)) continue;
                     if (Math.Abs(next.x - origin.x) > radius || Math.Abs(next.y - origin.y) > radius) continue;
                     if (!_terrainService.Contains(new Vector2Int(next.x, next.y))) continue;
-                    if (!network.Contains(next) && !paths.Contains(next) && !CanPlace(placer, next)) continue;
+                    if (!network.Contains(next) && !paths.Contains(next) && !HasPath(next) && !CanPlace(placer, next)) continue;
                     previous[next] = cell;
                     queue.Enqueue(next);
                 }
@@ -119,12 +129,91 @@ namespace Pandaborn.Ringtails.Dev
             return null;
         }
 
-        private static bool CanPlace(PreviewPlacer placer, Vector3Int cell)
+        /// <summary>
+        /// Places buildings on the district center's terrace (same height, so a path can reach them), at least 2 tiles apart,
+        /// checked with the game's own placement validation. Nothing is ever deleted (deleting and re-placing during the same
+        /// frame left objects that failed validation when the save was loaded).
+        /// </summary>
+        public string PlaceOnDistrictLevel(DistrictCenter center, IEnumerable<KeyValuePair<string, bool>> buildings, int radius = 30)
         {
+            var origin = center.GetComponent<BlockObject>().PositionedEntrance.Coordinates;
+            var used = new List<Vector3Int>();
+            int placed = 0, failed = 0;
+            var failures = new List<string>();
+            foreach (var request in buildings)
+            {
+                var spec = _templateService.GetAll<PlaceableBlockObjectSpec>().FirstOrDefault(s => s.GetSpec<TemplateSpec>()?.TemplateName == request.Key);
+                if (spec == null) { failed++; failures.Add(request.Key + " (not available)"); continue; }
+                var placer = _previewPlacerFactory.Create(spec);
+                bool done = false;
+                try
+                {
+                    for (int r = 4; r <= radius && !done; r++)
+                        for (int dx = -r; dx <= r && !done; dx++)
+                            for (int dy = -r; dy <= r && !done; dy++)
+                            {
+                                if (Math.Max(Math.Abs(dx), Math.Abs(dy)) != r) continue;
+                                var cell = new Vector3Int(origin.x + dx, origin.y + dy, origin.z);
+                                if (!_terrainService.Contains(new Vector2Int(cell.x, cell.y))) continue;
+                                if (_terrainService.GetTerrainHeightBelow(new Vector3Int(cell.x, cell.y, cell.z + 4)) != origin.z) continue;
+                                if (used.Any(u => Math.Abs(u.x - cell.x) < 4 && Math.Abs(u.y - cell.y) < 4)) continue;
+                                foreach (var o in new[] { Orientation.Cw0, Orientation.Cw90, Orientation.Cw180, Orientation.Cw270 })
+                                {
+                                    var placement = placer.GetBuildableCoordinates(new[] { new Placement(cell, o, FlipMode.Unflipped) }).FirstOrDefault();
+                                    if (placement.Coordinates != cell) continue;
+                                    var builder = new EntitySetup.Builder(spec.Blueprint);
+                                    if (request.Value) _constructionFactory.CreateAsFinished(builder, placement);
+                                    else _constructionFactory.CreateAsUnfinished(builder, placement);
+                                    used.Add(cell);
+                                    placed++;
+                                    done = true;
+                                    break;
+                                }
+                            }
+                }
+                finally
+                {
+                    placer.HideAllPreviews();
+                }
+                if (!done) { failed++; failures.Add(request.Key); }
+            }
+            return "placed " + placed + ", not placed " + failed + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "");
+        }
+
+        private bool HasPath(Vector3Int cell)
+        {
+            if (!_blockService.Contains(cell)) return false;
+            var path = _blockService.GetPathObjectAt(cell);
+            return path != null && path.GetComponent<Timberborn.PathSystem.PathSpec>() != null;
+        }
+
+        private string Diagnose(PreviewPlacer placer, Vector3Int cell)
+        {
+            var parts = new List<string> { "terrain " + _terrainService.GetTerrainHeightBelow(new Vector3Int(cell.x, cell.y, cell.z + 4)) };
+            for (int dz = -1; dz <= 1; dz++)
+            {
+                var c = new Vector3Int(cell.x, cell.y, cell.z + dz);
+                if (!_blockService.Contains(c)) continue;
+                var objects = _blockService.GetObjectsAt(c);
+                parts.Add("z" + c.z + ":" + (CanPlace(placer, c) ? "ok" : "no") + (HasPath(c) ? "+path" : "")
+                          + (objects.Count > 0 ? "[" + string.Join("|", objects.Select(o => o.GetComponent<TemplateSpec>()?.TemplateName)) + "]" : ""));
+            }
+            return string.Join(" ", parts);
+        }
+
+        private bool CanPlace(PreviewPlacer placer, Vector3Int cell)
+        {
+            if (!_blockService.Contains(cell) || _blockService.AnyObjectAt(cell)) return false;
             return placer.GetBuildableCoordinates(new[] { new Placement(cell, Orientation.Cw0, FlipMode.Unflipped) }).Any();
         }
 
         private void Place(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)
+        {
+            try { PlaceUnchecked(spec, cell, paths); }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Ringtails] path at " + cell + " not placed: " + e.Message); }
+        }
+
+        private void PlaceUnchecked(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)
         {
             _constructionFactory.CreateAsFinished(new EntitySetup.Builder(spec.Blueprint), new Placement(cell, Orientation.Cw0, FlipMode.Unflipped));
             paths.Add(cell);

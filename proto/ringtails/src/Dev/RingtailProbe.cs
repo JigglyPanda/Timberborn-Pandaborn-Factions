@@ -169,6 +169,15 @@ namespace Pandaborn.Ringtails.Dev
             if (Time.unscaledTime - _primaryUiAt < 6f) return;
             _spawned = true;
             var center = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
+            if (!HarnessBridge.LoadSave && center != null && _config["place"] is JArray place)
+            {
+                // our own placement on the district's terrace (the harness's ring search also uses other terraces)
+                var list = place.Select(t => t.Type == JTokenType.String
+                    ? new KeyValuePair<string, bool>((string)t, true)
+                    : new KeyValuePair<string, bool>((string)t["template"], t["finished"]?.Value<bool>() ?? true)).ToList();
+                try { Event("place", _pathConnector.PlaceOnDistrictLevel(center, list)); }
+                catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] placing buildings failed: " + e); }
+            }
             if (!HarnessBridge.LoadSave && (_config["connectPaths"]?.Value<bool>() ?? true) && center != null)
             {
                 try { Event("paths", _pathConnector.Connect(center)); }
@@ -295,7 +304,7 @@ namespace Pandaborn.Ringtails.Dev
             _pickups.Clear();
 
             sample["playerNumbers"] = PlayerNumbers();
-            sample["housing"] = new JObject { ["swaps"] = _housingRule.Swaps, ["movesIntoLofts"] = _housingRule.MovesIntoLofts };
+            sample["housing"] = new JObject { ["swaps"] = _housingRule.Swaps, ["movesIntoLofts"] = _housingRule.MovesIntoLofts, ["evictions"] = _housingRule.Evictions };
             _samples.Add(sample);
             Write();
         }

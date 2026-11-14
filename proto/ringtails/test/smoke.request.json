@@ -1,20 +1,42 @@
 {
-  "buildings": [
-    "Lodge.Folktails", "Lodge.Folktails", "Lodge.Folktails",
-    "RingtailLoft.Inkpaws", "RingtailLoft.Inkpaws",
-    "RingtailHaulingPost.Inkpaws", "RingtailGathererFlag.Inkpaws",
-    "LumberjackFlag.Folktails", "GathererFlag.Folktails",
-    { "template": "Lodge.Folktails", "finished": false },
-    { "template": "Lodge.Folktails", "finished": false }
-  ],
+  "buildings": [],
   "ringtails": {
     "spawn": 4,
     "spawnKits": 1,
     "kitGrowth": 0.97,
     "housingRule": false,
     "shots": [
-      { "name": "d0_h10_ringtail", "day": 0, "hour": 10, "select": "ringtail" },
-      { "name": "d0_h19_ringtailWorkplace", "day": 0, "hour": 19, "select": "ringtailWorkplace" }
+      {
+        "name": "d0_h10_ringtail",
+        "day": 0,
+        "hour": 10,
+        "select": "ringtail"
+      },
+      {
+        "name": "d0_h19_ringtailWorkplace",
+        "day": 0,
+        "hour": 19,
+        "select": "ringtailWorkplace"
+      }
+    ],
+    "place": [
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "RingtailHaulingPost.Inkpaws",
+      "RingtailGathererFlag.Inkpaws",
+      "LumberjackFlag.Folktails",
+      "GathererFlag.Folktails",
+      {
+        "template": "Lodge.Folktails",
+        "finished": false
+      },
+      {
+        "template": "Lodge.Folktails",
+        "finished": false
+      }
     ]
   }
 }

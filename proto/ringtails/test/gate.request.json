@@ -1,35 +1,109 @@
 {
-  "buildings": [
-    "Lodge.Folktails", "Lodge.Folktails", "Lodge.Folktails",
-    "RingtailLoft.Inkpaws", "RingtailLoft.Inkpaws",
-    "RingtailHaulingPost.Inkpaws", "RingtailGathererFlag.Inkpaws",
-    "LumberjackFlag.Folktails", "GathererFlag.Folktails",
-    { "template": "Lodge.Folktails", "finished": false },
-    { "template": "Lodge.Folktails", "finished": false },
-    { "template": "Lodge.Folktails", "finished": false }
-  ],
+  "buildings": [],
   "ringtails": {
     "spawn": 4,
     "spawnKits": 1,
     "kitGrowth": 0.97,
     "housingRule": true,
     "shots": [
-      { "name": "d0_h11_afternoon_ringtail", "day": 0, "hour": 11, "select": "ringtail" },
-      { "name": "d0_h12_districtCenter", "day": 0, "hour": 12, "select": "districtCenter" },
-      { "name": "d0_h18_night_courierLoft", "day": 0, "hour": 18, "select": "ringtailWorkplace" },
-      { "name": "d0_h21_night_ringtail", "day": 0, "hour": 21, "select": "ringtail" },
-      { "name": "d1_h2_morning_loft", "day": 1, "hour": 2, "select": "loft" },
-      { "name": "d1_h4_morning_inkpaw", "day": 1, "hour": 4, "select": "inkpaw" },
-      { "name": "d1_h5_morning_inkpawWorkplace", "day": 1, "hour": 5, "select": "inkpawWorkplace" },
-      { "name": "d1_h19_night_foragersNest", "day": 1, "hour": 19, "select": "ringtailGatherer" },
-      { "name": "d1_h22_night_overview", "day": 1, "hour": 22, "select": "none" },
-      { "name": "d2_h20_night_ringtail", "day": 2, "hour": 20, "select": "ringtail" }
+      {
+        "name": "d0_h11_afternoon_ringtail",
+        "day": 0,
+        "hour": 11,
+        "select": "ringtail"
+      },
+      {
+        "name": "d0_h12_districtCenter",
+        "day": 0,
+        "hour": 12,
+        "select": "districtCenter"
+      },
+      {
+        "name": "d0_h18_night_courierLoft",
+        "day": 0,
+        "hour": 18,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "d0_h21_night_ringtail",
+        "day": 0,
+        "hour": 21,
+        "select": "ringtail"
+      },
+      {
+        "name": "d1_h2_morning_loft",
+        "day": 1,
+        "hour": 2,
+        "select": "loft"
+      },
+      {
+        "name": "d1_h4_morning_inkpaw",
+        "day": 1,
+        "hour": 4,
+        "select": "inkpaw"
+      },
+      {
+        "name": "d1_h5_morning_inkpawWorkplace",
+        "day": 1,
+        "hour": 5,
+        "select": "inkpawWorkplace"
+      },
+      {
+        "name": "d1_h19_night_foragersNest",
+        "day": 1,
+        "hour": 19,
+        "select": "ringtailGatherer"
+      },
+      {
+        "name": "d1_h22_night_overview",
+        "day": 1,
+        "hour": 22,
+        "select": "none"
+      },
+      {
+        "name": "d2_h20_night_ringtail",
+        "day": 2,
+        "hour": 20,
+        "select": "ringtail"
+      }
     ],
     "reload": {
       "shots": [
-        { "name": "reload_ringtail", "atRunHour": 1, "select": "ringtail" },
-        { "name": "reload_courierLoft", "atRunHour": 2, "select": "ringtailWorkplace" }
+        {
+          "name": "reload_ringtail",
+          "atRunHour": 1,
+          "select": "ringtail"
+        },
+        {
+          "name": "reload_courierLoft",
+          "atRunHour": 2,
+          "select": "ringtailWorkplace"
+        }
       ]
-    }
+    },
+    "place": [
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "Lodge.Folktails",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "RingtailHaulingPost.Inkpaws",
+      "RingtailGathererFlag.Inkpaws",
+      "LumberjackFlag.Folktails",
+      "GathererFlag.Folktails",
+      {
+        "template": "Lodge.Folktails",
+        "finished": false
+      },
+      {
+        "template": "Lodge.Folktails",
+        "finished": false
+      },
+      {
+        "template": "Lodge.Folktails",
+        "finished": false
+      }
+    ]
   }
 }

@@ -1,0 +1,4 @@
+{
+  "buildings": [ "Lodge.Folktails", "HaulingPost.Folktails", "RingtailHaulingPost.Inkpaws" ],
+  "ringtails": { "spawn": 2, "spawnKits": 1 }
+}
