@@ -298,6 +298,13 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   (holder in `E:\PandabornDev\build\test\gametest.lock.json`) and waits while another run holds it or any Timberborn
   process is open, printing who it waits on. Exit code 2 only after `-WaitForGameSeconds` (default 1800). The mutex is
   released on every exit path; a holder that died is taken over.
+* **The game runs on a hidden Windows desktop by default** (since bee3cb4): no window on the owner's screen, no focus,
+  no real keyboard or mouse; rendering, UI and screenshots work (run `quiet-trial-1`). `-Visible` shows the game on
+  the real desktop: never pass it, and never start Timberborn any other way, while the owner is at the PC.
+* **Holding the queue:** `tools\game_test_hold.ps1` takes the test mutex after the run in progress and holds it (file
+  `E:\PandabornDev\build\test\HOLD`); delete that file to release. Queued runs keep waiting and nothing is cancelled;
+  held time does not count against `-WaitForGameSeconds`. A waiter started before a change to `run_game_test.ps1`
+  keeps the old script in memory: stop and requeue it.
 * Builds `src/devharness` (dev-only mod) to `E:\PandabornDev\build\PandabornDevHarness`, junctions it into `Mods`,
   writes `E:\PandabornDev\build\test\request.json`, launches the game, waits, kills it on timeout, then removes the
   junction (`-KeepInstalled` keeps it; it is inert without a request), deletes the `PB_AutoTest_<run>` save and
