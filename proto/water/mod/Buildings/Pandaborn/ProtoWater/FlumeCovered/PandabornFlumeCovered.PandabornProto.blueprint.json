@@ -185,5 +185,10 @@
         "Z": 1
       }
     ]
+  },
+  "PandabornEntityStateSpec": {
+    "Features": [
+      "Water"
+    ]
   }
 }

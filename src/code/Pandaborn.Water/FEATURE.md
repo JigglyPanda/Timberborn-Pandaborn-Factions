@@ -7,6 +7,10 @@ What it does, per spec (all specs in `Pandaborn.Specs/WaterSpecs.cs`, only on `.
   arrow) and lifts the piece's vanilla inert obstacle with the public `WaterObstacle.RemoveFromWaterService()`. On demolish
   it removes the limiters; the vanilla obstacle's own exit is then a no-op. Limiters are not saved by the game and are
   re-added on every load. `FlumeMonitor` (every 30 ticks) shows one status: blocked, misaligned, intake dry, end dry.
+  Loading re-adds the inert obstacle for one tick, which deletes up to one block of water in each flow cell; with a
+  `PandabornEntityStateSpec` on the piece the depth and contamination of each flow cell are saved (entry
+  `Water.Flume|1|t=<day>;<depth>,<contamination>;...`) and put back one tick after the lift, only when the entry's game
+  time matches the loaded game (an entry left from an older session with the module on is ignored).
 * `PandabornSolidCellsSpec { Cells }` -> `SolidCells`: full obstacles at extra cells (sealed Flume Drop body, caps).
 * `PandabornFlumeGateSpec { DefaultFlow, MaxFlow, FlowStep, ContaminationShutoff }` -> `FlumeGate`: an inflow limit on
   the gate cell (m3/s), and the badwater guard: above `ContaminationShutoff` behind the gate it closes (re-adds the inert
@@ -173,6 +177,11 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 * type `Timberborn.TickSystem.TickableComponent`
   * method `.ctor()`
 
+**Timberborn.TimeSystem**
+
+* type `Timberborn.TimeSystem.IDayNightCycle`
+  * method `get_PartialDayNumber()`
+
 **Timberborn.WaterBuildings**
 
 * type `Timberborn.WaterBuildings.FillValve`
@@ -201,6 +210,8 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `WaterDepth(UnityEngine.Vector3Int)`
   * method `WaterHeightOrFloor(UnityEngine.Vector3Int)`
 * type `Timberborn.WaterSystem.IWaterService`
+  * method `AddCleanWater(UnityEngine.Vector3Int, System.Single)`
+  * method `AddContaminatedWater(UnityEngine.Vector3Int, System.Single)`
   * method `AddDirectionLimiter(UnityEngine.Vector3Int, Timberborn.WaterSystem.FlowDirection)`
   * method `AddFullObstacle(UnityEngine.Vector3Int)`
   * method `RemoveDirectionLimiter(UnityEngine.Vector3Int)`
@@ -234,6 +245,7 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
   * method `LogWarning(System.Object)`
 * type `UnityEngine.Mathf`
   * method `Abs(System.Int32)`
+  * method `Abs(System.Single)`
   * method `Clamp(System.Single, System.Single, System.Single)`
   * method `Clamp01(System.Single)`
   * method `Max(System.Single, System.Single)`

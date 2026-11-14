@@ -1016,7 +1016,7 @@ namespace PandabornDevHarness
                 o["productionProgress"] = R(manufactory.ProductionProgress);
                 o["readyToProduce"] = manufactory.IsReadyToProduce;
             }
-            var seg = Reflect(bo, "FlumeSegment", "Active");
+            var seg = Reflect(bo, "FlumeSegment", "Active", "RestoredWater");
             if (seg != null) o["flume"] = seg;
             var gate = Reflect(bo, "FlumeGate", "Flow", "IsOpen", "ClosedByBadwater", "GuardEnabled", "LastContamination");
             if (gate != null) o["gate"] = gate;

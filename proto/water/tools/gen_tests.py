@@ -717,7 +717,54 @@ def w3():
     request2("w3", s, [], [30, 30], 7, 3600, {"nearDistrict": True})
 
 
+def w4():
+    """Save and reload of standing water: run water-w1b-0934 showed that loading cuts the water out of every flume cell
+    (the inert obstacle is re-added on load before the module lifts it), and the refill surge then over-filled the paddy.
+    The module now saves each flow cell's depth and puts it back. Line A: pond with a high head (surface 1.6 above the
+    flume bed, so the backed-up line stands more than one block deep) -> gate (12,6) -> 6 flumes -> spout -> paddy.
+    Line B crosses over A on Bridges with a span at (12,8). Short: fill, save, reload, compare tick 0/1/30/300.
+    """
+    s = [flat(1, 5, 6, 11, 3), flat(2, 6, 5, 10, 1), flat(6, 8, 6, 8, 1), flat(21, 6, 24, 10, -1),
+         flat(10, 2, 14, 6, 3), flat(11, 3, 13, 5, 0), flat(12, 6, 12, 6, 0), flat(10, 14, 14, 17, -1), wait(3),
+         place("PandabornFlumeGate", [6, 8, 1], "Cw90", id="g2"),
+         line("PandabornFlumeBridge", [7, 8, 0], 5, prefix="br"),
+         place("PandabornFlumeBridgeSpan", [12, 8, 0], "Cw90", id="span"),
+         line("PandabornFlumeBridge", [13, 8, 0], 8, prefix="bs"),
+         place("PandabornFlumeGate", [12, 6, 0], "Cw0", id="g1"),
+         line("PandabornFlume", [12, 7, 0], 6, (0, 1, 0), "Cw0", prefix="f"),
+         place("PandabornPaddySpout", [12, 13, 0], "Cw0", id="sp"),
+         wait(3), {"op": "set", "id": "sp", "targetDepth": 0.3},
+         water("p1", [12, 4, 0], 2.0, 1.6), water("p2", [3, 8, 1], 2.0, 0.8), water("keepB2", [23, 8, -1], -3.0, 0.3)]
+    cells = [[12, 7, 0], [12, 8, 0], [12, 10, 0], [12, 12, 0], [11, 10, 0], [13, 10, 0], [11, 7, 0], [13, 12, 0],
+             [12, 10, 1], [11, 10, 1], [12, 8, 1], [9, 8, 1], [9, 8, 0], [12, 15, -1], [12, 13, 0]]
+    objs = ["g1", "g2", "span", "f0", "f3", "f5", "sp", "br4", "bs0"]
+    probe = {"op": "probe", "cells": cells, "objects": objs, "volumes": [[10, 14, 14, 17, -1], [12, 7, 12, 12, 0]]}
+    s += [wait(600), dict(probe, label="t600"), shot("w4_before", [12, 10, 0], 14, 45, 30),
+          expect("line A backed up", "depth", [12, 10, 0], 0.5),
+          expect("line A sides dry", "depth", [11, 10, 0], None, 0.001),
+          expect("crossing carries line B", "depth", [12, 8, 1], 0.01),
+          expect("paddy at the spout depth", "depth", [12, 15, -1], 0.2, 0.45),
+          wait(30), dict(probe, label="before_save")]
+    binds = [{"op": "bind", "id": k, "at": at} for k, at in
+             (("g1", [12, 6, 0]), ("g2", [6, 8, 1]), ("span", [12, 8, 1]), ("f0", [12, 7, 0]), ("f3", [12, 10, 0]),
+              ("f5", [12, 12, 0]), ("sp", [12, 13, 0]), ("br4", [11, 8, 1]), ("bs0", [13, 8, 1]))]
+    reload = binds + [dict(probe, label="reload_t0"),
+                      water("p1", [12, 4, 0], 2.0, 1.6), water("p2", [3, 8, 1], 2.0, 0.8), water("keepB2", [23, 8, -1], -3.0, 0.3),
+                      {"op": "wait", "ticks": 1, "capSeconds": 60}, dict(probe, label="reload_t1"),
+                      {"op": "wait", "ticks": 2, "capSeconds": 60}, dict(probe, label="reload_t3"),
+                      wait(30), dict(probe, label="reload_t33"),
+                      expect("after reload: water back in the flume at once", "depth", [12, 10, 0], 0.5),
+                      expect("after reload: sides dry", "depth", [11, 10, 0], None, 0.001),
+                      expect("after reload: nothing on top beside", "depth", [11, 10, 1], None, 0.001),
+                      wait(300), dict(probe, label="reload_t333"),
+                      expect("after reload: paddy not over-filled", "depth", [12, 15, -1], 0.2, 0.45),
+                      expect("after reload: crossing carries line B", "depth", [12, 8, 1], 0.01),
+                      shot("w4_reload", [12, 10, 0], 14, 45, 30)]
+    request2("w4", s, reload, [26, 20], 3, 1500, "auto")
+
+
 if __name__ == "__main__":
+    w4()
     w1()
     w2()
     w3()

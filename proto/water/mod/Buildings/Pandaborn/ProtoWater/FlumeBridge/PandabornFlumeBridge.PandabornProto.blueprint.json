@@ -190,5 +190,10 @@
   },
   "FinishableWaterObstacleSpec": {
     "Height": 2.0
+  },
+  "PandabornEntityStateSpec": {
+    "Features": [
+      "Water"
+    ]
   }
 }

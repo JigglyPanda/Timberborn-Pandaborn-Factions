@@ -125,6 +125,8 @@ def flume_piece(model_id, flow_cells, floors, inert_height, solid_cells=()):
     bp["FinishableWaterObstacleSpec"] = {"Height": inert_height}
     if solid_cells:
         bp["PandabornSolidCellsSpec"] = {"Cells": [v3(*c) for c in solid_cells]}
+    # the water standing in the flow cells is saved and put back after a load (the inert obstacle cuts it out on load)
+    bp["PandabornEntityStateSpec"] = {"Features": ["Water"]}
     return bp
 
 
