@@ -8,49 +8,46 @@ using Timberborn.TimeSystem;
 namespace Pandaborn.Ringtails
 {
     /// <summary>
-    /// Light eaters and drinkers, with public API only: every tick a small continuous effect gives back part of the Hunger
-    /// and Thirst decay (NeedSpec.DailyDelta), so the net rate is AppetiteFactor x vanilla. No private field; the per-entity
-    /// rate inside Need is left alone. Approximation: the game mode's food/water consumption multiplier is not applied
-    /// to the give-back, so on non-default modes the factor is slightly off.
+    /// Light eaters and drinkers, with public API only. Vanilla <c>Need.Update</c> skips a tick's decay whenever any effect
+    /// was applied to the need since the last update (that is how eating and sleeping pause it). So applying a negligible
+    /// effect on (1 - AppetiteFactor) of the ticks removes exactly that share of the Hunger and Thirst decay: net rate =
+    /// AppetiteFactor x vanilla, game-mode consumption multipliers included. No private field.
+    /// Implicit dependency: the "an effect suppresses this tick's decay" rule in Need.Update. If it changed, Ringtails would
+    /// simply eat like Inkpaws (safe).
+    /// (A first version gave back points every tick; because of the same rule that stopped the decay entirely.)
     /// </summary>
     public class RingtailAppetite : TickableComponent, IAwakableComponent
     {
-        private static readonly string[] Needs = { "Hunger", "Thirst" };
+        private static readonly string[] NeedIds = { "Hunger", "Thirst" };
+        private const float Nudge = 0.0001f;   // points per hour; about 3e-6 points per tick
         private readonly IDayNightCycle _dayNightCycle;
-        private readonly List<ContinuousEffect> _effects = new List<ContinuousEffect>();
         private NeedManager _needManager;
+        private float _skipShare;
+        private float _accumulator;
 
         public RingtailAppetite(IDayNightCycle dayNightCycle)
         {
             _dayNightCycle = dayNightCycle;
         }
 
-        private float _factor = 1f;
-        private bool _initialized;
-
         public void Awake()
         {
             _needManager = GetComponent<NeedManager>();
             var spec = GetComponent<PandabornRingtailSpec>();
-            _factor = spec != null ? spec.AppetiteFactor : 1f;
-            if (_needManager == null || _factor >= 1f) DisableComponent();
-        }
-
-        /// <summary>NeedManager fills NeedSpecs in its own Awake, whose order relative to ours is not defined: read them lazily.</summary>
-        private void Initialize()
-        {
-            _initialized = true;
-            foreach (var need in _needManager.NeedSpecs)
-                if (System.Array.IndexOf(Needs, need.Id) >= 0 && need.DailyDelta < 0f)
-                    _effects.Add(new ContinuousEffect(need.Id, -need.DailyDelta / 24f * (1f - _factor)));
+            float factor = spec != null ? spec.AppetiteFactor : 1f;
+            _skipShare = 1f - factor;
+            if (_needManager == null || _skipShare <= 0f) DisableComponent();
         }
 
         public override void Tick()
         {
-            if (!_initialized) Initialize();
+            _accumulator += _skipShare;
+            if (_accumulator < 1f) return;
+            _accumulator -= 1f;
             float hours = _dayNightCycle.FixedDeltaTimeInHours;
-            for (int i = 0; i < _effects.Count; i++)
-                if (_needManager.NeedIsEnabled(_effects[i].NeedId)) _needManager.ApplyEffect(_effects[i], hours);
+            foreach (var id in NeedIds)
+                if (_needManager.HasNeed(id) && _needManager.NeedIsEnabled(id))
+                    _needManager.ApplyEffect(new ContinuousEffect(id, Nudge), hours);
         }
     }
 }

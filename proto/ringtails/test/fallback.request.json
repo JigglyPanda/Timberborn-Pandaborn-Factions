@@ -14,6 +14,10 @@
       "RingtailLoft.Inkpaws",
       "RingtailHaulingPost.Inkpaws",
       "RingtailGathererFlag.Inkpaws"
-    ]
+    ],
+    "stock": {
+      "Water": 400,
+      "Log": 40
+    }
   }
 }

@@ -68,7 +68,22 @@ namespace Pandaborn.Ringtails.Dev
                 foreach (var target in targets)
                 {
                     var goal = target.PositionedEntrance.Coordinates;
-                    var route = Search(placer, goal, network, paths, origin, radius);
+                    List<Vector3Int> route = null;
+                    for (int attempt = 0; attempt < 8; attempt++)
+                    {
+                        route = Search(placer, goal, network, paths, origin, radius);
+                        if (route == null) break;
+                        // the placement check and the real placement can disagree: a cell that refuses a path is blocked and we search again
+                        Vector3Int? refused = null;
+                        foreach (var cell in route)
+                        {
+                            if (network.Contains(cell) || paths.Contains(cell) || HasPath(cell)) continue;
+                            if (!Place(pathSpec, cell, paths)) { refused = cell; break; }
+                        }
+                        if (refused == null) break;
+                        _blocked.Add(refused.Value);
+                        route = null;
+                    }
                     if (route == null)
                     {
                         if (failed < 3) diagnostics += "; goal " + goal + " " + Diagnose(placer, goal);
@@ -77,11 +92,7 @@ namespace Pandaborn.Ringtails.Dev
                         unconnected.Add(target);
                         continue;
                     }
-                    foreach (var cell in route)
-                    {
-                        if (!paths.Contains(cell) && !HasPath(cell) && CanPlace(placer, cell)) Place(pathSpec, cell, paths);
-                        network.Add(cell);
-                    }
+                    foreach (var cell in route) network.Add(cell);
                     connected++;
                 }
             }
@@ -157,6 +168,7 @@ namespace Pandaborn.Ringtails.Dev
                                 if (!_terrainService.Contains(new Vector2Int(cell.x, cell.y))) continue;
                                 if (_terrainService.GetTerrainHeightBelow(new Vector3Int(cell.x, cell.y, cell.z + 4)) != origin.z) continue;
                                 if (used.Any(u => Math.Abs(u.x - cell.x) < 4 && Math.Abs(u.y - cell.y) < 4)) continue;
+                                if (!ClearAround(cell, 1)) continue;   // keeps entrances off bushes and trees
                                 foreach (var o in new[] { Orientation.Cw0, Orientation.Cw90, Orientation.Cw180, Orientation.Cw270 })
                                 {
                                     var placement = placer.GetBuildableCoordinates(new[] { new Placement(cell, o, FlipMode.Unflipped) }).FirstOrDefault();
@@ -178,6 +190,20 @@ namespace Pandaborn.Ringtails.Dev
                 if (!done) { failed++; failures.Add(request.Key); }
             }
             return "placed " + placed + ", not placed " + failed + (failures.Count > 0 ? " (" + string.Join(", ", failures) + ")" : "");
+        }
+
+        /// <summary>True when no object (bush, tree, building) stands within this many tiles at the cell's height.</summary>
+        private bool ClearAround(Vector3Int cell, int margin)
+        {
+            for (int x = -margin; x <= margin; x++)
+                for (int y = -margin; y <= margin; y++)
+                {
+                    var c = new Vector3Int(cell.x + x, cell.y + y, cell.z);
+                    if (!_blockService.Contains(c) || _blockService.AnyObjectAt(c)) return false;
+                    // same ground height all around, so the entrance tile is on the district's level too
+                    if (_terrainService.GetTerrainHeightBelow(new Vector3Int(c.x, c.y, c.z + 4)) != c.z) return false;
+                }
+            return true;
         }
 
         private bool HasPath(Vector3Int cell)
@@ -203,14 +229,19 @@ namespace Pandaborn.Ringtails.Dev
 
         private bool CanPlace(PreviewPlacer placer, Vector3Int cell)
         {
-            if (!_blockService.Contains(cell) || _blockService.AnyObjectAt(cell)) return false;
+            if (_blocked.Contains(cell) || !_blockService.Contains(cell) || _blockService.AnyObjectAt(cell)) return false;
+            // the preview check accepted paths floating one tile above lower ground; those fail validation when the save is
+            // loaded (deleted with a loading-issue dialog), so only ground-level cells are allowed
+            if (_terrainService.GetTerrainHeightBelow(new Vector3Int(cell.x, cell.y, cell.z + 4)) != cell.z) return false;
             return placer.GetBuildableCoordinates(new[] { new Placement(cell, Orientation.Cw0, FlipMode.Unflipped) }).Any();
         }
 
-        private void Place(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)
+        private readonly HashSet<Vector3Int> _blocked = new HashSet<Vector3Int>();
+
+        private bool Place(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)
         {
-            try { PlaceUnchecked(spec, cell, paths); }
-            catch (Exception e) { Debug.LogWarning("[Pandaborn.Ringtails] path at " + cell + " not placed: " + e.Message); }
+            try { PlaceUnchecked(spec, cell, paths); return true; }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Ringtails] path at " + cell + " not placed: " + e.Message); return false; }
         }
 
         private void PlaceUnchecked(PlaceableBlockObjectSpec spec, Vector3Int cell, HashSet<Vector3Int> paths)

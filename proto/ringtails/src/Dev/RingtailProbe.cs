@@ -183,6 +183,20 @@ namespace Pandaborn.Ringtails.Dev
                 try { Event("paths", _pathConnector.Connect(center)); }
                 catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] laying paths failed: " + e); }
             }
+            if (!HarnessBridge.LoadSave && center != null && _config["stock"] is JObject stock)
+            {
+                // the test map's start has no water in stock: give the district center what a 3-day test needs
+                var given = new List<string>();
+                foreach (var p in stock.Properties())
+                {
+                    var inventory = center.GetComponent<Timberborn.InventorySystem.Inventories>()?.EnabledInventories
+                        .FirstOrDefault(i => i.Takes(p.Name) || i.Gives(p.Name));
+                    if (inventory == null) { given.Add(p.Name + ": no inventory"); continue; }
+                    inventory.GiveExistingIgnoringCapacity(new Timberborn.Goods.GoodAmount(p.Name, p.Value.Value<int>()));
+                    given.Add(p.Name + " " + p.Value + " -> " + inventory.AmountInStock(p.Name));
+                }
+                Event("stock", string.Join(", ", given));
+            }
             int adults = _config["spawn"]?.Value<int>() ?? 0;
             int kits = _config["spawnKits"]?.Value<int>() ?? 0;
             if (HarnessBridge.LoadSave) { adults = 0; kits = 0; }

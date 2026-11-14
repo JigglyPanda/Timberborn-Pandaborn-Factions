@@ -104,6 +104,10 @@
         "template": "Lodge.Folktails",
         "finished": false
       }
-    ]
+    ],
+    "stock": {
+      "Water": 400,
+      "Log": 40
+    }
   }
 }

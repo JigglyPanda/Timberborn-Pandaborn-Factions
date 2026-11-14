@@ -474,3 +474,159 @@ Rung 3 is the safe floor.
 7. **Population panel is ours.** Vanilla numbers will look odd overnight unless a Harmony postfix is accepted.
 8. **"Lantern-lit paths give Ringtails full speed at night"** has nothing to undo: vanilla has no night speed
    penalty. Make lanterns a wellbeing/decoration effect instead.
+
+---
+
+## 17. Prototype results
+
+Status: go/no-go prototype built and run in game, 2026-11-14 (game 1.1.2.8). Code and data: `proto/ringtails`
+(dev-only mod `JigglyPanda.PandabornProtoRingtails`, see its README). Design target: the "Candidate changes" version
+of Pillar 1 — Ringtails staff **their own** buildings and sleep through the morning; no shift flipping.
+
+### 17.1 Verdict: GO, for the simplified design
+
+<!-- VERDICT -->
+
+### 17.2 What was built
+
+Everything follows the hook points of sections 3–8; no Harmony anywhere.
+
+| Piece | How | Lines (runtime C#) |
+|---|---|---|
+| Hidden Ringtail adult and kit templates | `Characters/Pandaborn/RingtailAdult|RingtailChild.Inkpaws`, generated from the vanilla beaver by `proto/ringtails/tools/derive.py`, in **no** template collection. Inkpaw body (`InkpawAdult.Model`), red panda coats, body scaled to 0.82 with `TransformSpec` on `Model_Preserved`, walking speed ×1.3 (2.7 → 3.51), animation ×1.25, normal lifting (14), vanilla label keys | data |
+| Worker type `PandabornRingtail` | `WorkerTypeSpec`, `IgnoresWorkingHours: true` | data |
+| Ringtail-only workplaces | Copies of the Folktails Hauling Post (Courier Loft) and Gatherer Flag (Forager's Nest): `DefaultWorkerType: PandabornRingtail`, `DisallowOtherWorkerTypes: true`, no unlock costs. Collection `Buildings.PandabornRingtails` appended to the Inkpaws faction by a `FactionSpec` merge (`TemplateCollectionIds#append`), so Folktails and Iron Teeth never see them | data |
+| Loft | A Lodge copy without `ProcreationHouseSpec`, marked `PandabornLoftSpec` | data |
+| Outfits | `WorkerOutfitSpec` Hauler/Gatherer for the Ringtail worker type | data |
+| Feature switch, factory, save registration | `RingtailService`: active only in an Inkpaws game; creates Ringtails with public API (mirrors `BeaverFactory`); registers both templates in `TemplateNameMapper` (private field, see 17.6) and verifies the read-back | 160 |
+| Save fallback alias | The Inkpaw templates list `RingtailAdult|RingtailChild.Inkpaws` in `BackwardCompatibleTemplateNames` (merge file) | data |
+| Day rest | `RingtailRestRootBehavior`, inserted just above `WorkerRootBehavior` (private list, see 17.6). In the rest window (0–8 h after dawn) it keeps the Ringtail off work and runs the game's own `SleepNeedBehavior` while Sleep < 0.55, then the game's `NeederRootBehavior`, then `WanderRootBehavior` | 130 |
+| Coat | `RingtailCoat` replaces the faction coat in `PostInitializeEntity` | 40 |
+| Kit growth | `RingtailGrowth`: at growth 0.995 the kit becomes a Ringtail adult through our factory (vanilla would make an Inkpaw at 1.0) | 50 |
+| Light appetite | `RingtailAppetite`: skips a quarter of the Hunger/Thirst decay ticks (see 17.6) | 60 |
+| Housing rule | `LoftHousingRule`: see 17.4 | 110 |
+| Test probe | `src/Dev/*`: spawns Ringtails, places buildings on the district terrace and lays paths, stocks the district center, logs every colonist and workplace each in-game hour, opens panels and takes screenshots. Talks to the harness by reflection; inert without a test request | dev only |
+
+Total runtime code ≈ 640 lines including comments. Harness changes: none were needed (the probe lives in the prototype
+mod, so the shared harness files that two other agents are editing were not touched). `-ExtraMods`, the game queue and
+`-SaveAndReload` came from the other agents' script work.
+
+<!-- MEASURED -->
+
+### 17.4 Housing: what happens when both kinds compete for beds
+
+* **Vanilla, no rule** (run `rt-smoke4`: 12 beds for 13 Inkpaws + 5 Ringtails): `DwellerHomeAssigner` hands each free
+  bed to the first adult in `DistrictPopulation.Adults` that is looking for a home, and the list is in registration
+  order. Inkpaws were there first, so they took **all** beds including both lofts, and all 5 Ringtails slept outside.
+  Kind plays no part. Nothing breaks: a homeless Ringtail sleeps outside (vanilla `SleepOutsideEffects`) at the start of
+  its rest window.
+* **Bed timing never conflicts.** A dwelling slot belongs to one dweller round the clock; the two kinds sleeping at
+  different hours does not create or free beds.
+* **The rule we kept** (`LoftHousingRule`, public API only, every 10 ticks): (1) a Ringtail in a non-loft home and an
+  Inkpaw in a loft swap homes; (2) a homeless Ringtail takes a free loft bed, or else a loft bed held by an Inkpaw,
+  who moves to a free non-loft bed or, if there is none, becomes homeless (loft beds belong to Ringtails). Swaps never
+  change how many dwellers a home has, so vanilla's own "move to an emptier home" logic has nothing to undo; no
+  oscillation was seen in three days. In `rt-gate3` all 4 Ringtails (and later the grown kit) were moved into the two
+  lofts within the first hour and stayed there; Inkpaws filled the lodges; 18 beds, 0 homeless.
+* Not possible without Harmony: stopping vanilla from putting an Inkpaw into a loft in the first place
+  (`AutoAssignableDwelling.CanAssignDweller` has no hook). The rule only corrects afterwards, which the player sees
+  as a short move.
+
+### 17.5 Interface: what was opened and what a release needs
+
+Opened in game with Ringtails present, no exceptions: every batch-control tab including the Population
+(`CharacterBatchControlTab`) tab, the Ringtail character panel, the Courier Loft and Forager's Nest workplace panels,
+the Loft dwelling panel, an Inkpaw panel and workplace panel, and the district center panel (screenshots `rt_*.png` in
+the run folders). The Ringtail panel correctly says "Lives in: Loft / Works at: Courier Loft".
+
+What the player sees today and what a release needs:
+
+| Element | Prototype | Release work |
+|---|---|---|
+| Character panel portrait and subtitle | Inkpaw (giant panda) avatar for Ringtails | Own `IEntityBadge` with priority above `BeaverEntityBadge` (10): Ringtail avatar, contaminated avatar, "Ringtail, age N" |
+| Population tab (batch control) | Ringtails listed among "Beavers" adults; works | Add kind column or icon (our own fragment), or accept |
+| Top bar population numbers | "Adults" = Inkpaws + Ringtails; workforce, employed and unemployed count **Inkpaws only** (`PopulationDataCollector` reads the `Beaver` and `Bot` worker types only), so Ringtail jobs are invisible | Our own population panel/tooltip with a second row for Ringtails (crews per kind, idle per kind). A vanilla-number fix would be a Harmony postfix; not needed |
+| Workplace panel | Ringtail workplaces show their workers; empty slots drawn with the faction (Inkpaw) silhouette; the beaver/bot toggle stays hidden (only after bots exist, and `DisallowOtherWorkerTypes` disables it) | Own empty-slot art (cosmetic); a "Ringtails only" line comes from `WorkerOnlyTextLocKey` |
+| District center default worker type toggle | Beaver/Bot only; Ringtails need no default (their buildings are typed) | None |
+| Automation population counter | Totals include Ringtails, worker modes Beaver/Bot only | Accept or own counter |
+| Statistics graphs | Ringtails inside adult counts | Accept |
+| Loft/Courier Loft/Forager's Nest | Vanilla models and icons | Art |
+
+### 17.6 Private-field and implicit dependencies, and how to fail safely
+
+| # | Dependency | Used for | Kind | Break risk on a game update | What happens if it breaks (prototype) | Proposed safe failure (release) |
+|---|---|---|---|---|---|---|
+| 1 | `TemplateNameMapper._templates` (private `Dictionary<string, TemplateSpec>`), written once at load | Loading saves that contain Ringtails | Reflection, 1 field | Low–medium. A rename or a switch to an immutable/frozen dictionary (the game already uses `FrozenDictionary` in `SpecTypeCache`) breaks it | Detected at load (field missing, wrong type, or read-back check fails): `RingtailService` logs one error and switches the feature off. Saved Ringtails load **as Inkpaws** through the alias merged into the Inkpaw templates (`BackwardCompatibleTemplateNames`), keeping name, age, needs, job and home; no new Ringtails are made; kits grow into Inkpaws | Same, plus a one-time in-game message. Ship the alias in the main mod permanently |
+| 2 | `BehaviorManager._rootBehaviors` (private `List<RootBehavior>`), one insert per Ringtail at initialisation | The day rest | Reflection, 1 field | Low–medium. Same field has existed through 1.0–1.1 | Detected per entity: one error logged, Ringtails then behave as round-the-clock workers whose only rest is critical sleep (vanilla `CriticalNeederRootBehavior`). They survive but are exhausted part of the time | Check the field once at load (on a throwaway list type check, before any Ringtail exists). If it is gone: keep the feature but fall back to a public-API rest — pause the Ringtail workplaces (`PausableBuilding`) during the rest window, so Ringtails are unemployed and the vanilla needer/sleep logic runs — and log one warning. Never crash |
+| 3 | Behaviour order from `BeaverBehaviorInitializer` (Worker root before Needer root) | Where the rest root is inserted (just above `WorkerRootBehavior`) | Implicit (public types, internal order) | Low | If `WorkerRootBehavior` disappears the insert falls back to "above `NeederRootBehavior`", else reports error #2 | Same |
+| 4 | Vanilla growth at `GrowthProgress >= 1.0` inside `ChildRootBehavior` | Kits grow into Ringtails (we act at 0.995) | Implicit | Low. If vanilla started growing earlier, a kit would become an **Inkpaw** (safe, no crash) | Kit becomes an Inkpaw | Acceptable; or check the produced adult in `CharacterCreatedEvent` |
+| 4b | Vanilla `Need.Update` skips a tick's decay when an effect was applied since the last update | Light appetite (we apply a negligible effect on a quarter of the ticks) | Implicit | Low | Ringtails eat and drink like Inkpaws (safe) | Same; or the per-entity `Need._deltaPointsPerUpdate` (private) if exact control is wanted |
+| 5 | `BeaverTextureSetter` sets the coat in `InitializeEntity` | Our coat replaces it in `PostInitializeEntity` | Implicit | Low | Ringtails wear Inkpaw coats (cosmetic) | Same |
+| 6 | `WorkplaceSpec.DisallowOtherWorkerTypes` + `DefaultWorkerType` | Ringtail-only workplaces | Public data | Very low | — | — |
+| 7 | `WorkerTypeSpec.IgnoresWorkingHours` | Ringtails work afternoon and night regardless of the Inkpaw working-hours slider | Public data | Very low | — | — |
+| dev | `Child.GrowthProgress` private setter; the harness's `Harness` class | Test probe only (push a kit near adulthood; find the request) | Reflection, dev only | n/a | n/a | not shipped |
+
+No Harmony patch was needed for anything in the target design.
+
+Every dependency is checked where it is used, fails at one known line, and logs a single `[Pandaborn.Ringtails]` error
+instead of throwing. For a release the checks should run once at load in one place (a `RingtailCompatibility`
+singleton) that decides which features are on, shows one in-game message when something is off, and is covered by the
+automated save/reload test after each game update.
+
+### 17.7 A save with Ringtails when the feature is removed
+
+* **Prototype mod removed** (templates gone): `WorldEntitiesLoader` cannot map `RingtailAdult.Inkpaws`, records the
+  loading issue "Object had unknown type and was deleted" (shown to the player in the loading-issues panel) and drops
+  the Ringtails; the Ringtail buildings go the same way. References to them from other entities are owned by the
+  dropped side (a worker stores its workplace, a dweller its home), so nothing dangles. The colony loses those
+  colonists and buildings. Read from code; not run, because the test script can only reload with the same mod set.
+* **Templates present but registration broken** (simulated game update, run `rt-fallback1`): the feature switches
+  itself off with one logged error; the 3 Ringtails loaded **as Inkpaws** with their names, ages, needs and homes
+  (through the `BackwardCompatibleTemplateNames` alias), lost their Ringtail jobs (vanilla drops a worker whose type no
+  longer matches the workplace on load), and the game ran on. No crash, no corruption.
+* **Recommendation:** ship the alias in the main mod's Inkpaw templates permanently, and keep the Ringtail templates
+  in the main mod even if the feature is ever turned off by a setting. Then a save never loses colonists: worst case,
+  Ringtails become Inkpaws.
+* (That fallback run also lost some Lodges on reload; the cause was the test probe's early path layer placing paths
+  over lower ground, which the game deletes on load. Fixed in the probe; unrelated to Ringtails.)
+
+### 17.8 Design recommendations
+
+* **Hours window: keep "rest 0–8 h after dawn", but call it what the game does with it: sleep ~3 h, then leisure.**
+  The game's sleep logic does not want an 8-hour sleep: a Ringtail coming off a 16-hour shift has Sleep ≈ 0.3, the
+  home restores 0.2/h, and the vanilla `Sleeper` wakes it when full, so it sleeps about 2.5–3 h (dawn to ~3 h) and
+  then eats, drinks and takes leisure (or wanders) until 8 h, when it goes back to work. That is the natural shape of
+  the game's own logic (vanilla Inkpaws sleep ~3 h before dawn, from ~21 h, for the same reason), and it gives the
+  design a nice beat: **Ringtails have the morning to themselves at the teahouse while the Inkpaws work.** Forcing an
+  8-hour sleep is possible (launch the sleep executor to the window's end) but costs the Ringtails their only leisure
+  time and makes them look idle in bed. The window is data (`RestStartHours`/`RestEndHours` on the template), so it
+  can be tuned without code.
+* **Do not tie the window to the Inkpaw working-hours slider.** Ringtails ignore working hours, so the slider stays an
+  Inkpaw lever; the afternoon overlap shrinks or grows with it, which is the intended "dusk and dawn are shared" feel.
+* **Housing rule: "lofts are for Ringtails, anyone may sleep anywhere else".** Use the swap rule of 17.4. Do not try to
+  keep Ringtails out of dens (needs Harmony; also cruel to a homeless Ringtail). In the UI, call a loft a Ringtail home
+  and show a small "Inkpaw in a loft" warning only if the rule cannot fix it (no free beds).
+* **How the player should see the two crews:** a sun or moon icon on every workplace (from its worker type), a second
+  row in the population panel ("Ringtails: 5 · working 5 · idle 0"), the Ringtail badge with a moon, and the Courier
+  Loft/Forager's Nest grouped in their own tool group. Because Ringtail workplaces are separate buildings, there is no
+  crew switching to explain: "these buildings are staffed by Ringtails, at night" is the whole rule.
+* **Stats:** walking speed ×1.3 and appetite ×0.75 are data or tiny code; keep normal lifting. The faster walk is the
+  only number the player needs to feel; hauling throughput per Ringtail (17.3) shows it.
+* **Kits:** kits grow into Ringtails with our hook; births belong in a loft nursery (stage 2 of section 14), still
+  needed for the "born in lofts" part of the design.
+
+### 17.9 Remaining work to production quality (estimate)
+
+| Work | Size |
+|---|---|
+| Move the code into the main mod's runtime project behind a `RingtailCompatibility` check (17.6) and a mod setting; ship the alias | 1 day |
+| Loft nursery (litters), Ringtail arrival with the first loft, arrival message | 2–3 days |
+| Badge, avatars, population-panel row, workplace sun/moon icon, Ringtail tool group | 3–4 days |
+| Real Ringtail body (beaver UV layout, node names, 61/39 animations), kit body, coats, outfits | art milestone, 1–2 weeks |
+| Own buildings beyond the two copies (courier loft, forager's nest, dew nets, star tower, lantern workshop) | per building, data + art |
+| Balance pass (rest window, appetite, speed, loft size) and the "Inkpaw workshops get roomier input shelves" change | 2 days |
+| Automated regression: the gate test of this section in CI-like form, plus a "feature removed" reload test (needs a script option to reload with a different mod set) | 1 day |
+
+Code: roughly 1,000–1,500 lines on top of the prototype's 640, all without Harmony.
+
+<!-- RESULTS -->
