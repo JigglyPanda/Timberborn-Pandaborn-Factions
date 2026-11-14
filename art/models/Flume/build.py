@@ -1,8 +1,9 @@
 """Flume: an open split-bamboo channel one tile wide, on the ground. Water runs one way along +z (the grid's +Y),
 in the single water cell whose floor is the ground; the channel's inner floor sits on it so the water shows.
 
-A green giant-bamboo half-pipe held by a pair of lashed stakes with a tie across, a rope sleeve at the upstream end so a run of
-pieces reads as nested in the direction of flow.
+A split giant culm weathered dark below the waterline, with proud nodes and lighter split-culm rims, held by a
+pair of lashed stakes with a tie across; a rope-bound sleeve at the upstream joint, so a run of pieces reads as a
+hand-built aqueduct nested in the direction of flow.
 """
 import os
 import sys
@@ -13,7 +14,7 @@ import waterworks as W  # noqa: E402
 
 m = Model("Flume", size=(1, 1, 1), seed=41, stand_in="ThrottlingValve.Folktails")
 g = m.geo
-W.stakes(g, 0.82)
+W.x_stakes(g, 0.58)
 W.straight(g, 0.0, 1.0, 0.0)
 m.blocks = [block("GroundOrStackable", "Bottom, Top, Corners, Path, Middle", "None")]
 m.extra["waterCells"] = [{"X": 0, "Y": 0, "Z": 0}]

@@ -112,26 +112,23 @@
     "Z": 1.0
    },
    "Size": {
-    "X": 1.9,
+    "X": 1.95,
     "Y": 2.4,
-    "Z": 1.9
+    "Z": 1.95
    }
   }
  ],
  "attachments": [],
  "triangles": {
-  "finished": 737,
-  "constructionStage0": 664,
+  "finished": 873,
+  "constructionStage0": 752,
   "vanillaMedianForFootprint": 900
  },
  "materials": [
   "BaseMetal.Folktails",
   "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
-  "BaseWood_Yellow.Folktails",
-  "IrregularPlanks_LightBrown.Folktails",
   "Plaster_White.Folktails",
-  "PlasteredWood_White.Folktails",
   "Sand.Folktails"
  ],
  "notes": [
@@ -142,5 +139,5 @@
   "Y": 0.0,
   "Z": 0.15
  },
- "liquidPlane": "vanilla MediumTank StockpilePlaneVisualizer (2x2): y 0.546 to 2.3; mouth radius 0.85"
+ "liquidPlane": "vanilla MediumTank StockpilePlaneVisualizer (2x2): y 0.546 to 2.3; mouth radius 0.8"
 }

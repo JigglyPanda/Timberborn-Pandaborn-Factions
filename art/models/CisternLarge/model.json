@@ -225,8 +225,8 @@
  ],
  "attachments": [],
  "triangles": {
-  "finished": 1215,
-  "constructionStage0": 898,
+  "finished": 1363,
+  "constructionStage0": 994,
   "vanillaMedianForFootprint": 1600
  },
  "materials": [
@@ -235,7 +235,6 @@
   "BaseWood_LightBrown.Folktails",
   "Details.Folktails",
   "Plaster_White.Folktails",
-  "PlasteredWood_White.Folktails",
   "Sand.Folktails",
   "ThatchedRoof.Folktails"
  ],
@@ -247,5 +246,5 @@
   "Y": 0.0,
   "Z": 0.2
  },
- "liquidPlane": "vanilla LargeTank StockpilePlaneVisualizer (3x3): y 0.566 to 2.45; mouth radius 1.33"
+ "liquidPlane": "vanilla LargeTank StockpilePlaneVisualizer (3x3): y 0.566 to 2.45; mouth radius 1.24"
 }

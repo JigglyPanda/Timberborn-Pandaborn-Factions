@@ -58,11 +58,12 @@
  ],
  "attachments": [],
  "triangles": {
-  "finished": 372,
-  "constructionStage0": 392,
+  "finished": 528,
+  "constructionStage0": 336,
   "vanillaMedianForFootprint": 300
  },
  "materials": [
+  "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
   "BaseWood_Yellow.Folktails",
   "Details.Folktails"

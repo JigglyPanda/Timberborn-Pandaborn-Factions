@@ -23,23 +23,23 @@
     "Z": 0.5
    },
    "Size": {
-    "X": 0.9,
+    "X": 0.95,
     "Y": 1.5,
-    "Z": 0.9
+    "Z": 0.95
    }
   }
  ],
  "attachments": [],
  "triangles": {
-  "finished": 502,
-  "constructionStage0": 136,
+  "finished": 514,
+  "constructionStage0": 292,
   "vanillaMedianForFootprint": 300
  },
  "materials": [
   "BaseMetal.Folktails",
+  "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
   "BaseWood_Yellow.Folktails",
-  "IrregularPlanks_LightBrown.Folktails",
   "Plaster_White.Folktails",
   "Sand.Folktails"
  ],
@@ -51,5 +51,5 @@
   "Y": 0.0,
   "Z": 0.1
  },
- "liquidPlane": "vanilla SmallTank StockpilePlaneVisualizer: y 0.546 to 1.42; jar mouth radius 0.39"
+ "liquidPlane": "vanilla SmallTank StockpilePlaneVisualizer: y 0.546 to 1.42; mouth radius 0.37, front half open"
 }

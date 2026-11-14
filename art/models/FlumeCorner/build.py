@@ -1,6 +1,6 @@
-"""Flume Corner: a 2x2 turning box. Cell (0, 0) holds the water (open on its -x and -z faces, where flumes join);
-the other three cells are solid: a low rammed-earth block paved with river stones, a potted bamboo clump in moss and a
-lantern on it.
+"""Flume Corner: a 2x2 turning box, built as an open junction. Cell (0, 0) holds the water, open on its -x and -z
+faces where flumes join; the other three cells are solid (water obstacles), here a low heap of dry-laid river
+stones banked against the basin with a bamboo clump and a lantern post, so nothing reads as a closed crate.
 """
 import os
 import sys
@@ -13,40 +13,33 @@ from core import *  # noqa: E402,F401,F403
 
 m = Model("FlumeCorner", size=(2, 2, 1), seed=53, stand_in="ThrottlingValve.Folktails")
 g = m.geo
-# the basin: a squat timber tub in cell (0,0), walls on its two inner sides, open mouths on -x and -z
-H = 0.42
-K.box(g, (0.02, -0.02, 0.02), (0.98, 0.012, 0.98), TIMBER, WOOD_BLOCK, skip=(3,))
-for (lo, hi) in (((0.96, 0.0, 0.0), (1.06, H, 1.06)), ((0.0, 0.0, 0.96), (0.96, H, 1.06))):
-    K.box(g, lo, hi, TIMBER, WOOD_STRIPS[2], skip=(3,))
-for x, z in ((0.02, 0.02), (1.0, 0.02), (0.02, 1.0)):
-    K.beam(g, (x, 0.0, z), (x, H + 0.08, z), w=0.07)
-# mouths: bamboo lips where the flumes slot in
-K.beam(g, (0.0, 0.02, 0.06), (0.0, 0.02, 0.94), w=0.05, material=BAMBOO_GOLD)
-K.beam(g, (0.06, 0.02, 0.0), (0.94, 0.02, 0.0), w=0.05, material=BAMBOO_GOLD)
-# the solid L: rammed earth faced with stones, a potted bamboo and a lantern on top
-for lo, hi in (((1.06, 0.0, 0.0), (2.0, 0.62, 2.0)), ((0.0, 0.0, 1.06), (1.06, 0.62, 2.0))):
-    K.box(g, lo, hi, EARTH, (0.02, 0.02, 0.98, 0.98), skip=(2, 3), tags={"base"})
-    K.box(g, (lo[0] + 0.02, 0.6, lo[2] + 0.02), (hi[0] - 0.02, 0.62, hi[2] - 0.02), EARTH, (0.05, 0.05, 0.95, 0.95),
-          skip=(3,))
-# a paving of big river stones on top, moss in the gaps round the bamboo
-K.stones(g, 1.12, 0.06, 1.94, 0.98, y=0.6, size=0.22, h=0.06, ring=False, skip=0.1, tone=(0.66, 0.66, 0.63))
-K.stones(g, 0.06, 1.12, 0.98, 1.94, y=0.6, size=0.22, h=0.06, ring=False, skip=0.1, tone=(0.66, 0.66, 0.63))
-K.box(g, (1.2, 0.61, 1.2), (1.92, 0.65, 1.92), MOSS, (0.05, 0.05, 0.95, 0.95), skip=(3,))
-K.stones(g, 1.1, 0.04, 1.96, 1.96, y=-0.01, size=0.25, h=0.2, tags={"base"})
-K.stones(g, 0.04, 1.1, 1.0, 1.96, y=-0.01, size=0.25, h=0.2, tags={"base"})
-K.lathe(g, [(0.0, 0.0), (0.16, 0.0), (0.2, 0.2), (0.22, 0.22)], (1.55, 0.62, 1.5), 7, EARTH, cap_top=True)
+# the basin: a floor of flat stones, a kerb of stones on its two inner sides, split-culm lips on the open faces
+K.box(g, (0.02, -0.02, 0.02), (0.98, 0.012, 0.98), EARTH, (0.05, 0.05, 0.95, 0.95), skip=(3,))
+K.stones(g, 0.08, 0.08, 0.92, 0.92, y=0.0, size=0.22, h=0.03, ring=False, skip=0.15, tone=(0.45, 0.48, 0.45))
+for (x0, z0, x1, z1) in ((0.98, 0.0, 1.1, 1.1), (0.0, 0.98, 1.1, 1.1)):
+    K.stones(g, x0, z0, x1, z1, y=-0.01, size=0.2, h=0.4, ring=False, skip=0.0)
+for (a, b) in (((0.0, 0.03, 0.04), (0.0, 0.03, 0.96)), ((0.04, 0.03, 0.0), (0.96, 0.03, 0.0))):
+    K.tube(g, [a, b], [0.03, 0.03], BAMBOO_GOLD, sides=4)
+for (x, z) in ((0.04, 0.04), (0.98, 0.04), (0.04, 0.98)):
+    K.pole(g, (x, -0.02, z), (x, 0.5, z), r=0.035, material=BAMBOO_GOLD, sides=5, bend=0.0)
+    K.lashing(g, (x, 0.32, z), (0, 1, 0), r=0.05)
+# the solid L: two courses of rubble stones over an earth core, moss in the top
+# (an earth core only under the moss, so the heap reads as stones, not a box)
+K.box(g, (1.2, 0.0, 1.2), (1.95, 0.4, 1.95), EARTH, (0.02, 0.02, 0.98, 0.98), skip=(3,), tags={"base"})
+K.stones(g, 1.12, 0.04, 1.96, 1.96, y=-0.01, size=0.28, h=0.26, skip=0.0, tags={"base"})
+K.stones(g, 0.04, 1.12, 1.08, 1.96, y=-0.01, size=0.28, h=0.26, skip=0.0, tags={"base"})
+K.stones(g, 1.16, 0.1, 1.9, 1.15, y=0.0, size=0.24, h=0.38, ring=False, skip=0.05, tags={"base"}, tone=(0.58, 0.6, 0.57))
+K.stones(g, 0.1, 1.16, 1.15, 1.9, y=0.0, size=0.24, h=0.38, ring=False, skip=0.05, tags={"base"}, tone=(0.6, 0.6, 0.58))
+K.box(g, (1.25, 0.41, 1.25), (1.9, 0.44, 1.9), MOSS, (0.05, 0.05, 0.95, 0.95), skip=(3,))
 for k in range(7):
-    x, z = 1.55 + 0.09 * np.cos(k * 1.3), 1.5 + 0.09 * np.sin(k * 1.3)
-    top = (x + 0.12 * np.cos(k), 1.5 + 0.18 * (k % 3), z + 0.12 * np.sin(k))
-    K.pole(g, (x, 0.8, z), top, r=0.02, material=BAMBOO_GREEN, sides=4, bend=0.04, segs=2)
-# a few river stones set in the moss and a bamboo ladle resting on the basin wall
-K.pole(g, (0.3, H + 0.02, 1.0), (0.9, H + 0.05, 1.01), r=0.015, material=BAMBOO_GOLD, sides=4, bend=0.0)
-K.lathe(g, [(0.0, 0.0), (0.05, 0.0), (0.05, 0.06)], (0.27, H - 0.02, 1.0), 6, BAMBOO_GOLD, cap_top=False)
-K.beam(g, (0.55, 0.62, 1.6), (0.55, 1.05, 1.6), w=0.05)
-K.beam(g, (0.55, 1.02, 1.6), (0.55, 1.02, 1.36), w=0.035)
-K.lantern(g, (0.55, 1.0, 1.38), r=0.06, h=0.14)
+    x, z = 1.58 + 0.12 * np.cos(k * 1.3), 1.58 + 0.12 * np.sin(k * 1.3)
+    top = (x + 0.14 * np.cos(k), 1.3 + 0.2 * (k % 3), z + 0.14 * np.sin(k))
+    K.pole(g, (x, 0.42, z), top, r=0.022, material=BAMBOO_GREEN, sides=4, bend=0.04, segs=2)
+K.beam(g, (0.55, 0.42, 1.55), (0.55, 1.0, 1.55), w=0.05)
+K.beam(g, (0.55, 0.97, 1.55), (0.55, 0.97, 1.3), w=0.035)
+K.lantern(g, (0.55, 0.95, 1.32), r=0.06, h=0.14)
 m.blocks = solid_blocks(2, 2, 1)
 m.extra["waterCells"] = [{"X": 0, "Y": 0, "Z": 0}]
 m.extra["solidCells"] = [{"X": 1, "Y": 0}, {"X": 0, "Y": 1}, {"X": 1, "Y": 1}]
-m.collider((1.0, 0.31, 1.0), (2.0, 0.62, 2.0))
+m.collider((1.0, 0.25, 1.0), (2.0, 0.5, 2.0))
 m.build()

@@ -1,6 +1,6 @@
 """Flume Gate: the intake of a flume. A flume cell under a timber sluice frame: two posts, a lintel, a plank gate
-raised on a rope over a little windlass, a counterweight stone; it caps the water at one block (lidded) and sets
-the flow.
+raised on a rope from a long bamboo lever with a stone counterweight; it caps the water at one block (lidded) and
+sets the flow.
 """
 import os
 import sys
@@ -22,12 +22,16 @@ K.beam(g, (0.02, 0.62, Z), (0.98, 0.62, Z), w=0.06)
 # the gate leaf, raised a little, sliding between the posts
 K.boards(g, (0.14, 0.18, Z - 0.015), (0, 1, 0), (1, 0, 0), 0.4, 0.72, 3, TIMBER, thick=0.03)
 K.beam(g, (0.5, 0.58, Z), (0.5, 1.05, Z), w=0.015, material=DETAILS, caps=False)
-# windlass on the lintel with a crank
-K.tube(g, [(0.2, 1.17, Z), (0.8, 1.17, Z)], [0.04, 0.04], TIMBER, sides=6)
-K.beam(g, (0.82, 1.17, Z), (0.86, 1.06, Z - 0.1), w=0.02)
-# counterweight stone on a rope at the side
-K.beam(g, (0.95, 1.0, Z + 0.08), (0.95, 0.55, Z + 0.08), w=0.012, material=DETAILS, caps=False)
-K.stones(g, 0.88, Z, 1.02, Z + 0.16, y=0.4, size=0.12, h=0.13, ring=False)
+# the lever: a long bamboo arm pivoted on a post behind the gate, its front end on a rope to the board, a river
+# stone lashed to its back end as the counterweight
+K.beam(g, (0.5, -0.02, 0.86), (0.5, 1.3, 0.86), w=0.07, caps="end")
+K.pole(g, (0.5, 1.42, 0.4), (0.5, 1.12, 1.25), r=0.026, material=BAMBOO_GOLD, sides=5, bend=0.0)
+K.lashing(g, (0.5, 1.27, 0.84), (0, 0, 1), r=0.04)
+K.beam(g, (0.5, 1.4, 0.42), (0.5, 0.6, Z), w=0.012, material=DETAILS, caps=False)
+K.stones(g, 0.42, 1.12, 0.58, 1.3, y=0.98, size=0.16, h=0.15, ring=False)
+# iron bands across the sluice board
+for y in (0.3, 0.5):
+    K.beam(g, (0.13, y, Z - 0.035), (0.87, y, Z - 0.035), w=0.02, material=IRON, caps=False)
 m.blocks = [block("GroundOrStackable", "Bottom, Top, Corners, Path, Middle", "None")]
 m.extra["waterCells"] = [{"X": 0, "Y": 0, "Z": 0}]
 m.extra["flow"] = "along +Y (grid) for orientation Cw0; fixed inflow limit (0.3 in the water prototype)"
