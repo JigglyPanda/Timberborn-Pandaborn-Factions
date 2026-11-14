@@ -776,3 +776,76 @@ Everything the main mod's data needs. Ids follow the lock rules; the four spec c
 | New Ringtails | Arrival and kits | Never | Never |
 | Notice | — | Core's "switched off" notice | Core's "falls back to the plain game" notice |
 
+
+### 18.3 Night couriers and shelf size (measured)
+
+Three 2-day runs of the same village (`proto/ringtails/test/workshops*.request.json`, analysis
+`proto/ringtails/test/shelves.py`): 2 Paper Mills and 2 Pickle Yards, each with one Inkpaw worker, a plank pile and a
+cabbage warehouse stocked at the start, output warehouses for paper (and pickles where it fitted), and — in A and B — a
+Moon Loft (the family arrives at once) and a Night Courier Post. "Shelf" = a recipe's `CyclesCapacity`, which sizes both
+the input and the output store of the workshop (`RecipeSpec.GetCapacity = Amount x CyclesCapacity`).
+
+| Run | Shelves | Ringtails | Goods moved by the couriers at night (2 nights) | Inkpaw workshop workers by day: carrying / producing / idle at work |
+|---|---|---|---|---|
+| `rt2-shelvesA` | as generated (Paper 10 cycles, Pickles 20: about one day) | yes | **24** | 5 % / 47 % / 44 % (producing 38.8 h) |
+| `rt2-shelvesB` | three working days (Paper 33, Pickles 48) | yes | **107** | 8.5 % / 48 % / 37 % (producing 56.5 h) |
+| `rt2-shelvesC` | three working days | no | — | 12 % / 41 % / 41 % (producing 48.0 h) |
+
+What it shows:
+
+* **Shelf size is what makes night work.** With day-sized shelves the couriers found little to move (24 goods in two
+  nights); with three-day shelves they moved 4.5 times as much, and the workshops produced 46 % more hours (56.5 vs
+  38.8), because the input stores were full at dawn and the output stores had been cleared.
+* **Without Ringtails the bigger shelves are harmless:** the Inkpaws fetch and clear for themselves as in vanilla
+  (C: 12 % of their workshop day carrying, still producing 48 h). Compared with B, the couriers took about a third of
+  the Inkpaws' carrying off them (12 % → 8.5 %).
+* Caveats: one small layout per run (the tight Diorama terrace fitted the pickle warehouse only in C), 2 days, one
+  worker per workshop. The direction is clear; the exact percentages are not.
+
+**The capacity rule for the catalogue:** every Inkpaw workshop recipe gets
+`CyclesCapacity = ceil(48 h x MaxWorkers / CycleDurationInHours)` (inputs and outputs for three full 16-hour working
+days at full staffing), and the same factor on `FuelCapacity`. Measured examples: Paper 10 → 33, Pickles 20 → 48,
+Paper Lantern 10 → 33, Steamed Rice 30 → 48 (one worker each). Flags and farms (outputs only) are the same idea:
+their output store should hold a day's harvest, so the night couriers clear it.
+
+### 18.4 What a player sees, from the first Moon Loft to a two-people village
+
+1. **Before:** an Inkpaws colony. The night posts are locked behind a science cost like other buildings; nothing
+   mentions Ringtails. A player who never builds a Moon Loft never sees one (verified: `rt2-shelvesC` and
+   `rt2-folktails`; no Ringtail is ever created without the arrival).
+2. **The first Moon Loft is finished:** two Ringtail adults and a kit appear at its door and move in. One message:
+   "A Ringtail family has moved into the Moon Loft: Azra, Alzim, Aketa. Ringtails work from the afternoon bell to dawn.
+   The night posts are now available." The three night posts unlock for free. A second population row appears under
+   the vanilla one (in `rt2-module1`, where posts already stood: "Ringtails: 3   Working: 2   Idle: 0").
+3. **The player builds night posts.** Each is a Ringtail workplace at once (the panel lists Ringtail workers with
+   red-panda portraits and says "Night post: Ringtails work here from the afternoon bell to dawn."). By day the post
+   shows the status "Closed for the day. Ringtails start at the afternoon bell." instead of an alarm; the vanilla
+   "unstaffed" alert appears only if no Ringtail works there at all.
+4. **The bell rings:** Inkpaws walk home, Ringtails walk to work (shift starts at the bell: 16 h after dawn by
+   default; with the Bell on, the day the Bell locked at dawn). They work until dawn, go to bed in their lofts for
+   about three hours, eat, drink and take leisure (the teahouse beat), and go back at the bell.
+5. **Kits:** each dawn a Moon Loft with a Ringtail living in it and room for a kit raises one kit while the district
+   has open night jobs (posts' worker slots minus Ringtails and kits already growing), and nobody is starving. The
+   loft's panel says which: "Kits: one is raised each morning while night jobs are open." / "Kits: waiting for open
+   night jobs." / "Kits: no room for a kit." / "Kits: none while anyone in the district is hungry or thirsty." A birth
+   posts "Name was born in a Moon Loft!". Kits grow into Ringtail adults and take the open jobs.
+6. **More lofts do not mean more Ringtails:** the arrival happens once per save, and births follow open night jobs,
+   not beds. Ten lofts are ten homes; Inkpaws may live in spare loft beds and are swapped out only when a Ringtail
+   needs one (adults) or a kit needs the slot (cubs move to a free cub slot elsewhere, never into homelessness).
+7. **A demolished post:** its Ringtails become idle (the row shows them), keep their homes, rest and take leisure;
+   no kits are raised until there are open night jobs again; a new post takes them at once.
+8. **A mature village:** two rows in the population panel, night posts busy from the bell to dawn, Inkpaw workshops
+   stocked and cleared overnight (with day-sized shelves, §18.3).
+
+### 18.5 Interface: done and not done
+
+| Piece | State |
+|---|---|
+| Ringtail badge (portrait, "Ringtail, age N", district link) | Done (`RingtailBadge`, priority 11 over the vanilla 10); seen in game, also used by the workplace worker list |
+| Population panel second row (total, working, idle) | Done (`RingtailsPopulationRow`, a copy of the working-hours panel frame under the population panel), follows the selected district |
+| Moon line on night posts and lofts | Done as a panel line (`RingtailsBuildingFragment`) |
+| "Closed for the day" status | Done (`NightPost`, normal status, reuses the vanilla `NoUnemployed` icon) |
+| Moon mark in the toolbar, moon arc on the clock | Not done: the toolbar icons are art (the kit's icons are moon-marked); the clock arc needs UI work |
+| Ringtail names | Not done in data: the templates need `PandabornNamePoolSpec` with `Pandaborn.Ringtail.NamePool` (names.json); until then Ringtails get vanilla beaver names |
+
+All interface code runs inside `SafeUi`; a failing piece switches itself off for the session.
