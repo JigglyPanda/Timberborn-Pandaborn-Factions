@@ -105,6 +105,7 @@
  },
  "budgetFlags": [],
  "basis": "Carrot",
+ "gatherableDetail": "not a gatherable: the detail map carries buds on the grown model's leaf sprays, for the Great Flowering's announcement (PandabornFloweringPlantSpec.BudsUseDetail = true)",
  "blockHeight": 1,
  "randomizer": {
   "ConstrainProportion": true,

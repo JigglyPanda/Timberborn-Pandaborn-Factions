@@ -208,9 +208,47 @@ def pass2():
     }
 
 
+def flowering():
+    """Pass 3: the Great Flowering's art. Needs the events prototype for the twin templates
+    (-ExtraMods E:\PandabornDev\build\proto\events,E:\PandabornDev\build\proto\plants). Twins are spawned
+    directly (the events lane proves the mechanics); the plant lab forces buds, dying, dead and the cut stump."""
+    I = ".Inkpaws"
+    SB, SF, TB, TF = ("PandabornShootBamboo" + I, "PandabornShootBambooInFlower" + I, "PandabornTimberBamboo" + I,
+                      "PandabornTimberBambooInFlower" + I)
+    blocks = [  # template, rect, state
+        (SB, [0, 0, 5, 3], "alive"), (SB, [0, 4, 5, 4], "buds"), (SF, [7, 0, 12, 4], "alive"),
+        (SF, [14, 0, 16, 4], "dying"), (SF, [18, 0, 20, 4], "dead"),
+        (TB, [0, 7, 4, 11], "alive"), (TF, [6, 7, 10, 11], "alive"), (TF, [12, 7, 14, 11], "dying"),
+        (TF, [16, 7, 18, 11], "dead"), (TF, [20, 7, 21, 8], "cut")]
+    steps, rules = [], []
+    for t, rect, state in blocks:
+        steps.append({"op": "plant", "template": t, "rect": rect})
+        steps.append({"op": "grow", "template": t, "rect": rect, "progress": 1.0})
+        if state in ("buds", "cut"):      # keep them healthy on the test's dry ground, then the state
+            rules.append({"template": t, "rect": rect, "state": "alive"})
+        rules.append({"template": t, "rect": rect, "state": state})
+    steps.append({"op": "wait", "hours": 0.3, "speed": 3, "capSeconds": 300})
+    steps.append({"op": "plants", "label": "all", "rect": [0, 0, 21, 11], "detail": False})
+    steps += [shot("fl_overview", [10.5, 5.5, 0], 30, pitch=55),
+              shot("fl_shoot_field", [9, 2, 0], 16, pitch=52),
+              shot("fl_buds", [2.5, 4, 0], 6, pitch=45, yaw=15),
+              shot("fl_timber_grove", [9.5, 9, 0], 22, pitch=52),
+              shot("fl_timber_close", [8, 9, 0], 12, pitch=40, yaw=-20),
+              shot("fl_low", [10, 6, 0], 22, pitch=35, yaw=200)]
+    return {
+        "faction": "Inkpaws", "map": "Plains", "speed": 0, "batchControl": False,
+        "run": {"realSeconds": 900, "settleSeconds": 2},
+        "screenshots": [{"name": "screen_end", "kind": "screen", "at": "end"}],
+        "ownPatterns": OWN + ["PandabornProtoEvents"],
+        "water": {"name": "plants-flowering", "speed": 5, "area": [22, 12], "origin": "auto", "flattenMargin": 2,
+                  "steps": steps},
+        "plantLab": {"rules": rules},
+    }
+
+
 def main():
     os.makedirs(TESTS, exist_ok=True)
-    for name, fn in (("states", states), ("terrace", terrace), ("pass2", pass2)):
+    for name, fn in (("states", states), ("terrace", terrace), ("pass2", pass2), ("flowering", flowering)):
         p = os.path.join(TESTS, name + ".request.json")
         json.dump(fn(), open(p, "w"), indent=1)
         print(p)

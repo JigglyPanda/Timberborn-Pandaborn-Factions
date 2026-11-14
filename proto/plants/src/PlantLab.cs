@@ -36,7 +36,8 @@ namespace Pandaborn.PlantsProto
     /// </code>
     /// rect is relative to the water lab's origin (result.json water.origin), like the water lab's own steps. States:
     /// alive (keeps the healthy model even on soil that would make it die), dying (the #Dying model), dead (dies),
-    /// ripe (a grown gatherable gets its yield: the detail shows), cut (a grown cuttable is cut: trees show the stump).
+    /// ripe (a grown gatherable gets its yield: the detail shows), cut (a grown cuttable is cut: trees show the stump),
+    /// buds (the detail map switched on for the grown model, as the Flowering module does a cycle before a flowering).
     /// Applied every half second, so it also catches plants the water lab spawns or grows later. It reports, for the
     /// first plant of every rule, which model nodes are active, their material, mesh size and _EnableDetail.
     /// </summary>
@@ -143,6 +144,19 @@ namespace Pandaborn.PlantsProto
                         }
                         break;
                     }
+                    case "buds":
+                    {
+                        // what the Flowering module does a cycle ahead (BudsUseDetail): the detail map on the grown model
+                        var mature = p.GameObject.transform.Find("#Models/Mature") ?? FindDeep(p.GameObject.transform, "Mature");
+                        if (grown && mature != null)
+                            foreach (var r in mature.GetComponentsInChildren<MeshRenderer>(true))
+                                if (r.material.HasProperty(EnableDetailId) && r.material.GetFloat(EnableDetailId) < 0.5f)
+                                {
+                                    r.material.SetFloat(EnableDetailId, 1f);
+                                    changed++;
+                                }
+                        break;
+                    }
                     case "cut":
                     {
                         var cuttable = p.GetComponent<Cuttable>();
@@ -159,6 +173,17 @@ namespace Pandaborn.PlantsProto
             var entry = new JObject { ["template"] = template, ["state"] = state, ["plants"] = plants.Count, ["changedThisPass"] = changed };
             if (plants.Count > 0) entry["sample"] = Describe(plants[0]);
             return entry;
+        }
+
+        private static Transform FindDeep(Transform t, string name)
+        {
+            foreach (Transform c in t)
+            {
+                if (c.name == name) return c;
+                var f = FindDeep(c, name);
+                if (f != null) return f;
+            }
+            return null;
         }
 
         private static void SetDying(DyingNaturalResource dying, bool value)

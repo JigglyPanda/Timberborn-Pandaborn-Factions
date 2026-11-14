@@ -1,0 +1,181 @@
+{
+ "id": "PandabornTimberBambooInFlower",
+ "template": "PandabornTimberBambooInFlower.Inkpaws",
+ "kind": "Trees",
+ "material": "PandabornTimberBamboo",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornTimberBamboo",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerMatureDead",
+  "#Leftover": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerMatureStump"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlowerMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornTimberBambooInFlower",
+ "stats": {
+  "PandabornTimberBambooInFlowerSeedling": {
+   "triangles": 128,
+   "vertices": 126,
+   "bboxMin": [
+    -0.002,
+    -0.002,
+    0.226
+   ],
+   "bboxMax": [
+    0.885,
+    0.934,
+    0.857
+   ]
+  },
+  "PandabornTimberBambooInFlowerSeedlingDry": {
+   "triangles": 128,
+   "vertices": 126,
+   "bboxMin": [
+    -0.002,
+    -0.002,
+    0.226
+   ],
+   "bboxMax": [
+    0.885,
+    0.934,
+    0.857
+   ]
+  },
+  "PandabornTimberBambooInFlowerSeedlingDead": {
+   "triangles": 116,
+   "vertices": 102,
+   "bboxMin": [
+    0.103,
+    -0.002,
+    0.235
+   ],
+   "bboxMax": [
+    0.855,
+    0.836,
+    0.681
+   ]
+  },
+  "PandabornTimberBambooInFlowerMature": {
+   "triangles": 288,
+   "vertices": 360,
+   "bboxMin": [
+    -0.377,
+    -0.004,
+    -0.363
+   ],
+   "bboxMax": [
+    1.414,
+    2.854,
+    1.515
+   ]
+  },
+  "PandabornTimberBambooInFlowerMatureDry": {
+   "triangles": 264,
+   "vertices": 312,
+   "bboxMin": [
+    -0.373,
+    -0.004,
+    -0.296
+   ],
+   "bboxMax": [
+    1.351,
+    2.84,
+    1.485
+   ]
+  },
+  "PandabornTimberBambooInFlowerMatureDead": {
+   "triangles": 212,
+   "vertices": 208,
+   "bboxMin": [
+    -0.25,
+    -0.004,
+    -0.387
+   ],
+   "bboxMax": [
+    1.32,
+    2.863,
+    1.366
+   ]
+  },
+  "PandabornTimberBambooInFlowerMatureStump": {
+   "triangles": 60,
+   "vertices": 72,
+   "bboxMin": [
+    0.41,
+    0.0,
+    0.295
+   ],
+   "bboxMax": [
+    0.626,
+    0.258,
+    0.721
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "ChestnutTree",
+ "blockHeight": 3,
+ "treeCuttingRadius": 0.22,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.9,
+  "MaxHeightScaleFactor": 1.08,
+  "MinWidthScaleFactor": 0.9,
+  "MaxWidthScaleFactor": 1.1,
+  "RandomizedRotation": "BetweenMinAndMax",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": {
+  "Seedling": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.35,
+     0.5
+    ],
+    "radius": 0.2,
+    "height": 0.9
+   }
+  },
+  "Mature": {
+   "capsule": {
+    "center": [
+     0.5,
+     1.6,
+     0.5
+    ],
+    "radius": 0.45,
+    "height": 2.9
+   }
+  },
+  "Mature/#Dead": {
+   "capsule": {
+    "center": [
+     0.5,
+     1.3,
+     0.5
+    ],
+    "radius": 0.24,
+    "height": 2.7
+   }
+  },
+  "#Leftover": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.12,
+     0.5
+    ],
+    "radius": 0.25,
+    "height": 0.3
+   }
+  }
+ }
+}

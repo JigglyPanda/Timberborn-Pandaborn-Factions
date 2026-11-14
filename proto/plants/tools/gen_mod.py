@@ -68,11 +68,71 @@ def blueprint(info):
     return bp
 
 
+DEV_BUNDLE = r"E:\PandabornDev\build\plants\dev-bundle\pandabornplantsdev_win"
+DEV_COLLECTION = "PandabornPlantsDev.Inkpaws"
+
+
+def dev_materials(out, keep, ids):
+    """Copies the listed plants' models to NaturalResources/Pandaborn/Dev/<Id>/ with every material renamed <name>Dev,
+    points the plants' blueprints at them, and ships the dev bundle with its collection, listed by the faction."""
+    import sys
+    import zlib
+    sys.path.insert(0, os.path.join(REPO, "src", "pipeline"))
+    import model_pb2 as pb
+    mats = set()
+    for pid in ids:
+        info = json.load(open(os.path.join(REPO, "art", "plants", pid, "model.json")))
+        dev = dict(info, models={})
+        d = os.path.join(out, "NaturalResources", "Pandaborn", "Dev", pid)
+        os.makedirs(d, exist_ok=True)
+        for key, path in info["models"].items():
+            name = path.split("/")[-1]
+            m = pb.Model()
+            m.ParseFromString(zlib.decompress(open(os.path.join(info["builtTo"], name + ".timbermesh"), "rb").read()))
+            for nd in m.nodes:
+                for me in nd.meshes:
+                    if me.material.startswith("Pandaborn"):
+                        me.material += "Dev"
+                        mats.add(me.material)
+            with open(os.path.join(d, name + ".timbermesh"), "wb") as fh:
+                fh.write(zlib.compress(m.SerializeToString(), 6))
+            keep.add(os.path.relpath(os.path.join(d, name + ".timbermesh"), out).lower())
+            dev["models"][key] = "NaturalResources/Pandaborn/Dev/%s/%s" % (pid, name)
+        dev["PlantablePreviewModelSpec.Model"] = dev["models"].get("Mature/#Alive", info["PlantablePreviewModelSpec.Model"])
+        bd = os.path.join(out, *info["modelDir"].split("/"))
+        os.makedirs(bd, exist_ok=True)
+        bp_path = os.path.join(bd, info["template"] + ".optional.blueprint.json")
+        bp = blueprint(dev)
+        if pid.endswith("InFlower"):
+            bp.pop("PlantablePreviewModelSpec", None)    # twins are never planted (no such spec on their blueprint)
+        json.dump(bp, open(bp_path, "w", encoding="utf-8"), indent=2)
+        keep.add(os.path.relpath(bp_path, out).lower())
+        print("dev materials:", pid, "->", "NaturalResources/Pandaborn/Dev/" + pid)
+    os.makedirs(os.path.join(out, "AssetBundles"), exist_ok=True)
+    shutil.copyfile(DEV_BUNDLE, os.path.join(out, "AssetBundles", os.path.basename(DEV_BUNDLE)))
+    keep.add(os.path.join("assetbundles", os.path.basename(DEV_BUNDLE)).lower())
+    names = ["PandabornTimberBamboo", "PandabornShootBamboo", "PandabornCabbage", "PandabornRice", "PandabornTeaBush",
+             "PandabornSichuanPepper", "PandabornPersimmonTree"]
+    coll = {"MaterialCollectionSpec": {"CollectionId": DEV_COLLECTION,
+                                       "Materials": ["Materials/Pandaborn/Plants/%sDev" % n for n in names]}}
+    cp = os.path.join(out, "MaterialCollections", "Pandaborn", "MaterialCollection.%s.blueprint.json" % DEV_COLLECTION)
+    os.makedirs(os.path.dirname(cp), exist_ok=True)
+    json.dump(coll, open(cp, "w"), indent=2)
+    keep.add(os.path.relpath(cp, out).lower())
+    fp = os.path.join(out, "Factions", "Pandaborn", "Faction.Inkpaws.optional.blueprint.json")
+    os.makedirs(os.path.dirname(fp), exist_ok=True)
+    json.dump({"FactionSpec": {"MaterialCollectionIds#append": [DEV_COLLECTION]}}, open(fp, "w"), indent=2)
+    keep.add(os.path.relpath(fp, out).lower())
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=r"E:\PandabornDev\build\proto\plants")
     ap.add_argument("--adopted", action="store_true", help="the faction ships the plants: lab and merges only")
     ap.add_argument("--standalone", action="store_true", help="ship bundle, collection and models even if adopted")
+    ap.add_argument("--dev-materials", default="",
+                    help="comma list of plant ids whose models switch to the dev bundle's <name>Dev materials "
+                         "(build_dev_bundle.py), for new art the installed faction's bundle does not have yet")
     a = ap.parse_args()
     out = a.out
     adopted = a.adopted or (not a.standalone and
@@ -92,7 +152,10 @@ def main():
         info = json.load(open(mj))
         d = os.path.join(out, *info["modelDir"].split("/"))
         os.makedirs(d, exist_ok=True)
-        for path in ([] if adopted else set(info["models"].values())):
+        paths = set(info["models"].values())
+        if adopted:   # only the meshes the faction does not ship yet (e.g. the flowering twins before adoption)
+            paths = {pth for pth in paths if not os.path.exists(os.path.join(FACTION, *pth.split("/")) + ".timbermesh")}
+        for path in paths:
             name = path.split("/")[-1] + ".timbermesh"
             shutil.copyfile(os.path.join(info["builtTo"], name), os.path.join(d, name))
             keep.add(os.path.relpath(os.path.join(d, name), out).lower())
@@ -105,6 +168,8 @@ def main():
         os.makedirs(os.path.join(out, "AssetBundles"), exist_ok=True)
         shutil.copyfile(BUNDLE, os.path.join(out, "AssetBundles", os.path.basename(BUNDLE)))
         keep.add(os.path.join("assetbundles", os.path.basename(BUNDLE)).lower())
+    if a.dev_materials:
+        dev_materials(out, keep, [x.strip() for x in a.dev_materials.split(",") if x.strip()])
     for root, _, files in os.walk(out):
         for f in files:
             rel = os.path.relpath(os.path.join(root, f), out)

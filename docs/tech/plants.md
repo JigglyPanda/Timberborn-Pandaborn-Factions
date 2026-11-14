@@ -279,3 +279,47 @@ plant lab. Shots in `E:\PandabornDev\build\test\plants-pass2-2\`.
   * by-product for the design lane: tea on a bench **one level up and 4-8 tiles from 0.3-0.45 water** also started
     dying (11 of the unforced row): moisture climbs one level and reaches that far. Tea gardens need more distance or
     height from paddies than the terrace run's layout gave them (there, 7+ tiles and a ditch at -1 left all tea alive).
+
+### 2026-11-14, pass 3: the Great Flowering
+
+Two new plants (the flowering twins, docs/tech/events.md 3-4 and 10) and buds; no change to the `model.json` schema.
+
+| Twin (template) | Script | Mature: alive / dying / dead | Look |
+|---|---|---|---|
+| `PandabornShootBambooInFlower.Inkpaws` (Crops, Carrot basis) | `art/plants/PandabornShootBambooInFlower/build.py` | 108 / 108 / 98 triangles | the shoot-bamboo clump, five culms yellowing, no shoots, three pale straw-gold seed plumes arching out and hanging from every culm top: a flowering field is a pale feathery straw carpet. Dying: straw culms, tan plumes. Dead: bleached stalks slumped on dry soil, grey plumes, withered leaves |
+| `PandabornTimberBambooInFlower.Inkpaws` (Trees, ChestnutTree basis) | `art/plants/PandabornTimberBambooInFlower/build.py` | 288 / 264 / 212, stump 60 | the grove's culms yellowing, thinner yellow leaves, a seed plume hanging from every spray and from the tops: a pale straw-gold grove. Dying: straw culms, brown leaves, tan plumes. **Dies standing**: bleached silver-white culms, no leaves, a few grey plumes (dead twin trees keep their seed until cut) |
+
+* Both reuse their bamboo's material (`PandabornShootBamboo`, `PandabornTimberBamboo`) and its seedling and stump
+  (a twin is spawned grown; its Seedling files exist only so the basis has no vanilla stand-in left). The plumes are a new
+  atlas sprite (`bamboo_flower_a|b`, painted spikelets on wiry branchlets, in colour), so the twins need the
+  **rebuilt `pandabornplants` bundle** (Windows and Mac rebuilt 2026-11-14 for pass 3).
+* Same colliders and randomizer as their bamboo (`Mature/#Dead` narrow for the timber twin).
+* The parent scripts gained an optional `look` argument for the twins; built without it, the ordinary bamboos are
+  byte-identical to before, except the shoot bamboo's alive Mature model, which now carries the buds' uv2.
+
+**Buds.** Shoot bamboo is a crop with no gatherable yield, so its detail map was free: the alive Mature model's leaf
+sprays now carry small pale yellow-green bud clusters in the detail map (`bamboo_buds|_b`, uv2 only, 0 extra triangles),
+shown when the Flowering module switches `_EnableDetail` on a cycle ahead. Timber bamboo's detail map is the bamboo
+fungus (the game's `GatherableModel` drives it with the mushroom yield), and the shader has one detail flag: buds and
+fungus cannot be told apart, so **timber bamboo gets no early buds** (its `BudsUseDetail` stays false). The cheap
+alternatives, both not built: a vertex-colour tint cannot change at runtime without a third model; a third model stage
+needs code (a `#Budding` child the Flowering module shows instead of `#Alive`, about 10 lines in the module plus 3 mesh
+files). The forecast line and the panel text already carry the warning for timber bamboo.
+
+#### For the catalogue lane
+
+1. `catalogue/plants.toml`: `model = "PandabornShootBambooInFlower"` on `PandabornShootBambooInFlower` and
+   `model = "PandabornTimberBambooInFlower"` on `PandabornTimberBambooInFlower` (today both say the parent's model).
+   The adopter (`src/gen/pbgen/models.py apply_plant_model`) handles them as is: no planting or reproduction specs exist on
+   the twins, so their `PlantablePreviewModelSpec.Model` entry is skipped (as already coded); the seed yield and resource
+   group stay as the catalogue has them (Farmhouse for the crop, Cuttable for the trees).
+2. `PandabornShootBamboo`: `BudsUseDetail = true` in its `PandabornFloweringPlantSpec`. Leave `PandabornTimberBamboo` false.
+3. Rebuild with `pandaborn.ps1 all -Plants` (the `models` stage builds the twins from their scripts) after
+   `tools/build_plants.ps1` and `tools/build_plants.ps1 -Mac` (done today): the bundle has the plume and bud sprites.
+4. Model paths (for anything that points at them by hand, e.g. the events prototype's derived twins):
+   `NaturalResources/Pandaborn/Crops/PandabornShootBambooInFlower/PandabornShootBambooInFlower{Seedling,SeedlingDry,SeedlingDead,Mature,MatureDry,MatureDead}`
+   and `NaturalResources/Pandaborn/Trees/PandabornTimberBambooInFlower/PandabornTimberBambooInFlower{Seedling,...,MatureDead,MatureStump}`.
+
+Previews (Blender, game camera height): `E:\PandabornDev\build\plants\preview\flowering_shoot_field.png` (shoot
+bamboo, flowering, dying, dead fields), `flowering_timber_grove.png` (grove, flowering, dying, dead), `shoot_buds.png`
+(shoot bamboo with the buds on).

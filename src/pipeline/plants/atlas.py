@@ -56,6 +56,9 @@ REGIONS = {
     "soil_mound_dry": (1280, 1792, 1536, 2048),
     "shoot_leaves": (1536, 1536, 1792, 1792),
     "seedling_sprig": (1536, 1792, 1792, 2048),
+    # the Great Flowering (2026-11-14): pale straw seed plumes hanging from bamboo sprays
+    "bamboo_flower_a": (1792, 1536, 2048, 1792),
+    "bamboo_flower_b": (1792, 1792, 2048, 1984),
     "blank": (1984, 1984, 2048, 2048),     # fully transparent: uv0 of parts that only show their detail (fruit)
 }
 
@@ -68,6 +71,10 @@ DETAIL_REGIONS = {
     "tea_flush_top": (512, 256, 768, 512),  # over tea_top
     "mushrooms": (512, 512, 768, 768),      # bamboo fungus (white lace veils) at the culm bases
     "mushrooms_b": (768, 512, 1024, 768),
+    # buds a cycle before the Great Flowering, laid over the shoot bamboo's leaf sprays (uv2; never the bottom-left
+    # corner, where UV2_NONE samples)
+    "bamboo_buds": (256, 768, 512, 1024),
+    "bamboo_buds_b": (512, 768, 768, 1024),
 }
 
 

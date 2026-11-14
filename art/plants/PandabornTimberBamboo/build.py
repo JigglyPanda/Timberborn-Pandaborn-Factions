@@ -37,7 +37,13 @@ def leaf_colour(rng, state):
     return state_tint(c, state, dry_to=jitter(rng, [0.66, 0.58, 0.28], 0.08), dead_to=jitter(rng, [0.52, 0.45, 0.33], 0.06))
 
 
-def clump(m, rng, state, n, h_range, r_range, spread, sprays_per, spray_size, broken=0, mushrooms=False, shoot=False):
+def clump(m, rng, state, n, h_range, r_range, spread, sprays_per, spray_size, broken=0, mushrooms=False, shoot=False,
+          look=None):
+    """look (the flowering twin, art/plants/PandabornTimberBambooInFlower): {"culm": fn(rng, state, old) -> rgb,
+    "leaf": fn(rng, state) -> rgb, "plume": fn(m, rng, state, p, azimuth, size, f), "sprays": n, "leaves": bool}.
+    Without it the ordinary bamboo is built exactly as before."""
+    culm_col = look["culm"] if look else culm_colour
+    leaf_col = look["leaf"] if look else leaf_colour
     culm_uv = A.uv("culm")
     thin_uv = A.uv("culm_thin")
     angles = np.sort(rng.uniform(0, 2 * math.pi, n)) + rng.uniform(0, 1)
@@ -54,12 +60,14 @@ def clump(m, rng, state, n, h_range, r_range, spread, sprays_per, spray_size, br
             top = base + (top - base) * rng.uniform(0.35, 0.6)
         bow = np.array([math.cos(a), 0, math.sin(a)]) * (0.05 * H / 3)
         v0 = rng.uniform(0.0, 0.25)
-        stem(m, base, top, r, r * 0.55, culm_uv if r > 0.025 else thin_uv, culm_colour(rng, state, old=i % 3 == 0),
+        stem(m, base, top, r, r * 0.55, culm_uv if r > 0.025 else thin_uv, culm_col(rng, state, old=i % 3 == 0),
              sides=5, segments=3, bend=bow, v_range=(v0, v0 + min(0.75, H / 3.2)))
         if is_broken:
             continue
         # leaf sprays along the upper half, fanning outward, lowest ones largest
         k = sprays_per if state != "dead" else max(1, sprays_per // 3)
+        if look and "sprays" in look:
+            k = look["sprays"](state)
         for j in range(k):
             f = 0.5 + 0.5 * (j + rng.uniform(0.2, 0.8)) / k
             p = base + (top - base) * f + bow * 4 * f * (1 - f)
@@ -67,12 +75,17 @@ def clump(m, rng, state, n, h_range, r_range, spread, sprays_per, spray_size, br
             size = spray_size * rng.uniform(0.75, 1.1) * (1.15 - 0.45 * (f - 0.5) * 2)
             spr = SPRAYS[int(rng.integers(0, 2 if size > 0.5 else 5))] if state != "dead" else "bamboo_dry"
             tilt = rng.uniform(-0.15, 0.45) if f < 0.92 else rng.uniform(0.45, 0.7)
-            card(m, p, az, tilt, size, size, A.uv(spr), leaf_colour(rng, state), sway=(0.6 * f, 1.0),
-                 back_offset=size * 0.08)
+            if not look or look.get("leaves", lambda st: True)(state):
+                card(m, p, az, tilt, size, size, A.uv(spr), leaf_col(rng, state), sway=(0.6 * f, 1.0),
+                     back_offset=size * 0.08)
+            if look:
+                look["plume"](m, rng, state, p, az + rng.uniform(-0.6, 0.6), size, f)
         # the arching top: a spray standing up off the tip
-        if state != "dead":
+        if state != "dead" and not look:
             card(m, top, a + rng.uniform(-0.5, 0.5), rng.uniform(0.55, 0.75), spray_size * 0.8, spray_size * 0.7,
                  A.uv(SPRAYS[int(rng.integers(2, 5))]), leaf_colour(rng, state), sway=(0.9, 1.0), back_offset=0.05)
+        elif look:
+            look["plume"](m, rng, state, top, a, spray_size * 1.0, 1.0)
     if mushrooms:
         for k in range(3):
             a = 2 * math.pi * k / 3 + rng.uniform(-0.4, 0.4)

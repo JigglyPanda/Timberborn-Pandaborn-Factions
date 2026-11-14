@@ -32,7 +32,11 @@ def shoot(m, p, h, r, state, lean=(0.0, 0.0)):
            [r, r * 0.72, r * 0.08], 6, A.uv("sheath"), sway=[0, 0.1, 0.2], color=tint)
 
 
-def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size):
+def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size, buds=False, look=None):
+    """buds: the leaf sprays and ground fans carry bud sprites in the detail map (uv2), shown a cycle before a Great
+    Flowering when the Flowering module switches _EnableDetail on (BudsUseDetail); the crop has no other detail use.
+    look (the flowering twin, art/plants/PandabornShootBambooInFlower): {"culm", "leaf", "plume"} as for timber bamboo."""
+    leaf_c = look["leaf"] if look else leaf_col
     soil = "soil_mound" if state == "alive" else "soil_mound_dry"
     mound(m, C, 0.4, 0.012, A.uv(soil), [1, 1, 1])
     for i in range(culms):
@@ -41,6 +45,8 @@ def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size):
         H = rng.uniform(*h_range) * (0.6 if state == "dead" else 1.0)
         top = b + np.array([math.cos(a) * 0.08, H, math.sin(a) * 0.08])
         c = state_tint(jitter(rng, CULM, 0.07, 0.05), state, dry_to=[0.78, 0.7, 0.42], dead_to=[0.62, 0.58, 0.5])
+        if look:
+            c = look["culm"](rng, state)
         stem(m, b, top, 0.016, 0.009, A.uv("culm_thin"), c, sides=4, segments=1, v_range=(0.1, 0.1 + H / 3))
         nl = leaves if state != "dead" else 1
         for j in range(nl):
@@ -50,12 +56,15 @@ def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size):
             s = rng.uniform(0.22, 0.3)
             card(m, p, az, rng.uniform(0.2, 0.6), s, s, A.uv(["bamboo_spray_c", "bamboo_spray_d", "bamboo_spray_e"][j % 3]
                                                                if state != "dead" else "bamboo_dry"),
-                 leaf_col(rng, state), back_offset=0.03, sway=(0.5, 1.0))
+                 leaf_c(rng, state), back_offset=0.03, sway=(0.5, 1.0),
+                 uv2=A.duv("bamboo_buds" if j % 2 == 0 else "bamboo_buds_b") if buds else None)
+        if look:
+            look["plume"](m, rng, state, top, a, H)
     for k in range(4):        # low leaf fans on the ground around the clump
         a = 2 * math.pi * k / 4 + rng.uniform(-0.3, 0.3)
         p = C + np.array([math.cos(a) * 0.12, 0.05, math.sin(a) * 0.12])
         card(m, p, a, rng.uniform(0.35, 0.6), 0.26, 0.3, A.uv("shoot_leaves") if state != "dead" else A.uv("withered"),
-             leaf_col(rng, state), sway=(0.1, 0.6))
+             leaf_c(rng, state), sway=(0.1, 0.6))
     for k in range(shoots):
         a = 2 * math.pi * (k + 0.3) / shoots + rng.uniform(-0.25, 0.25)
         rr = rng.uniform(0.22, 0.3)
@@ -66,7 +75,7 @@ def clump(m, rng, state, culms, h_range, leaves, shoots, shoot_size):
 
 def mature(m, state):
     rng = np.random.default_rng(4)
-    clump(m, rng, state, culms=4, h_range=(0.42, 0.62), leaves=2, shoots=3, shoot_size=0.3)
+    clump(m, rng, state, culms=4, h_range=(0.42, 0.62), leaves=2, shoots=3, shoot_size=0.3, buds=state == "alive")
     ambient(m, 0.45, floor=0.55)
     auto_sway(m, 0.65, seed=1)
 
@@ -83,6 +92,7 @@ p.stage("Seedling", seedling)
 p.stage("Mature", mature)
 p.extra = {
     "basis": "Carrot",
+    "gatherableDetail": "not a gatherable: the detail map carries buds on the grown model's leaf sprays, for the Great Flowering's announcement (PandabornFloweringPlantSpec.BudsUseDetail = true)",
     "blockHeight": 1,
     "randomizer": {"ConstrainProportion": True, "MinHeightScaleFactor": 0.92, "MaxHeightScaleFactor": 1.08,
                    "MinWidthScaleFactor": 0.95, "MaxWidthScaleFactor": 1.05, "RandomizedRotation": "BetweenMinAndMax",

@@ -1,0 +1,472 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 900,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoPlants",
+  "PandabornPlants",
+  "PandabornProtoEvents"
+ ],
+ "water": {
+  "name": "plants-flowering",
+  "speed": 5,
+  "area": [
+   22,
+   12
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     3
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     3
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     4,
+     5,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     4,
+     5,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     16,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     16,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     18,
+     0,
+     20,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     18,
+     0,
+     20,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     0,
+     7,
+     4,
+     11
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     0,
+     7,
+     4,
+     11
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     6,
+     7,
+     10,
+     11
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     6,
+     7,
+     10,
+     11
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     12,
+     7,
+     14,
+     11
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     12,
+     7,
+     14,
+     11
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     16,
+     7,
+     18,
+     11
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     16,
+     7,
+     18,
+     11
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     20,
+     7,
+     21,
+     8
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     20,
+     7,
+     21,
+     8
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "wait",
+    "hours": 0.3,
+    "speed": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "plants",
+    "label": "all",
+    "rect": [
+     0,
+     0,
+     21,
+     11
+    ],
+    "detail": false
+   },
+   {
+    "op": "shot",
+    "name": "fl_overview",
+    "focus": [
+     10.5,
+     5.5,
+     0
+    ],
+    "distance": 30,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "fl_shoot_field",
+    "focus": [
+     9,
+     2,
+     0
+    ],
+    "distance": 16,
+    "pitch": 52,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "fl_buds",
+    "focus": [
+     2.5,
+     4,
+     0
+    ],
+    "distance": 6,
+    "pitch": 45,
+    "yaw": 15,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "fl_timber_grove",
+    "focus": [
+     9.5,
+     9,
+     0
+    ],
+    "distance": 22,
+    "pitch": 52,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "fl_timber_close",
+    "focus": [
+     8,
+     9,
+     0
+    ],
+    "distance": 12,
+    "pitch": 40,
+    "yaw": -20,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "fl_low",
+    "focus": [
+     10,
+     6,
+     0
+    ],
+    "distance": 22,
+    "pitch": 35,
+    "yaw": 200,
+    "width": 1600,
+    "height": 900
+   }
+  ]
+ },
+ "plantLab": {
+  "rules": [
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     5,
+     3
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     4,
+     5,
+     4
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     4,
+     5,
+     4
+    ],
+    "state": "buds"
+   },
+   {
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     7,
+     0,
+     12,
+     4
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     14,
+     0,
+     16,
+     4
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornShootBambooInFlower.Inkpaws",
+    "rect": [
+     18,
+     0,
+     20,
+     4
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     0,
+     7,
+     4,
+     11
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     6,
+     7,
+     10,
+     11
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     12,
+     7,
+     14,
+     11
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     16,
+     7,
+     18,
+     11
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     20,
+     7,
+     21,
+     8
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTimberBambooInFlower.Inkpaws",
+    "rect": [
+     20,
+     7,
+     21,
+     8
+    ],
+    "state": "cut"
+   }
+  ]
+ }
+}

@@ -22,7 +22,9 @@
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File tools\build_plants.ps1
 .EXAMPLE
-  powershell -ExecutionPolicy Bypass -File tools\build_plants.ps1 -SkipTextures -Mac
+  powershell -ExecutionPolicy Bypass -File tools\build_plants.ps1 -Mac
+  Not -SkipTextures with -Mac after a texture change: the Mac build has its own project and its own copy of the
+  textures, so -SkipTextures builds the Mac bundle from that project's older textures (seen 2026-11-14).
 #>
 [CmdletBinding()]
 param(

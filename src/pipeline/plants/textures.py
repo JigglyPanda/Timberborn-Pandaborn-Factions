@@ -538,6 +538,59 @@ def rice_panicle(cv, name, seed, n=3):
                      shadow=0.3, h=0.8)
 
 
+def bamboo_flower(cv, name, seed, n=3):
+    """Bamboo in flower: thin wiry branchlets arching out and hanging, strung with long pale straw spikelets (seed
+    heads) and tiny dark anthers; drawn in colour, vertex colour stays near white."""
+    rng = np.random.default_rng(seed)
+    x0, y0, W, H = region_origin(name)
+    straw = np.array([0.90, 0.82, 0.56])
+    pale = np.array([0.95, 0.90, 0.70])
+    tan = np.array([0.70, 0.58, 0.36])
+    for k in range(n):
+        base = np.array([x0 + W * rng.uniform(0.4, 0.6), y0 + H * 0.98])
+        ang = -math.pi / 2 + (k / max(n - 1, 1) - 0.5) * 0.8 + rng.uniform(-0.1, 0.1)
+        turn = rng.uniform(0.14, 0.19) * (1 if math.cos(ang) >= 0 else -1)
+        pts = [base]
+        for i in range(8):
+            ang += turn + rng.uniform(-0.04, 0.04)
+            pts.append(pts[-1] + np.array([math.cos(ang), math.sin(ang)]) * H * 0.115)
+        pts = np.array(pts)
+        pts[:, 0] = np.clip(pts[:, 0], x0 + 6, x0 + W - 6)
+        pts[:, 1] = np.clip(pts[:, 1], y0 + 6, y0 + H - 2)
+        stroke(cv, pts, 3.0, 1.2, value=0.6, color=np.array([0.66, 0.6, 0.36]), shadow=0.1)
+        for i in range(2, len(pts)):
+            for side in (-1, 1):
+                t = pts[i] - pts[i - 1]
+                t /= max(np.linalg.norm(t), 1e-6)
+                nrm = np.array([-t[1], t[0]]) * side
+                hang = pts[i] + (nrm * 0.35 + np.array([0, 1.0])) * rng.uniform(18, 34)
+                stroke(cv, [pts[i], hang], 1.4, 1.0, value=0.6, color=np.array([0.62, 0.56, 0.34]), shadow=0.0)
+                for g in range(int(rng.integers(3, 5))):
+                    gp = pts[i] + (hang - pts[i]) * (0.3 + 0.2 * g) + rng.uniform(-2.5, 2.5, 2)
+                    col = (pale if rng.random() < 0.5 else straw) * rng.uniform(0.92, 1.05)
+                    blob(cv, gp, 8.0, 2.6, col if rng.random() > 0.12 else tan,
+                         angle=math.atan2(hang[1] - pts[i][1], hang[0] - pts[i][0]), spec=0.12, shadow=0.25, h=0.7)
+                    if rng.random() < 0.35:   # dangling anthers
+                        blob(cv, gp + np.array([0, 6]), 1.6, 2.4, np.array([0.45, 0.32, 0.26]), spec=0.0, shadow=0.0)
+
+
+def bamboo_buds(cv, name, seed, n):
+    """Buds a cycle before flowering: small pale yellow-green spikelet buds in twos and threes, scattered so they sit
+    among the leaves of the spray cards they overlay."""
+    rng = np.random.default_rng(seed)
+    x0, y0, W, H = region_origin(name, atlas.DETAIL_REGIONS)
+    bud = np.array([0.86, 0.88, 0.58])
+    for k in range(n):
+        p = np.array([x0 + W * rng.uniform(0.1, 0.9), y0 + H * rng.uniform(0.08, 0.85)])
+        a = rng.uniform(0, 2 * math.pi)
+        for j in range(int(rng.integers(2, 4))):
+            aa = a + (j - 1) * 0.45
+            q = p + np.array([math.cos(aa), math.sin(aa)]) * 7
+            stroke(cv, [p, q], 1.5, 1.2, value=0.5, color=np.array([0.55, 0.6, 0.32]), shadow=0.0)
+            blob(cv, q + np.array([math.cos(aa), math.sin(aa)]) * 6, 8.5, 3.6, bud * rng.uniform(0.92, 1.06),
+                 angle=aa, spec=0.2, shadow=0.35, h=0.8)
+
+
 def pepper_cluster(cv, name, seed, n):
     """Compound leaves: a rachis with paired small leaflets, radiating from the centre."""
     rng = np.random.default_rng(seed)
@@ -745,6 +798,8 @@ def paint_main(size=atlas.MAIN):
     soil_mound(cv, "soil_mound_dry", 82, dry=True)
     bamboo_spray_small_low(cv, "shoot_leaves", 83)
     sprig(cv, "seedling_sprig", 84)
+    bamboo_flower(cv, "bamboo_flower_a", 85, 5)
+    bamboo_flower(cv, "bamboo_flower_b", 86, 4)
     return cv
 
 
@@ -770,6 +825,8 @@ def paint_detail(size=atlas.DETAIL):
     tea_flush(cv, "tea_flush_top", 95, 30)
     mushrooms(cv, "mushrooms", 96, 3)
     mushrooms(cv, "mushrooms_b", 97, 2)
+    bamboo_buds(cv, "bamboo_buds", 98, 30)
+    bamboo_buds(cv, "bamboo_buds_b", 99, 24)
     return cv
 
 
