@@ -20,7 +20,10 @@ Game design lives in [docs/DESIGN.md](docs/DESIGN.md). Read it before adding con
 
 | Path | Contents |
 |---|---|
-| `mod/PandabornFactions/` | The mod as shipped, minus large binaries (meshes over ~10 MB) |
+| `catalogue/` | **The source of truth for all content**: faction, characters, buildings, goods, needs, recipes, plants, text, the id lock. Author content only here ([catalogue/README.md](catalogue/README.md)) |
+| `mod/PandabornFactions/` | Hand-written files only: manifest, sprites, coat textures, hand-authored loc. Never put generated or copied blueprints here |
+| `src/gen/` | The generator (catalogue -> mod data, deterministic, with provenance) and the stat-sheet importer |
+| `schema/` | Every game spec class, field, type and enum per game version, from `tools/schema` (the validator's reference) |
 | `src/code/` | Runtime C#: `Pandaborn.Bootstrap` (the only DLL), `Specs`, `Core`, one module per feature (`Bell`, `Names`). Read its README before adding code |
 | `src/scripts/` | Water prototype code (flume, dew), to move into `src/code/Pandaborn.Water` |
 | `proto/stage0/` | Stage-0 prototype: faction modifiers, plank tree, tutorial, the code modules, an in-game probe. Results in `docs/tech/stage0.md` |
@@ -54,6 +57,10 @@ Game design lives in [docs/DESIGN.md](docs/DESIGN.md). Read it before adding con
 * **Collision-proof ids.** Template names end in `.Inkpaws`. Global ids (goods, needs, recipes, need groups,
   collections) start with `Pandaborn` or are `Inkpaws`-scoped. Other faction mods have crashed over shared ids
   such as `Grapes`.
+* **Content is generated, never hand-written.** Buildings, goods, needs, recipes, plants, collections, the faction
+  file, characters, decals, outfits and their loc are entries in `catalogue/` turned into game data by `src/gen`
+  (`tools/pandaborn.ps1 all`). New ids must be locked (`generate -Lock`) and are then frozen forever
+  (`catalogue/ids.lock.json`, append-only). Never edit files in the build folders; they are overwritten.
 * **No required mods** unless a mechanic cannot be built without one. Mod Settings stays optional. A DLL that
   references an absent mod crashes the game, so optional integrations load late (see the Reskin's `.bin` trick).
 * **The user's machine:** never delete or edit the user's saves, other mods, or mod enable states. Test saves use
@@ -191,6 +198,17 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   (`Unity.exe -batchmode -quit -projectPath <proj> -executeMethod <Builder.Build>`). The Unity project goes in
   `E:\PandabornDev\unity`.
 * Dev mode in game is Shift+Alt+Z; `-skipModManager` skips the launch dialog.
+* **One command:** `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage>`; stages `pin`, `generate`
+  (`-DryRun`, `-Lock`), `code` and `bundles` (hooks, off unless `-WithCode`/`-WithBundles`), `assemble`, `validate`,
+  `install`, `test` (grid scenario), `package`, `all`. `tools/build.ps1` still works and runs generate, assemble,
+  validate, install. The build refuses to run if the vanilla dump differs from `catalogue/vanilla.pin.json` until
+  you review `tools/game_diff.py` and `pin -Accept`.
+* **Validator:** `python tools/validate.py --mod <any mod folder>` checks every blueprint key and field against
+  `schema/<game version>.json` (unknown spec keys throw in game; unknown fields are silently ignored), asset
+  references (exact case), ids and the lock, custom specs in global data, NeedVerifier, goods outside the faction's
+  collections, bundle pairs. Prototypes that add fragments to the faction build: `--base-mod
+  E:\PandabornDev\build\stage\PandabornFactions`; their own spec classes: `--mod-schema` (from `tools/schema
+  --include <dll>`). `--self-test` runs the broken fixtures in `tools/tests/validate`.
 * See `tools/` for the build, validate and automated in-game test scripts.
 
 ### Automated in-game test
@@ -258,12 +276,19 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   Unity arguments work: `-skipModManager`, `-logFile <path>`, `-screen-fullscreen 0 -screen-width W -screen-height H`.
   The game's own arguments: `-skipModManager`, `-saveName`/`-settlementName` (auto-load a save), `-uncapped`,
   `-benchmarkLength` (loads no mods).
-* `tools/build.ps1` mirrors `mod/PandabornFactions` plus the two panda meshes (from
-  `E:\PandabornDev\assets\Pandaborn-Reskin-release`) into `E:\PandabornDev\build\PandabornFactions`, runs
-  `tools/validate.py`, then junctions `Documents\Timberborn\Mods\PandabornFactions` to it. It never touches any
-  other `Mods` entry and refuses to replace a real folder. *Untested:* that the game loads a mod through a junction.
-* `src/pipeline/derive_vanilla_copies.py` regenerates the Inkpaws copies of vanilla blueprints (characters, bot,
-  shaft parts, decals, worker outfits) from the dump; rerun it after a game update.
+* The build (`tools/pandaborn.ps1`, or `tools/build.ps1`) generates the catalogue into
+  `E:\PandabornDev\build\gen\PandabornFactions`, assembles it with `mod/PandabornFactions` and the two panda meshes
+  (from `E:\PandabornDev\assets\Pandaborn-Reskin-release`) in `E:\PandabornDev\build\stage\PandabornFactions`,
+  validates that, then mirrors it into `E:\PandabornDev\build\PandabornFactions` and junctions
+  `Documents\Timberborn\Mods\PandabornFactions` to it (the game loads mods through the junction; verified). It never
+  touches any other `Mods` entry and refuses to replace a real folder; a build that fails validation is not installed.
+* Since 2026-11-14 the Inkpaws own their building list (`Buildings.Inkpaws`, 145 buildings), goods
+  (`Goods.Inkpaws`), needs (`Needs.Inkpaws`) and plants (`NaturalResources.Inkpaws`); an Inkpaws game no longer
+  offers `*.Folktails` templates. Re-themed vanilla buildings are `<Name>.Inkpaws` copies; new buildings are
+  `Pandaborn<Name>.Inkpaws` on vanilla stand-in models (`E:\PandabornDev\build\gen\PandabornFactions.report.json`
+  lists every stand-in). Harness: `-RequestJson E:\PandabornDev\build\gen\PandabornFactions.grid.json` places and
+  finishes every placeable template (`src/devharness/GridLab.cs`, request key `grid`; use `-Map Plains -OnlyMods
+  JigglyPanda.PandabornFactions` for a comparable layout).
 
 ## Art toolchain
 

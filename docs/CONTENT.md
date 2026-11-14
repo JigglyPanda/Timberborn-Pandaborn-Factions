@@ -33,14 +33,14 @@ files in `catalogue/`; this page is the human overview.
 | Bamboo shoots | Raw food | Shoot bamboo, a field crop | Starter staple; steamed shoots |
 | Poles | Material | Timber bamboo, cut | Construction in place of planks; paper |
 | Cured poles | Material | Smoke Kiln | Late construction in place of treated planks |
-| Cabbage | Raw food | Farmstead | Second staple; pickles, hot pot |
+| Cabbage | Raw food | Farmhouse | Second staple; pickles, hot pot |
 | Rice | Crop | Paddy | Steamed rice, rice flour |
 | Rice flour | Ingredient | Trip-Hammer Mill | Sweet rice balls, seed cakes |
 | Steamed shoots | Food | Steamer | The first cooked dish |
 | Steamed rice | Food | Steamer | Staple meal |
 | Pickles | Food | Pickle Yard | One cabbage makes several: the way to stretch a harvest |
 | Sweet rice balls | Food | Kitchen | The festival sweet |
-| Sichuan pepper | Crop | Farmstead, dry ground | Hot pot |
+| Sichuan pepper | Crop | Farmhouse, dry ground | Hot pot |
 | Hot pot | Food | Hot Pot Hall | Best everyday meal |
 | Tea leaves | Crop | Tea bushes, dry ground | Tea |
 | Tea | Drink | Tea Roastery | Its own need, and quenches thirst: three cups from one water |
@@ -65,12 +65,12 @@ charcoal, persimmon cakes, lotus root, ox parts and ox upkeep goods, scrolls.
 
 | Plant | Zone | Planted by | Harvest | Notes |
 |---|---|---|---|---|
-| Shoot bamboo | Moist | Farmstead | Shoots | Field crop, like carrots; edible raw; about three days |
+| Shoot bamboo | Moist | Farmhouse | Shoots | Field crop, like carrots; edible raw; about three days |
 | Timber bamboo | Moist | Forester | Poles; mushrooms foraged while standing | Fast tree |
-| Cabbage | Moist | Farmstead | Cabbage | Edible raw |
+| Cabbage | Moist | Farmhouse | Cabbage | Edible raw |
 | Rice | Flooded, up to one block | Paddy House | Rice | Staple of the second cycle onward |
-| Tea bush | Dry | Farmstead | Tea leaves, repeatedly | Permanent; dies if its roots get wet |
-| Sichuan pepper | Dry | Farmstead | Pepper | Dies if its roots get wet |
+| Tea bush | Dry | Farmhouse | Tea leaves, repeatedly | Permanent; dies if its roots get wet |
+| Sichuan pepper | Dry | Farmhouse | Pepper | Dies if its roots get wet |
 | Persimmon tree | Moist | Forester | Persimmons; logs when felled | Orchard tree |
 
 Birch, pine, oak and blueberries remain. Both bamboos survive a short drought and die in a long one.
@@ -103,7 +103,7 @@ Any home takes anyone.
 | Building | Basis | Who | When | Role |
 |---|---|---|---|---|
 | Gatherer Flag | re-themed | I | 0 | Berries, persimmons, mushrooms |
-| Farmstead | re-themed | I | 0 | Shoot bamboo, cabbage; later tea and pepper on dry ground |
+| Farmhouse | re-themed | I | 0 | Shoot bamboo, cabbage; later tea and pepper on dry ground |
 | Steamer | new | I | 1 | Steamed shoots, then steamed rice |
 | Pickle Yard | new | I | 1 | Pickles |
 | Paddy House | new | I | 2 | Rice |
@@ -187,10 +187,10 @@ rope.
 | Nap Platform | new | Nap, for several at once | Daily | 2 |
 | Teahouse | new | Tea, company | Daily | 1 |
 | Slide and Swing | new | Play | Every few days | 2 |
-| Panda Kindergarten | new | Cub-watching for adults; play for cubs and kits | Every few days | 2 |
-| Ink Studio | new | Contemplation | Weekly | 2 |
+| Kindergarten | new | Watching the young, for adults; play for cubs and kits | Every few days | 2 |
+| Ink Studio | new | Ink painting | Weekly | 2 |
 | Hot Spring Bath | new | Soak | Every few days | 3 |
-| Opera Stage | new | Performance (run by Ringtails) | Weekly | 3 |
+| Opera Stage | new | Opera (run by Ringtails) | Weekly | 3 |
 | Teeth Grindstone, Medical Bed, Herbalist, Shower | re-themed | As vanilla | As vanilla | 0–2 |
 
 ### Ringtail workplaces
@@ -201,7 +201,7 @@ All in one toolbar group marked with a moon.
 |---|---|---|---|
 | Night Builders' Post | new | With the first Moon Loft | Builders through the evening and night |
 | Night Courier Post | new | 2 | Hauling |
-| Night Forager's Post | new | 2 | Mushrooms and wild food |
+| Night Gatherers' Post | new | 2 | Mushrooms and wild food |
 | Star Tower | new | 3 | Science |
 | Opera Stage | new | 3 | Performances |
 
@@ -233,10 +233,10 @@ Shared with vanilla: hunger, thirst, sleep, shelter, wet fur, injury, contaminat
 | Tea | Drinking tea; daily |
 | Nap | Hammock, nap platform; daily |
 | Play | Slide and swing, kindergarten |
-| Cub-watching | Panda Kindergarten |
+| Watching the young | Kindergarten |
 | Soak | Hot spring bath |
-| Contemplation | Ink studio |
-| Performance | Opera stage |
+| Ink painting | Ink studio |
+| Opera | Opera stage |
 | One per decoration kind | Standing near it |
 | Awe | Monuments |
 | Festive spirit | A Lantern Festival; fades over most of a cycle |
