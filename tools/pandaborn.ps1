@@ -177,6 +177,17 @@ foreach ($s in $stages) {
             $log = & dotnet build (Join-Path $repo 'src\code\Pandaborn.Code.sln') -c Release -v q --nologo "-p:ModOut=$codeOut" 2>&1
             if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Say "  $_" 'Red' }; $failed += $s; break }
             Say "code: built into $codeOut"
+            # the mod's own spec classes, for the validator (.bin files are assemblies loaded from bytes)
+            $dlls = Join-Path (Split-Path $codeOut -Parent) 'code-dlls'
+            if (Test-Path $dlls) { Remove-Item -Recurse -Force $dlls }
+            New-Item -ItemType Directory -Force $dlls | Out-Null
+            foreach ($f in Get-ChildItem -LiteralPath $codeOut -Recurse -File | Where-Object { $_.Extension -in '.bin', '.dll' }) {
+                Copy-Item -LiteralPath $f.FullName (Join-Path $dlls ($f.BaseName + '.dll'))
+            }
+            $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
+            $log = & dotnet run --project (Join-Path $repo 'tools\schema') -c Release -- --include $dlls --out $modSchema 2>&1
+            if ($LASTEXITCODE -ne 0) { $log | ForEach-Object { Say "  $_" 'Red' }; $failed += $s; break }
+            Say "code: spec schema with the mod's own classes in $modSchema"
         }
         'bundles' {
             if (-not $WithBundles) { Say 'bundles: skipped (HOOK; pass -WithBundles; drop pandabornfactions*_win/_mac pairs into -BundleDir)' 'DarkYellow'; continue }
@@ -222,6 +233,8 @@ foreach ($s in $stages) {
         'validate' {
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
             if ($Catalogue) { $a += @('--lock', (Join-Path $Catalogue 'ids.lock.json')) }
+            $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
+            if ($WithCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
             $validated = $true
             # report only: numbers in the balance model's stat sheet the catalogue has not carried over

@@ -425,7 +425,7 @@ def check_paths(c):
             continue
         if low.startswith("localizations/") and "pandaborn" in low.rsplit("/", 1)[-1]:
             continue
-        if low.endswith(".dll") or low.startswith("scripts/") or low.startswith("assetbundles/"):
+        if low.endswith(".dll") or low.startswith(("scripts/", "modules/", "assetbundles/")):
             continue
         if "pandaborn" not in [seg.lower() for seg in rel.split("/")[:-1]]:
             R.error("new file outside a Pandaborn path segment: " + rel)
@@ -586,8 +586,9 @@ def check_references(c):
             if tm:
                 resolve(c, tm.get("Model", ""), rel + " %s.TimbermeshSpec.Model" % child_name, "timbermesh")
                 handled.add("Children.%s.TimbermeshSpec.Model" % child_name)
+        typed = {v for _, v, _ in getattr(c, "asset_refs", [])}   # checked with their asset type by the schema
         for path, value in walk_strings(bp):
-            if path in handled or not PATH_RE.match(value):
+            if path in handled or not PATH_RE.match(value) or value in typed:
                 continue
             kind = "texture" if path.startswith("DecalSpec.Texture") else None
             resolve(c, value, rel + " " + path, kind)
@@ -1385,6 +1386,10 @@ def check_material_coverage(c, fid, bp):
                 "found'): %s" % (fid, len(missing), ", ".join(missing[:20]) + (" ..." if len(missing) > 20 else "")))
 
 
+# bundles whose file name is fixed by a recorded decision (docs/ENGINEERING.md asks for pandabornfactions*)
+BUNDLE_NAME_EXCEPTIONS = {"pandabornlook": "docs/tech/look.md (the material swap finds its materials by this bundle)"}
+
+
 def check_bundles(c):
     bundles = {}
     for rel in c.files:
@@ -1399,7 +1404,10 @@ def check_bundles(c):
             continue
         bundles.setdefault(m.group(1), set()).add(m.group(2))
         if c.profile == "pandaborn" and not m.group(1).lower().startswith("pandabornfactions"):
-            R.error("%s: bundle names must start with pandabornfactions (distinct from the Reskin's)" % rel)
+            if m.group(1).lower() in BUNDLE_NAME_EXCEPTIONS:
+                R.info("%s: bundle name kept by decision: %s" % (rel, BUNDLE_NAME_EXCEPTIONS[m.group(1).lower()]))
+            else:
+                R.error("%s: bundle names must start with pandabornfactions (distinct from the Reskin's)" % rel)
     for base, plats in sorted(bundles.items()):
         for p in ("win", "mac"):
             if p not in plats:
