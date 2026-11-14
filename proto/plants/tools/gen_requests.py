@@ -98,7 +98,8 @@ def terrace():
         {"op": "water", "id": "paddyE", "at": [22, 3, -1], "rate": 3.0, "maxDepth": 0.3},
         {"op": "water", "id": "ditchW", "at": [1, 9, -1], "rate": 1.5, "maxDepth": 0.3},
         {"op": "water", "id": "ditchE", "at": [28, 9, -1], "rate": 1.5, "maxDepth": 0.3},
-        {"op": "wait", "hours": 1.0, "speed": 7, "capSeconds": 300},
+        {"op": "water", "id": "paddyM", "at": [14, 2, -1], "rate": 3.0, "maxDepth": 0.3},
+        {"op": "wait", "hours": 3.0, "speed": 7, "capSeconds": 400},
     ]
     plantings = [  # template, rect, z, grow
         ("PandabornRice", [1, 1, 18, 4], -1, True), ("PandabornRice", [20, 1, 28, 4], -1, False),
@@ -131,7 +132,7 @@ def terrace():
                 shot("terrace_orchard_" + tag, [6, 10, 0], 14, pitch=50, yaw=15),
                 shot("terrace_low_" + tag, [15, 9, 0], 26, pitch=38, yaw=200)]
     steps += shots("day")
-    steps.append({"op": "wait", "hours": 12.5, "speed": 7, "capSeconds": 900})
+    steps.append({"op": "wait", "hours": 16.0, "speed": 7, "capSeconds": 1200})
     steps.append({"op": "plants", "label": "night", "rect": [0, 0, 29, 21], "detail": False})
     steps += shots("night")
     return {

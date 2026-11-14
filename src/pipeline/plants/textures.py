@@ -500,14 +500,14 @@ def rice_panicle(cv, name, seed, n=3):
     """Drooping golden panicles: arching stems from the lower left, grains hanging along their side branches."""
     rng = np.random.default_rng(seed)
     x0, y0, W, H = region_origin(name)
-    gold = np.array([0.88, 0.73, 0.36])
-    husk = np.array([0.70, 0.52, 0.22])
+    gold = np.array([0.86, 0.78, 0.46])
+    husk = np.array([0.72, 0.62, 0.34])
     for k in range(n):
         p = np.array([x0 + W * rng.uniform(0.15, 0.35), y0 + H * rng.uniform(0.85, 0.95)])
         a = -math.pi / 2 + rng.uniform(0.15, 0.45)
         pts = [p.copy()]
         for i in range(9):
-            a += 0.2 + rng.uniform(-0.03, 0.05)
+            a += 0.15 + rng.uniform(-0.02, 0.03)
             p = p + np.array([math.cos(a), math.sin(a)]) * H * 0.11
             pts.append(p.copy())
         pts = np.array(pts)
@@ -519,12 +519,12 @@ def rice_panicle(cv, name, seed, n=3):
                 tdir = pts[i] - pts[i - 1]
                 tdir = tdir / np.linalg.norm(tdir)
                 nrm = np.array([-tdir[1], tdir[0]]) * side
-                q = pts[i] + (nrm * 0.6 + np.array([0, 1.0])) * rng.uniform(16, 30)
+                q = pts[i] + (nrm * 0.5 + np.array([0, 1.0])) * rng.uniform(10, 18)
                 stroke(cv, [pts[i], q], 1.6, 1.0, value=0.6, color=np.array([0.6, 0.55, 0.3]), shadow=0.0)
                 for g in range(int(rng.integers(4, 7))):
                     gp = pts[i] + (q - pts[i]) * (0.2 + 0.15 * g) + rng.uniform(-2.5, 2.5, 2)
                     col = gold * rng.uniform(0.88, 1.08) if rng.random() > 0.2 else husk
-                    blob(cv, gp, 7.0, 3.8, col, angle=math.atan2(q[1] - pts[i][1], q[0] - pts[i][0]) + 0.2, spec=0.15,
+                    blob(cv, gp, 6.5, 3.6, col, angle=math.atan2(q[1] - pts[i][1], q[0] - pts[i][0]) + 0.2, spec=0.15,
                          shadow=0.25, h=0.8)
 
 
@@ -712,9 +712,9 @@ def paint_main(size=atlas.MAIN):
     bamboo_dead(cv, "bamboo_dry", 26)
     discs_culm(cv, "culm_discs")
     branches(cv, "twigs_dead", 27, np.array([0.55, 0.5, 0.42]), n=2, thick=7, value=0.55)
-    leaf_cluster(cv, "persimmon_leaves_a", 31, 46, 120, 70, "ovate", value=0.82, bend=0.2, midrib=0.1, crinkle=0.0)
-    leaf_cluster(cv, "persimmon_leaves_b", 32, 18, 70, 40, "ovate", value=0.82, bend=0.2)
-    leaf_cluster(cv, "persimmon_leaves_c", 33, 16, 64, 38, "ovate", value=0.8, bend=0.25)
+    leaf_cluster(cv, "persimmon_leaves_a", 31, 72, 115, 68, "ovate", value=0.82, bend=0.2, midrib=0.1, crinkle=0.0, round_=0.97)
+    leaf_cluster(cv, "persimmon_leaves_b", 32, 28, 64, 38, "ovate", value=0.82, bend=0.2, round_=0.97)
+    leaf_cluster(cv, "persimmon_leaves_c", 33, 26, 60, 36, "ovate", value=0.8, bend=0.25, round_=0.97)
     branches(cv, "persimmon_branch", 34, np.array([0.24, 0.20, 0.17]), n=3, thick=14, value=0.3)
     discs_wood(cv, "persimmon_discs")
     tea_mass(cv, "tea_leaves", 41, 420, 46, 22)

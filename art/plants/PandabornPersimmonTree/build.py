@@ -48,7 +48,7 @@ def trunk(m, rng, state, H, r, limbs):
 def crown(m, rng, state, centre, R, Hc, n, fruit):
     """Leaf puffs laid like tiles over an ellipsoid crown, top down, as vanilla canopies are built; then fruit."""
     cards = []
-    rings = [(0.15, 3), (0.55, 7), (0.95, 10), (1.35, 12), (1.75, 10)]
+    rings = [(0.1, 3), (0.45, 7), (0.8, 10), (1.12, 12), (1.45, 12), (1.8, 10)]
     for phi, k in rings:
         for j in range(k):
             cards.append((phi + rng.uniform(-0.1, 0.1), 2 * math.pi * (j + rng.uniform(-0.25, 0.25)) / k + phi))
@@ -63,7 +63,7 @@ def crown(m, rng, state, centre, R, Hc, n, fruit):
             phi = rng.uniform(0.55, 1.65)
             th = 2 * math.pi * k / 16 + rng.uniform(-0.2, 0.2)
             spr = ["persimmon_fruit_a", "persimmon_fruit_b", "persimmon_fruit_c"][k % 3]
-            s = rng.uniform(0.26, 0.32) * (0.65 if spr == "persimmon_fruit_c" else 1.0)
+            s = rng.uniform(0.32, 0.4) * (0.65 if spr == "persimmon_fruit_c" else 1.0)
             # hanging just outside the leaves, stalk up (the card runs down from its hinge, sprite flipped)
             shingle(m, centre, (R * 1.04, Hc * 0.53, R * 1.04), phi, th, s, s, BLANK, [1, 1, 1], uv2=A.duv(spr),
                     inset=0.0, droop=0.5, lift_normal=0.5, sway=(0.7, 0.9))

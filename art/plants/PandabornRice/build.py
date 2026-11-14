@@ -21,8 +21,8 @@ from plant import Plant, card, state_tint, jitter, ambient, auto_sway, upright  
 
 ID = "PandabornRice"
 YOUNG = np.array([0.46, 0.72, 0.24])
-RIPE = np.array([0.66, 0.68, 0.30])
-GOLD = np.array([1.0, 0.97, 0.9])
+RIPE = np.array([0.50, 0.62, 0.25])
+GOLD = np.array([0.95, 0.93, 0.85])
 GRID = [(1 / 6 + i / 3, 1 / 6 + j / 3) for i in range(3) for j in range(3)]
 
 

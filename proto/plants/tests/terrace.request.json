@@ -111,10 +111,21 @@
     "maxDepth": 0.3
    },
    {
+    "op": "water",
+    "id": "paddyM",
+    "at": [
+     14,
+     2,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.3
+   },
+   {
     "op": "wait",
-    "hours": 1.0,
+    "hours": 3.0,
     "speed": 7,
-    "capSeconds": 300
+    "capSeconds": 400
    },
    {
     "op": "plant",
@@ -584,9 +595,9 @@
    },
    {
     "op": "wait",
-    "hours": 12.5,
+    "hours": 16.0,
     "speed": 7,
-    "capSeconds": 900
+    "capSeconds": 1200
    },
    {
     "op": "plants",
