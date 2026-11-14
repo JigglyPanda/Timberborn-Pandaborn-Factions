@@ -1,0 +1,158 @@
+{
+ "id": "NightBuildersPost",
+ "standIn": "BuildersHut.Folktails",
+ "generatedBy": "art/models/NightBuildersPost/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "NightBuildersPost.Model",
+  "constructionStage0": "NightBuildersPost.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 3,
+  "Y": 2,
+  "Z": 2
+ },
+ "blocks": [
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "Bottom, Top, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  }
+ ],
+ "entrance": {
+  "X": 1,
+  "Y": -1,
+  "Z": 0
+ },
+ "slots": [
+  {
+   "node": "#Slot#Entrance",
+   "position": {
+    "X": 1.5,
+    "Y": 0.1,
+    "Z": 0.5
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 1.5,
+    "Y": 0.7,
+    "Z": 1.0
+   },
+   "Size": {
+    "X": 2.9,
+    "Y": 1.4,
+    "Z": 1.9
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 1626,
+  "constructionStage0": 960,
+  "vanillaMedianForFootprint": 1250
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "IrregularPlanks_White.Folktails",
+  "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
+  "Sand.Folktails",
+  "ThatchedRoof.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Ringtail mark: the round moon window (kit moon_window), lit by WorkplaceIlluminatorSpec on the night shift."
+ ],
+ "access": {
+  "X": 1.5,
+  "Y": 0.1,
+  "Z": 0.6
+ }
+}

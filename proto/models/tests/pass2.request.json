@@ -1,0 +1,393 @@
+{
+ "run": {
+  "inGameHours": 17.0,
+  "realSeconds": 600
+ },
+ "speed": 3,
+ "batchControl": false,
+ "buildings": [
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelMoonLoft.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "PandabornModelTeahouse.PandabornProto",
+  "PandabornModelCisternLarge.PandabornProto",
+  "PandabornModelCisternMedium.PandabornProto",
+  "PandabornModelCistern.PandabornProto",
+  "PandabornModelNightBuildersPost.PandabornProto",
+  "PandabornModelNightCourierPost.PandabornProto",
+  "PandabornModelNightForagersPost.PandabornProto",
+  "PandabornModelStarTower.PandabornProto",
+  "PandabornModelCourtyardHouse.PandabornProto",
+  "PandabornModelTerraceHouse.PandabornProto",
+  "PandabornModelNapPlatform.PandabornProto",
+  "PandabornModelStandingLantern.PandabornProto",
+  "PandabornModelHangingLantern.PandabornProto",
+  "PandabornModelStringLanterns.PandabornProto",
+  "PandabornModelFlumeGate.PandabornProto",
+  "PandabornModelFlume.PandabornProto",
+  "PandabornModelFlumeBridge.PandabornProto",
+  "PandabornModelFlumeDrop.PandabornProto",
+  "PandabornModelFlumeCorner.PandabornProto",
+  "PandabornModelDen.PandabornProto",
+  "PandabornModelHammock.PandabornProto",
+  "Lodge.Inkpaws"
+ ],
+ "screenshots": [
+  {
+   "name": "day_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "Den_day",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "MoonLoft_day",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_day",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Teahouse_day",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "CisternLarge_day",
+   "kind": "building",
+   "target": "PandabornModelCisternLarge.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "CisternMedium_day",
+   "kind": "building",
+   "target": "PandabornModelCisternMedium.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Cistern_day",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightBuildersPost_day",
+   "kind": "building",
+   "target": "PandabornModelNightBuildersPost.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightCourierPost_day",
+   "kind": "building",
+   "target": "PandabornModelNightCourierPost.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightForagersPost_day",
+   "kind": "building",
+   "target": "PandabornModelNightForagersPost.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "StarTower_day",
+   "kind": "building",
+   "target": "PandabornModelStarTower.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "CourtyardHouse_day",
+   "kind": "building",
+   "target": "PandabornModelCourtyardHouse.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "TerraceHouse_day",
+   "kind": "building",
+   "target": "PandabornModelTerraceHouse.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "NapPlatform_day",
+   "kind": "building",
+   "target": "PandabornModelNapPlatform.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "StandingLantern_day",
+   "kind": "building",
+   "target": "PandabornModelStandingLantern.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "HangingLantern_day",
+   "kind": "building",
+   "target": "PandabornModelHangingLantern.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "StringLanterns_day",
+   "kind": "building",
+   "target": "PandabornModelStringLanterns.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeGate_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeGate.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "Flume_day",
+   "kind": "building",
+   "target": "PandabornModelFlume.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeBridge_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeBridge.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeDrop_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeDrop.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeCorner_day",
+   "kind": "building",
+   "target": "PandabornModelFlumeCorner.PandabornProto",
+   "at": "start",
+   "zoom": 1.5
+  },
+  {
+   "name": "hammock_0",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "300",
+   "zoom": 1.1
+  },
+  {
+   "name": "hammock_1",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "301",
+   "zoom": 1.1
+  },
+  {
+   "name": "hammock_2",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "302",
+   "zoom": 1.1
+  },
+  {
+   "name": "night_overview",
+   "kind": "overview",
+   "at": "end"
+  },
+  {
+   "name": "Den_night",
+   "kind": "building",
+   "target": "PandabornModelDen.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "MoonLoft_night",
+   "kind": "building",
+   "target": "PandabornModelMoonLoft.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Hammock_night",
+   "kind": "building",
+   "target": "PandabornModelHammock.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Teahouse_night",
+   "kind": "building",
+   "target": "PandabornModelTeahouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "CisternLarge_night",
+   "kind": "building",
+   "target": "PandabornModelCisternLarge.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "CisternMedium_night",
+   "kind": "building",
+   "target": "PandabornModelCisternMedium.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Cistern_night",
+   "kind": "building",
+   "target": "PandabornModelCistern.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightBuildersPost_night",
+   "kind": "building",
+   "target": "PandabornModelNightBuildersPost.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightCourierPost_night",
+   "kind": "building",
+   "target": "PandabornModelNightCourierPost.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "NightForagersPost_night",
+   "kind": "building",
+   "target": "PandabornModelNightForagersPost.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "StarTower_night",
+   "kind": "building",
+   "target": "PandabornModelStarTower.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "CourtyardHouse_night",
+   "kind": "building",
+   "target": "PandabornModelCourtyardHouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "TerraceHouse_night",
+   "kind": "building",
+   "target": "PandabornModelTerraceHouse.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "NapPlatform_night",
+   "kind": "building",
+   "target": "PandabornModelNapPlatform.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "StandingLantern_night",
+   "kind": "building",
+   "target": "PandabornModelStandingLantern.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "HangingLantern_night",
+   "kind": "building",
+   "target": "PandabornModelHangingLantern.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "StringLanterns_night",
+   "kind": "building",
+   "target": "PandabornModelStringLanterns.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeGate_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeGate.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "Flume_night",
+   "kind": "building",
+   "target": "PandabornModelFlume.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeBridge_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeBridge.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeDrop_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeDrop.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "FlumeCorner_night",
+   "kind": "building",
+   "target": "PandabornModelFlumeCorner.PandabornProto",
+   "at": "end",
+   "zoom": 1.5
+  },
+  {
+   "name": "night_screen",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "screenshotSize": [
+  1600,
+  1000
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoModels",
+  "PandabornModel",
+  "PandabornCodeDev"
+ ]
+}

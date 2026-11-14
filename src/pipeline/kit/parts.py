@@ -9,7 +9,7 @@ import numpy as np
 
 from core import (Part, fix_winding, frame_from, quad_part, rot_axis, TEXEL, TIMBER, BAMBOO_GOLD, BAMBOO_GREEN,
                   PLASTER, PLASTER_LATH, TILE, WINDOWS, DETAILS, EARTH, WEAVE, IRON,
-                  WOOD_STRIPS, WOOD_SHORT, WOOD_BLOCK, WOOD_DISCS, WIN_LATTICE, WIN_DARK, WIN_PANES,
+                  WOOD_STRIPS, WOOD_SHORT, WOOD_BLOCK, WOOD_DISCS, WIN_LATTICE, WIN_DARK, WIN_PANES, WIN_ROUND,
                   DET_ROPE, DET_RED, DET_CLOTH, TILE_COURSES, TILE_COLS)
 
 V = np.asarray
@@ -1011,3 +1011,33 @@ def round_roof(geo, center, radius, y_eave, y_apex, sides=8, sag=0.06, thick=0.0
                     col_offset=2 * k)
     lathe(geo, [(0.0, 0.0), (0.07, 0.0), (0.08, 0.05), (0.05, 0.11), (0.06, 0.14), (0.0, 0.16)], apex - V([0, 0.03, 0]),
           6, TILE, uv_region=(0.0, TILE_COURSES[1][0], 0.25, TILE_COURSES[1][1]), tags=tags)
+
+
+def moon_window(geo, center, normal, r=0.3, tags=()):
+    """The Ringtail buildings' mark: a round 'moon' window, the glowing round cracked-ice light in a white lime disc
+    with a dark timber ring, set flat on a wall facing `normal`."""
+    c, n = V(center, float), V(normal, float)
+    n = n / np.linalg.norm(n)
+    F = frame_from(n)
+    before = len(geo.parts)
+    lathe(geo, [(r * 1.25, 0.0), (0.0, 0.0)], (0, 0, 0), 14, PLASTER, uv_region=(0.1, 0.1, 0.9, 0.9), cap_top=False,
+          tags=tags)
+    lathe(geo, [(r * 0.92, 0.0), (r * 0.94, 0.04), (r * 1.06, 0.03), (r * 1.04, 0.0)], (0, 0, 0), 14, TIMBER,
+          cap_top=False, tags=tags)
+    M = np.stack([F[:, 0], n, F[:, 1]], 0)       # lathe x -> side, lathe y (height) -> out of the wall, lathe z -> up
+    for p in geo.parts[before:]:
+        p.P = c + p.P @ M + n * 0.004
+        p.N = p.N @ M
+        p.T = fix_winding(p.P, p.N, p.T)
+    u0, v0, u1, v1 = WIN_ROUND
+    k = 12
+    P = [c + n * 0.008]
+    UV = [((u0 + u1) / 2, (v0 + v1) / 2)]
+    for i in range(k):
+        a = 2 * math.pi * i / k
+        P.append(c + (F[:, 0] * math.cos(a) + F[:, 1] * math.sin(a)) * r * 0.93 + n * 0.008)
+        UV.append(((u0 + u1) / 2 + (u1 - u0) / 2 * 0.96 * math.cos(a), (v0 + v1) / 2 + (v1 - v0) / 2 * 0.96 * math.sin(a)))
+    P = V(P)
+    N = np.tile(n, (len(P), 1))
+    T = V([(0, 1 + i, 1 + (i + 1) % k) for i in range(k)])
+    geo.add(Part(WINDOWS, P, N, V(UV), fix_winding(P, N, T)), set(tags) | {"glow"})

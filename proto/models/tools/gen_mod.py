@@ -41,6 +41,8 @@ STAND_IN = {   # stand-in vanilla template -> blueprint path under BP
     "Observatory.Folktails": "Buildings/Science/Observatory/Observatory.Folktails.blueprint.json",
     "BuildersHut.Folktails": "Buildings/DistrictManagement/BuildersHut/BuildersHut.Folktails.blueprint.json",
     "Lantern.Folktails": "Buildings/Decoration/Lantern/Lantern.Folktails.blueprint.json",
+    "HaulingPost.Folktails": "Buildings/DistrictManagement/HaulingPost/HaulingPost.Folktails.blueprint.json",
+    "GathererFlag.Folktails": "Buildings/Food/GathererFlag/GathererFlag.Folktails.blueprint.json",
     "RooftopTerrace.Folktails": "Buildings/Wellbeing/RooftopTerrace/RooftopTerrace.Folktails.blueprint.json",
     "Hammock.Folktails": "Buildings/Decoration/Hammock/Hammock.Folktails.blueprint.json",
     "Campfire.Folktails": "Buildings/Wellbeing/Campfire/Campfire.Folktails.blueprint.json",

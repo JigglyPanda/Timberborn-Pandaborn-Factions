@@ -1,0 +1,64 @@
+{
+ "id": "NightForagersPost",
+ "standIn": "GathererFlag.Folktails",
+ "generatedBy": "art/models/NightForagersPost/build.py (src/pipeline/kit); AI-generated, code-made",
+ "models": {
+  "finished": "NightForagersPost.Model",
+  "constructionStage0": "NightForagersPost.ConstructionStage0.Model"
+ },
+ "size": {
+  "X": 1,
+  "Y": 1,
+  "Z": 2
+ },
+ "blocks": null,
+ "entrance": null,
+ "slots": [
+  {
+   "node": "#Slot#Seat",
+   "position": {
+    "X": 0.5,
+    "Y": 0.0,
+    "Z": 0.3
+   },
+   "yaw": 180
+  }
+ ],
+ "animatedNodes": [],
+ "colliders": [
+  {
+   "Center": {
+    "X": 0.5,
+    "Y": 0.9,
+    "Z": 0.6
+   },
+   "Size": {
+    "X": 0.3,
+    "Y": 1.8,
+    "Z": 0.3
+   }
+  }
+ ],
+ "attachments": [],
+ "triangles": {
+  "finished": 528,
+  "constructionStage0": 136,
+  "vanillaMedianForFootprint": 300
+ },
+ "materials": [
+  "BaseWood_Brown.Folktails",
+  "BaseWood_LightBrown.Folktails",
+  "Details.Folktails",
+  "IrregularPlanks_LightBrown.Folktails",
+  "Plaster_White.Folktails",
+  "WindowsAtlas.Folktails"
+ ],
+ "notes": [
+  "Blocks, entrance and the Seat slot as the vanilla Gatherer Flag. Ringtail mark: the moon plaque."
+ ],
+ "access": {
+  "X": 0.5,
+  "Y": 0.0,
+  "Z": 0.2
+ }
+}
