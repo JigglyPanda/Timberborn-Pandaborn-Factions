@@ -321,3 +321,82 @@ House reads from above as a flat tan box (the clear roof needed for stacking is 
 and a stronger roof colour). The flume green still reads bright in daylight next to the brown-grey terrain.
 Still unverified: lit windows with occupants at close range, hammock swinging with a sleeper (the swing shots caught
 nobody in it), colonists walking under the Moon Loft.
+
+## Requests from the water lane (2026-11-14)
+
+The water module (`src/code/Pandaborn.Water`) and its dev mod (`proto/water`) now place the kit models directly
+(meshes from `E:\PandabornDev\build\models\<Id>`, blocks and colliders from `model.json`). Every `waterCells`,
+`solidCells`, `waterInput` and `waterOutput` in the kit matches what the module needs; nothing there is wrong. What the
+water pieces need beyond the current models, in priority order:
+
+1. **A cap block on the Flume Gate, Flume Corner and Paddy Spout (and a covered Flume, if there is one).** The module
+   puts a solid water obstacle one block above each of these (cell `(0,0,1)`), so a line that backs up to its pond level
+   cannot run over the top (measured: without it a backed-up line overtopped 1-block pieces and flooded the field).
+   Today that cell is not part of the building, so another object could be built into it, and two obstacles in one
+   cell corrupt the water column. Please make these pieces **two blocks tall**: the second block occupied
+   (`Bottom, Top, Corners, Path, Middle`, `MatterBelow Any`) with a visible hood, lid or post top, so the cap is inside
+   the building. Corner posts: two blocks tall as well (the module makes them solid to that height).
+2. **Flume Bridge span.** A Bridge piece cannot stand over a ground flume: the leg's `Corners` occupation collides with
+   the flume tile below. The dev mod adds a span variant (same model, lower block `Occupations None`, no inert
+   obstacle) and the coordinator's crossing test uses it. A model for it: the deck on the same height, trestle legs
+   outside the cell (or none), so nothing visibly stands in the flume below. Save it as `FlumeBridgeSpan` with the same
+   `waterCells` `(0,0,1)`.
+3. **Flume Drop: the open cell above the lower half.** The lower flow cell `(0,1,0)` has open air above it; that is
+   right. Keep the upper half's leg `(0,0,0)` solid as it is (`solidCells` `(0,0)`): it is what stops the drop leaking
+   backwards.
+4. **Scoop Wheel**: the outlet at `(0,2,2)` hanging one block above the basin floor is right (vanilla `WaterOutput` needs
+   the gap). No change.
+5. **Models still missing for the water set:** Treadwheel Lift (the dev mod uses the vanilla Power Wheel: input
+   `(0,1,-1)`, output `(2,2,1)`), Cistern Tap (vanilla Discharge, 1x2, second cell over water), Water Trip-Hammer Mill
+   (one cell must stand in the current: `WaterPoweredGeneratorSpec.Blocks`; say which).
+
+## Pass 3 (2026-11-14)
+
+**Test setup changed again:** the installed faction now ships `pandabornlook_win` itself, so `-ExtraMods
+PandabornCodeDev` on top crashes the load ("another AssetBundle with the same files is already loaded",
+`models-pass3-1`). Pass `-ExtraMods E:\PandabornDev\build\proto\models` only.
+
+**Evidence fixes:**
+* Harness (additive, `src/devharness`): framed `building` shots take `"front": true` (camera heading from the
+  building's own orientation, so it looks at the entrance side; `yaw` adds to it) and `"minDistance"` (tiles; the
+  camera never comes closer than this or than 1.2x the model's radius). Together with the look lane's
+  MeshRenderer-only bounds this keeps small objects and smoking workshops in frame.
+* Prototype blueprints set `FinishableWithBeaversOnSite: true`: a site "finished" by the harness next to the district
+  centre otherwise waits for colonists to step off it (`ConstructionSite.FinishIfRequirementsMet`), which is why the
+  pass-2 Den, Moon Loft, Teahouse and large Cistern showed their construction stage in "finished" shots.
+* `proto/models/tools/gen_pass3_request.py`: every model placed finished, a front view and a three-quarter view each,
+  three evening hammock frames, and at night each lit-capable building twice: as occupied (unforced) and with the
+  look lane's `"lit": true`.
+
+**Kit fix:** `beam()` and therefore `boards()` made square sections the size of the diagonal; they now make true
+w x h sections (floors, door leaves, shutters and planks all became thinner and flatter; every model rebuilt).
+
+**Changes from the coordinator's pass-2 review:** Terrace House roof is now a plank deck inside a low lime parapet
+with tile coping and drying trays (stackable still); Night Courier Post has a tiled lean-to over its yard;
+Night Builders' Post has a plastered end wall with the moon window facing out, clear of the eave; celadon glaze darker;
+flume culms weathered olive.
+
+**New models (preview proven):** Sky Lantern (wonder, 4966 tris: stepped stone terrace, lashed bamboo launch tower,
+a 3.7-unit red-gold paper lantern that glows at night, lantern strings; `#SkyLanternAnimated` with a one-shot `rise`
+animation for WonderAnimationController, builder slots on the stage), Great Sitting Panda (3576: rock outcrop, a
+painted carved panda holding bamboo, a red panda on its knee, a still pool and lanterns), Festival Square (3x3:
+paved square, roofed timber gateway, central lantern pole with strings to corner poles, drum stand, festival goods),
+Hot Spring Bath (Mud Pit: stone pool whose `#SpringWater` surface node is the vanilla surface controller's, steam from
+the bubbles), Ink Studio (Contemplation Spot), Opera Stage (Dance Hall: roofed stage, backdrop, benches, moon plaque),
+Slide and Swing (Lido: deck, slide tower, swing over the pool, Lido slots and `#MiscStart/#MiscEnd` patrol markers),
+Paddy House (Aquatic Farmhouse), Bamboo Fence (six modular variants), Panda Statue, Potted Pine, Goldfish Bowl,
+Garden Moon Gate, Bamboo Pinwheel (Weathervane; wind-turned rotor), Hot Pot Hall and Lantern Workshop (Bakery).
+
+### Catalogue adoption list for pass 3
+* Re-run every adopted model (beam fix changes all meshes; footprints unchanged).
+* Sky Lantern: basis EarthRecultivator; **one** construction stage carrying the `Working/Building/Cutting/Digging`
+  slots, so `ProgressThresholds` = `[0.0]`; keep the `Lanterns` attachment at `attachments`.
+* Great Sitting Panda: basis HallOfAbundance, one stage, thresholds `[0.0]`, no entrance.
+* Festival Square: the Small Warehouse stand-in is 1x1; take size 3x3, blocks, entrance and access from model.json.
+* Hot Spring Bath: set `GoodConsumingAttractionSurfaceControllerSpec.SurfaceName` to `surfaceName` (`#SpringWater`).
+* Slide and Swing: Lido blocks and BaseZ 1 from model.json; slot nodes keep the vanilla names.
+* Bamboo Fence: replace the six `#Finished` children with `mergeableObjectModel.children` and set
+  `ModelNamePrefix` = `BambooFence`; the stage is `BambooFence.ConstructionStage0.Model`.
+* Bamboo Pinwheel: `WindRotationAnimatorSpec` from `windRotationAnimator`.
+* Lantern Workshop: `removeSpecs` drops the Bakery's smoke.
+* Opera Stage: its 20 slots all use the Dance Hall's `Spot` keyword (Dancing).
