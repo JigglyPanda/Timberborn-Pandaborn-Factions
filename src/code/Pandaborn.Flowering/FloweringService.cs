@@ -11,6 +11,7 @@ using Timberborn.GameFactionSystem;
 using Timberborn.Growing;
 using Timberborn.Localization;
 using Timberborn.NaturalResources;
+using Timberborn.Planting;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.TickSystem;
@@ -59,16 +60,19 @@ namespace Pandaborn.Flowering
         private readonly EntityService _entityService;
         private readonly NaturalResourceFactory _naturalResourceFactory;
         private readonly FactionService _factionService;
+        private readonly PlantingService _plantingService;
 
         private readonly List<FloweringPlant> _plants = new List<FloweringPlant>();
         private readonly List<InFlowerPlant> _inFlower = new List<InFlowerPlant>();
         private readonly System.Random _random = new System.Random();
         private int _lastHour = -1;
         private int _seedBorne;
+        private int _seedLost;
 
         public FloweringService(TemplateService templateService, TemplateNameMapper templateNameMapper, PandabornStore store, Messenger messenger,
                                 ILoc loc, IDayNightCycle dayNightCycle, GameCycleService gameCycleService, EventBus eventBus,
-                                EntityService entityService, NaturalResourceFactory naturalResourceFactory, FactionService factionService)
+                                EntityService entityService, NaturalResourceFactory naturalResourceFactory, FactionService factionService,
+                                PlantingService plantingService)
         {
             _templateService = templateService;
             _templateNameMapper = templateNameMapper;
@@ -81,6 +85,7 @@ namespace Pandaborn.Flowering
             _entityService = entityService;
             _naturalResourceFactory = naturalResourceFactory;
             _factionService = factionService;
+            _plantingService = plantingService;
         }
 
         public static FloweringService Current { get; private set; }
@@ -285,6 +290,7 @@ namespace Pandaborn.Flowering
             NextSpecies = (NextSpecies + 1) % Spec.Species.Length;
             NextCycle = -1;
             _seedBorne = 0;
+            _seedLost = 0;
             SeedCut = 0;
             int twins = 0, killed = 0, failed = 0;
             foreach (var plant in _plants.Where(p => p && p.Species == Species).ToList())
@@ -301,6 +307,7 @@ namespace Pandaborn.Flowering
             Persist();
             ApplyHolds();
             _seedBorne = _inFlower.Where(t => t && t.Species == Species).Sum(t => t.SeedLeft);
+            Persist();
             Debug.Log(Log + "flowered (" + why + "): " + Species + "; " + twins + " in flower bearing " + _seedBorne + " seed, " + killed
                       + " young plants died" + (failed > 0 ? ", " + failed + " could not be replaced and died" : "") + "; next " + NextCycle);
             _messenger.Post(string.Format(CultureInfo.InvariantCulture, _loc.T("Pandaborn.Flowering.Message.Flowered"), PlantName(Species),
@@ -313,8 +320,12 @@ namespace Pandaborn.Flowering
             string twin = plant.Spec?.InFlowerTemplate;
             if (string.IsNullOrEmpty(twin) || !_templateNameMapper.TryGetTemplate(twin, out _)) return false;
             var coordinates = plant.BlockObject.Coordinates;
+            // the game clears a planting mark under any block of another template (PlantingCoordinatesUnsetter): keep the
+            // farm's or forester's mark so the tile is replanted on its own once the twin is gone
+            string mark = _plantingService.GetResourceAt(coordinates);
             _entityService.Delete(plant);
             var made = _naturalResourceFactory.SpawnIgnoringConstraints(twin, coordinates);
+            if (mark != null && _plantingService.GetResourceAt(coordinates) == null) _plantingService.SetPlantingCoordinates(coordinates, mark);
             if (made == null) { failed++; return true; }   // the original is gone either way: counted as died
             made.GetComponent<Growable>()?.IncreaseGrowthProgress(1f);
             return true;
@@ -329,14 +340,20 @@ namespace Pandaborn.Flowering
                 foreach (var twin in _inFlower.Where(t => t && t.Species == Species && !t.IsDead).ToList())
                 {
                     float dieAt = end - 1f + Hash01(twin.BlockObject.Coordinates);
-                    if (Now >= dieAt || Now >= end) twin.Living?.Die();
+                    if (Now >= dieAt || Now >= end)
+                    {
+                        _seedLost += twin.SeedLeft;
+                        twin.Living?.Die();
+                        Persist();
+                    }
                 }
                 if (Now >= end)
                 {
                     Phase = FloweringPhase.Resting;
                     Persist();
-                    Debug.Log(Log + "seed time over: " + SeedCut + " of " + _seedBorne + " seed cut this session");
-                    _messenger.Post(_loc.T("Pandaborn.Flowering.Message.SeedOver", PlantName(Species), SeedCut.ToString(CultureInfo.InvariantCulture),
+                    int harvested = Math.Max(0, _seedBorne - _seedLost);
+                    Debug.Log(Log + "seed time over: " + harvested + " of " + _seedBorne + " seed harvested, " + _seedLost + " lost");
+                    _messenger.Post(_loc.T("Pandaborn.Flowering.Message.SeedOver", PlantName(Species), harvested.ToString(CultureInfo.InvariantCulture),
                                            Days(RestDaysLeft)));
                     Changed?.Invoke();
                 }
@@ -420,6 +437,8 @@ namespace Pandaborn.Flowering
             if (string.IsNullOrEmpty(Species)) Species = null;
             FloweringDay = float.TryParse(Get(v, "day"), NumberStyles.Float, CultureInfo.InvariantCulture, out float d) ? d : -1f;
             LastCycle = Int(v, "last", -1);
+            _seedBorne = Math.Max(0, Int(v, "borne", 0));
+            _seedLost = Math.Max(0, Int(v, "lost", 0));
             if (Phase != FloweringPhase.Idle && (Species == null || !Spec.Species.Contains(Species))) { Phase = FloweringPhase.Idle; Species = null; }
             if ((Phase == FloweringPhase.Flowering || Phase == FloweringPhase.Resting) && FloweringDay < 0f) { Phase = FloweringPhase.Idle; Species = null; }
         }
@@ -434,7 +453,9 @@ namespace Pandaborn.Flowering
                 new KeyValuePair<string, string>("nextSpecies", NextSpecies.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("species", Species ?? ""),
                 new KeyValuePair<string, string>("day", FloweringDay.ToString("0.###", CultureInfo.InvariantCulture)),
-                new KeyValuePair<string, string>("last", LastCycle.ToString(CultureInfo.InvariantCulture))
+                new KeyValuePair<string, string>("last", LastCycle.ToString(CultureInfo.InvariantCulture)),
+                new KeyValuePair<string, string>("borne", _seedBorne.ToString(CultureInfo.InvariantCulture)),
+                new KeyValuePair<string, string>("lost", _seedLost.ToString(CultureInfo.InvariantCulture))
             }));
         }
 

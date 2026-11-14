@@ -188,6 +188,12 @@ are not saved: the game saves growth progress as always, and the service holds t
   * method `Die()`
   * method `get_IsDead()`
 
+**Timberborn.Planting**
+
+* type `Timberborn.Planting.PlantingService`
+  * method `GetResourceAt(UnityEngine.Vector3Int)`
+  * method `SetPlantingCoordinates(UnityEngine.Vector3Int, System.String)`
+
 **Timberborn.SingletonSystem**
 
 * type `Timberborn.SingletonSystem.EventBus`
