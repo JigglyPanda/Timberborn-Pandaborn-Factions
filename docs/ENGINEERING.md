@@ -36,7 +36,10 @@ a backward-compatible alias, and a retired building keeps an alias so saved inst
 
 1. **Global data stays plain.** Goods, needs, recipes, collections, decals, outfits, worker types and the
    faction file use only vanilla spec types. Our own spec types appear only in templates that are listed
-   solely in Inkpaws collections.
+   solely in Inkpaws collections. Inkpaws-only changes to vanilla blueprints (a good's name, a need's rate, a
+   building's cost, tutorials) go through `FactionSpec.BlueprintModifiers`, and every modifier file is named
+   `<name>.optional.blueprint.json` at a path with no base blueprint: a modifier file named like a normal
+   blueprint is also indexed as a blueprint of its own, in every game (verified, docs/tech/stage0.md).
 2. **Data alone behaves like vanilla; code only adds.** With every code module switched off, every building is
    still a sensible vanilla building. A feature never replaces a vanilla spec the colony depends on.
 3. **Faction blueprints are generated, never hand-edited.** The catalogue names each item's vanilla basis and a
@@ -56,13 +59,21 @@ a backward-compatible alias, and a retired building keeps an alias so saved inst
      loaded, so a disabled feature's data still reads and is written back unchanged.
    * One module per feature, loaded only if its check passes. A failed check means "feature off, player told",
      never a crash.
+   * Built and verified in game: `src/code` (see its README for how to add a module). The bootstrap itself may
+     reference only `IModStarter`/`IModEnvironment` and `Debug`; `Pandaborn.Specs` only the blueprint system. A
+     dev switch (`pandaborn.dev.txt`: `force-off:`, `simulate-missing-api:`) exercises the off paths.
 3. **Each module lists the game types, methods and fields it touches** in a `FEATURE.md`, and the build
    produces that list from the compiled module so it can be diffed against a new game version.
 4. **Reflection on private members is allowed only with a written fallback**, and is exercised by a test that
    simulates the member being gone.
 5. **Temporary effects never write saved vanilla state.** Use bonuses, behaviours and effects that disappear
-   when the code is absent.
-6. **Our saved data carries a version and is read tolerantly.**
+   when the code is absent. Bonuses only add (one sum per bonus id); an effect meant to multiply must re-add
+   `share = multiplier without it x factor` whenever another bonus of that id changes (`BonusValueChanged`), as
+   `Pandaborn.Bell` does. Bonus types clamp (`MovementSpeed` at 2.0 in vanilla).
+6. **Our saved data carries a version and is read tolerantly.** Singleton state goes in `PandabornStore` (in
+   Core, so it survives saves made while its feature is off). Per-entity state of a feature that can be off
+   needs the same treatment: a Core-owned component carrier, not yet built; until then a feature module keeps
+   per-entity state out of the save or accepts losing it while off.
 7. **Interface fragments are wrapped** so an exception in a panel never breaks the game.
 
 ## Tooling

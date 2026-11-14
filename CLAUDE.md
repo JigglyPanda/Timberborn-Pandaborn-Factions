@@ -21,7 +21,9 @@ Game design lives in [docs/DESIGN.md](docs/DESIGN.md). Read it before adding con
 | Path | Contents |
 |---|---|
 | `mod/PandabornFactions/` | The mod as shipped, minus large binaries (meshes over ~10 MB) |
-| `src/scripts/` | C# runtime code for the mod's DLL |
+| `src/code/` | Runtime C#: `Pandaborn.Bootstrap` (the only DLL), `Specs`, `Core`, one module per feature (`Bell`, `Names`). Read its README before adding code |
+| `src/scripts/` | Water prototype code (flume, dew), to move into `src/code/Pandaborn.Water` |
+| `proto/stage0/` | Stage-0 prototype: faction modifiers, plank tree, tutorial, the code modules, an in-game probe. Results in `docs/tech/stage0.md` |
 | `src/devharness/` | Dev-only automated test mod. Never shipped |
 | `src/unity/` | Sources for Unity asset bundles (materials, shaders, sounds) |
 | `src/pipeline/` | Code that generates models, textures and icons |
@@ -83,11 +85,31 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
 * DLLs anywhere in the mod load via `Assembly.Load(bytes)` (`Assembly.Location` is empty; get the folder from
   `IModStarter.StartMod(IModEnvironment)`). Bindito picks up `[Context("Game"|"MainMenu"|"MapEditor")]`
   configurators. Harmony is a separate mod, not built in.
+* **Late-loaded code works like a normal DLL** (verified in game 2026-11-14): `ModCodeStarter` loads every mod's DLLs,
+  then runs each `IModStarter` once per process, all before the main menu. Bindito scans `AppDomain.GetAssemblies()`
+  every time it builds a context, and `SpecTypeCache` is created with each context's `BlueprintDeserializer`, so
+  assemblies loaded with `Assembly.Load(bytes)` inside a mod starter get their configurators bound and their spec
+  records registered with no extra step. `src/code`'s bootstrap does exactly this, after resolving each module's
+  required-API list. A second enabled copy of a mod runs its starter too (`MarkDuplicatedIds` only works within one
+  source), so the bootstrap loads each assembly once per AppDomain and reports the duplicate.
+* **Faction blueprint modifiers** (`FactionSpec.BlueprintModifiers`, `[{Original, Modifier}]`, both blueprint asset
+  paths without `.json`) work for every blueprint except the faction files themselves: in a new Inkpaws game only the 3
+  faction blueprints are read before `FactionService.Load` initialises them; goods, needs, templates, recipes, bonus
+  types, wellbeing tiers and tutorials are all read later and get the merge (same JSON merge rules as same-path files).
+  Applied again on every load. Verified: `Plank` renamed, re-iconed (mod sprite) and reweighted, a need's `DailyDelta`,
+  a building's cost, a recipe list, `BonusType.MovementSpeed` max, and the tutorials, all for Inkpaws only.
+  **Modifier files must be `<name>.optional.blueprint.json` at a path with no base blueprint**: `SpecService.Load`
+  indexes every blueprint file by its spec keys, so a normally named modifier becomes a broken standalone blueprint in
+  every game; optional-only groups are skipped by the index but still load through the modifier's asset path.
+* Blueprint top-level keys are all read as spec names: no comment or provenance keys (an unknown key throws on read).
 
 **A faction needs**
 * `Factions/Faction.<Id>.blueprint.json` with `FactionSpec` and `FactionWonderSpec` (required in practice: the UI
-  sound controller reads it with no null check). Omit `StartingFactionSpec` (tutorial-only, hardcoded to
-  Folktails). Omit `UnlockableFactionSpec` to be unlocked from the start.
+  sound controller reads it with no null check). `StartingFactionSpec` (empty) switches the tutorial system on for
+  a faction (read only by `TutorialService`, `TutorialTriggers`, `TutorialToggleController`); with it, every vanilla
+  `TutorialSpec` is built for that faction, so switch them off with faction modifiers and add your own (verified in
+  game, see docs/tech/stage0.md; `StairsUnlockedTrigger` then needs a template answering to `Stairs.Folktails`).
+  Omit `UnlockableFactionSpec` to be unlocked from the start.
 * `FactionSpec` fields: `Id`, `Order`, `Avatar`, `ChildAvatar`, `BotAvatar`, `ContaminatedAdultAvatar`,
   `ContaminatedChildAvatar`, `Logo`, `NewGameFullAvatar`, `Textures`, `ChildTextures`, `MaterialCollectionIds`,
   `TemplateCollectionIds`, `NeedCollectionIds`, `GoodCollectionIds`, `PathMaterial`, `BaseWoodMaterial`,
@@ -109,8 +131,11 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   vanilla ones (e.g. `BaseWood_Brown.Folktails`), provided the faction does not also list the `Folktails`
   collection. Every vanilla Folktails model then renders with our materials in an Inkpaws game only.
   *Untested in game.*
-* Global, not per faction: game modes, starting goods (hardcoded Berries and Water), the name pool
-  (`Beaver.NamePool`), wellbeing tiers, bottom-bar tool groups, achievements.
+* Global, not per faction: game modes, starting goods (hardcoded Berries and Water), wellbeing tiers, bottom-bar tool
+  groups, achievements. The name pool (`Beaver.NamePool`) is global, but an `IEntityNamer` with priority above 20
+  decorated on a faction-only spec names that faction's colonists (`Pandaborn.Names`, verified; glosses like
+  "Le Le (Joy)" show verbatim). Many global specs (needs, goods, bonus types, tiers) can be retuned per faction with
+  blueprint modifiers.
 
 **Characters**
 * The body is whatever single adult/child template the faction's `Characters.*` collection lists. The mesh is
@@ -141,6 +166,17 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   `FactionSpec.Textures`, applied as `_BaseMap` on the fixed `BeaverURP` material. A body must keep the beaver UV
   layout or outfits, injuries and the fixed normal map misalign. See the Reskin's
   `docs/CHARACTER_MOD_CONTEXT.md`.
+
+**Bonuses, working hours, trees** (verified in game 2026-11-14, `proto/stage0`)
+* `BonusManager` keeps one additive sum per bonus id (start 1.0), clamped by `BonusTypeSpec` min/max
+  (`MovementSpeed` 0.25..2.0, `WorkingSpeed` 0.05..1000); bonuses are not saved. `Worker.WorkingSpeedMultiplier` and
+  `WalkerSpeedManager` read the multiplier every tick. A multiplicative bonus is possible by re-adding
+  `share = multiplier without it x factor` on `BonusValueChanged` (`Pandaborn.Bell`: wellbeing-80 work 3.8 -> 5.054,
+  walk 1.7 -> 2.261 with the Inkpaws-only cap raised to 2.66 by a modifier).
+* The working-hours slider is `WorkingHoursManager.WorkedPartOfDay` (saved); `DaytimeStartEvent` fires at dawn.
+* A tree may yield any good: a Birch copy with `CuttableSpec.Yielder.Yield = Plank` was cut by the vanilla lumberjack,
+  carried to its flag and piled; the yield panel shows the good's icon. The chipped-teeth effect and the cutting
+  success chance are keyed to `Log` and do not apply to other yields.
 
 **Known constraints from other faction mods**
 * Breeding is a property of the housing building (`ProcreationHouseSpec`), not the faction.
