@@ -11,6 +11,9 @@
   generate  catalogue/ -> E:\PandabornDev\build\gen\PandabornFactions (blueprints, collections, modifiers, loc), with
             .provenance.json, .report.json and .grid.json next to it. -Lock appends new ids to catalogue/ids.lock.json;
             -DryRun prints the diff and writes nothing; -AcceptPin generates against a game that differs from the pin.
+  models    Runs every art/models/<Id>/build.py (the building kit; -Plants adds art/plants/<Id>/build.py) with the
+            art venv into E:\PandabornDev\build\models\<Id>. The meshes never enter git; assemble copies the
+            ones the catalogue adopts (model = "<Id>") into the mod, from <GenDir>.models.json.
   code      HOOK (owner switch): builds src/code into the staging folder. Off unless -WithCode, because the owner has
             not switched the code on in the faction mod yet (src/code/README.md). Feature tests use
             tools/build_code_devmod.ps1 meanwhile.
@@ -27,7 +30,7 @@
   test      tools/run_game_test.ps1 -Faction Inkpaws with the generated grid request (every placeable template),
             on Plains with -OnlyMods JigglyPanda.PandabornFactions. -TestArgs passes more arguments.
   package   Copies the staging folder to E:\PandabornDev\build\package\PandabornFactions and zips it (mod.io).
-  all       pin, generate, code, bundles, assemble, validate, install. (test and package only when named.)
+  all       pin, models, generate, code, bundles, assemble, validate, install. (test and package only when named.)
 
   Exit code 0 when every requested stage passed.
 .EXAMPLE
@@ -45,6 +48,8 @@ param(
     [switch]$WithCode,
     [switch]$WithBundles,
     [switch]$NoLink,
+    [switch]$Plants,
+    [string]$ArtPython = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     [string]$Catalogue = '',
     [string]$GenDir = 'E:\PandabornDev\build\gen\PandabornFactions',
     [string]$StageDir = 'E:\PandabornDev\build\stage\PandabornFactions',
@@ -61,8 +66,8 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $source = Join-Path $repo 'mod\PandabornFactions'
 $env:PYTHONDONTWRITEBYTECODE = '1'
 $stages = @($Stage | ForEach-Object { $_ -split ',' } | Where-Object { $_ } | ForEach-Object { $_.Trim().ToLowerInvariant() })
-if ($stages -contains 'all') { $stages = @('pin', 'generate', 'code', 'bundles', 'assemble', 'validate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
-$known = 'pin', 'generate', 'validate', 'code', 'bundles', 'assemble', 'install', 'test', 'package'
+if ($stages -contains 'all') { $stages = @('pin', 'models', 'generate', 'code', 'bundles', 'assemble', 'validate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
+$known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'install', 'test', 'package'
 foreach ($s in $stages) { if ($known -notcontains $s) { throw "unknown stage '$s' (stages: $($known -join ', '), all)" } }
 
 # large binaries that live outside git: staging-relative path -> source file
@@ -150,6 +155,21 @@ foreach ($s in $stages) {
             if ($Lock) { $a += '--lock' }; if ($DryRun) { $a += '--dry-run' }; if ($AcceptPin -or $Accept) { $a += '--accept-pin' }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
         }
+        'models' {
+            if (-not (Test-Path -LiteralPath $ArtPython)) { Say "models: art Python not found: $ArtPython" 'Red'; $failed += $s; break }
+            $env:TEMP = 'E:\PandabornDev\tools\tmp'; $env:TMP = $env:TEMP
+            $roots = @('art' + [IO.Path]::DirectorySeparatorChar + 'models'); if ($Plants) { $roots += 'art' + [IO.Path]::DirectorySeparatorChar + 'plants' }
+            $built = 0; $bad = @()
+            foreach ($root in $roots) {
+                foreach ($script in Get-ChildItem -Path (Join-Path $repo $root) -Filter build.py -Recurse -Depth 1 -ErrorAction SilentlyContinue) {
+                    $out = & $ArtPython $script.FullName 2>&1
+                    if ($LASTEXITCODE -ne 0) { $bad += $script.Directory.Name; $out | Select-Object -Last 5 | ForEach-Object { Say "  $_" 'Red' } }
+                    else { $built++ }
+                }
+            }
+            Say "models: $built built into E:\PandabornDev\build\models$(if ($bad) { '; FAILED: ' + ($bad -join ', ') })"
+            if ($bad) { $failed += $s; break }
+        }
         'code' {
             if (-not $WithCode) { Say 'code: skipped (HOOK; pass -WithCode once the owner switches the code on in the faction mod)' 'DarkYellow'; continue }
             if (Test-Path $codeOut) { Remove-Item -Recurse -Force $codeOut }
@@ -174,6 +194,20 @@ foreach ($s in $stages) {
             Add-Tree $map $source 'mod/PandabornFactions' $origins
             Add-Tree $map $GenDir 'generated' $origins
             if ($WithCode) { Add-Tree $map $codeOut 'code' $origins }
+            # meshes of the models the catalogue adopts (built by the models stage, outside git)
+            $manifest = "$GenDir.models.json"
+            if (Test-Path -LiteralPath $manifest) {
+                $mm = Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json
+                $missingMesh = @()
+                foreach ($p in $mm.files.PSObject.Properties) {
+                    $rel = $p.Name.Replace('/', [string][IO.Path]::DirectorySeparatorChar)
+                    if (-not (Test-Path -LiteralPath $p.Value)) { $missingMesh += $p.Value; continue }
+                    $k = $rel.ToLowerInvariant()
+                    if ($origins.ContainsKey($k)) { throw "assemble: $rel comes from both $($origins[$k]) and models" }
+                    $origins[$k] = 'models'; $map[$rel] = $p.Value
+                }
+                if ($missingMesh) { Say ("assemble: {0} model mesh(es) missing; run the models stage first: {1}" -f $missingMesh.Count, ($missingMesh | Select-Object -First 3) -join ', ') 'Red'; $failed += $s; break }
+            }
             if ($WithBundles) { Add-Tree $map $bundleOut 'bundles' $origins }
             foreach ($rel in $meshes.Keys) {
                 $from = $meshes[$rel]

@@ -53,6 +53,7 @@ def main(argv=None):
     ap.add_argument("--accept", action="store_true", help="pin: accept the current game as the new pin")
     ap.add_argument("--accept-pin", action="store_true", help="generate even if the game differs from the pin")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--models", default=os.path.join(DEFAULT_BUILD, "models"), help="built model meshes (models stage)")
     a = ap.parse_args(argv)
     try:
         v = Vanilla(a.blueprints, a.localizations)
@@ -82,7 +83,9 @@ def main(argv=None):
 
 def generate(a, v):
     cat = Catalogue(a.catalogue)
-    g = Generator(cat, v).run()
+    g = Generator(cat, v)
+    g.mesh_dir = a.models
+    g.run()
     files = g.files()
     lock = lockmod.read_lock(a.catalogue)
     new, missing = lockmod.check_and_extend(lock, g.ids, allow_new=a.lock or a.dry_run)
@@ -91,7 +94,9 @@ def generate(a, v):
         for kind, i in missing:
             print("   ", kind, i)
     prov = g.provenance(files)
-    report = {"notes": [{"item": i, "note": n} for i, n in g.notes],
+    report = {"adoptedModels": dict(sorted(g.adopted_models.items())),
+              "standIns": sorted({i for i, n in g.notes if n.startswith("stand-in on")}),
+              "notes": [{"item": i, "note": n} for i, n in g.notes],
               "counts": {k: len(x) for k, x in sorted(g.ids.items())}}
     placeable = []
     for p, o in g.outputs.items():
@@ -141,6 +146,13 @@ def generate(a, v):
     write_text(a.out + ".provenance.json", dumps(prov))
     write_text(a.out + ".report.json", dumps(report))
     write_text(a.out + ".grid.json", dumps(grid))
+    # meshes of adopted models: assemble copies them into the mod (built by the models stage, never in git)
+    missing = sorted(src for src in g.model_files.values() if not os.path.isfile(src))
+    write_text(a.out + ".models.json", dumps({"files": dict(sorted(g.model_files.items())),
+                                               "adopted": dict(sorted(g.adopted_models.items()))}))
+    if missing:
+        print("generate: WARNING %d model mesh(es) not built yet (run: tools/pandaborn.ps1 models): %s"
+              % (len(missing), ", ".join(missing[:5])))
     if new:
         lockmod.write_lock(a.catalogue, lock)
         print("generate: appended %d id(s) to catalogue/ids.lock.json" % len(new))

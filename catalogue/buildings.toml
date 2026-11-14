@@ -12,23 +12,23 @@
 
 [buildings]
 # ------------------------------------------------------------------ village and logistics (CONTENT: Village)
-PandabornVillageHall = { basis = "DistrictCenter.Folktails", standin = "art/models/VillageHall" }
+PandabornVillageHall = { model = "VillageHall" }
 BuildersHut = {}
 HaulingPost = {}
 DistrictCrossing = {}
 PandabornFestivalSquare = { archetype = "storage", standin = "new model", needs_code = "holds festival goods and calls the Lantern Festival; until then a small warehouse" }
 
 # ------------------------------------------------------------------ homes (all "new" in CONTENT; vanilla stand-ins)
-PandabornDen = { basis = "Lodge.Folktails", standin = "art/models/Den" }
+PandabornDen = { model = "Den" }
 PandabornCourtyardHouse = { basis = "DoubleLodge.Folktails", standin = "new model" }
 PandabornTerraceHouse = { basis = "TripleLodge.Folktails", standin = "new model" }
-PandabornMoonLoft = { basis = "MiniLodge.Folktails", standin = "art/models/MoonLoft", needs_code = "invites and raises the Ringtails; until then a small home" }
+PandabornMoonLoft = { model = "MoonLoft", needs_code = "invites and raises the Ringtails (Ringtails module); until then a home" }
 
 # ------------------------------------------------------------------ food
 GathererFlag = {}
 EfficientFarmHouse = { text = "PandabornFarmstead", note = "CONTENT's Farmstead; keeps the vanilla name Farmhouse (coordinator, 2026-11-14)" }
-PandabornSteamer = { basis = "Grill.Folktails", standin = "art/models/Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice"] }
-PandabornPickleYard = { archetype = "workshop", standin = "art/models/PickleYard", recipes = ["PandabornPickles"] }
+PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice"] }
+PandabornPickleYard = { archetype = "workshop", model = "PickleYard", recipes = ["PandabornPickles"] }
 PandabornPaddyHouse = { basis = "AquaticFarmhouse.Folktails", standin = "new model" }
 PandabornTeaRoastery = { archetype = "workshop", standin = "new model", recipes = ["PandabornTea"] }
 PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", recipes = ["PandabornRiceFlour"], needs_code = "driven by flowing water: until then powered like the vanilla gristmill" }
@@ -60,7 +60,7 @@ Discharge = {}
 Centrifuge = {}
 BadwaterDome = {}
 BadwaterRig = {}
-PandabornCisternSmall = { basis = "SmallTank.Folktails", standin = "art/models/Cistern" }
+PandabornCisternSmall = { model = "Cistern" }
 PandabornCisternMedium = { basis = "MediumTank.Folktails", standin = "art/models/Cistern" }
 PandabornCisternLarge = { basis = "LargeTank.Folktails", standin = "art/models/Cistern" }
 StreamGauge = { note = "not named in CONTENT; kept as a water instrument next to the automation set" }
@@ -102,8 +102,8 @@ ImpermeablePowerShaft = {}
 VerticalPowerShaft = { text = "PowerShaft" }
 Clutch = {}
 GravityBattery = {}
-PandabornBambooWaterWheel = { basis = "WaterWheel.Folktails", standin = "art/models/BambooWaterWheel" }
-PandabornKiteWindmill = { basis = "WindTurbine.Folktails", standin = "art/models/KiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillSmallIcon" }
+PandabornBambooWaterWheel = { model = "BambooWaterWheel" }
+PandabornKiteWindmill = { model = "KiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillSmallIcon" }
 PandabornLargeKiteWindmill = { basis = "LargeWindTurbine.Folktails", standin = "art/models/KiteWindmill", icon = "Sprites/Pandaborn/Buildings/PandabornKiteWindmillLargeIcon" }
 DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGenerator.blueprint" }
 
@@ -148,11 +148,12 @@ DevWaterSource = { vanilla = "Buildings/Water/DevWaterSource/DevWaterSource.blue
 
 # ------------------------------------------------------------------ leisure and care
 Campfire = {}
-PandabornHammock = { basis = "Hammock.Folktails", standin = "art/models/Hammock", needs_code = "the vanilla hammock is a plain decoration: it meets no need until it gets an AttractionSpec (Nap) and a seat" }
+# the Nap attraction: the vanilla hammock (a rest place for idle wanderers) plus an attraction on its swinging Spot
+PandabornHammock = { model = "Hammock", delete = ["RestPlaceSpec"], add = { AttractionSpec = { Effects = [{ NeedId = "PandabornNap", PointsPerHour = 0.6, SatisfyToMaxValue = false }] } } }
 PandabornNapPlatform = { basis = "RooftopTerrace.Folktails", standin = "new model", needs_map = { RooftopTerrace = "PandabornNap" } }
-PandabornTeahouse = { basis = "DomedGarden.Folktails", standin = "art/models/Teahouse", needs_map = { DomedGarden = "PandabornTeahouse" } }
+PandabornTeahouse = { model = "Teahouse", needs_map = { Campfire = "PandabornTeahouse" } }
 PandabornSlideAndSwing = { basis = "Lido.Folktails", standin = "new model", needs_map = { Lido = "PandabornPlay" } }
-PandabornKindergarten = { basis = "Agora.Folktails", standin = "art/models/Kindergarten", needs_map = { Agora = "PandabornCubWatching" }, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
+PandabornKindergarten = { model = "Kindergarten", needs_map = { Campfire = "PandabornCubWatching" }, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
 PandabornInkStudio = { basis = "ContemplationSpot.Folktails", standin = "new model", needs_map = { ContemplationSpot = "PandabornContemplation" } }
 PandabornHotSpringBath = { basis = "MudPit.Folktails", standin = "new model", needs_map = { MudPit = "PandabornSoak" }, cost = { Log = 60, TreatedPlank = 40, PandabornRice = 20 }, note = "vanilla Mud Pit cost with rice in place of wheat" }
 PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, needs_code = "run by Ringtails" }

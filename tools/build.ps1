@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Kept for existing callers; the build is now tools/pandaborn.ps1. This runs its stages
-  generate, assemble, validate, install:
+  models, generate, assemble, validate, install (models: art/models/*/build.py into E:PandabornDevbuildmodels):
     1. catalogue/ -> E:\PandabornDev\build\gen\PandabornFactions (generated blueprints, collections, loc).
     2. mod/PandabornFactions (hand-written files) + generated data + the two panda body meshes (from the Reskin release
        on E:, not in git) -> staging folder E:\PandabornDev\build\stage\PandabornFactions.
@@ -22,7 +22,7 @@ param(
     [switch]$NoLink
 )
 $ErrorActionPreference = 'Stop'
-$stages = if ($SkipValidate) { 'generate,assemble,install' } else { 'generate,assemble,validate,install' }
+$stages = if ($SkipValidate) { 'models,generate,assemble,install' } else { 'models,generate,assemble,validate,install' }
 $a = @('-ExecutionPolicy', 'Bypass', '-File', (Join-Path $PSScriptRoot 'pandaborn.ps1'), $stages,
        '-InstallDir', $BuildDir, '-ModsDir', $ModsDir, '-LinkName', $LinkName)
 if ($NoLink) { $a += '-NoLink' }

@@ -9,7 +9,7 @@ import copy
 import os
 import re
 
-from . import content
+from . import content, models
 from .util import REPO, GenError, dumps, sha256_bytes
 
 LOC_COMMENT_MAX = 400
@@ -32,6 +32,9 @@ class Generator:
         self.good_icon = {}
         self.building_name_key = {}   # building id -> display name loc key
         self.generated_collections = {"good": set(), "need": set()}
+        self.model_files = {}     # mod rel path -> built mesh (E:\PandabornDev\build\models), copied by assemble
+        self.adopted_models = {}  # model id -> {item, modelJson, standIn}
+        self.mesh_dir = None
         self.rules = catalogue["rules"]
         self.suffix = self.rules.get("names", {}).get("template_suffix", ".Inkpaws")
         self.source_faction = self.rules.get("names", {}).get("source_faction", "Folktails")
@@ -185,7 +188,10 @@ class Generator:
                 self.plan[bid] = {"vanilla": key, "item": item}
                 continue
             basis = b.get("basis") or (bid + "." + self.source_faction)
-            if b.get("archetype"):
+            if b.get("model") and not b.get("basis"):
+                # an adopted model brings its stand-in: the blueprint whose specs the model was made for
+                basis = models.load_model("building", b["model"], item)[0]["standIn"]
+            elif b.get("archetype"):
                 arch = (self.cat["archetypes"].get("archetypes") or {}).get(b["archetype"])
                 if arch is None:
                     raise GenError("%s: archetype %s is not defined in catalogue/archetypes.toml" % (item, b["archetype"]))
@@ -221,6 +227,8 @@ class Generator:
             data = self.v.copy(key)
             if b.get("archetype"):
                 b = self.with_archetype(b, data, item)
+            if b.get("model"):
+                models.apply_building_model(self, data, b["model"], item, self.mesh_dir)
             self.set_template(data, p["template"], b.get("aliases"), item)
             self.remap_template_refs(data, item)
             self.apply_building_text(data, bid, b, text, item)
@@ -265,7 +273,7 @@ class Generator:
             category = self.v.rel(key).split("/")[1] if self.v.rel(key).startswith("Buildings/") else "Misc"
             path = b.get("path") or "Buildings/Pandaborn/%s/%s/%s" % (category, bid, p["template"])
             coll.append(self.emit(path, data, item, "building", key))
-            if b.get("standin"):
+            if b.get("standin") and not b.get("model"):
                 self.note(item, "stand-in on %s; replace with %s" % (p["vname"], b["standin"]))
             if b.get("needs_code"):
                 self.note(item, "needs code: " + b["needs_code"])

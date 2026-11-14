@@ -1,0 +1,16 @@
+{
+  "goodsProbe": {
+    "goods": [
+      "Plank",
+      "TreatedPlank",
+      "Log",
+      "PandabornCabbage"
+    ],
+    "templates": [
+      "BuildersHut.Inkpaws",
+      "PandabornTimberBamboo.Inkpaws",
+      "PandabornTeaBush.Inkpaws",
+      "GearWorkshop.Inkpaws"
+    ]
+  }
+}

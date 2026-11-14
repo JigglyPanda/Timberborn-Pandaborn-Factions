@@ -9,7 +9,7 @@ from .util import GenError, load_json
 BUILDING_FIELDS = {
     "basis", "archetype", "vanilla", "text", "template", "cost", "science", "workers", "default_workers", "worker_type",
     "disallow_other_workers", "recipes", "capacity", "tool_group", "tool_order", "models", "icon", "retire", "aliases",
-    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects",
+    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects", "model",
 }
 CHARACTER_FIELDS = {"basis", "template", "path", "models", "set", "note"}
 GOOD_FIELDS = {"basis", "vanilla", "text", "icon", "weight", "good_type", "group", "order", "consumption", "set",

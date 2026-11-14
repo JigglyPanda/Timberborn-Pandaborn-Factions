@@ -1,0 +1,12 @@
+{
+  "goodsProbe": {
+    "goods": [
+      "Plank",
+      "TreatedPlank"
+    ],
+    "templates": [
+      "BuildersHut.Folktails",
+      "LumberMill.Folktails"
+    ]
+  }
+}

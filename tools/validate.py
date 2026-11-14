@@ -349,6 +349,7 @@ def main(argv=None):
     check_schema(c)
     check_references(c)
     check_asset_refs(c)
+    check_models(c)
     check_template_names(c)
     check_no_vanilla_side_effects(c)
     check_global_specs(c)
@@ -1467,6 +1468,106 @@ def check_lock(c):
                 R.error("catalogue/ids.lock.json: %s id %s changed since the last commit" % (kind, v))
     R.info("id lock: %d ids, append-only vs HEAD ok" % sum(len(e) for e in ids.values()))
 
+
+
+# ------------------------------------------------------------------------------- v2: adopted models (art lanes)
+
+MODEL_PREFIXES = {"buildings/pandaborn/models/": ("art", "models"), "naturalresources/pandaborn/models/": ("art", "plants")}
+
+
+def model_of(path):
+    low = path.replace("\\", "/").lower()
+    for prefix, root in MODEL_PREFIXES.items():
+        if low.startswith(prefix):
+            rest = path.replace("\\", "/")[len(prefix):]
+            return root, rest.split("/", 1)[0]
+    return None, None
+
+
+def blueprint_meshes(bp, path=""):
+    """(child path, model asset path) for every TimbermeshSpec in a blueprint."""
+    for k, v in bp.items():
+        if k == "Children" and isinstance(v, dict):
+            for child, node in v.items():
+                if isinstance(node, dict):
+                    yield from blueprint_meshes(node, path + "/" + child)
+        elif k == "TimbermeshSpec" and isinstance(v, dict) and v.get("Model"):
+            yield path, v["Model"]
+
+
+def check_models(c):
+    """A blueprint that uses a model from the art lanes must agree with that model's model.json (footprint, blocks,
+    entrance, access, construction base and stage order, attachments) and with the mesh itself (slot nodes for every
+    slot keyword, animated nodes and their driver specs)."""
+    checked = 0
+    for key, bp in sorted(c.mod_bp.items()):
+        rel = c.keys[key][0]
+        meshes = list(blueprint_meshes(bp))
+        ids = {model_of(m)[1]: model_of(m)[0] for _, m in meshes if model_of(m)[1]}
+        for mid, root in ids.items():
+            mj_path = os.path.join(REPO, root[0], root[1], mid, "model.json")
+            if not os.path.isfile(mj_path):
+                R.error("%s: uses model %s but %s does not exist" % (rel, mid, mj_path))
+                continue
+            mj = load_json(mj_path)
+            checked += 1
+            where = "%s (model %s)" % (rel, mid)
+            bos = bp.get("BlockObjectSpec") or {}
+            size = mj.get("size") or {}
+            if bos.get("Size") != {"X": size.get("X"), "Y": size.get("Y"), "Z": size.get("Z")}:
+                R.error("%s: BlockObjectSpec.Size %s differs from model.json size %s" % (where, bos.get("Size"), size))
+            if mj.get("blocks") and bos.get("Blocks") != mj["blocks"]:
+                R.error("%s: BlockObjectSpec.Blocks differ from model.json blocks" % where)
+            if mj.get("entrance"):
+                e = (bos.get("Entrance") or {})
+                if not e.get("HasEntrance") or e.get("Coordinates") != mj["entrance"]:
+                    R.error("%s: entrance %s differs from model.json %s" % (where, e, mj["entrance"]))
+            if mj.get("access"):
+                la = (bp.get("BuildingAccessibleSpec") or {}).get("LocalAccess")
+                if la != mj["access"]:
+                    R.error("%s: LocalAccess %s differs from model.json access %s (colonists would vanish away from "
+                            "the door)" % (where, la, mj["access"]))
+            unf = ((bp.get("Children") or {}).get("#Unfinished") or {}).get("Children") or {}
+            if unf:
+                names = list(unf)
+                bases = [n for n in names if "ConstructionBase" in n]
+                if len(bases) != 1 or not names[0].startswith("ConstructionBase"):
+                    R.error("%s: #Unfinished must hold exactly one ConstructionBase as its first child (models.md), "
+                            "has %s" % (where, names))
+                if mj.get("models", {}).get("constructionStage0") and "ConstructionStage0" not in names:
+                    R.error("%s: model has a construction stage but #Unfinished has no ConstructionStage0" % where)
+            for a in mj.get("attachments") or []:
+                hits = [at for at in (bp.get("TemplateAttachmentsSpec") or {}).get("Attachments", [])
+                        if at.get("AttachmentId") == a.get("AttachmentId")]
+                if not hits or any(at.get("Position") != a.get("Position") for at in hits):
+                    R.error("%s: attachment %s is not at the model's position %s" % (where, a.get("AttachmentId"),
+                                                                                       a.get("Position")))
+            # the mesh: slot nodes for every slot keyword; animated nodes and their drivers
+            fin = [m for child, m in meshes if child == "/#Finished" and model_of(m)[1] == mid]
+            nodes = set()
+            if fin and ref_key(fin[0]) in c.keys:
+                try:
+                    _, mesh_nodes = read_timbermesh(c.files[c.keys[ref_key(fin[0])][0]])
+                    nodes = {n["name"] for n in mesh_nodes}
+                except Exception as ex:  # noqa: BLE001
+                    R.error("%s: cannot read %s: %s" % (where, fin[0], ex))
+            elif fin:
+                R.unchecked.add("%s: mesh %s not in this folder (assemble copies it)" % (where, fin[0]))
+            if nodes:
+                for slot in (bp.get("TransformSlotInitializerSpec") or {}).get("Slots", []):
+                    kw = slot.get("SlotKeyword")
+                    if kw and not any(n.startswith("#Slot#" + kw) for n in nodes):
+                        R.error("%s: slot keyword %s has no #Slot#%s node in the mesh (colonists would sit at the "
+                                "origin)" % (where, kw, kw))
+                for an in mj.get("animatedNodes") or []:
+                    if an.get("node") not in nodes:
+                        R.error("%s: animated node %s is not in the mesh" % (where, an.get("node")))
+                    driver = re.findall(r"([A-Z][A-Za-z]+Spec)", an.get("drivenBy") or "")
+                    if driver and driver[0] not in bp:
+                        R.error("%s: animated node %s is driven by %s, which the blueprint lacks (it would never move)"
+                                % (where, an.get("node"), driver[0]))
+    if checked:
+        R.info("models: %d blueprint(s) checked against their model.json" % checked)
 
 # ------------------------------------------------------------------------------------------------ self test
 
