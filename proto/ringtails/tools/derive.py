@@ -63,6 +63,7 @@ def derive_character(bp, src, dst, template, model, adult):
     if adult:
         data["WorkerSpec"]["WorkerType"] = WORKER_TYPE
         data["GoodCarrierSpec"]["BaseLiftingCapacity"] = LIFTING
+    data["PandabornNamePoolSpec"] = {"NamePoolLocKey": "Pandaborn.NamePool.Ringtails"}
     avatar, contaminated = AVATARS[adult]
     data["PandabornRingtailSpec"] = {
         "Kind": "Ringtail",
@@ -79,6 +80,19 @@ def derive_character(bp, src, dst, template, model, adult):
     save(dst, data)
 
 
+def write_name_pool():
+    """The Ringtail name pool from catalogue/text/names.json, as the generator does for the Inkpaws (one key, the display
+    strings joined with line breaks)."""
+    names = json.load(open(os.path.join(HERE, "..", "..", "..", "catalogue", "text", "names.json"), encoding="utf-8"))["ringtails"]
+    nl = chr(10)
+    text = nl.join(n["display"] for n in names).replace('"', '""')
+    path = os.path.join(MOD, "Localizations", "enUS_PandabornProtoRingtailNames.csv")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline=nl) as f:
+        f.write("ID,Text,Comment" + nl + '"Pandaborn.NamePool.Ringtails","' + text + '","Ringtail names (catalogue/text/names.json)"' + nl)
+    print("wrote name pool,", len(names), "names")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--blueprints", default=r"E:\PandabornDev\reference\Blueprints")
@@ -86,6 +100,7 @@ def main():
     # start clean: everything under mod/ except the manifest and the hand-written loc is generated here
     for sub in ("Characters", "Buildings", "WorkerTypes", "WorkerOutfits"):
         shutil.rmtree(os.path.join(MOD, sub), ignore_errors=True)
+    write_name_pool()
     derive_character(bp, "Characters/Beaver/BeaverAdult.blueprint.json", "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json",
                      "RingtailAdult.Inkpaws", "Characters/Pandaborn/RingtailAdult.Model", True)
     derive_character(bp, "Characters/Beaver/BeaverChild.blueprint.json", "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint.json",

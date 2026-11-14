@@ -898,6 +898,9 @@
       }
     }
   },
+  "PandabornNamePoolSpec": {
+    "NamePoolLocKey": "Pandaborn.NamePool.Ringtails"
+  },
   "PandabornRingtailSpec": {
     "Kind": "Ringtail",
     "Textures": [
