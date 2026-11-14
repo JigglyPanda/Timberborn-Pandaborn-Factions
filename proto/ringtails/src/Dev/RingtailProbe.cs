@@ -410,9 +410,38 @@ namespace Pandaborn.Ringtails.Dev
 
         // ------------------------------------------------------------------ panels and screenshots
 
+        private readonly List<JObject> _laterPlace = new List<JObject>();
+        private bool _laterLoaded;
+
+        /// <summary>"laterPlace": [ { "day": 0, "hour": 17, "place": [ templates ] } ]: construction queued at a given time,
+        /// e.g. after the bell, to see who hauls it.</summary>
+        private void PlaceDueLater(float runHour)
+        {
+            if (!_laterLoaded)
+            {
+                _laterLoaded = true;
+                if (!HarnessBridge.LoadSave && _config["laterPlace"] is JArray later) _laterPlace.AddRange(later.OfType<JObject>());
+            }
+            for (int i = _laterPlace.Count - 1; i >= 0; i--)
+            {
+                var item = _laterPlace[i];
+                float due = (item["day"]?.Value<float>() ?? 0f) * 24f + (item["hour"]?.Value<float>() ?? 0f) - (float)Math.Floor(_firstSampleSinceDawn);
+                if (runHour < due) continue;
+                _laterPlace.RemoveAt(i);
+                var center = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
+                if (center == null || !(item["place"] is JArray place)) continue;
+                var list = place.Select(t => t.Type == JTokenType.String
+                    ? new KeyValuePair<string, bool>((string)t, true)
+                    : new KeyValuePair<string, bool>((string)t["template"], t["finished"]?.Value<bool>() ?? true)).ToList();
+                try { Event("laterPlace", _pathConnector.PlaceOnDistrictLevel(center, list)); }
+                catch (Exception e) { Debug.LogError("[Pandaborn.Ringtails] later placement failed: " + e); }
+            }
+        }
+
         private void QueueDueShots()
         {
             float runHour = _dayNightCycle.PartialDayNumber * 24f - _firstSampleHours;
+            PlaceDueLater(runHour);
             for (int i = _pendingShots.Count - 1; i >= 0; i--)
             {
                 var s = _pendingShots[i];

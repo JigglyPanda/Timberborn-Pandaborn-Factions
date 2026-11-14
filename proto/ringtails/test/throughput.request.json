@@ -5,35 +5,11 @@
     "place": [
       "RingtailHaulingPost.Inkpaws",
       "RingtailLoft.Inkpaws",
-      "RingtailLoft.Inkpaws",
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      },
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      },
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      },
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      },
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      },
-      {
-        "template": "PandabornDen.Inkpaws",
-        "finished": false
-      }
+      "RingtailLoft.Inkpaws"
     ],
     "stock": {
       "Water": 300,
-      "Log": 120
+      "Log": 200
     },
     "shots": [
       {
@@ -53,6 +29,68 @@
         "day": 1,
         "hour": 23,
         "select": "none"
+      }
+    ],
+    "laterPlace": [
+      {
+        "day": 0,
+        "hour": 16.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
+      },
+      {
+        "day": 1,
+        "hour": 16.5,
+        "place": [
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          },
+          {
+            "template": "PandabornDen.Inkpaws",
+            "finished": false
+          }
+        ]
       }
     ]
   }

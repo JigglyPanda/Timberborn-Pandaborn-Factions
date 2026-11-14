@@ -16,9 +16,10 @@ Manifest Id `JigglyPanda.PandabornProtoRingtails`; requires `JigglyPanda.Pandabo
 | Save fallback alias: the Inkpaw templates answer to the Ringtail names | `mod/Characters/Pandaborn/Inkpaw*.Inkpaws` (merge) | Data |
 | Outfits for the Ringtail worker type | `mod/WorkerOutfits/Pandaborn` (generated) | Data |
 | Feature switch, factory, save/load registration | `src/RingtailService.cs` | Code, 1 private field |
-| Day rest (sleep through the morning) | `src/RingtailRestRootBehavior.cs` | Code, 1 private field |
+| Day rest: dawn until the bell (Inkpaw working-hours end), clamped 4–16 h; to bed first thing unless nearly rested | `src/RingtailRestRootBehavior.cs` | Code, 1 private field |
 | Coat | `src/RingtailCoat.cs` | Code |
 | Kit grows into a Ringtail adult | `src/RingtailGrowth.cs` | Code |
+| Inkpaw walking speed, never slowed by a load (`BaseSlowedSpeed = BaseWalkingSpeed`), lifting 14, equal appetite | template data | Data |
 | Housing rule (Ringtails end up in lofts) | `src/LoftHousingRule.cs` | Code |
 | Test probe (spawn, hourly log, panels, screenshots) | `src/Dev/*` (inert without a harness request) | Dev code |
 
@@ -34,3 +35,8 @@ python proto\ringtails\test\analyze.py E:\PandabornDev\build\test\<run id>
 ```
 
 The probe writes `ringtails.json` (hourly samples) and `rt_*.png` (panels and night shots) next to `result.json`.
+
+For other agents using this build with `-ExtraMods`: template names (`RingtailAdult|RingtailChild.Inkpaws`,
+`RingtailHaulingPost|RingtailGathererFlag|RingtailLoft.Inkpaws`), the worker type `PandabornRingtail` and the request
+section `"ringtails": { spawn, spawnKits, kitGrowth, place, stock, connectPaths, housingRule, shots, reload,
+disableTemplateRegistration }` are stable. The runtime code is being moved to `src/code/Pandaborn.Ringtails`.
