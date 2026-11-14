@@ -1,0 +1,26 @@
+{
+  "MaterialCollectionSpec": {
+    "CollectionId": "PandabornLook.Inkpaws",
+    "Materials": [
+      "Materials/Pandaborn/Look/BaseMetal.Folktails",
+      "Materials/Pandaborn/Look/BaseWood_Brown.Folktails",
+      "Materials/Pandaborn/Look/BaseWood_LightBrown.Folktails",
+      "Materials/Pandaborn/Look/BaseWood_White.Folktails",
+      "Materials/Pandaborn/Look/BaseWood_Yellow.Folktails",
+      "Materials/Pandaborn/Look/Details.Folktails",
+      "Materials/Pandaborn/Look/IrregularPlanks_Brown.Folktails",
+      "Materials/Pandaborn/Look/IrregularPlanks_LightBrown.Folktails",
+      "Materials/Pandaborn/Look/IrregularPlanks_Mossy.Folktails",
+      "Materials/Pandaborn/Look/IrregularPlanks_White.Folktails",
+      "Materials/Pandaborn/Look/IrregularPlanks_Yellow.Folktails",
+      "Materials/Pandaborn/Look/Moss.Folktails",
+      "Materials/Pandaborn/Look/PaintedMetal.Folktails",
+      "Materials/Pandaborn/Look/Paper.Folktails",
+      "Materials/Pandaborn/Look/Plaster_White.Folktails",
+      "Materials/Pandaborn/Look/PlasteredWood_White.Folktails",
+      "Materials/Pandaborn/Look/Sand.Folktails",
+      "Materials/Pandaborn/Look/ThatchedRoof.Folktails",
+      "Materials/Pandaborn/Look/WindowsAtlas.Folktails"
+    ]
+  }
+}

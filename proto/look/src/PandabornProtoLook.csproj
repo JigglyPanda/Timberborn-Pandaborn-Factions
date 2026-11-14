@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Look prototype, "swap" variant: dotnet build proto/look/src -c Release
+       Output: E:\PandabornDev\build\proto\look-swap\Scripts\PandabornProtoLook.dll (tools/build_look.ps1 -Variant swap) -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>PandabornProtoLook</AssemblyName>
+    <RootNamespace>PandabornProtoLook</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\proto\look-swap</ModOut>
+    <OutputPath>$(ModOut)\Scripts\</OutputPath>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
+    <NoWarn>CS1701;CS1702;MSB3277;NU1701</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+  </ItemGroup>
+</Project>

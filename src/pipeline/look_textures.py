@@ -33,30 +33,37 @@ VT = os.path.join(REF, "textures")
 S = 1024
 
 # ------------------------------------------------------------------------------------------------ palette (sRGB 0-255)
+# Art direction (docs/tech/look.md): rural Sichuan farmsteads of the Chengdu plain. Dark timber frames, white lime
+# plaster, grey clay tile, bamboo (green fresh, straw-gold cured, grey weathered), woven bamboo, rammed earth and river
+# stone. Red is an accent only (lanterns, small trim, festival cloth). No text on any texture. Nothing Japanese-coded.
 INK = np.array([34, 31, 30])
 INK_GREY = np.array([66, 63, 60])
-PAPER = np.array([238, 228, 204])
-PAPER_WARM = np.array([244, 226, 186])
-LACQUER = np.array([164, 42, 34])
-LACQUER_DARK = np.array([112, 28, 24])
-BAMBOO_PALE = np.array([226, 220, 176])       # bleached culm; tints below turn it gold, green or black
+TIMBER = np.array([72, 54, 40])               # dark, oiled and smoke-darkened fir
+LIME = np.array([236, 234, 226])              # white lime plaster
+PAPER = np.array([232, 222, 198])             # window paper (unbleached)
+PAPER_WARM = np.array([240, 220, 180])
+LACQUER = np.array([150, 44, 36])             # accents only
+INDIGO = np.array([52, 66, 96])               # indigo-dyed cloth
+BAMBOO_PALE = np.array([226, 220, 176])       # pale culm; tints below make it straw-gold, green or weathered grey
 TEA = np.array([150, 170, 112])
 TILE = np.array([104, 108, 114])
 TILE_DARK = np.array([58, 60, 66])
-BRONZE = np.array([74, 70, 62])
-VERDIGRIS = np.array([96, 132, 112])
+IRON = np.array([60, 58, 56])
+RUST = np.array([120, 82, 56])
+EARTH = np.array([168, 140, 104])             # rammed earth
+STONE = np.array([150, 148, 140])             # river stone
 
 # _Color tints per material (linear multipliers applied by the game, baked into vertex colours)
 TINT = {
-    "BaseWood_White": (1.0, 1.0, 1.0, 1.0),          # pale bamboo
-    "BaseWood_Brown": (0.82, 0.80, 0.50, 1.0),       # golden bamboo (most used wood: 320 models)
-    "BaseWood_LightBrown": (0.33, 0.31, 0.30, 1.0),  # black "ink" bamboo
-    "BaseWood_Yellow": (0.62, 0.78, 0.48, 1.0),      # green bamboo
-    "IrregularPlanks_White": (1.0, 1.0, 1.0, 1.0),
-    "IrregularPlanks_Brown": (0.80, 0.74, 0.52, 1.0),
-    "IrregularPlanks_LightBrown": (0.62, 0.58, 0.48, 1.0),
-    "IrregularPlanks_Yellow": (0.70, 0.80, 0.52, 1.0),
-    "IrregularPlanks_Mossy": (0.66, 0.76, 0.56, 1.0),
+    "BaseWood_Brown": (1.0, 1.0, 1.0, 1.0),          # dark timber frame (own texture; most used wood: 320 models)
+    "BaseWood_White": (0.86, 0.85, 0.80, 1.0),       # weathered grey bamboo
+    "BaseWood_LightBrown": (0.88, 0.80, 0.62, 1.0),  # cured straw-gold bamboo
+    "BaseWood_Yellow": (0.66, 0.80, 0.50, 1.0),      # fresh green bamboo
+    "IrregularPlanks_White": (0.94, 0.92, 0.86, 1.0),  # woven bamboo panels, weathered
+    "IrregularPlanks_Brown": (0.66, 0.58, 0.46, 1.0),
+    "IrregularPlanks_LightBrown": (0.84, 0.78, 0.64, 1.0),
+    "IrregularPlanks_Yellow": (0.72, 0.80, 0.56, 1.0),
+    "IrregularPlanks_Mossy": (0.92, 0.88, 0.78, 1.0),
 }
 
 
@@ -234,20 +241,101 @@ def components(mask, min_px=400):
     return out
 
 
-# ------------------------------------------------------------------------------------------------ sets
-def make_bamboo():
-    """Replaces the BaseWood trim sheet: plank strips become split bamboo slats, the long-grain block becomes a row
-    of thin culms, log ends become hollow cross-sections, the plain corner a pale lime wash."""
-    st = Set("Bamboo")
+def paint_board(st, mask, x0, y0, x1, y1, seed, horizontal=False):
+    """A dark timber board: wavy grain along its length, darker edges, the odd knot."""
+    r = rng(seed)
+    w, h = x1 - x0, y1 - y0
+    if horizontal:
+        w, h = h, w
+    ww, hh_ = max(w, 8), max(h, 8)
+    warp = (noise(seed + 2, 40, 2.0, shape=(hh_, ww)) - 0.5) * 18
+    xx = np.arange(ww)[None, :] + warp
+    grain = 0.5 + 0.5 * np.sin(xx * r.uniform(0.35, 0.6) + 3 * noise(seed + 3, 12, aniso=(1, 0.1), shape=(hh_, ww)))
+    grain = grain[:h, :w]
+    fib = noise(seed + 1, 4, 1.4, aniso=(1.0, 0.05), shape=(hh_, ww))[:h, :w]
+    t = (np.arange(w) + 0.5) / max(w, 1)
+    edge = np.clip(np.minimum(t, 1 - t) * 8, 0, 1)
+    tone = r.uniform(0.85, 1.12)
+    col = (TIMBER / 255.0)[None, None, :] * tone * (0.82 + 0.25 * grain[..., None]) * (0.92 + 0.12 * fib[..., None])
+    col = col * (0.7 + 0.3 * edge[None, :, None])
+    hgt = 0.45 + 0.08 * grain + 0.04 * fib + 0.15 * edge[None, :]
+    # a knot or two
+    for _ in range(r.integers(0, 3)):
+        ky, kx = r.uniform(0, h), r.uniform(0.2, 0.8) * w
+        yy, xs = np.mgrid[0:h, 0:w]
+        d = np.sqrt(((yy - ky) / 2.2) ** 2 + (xs - kx) ** 2)
+        k = np.exp(-(d / 5.0) ** 2)
+        col = col * (1 - 0.5 * k[..., None])
+        hgt = hgt - 0.1 * k
+    if horizontal:
+        col = col.transpose(1, 0, 2)
+        hgt = hgt.T
+    m = mask[y0:y1, x0:x1]
+    st.d[y0:y1, x0:x1][m] = col[m]
+    st.h[y0:y1, x0:x1][m] = hgt[m] + 0.2
+
+
+def paint_log_end(st, cx, cy, rad, seed):
+    r = rng(seed)
+    yy, xx = np.mgrid[0:S, 0:S].astype(np.float32)
+    ang = np.arctan2(yy - cy, xx - cx)
+    d = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) * (1 + 0.05 * np.sin(ang * 5 + r.uniform(0, 6)))
+    disc = d < rad
+    rings = 0.5 + 0.5 * np.cos(d * 0.9)
+    bark = d > rad * 0.9
+    col = (np.array([150, 112, 78]) / 255.0) * (0.8 + 0.2 * rings[..., None])
+    col = np.where(bark[..., None], TIMBER / 255.0 * 0.7, col)
+    crack = (np.abs(((ang + 3.2) % 0.9) - 0.45) < 0.015) & (d < rad * 0.7)
+    col[crack] = INK / 255.0
+    st.d[disc] = col[disc]
+    st.h[disc] = (0.55 + 0.03 * rings - 0.1 * crack)[disc]
+
+
+def wood_components():
+    """The plank strips, the long-grain block and the log-end discs of the vanilla BaseWood trim sheet."""
     v = vanilla("BaseWood_1K_D_White", "RGB")
     whiteish = v.min(2) > 0.80
     wood = ndi.binary_opening(~whiteish, iterations=2)
     wood = ndi.binary_fill_holes(wood)
-    # background: pale wash
-    st.d[:] = color_field(np.array([236, 232, 218]), 0.05, 11, 48)
+    return components(wood)
+
+
+# ------------------------------------------------------------------------------------------------ sets
+def make_timber():
+    """Replaces BaseWood_Brown (the main structural wood): dark oiled timber boards in the same strips, end grain on
+    the log-end discs, dark gaps between boards."""
+    st = Set("Timber")
+    st.d[:] = color_field(np.array([52, 40, 32]), 0.08, 13, 48)
+    st.h[:] = 0.1 + 0.05 * noise(14, 24)
+    for k, (x0, y0, x1, y1, m) in enumerate(wood_components()):
+        w, h = x1 - x0, y1 - y0
+        if w > 300 and h > 300:
+            x, j = x0, 0
+            while x < x1:
+                bw = int(rng(800 + j).integers(48, 90))
+                sub = np.zeros_like(m)
+                sub[:, x:min(x + bw, x1)] = True
+                paint_board(st, m & sub, x, y0, min(x + bw, x1), y1, 900 + j)
+                x += bw
+                j += 1
+        elif h > 1.8 * w or w > 1.8 * h:
+            paint_board(st, m, x0, y0, x1, y1, 1000 + k, horizontal=w > h)
+        else:
+            paint_log_end(st, (x0 + x1) / 2, (y0 + y1) / 2, min(w, h) / 2 * 0.95, 1100 + k)
+    st.smooth = 0.30
+    st.metal = 0.02
+    return st
+
+
+def make_bamboo():
+    """Replaces the BaseWood trim sheet: plank strips become split bamboo slats, the long-grain block becomes a row
+    of thin culms, log ends become hollow cross-sections, the plain corner a pale lime wash."""
+    st = Set("Bamboo")
+    # background (gaps, plain corner): lime wash
+    st.d[:] = color_field(LIME, 0.05, 11, 48)
     st.h[:] = 0.1 + 0.05 * noise(12, 24)
     k = 0
-    for x0, y0, x1, y1, m in components(wood):
+    for x0, y0, x1, y1, m in wood_components():
         w, h = x1 - x0, y1 - y0
         k += 1
         if w > 300 and h > 300:                       # long-grain block: packed thin culms
@@ -270,11 +358,11 @@ def make_bamboo():
     return st
 
 
-def make_weave():
-    """Replaces IrregularPlanks: woven bamboo matting (twill), seamless."""
-    st = Set("Weave")
+def make_weave(name="Weave", strip=32, seed=21, moss=False):
+    """Replaces IrregularPlanks: woven bamboo matting (twill), seamless. Three variants (plain, coarse, mossy) so the
+    atlas fragments IrregularPlanks_White/Brown/Mossy keep distinct texture sets (AutoAtlaser keys on textures)."""
+    st = Set(name)
     yy, xx = np.mgrid[0:S, 0:S]
-    strip = 32
     u = (xx + yy) // strip          # diagonal strands one way
     vv = (xx - yy) % S // strip     # and the other
     over = ((u + (vv // 2)) % 2 == 0)
@@ -283,16 +371,20 @@ def make_weave():
     prof_u = np.sin(np.pi * tu)
     prof_v = np.sin(np.pi * tv)
     hh = np.where(over, 0.6 + 0.3 * prof_u, 0.4 + 0.3 * prof_v).astype(np.float32)
-    fib_a = noise(21, 5, 1.5, aniso=(0.08, 1.0))
-    fib = np.where(over, noise(22, 5, 1.5, aniso=(1.0, 0.08)), fib_a)
+    fib_a = noise(seed, 5, 1.5, aniso=(0.08, 1.0))
+    fib = np.where(over, noise(seed + 1, 5, 1.5, aniso=(1.0, 0.08)), fib_a)
     base = np.where(over[..., None], BAMBOO_PALE / 255.0, BAMBOO_PALE / 255.0 * 0.86)
-    per = noise(23, 40)
+    per = noise(seed + 2, 40)
     d = base * (0.88 + 0.12 * np.where(over, prof_u, prof_v)[..., None]) * (0.92 + 0.1 * fib[..., None])
     d *= (0.94 + 0.1 * per[..., None])
     edge = np.minimum(np.where(over, prof_u, prof_v), 1)
     d *= (0.6 + 0.4 * np.clip(edge * 3, 0, 1))[..., None]
-    st.d = d.astype(np.float32)
     st.h = hh + 0.04 * fib
+    if moss:
+        m = np.clip((noise(seed + 3, 50) * 0.7 + noise(seed + 4, 8) * 0.3 - 0.5) * 4, 0, 1) * (1 - 0.5 * edge)
+        d = d * (1 - m[..., None]) + (TEA / 255.0 * 0.75)[None, None, :] * (0.8 + 0.3 * noise(seed + 5, 3))[..., None] * m[..., None]
+        st.h = st.h + 0.1 * m
+    st.d = d.astype(np.float32)
     st.smooth = 0.28
     st.metal = 0.02
     st.ao_radius, st.ao_strength = 4, 3.0
@@ -316,22 +408,27 @@ def make_tiles():
     pan_t = np.where(cx < 0.5, cx / 0.28, (1 - cx) / 0.28)
     pan_h = 0.15 * (1 - np.clip(pan_t, 0, 1)) ** 2
     hh = np.where(cover, 0.35 + cover_h, 0.1 + pan_h)
-    # individual tile lengths inside a course: two overlapping tiles per course
-    seg = (yc % (course / 2)) / (course / 2)
-    hh = hh + 0.10 * seg                  # each tile rises toward its lower end
+    # three overlapping tiles per course, each with a lip at its lower end
+    tile_len = course / 3
+    curve = np.where(cover, 9 * np.sin(np.pi * tc), -4 * np.clip(1 - np.abs(cx - 0.5) * 2, 0, 1))
+    ycl = (yc + curve) % tile_len         # tile lips are arcs, not straight lines
+    seg = ycl / tile_len                  # 0 at a tile's lower lip, 1 at its upper end (rows grow downwards)
+    lip = np.exp(-ycl / 4.0)
+    hh = hh + 0.12 * (1 - seg) - 0.18 * lip
     # overlap shadow just below each course edge (yc small means just below the edge)
     under = np.exp(-yc / 18.0)
     hh = hh - 0.35 * under
     hh = hh + 0.04 * noise(31, 10)
     pair = (xx // col_w).astype(int)
-    crs = ((yy - edge0) // course).astype(int)
-    var = (np.sin(pair * 12.9898 + crs * 78.233) * 43758.5453) % 1.0
-    base = TILE / 255.0 * (0.88 + 0.22 * var[..., None])
-    base = np.where(cover[..., None], base * (0.85 + 0.25 * cover_h[..., None] / 0.55), base * 0.82)
-    base = base * (1 - 0.55 * under[..., None])
+    tile_i = ((yy - edge0) // tile_len).astype(int)
+    var = (np.sin(pair * 12.9898 + tile_i * 78.233) * 43758.5453) % 1.0
+    base = TILE / 255.0 * (0.90 + 0.15 * var[..., None])
+    pan_shade = 0.62 + 0.18 * np.clip(pan_t, 0, 1)            # pans are concave: darker down the middle
+    base = np.where(cover[..., None], base * (0.70 + 0.45 * np.sin(np.pi * tc))[..., None], base * pan_shade[..., None])
+    base = base * (1 - 0.35 * lip[..., None]) * (1 - 0.55 * under[..., None])
     grime = noise(32, 60)
-    base = base * (0.9 + 0.15 * grime[..., None])
-    lichen = (noise(33, 30) > 0.78) & ~cover
+    base = base * (0.88 + 0.18 * grime[..., None])
+    lichen = (noise(33, 30) > 0.80) & ~cover
     base[lichen] = base[lichen] * 0.6 + TEA / 255.0 * 0.4
     # round end caps of the cover tiles at each course edge (seen as a darker rim)
     cap = cover & (yc < 10)
@@ -344,95 +441,136 @@ def make_tiles():
     return st
 
 
-def make_plaster(name="Plaster", base=PAPER, seed=40):
+def make_plaster(name="Plaster", base=LIME, seed=40):
+    """White lime plaster: soft mottling and trowel marks."""
     st = Set(name)
     n1, n2, n3 = noise(seed, 120), noise(seed + 1, 24), noise(seed + 2, 6)
-    st.d = color_field(base, 0.05, seed + 3, 140) * (0.94 + 0.06 * n2[..., None]) * (0.97 + 0.04 * n3[..., None])
+    st.d = color_field(base, 0.04, seed + 3, 140) * (0.95 + 0.05 * n2[..., None]) * (0.97 + 0.04 * n3[..., None])
     pits = noise(seed + 4, 3, 1.0) > 0.86
-    st.d[pits] *= 0.9
+    st.d[pits] *= 0.92
     st.h = 0.3 * n1 + 0.15 * n2 + 0.05 * n3 - 0.1 * pits
-    st.smooth = 0.2
+    st.smooth = 0.18
     st.nstrength = 3.0
     return st
 
 
 def make_plastered_wood():
-    """Replaces PlasteredWood: lime plaster with thin dark bamboo laths showing through in horizontal strokes."""
-    st = make_plaster("PlasterLath", PAPER, 50)
+    """Replaces PlasteredWood: lime plaster over wattle; where it has spalled, bamboo laths and rammed earth show."""
+    st = make_plaster("PlasterLath", LIME, 50)
     r = rng(51)
     yy, xx = np.mgrid[0:S, 0:S].astype(np.float32)
     lath = np.zeros((S, S), np.float32)
-    for _ in range(140):
+    for _ in range(110):
         cy, cx = r.uniform(0, S), r.uniform(0, S)
-        ln, th = r.uniform(40, 140), r.uniform(2.0, 4.5)
+        ln, th = r.uniform(40, 130), r.uniform(2.0, 4.0)
         dx = (xx - cx + S / 2) % S - S / 2
         dy = (yy - cy + S / 2) % S - S / 2
         taper = np.clip(1 - (2 * dx / ln) ** 2, 0, 1)
         lath = np.maximum(lath, np.exp(-(dy ** 2) / (2 * (th * taper + 0.01) ** 2)) * (np.abs(dx) < ln / 2))
-    st.d = st.d * (1 - lath[..., None]) + (INK_GREY / 255.0) * lath[..., None]
-    st.h = st.h + 0.25 * lath
+    spall = np.clip((noise(52, 70) - 0.66) * 6, 0, 1)
+    earth = EARTH / 255.0 * (0.85 + 0.2 * noise(53, 8)[..., None])
+    st.d = st.d * (1 - spall[..., None]) + earth * spall[..., None]
+    st.d = st.d * (1 - lath[..., None]) + (BAMBOO_PALE / 255.0 * 0.62) * lath[..., None]
+    st.h = st.h - 0.25 * spall + 0.2 * lath
     return st
 
 
-def make_shoji():
-    """Replaces Paper: cream rice paper with a dark lacquered lattice where the vanilla sheet has frame lines."""
-    st = Set("Shoji")
+def lattice_lantern(period=64, bar=4):
+    """Chinese "lantern frame" lattice (deng long kuang): square cells with an inner panel tied to the frame by
+    short bars at the middle of each side."""
+    yy, xx = np.mgrid[0:S, 0:S]
+    u, v = xx % period, yy % period
+    half, inset = period / 2, period * 0.28
+    border = (u < bar) | (v < bar)
+    inner = (np.abs(u - half) < half - inset) & (np.abs(v - half) < half - inset)
+    inner_core = (np.abs(u - half) < half - inset - bar) & (np.abs(v - half) < half - inset - bar)
+    inner_edge = inner & ~inner_core
+    ties = ((np.abs(u - half) < bar / 2 + 0.5) & ~inner) | ((np.abs(v - half) < bar / 2 + 0.5) & ~inner)
+    return border | inner_edge | ties
+
+
+def lattice_ice(seed=7, cell=46, bar=2.6):
+    """Chinese cracked-ice lattice (bing lie wen): straight bars along the edges of an irregular tiling."""
+    from scipy.spatial import cKDTree
+    r = rng(seed)
+    n = int((S / cell) ** 2)
+    pts = r.uniform(0, S, (n, 2))
+    tiled = np.concatenate([pts + [dx, dy] for dx in (-S, 0, S) for dy in (-S, 0, S)])
+    yy, xx = np.mgrid[0:S, 0:S]
+    q = np.stack([xx.ravel(), yy.ravel()], 1).astype(np.float32)
+    d, _ = cKDTree(tiled).query(q, k=2)
+    return ((d[:, 1] - d[:, 0]) < bar).reshape(S, S)
+
+
+def make_lattice_paper():
+    """Replaces Paper: paper panels in dark timber frames (frame lines where the vanilla sheet has them), each panel
+    backed by a lantern-frame lattice."""
+    st = Set("LatticePaper")
     v = vanilla("Paper_D.Folktails", "RGB")
     lum = v.mean(2)
     lines = (blur(lum, 6) - lum) > 0.05
     lines = ndi.binary_closing(ndi.binary_opening(lines, iterations=1), iterations=2)
-    lines = ndi.binary_dilation(lines, iterations=2)
+    lines = ndi.binary_dilation(lines, iterations=3)
+    lat = lattice_lantern(85, 4) & ~lines
     fib = noise(61, 3, 1.2)
     st.d = color_field(PAPER, 0.03, 62, 200) * (0.95 + 0.07 * fib[..., None])
     soft = blur(lines.astype(np.float32), 1.2)
-    st.d = st.d * (1 - soft[..., None]) + (INK / 255.0 * 1.3) * soft[..., None]
-    st.h = 0.2 + 0.03 * fib + 0.4 * soft
-    st.smooth = np.where(lines, 0.55, 0.12)
+    lats = blur(lat.astype(np.float32), 0.8)
+    timber = TIMBER / 255.0 * (0.85 + 0.25 * noise(63, 20, aniso=(1, 0.2))[..., None])
+    st.d = st.d * (1 - lats[..., None]) + timber * 0.9 * lats[..., None]
+    st.d = st.d * (1 - soft[..., None]) + timber * soft[..., None]
+    st.h = 0.2 + 0.03 * fib + 0.3 * lats + 0.45 * soft
+    st.smooth = np.where(lines | lat, 0.4, 0.12)
     return st
 
 
 def make_iron():
-    """Replaces BaseMetal: blackened bronze with verdigris in the seams; plate seams and rivets follow the vanilla
-    sheet's layout (read from its normal map)."""
-    st = Set("Bronze")
+    """Replaces BaseMetal: hand-forged iron, soot-dark with rust in the seams; plate seams and rivets follow the
+    vanilla sheet's layout (read from its normal map)."""
+    st = Set("Iron")
     vn = vanilla("BaseMetal_N")
     dev = np.sqrt((vn[..., 3] - 0.5) ** 2 + (vn[..., 1] - 0.5) ** 2)
     seams = blur(dev, 1.0) > 0.12
     seams = ndi.binary_opening(seams, iterations=1)
     sf = blur(seams.astype(np.float32), 1.5)
     n1, n2 = noise(71, 80), noise(72, 8)
-    st.d = color_field(BRONZE, 0.10, 73, 90) * (0.9 + 0.15 * n2[..., None])
-    patina = np.clip((blur(sf, 6) * 1.5 + 0.6 * n1 - 0.55) * 2, 0, 1)
-    st.d = st.d * (1 - 0.6 * patina[..., None]) + VERDIGRIS / 255.0 * 0.6 * patina[..., None]
+    st.d = color_field(IRON, 0.10, 73, 90) * (0.9 + 0.15 * n2[..., None])
+    rust = np.clip((blur(sf, 6) * 1.5 + 0.6 * n1 - 0.6) * 2, 0, 1)
+    st.d = st.d * (1 - 0.7 * rust[..., None]) + RUST / 255.0 * 0.7 * rust[..., None]
     st.d = st.d * (1 - 0.5 * sf[..., None])
     st.h = 0.5 - 0.35 * sf + 0.05 * n2
-    st.metal = 0.55 - 0.4 * patina
-    st.smooth = 0.42 - 0.25 * patina
+    st.metal = 0.6 - 0.45 * rust
+    st.smooth = 0.4 - 0.25 * rust
     return st
 
 
-def make_lacquer():
-    """Replaces PaintedMetal: the vanilla yellow/black hazard stripes become lacquer red / ink black, worn at edges."""
-    st = Set("Lacquer")
+def make_painted():
+    """Replaces PaintedMetal (vanilla yellow/black hazard stripes on machinery): the stripes become straw-gold cane
+    binding over soot-black iron. No red here: red is kept for accents."""
+    st = Set("Banded")
     v = vanilla("PaintedMetal_D.Folktails", "RGB")
     yellow = (v[..., 0] > 0.55) & (v[..., 1] > 0.45) & (v[..., 2] < 0.35)
     yellow = ndi.binary_closing(ndi.binary_opening(yellow, iterations=2), iterations=3)
     ys = blur(yellow.astype(np.float32), 1.5)
+    yy = np.mgrid[0:S, 0:S][0]
+    wrap = 0.75 + 0.25 * np.abs(np.sin(yy * 0.45))          # cane wraps across the band
     wear = noise(81, 18) * noise(82, 90)
     chips = (wear > 0.55) & yellow
-    base = (LACQUER / 255.0) * ys[..., None] + (INK / 255.0) * (1 - ys[..., None])
+    cane = (BAMBOO_PALE / 255.0 * np.array([0.95, 0.80, 0.52]))[None, None, :] * wrap[..., None]
+    base = cane * ys[..., None] + (IRON / 255.0 * 0.8) * (1 - ys[..., None])
     base = base * (0.92 + 0.12 * noise(83, 50)[..., None])
-    base[chips] = BRONZE / 255.0
+    base[chips] = IRON / 255.0
     st.d = base.astype(np.float32)
-    st.h = 0.5 + 0.08 * ys - 0.15 * chips + 0.02 * noise(84, 4)
-    st.smooth = np.where(chips, 0.3, 0.62)
-    st.metal = np.where(chips, 0.5, 0.0)
+    st.h = 0.5 + 0.1 * ys * wrap - 0.15 * chips + 0.02 * noise(84, 4)
+    st.smooth = np.where(yellow, 0.35, 0.45)
+    st.metal = np.where(yellow & ~chips, 0.0, 0.55)
     return st
 
 
 def make_windows():
-    """Replaces WindowsAtlas: same window shapes; frames become lacquered red / ink wood, glass becomes paper with
-    a shoji lattice, and the night glow (_LightingMap) is a warm paper light broken by the lattice."""
+    """Replaces WindowsAtlas: same window shapes; frames become dark timber, the glass becomes paper on a
+    cracked-ice lattice, the wall around them lime plaster, and the night glow (_LightingMap) is warm lamplight
+    through paper, broken by the lattice."""
     st = Set("Windows")
     vd = vanilla("WindowsAtlas_D.Folktails", "RGB")
     ve = vanilla("WindowsAtlas_E.Folktails", "RGB").mean(2)
@@ -447,33 +585,33 @@ def make_windows():
     sizes = ndi.sum(rest, lab, range(1, n + 1))
     interior = np.isin(lab, 1 + np.nonzero(sizes > 120000)[0])
     frame = ndi.binary_opening(rest & ~interior, iterations=1)
-    yy, xx = np.mgrid[0:S, 0:S]
-    lattice = ((xx % 22) < 3) | ((yy % 22) < 3)
-    st.d = color_field(PAPER, 0.04, 91, 120) * 0.92
+    lattice = lattice_ice(7, 40, 2.4)
+    st.d = color_field(LIME, 0.04, 91, 120) * 0.95
     edge = blur(frame.astype(np.float32), 2.0)       # frames darken toward their edges
-    st.d[frame] = (LACQUER / 255.0)[None, :] * (0.55 + 0.45 * edge[frame] * (0.85 + 0.3 * noise(94, 30)[frame]))[:, None]
+    timber = TIMBER / 255.0 * (0.85 + 0.3 * noise(94, 20, aniso=(1, 0.3)))[..., None]
+    st.d[frame] = timber[frame] * (0.6 + 0.4 * edge[frame])[:, None]
     st.d[interior] = (INK / 255.0)[None, :] * (0.8 + 0.4 * noise(92, 120)[interior])[:, None]
     gl = glass & ~lattice
     st.d[gl] = PAPER_WARM / 255.0
-    st.d[glass & lattice] = INK / 255.0 * 1.4
-    st.h = 0.3 + 0.3 * edge * frame - 0.1 * gl + 0.1 * (glass & lattice) - 0.2 * interior + 0.03 * noise(93, 6)
-    st.smooth = np.where(frame, 0.55, 0.15)
+    st.d[glass & lattice] = TIMBER / 255.0 * 0.9
+    st.h = 0.3 + 0.3 * edge * frame - 0.1 * gl + 0.12 * (glass & lattice) - 0.2 * interior + 0.03 * noise(93, 6)
+    st.smooth = np.where(frame, 0.4, 0.15)
     e = np.zeros((S, S, 3), np.float32)
-    e[:] = (np.array([255, 206, 140]) / 255.0)[None, None, :]
+    e[:] = (np.array([255, 200, 130]) / 255.0)[None, None, :]
     e *= (glow_soft * (~lattice | ~glass))[..., None]
     st.e = e
     return st
 
 
 def make_details():
-    """Replaces Details: the banner becomes lacquer red with an ink disc and a pale bamboo-leaf mark; the sack,
-    rope and good labels are repainted; crate and plank regions keep their seams (read from the vanilla sheet)
-    and are filled with bamboo."""
+    """Replaces Details: the banner becomes indigo-dyed cloth with ink-painted bamboo; the sack is hemp, the rope
+    rice straw, the three good labels are plain colour fields with simple pictures (no writing); crate and plank
+    regions keep their seams (read from the vanilla sheet) and are filled with bamboo, the metal bands become cane
+    lashing."""
     st = Set("Details")
     v = vanilla("Details_D.Folktails", "RGB")
     lum = v.mean(2)
     yy, xx = np.mgrid[0:S, 0:S].astype(np.float32)
-    # crates and planks (lower half): seams -> slats
     seams = (blur(lum, 4) - lum) > 0.06
     seams = ndi.binary_dilation(ndi.binary_opening(seams), iterations=1)
     st.d[:] = BAMBOO_PALE / 255.0 * 0.85
@@ -483,48 +621,51 @@ def make_details():
     slat = lower & ~seams
     for k, (x0, y0, x1, y1, m) in enumerate(components(slat, 200)):
         paint_culm(st, m, x0, y0, x1, y1, 700 + k, horizontal=(x1 - x0) > (y1 - y0), node_gap=(60, 120))
-    st.d[lower & seams] = INK_GREY / 255.0
+    st.d[lower & seams] = TIMBER / 255.0 * 0.8
     st.h[lower & seams] = 0.1
-    # metal bands on the plank panel -> rope lashing
     band = lower & (v[..., 2] > 0.55) & (np.abs(v[..., 0] - v[..., 2]) < 0.12)
     band = ndi.binary_opening(band, iterations=2)
     rope = 0.75 + 0.25 * np.sin((xx + yy) * 0.6)
     st.d[band] = (np.array([196, 170, 120]) / 255.0)[None, :] * rope[band][:, None]
     st.h[band] = 0.6 + 0.2 * rope[band]
-    # banner (0..512, 0..512)
+    # banner (0..512, 0..512): indigo cloth, a pale disc, ink-painted bamboo stalk and leaves
     by, bx = slice(0, 512), slice(0, 512)
-    cloth = 0.9 + 0.1 * noise(94, 20, aniso=(1, 0.3))[by, bx]
-    st.d[by, bx] = (LACQUER / 255.0)[None, None, :] * cloth[..., None]
+    cloth = 0.88 + 0.12 * noise(94, 20, aniso=(1, 0.3))[by, bx]
+    st.d[by, bx] = (INDIGO / 255.0)[None, None, :] * cloth[..., None]
     st.h[by, bx] = 0.3 + 0.1 * cloth
-    cxb, cyb = 256, 250
-    dd = np.sqrt((xx[by, bx] - cxb) ** 2 + (yy[by, bx] - cyb) ** 2)
-    disc = dd < 150
-    st.d[by, bx][disc] = INK / 255.0
-    # leaf: two curved blades
-    lx, ly = xx[by, bx] - cxb, yy[by, bx] - cyb
-    for ang, sc in ((0.6, 1.0), (-0.5, 0.85), (1.6, 0.7)):
+    X, Y = xx[by, bx], yy[by, bx]
+    disc = (X - 256) ** 2 + (Y - 250) ** 2 < 165 ** 2
+    st.d[by, bx][disc] = PAPER / 255.0 * 0.95
+    ink = np.zeros((512, 512), bool)
+    stalk_x = 230 + 0.06 * (Y - 250)
+    ink |= (np.abs(X - stalk_x) < 9) & (np.abs(Y - 250) < 150)
+    for ny in (150, 230, 310):                                         # nodes
+        ink |= (np.abs(Y - ny) < 3) & (np.abs(X - (230 + 0.06 * (ny - 250))) < 13)
+    for (lx, ly, ang, ln) in ((240, 160, -0.5, 95), (240, 165, -0.9, 80), (238, 235, 0.35, 100),
+                              (238, 240, 0.75, 85), (222, 300, 3.5, 90), (222, 305, 2.9, 75)):
         ca, sa = np.cos(ang), np.sin(ang)
-        u = (lx * ca + ly * sa) / (110 * sc)
-        w = (-lx * sa + ly * ca) / (110 * sc)
-        leaf = (u > -0.9) & (u < 0.9) & (np.abs(w - 0.15 * u * u) < 0.22 * (1 - u * u))
-        st.d[by, bx][leaf & disc] = PAPER / 255.0
-    # sack (512..768, 0..512)
+        u = ((X - lx) * ca + (Y - ly) * sa) / ln
+        w = (-(X - lx) * sa + (Y - ly) * ca) / ln
+        ink |= (u > 0) & (u < 1) & (np.abs(w) < 0.14 * np.sin(np.pi * np.clip(u, 0, 1)) ** 0.8)
+    ink &= disc
+    st.d[by, bx][ink] = INK / 255.0
+    st.h[by, bx][ink] = 0.42
+    # sack (512..768, 0..512): hemp
     sy, sx = slice(0, 512), slice(512, 768)
     weave = 0.85 + 0.15 * (np.sin(xx[sy, sx] * 1.4) * np.sin(yy[sy, sx] * 1.4))
-    st.d[sy, sx] = color_field(np.array([214, 196, 160]), 0.08, 95, 40)[sy, sx] * weave[..., None]
+    st.d[sy, sx] = color_field(np.array([200, 182, 146]), 0.08, 95, 40)[sy, sx] * weave[..., None]
     st.h[sy, sx] = 0.4 + 0.25 * noise(96, 40)[sy, sx] + 0.05 * weave
-    # rope column (768..832)
+    # rope column (768..832): twisted rice straw
     ry, rx = slice(0, 512), slice(768, 832)
     twist = 0.7 + 0.3 * np.sin((xx[ry, rx] * 0.4 + yy[ry, rx]) * 0.35)
-    st.d[ry, rx] = (np.array([190, 160, 110]) / 255.0)[None, None, :] * twist[..., None]
+    st.d[ry, rx] = (np.array([196, 170, 110]) / 255.0)[None, None, :] * twist[..., None]
     st.h[ry, rx] = 0.4 + 0.3 * twist
-    # labels (832..1024): three colour bands with simple marks
-    for (y0, y1), colr, mark in (((0, 170), LACQUER, "logs"), ((170, 340), TEA, "leaf"), ((340, 512), INK_GREY, "dots")):
-        ly0, ly1 = y0, y1
-        st.d[ly0:ly1, 832:1024] = colr / 255.0
-        st.h[ly0:ly1, 832:1024] = 0.45
-        cx0, cy0 = 928, (ly0 + ly1) / 2
-        X, Y = xx[ly0:ly1, 832:1024] - cx0, yy[ly0:ly1, 832:1024] - cy0
+    # labels (832..1024): three colour fields with simple pictures; one small red accent
+    for (y0, y1), colr, mark in (((0, 170), LACQUER, "logs"), ((170, 340), TEA, "leaf"),
+                                 ((340, 512), INDIGO, "dots")):
+        st.d[y0:y1, 832:1024] = colr / 255.0
+        st.h[y0:y1, 832:1024] = 0.45
+        X, Y = xx[y0:y1, 832:1024] - 928, yy[y0:y1, 832:1024] - (y0 + y1) / 2
         if mark == "logs":
             m = (np.abs(Y) < 40) & (np.abs(X) < 55) & ((np.abs(Y) % 28) < 22)
         elif mark == "leaf":
@@ -533,17 +674,21 @@ def make_details():
             m = np.zeros_like(X, bool)
             for ox, oy in ((-25, -15), (20, -20), (0, 18), (-30, 25), (30, 20)):
                 m |= (X - ox) ** 2 + (Y - oy) ** 2 < 15 ** 2
-        st.d[ly0:ly1, 832:1024][m] = PAPER / 255.0
-        st.h[ly0:ly1, 832:1024][m] = 0.55
+        st.d[y0:y1, 832:1024][m] = PAPER / 255.0
+        st.h[y0:y1, 832:1024][m] = 0.55
     st.smooth = 0.25
     return st
 
 
-def make_sand():
-    st = make_plaster("Gravel", np.array([170, 168, 160]), 100)
-    pebbles = noise(101, 5, 1.0) > 0.7
-    st.d[pebbles] *= 1.12
-    st.h += 0.2 * pebbles
+def make_earth():
+    """Replaces Sand: rammed earth, in horizontal pour layers with small river pebbles."""
+    st = make_plaster("RammedEarth", EARTH, 100)
+    yy = np.mgrid[0:S, 0:S][0].astype(np.float32)
+    layers = 0.5 + 0.5 * np.sin(yy / S * 2 * np.pi * 12 + 2 * noise(101, 80))
+    st.d *= (0.9 + 0.12 * layers[..., None])
+    pebbles = noise(102, 5, 1.0) > 0.74
+    st.d[pebbles] = st.d[pebbles] * 0.4 + STONE / 255.0 * 0.6
+    st.h += 0.08 * layers + 0.2 * pebbles
     return st
 
 
@@ -555,31 +700,34 @@ def make_moss():
 
 
 SETS = {
-    "Bamboo": make_bamboo, "Weave": make_weave, "RoofTiles": make_tiles, "Plaster": make_plaster,
-    "PlasterLath": make_plastered_wood, "Shoji": make_shoji, "Bronze": make_iron, "Lacquer": make_lacquer,
-    "Windows": make_windows, "Details": make_details, "Gravel": make_sand, "Moss": make_moss,
+    "Timber": make_timber, "Bamboo": make_bamboo, "Weave": make_weave,
+    "WeaveCoarse": lambda: make_weave("WeaveCoarse", 48, 121),
+    "WeaveMossy": lambda: make_weave("WeaveMossy", 32, 221, True), "RoofTiles": make_tiles,
+    "Plaster": make_plaster, "PlasterLath": make_plastered_wood, "LatticePaper": make_lattice_paper,
+    "Iron": make_iron, "Banded": make_painted, "Windows": make_windows, "Details": make_details,
+    "RammedEarth": make_earth, "Moss": make_moss,
 }
 
 # vanilla material -> (texture set, tint key or None)
 MATERIALS = {
+    "BaseWood_Brown.Folktails": ("Timber", "BaseWood_Brown"),
     "BaseWood_White.Folktails": ("Bamboo", "BaseWood_White"),
-    "BaseWood_Brown.Folktails": ("Bamboo", "BaseWood_Brown"),
     "BaseWood_LightBrown.Folktails": ("Bamboo", "BaseWood_LightBrown"),
     "BaseWood_Yellow.Folktails": ("Bamboo", "BaseWood_Yellow"),
     "IrregularPlanks_White.Folktails": ("Weave", "IrregularPlanks_White"),
-    "IrregularPlanks_Brown.Folktails": ("Weave", "IrregularPlanks_Brown"),
+    "IrregularPlanks_Brown.Folktails": ("WeaveCoarse", "IrregularPlanks_Brown"),
     "IrregularPlanks_LightBrown.Folktails": ("Weave", "IrregularPlanks_LightBrown"),
     "IrregularPlanks_Yellow.Folktails": ("Weave", "IrregularPlanks_Yellow"),
-    "IrregularPlanks_Mossy.Folktails": ("Weave", "IrregularPlanks_Mossy"),
+    "IrregularPlanks_Mossy.Folktails": ("WeaveMossy", "IrregularPlanks_Mossy"),
     "ThatchedRoof.Folktails": ("RoofTiles", None),
     "Plaster_White.Folktails": ("Plaster", None),
     "PlasteredWood_White.Folktails": ("PlasterLath", None),
-    "Paper.Folktails": ("Shoji", None),
-    "BaseMetal.Folktails": ("Bronze", None),
-    "PaintedMetal.Folktails": ("Lacquer", None),
+    "Paper.Folktails": ("LatticePaper", None),
+    "BaseMetal.Folktails": ("Iron", None),
+    "PaintedMetal.Folktails": ("Banded", None),
     "WindowsAtlas.Folktails": ("Windows", None),
     "Details.Folktails": ("Details", None),
-    "Sand.Folktails": ("Gravel", None),
+    "Sand.Folktails": ("RammedEarth", None),
     "Moss.Folktails": ("Moss", None),
 }
 

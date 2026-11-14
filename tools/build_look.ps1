@@ -6,7 +6,9 @@
   1. Paints the textures and writes the material spec (src/pipeline/look_textures.py) into the Unity project.
   2. Copies the editor builder (src/unity/PandabornLook/Editor) into the Unity project.
   3. Runs Unity 6000.5.11f1 in batch mode: PandabornLookBuilder.Build -> <out>\AssetBundles\pandabornprotolook_win.
-  4. Mirrors proto/look/mod next to the bundle.
+  4. Mirrors proto/look/mod next to the bundle ("names" variant, E:\PandabornDev\build\proto\look), and builds the
+     "swap" variant (proto/look/mod-swap + proto/look/src DLL + the same bundle) into ...\proto\look-swap.
+     Enable at most one of the two in a game: they share the manifest Id.
   Everything heavy stays on E: (project + Library, UPM cache, logs). Exit code 0 = built.
 
   First-time setup of the Unity project (done once, kept on E:):
@@ -25,6 +27,7 @@ param(
     [string]$UnityExe = 'C:\Program Files\Unity\Hub\Editor\6000.5.11f1\Editor\Unity.exe',
     [string]$Project = 'E:\PandabornDev\unity\PandabornLook',
     [string]$Out = 'E:\PandabornDev\build\proto\look',
+    [string]$SwapOut = 'E:\PandabornDev\build\proto\look-swap',
     [string]$Python = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     [string]$GameDir = 'C:\Program Files (x86)\Steam\steamapps\common\Timberborn',
     [string]$Only = '',
@@ -82,4 +85,14 @@ Select-String -Path $log -Pattern '\[PandabornLook\]|error CS|Shader error' | Fo
 "Unity exit $($p.ExitCode) after $([int]$sw.Elapsed.TotalSeconds) s; log $log"
 if ($p.ExitCode -ne 0 -or -not $ok) { exit 1 }
 Get-ChildItem "$Out\AssetBundles" | Select-Object Name, Length | Format-Table -AutoSize | Out-String | Write-Host
+
+# swap variant: same bundle, its own blueprints, plus the DLL
+New-Item -ItemType Directory -Force $SwapOut | Out-Null
+robocopy "$repo\proto\look\mod-swap" $SwapOut /MIR /XD AssetBundles Scripts /NFL /NDL /NJH /NJS /NP | Out-Null
+if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
+robocopy "$Out\AssetBundles" "$SwapOut\AssetBundles" /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
+if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
+dotnet build "$repo\proto\look\src" -c Release -p:ModOut=$SwapOut -v q -nologo
+if ($LASTEXITCODE -ne 0) { throw "dotnet build of the swap variant failed" }
+"swap variant: $SwapOut"
 exit 0
