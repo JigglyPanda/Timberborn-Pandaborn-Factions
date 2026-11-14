@@ -132,7 +132,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_lodge",
@@ -141,7 +142,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_doublelodge",
@@ -150,7 +152,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_lumbermill",
@@ -159,7 +162,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_warehouse",
@@ -168,7 +172,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_tank",
@@ -177,7 +182,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_inventor",
@@ -186,7 +192,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_waterwheel",
@@ -195,7 +202,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     },
     {
       "name": "night_triplelodge",
@@ -204,7 +212,8 @@
       "at": "end",
       "yaw": 0,
       "pitch": 38,
-      "zoom": 1.0
+      "zoom": 1.0,
+      "lit": true
     }
   ],
   "screenshotSize": [

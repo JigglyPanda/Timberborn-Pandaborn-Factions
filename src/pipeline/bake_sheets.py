@@ -334,7 +334,7 @@ def set_wood(name, kind):
         endm.node_tree.nodes["Wave Texture"].wave_type = "RINGS"
         endm.node_tree.nodes["Wave Texture"].inputs["Scale"].default_value = 260.0
     else:
-        base, gap = srgb((226, 220, 176)), srgb((238, 236, 228))
+        base, gap = srgb((204, 192, 142)), srgb((226, 222, 210))
         wood = material("bamboo", "streak", scale=(900, 6, 900), bump=0.15)
         wood_h = material("bamboo_h", "streak", scale=(6, 900, 900), bump=0.15)
     plane("bg", -20, -20, S + 20, S + 20, 0.0, gap, material("bg", "mottle", scale=(40, 40, 40), bump=0.05))
@@ -376,7 +376,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
     """Plain-weave bamboo panels, one per vanilla plank column, with bamboo battens on the seams, a binding batten
     across the middle, a few repaired patches in fresher strands."""
     rnd = random.Random(seed)
-    tones = tones or [srgb((206, 190, 140)), srgb((170, 168, 138)), srgb((186, 176, 132)), srgb((156, 160, 130))]
+    tones = tones or [srgb((188, 168, 118)), srgb((150, 150, 120)), srgb((170, 156, 112)), srgb((138, 142, 112))]
     warp_m = material("warp", "streak", scale=(900, 8, 900), bump=0.12)
     weft_m = material("weft", "streak", scale=(8, 900, 900), bump=0.12)
     batten_m = material("batten", "streak", scale=(900, 6, 900), bump=0.15)
@@ -401,7 +401,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 across = (v - 0.5) * strand * 0.92
                 ph = math.pi * (yy / strand) + math.pi * i
                 z = amp * np.sin(ph) + 1.2 * np.sin(math.pi * v)
-                k = 0.84 + 0.16 * (0.5 + 0.5 * np.sin(ph))     # darker where the strand dives under
+                k = 0.66 + 0.34 * (0.5 + 0.5 * np.sin(ph))     # darker where the strand dives under
                 for (a, b) in patch:
                     k = np.where((yy > a) & (yy < b), 1.12, k)
                 g = 1 + moss * 0 * u
@@ -422,7 +422,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 across = (v - 0.5) * strand * 0.92
                 ph = math.pi * ((xx - xs) / strand) + math.pi * (j + 1)
                 z = amp * np.sin(ph) + 1.2 * np.sin(math.pi * v)
-                k = 0.84 + 0.16 * (0.5 + 0.5 * np.sin(ph))
+                k = 0.66 + 0.34 * (0.5 + 0.5 * np.sin(ph))
                 return X(xx), Y(yc + across), (z + 6) / S, c[0] * k, c[1] * k, c[2] * k
 
             surface("f%d_%d" % (pi_, j), max(int((x1 - x0) / 3), 4), 5, ff, weft_m)
@@ -460,9 +460,9 @@ def set_tiles():
             for col in range(-1, 17):
                 key = (col % 16, k % 4, t)
                 r2 = random.Random(hash(key) & 0xFFFF)
-                c = jitter(tile, r2, 0.12)
+                c = jitter(tile, r2, 0.05)
                 if r2.random() < 0.03:
-                    c = jitter(srgb((128, 124, 120)), r2, 0.05)       # an odd replaced tile
+                    c = jitter(srgb((88, 94, 102)), r2, 0.05)         # an odd newer, darker tile
                 cx = col * pitch + pitch / 2
                 rise = 3 + 6 * t                                       # tiles further down a course sit higher
 
@@ -470,7 +470,7 @@ def set_tiles():
                     xx = cx - pitch / 2 + pitch * v - 0.5
                     yy = ya + (yb - ya) * u
                     z = rise + 10 * u - 6 * np.sin(math.pi * v)          # concave channel, rising to its lip
-                    shade = (0.72 + 0.2 * u) * (0.85 + 0.15 * np.abs(np.cos(math.pi * v)))
+                    shade = (0.50 + 0.15 * u) * (0.75 + 0.25 * np.abs(np.cos(math.pi * v)))
                     return X(xx), Y(yy), z / S, c[0] * shade, c[1] * shade, c[2] * shade
 
                 surface("p%d_%d_%d" % (k, t, col), 24, 12, fpan, pan_m)
@@ -480,7 +480,7 @@ def set_tiles():
                     th = math.pi * v
                     yy = ya + (yb - ya) * u
                     z = rise + 10 * u + 2 + rc * np.sin(th) * 0.9
-                    shade = (1.0 + 0.12 * u) * 1.12
+                    shade = (1.0 + 0.10 * u) * (0.9 + 0.35 * np.sin(th) ** 2)   # a lit crown on each cover tile
                     return X(cx + rc * np.cos(th)), Y(yy), z / S, c[0] * shade, c[1] * shade, c[2] * shade
 
                 cc = jitter(c, r2, 0.05)
@@ -491,10 +491,10 @@ def set_tiles():
                         X(cx + rc * 1.05 * np.cos(math.pi * v) * u), Y(yb - 1 + 0 * u),
                         (rise + 12 + rc * 1.05 * np.sin(math.pi * v) * u) / S, cc[0] * 0.7, cc[1] * 0.7, cc[2] * 0.7), cov_m)
                 # moss in the channel near the lip
-                if r2.random() < 0.28:
+                if r2.random() < 0.18:
                     mc = jitter(srgb((92, 112, 64)), r2, 0.2)
                     my = yb - r2.uniform(8, 40)
-                    mr = r2.uniform(5, 12)
+                    mr = r2.uniform(3, 7)
                     surface("m%d_%d_%d" % (k, t, col), 6, 16, lambda u, v, cx=cx, my=my, mr=mr, mc=mc, rise=rise: (
                         X(cx + mr * u * np.cos(2 * math.pi * v)), Y(my + mr * 1.6 * u * np.sin(2 * math.pi * v)),
                         (rise + 9) / S + 0 * u, mc[0], mc[1], mc[2]), moss_m)
@@ -545,10 +545,10 @@ SETS = {
     "PlasterLath": lambda: set_heightfield("PlasterLath", 10.0),
     "Timber": lambda: set_wood("Timber", "timber"),
     "Bamboo": lambda: set_wood("Bamboo", "bamboo"),
-    "Weave": lambda: set_weave("Weave", 16, seed=3),
-    "WeaveCoarse": lambda: set_weave("WeaveCoarse", 24, tones=[srgb((150, 128, 92)), srgb((128, 116, 90)),
+    "Weave": lambda: set_weave("Weave", 28, seed=3),
+    "WeaveCoarse": lambda: set_weave("WeaveCoarse", 40, tones=[srgb((150, 128, 92)), srgb((128, 116, 90)),
                                                                 srgb((140, 120, 84))], seed=4),
-    "WeaveMossy": lambda: set_weave("WeaveMossy", 16, moss=1.0, seed=5),
+    "WeaveMossy": lambda: set_weave("WeaveMossy", 28, moss=0.6, seed=5),
     "RoofTiles": set_tiles,
 }
 

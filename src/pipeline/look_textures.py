@@ -182,7 +182,7 @@ BAKE = "E:/PandabornDev/build/look/bake"
 LIGHT = np.array([-0.45, 0.55, 0.70]) / np.linalg.norm([-0.45, 0.55, 0.70])   # painted light: upper left
 
 
-def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5, crisp=0.8):
+def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5, crisp=0.8, light=None):
     """A set baked by src/pipeline/bake_sheets.py (Cycles passes of modelled geometry). The albedo gets a painted
     light (soft top-left key + AO), the way the vanilla sheets are hand-painted, so models do not look flatter than
     Folktails ones under the game's own lighting."""
@@ -192,8 +192,9 @@ def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5, crisp=0.8):
     ao = np.clip(np.load(os.path.join(d, "ao.npy")).mean(2), 0, 1)
     ln = np.linalg.norm(nrm, axis=2, keepdims=True)
     nrm = nrm / np.maximum(ln, 1e-6)
-    lam = np.clip((nrm * LIGHT).sum(2), 0, 1)
-    flat = LIGHT[2]
+    lt = LIGHT if light is None else np.asarray(light) / np.linalg.norm(light)
+    lam = np.clip((nrm * lt).sum(2), 0, 1)
+    flat = lt[2]
     shade = (1 - paint + paint * lam / flat) * (1 - ao_paint + ao_paint * ao ** 1.3)
     lin = np.clip(diff * shade[..., None], 0, 1)
     st = Set(name)
@@ -217,7 +218,9 @@ def baked_or(name, fallback, smooth, keep_emission=False, crisp=None):
     def make():
         if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
             print("  (from Blender bake)", flush=True)
-            st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8))
+            st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8),
+                           paint=0.85 if name == "RoofTiles" else 0.55,
+                           light=(-0.75, 0.25, 0.6) if name == "RoofTiles" else None)   # grazing: rounds the covers
             if keep_emission:
                 st.e = fallback().e
             return st
@@ -760,7 +763,7 @@ SETS = {
     "Weave": baked_or("Weave", make_weave, 0.25),
     "WeaveCoarse": baked_or("WeaveCoarse", lambda: make_weave("WeaveCoarse", 48, 121), 0.22),
     "WeaveMossy": baked_or("WeaveMossy", lambda: make_weave("WeaveMossy", 32, 221, True), 0.20),
-    "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30),
+    "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30, crisp=1.0),
     "Plaster": make_plaster,
     "PlasterLath": baked_or("PlasterLath", make_plastered_wood, 0.18, crisp=0.4),
     "LatticePaper": baked_or("LatticePaper", make_lattice_paper, 0.3, crisp=0.5),
