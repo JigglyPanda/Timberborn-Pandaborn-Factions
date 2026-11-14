@@ -23,6 +23,7 @@
     <Reference Include="$(GameManaged)\UnityEngine.ImageConversionModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.ScreenCaptureModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.AudioModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.AssetBundleModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\UnityEngine.UIElementsModule.dll" Private="false" />
     <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
     <Reference Include="$(GameManaged)\Newtonsoft.Json.dll" Private="false" />

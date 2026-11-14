@@ -1,0 +1,337 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 1,
+ "run": {
+  "realSeconds": 75
+ },
+ "buildings": [
+  "PandabornSteamer.Inkpaws",
+  "PandabornTeaRoastery.Inkpaws",
+  "PandabornPickleYard.Inkpaws",
+  "PandabornLanternWorkshop.Inkpaws",
+  "PandabornSmokeKiln.Inkpaws",
+  "PandabornTripHammerMill.Inkpaws",
+  "PandabornKitchen.Inkpaws",
+  "PandabornHotPotHall.Inkpaws",
+  "PandabornKiteWindmill.Inkpaws",
+  "PandabornTeahouse.Inkpaws",
+  "PandabornHotSpringBath.Inkpaws",
+  "PandabornOperaStage.Inkpaws"
+ ],
+ "screenshots": [
+  {
+   "name": "inkpaws_overview",
+   "kind": "overview",
+   "at": "start"
+  },
+  {
+   "name": "inkpaws_screen",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "soundProbe": {
+  "expect": [
+   "Environment.Pandaborn.ShiftBell.End",
+   "Environment.Pandaborn.ShiftBell.Dawn",
+   "Environment.Pandaborn.NightClapper",
+   "UI.Buildings.Selected.Pandaborn.VillageHall",
+   "Environment.Pandaborn.FlumeWater",
+   "Environment.Pandaborn.BambooTok",
+   "Environment.Buildings.Loop.Pandaborn.ScoopWheel",
+   "Environment.Buildings.Loop.Pandaborn.BambooWaterWheel",
+   "Environment.Buildings.Loop.Pandaborn.KiteWindmill",
+   "UI.Buildings.Wonder.PandabornSkyLantern",
+   "Environment.Buildings.Loop.Pandaborn.Steamer",
+   "Environment.Buildings.Loop.Pandaborn.TeaRoastery",
+   "Environment.Buildings.Loop.Pandaborn.PickleYard",
+   "Environment.Buildings.Loop.Pandaborn.LanternWorkshop",
+   "Environment.Buildings.Loop.Pandaborn.SmokeKiln",
+   "Environment.Buildings.Loop.Pandaborn.TripHammer",
+   "Environment.Buildings.Loop.Pandaborn.Simmer",
+   "Environment.Pandaborn.FestivalDrum",
+   "Environment.Pandaborn.Firecrackers",
+   "Environment.Pandaborn.LanternRise",
+   "Environment.Buildings.Loop.Pandaborn.OperaStage",
+   "Environment.Buildings.Loop.Pandaborn.Teahouse",
+   "Environment.Buildings.Loop.Pandaborn.HotSpring",
+   "UI.Beavers.Pandaborn.Selected.Adult_Content",
+   "UI.Beavers.Pandaborn.Selected.Adult_Discontent",
+   "UI.Beavers.Pandaborn.Selected.Adult_Sleepy",
+   "UI.Beavers.Pandaborn.Selected.Adult_Sleeping",
+   "UI.Beavers.Pandaborn.Selected.Child_Content",
+   "UI.Beavers.Pandaborn.Selected.Child_Discontent",
+   "UI.Beavers.Pandaborn.Selected.Child_Sleepy",
+   "UI.Beavers.Pandaborn.Selected.Child_Sleeping"
+  ],
+  "bundle": "pandabornsounds",
+  "watch": "Pandaborn",
+  "sampleEvery": 0.5,
+  "play": [
+   {
+    "id": "Environment.Pandaborn.ShiftBell.End",
+    "at": 10,
+    "mode": "2d"
+   },
+   {
+    "id": "Environment.Pandaborn.ShiftBell.Dawn",
+    "at": 19,
+    "mode": "2d"
+   },
+   {
+    "id": "Environment.Pandaborn.NightClapper",
+    "at": 28,
+    "mode": "2d"
+   },
+   {
+    "id": "Environment.Pandaborn.BambooTok",
+    "at": 31,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Pandaborn.FlumeWater",
+    "at": 33,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Buildings.Loop.Pandaborn.ScoopWheel",
+    "at": 35,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Buildings.Loop.Pandaborn.BambooWaterWheel",
+    "at": 37,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Pandaborn.FestivalDrum",
+    "at": 39,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Pandaborn.Firecrackers",
+    "at": 41,
+    "mode": "2d"
+   },
+   {
+    "id": "Environment.Pandaborn.LanternRise",
+    "at": 45,
+    "mode": "2d"
+   }
+  ],
+  "loops": [
+   {
+    "target": "PandabornSteamer.Inkpaws",
+    "at": 12,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornTeaRoastery.Inkpaws",
+    "at": 13,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornPickleYard.Inkpaws",
+    "at": 14,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornLanternWorkshop.Inkpaws",
+    "at": 15,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornSmokeKiln.Inkpaws",
+    "at": 16,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornTripHammerMill.Inkpaws",
+    "at": 17,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornKitchen.Inkpaws",
+    "at": 18,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornHotPotHall.Inkpaws",
+    "at": 19,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornKiteWindmill.Inkpaws",
+    "at": 20,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornTeahouse.Inkpaws",
+    "at": 21,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornHotSpringBath.Inkpaws",
+    "at": 22,
+    "stopAt": 58
+   },
+   {
+    "target": "PandabornOperaStage.Inkpaws",
+    "at": 23,
+    "stopAt": 58
+   }
+  ],
+  "select": [
+   {
+    "target": "PandabornVillageHall.Inkpaws",
+    "at": 48
+   },
+   {
+    "target": "InkpawAdult.Inkpaws",
+    "at": 51
+   },
+   {
+    "target": "InkpawChild.Inkpaws",
+    "at": 54
+   }
+  ],
+  "wonderLaunch": [
+   62
+  ]
+ },
+ "checks": {
+  "soundsKnown": [
+   "Environment.Pandaborn.ShiftBell.End",
+   "Environment.Pandaborn.ShiftBell.Dawn",
+   "Environment.Pandaborn.NightClapper",
+   "UI.Buildings.Selected.Pandaborn.VillageHall",
+   "Environment.Pandaborn.FlumeWater",
+   "Environment.Pandaborn.BambooTok",
+   "Environment.Buildings.Loop.Pandaborn.ScoopWheel",
+   "Environment.Buildings.Loop.Pandaborn.BambooWaterWheel",
+   "Environment.Buildings.Loop.Pandaborn.KiteWindmill",
+   "UI.Buildings.Wonder.PandabornSkyLantern",
+   "Environment.Buildings.Loop.Pandaborn.Steamer",
+   "Environment.Buildings.Loop.Pandaborn.TeaRoastery",
+   "Environment.Buildings.Loop.Pandaborn.PickleYard",
+   "Environment.Buildings.Loop.Pandaborn.LanternWorkshop",
+   "Environment.Buildings.Loop.Pandaborn.SmokeKiln",
+   "Environment.Buildings.Loop.Pandaborn.TripHammer",
+   "Environment.Buildings.Loop.Pandaborn.Simmer",
+   "Environment.Pandaborn.FestivalDrum",
+   "Environment.Pandaborn.Firecrackers",
+   "Environment.Pandaborn.LanternRise",
+   "Environment.Buildings.Loop.Pandaborn.OperaStage",
+   "Environment.Buildings.Loop.Pandaborn.Teahouse",
+   "Environment.Buildings.Loop.Pandaborn.HotSpring",
+   "UI.Beavers.Pandaborn.Selected.Adult_Content",
+   "UI.Beavers.Pandaborn.Selected.Adult_Discontent",
+   "UI.Beavers.Pandaborn.Selected.Adult_Sleepy",
+   "UI.Beavers.Pandaborn.Selected.Adult_Sleeping",
+   "UI.Beavers.Pandaborn.Selected.Child_Content",
+   "UI.Beavers.Pandaborn.Selected.Child_Discontent",
+   "UI.Beavers.Pandaborn.Selected.Child_Sleepy",
+   "UI.Beavers.Pandaborn.Selected.Child_Sleeping"
+  ],
+  "soundsPlayed": [
+   "Environment.Pandaborn.ShiftBell.End",
+   "Environment.Pandaborn.ShiftBell.Dawn",
+   "Environment.Pandaborn.NightClapper",
+   "Environment.Pandaborn.BambooTok",
+   "Environment.Pandaborn.FlumeWater",
+   "Environment.Buildings.Loop.Pandaborn.ScoopWheel",
+   "Environment.Buildings.Loop.Pandaborn.BambooWaterWheel",
+   "Environment.Pandaborn.FestivalDrum",
+   "Environment.Pandaborn.Firecrackers",
+   "Environment.Pandaborn.LanternRise",
+   "Environment.Buildings.Loop.Pandaborn.Steamer",
+   "Environment.Buildings.Loop.Pandaborn.TeaRoastery",
+   "Environment.Buildings.Loop.Pandaborn.PickleYard",
+   "Environment.Buildings.Loop.Pandaborn.LanternWorkshop",
+   "Environment.Buildings.Loop.Pandaborn.SmokeKiln",
+   "Environment.Buildings.Loop.Pandaborn.TripHammer",
+   "Environment.Buildings.Loop.Pandaborn.Simmer",
+   "Environment.Buildings.Loop.Pandaborn.KiteWindmill",
+   "Environment.Buildings.Loop.Pandaborn.Teahouse",
+   "Environment.Buildings.Loop.Pandaborn.HotSpring",
+   "Environment.Buildings.Loop.Pandaborn.OperaStage",
+   "UI.Buildings.Selected.Pandaborn.VillageHall",
+   "UI.Beavers.Pandaborn.Selected.Adult",
+   "UI.Beavers.Pandaborn.Selected.Child",
+   "UI.Buildings.Wonder.PandabornSkyLantern"
+  ]
+ },
+ "then": {
+  "name": "folktails",
+  "faction": "Folktails",
+  "buildings": [
+   "Grill.Folktails",
+   "DanceHall.Folktails"
+  ],
+  "screenshots": [
+   {
+    "name": "folktails_screen",
+    "kind": "screen",
+    "at": "end"
+   }
+  ],
+  "soundProbe": {
+   "expect": [
+    "Environment.Pandaborn.ShiftBell.End",
+    "UI.Beavers.Pandaborn.Selected.Adult_Content",
+    "UI.Beavers.Common.Selected.Adult_Content",
+    "Environment.Buildings.Loop.Grill",
+    "UI.Buildings.Wonder.EarthRecultivator"
+   ],
+   "bundle": "pandabornsounds",
+   "watch": "",
+   "sampleEvery": 0.5,
+   "loops": [
+    {
+     "target": "Grill.Folktails",
+     "at": 12,
+     "stopAt": 40
+    },
+    {
+     "target": "DanceHall.Folktails",
+     "at": 13,
+     "stopAt": 40
+    }
+   ],
+   "select": [
+    {
+     "target": "DistrictCenter.Folktails",
+     "at": 18
+    },
+    {
+     "target": "BeaverAdult",
+     "at": 21
+    },
+    {
+     "target": "BeaverChild",
+     "at": 24
+    }
+   ],
+   "wonderLaunch": [
+    28
+   ]
+  },
+  "checks": {
+   "soundsNotPlayed": "Pandaborn",
+   "soundsPlayed": [
+    "Environment.Buildings.Loop.Grill",
+    "Environment.Buildings.Loop.DanceHall",
+    "UI.Buildings.Selected.DistrictCenter",
+    "UI.Beavers.Common.Selected.Adult",
+    "UI.Beavers.Common.Selected.Child",
+    "UI.Buildings.Wonder.EarthRecultivator"
+   ]
+  }
+ }
+}

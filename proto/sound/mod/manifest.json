@@ -1,0 +1,13 @@
+{
+  "Name": "Pandaborn - Sound prototype (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoSound",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only test mod for the sounds of Pandaborn - Factions: the pandabornsounds asset bundle and blueprint fragments that point the faction's buildings, its colonists' calls and its wonder at those sounds. Never shipped. Art, code and audio are AI-generated.",
+  "RequiredMods": [
+    {
+      "Id": "JigglyPanda.PandabornFactions"
+    }
+  ],
+  "OptionalMods": []
+}

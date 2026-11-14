@@ -1,0 +1,8 @@
+{
+  "FactionSpec": {
+    "SoundId": "Pandaborn"
+  },
+  "FactionWonderSpec": {
+    "WonderLaunchSound": "UI.Buildings.Wonder.PandabornSkyLantern"
+  }
+}

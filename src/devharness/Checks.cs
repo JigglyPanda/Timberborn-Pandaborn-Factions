@@ -128,6 +128,7 @@ namespace PandabornDevHarness
                 foreach (var w in unwanted) Add("templateUnavailable", !templates.Contains((string)w), (string)w);
 
             MaterialProbe.AddChecks(result, options, Add);
+            SoundProbe.AddChecks(result, options, Add);
 
             bool allPass = true;
             foreach (var c in checks) allPass &= (bool)c["pass"];
