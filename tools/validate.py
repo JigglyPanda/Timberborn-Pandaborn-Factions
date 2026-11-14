@@ -361,8 +361,10 @@ def main(argv=None):
         check_faction(c, fid, fspec)
         check_faction_goods(c, fid, fspec)
         check_material_coverage(c, fid, fspec)
+        check_economy(c, fid, fspec)
     check_localization(a, c)
     check_bundles(c)
+    check_modules(c)
     check_lock(c)
 
     for m in R.infos if not a.quiet else []:
@@ -1586,6 +1588,259 @@ def check_models(c):
                                 % (where, an.get("node"), driver[0]))
     if checked:
         R.info("models: %d blueprint(s) checked against their model.json" % checked)
+
+
+# ------------------------------------------------------------------------- v2: the faction's economy and honesty
+# "Nothing in the toolbar lies" (docs/DESIGN.md, Quality bar). Errors with --release, warnings in dev builds.
+
+# module -> spec (or bundle) whose presence means "this module's data ships"
+MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "PandabornNamePoolSpec"),
+               "Look": ("bundle", "pandabornlook"), "Water": ("spec", "PandabornFlumeSegmentSpec"),
+               "Ringtails": ("spec", "PandabornRingtailsSpec"), "RingtailsFallback": ("spec", "PandabornNightPostSpec"),
+               "Festival": ("spec", "PandabornFestivalSpec"), "Flowering": ("spec", "PandabornFloweringSpec")}
+SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
+DWELLING_NEEDS = ("Sleep", "Shelter")
+TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
+
+
+def gate(c, msg):
+    if c.args.release:
+        R.error(msg)
+    else:
+        R.warn(msg + " (an error with --release)")
+
+
+def walk_effects(obj):
+    """(NeedId, points) of every effect-like object in a template (attractions, decorations, wonders...)."""
+    if isinstance(obj, dict):
+        if isinstance(obj.get("NeedId"), str):
+            pts = obj.get("PointsPerHour", obj.get("Points", 0)) or 0
+            yield obj["NeedId"], pts
+        for k, v in obj.items():
+            if k != "Children":
+                yield from walk_effects(v)
+    elif isinstance(obj, list):
+        for x in obj:
+            yield from walk_effects(x)
+
+
+def faction_world(c, fs):
+    """Everything an Inkpaws game can use: templates, goods, needs, recipes; producers, consumers, satisfiers."""
+    w = Ctx()
+    w.templates = []   # (path, bp)
+    seen = set()
+    for cid in list(fs.get("TemplateCollectionIds", [])) + ["Common"]:
+        for _, tcs in collection_members(c, "TemplateCollectionSpec", cid):
+            for b in tcs.get("Blueprints", []):
+                k = ref_key(b)
+                if k in seen:
+                    continue
+                seen.add(k)
+                t = get_bp(c, k)
+                if t is not None:
+                    w.templates.append((b, t))
+    w.goods = set()
+    for cid in list(fs.get("GoodCollectionIds", [])) + ["Common"]:
+        for _, g in collection_members(c, "GoodCollectionSpec", cid):
+            w.goods.update(g.get("Goods") or [])
+    w.own_goods = set()
+    for cid in fs.get("GoodCollectionIds", []):
+        for src, g in collection_members(c, "GoodCollectionSpec", cid):
+            if not src.startswith("vanilla"):
+                w.own_goods.update(g.get("Goods") or [])
+    w.needs = set()
+    for cid in list(fs.get("NeedCollectionIds", [])) + ["Common"]:
+        for _, n in collection_members(c, "NeedCollectionSpec", cid):
+            w.needs.update(n.get("Needs") or [])
+    recipes = {s.get("Id"): s for _, s in all_vanilla_specs(c, "RecipeSpec")}
+    for b in c.mod_bp.values():
+        if "RecipeSpec" in b:
+            recipes[b["RecipeSpec"].get("Id")] = b["RecipeSpec"]
+    goodspecs = {s.get("Id"): s for _, s in all_vanilla_specs(c, "GoodSpec")}
+    for b in c.mod_bp.values():
+        if "GoodSpec" in b:
+            goodspecs[b["GoodSpec"].get("Id")] = b["GoodSpec"]
+    w.producers, w.consumers, w.satisfiers = {}, {}, {}
+    w.yields, w.removers = [], set()
+
+    def add(table, key, who):
+        table.setdefault(key, []).append(who)
+    for path, t in w.templates:
+        sp = specs_of(t)
+        name = (sp.get("TemplateSpec") or {}).get("TemplateName", path)
+        for cost in (sp.get("BuildingSpec") or {}).get("BuildingCost") or []:
+            add(w.consumers, cost.get("Id"), name + " (cost)")
+        for rid in (sp.get("ManufactorySpec") or {}).get("ProductionRecipeIds") or []:
+            r = recipes.get(rid) or {}
+            for g in r.get("Ingredients") or []:
+                add(w.consumers, g.get("Id"), "%s:%s" % (name, rid))
+            if r.get("Fuel"):
+                add(w.consumers, r["Fuel"], "%s:%s (fuel)" % (name, rid))
+            for g in r.get("Products") or []:
+                add(w.producers, g.get("Id"), "%s:%s" % (name, rid))
+        for g in (sp.get("GoodConsumingBuildingSpec") or {}).get("ConsumedGoods") or []:
+            add(w.consumers, g.get("GoodId"), name + " (upkeep)")
+        for g in (sp.get("WonderInventorySpec") or {}).get("RequiredGoods") or []:
+            add(w.consumers, g.get("Id"), name + " (launch)")
+        for ys in ("CuttableSpec", "GatherableSpec"):
+            yielder = (sp.get(ys) or {}).get("Yielder") or {}
+            y = yielder.get("Yield") or {}
+            if y.get("Id"):
+                # a yield counts only if a building of the faction removes yields of that group (a pine's resin needs
+                # a tapper, which the Inkpaws do not have)
+                w.yields.append((y["Id"], yielder.get("ResourceGroup"), "%s (%s)" % (name, ys[:-4].lower())))
+        group = (sp.get("YieldRemovingBuildingSpec") or {}).get("ResourceGroup")
+        if group:
+            w.removers.add(group)
+        for spec in ("FireworkLauncherSpec",):
+            if spec in sp:
+                add(w.consumers, "Fireworks", name)
+        if "DwellingSpec" in sp:
+            for n in DWELLING_NEEDS:
+                add(w.satisfiers, n, name + " (home)")
+        for k, v in sp.items():
+            if k in ("WorkshopRandomNeedApplierSpec", "YieldRemoverWorkplaceEffectsSpec"):
+                continue
+            for nid, pts in walk_effects(v):
+                if pts and pts > 0:
+                    add(w.satisfiers, nid, "%s (%s)" % (name, k))
+    for gid, group, who in w.yields:
+        if group in w.removers:
+            add(w.producers, gid, who)
+    for gid in w.goods:
+        gs = goodspecs.get(gid) or {}
+        for e in gs.get("ConsumptionEffects") or []:
+            if e.get("NeedId") in w.needs and (e.get("Points") or 0) > 0:
+                add(w.consumers, gid, "colonists (%s)" % e["NeedId"])
+                if gid in w.producers:
+                    add(w.satisfiers, e["NeedId"], "good " + gid)
+    return w
+
+
+def check_economy(c, fid, bp):
+    fs = bp["FactionSpec"]
+    w = faction_world(c, fs)
+    report = {"needsWithoutSatisfier": [], "goodsWithoutSource": [], "goodsWithoutUse": [], "toolClashes": []}
+    for n in sorted(w.needs):
+        if not w.satisfiers.get(n):
+            report["needsWithoutSatisfier"].append(n)
+            gate(c, "Faction %s: need %s is in the faction's collections but nothing the faction has can satisfy it "
+                    "(no good, attraction, decoration or home raises it)" % (fid, n))
+    for g in sorted(w.consumers):
+        if g and not w.producers.get(g) and g not in ("Water", "Badwater"):
+            uses = [u for u in w.consumers[g] if not u.startswith("colonists")]
+            if uses:
+                report["goodsWithoutSource"].append(g)
+                gate(c, "Faction %s: %s is needed (%s) but nothing the faction has produces or gathers it"
+                        % (fid, g, "; ".join(uses[:4])))
+    for g in sorted(w.own_goods):
+        if not w.consumers.get(g):
+            report["goodsWithoutUse"].append(g)
+            gate(c, "Faction %s: good %s has no use: no cost, recipe, upkeep, launch or need consumes it" % (fid, g))
+    slots = {}
+    for path, t in w.templates:
+        sp = specs_of(t)
+        pb = sp.get("PlaceableBlockObjectSpec")
+        if not pb or pb.get("DevModeTool") or "BuildingSpec" not in sp:
+            continue
+        key = (pb.get("ToolGroupId"), pb.get("ToolOrder"))
+        name = (sp.get("TemplateSpec") or {}).get("TemplateName", path)
+        if key in slots:
+            report["toolClashes"].append([slots[key], name, key[0], key[1]])
+            gate(c, "Faction %s: %s and %s share tool group %s order %s (the toolbar order is ambiguous)"
+                    % (fid, slots[key], name, key[0], key[1]))
+        else:
+            slots[key] = name
+    c.economy = report
+    R.info("Faction %s economy: %d needs, %d goods, %d templates; %d unmet needs, %d unsourced goods, %d unused goods, "
+           "%d tool clashes" % (fid, len(w.needs), len(w.goods), len(w.templates), len(report["needsWithoutSatisfier"]),
+                                len(report["goodsWithoutSource"]), len(report["goodsWithoutUse"]),
+                                len(report["toolClashes"])))
+    check_tutorial(c, fid, bp, w)
+
+
+def check_tutorial(c, fid, bp, w):
+    if "StartingFactionSpec" not in bp:
+        return
+    names = set()
+    for _, t in w.templates:
+        ts = specs_of(t).get("TemplateSpec") or {}
+        names.add(ts.get("TemplateName"))
+        names.update(ts.get("BackwardCompatibleTemplateNames") or [])
+    names.add("Path")
+    if "Stairs.Folktails" not in names:
+        R.error("Faction %s has StartingFactionSpec but no template named or aliased Stairs.Folktails: "
+                "StairsUnlockedTrigger throws at load (docs/tech/tutorial.md)" % fid)
+    for key, t in list(c.mod_bp.items()) + list(c.optional_bp.items()):
+        rel = c.keys[key][0]
+        if not rel.lower().startswith(("tutorials/", "modifiers/")):
+            continue
+
+        def walk(o, path):
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    if k in TUTORIAL_TEMPLATE_FIELDS:
+                        for n in (v if isinstance(v, list) else [v]):
+                            if isinstance(n, str) and n and n not in names:
+                                R.error("%s %s: tutorial step names %s, which faction %s does not have: "
+                                        "TutorialService.Load throws at the start of every game" % (rel, path, n, fid))
+                    else:
+                        walk(v, path + "." + k)
+            elif isinstance(o, list):
+                for x in o:
+                    walk(x, path)
+        if any(k.endswith("TutorialStepSpec") or k.endswith("StepSpec") for k in specs_of(t)) or "Children" in t:
+            walk(t, "")
+
+
+def check_modules(c):
+    """The shipped code modules (Modules/modules.txt) and the data that switches them on must match; a catalogue item
+    that waits for a module must not ship unless that module and its data do."""
+    if c.profile != "pandaborn":
+        return
+    mf = next((r for r in c.files if r.lower() == "modules/modules.txt"), None)
+    shipped = set()
+    if mf:
+        for line in open(c.files[mf], encoding="utf-8"):
+            line = line.strip()
+            if line and not line.startswith("#"):
+                shipped.add(line.split()[0])
+    specs = set()
+    for b in c.mod_bp.values():
+        specs.update(specs_of(b))
+        for child in (b.get("Children") or {}).values():
+            if isinstance(child, dict):
+                specs.update(child)
+    bundles = {r.rsplit("/", 1)[-1].rsplit("_", 1)[0].lower() for r in c.files if r.lower().startswith("assetbundles/")}
+    data_on = set()
+    for mod, (kind, what) in MODULE_DATA.items():
+        present = what in specs if kind == "spec" else what in bundles
+        if present:
+            data_on.add(mod)
+        if mod in shipped and not present:
+            gate(c, "module %s ships (Modules/modules.txt) but its data (%s %s) does not: the module would do nothing"
+                    % (mod, kind, what))
+        if present and mod not in shipped:
+            R.error("%s %s ships but module %s does not: the data needs that module" % (kind, what, mod))
+    for mod in shipped - set(MODULE_DATA) - SELF_CONTAINED_MODULES:
+        R.info("module %s ships; no data rule known for it" % mod)
+    # catalogue items waiting for a module
+    try:
+        import tomllib
+    except ImportError:
+        return
+    cat = os.path.join(REPO, "catalogue", "buildings.toml")
+    if not os.path.isfile(cat):
+        return
+    with open(cat, "rb") as f:
+        buildings = tomllib.load(f).get("buildings", {})
+    present_templates = {(b.get("TemplateSpec") or {}).get("TemplateName") for b in c.mod_bp.values()}
+    for bid, b in buildings.items():
+        mod = b.get("waits_for")
+        tname = (b.get("template") or bid + ".Inkpaws")
+        if mod and tname in present_templates and not (mod in shipped and mod in data_on):
+            gate(c, "%s ships but waits for module %s, whose code or data is absent: its text promises what its "
+                    "stand-in does not do" % (tname, mod))
 
 # ------------------------------------------------------------------------------------------------ self test
 
