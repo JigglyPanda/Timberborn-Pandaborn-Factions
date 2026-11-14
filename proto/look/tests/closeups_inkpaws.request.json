@@ -9,7 +9,6 @@
     "PandabornDen.Inkpaws",
     "PandabornMoonLoft.Inkpaws",
     "PandabornTeahouse.Inkpaws",
-    "PandabornVillageHall.Inkpaws",
     "PandabornSteamer.Inkpaws",
     "PandabornPickleYard.Inkpaws",
     "PandabornKindergarten.Inkpaws",
@@ -64,13 +63,6 @@
       "name": "day_teahouse",
       "kind": "building",
       "target": "PandabornTeahouse.Inkpaws",
-      "at": "start",
-      "pitch": 38
-    },
-    {
-      "name": "day_villagehall",
-      "kind": "building",
-      "target": "PandabornVillageHall.Inkpaws",
       "at": "start",
       "pitch": 38
     },
@@ -186,14 +178,6 @@
       "name": "night_teahouse",
       "kind": "building",
       "target": "PandabornTeahouse.Inkpaws",
-      "at": "end",
-      "pitch": 38,
-      "lit": true
-    },
-    {
-      "name": "night_villagehall",
-      "kind": "building",
-      "target": "PandabornVillageHall.Inkpaws",
       "at": "end",
       "pitch": 38,
       "lit": true
