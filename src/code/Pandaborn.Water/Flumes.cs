@@ -5,6 +5,7 @@ using Pandaborn.Core;
 using Pandaborn.Specs;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BlockSystem;
+using Timberborn.EntitySystem;
 using Timberborn.SingletonSystem;
 using Timberborn.TickSystem;
 using Timberborn.TimeSystem;
@@ -15,11 +16,14 @@ using UnityEngine;
 namespace Pandaborn.Water
 {
     /// <summary>
-    /// Applies flume pieces one tick after they are finished (or loaded). The delay matters: every piece also carries a
-    /// vanilla full water obstacle over its flow cells (the module-off fallback, an inert block), which vanilla adds in
-    /// its own finished-state listener; we lift it through the vanilla <see cref="WaterObstacle"/> component (so vanilla's
-    /// own bookkeeping stays right when the piece is later demolished) only after it has certainly been added. Openings
-    /// run first, solid cells second, so a Drop's leg is re-solidified after the vanilla obstacle over it is lifted.
+    /// Every flume piece also carries a vanilla full water obstacle over its flow cells (the module-off fallback, an inert
+    /// block), which vanilla adds in its own finished-state listener. A piece is opened in its own finished-state listener
+    /// (so on a load the vanilla obstacle's add and our removal reach the water simulation in the same batch, and water
+    /// standing more than a block deep never sits on a solid block for a tick and spills sideways), and checked again here
+    /// one tick later in case vanilla's listener ran after ours. We lift through the vanilla <see cref="WaterObstacle"/>
+    /// component, so vanilla's own bookkeeping stays right when the piece is later demolished. Water put back after a
+    /// load goes in one tick after that check. Openings run first, solid cells second, so a Drop's leg is re-solidified
+    /// after the vanilla obstacle over it is lifted.
     /// </summary>
     public class FlumeService : ITickableSingleton
     {
@@ -55,15 +59,19 @@ namespace Pandaborn.Water
             // water restores first: they were queued by last tick's activations, whose obstacle removals are applied by now
             if (_restores.Count > 0)
             {
-                var restores = _restores.ToList();
-                _restores.Clear();
-                foreach (var s in restores) if (s) s.RestoreWater();
+                foreach (var s in _restores.ToList())
+                    if (!s || s.RestoreWater()) _restores.Remove(s);
             }
             if (_segments.Count > 0)
             {
                 var segments = _segments.ToList();
                 _segments.Clear();
-                foreach (var s in segments) if (s) s.Activate();
+                foreach (var s in segments)
+                {
+                    if (!s) continue;
+                    s.Activate();
+                    if (s.HasWaterToRestore) EnqueueRestore(s);
+                }
             }
             if (_solids.Count > 0)
             {
@@ -84,7 +92,7 @@ namespace Pandaborn.Water
     /// the game time) and put back one tick after the lift, but only if that entry was written by the save being loaded
     /// (same game time), never from an older save made while the module was on.
     /// </summary>
-    public class FlumeSegment : BaseComponent, IAwakableComponent, IFinishedStateListener
+    public class FlumeSegment : BaseComponent, IAwakableComponent, IFinishedStateListener, IPostLoadableEntity
     {
         private const string StateKey = "Water.Flume";
         private readonly IWaterService _waterService;
@@ -99,6 +107,8 @@ namespace Pandaborn.Water
         private bool _restoreChecked;
         private bool _closed;
         private List<(float Depth, float Contamination)> _toRestore;
+        private int _restoreDelay;
+        private const int RestoreDelayTicks = 3;
 
         public FlumeSegment(IWaterService waterService, FlumeService flumeService, IThreadSafeWaterMap waterMap,
                             IDayNightCycle dayNightCycle)
@@ -147,7 +157,21 @@ namespace Pandaborn.Water
         {
             _worldCells.Clear();
             foreach (var c in _spec.FlowCells) _worldCells.Add(_blockObject.TransformCoordinates(c));
-            _flumeService.Enqueue(this);
+            Activate();                     // at once: see FlumeService
+            _flumeService.Enqueue(this);    // and again next tick, in case the vanilla obstacle was added after us
+        }
+
+        /// <summary>After a load every entity has run its finished-state listeners, vanilla's obstacle add included (on a
+        /// load ours can run before vanilla's): lift here so the add and the lift reach the water simulation in the same
+        /// batch, before its first tick, and the water above the first block never sits on a solid cell.</summary>
+        public void PostLoadEntity()
+        {
+            if (!Active) return;
+            if (!_closed) _inertObstacle?.RemoveFromWaterService();
+            if (_restoreChecked) return;
+            _restoreChecked = true;
+            ReadSavedWater();
+            if (_toRestore != null) _flumeService.EnqueueRestore(this);
         }
 
         public void OnExitFinishedState()
@@ -163,19 +187,27 @@ namespace Pandaborn.Water
 
         public event System.Action Deactivated;
 
+        internal bool HasWaterToRestore => _toRestore != null;
+
         internal void Activate()
         {
-            if (Active || !_blockObject.IsFinished) return;
+            if (Active)
+            {
+                if (!_closed) _inertObstacle?.RemoveFromWaterService();   // no-op unless vanilla added it after us
+                if (!_restoreChecked)
+                {
+                    // read here, a tick after loading, when the entity's saved state has certainly been loaded
+                    _restoreChecked = true;
+                    ReadSavedWater();
+                }
+                return;
+            }
+            if (!_blockObject.IsFinished) return;
             var direction = _blockObject.Orientation.ToFlowDirection();
             foreach (var cell in _worldCells) _waterService.AddDirectionLimiter(cell, direction);
             _inertObstacle?.RemoveFromWaterService();   // no-op if the data has no inert obstacle
             _closed = false;
             Active = true;
-            if (!_restoreChecked)
-            {
-                _restoreChecked = true;
-                ReadSavedWater();
-            }
             _state?.SetWriter(StateKey, 1, WriteWater);
             Activated?.Invoke();
         }
@@ -209,27 +241,34 @@ namespace Pandaborn.Water
                 var dc = parts[i].Split(',');
                 if (dc.Length != 2 || !float.TryParse(dc[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float d)
                     || !float.TryParse(dc[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float c)) return;
-                list.Add((Mathf.Clamp(d, 0f, 1f), Mathf.Clamp01(c)));   // the obstacle cut at most one block per cell
+                list.Add((Mathf.Max(0f, d), Mathf.Clamp01(c)));
             }
-            _toRestore = list;
-            _flumeService.EnqueueRestore(this);
+            _restoreDelay = RestoreDelayTicks;
+            _toRestore = list;   // put back by the FlumeService a tick after its second check
         }
 
-        internal void RestoreWater()
+        /// <summary>Puts back only what is missing, a few ticks after the load so the water map shows the loaded state:
+        /// when the vanilla obstacle's add and our lift reach the simulation together nothing is lost (run water-w4d:
+        /// the line was whole at tick 1, and putting the saved depth back on top doubled it). True when done.</summary>
+        internal bool RestoreWater()
         {
+            if (_toRestore == null) return true;
+            if (--_restoreDelay > 0) return false;
             var list = _toRestore;
             _toRestore = null;
-            if (list == null || !Active || _closed || !_blockObject.IsFinished) return;
+            if (!Active || _closed || !_blockObject.IsFinished) return true;
             float total = 0f;
             for (int i = 0; i < list.Count && i < _worldCells.Count; i++)
             {
-                var (depth, c) = list[i];
-                if (depth <= 0.0001f) continue;
-                if (c < 1f) _waterService.AddCleanWater(_worldCells[i], depth * (1f - c));
-                if (c > 0f) _waterService.AddContaminatedWater(_worldCells[i], depth * c);
-                total += depth;
+                var (saved, c) = list[i];
+                float missing = Mathf.Clamp(saved - _waterMap.WaterDepth(_worldCells[i]), 0f, 1f);   // an obstacle cuts at most one block
+                if (missing <= 0.01f) continue;
+                if (c < 1f) _waterService.AddCleanWater(_worldCells[i], missing * (1f - c));
+                if (c > 0f) _waterService.AddContaminatedWater(_worldCells[i], missing * c);
+                total += missing;
             }
             RestoredWater = total;
+            return true;
         }
 
         /// <summary>Puts the vanilla inert obstacle back (a closed gate). Safe to call repeatedly.</summary>

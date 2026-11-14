@@ -79,12 +79,14 @@ namespace Pandaborn.Water
             if (_state == null) return;
             if (_state.TryGet(Feature, out int version, out string payload) && version == Version) Read(payload);
             _state.SetWriter(Feature, Version, Write);
+            if (_segment != null && _segment.Active) Apply();   // opened before the saved settings were read
         }
 
         public void OnEnterFinishedState()
         {
             _segment.Activated += Apply;
             EnableComponent();
+            if (_segment.Active) Apply();   // the segment may have opened already in its own finished-state listener
         }
 
         public void OnExitFinishedState()

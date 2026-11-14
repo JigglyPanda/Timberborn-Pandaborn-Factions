@@ -7,10 +7,13 @@ What it does, per spec (all specs in `Pandaborn.Specs/WaterSpecs.cs`, only on `.
   arrow) and lifts the piece's vanilla inert obstacle with the public `WaterObstacle.RemoveFromWaterService()`. On demolish
   it removes the limiters; the vanilla obstacle's own exit is then a no-op. Limiters are not saved by the game and are
   re-added on every load. `FlumeMonitor` (every 30 ticks) shows one status: blocked, misaligned, intake dry, end dry.
-  Loading re-adds the inert obstacle for one tick, which deletes up to one block of water in each flow cell; with a
+  Loading re-adds the inert obstacle (vanilla's finished-state listener). The segment lifts it again in
+  `PostLoadEntity`, so the add and the lift reach the water simulation in the same batch before its first tick and the
+  water standing in the line is kept (run `water-w4d`; lifting a tick later cut up to one block of water out of each cell
+  and let the rest spill sideways, runs `water-w4-1155`, `water-w4c`). As a safety net, with a
   `PandabornEntityStateSpec` on the piece the depth and contamination of each flow cell are saved (entry
-  `Water.Flume|1|t=<day>;<depth>,<contamination>;...`) and put back one tick after the lift, only when the entry's game
-  time matches the loaded game (an entry left from an older session with the module on is ignored).
+  `Water.Flume|1|t=<day>;<depth>,<contamination>;...`); three ticks after loading, whatever is missing (at most one
+  block per cell) is put back, only when the entry's game time matches the loaded game.
 * `PandabornSolidCellsSpec { Cells }` -> `SolidCells`: full obstacles at extra cells (sealed Flume Drop body, caps).
 * `PandabornFlumeGateSpec { DefaultFlow, MaxFlow, FlowStep, ContaminationShutoff }` -> `FlumeGate`: an inflow limit on
   the gate cell (m3/s), and the badwater guard: above `ContaminationShutoff` behind the gate it closes (re-adds the inert
@@ -115,6 +118,7 @@ just have nothing to save) and nothing floods; the gate's settings stay in the c
 **Timberborn.EntitySystem**
 
 * type `Timberborn.EntitySystem.IInitializableEntity`
+* type `Timberborn.EntitySystem.IPostLoadableEntity`
 
 **Timberborn.Goods**
 
