@@ -221,17 +221,55 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   (`Unity.exe -batchmode -quit -projectPath <proj> -executeMethod <Builder.Build>`). The Unity project goes in
   `E:\PandabornDev\unity`.
 * Dev mode in game is Shift+Alt+Z; `-skipModManager` skips the launch dialog.
-* **One command:** `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage>`; stages `pin`, `generate`
-  (`-DryRun`, `-Lock`), `code` and `bundles` (hooks, off unless `-WithCode`/`-WithBundles`), `assemble`, `validate`,
-  `install`, `test` (grid scenario), `package`, `all`. `tools/build.ps1` still works and runs generate, assemble,
-  validate, install. The build refuses to run if the vanilla dump differs from `catalogue/vanilla.pin.json` until
-  you review `tools/game_diff.py` and `pin -Accept`.
+* **One command:** `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage>`; `all` = `pin`, `models`,
+  `generate` (`-DryRun`, `-Lock`), `code`, `bundles`, `assemble`, `validate`, `install`; also `test` (grid scenario)
+  and `package` (release rules). `tools/build.ps1` runs models, generate, code, bundles, assemble, validate, install.
+  The build refuses to run if the vanilla dump differs from `catalogue/vanilla.pin.json` until you review
+  `tools/game_diff.py` and `pin -Accept`; `pin` also runs the Words table check
+  (`src/code/Pandaborn.Words/tools/candidates.py --check`, a warning there, a failure for `package`).
+  * `models`: runs every `art/models/<Id>/build.py` (the building kit; `-Plants` also `art/plants/<Id>/build.py`)
+    into `E:\PandabornDev\build\models\<Id>`; plant meshes live in `E:\PandabornDev\build\plants\<Id>`. Meshes never
+    enter git; `assemble` copies the ones the catalogue adopts (`model = "<Id>"`) from `<gen>.models.json`, and the
+    Ringtail bodies from `E:\PandabornDev\build\characters\out` when the data has the Ringtail templates.
+  * `code`: **the code ships in the mod since 2026-11-14.** `src/code` builds into
+    `E:\PandabornDev\build\code\PandabornFactions`; the Look module brings the `pandabornlook` bundle; the stage also
+    dumps the mod's own spec classes (`code-schema.json`) for the validator and runs `tools/check_api_lists.py`
+    (game-API lists, a warning here, a failure for `package`). **A module ships only when its data is switched on**
+    in `catalogue/rules.toml [modules]` (today Bell, Names, Look, Words, Ringtails, RingtailsFallback; Water, Festival,
+    Flowering are left out of `Modules/modules.txt`). `-NoCode` builds the data-only fallback (no custom specs,
+    vanilla names, Folktails look). Do not also load `E:\PandabornDev\build\PandabornCodeDev` (`-ExtraMods`) with the
+    installed faction: the code would be there twice.
+  * `bundles`: copies built `pandaborn*_win|_mac` bundles, never renamed, from `-BundleDirs` (today
+    `E:\PandabornDev\build\plants\AssetBundles` and `E:\PandabornDev\build\sound\AssetBundles`; planned:
+    `E:\PandabornDev\build\characters\attachments` once real hats and baskets exist) into `AssetBundles/`; fails if
+    an adopted model needs a bundle that is not built. A missing `_mac` twin is a warning in dev stages and an error
+    for `package` (`validate.py --release`); Mac builds: docs/tech/mac.md. Never enable `proto/sound` with the
+    faction (the same bundle twice crashes). A folder `AssetBundles.parked` (left by a second enabled copy) is never
+    content: assemble skips it, install's mirror removes it, `package` refuses it.
+  * **Install discipline:** run `install` only when no Timberborn process runs (other lanes queue game tests all
+    day); take the test mutex `Global\PandabornGameTest` for it, and never leave the tree in a state where `all`
+    fails.
+* **Hidden until wired** (DESIGN.md 2026-11-14): a catalogue item with `waits_for = "<Module>"` is left out of the
+  build (templates, goods, needs, recipes, plants, tutorial stages, tool groups) unless that module ships and its
+  switch in `rules.toml [modules]` is on; its ids stay in the lock marked `gatedBy`. `module_specs = { <Module> = {
+  <Spec> = {...} } }` adds our own spec classes only when the module is on. `<gen>.report.json` `leftOut` lists what
+  is hidden. The validator's economy block (`--release`: errors) refuses needs nothing meets, goods nothing makes or
+  uses, two buildings on one toolbar slot, shipped modules without their data and data without its module.
+* **Catalogue extras:** `catalogue/modifiers.toml` (Inkpaws-only blueprint modifiers, e.g. the bell's walking cap),
+  `catalogue/tutorial.toml` + `text/tutorial.json` (StartingFactionSpec, every vanilla tutorial off, our dormant
+  tutorials switched on by modifier, `Stairs.Folktails` alias on `Stairs.Inkpaws`), `rules.toml [shelves]` (workshop
+  recipes hold `workshop_hours` of work at full staffing, flags and farms `harvest_hours` of harvest), `faction.toml`
+  `[tool_groups]` (the Night Watch group), `[worker_types]` (PandabornRingtail: ships forever), own decals and
+  `[outfits] extra` (Ringtail outfits), characters with `in_collection = false` (the Ringtails).
 * **Validator:** `python tools/validate.py --mod <any mod folder>` checks every blueprint key and field against
   `schema/<game version>.json` (unknown spec keys throw in game; unknown fields are silently ignored), asset
   references (exact case), ids and the lock, custom specs in global data, NeedVerifier, goods outside the faction's
   collections, bundle pairs. Prototypes that add fragments to the faction build: `--base-mod
   E:\PandabornDev\build\stage\PandabornFactions`; their own spec classes: `--mod-schema` (from `tools/schema
-  --include <dll>`). `--self-test` runs the broken fixtures in `tools/tests/validate`.
+  --include <dll>`). `--self-test` writes the broken fixtures from the vanilla dump
+  (`tools/tests/validate/make_fixtures.py`, into `E:\PandabornDev\build\validate-fixtures`: they copy game files, so
+  they stay out of git) and runs them. Our own sound names are checked against the mod's bundles (UnityPy from the
+  art venv).
 * See `tools/` for the build, validate and automated in-game test scripts.
 
 ### Automated in-game test
@@ -300,16 +338,19 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   The game's own arguments: `-skipModManager`, `-saveName`/`-settlementName` (auto-load a save), `-uncapped`,
   `-benchmarkLength` (loads no mods).
 * The build (`tools/pandaborn.ps1`, or `tools/build.ps1`) generates the catalogue into
-  `E:\PandabornDev\build\gen\PandabornFactions`, assembles it with `mod/PandabornFactions` and the two panda meshes
-  (from `E:\PandabornDev\assets\Pandaborn-Reskin-release`) in `E:\PandabornDev\build\stage\PandabornFactions`,
+  `E:\PandabornDev\build\gen\PandabornFactions`, assembles it with `mod/PandabornFactions`, the two panda meshes
+  (from `E:\PandabornDev\assets\Pandaborn-Reskin-release`), the adopted model meshes, the code and the bundles in
+  `E:\PandabornDev\build\stage\PandabornFactions`,
   validates that, then mirrors it into `E:\PandabornDev\build\PandabornFactions` and junctions
   `Documents\Timberborn\Mods\PandabornFactions` to it (the game loads mods through the junction; verified). It never
   touches any other `Mods` entry and refuses to replace a real folder; a build that fails validation is not installed.
-* Since 2026-11-14 the Inkpaws own their building list (`Buildings.Inkpaws`, 145 buildings), goods
+* Since 2026-11-14 the Inkpaws own their building list (`Buildings.Inkpaws`, 152 visible buildings; 15 more wait
+  for the Water, Festival and Ringtail-venue modules), goods
   (`Goods.Inkpaws`), needs (`Needs.Inkpaws`) and plants (`NaturalResources.Inkpaws`); an Inkpaws game no longer
   offers `*.Folktails` templates. Re-themed vanilla buildings are `<Name>.Inkpaws` copies; new buildings are
-  `Pandaborn<Name>.Inkpaws` on vanilla stand-in models (`E:\PandabornDev\build\gen\PandabornFactions.report.json`
-  lists every stand-in). Harness: `-RequestJson E:\PandabornDev\build\gen\PandabornFactions.grid.json` places and
+  `Pandaborn<Name>.Inkpaws`, on the art lanes' models where adopted and on vanilla stand-in models otherwise
+  (`E:\PandabornDev\build\gen\PandabornFactions.report.json` lists adopted models, stand-ins and the code module
+  each stand-in waits for; `<gen>.models.request.json` is a ready test of every adopted model). Harness: `-RequestJson E:\PandabornDev\build\gen\PandabornFactions.grid.json` places and
   finishes every placeable template (`src/devharness/GridLab.cs`, request key `grid`; use `-Map Plains -OnlyMods
   JigglyPanda.PandabornFactions` for a comparable layout).
 

@@ -1,9 +1,0 @@
-{
-  "WorkerTypeSpec": {
-    "Id": "PandabornRingtail",
-    "BackwardCompatibleIds": [],
-    "IgnoresWorkingHours": true,
-    "DisplayNameLocKey": "Pandaborn.Ringtails.PluralDisplayName",
-    "WorkerOnlyTextLocKey": "Pandaborn.Ringtails.WorkerOnly"
-  }
-}
