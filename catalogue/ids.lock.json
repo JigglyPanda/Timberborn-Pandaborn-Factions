@@ -231,16 +231,52 @@
       "PandabornCisternSmall.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornCisternTap.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornCourtyardHouse.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornDen.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornDewCollector.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornDryStoneWall.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFestivalSquare.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlume.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlumeBridge.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlumeCorner.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlumeDrop.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornFlumeGate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornGardenMoonGate.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornGoldfishBowl.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornGreatSittingPanda.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornHammock.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornHangingLantern.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornHotPotHall.Inkpaws": {
@@ -270,7 +306,19 @@
       "PandabornMemorialArch.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornMoonLoft.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornNapPlatform.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornNightBuildersPost.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornNightCourierPost.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornNightForagersPost.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornOperaStage.Inkpaws": {
@@ -282,6 +330,9 @@
       "PandabornPaddyHouse.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornPaddySpout.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornPandaStatue.Inkpaws": {
         "since": "2026-11-14"
       },
@@ -291,7 +342,13 @@
       "PandabornPickleYard.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornPottedPine.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornRice.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornScoopWheel.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornShootBamboo.Inkpaws": {
@@ -312,7 +369,13 @@
       "PandabornStandingLantern.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornStarTower.Inkpaws": {
+        "since": "2026-11-14"
+      },
       "PandabornSteamer.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornStringLanterns.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornTeaBush.Inkpaws": {
@@ -328,6 +391,9 @@
         "since": "2026-11-14"
       },
       "PandabornTimberBamboo.Inkpaws": {
+        "since": "2026-11-14"
+      },
+      "PandabornTreadwheelLift.Inkpaws": {
         "since": "2026-11-14"
       },
       "PandabornTripHammerMill.Inkpaws": {
@@ -632,6 +698,9 @@
         "since": "2026-11-14"
       },
       "PandabornCuredPole": {
+        "since": "2026-11-14"
+      },
+      "PandabornDewWater": {
         "since": "2026-11-14"
       },
       "PandabornHotPot": {

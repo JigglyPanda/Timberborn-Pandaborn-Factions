@@ -127,3 +127,14 @@ fuel = ""
 cycles_fuel_lasts = 0
 fuel_capacity = 0
 src = "M q8 (vanilla bot parts, one building) (building: Ox Workshop)"
+
+[recipes.PandabornDewWater]
+basis = "Paper"
+cycle_hours = 12.0
+ingredients = {  }
+products = { Water = 1 }
+capacity = 4
+fuel = ""
+cycles_fuel_lasts = 0
+fuel_capacity = 0
+src = "M q4: 2 a day; DewLimiter DroughtEfficiency 0.33, and efficiency / (collectors within 6 tiles) (building: Dew Collector)"

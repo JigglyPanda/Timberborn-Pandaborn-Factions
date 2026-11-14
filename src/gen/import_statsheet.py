@@ -59,7 +59,8 @@ RECIPES = {  # sheet id -> (catalogue id, vanilla basis recipe) ; None = not dat
     "PandabornCuredPole": ("PandabornCuredPole", "TreatedPlank"),
     "PandabornWoodenOx": ("PandabornWoodenOx", "Bot.Folktails"),
     "Gear": None, "Water": None,   # the vanilla recipes, unchanged
-    "PandabornDewWater": None, "PandabornCisternTap": None,   # need code (water module)
+    "PandabornDewWater": ("PandabornDewWater", "Paper"),   # data alone: a steady trickle; the drought limiter is code
+    "PandabornCisternTap": None,   # needs code (water module)
     "SciencePointsStarTower": None,   # Ringtail building, 1.1
 }
 NEEDS_BASIS = {
