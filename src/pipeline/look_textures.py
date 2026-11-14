@@ -59,11 +59,11 @@ TINT = {
     "BaseWood_White": (0.86, 0.85, 0.80, 1.0),       # weathered grey bamboo
     "BaseWood_LightBrown": (0.88, 0.80, 0.62, 1.0),  # cured straw-gold bamboo
     "BaseWood_Yellow": (0.66, 0.80, 0.50, 1.0),      # fresh green bamboo
-    "IrregularPlanks_White": (0.94, 0.92, 0.86, 1.0),  # woven bamboo panels, weathered
-    "IrregularPlanks_Brown": (0.66, 0.58, 0.46, 1.0),
-    "IrregularPlanks_LightBrown": (0.84, 0.78, 0.64, 1.0),
-    "IrregularPlanks_Yellow": (0.72, 0.80, 0.56, 1.0),
-    "IrregularPlanks_Mossy": (0.92, 0.88, 0.78, 1.0),
+    "IrregularPlanks_White": (1.0, 1.0, 1.0, 1.0),     # woven panels: tones are baked in (straw, grey-green)
+    "IrregularPlanks_Brown": (1.0, 1.0, 1.0, 1.0),     # coarse, smoke-darkened weave (own texture)
+    "IrregularPlanks_LightBrown": (0.96, 0.92, 0.84, 1.0),
+    "IrregularPlanks_Yellow": (0.86, 0.95, 0.78, 1.0),
+    "IrregularPlanks_Mossy": (1.0, 1.0, 1.0, 1.0),
 }
 
 
@@ -157,12 +157,17 @@ class Set:
         self.nstrength = 4.0
         self.ao_radius = 6
         self.ao_strength = 2.5
+        self.n_baked = None      # RGBA uint8, already in the game's swizzled layout (Blender bake)
+        self.ao_baked = None     # float 0..1 (Blender bake)
 
     def write(self, outdir):
         p = os.path.join(outdir, "PBLook_" + self.name)
         save_rgb(p + "_D.png", self.d)
-        Image.fromarray(normal_from_height(self.h, self.nstrength), "RGBA").save(p + "_N.png")
-        save_gray(p + "_AO.png", ao_from_height(self.h, self.ao_radius, self.ao_strength, self.ao_extra))
+        n = self.n_baked if self.n_baked is not None else normal_from_height(self.h, self.nstrength)
+        Image.fromarray(n, "RGBA").save(p + "_N.png")
+        ao = self.ao_baked if self.ao_baked is not None else ao_from_height(self.h, self.ao_radius, self.ao_strength,
+                                                                             self.ao_extra)
+        save_gray(p + "_AO.png", ao)
         save_m(p + "_M.png", self.metal, self.smooth)
         maps = {"_MainTex": p + "_D.png", "_BumpMap": p + "_N.png", "_AmbientOcclusion": p + "_AO.png",
                 "_MetallicGlossMap": p + "_M.png"}
@@ -170,6 +175,48 @@ class Set:
             save_rgb(p + "_E.png", self.e)
             maps["_LightingMap"] = p + "_E.png"
         return maps
+
+
+# ------------------------------------------------------------------------------------------------ Blender bakes
+BAKE = "E:/PandabornDev/build/look/bake"
+LIGHT = np.array([-0.45, 0.55, 0.70]) / np.linalg.norm([-0.45, 0.55, 0.70])   # painted light: upper left
+
+
+def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5):
+    """A set baked by src/pipeline/bake_sheets.py (Cycles passes of modelled geometry). The albedo gets a painted
+    light (soft top-left key + AO), the way the vanilla sheets are hand-painted, so models do not look flatter than
+    Folktails ones under the game's own lighting."""
+    d = os.path.join(BAKE, name)
+    diff = np.load(os.path.join(d, "diffcol.npy"))
+    nrm = np.load(os.path.join(d, "normal.npy"))
+    ao = np.clip(np.load(os.path.join(d, "ao.npy")).mean(2), 0, 1)
+    ln = np.linalg.norm(nrm, axis=2, keepdims=True)
+    nrm = nrm / np.maximum(ln, 1e-6)
+    lam = np.clip((nrm * LIGHT).sum(2), 0, 1)
+    flat = LIGHT[2]
+    shade = (1 - paint + paint * lam / flat) * (1 - ao_paint + ao_paint * ao ** 1.3)
+    lin = np.clip(diff * shade[..., None], 0, 1)
+    st = Set(name)
+    st.d = np.where(lin <= 0.0031308, lin * 12.92, 1.055 * np.power(lin, 1 / 2.4) - 0.055).astype(np.float32)
+    n8 = np.zeros((S, S, 4), np.uint8)
+    n8[..., 0] = 255
+    n8[..., 1] = np.clip((nrm[..., 1] * 0.5 + 0.5) * 255, 0, 255)
+    n8[..., 2] = n8[..., 1]
+    n8[..., 3] = np.clip((nrm[..., 0] * 0.5 + 0.5) * 255, 0, 255)
+    st.n_baked = n8
+    st.ao_baked = ao
+    st.smooth = smooth
+    st.metal = metal
+    return st
+
+
+def baked_or(name, fallback, smooth):
+    def make():
+        if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
+            print("  (from Blender bake)", flush=True)
+            return from_bake(name, smooth)
+        return fallback()
+    return make
 
 
 # ------------------------------------------------------------------------------------------------ painters
@@ -597,8 +644,11 @@ def make_windows():
     st.h = 0.3 + 0.3 * edge * frame - 0.1 * gl + 0.12 * (glass & lattice) - 0.2 * interior + 0.03 * noise(93, 6)
     st.smooth = np.where(frame, 0.4, 0.15)
     e = np.zeros((S, S, 3), np.float32)
-    e[:] = (np.array([255, 200, 130]) / 255.0)[None, None, :]
-    e *= (glow_soft * (~lattice | ~glass))[..., None]
+    # warm lamplight through paper: flat and strong across the panes (the vanilla map falls off toward the frame),
+    # cut by the lattice; the doorway keeps the vanilla soft gradient
+    e[:] = (np.array([255, 212, 150]) / 255.0)[None, None, :]
+    pane = np.where(glass, np.clip(0.75 + 0.35 * glow_soft, 0, 1), glow_soft)
+    e *= (pane * (~(lattice & glass)))[..., None]
     st.e = e
     return st
 
@@ -700,9 +750,11 @@ def make_moss():
 
 
 SETS = {
-    "Timber": make_timber, "Bamboo": make_bamboo, "Weave": make_weave,
-    "WeaveCoarse": lambda: make_weave("WeaveCoarse", 48, 121),
-    "WeaveMossy": lambda: make_weave("WeaveMossy", 32, 221, True), "RoofTiles": make_tiles,
+    "Timber": baked_or("Timber", make_timber, 0.30), "Bamboo": baked_or("Bamboo", make_bamboo, 0.40),
+    "Weave": baked_or("Weave", make_weave, 0.25),
+    "WeaveCoarse": baked_or("WeaveCoarse", lambda: make_weave("WeaveCoarse", 48, 121), 0.22),
+    "WeaveMossy": baked_or("WeaveMossy", lambda: make_weave("WeaveMossy", 32, 221, True), 0.20),
+    "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30),
     "Plaster": make_plaster, "PlasterLath": make_plastered_wood, "LatticePaper": make_lattice_paper,
     "Iron": make_iron, "Banded": make_painted, "Windows": make_windows, "Details": make_details,
     "RammedEarth": make_earth, "Moss": make_moss,

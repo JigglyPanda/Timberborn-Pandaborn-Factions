@@ -1,0 +1,214 @@
+{
+  "run": {
+    "inGameHours": 13.5,
+    "realSeconds": 240
+  },
+  "speed": 3,
+  "batchControl": false,
+  "buildings": [
+    "Lodge.Folktails",
+    "DoubleLodge.Folktails",
+    "LumberMill.Folktails",
+    "Inventor.Folktails",
+    "WaterWheel.Folktails",
+    "PowerShaft.Folktails",
+    "SmallWarehouse.Folktails",
+    "MediumTank.Folktails",
+    "Campfire.Folktails",
+    "Lantern.Folktails",
+    "PoleBanner.Folktails",
+    "WindTurbine.Folktails",
+    "GearWorkshop.Folktails",
+    "Bakery.Folktails",
+    "SmallPile.Folktails",
+    "Shrub.Folktails",
+    {
+      "template": "TripleLodge.Folktails",
+      "finished": false
+    },
+    {
+      "template": "Gristmill.Folktails",
+      "finished": false
+    },
+    "WoodWorkshop.Folktails",
+    "BeaverStatue.Folktails"
+  ],
+  "screenshots": [
+    {
+      "name": "day_overview",
+      "kind": "overview",
+      "at": "start"
+    },
+    {
+      "name": "night_overview",
+      "kind": "overview",
+      "at": "end"
+    },
+    {
+      "name": "day_dc",
+      "kind": "building",
+      "target": "DistrictCenter.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_lodge",
+      "kind": "building",
+      "target": "Lodge.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_doublelodge",
+      "kind": "building",
+      "target": "DoubleLodge.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_lumbermill",
+      "kind": "building",
+      "target": "LumberMill.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_warehouse",
+      "kind": "building",
+      "target": "SmallWarehouse.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_tank",
+      "kind": "building",
+      "target": "MediumTank.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_inventor",
+      "kind": "building",
+      "target": "Inventor.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_waterwheel",
+      "kind": "building",
+      "target": "WaterWheel.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "day_triplelodge",
+      "kind": "building",
+      "target": "TripleLodge.Folktails",
+      "at": "start",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_dc",
+      "kind": "building",
+      "target": "DistrictCenter.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_lodge",
+      "kind": "building",
+      "target": "Lodge.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_doublelodge",
+      "kind": "building",
+      "target": "DoubleLodge.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_lumbermill",
+      "kind": "building",
+      "target": "LumberMill.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_warehouse",
+      "kind": "building",
+      "target": "SmallWarehouse.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_tank",
+      "kind": "building",
+      "target": "MediumTank.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_inventor",
+      "kind": "building",
+      "target": "Inventor.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_waterwheel",
+      "kind": "building",
+      "target": "WaterWheel.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    },
+    {
+      "name": "night_triplelodge",
+      "kind": "building",
+      "target": "TripleLodge.Folktails",
+      "at": "end",
+      "yaw": 0,
+      "pitch": 38,
+      "zoom": 1.0
+    }
+  ],
+  "screenshotSize": [
+    1600,
+    1100
+  ]
+}

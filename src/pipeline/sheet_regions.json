@@ -1,0 +1,1261 @@
+{
+ "note": "pixels of a 1024 sheet, [x0, y0, x1, y1), y down; u = x/1024, v = 1 - y/1024",
+ "sheets": {
+  "BaseWood": {
+   "materials": [
+    "BaseWood_Brown",
+    "BaseWood_White",
+    "BaseWood_LightBrown",
+    "BaseWood_Yellow"
+   ],
+   "ourSet": "Timber (Brown), Bamboo (White, LightBrown, Yellow)",
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      512,
+      500
+     ],
+     "kind": "long-grain block (long faces of beams and logs)"
+    },
+    {
+     "rect": [
+      516,
+      4,
+      572,
+      501
+     ],
+     "kind": "plank strip 56x497 px, grain vertical"
+    },
+    {
+     "rect": [
+      580,
+      4,
+      636,
+      501
+     ],
+     "kind": "plank strip 56x497 px, grain vertical"
+    },
+    {
+     "rect": [
+      644,
+      4,
+      700,
+      501
+     ],
+     "kind": "plank strip 56x497 px, grain vertical"
+    },
+    {
+     "rect": [
+      708,
+      4,
+      764,
+      501
+     ],
+     "kind": "plank strip 56x497 px, grain vertical"
+    },
+    {
+     "rect": [
+      772,
+      4,
+      828,
+      121
+     ],
+     "kind": "plank strip 56x117 px, grain vertical"
+    },
+    {
+     "rect": [
+      836,
+      4,
+      892,
+      121
+     ],
+     "kind": "plank strip 56x117 px, grain vertical"
+    },
+    {
+     "rect": [
+      900,
+      4,
+      956,
+      121
+     ],
+     "kind": "plank strip 56x117 px, grain vertical"
+    },
+    {
+     "rect": [
+      964,
+      4,
+      1020,
+      121
+     ],
+     "kind": "plank strip 56x117 px, grain vertical"
+    },
+    {
+     "rect": [
+      772,
+      132,
+      828,
+      501
+     ],
+     "kind": "plank strip 56x369 px, grain vertical"
+    },
+    {
+     "rect": [
+      836,
+      132,
+      892,
+      501
+     ],
+     "kind": "plank strip 56x369 px, grain vertical"
+    },
+    {
+     "rect": [
+      900,
+      132,
+      956,
+      501
+     ],
+     "kind": "plank strip 56x369 px, grain vertical"
+    },
+    {
+     "rect": [
+      964,
+      132,
+      1020,
+      501
+     ],
+     "kind": "plank strip 56x369 px, grain vertical"
+    },
+    {
+     "rect": [
+      4,
+      516,
+      60,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      68,
+      516,
+      124,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      132,
+      516,
+      188,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      196,
+      516,
+      252,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      260,
+      516,
+      316,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      324,
+      516,
+      380,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      388,
+      516,
+      444,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      452,
+      516,
+      508,
+      1020
+     ],
+     "kind": "plank strip 56x504 px, grain vertical"
+    },
+    {
+     "rect": [
+      516,
+      516,
+      572,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      580,
+      516,
+      636,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      644,
+      516,
+      700,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      708,
+      516,
+      764,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      772,
+      516,
+      828,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      836,
+      516,
+      892,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      900,
+      516,
+      956,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      964,
+      516,
+      1020,
+      761
+     ],
+     "kind": "plank strip 56x245 px, grain vertical"
+    },
+    {
+     "rect": [
+      512,
+      768,
+      640,
+      896
+     ],
+     "kind": "end-grain disc, with hole (peg / hollow)"
+    },
+    {
+     "rect": [
+      640,
+      768,
+      768,
+      896
+     ],
+     "kind": "end-grain disc, rings"
+    },
+    {
+     "rect": [
+      512,
+      896,
+      640,
+      1024
+     ],
+     "kind": "end-grain disc, broken / splintered"
+    },
+    {
+     "rect": [
+      640,
+      896,
+      768,
+      960
+     ],
+     "kind": "end-grain disc, small"
+    },
+    {
+     "rect": [
+      640,
+      960,
+      768,
+      1024
+     ],
+     "kind": "end-grain disc, small"
+    },
+    {
+     "rect": [
+      768,
+      768,
+      1024,
+      1024
+     ],
+     "kind": "plain fill (no grain)"
+    }
+   ]
+  },
+  "IrregularPlanks": {
+   "materials": [
+    "IrregularPlanks_*"
+   ],
+   "ourSet": "Weave (White, LightBrown, Yellow), WeaveCoarse (Brown), WeaveMossy (Mossy)",
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      143,
+      1024
+     ],
+     "kind": "plank 1 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      143,
+      0,
+      243,
+      1024
+     ],
+     "kind": "plank 2 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      243,
+      0,
+      377,
+      1024
+     ],
+     "kind": "plank 3 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      377,
+      0,
+      509,
+      1024
+     ],
+     "kind": "plank 4 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      509,
+      0,
+      640,
+      1024
+     ],
+     "kind": "plank 5 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      640,
+      0,
+      772,
+      1024
+     ],
+     "kind": "plank 6 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      772,
+      0,
+      890,
+      1024
+     ],
+     "kind": "plank 7 (full height, grain vertical)"
+    },
+    {
+     "rect": [
+      890,
+      0,
+      1023,
+      1024
+     ],
+     "kind": "plank 8 (full height, grain vertical)"
+    }
+   ]
+  },
+  "ThatchedRoof": {
+   "materials": [
+    "ThatchedRoof"
+   ],
+   "ourSet": "RoofTiles",
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      1024,
+      200
+     ],
+     "kind": "roof course 1 (lower edge at bottom, slope runs up)"
+    },
+    {
+     "rect": [
+      0,
+      200,
+      1024,
+      456
+     ],
+     "kind": "roof course 2 (lower edge at bottom, slope runs up)"
+    },
+    {
+     "rect": [
+      0,
+      456,
+      1024,
+      712
+     ],
+     "kind": "roof course 3 (lower edge at bottom, slope runs up)"
+    },
+    {
+     "rect": [
+      0,
+      712,
+      1024,
+      968
+     ],
+     "kind": "roof course 4 (lower edge at bottom, slope runs up)"
+    },
+    {
+     "rect": [
+      0,
+      968,
+      1024,
+      1024
+     ],
+     "kind": "top of course 1 continued (sheet tiles vertically)"
+    }
+   ]
+  },
+  "WindowsAtlas": {
+   "materials": [
+    "WindowsAtlas"
+   ],
+   "ourSet": "Windows",
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      256
+     ],
+     "kind": "round window, framed, with inner ring"
+    },
+    {
+     "rect": [
+      256,
+      0,
+      512,
+      256
+     ],
+     "kind": "round window, framed"
+    },
+    {
+     "rect": [
+      0,
+      256,
+      256,
+      512
+     ],
+     "kind": "round window, framed, with inner ring (2)"
+    },
+    {
+     "rect": [
+      256,
+      256,
+      512,
+      512
+     ],
+     "kind": "round window, framed, one mullion"
+    },
+    {
+     "rect": [
+      0,
+      512,
+      512,
+      1024
+     ],
+     "kind": "doorway interior: dark, with a soft glow gradient at night"
+    },
+    {
+     "rect": [
+      544,
+      32,
+      640,
+      200
+     ],
+     "kind": "small tall window"
+    },
+    {
+     "rect": [
+      672,
+      32,
+      960,
+      160
+     ],
+     "kind": "long window, four lights"
+    },
+    {
+     "rect": [
+      544,
+      256,
+      992,
+      496
+     ],
+     "kind": "arched window with mullions"
+    },
+    {
+     "rect": [
+      768,
+      512,
+      1024,
+      768
+     ],
+     "kind": "porthole / round light in a dark frame"
+    },
+    {
+     "rect": [
+      768,
+      768,
+      1024,
+      1024
+     ],
+     "kind": "glass / light panel, vertical gradient"
+    },
+    {
+     "rect": [
+      512,
+      512,
+      768,
+      1024
+     ],
+     "kind": "plain wall"
+    },
+    {
+     "rect": [
+      0,
+      0,
+      1024,
+      1024
+     ],
+     "kind": "background = wall around windows (flat)",
+     "background": true
+    }
+   ]
+  },
+  "Details": {
+   "materials": [
+    "Details"
+   ],
+   "ourSet": "Details",
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      512,
+      512
+     ],
+     "kind": "banner cloth (faction emblem)"
+    },
+    {
+     "rect": [
+      512,
+      0,
+      768,
+      512
+     ],
+     "kind": "sack"
+    },
+    {
+     "rect": [
+      768,
+      0,
+      832,
+      512
+     ],
+     "kind": "rope (vertical)"
+    },
+    {
+     "rect": [
+      832,
+      0,
+      1024,
+      170
+     ],
+     "kind": "good label 1 (red in vanilla: planks)"
+    },
+    {
+     "rect": [
+      832,
+      170,
+      1024,
+      340
+     ],
+     "kind": "good label 2 (green: logs)"
+    },
+    {
+     "rect": [
+      832,
+      340,
+      1024,
+      512
+     ],
+     "kind": "good label 3 (purple: berries)"
+    },
+    {
+     "rect": [
+      0,
+      512,
+      256,
+      768
+     ],
+     "kind": "crate side with X brace"
+    },
+    {
+     "rect": [
+      256,
+      512,
+      512,
+      768
+     ],
+     "kind": "crate side with X brace (2)"
+    },
+    {
+     "rect": [
+      0,
+      768,
+      256,
+      1024
+     ],
+     "kind": "crate lid / framed panel"
+    },
+    {
+     "rect": [
+      256,
+      768,
+      512,
+      1024
+     ],
+     "kind": "plain planks, horizontal"
+    },
+    {
+     "rect": [
+      512,
+      512,
+      1024,
+      1024
+     ],
+     "kind": "vertical planks with two metal bands (now cane lashing)"
+    }
+   ]
+  },
+  "Paper": {
+   "materials": [
+    "Paper"
+   ],
+   "ourSet": "LatticePaper",
+   "regions": [
+    {
+     "rect": [
+      4,
+      6,
+      167,
+      254
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      174,
+      6,
+      337,
+      254
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      343,
+      0,
+      1024,
+      1024
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      4,
+      261,
+      168,
+      509
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      175,
+      260,
+      337,
+      510
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      343,
+      260,
+      509,
+      509
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      0,
+      516,
+      510,
+      766
+     ],
+     "kind": "paper panel inside a frame"
+    },
+    {
+     "rect": [
+      0,
+      772,
+      510,
+      1021
+     ],
+     "kind": "paper panel inside a frame"
+    }
+   ]
+  },
+  "BaseMetal": {
+   "materials": [
+    "BaseMetal"
+   ],
+   "ourSet": "Iron",
+   "regions": [
+    {
+     "rect": [
+      7,
+      8,
+      505,
+      505
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      514,
+      0,
+      1024,
+      382
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      776,
+      264,
+      1016,
+      504
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      818,
+      305,
+      975,
+      463
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      517,
+      389,
+      571,
+      507
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      581,
+      389,
+      635,
+      507
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      645,
+      389,
+      699,
+      507
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      709,
+      389,
+      763,
+      507
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      17,
+      520,
+      47,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      59,
+      516,
+      69,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      81,
+      520,
+      111,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      123,
+      516,
+      133,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      145,
+      520,
+      175,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      187,
+      516,
+      197,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      209,
+      520,
+      239,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      251,
+      516,
+      261,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      273,
+      520,
+      303,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      315,
+      516,
+      325,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      337,
+      520,
+      367,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      379,
+      516,
+      389,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      401,
+      520,
+      431,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      443,
+      516,
+      453,
+      1020
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      465,
+      520,
+      495,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      520,
+      520,
+      760,
+      760
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      529,
+      776,
+      559,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      593,
+      776,
+      623,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      657,
+      776,
+      687,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      721,
+      776,
+      751,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      776,
+      776,
+      888,
+      888
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      904,
+      776,
+      1016,
+      888
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      776,
+      904,
+      888,
+      1016
+     ],
+     "kind": "plate"
+    },
+    {
+     "rect": [
+      904,
+      904,
+      1016,
+      1016
+     ],
+     "kind": "plate"
+    }
+   ]
+  },
+  "PaintedMetal": {
+   "materials": [
+    "PaintedMetal"
+   ],
+   "ourSet": "Banded",
+   "regions": [
+    {
+     "rect": [
+      27,
+      0,
+      89,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      155,
+      0,
+      228,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      294,
+      0,
+      346,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      411,
+      0,
+      485,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      551,
+      0,
+      613,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      668,
+      0,
+      729,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      795,
+      0,
+      857,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    },
+    {
+     "rect": [
+      923,
+      0,
+      985,
+      1024
+     ],
+     "kind": "stripe (yellow in vanilla, cane binding in ours)"
+    }
+   ]
+  }
+ },
+ "texelDensity": {
+  "BaseWood_Brown": {
+   "medianPxPerTile": 416.2,
+   "p10": 244.2,
+   "p90": 700.2
+  },
+  "BaseMetal": {
+   "medianPxPerTile": 358.6,
+   "p10": 187.5,
+   "p90": 897.7
+  },
+  "WindowsAtlas": {
+   "medianPxPerTile": 462.7,
+   "p10": 284.1,
+   "p90": 858.8
+  },
+  "BaseWood_LightBrown": {
+   "medianPxPerTile": 366.2,
+   "p10": 197.9,
+   "p90": 830.0
+  },
+  "BaseWood_White": {
+   "medianPxPerTile": 491.4,
+   "p10": 239.7,
+   "p90": 1498.5
+  },
+  "Details": {
+   "medianPxPerTile": 704.6,
+   "p10": 365.0,
+   "p90": 1264.5
+  },
+  "IrregularPlanks_Brown": {
+   "medianPxPerTile": 578.9,
+   "p10": 453.6,
+   "p90": 832.1
+  },
+  "ThatchedRoof": {
+   "medianPxPerTile": 497.4,
+   "p10": 309.8,
+   "p90": 625.4
+  },
+  "IrregularPlanks_White": {
+   "medianPxPerTile": 473.2,
+   "p10": 386.4,
+   "p90": 673.8
+  },
+  "Paper": {
+   "medianPxPerTile": 437.4,
+   "p10": 277.3,
+   "p90": 1104.2
+  },
+  "Sand": {
+   "medianPxPerTile": 366.3,
+   "p10": 366.3,
+   "p90": 366.3
+  },
+  "Plaster_White": {
+   "medianPxPerTile": 435.6,
+   "p10": 319.1,
+   "p90": 769.6
+  },
+  "IrregularPlanks_LightBrown": {
+   "medianPxPerTile": 605.7,
+   "p10": 473.0,
+   "p90": 646.3
+  },
+  "Moss": {
+   "medianPxPerTile": 478.1,
+   "p10": 264.9,
+   "p90": 4809.3
+  },
+  "Path": {
+   "medianPxPerTile": 1959.0,
+   "p10": 1113.1,
+   "p90": 4487.9
+  },
+  "PlasteredWood_White": {
+   "medianPxPerTile": 512.0,
+   "p10": 390.7,
+   "p90": 575.2
+  },
+  "IrregularPlanks_Mossy": {
+   "medianPxPerTile": 517.1,
+   "p10": 413.0,
+   "p90": 622.8
+  },
+  "PaintedMetal": {
+   "medianPxPerTile": 565.5,
+   "p10": 324.8,
+   "p90": 880.8
+  },
+  "BaseWood_Yellow": {
+   "medianPxPerTile": 502.3,
+   "p10": 270.4,
+   "p90": 888.0
+  },
+  "Hedge": {
+   "medianPxPerTile": 821.3,
+   "p10": 589.7,
+   "p90": 1213.0
+  },
+  "Dam": {
+   "medianPxPerTile": 512.0,
+   "p10": 324.1,
+   "p90": 601.1
+  },
+  "Shrub": {
+   "medianPxPerTile": 484.0,
+   "p10": 327.8,
+   "p90": 830.9
+  },
+  "Bot": {
+   "medianPxPerTile": 910.6,
+   "p10": 700.5,
+   "p90": 989.0
+  }
+ }
+}

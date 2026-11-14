@@ -88,7 +88,8 @@ public static class PandabornLookBuilder
             if (BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX))
                 BuildFor(outDir, bundleName + "_mac", matPaths, BuildTarget.StandaloneOSX);
             else
-                Debug.LogWarning("[PandabornLook] Mac Build Support is not installed: no _mac bundle");
+                throw new Exception("-mac given but Mac Build Support (Mono) is not installed for this editor: install the "
+                                    + "module (Unity Hub > Installs > 6000.5.11f1 > Add modules), then rerun");
         }
         foreach (var extra in new[] { Path.GetFileName(outDir.TrimEnd('/', '\\')), "AssetBundles" })
         {
