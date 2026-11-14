@@ -11,7 +11,8 @@ import os
 import sys
 from collections import Counter, defaultdict
 
-RINGTAIL_WORKPLACES = {"RingtailHaulingPost.Inkpaws", "RingtailGathererFlag.Inkpaws"}
+RINGTAIL_WORKPLACES = {"RingtailHaulingPost.Inkpaws", "RingtailGathererFlag.Inkpaws", "PandabornNightBuildersPost.Inkpaws",
+                       "PandabornNightCourierPost.Inkpaws", "PandabornNightForagersPost.Inkpaws"}
 WORK_EXECUTORS_IDLE = {"WaitInsideIdlyWorkplaceBehavior"}
 
 
@@ -22,11 +23,15 @@ def load(path):
         return json.load(f)
 
 
+BELL = [16.0]
+
+
 def phase(hour):
-    """hour = hours after dawn. Morning 0-8 (Inkpaws only), afternoon 8-16 (both), night 16-24 (Ringtails only)."""
-    if hour < 8:
+    """hour = hours after dawn. Rest/day: dawn to the bell (Inkpaws work); night: the bell to dawn (Ringtails work).
+    The early part of the day (first 4 h) is reported separately as "morning" (Ringtails asleep)."""
+    if hour < 4:
         return "morning"
-    if hour < 16:
+    if hour < BELL[0]:
         return "afternoon"
     return "night"
 
@@ -55,6 +60,8 @@ def activity(c):
 
 def analyse_samples(probe, label):
     samples = probe.get("samples", []) if probe else []
+    if samples and samples[-1].get("sliderHours"):
+        BELL[0] = float(samples[-1]["sliderHours"])
     out = {"label": label, "samples": len(samples)}
     if not samples:
         return out, []

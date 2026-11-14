@@ -67,6 +67,7 @@ namespace Pandaborn.Ringtails.Dev
         private readonly EntitySelectionService _entitySelectionService;
         private readonly WorkingHoursManager _workingHoursManager;
         private readonly PathConnector _pathConnector;
+        private readonly EntityService _entityService;
 
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
@@ -94,7 +95,7 @@ namespace Pandaborn.Ringtails.Dev
         public RingtailProbe(EventBus eventBus, IDayNightCycle dayNightCycle,
                              CharacterPopulation characterPopulation, DistrictCenterRegistry districtCenterRegistry, EntityRegistry entityRegistry,
                              EntitySelectionService entitySelectionService, WorkingHoursManager workingHoursManager,
-                             PathConnector pathConnector)
+                             PathConnector pathConnector, EntityService entityService)
         {
             _eventBus = eventBus;
             _dayNightCycle = dayNightCycle;
@@ -104,6 +105,7 @@ namespace Pandaborn.Ringtails.Dev
             _entitySelectionService = entitySelectionService;
             _workingHoursManager = workingHoursManager;
             _pathConnector = pathConnector;
+            _entityService = entityService;
             _config = HarnessBridge.Config;
         }
 
@@ -514,10 +516,37 @@ namespace Pandaborn.Ringtails.Dev
             }
         }
 
+        private readonly List<JObject> _laterDelete = new List<JObject>();
+        private bool _laterDeleteLoaded;
+
+        /// <summary>"laterDelete": [ { "day": 1, "hour": 2, "template": "PandabornNightCourierPost.Inkpaws" } ]: demolish the first such
+        /// building at that time (to see what its Ringtails do).</summary>
+        private void DeleteDueLater(float runHour)
+        {
+            if (!_laterDeleteLoaded)
+            {
+                _laterDeleteLoaded = true;
+                if (!HarnessBridge.LoadSave && _config["laterDelete"] is JArray later) _laterDelete.AddRange(later.OfType<JObject>());
+            }
+            for (int i = _laterDelete.Count - 1; i >= 0; i--)
+            {
+                var item = _laterDelete[i];
+                float due = (item["day"]?.Value<float>() ?? 0f) * 24f + (item["hour"]?.Value<float>() ?? 0f) - (float)Math.Floor(_firstSampleSinceDawn);
+                if (runHour < due) continue;
+                _laterDelete.RemoveAt(i);
+                string template = (string)item["template"];
+                var target = _entityRegistry.Entities.FirstOrDefault(e => TemplateName(e) == template);
+                if (target == null) { Event("laterDelete", template + " not found"); continue; }
+                _entityService.Delete(target);
+                Event("laterDelete", "demolished " + template);
+            }
+        }
+
         private void QueueDueShots()
         {
             float runHour = _dayNightCycle.PartialDayNumber * 24f - _firstSampleHours;
             PlaceDueLater(runHour);
+            DeleteDueLater(runHour);
             for (int i = _pendingShots.Count - 1; i >= 0; i--)
             {
                 var s = _pendingShots[i];

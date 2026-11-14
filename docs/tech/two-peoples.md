@@ -849,3 +849,19 @@ their output store should hold a day's harvest, so the night couriers clear it.
 | Ringtail names | Not done in data: the templates need `PandabornNamePoolSpec` with `Pandaborn.Ringtail.NamePool` (names.json); until then Ringtails get vanilla beaver names |
 
 All interface code runs inside `SafeUi`; a failing piece switches itself off for the session.
+
+### 18.6 Tests and what is still unproven
+
+| Run | What | Result |
+|---|---|---|
+| `rt2-module1` | The module on the real generated build: Moon Loft → arrival, three night posts, badge, row, panel lines, statuses, 34 h | Passed, 0 errors from our code. Found and fixed: the arriving kit could not move in (the arrival runs before the loft has worked out its kit slots), an Inkpaw cub took the loft's kit slot (now moved to a cub slot elsewhere) |
+| `rt2-shelvesA/B/C` | Night couriers vs shelf size (§18.3) | Passed, 0 errors |
+| `rt2-forcedoff` | A save with Ringtails reloaded with `force-off: Ringtails` (the probe writes the dev switch for the relaunch only and removes it) | <!-- FORCEDOFF --> |
+| `rt2-soak` | Five days (2.5 + save/reload + 2.5), Bell on with a 12-hour day, three posts, ten Moon Lofts requested, workshops, a post demolished on day 1 | <!-- SOAK --> |
+| `rt2-folktails` | Folktails with the module and test data | <!-- FOLKTAILS --> |
+
+Unproven: Ringtail names (data not there yet); walking in from the map edge (they appear at the loft); the toolbar moon
+mark and the clock arc; the Night Builders' Post actually raising sites at night (it needs sites queued after the bell
+in a layout with room; the soak queues dens after the bell); births over many days (one kit per loft per dawn was seen
+blocked by the cub, then fixed, but a long breeding run was not done); the module-off case where the API check fails
+for real (simulated by `force-off` and by `simulate-missing-member: Ringtails`, which takes the degraded path).

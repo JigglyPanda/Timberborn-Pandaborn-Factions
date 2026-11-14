@@ -8,20 +8,19 @@
       "PandabornNightForagersPost.Inkpaws",
       "LumberjackFlag.Inkpaws",
       "GathererFlag.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornMoonLoft.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
+      "PandabornDen.Inkpaws",
       "PaperMill.Inkpaws",
       "PandabornPickleYard.Inkpaws",
       "LargePile.Inkpaws",
       "MediumWarehouse.Inkpaws",
       "MediumWarehouse.Inkpaws",
       "MediumWarehouse.Inkpaws",
-      "PandabornDen.Inkpaws",
-      "PandabornDen.Inkpaws",
-      "PandabornDen.Inkpaws",
-      "PandabornDen.Inkpaws",
-      "PandabornDen.Inkpaws",
-      "PandabornMoonLoft.Inkpaws",
-      "PandabornMoonLoft.Inkpaws",
-      "PandabornMoonLoft.Inkpaws",
       "PandabornMoonLoft.Inkpaws",
       "PandabornMoonLoft.Inkpaws",
       "PandabornMoonLoft.Inkpaws",
@@ -188,6 +187,13 @@
         }
       ]
     },
-    "workingHours": 12
+    "workingHours": 12,
+    "laterDelete": [
+      {
+        "day": 1,
+        "hour": 3,
+        "template": "PandabornNightForagersPost.Inkpaws"
+      }
+    ]
   }
 }
