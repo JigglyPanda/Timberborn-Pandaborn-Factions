@@ -17,6 +17,7 @@ powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 test              #
 |---|---|---|
 | `faction.toml` | the faction file, characters, bot, shaft parts, decal and outfit copies | `Factions/`, `Characters/`, `Decals/`, `WorkerOutfits/`, `TemplateCollections/` (all under `Pandaborn/`) |
 | `buildings.toml` | every building, one line each; the template collection `Buildings.Inkpaws` in this order | `Buildings/Pandaborn/<group>/<Id>/<Id>.Inkpaws.blueprint.json` |
+| `building_stats.toml` | the balance numbers of buildings (cost, science, workers, storage capacity), imported from the stat sheet; merged into `buildings.toml` items (a field set in both is an error) | (used by buildings) |
 | `archetypes.toml` | named defaults for wholly new buildings (workshop, dwelling, attraction...) | (used by buildings) |
 | `goods.toml` | new goods + the good collection `Goods.Inkpaws` | `Goods/Pandaborn/`, `GoodCollections/Pandaborn/` |
 | `needs.toml` | new needs + the need collection `Needs.Inkpaws` | `Needs/Pandaborn/`, `NeedCollections/Pandaborn/` |
@@ -71,6 +72,8 @@ PandabornPickleYard = { archetype = "workshop", recipes = ["PandabornPickles"], 
 | (key) | the building id; template name = id + `.Inkpaws` (frozen once locked) |
 | `basis` | vanilla template name; default `<Id>.Folktails` (a plain re-theme) |
 | `archetype` | defaults from `archetypes.toml` (basis + required specs); the building's own fields win |
+| `model` | adopt an art-lane model: `model = "Den"` reads `art/models/Den/model.json` (footprint, blocks, entrance, access, colliders, both meshes, construction base and stage, attachments, anchor, the model's spec additions/removals); the basis defaults to the model's `standIn`. Meshes come from the `models` stage. Water pieces wait for the water module |
+| `waits_for`, `needs_code` | the code module this stand-in waits for (`Water`, `Ringtails`, `Festival`...) and what it does until then; listed by module in the report |
 | `vanilla` | list a vanilla blueprint unchanged in the collection (dev buildings) |
 | `text` | entry in `text/buildings.json`; `null` texts there keep the vanilla loc key (already translated) |
 | `cost` | `{ Log = 10, Plank = 5 }` replaces `BuildingSpec.BuildingCost` (after `rules.toml` substitutions) |
@@ -88,6 +91,13 @@ PandabornPickleYard = { archetype = "workshop", recipes = ["PandabornPickles"], 
 
 Template-name references inside a basis (a tunnel's support platform, a detonator's dynamite) are rewritten to our
 copies automatically; a reference to a Folktails template the Inkpaws do not have is an error.
+
+**Worked example: adopting a model.** When the kit writes `art/models/Steamer/model.json`, the Steamer's line becomes
+`PandabornSteamer = { model = "Steamer", recipes = [...] }`; `pandaborn.ps1 all` builds the mesh, generates the
+blueprint from the model, copies the meshes to `Buildings/Pandaborn/Models/Steamer/`, and the validator checks the
+blueprint against `model.json` and the mesh (slot keywords, animated nodes and their drivers). `.models.request.json`
+next to the generated folder is a ready test request: every adopted model placed and finished, one copy per model
+started so its construction stage shows, and close-ups of both (`tools/run_game_test.ps1 -RequestJson ...`).
 
 **Worked example: a new building.** The Kitchen bakes sweet rice balls and seed cakes on the vanilla bakery until its
 own model exists:
@@ -184,7 +194,7 @@ re-keyed to Inkpaws).
 
 ## Balance numbers
 
-`goods/needs/recipes/plants.toml` were imported once from the balance model's sheet (`tools/sim/out/statsheet.json`)
+`goods/needs/recipes/plants.toml` and `building_stats.toml` were imported once from the balance model's sheet (`tools/sim/out/statsheet.json`)
 by `src/gen/import_statsheet.py`; each item keeps its `src`. The catalogue is now the source: a balance change is one
 edit here plus `pandaborn.ps1 all`. `python src/gen/import_statsheet.py --check` (also printed by the validate stage)
 lists every number where the latest sheet and the catalogue differ.

@@ -35,6 +35,7 @@ class Generator:
         self.model_files = {}     # mod rel path -> built mesh (E:\PandabornDev\build\models), copied by assemble
         self.adopted_models = {}  # model id -> {item, modelJson, standIn}
         self.mesh_dir = None
+        self.code_waits = {}      # code module -> buildings that are vanilla-behaving stand-ins until it ships
         self.rules = catalogue["rules"]
         self.suffix = self.rules.get("names", {}).get("template_suffix", ".Inkpaws")
         self.source_faction = self.rules.get("names", {}).get("source_faction", "Folktails")
@@ -214,9 +215,32 @@ class Generator:
                 self.template_map[vname] = template
             self.plan[bid] = {"key": key, "template": template, "item": item, "vname": vname}
 
+    def merged_stats(self, bid, b, item):
+        """Numbers from catalogue/building_stats.toml (the balance lane's file) joined to a building; a field set in
+        both files is an error, so nobody wonders which one wins."""
+        st = self.stats.get(bid)
+        if not st:
+            return b
+        allowed = {"cost", "science", "workers", "default_workers", "capacity", "src"}
+        unknown = set(st) - allowed
+        if unknown:
+            raise GenError("catalogue/building_stats.toml [stats.%s]: unknown field(s) %s" % (bid, ", ".join(sorted(unknown))))
+        both = sorted(k for k in st if k != "src" and k in b)
+        if both:
+            raise GenError("%s: %s set both here and in catalogue/building_stats.toml [stats.%s]; keep one"
+                           % (item, ", ".join(both), bid))
+        merged = dict(b)
+        merged.update({k: v for k, v in st.items() if k != "src"})
+        return merged
+
     def gen_buildings(self):
         text = self.cat.text_by_id("buildings")
         coll = []
+        self.stats = (self.cat["building_stats"].get("stats") or {})
+        orphans = sorted(set(self.stats) - set(self.building_items()))
+        if orphans:
+            raise GenError("catalogue/building_stats.toml has numbers for buildings that buildings.toml does not "
+                           "have: %s" % ", ".join(orphans))
         for bid, b in self.building_items().items():
             p = self.plan[bid]
             item = p["item"]
@@ -225,6 +249,7 @@ class Generator:
                 continue
             key = p["key"]
             data = self.v.copy(key)
+            b = self.merged_stats(bid, b, item)
             if b.get("archetype"):
                 b = self.with_archetype(b, data, item)
             if b.get("model"):
@@ -275,8 +300,12 @@ class Generator:
             coll.append(self.emit(path, data, item, "building", key))
             if b.get("standin") and not b.get("model"):
                 self.note(item, "stand-in on %s; replace with %s" % (p["vname"], b["standin"]))
-            if b.get("needs_code"):
+            if b.get("needs_code") or b.get("waits_for"):
+                if not (b.get("needs_code") and b.get("waits_for")):
+                    raise GenError("%s: needs_code and waits_for (the code module) go together" % item)
                 self.note(item, "needs code: " + b["needs_code"])
+                self.code_waits.setdefault(b["waits_for"], []).append(
+                    {"building": p["template"], "until_then": b["needs_code"]})
             if b.get("retire_when"):
                 self.note(item, "temporary; retire when " + b["retire_when"])
         if coll:

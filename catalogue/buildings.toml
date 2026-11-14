@@ -5,7 +5,8 @@
 #   Id = { basis = "Grill.Folktails" }   a building of our own on a vanilla stand-in (model and behaviour of the basis
 #                                        until its own model and numbers arrive); Id is its frozen template base name
 #   fields: basis, archetype, text, cost, science, workers, worker_type, disallow_other_workers, recipes, capacity,
-#           tool_group, tool_order, models, icon, retire, aliases, set, standin, needs_code, note
+#           tool_group, tool_order, models, icon, retire, aliases, set, model, standin, waits_for (code module),
+#           needs_code, note; numbers from building_stats.toml are merged in
 #
 # Text (names, descriptions, flavor) comes from text/buildings.json, matched by "id" (or by `text = "<id>"`).
 # Every building lands in the template collection Buildings.Inkpaws in the order written here.
@@ -16,13 +17,13 @@ PandabornVillageHall = { model = "VillageHall" }
 BuildersHut = {}
 HaulingPost = {}
 DistrictCrossing = {}
-PandabornFestivalSquare = { archetype = "storage", standin = "new model", needs_code = "holds festival goods and calls the Lantern Festival; until then a small warehouse" }
+PandabornFestivalSquare = { archetype = "storage", standin = "new model", waits_for = "Festival", needs_code = "holds festival goods and calls the Lantern Festival; until then a small warehouse" }
 
 # ------------------------------------------------------------------ homes (all "new" in CONTENT; vanilla stand-ins)
 PandabornDen = { model = "Den" }
 PandabornCourtyardHouse = { basis = "DoubleLodge.Folktails", standin = "new model" }
 PandabornTerraceHouse = { basis = "TripleLodge.Folktails", standin = "new model" }
-PandabornMoonLoft = { model = "MoonLoft", needs_code = "invites and raises the Ringtails (Ringtails module); until then a home" }
+PandabornMoonLoft = { model = "MoonLoft", waits_for = "Ringtails", needs_code = "invites and raises the Ringtails (Ringtails module); until then a home" }
 
 # ------------------------------------------------------------------ food
 GathererFlag = {}
@@ -31,7 +32,7 @@ PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "Pa
 PandabornPickleYard = { archetype = "workshop", model = "PickleYard", recipes = ["PandabornPickles"] }
 PandabornPaddyHouse = { basis = "AquaticFarmhouse.Folktails", standin = "new model" }
 PandabornTeaRoastery = { archetype = "workshop", standin = "new model", recipes = ["PandabornTea"] }
-PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", recipes = ["PandabornRiceFlour"], needs_code = "driven by flowing water: until then powered like the vanilla gristmill" }
+PandabornTripHammerMill = { basis = "Gristmill.Folktails", standin = "new model", recipes = ["PandabornRiceFlour"], waits_for = "Water", needs_code = "driven by flowing water: until then powered like the vanilla gristmill" }
 PandabornKitchen = { basis = "Bakery.Folktails", standin = "new model", recipes = ["PandabornSweetRiceBalls", "PandabornBambooSeedCakes"] }
 PandabornHotPotHall = { archetype = "workshop", basis = "Bakery.Folktails", standin = "new model", recipes = ["PandabornHotPot"] }
 
@@ -66,16 +67,16 @@ PandabornCisternLarge = { basis = "LargeTank.Folktails", standin = "art/models/C
 StreamGauge = { note = "not named in CONTENT; kept as a water instrument next to the automation set" }
 # the water toolkit needs the water code module (src/scripts/Water -> src/code/Pandaborn.Water): until then each piece
 # is an inert or vanilla-behaving stand-in, so data alone never breaks a colony
-PandabornFlume = { basis = "PoleBanner.Folktails", standin = "art/models/Flume", needs_code = "flume segment (one-way water); inert until the water module ships" }
-PandabornFlumeCorner = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeCorner", needs_code = "flume segment; inert until the water module ships" }
-PandabornFlumeDrop = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeDrop", needs_code = "flume segment; inert until the water module ships" }
-PandabornFlumeBridge = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeBridge", needs_code = "flume segment; inert until the water module ships" }
-PandabornFlumeGate = { basis = "FillValve.Folktails", standin = "art/models/FlumeGate", needs_code = "intake, flow setting and badwater shut-off; until then a fill valve" }
-PandabornScoopWheel = { basis = "CompactMechanicalPump.Folktails", standin = "art/models/ScoopWheel", needs_code = "lifts water with the current; until then a powered pump" }
-PandabornPaddySpout = { basis = "FillValve.Folktails", standin = "art/models/PaddySpout", needs_code = "holds a field at a shallow depth; until then a fill valve" }
-PandabornCisternTap = { basis = "Discharge.Folktails", standin = "new model", needs_code = "pours stored water into a flume; until then a vanilla discharge" }
-PandabornDewCollector = { archetype = "workshop", standin = "art/models/DewCollector", recipes = ["PandabornDewWater"], needs_code = "no workers and less water in drought (dew limiter); until then a staffed workshop making a steady trickle" }
-PandabornTreadwheelLift = { basis = "WaterPump.Folktails", standin = "new model", needs_code = "lifts water by walking; until then a water pump" }
+PandabornFlume = { basis = "PoleBanner.Folktails", standin = "art/models/Flume", waits_for = "Water", needs_code = "flume segment (one-way water); inert until the water module ships" }
+PandabornFlumeCorner = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeCorner", waits_for = "Water", needs_code = "flume segment; inert until the water module ships" }
+PandabornFlumeDrop = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeDrop", waits_for = "Water", needs_code = "flume segment; inert until the water module ships" }
+PandabornFlumeBridge = { basis = "PoleBanner.Folktails", standin = "art/models/FlumeBridge", waits_for = "Water", needs_code = "flume segment; inert until the water module ships" }
+PandabornFlumeGate = { basis = "FillValve.Folktails", standin = "art/models/FlumeGate", waits_for = "Water", needs_code = "intake, flow setting and badwater shut-off; until then a fill valve" }
+PandabornScoopWheel = { basis = "CompactMechanicalPump.Folktails", standin = "art/models/ScoopWheel", waits_for = "Water", needs_code = "lifts water with the current; until then a powered pump" }
+PandabornPaddySpout = { basis = "FillValve.Folktails", standin = "art/models/PaddySpout", waits_for = "Water", needs_code = "holds a field at a shallow depth; until then a fill valve" }
+PandabornCisternTap = { basis = "Discharge.Folktails", standin = "new model", waits_for = "Water", needs_code = "pours stored water into a flume; until then a vanilla discharge" }
+PandabornDewCollector = { archetype = "workshop", standin = "art/models/DewCollector", recipes = ["PandabornDewWater"], waits_for = "Water", needs_code = "no workers and less water in drought (dew limiter); until then a staffed workshop making a steady trickle" }
+PandabornTreadwheelLift = { basis = "WaterPump.Folktails", standin = "new model", waits_for = "Water", needs_code = "lifts water by walking; until then a water pump" }
 
 # ------------------------------------------------------------------ landscaping
 Levee = {}
@@ -110,7 +111,7 @@ DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGener
 # ------------------------------------------------------------------ science and Wooden Oxen
 Inventor = {}
 PandabornOxWorkshop = { basis = "BotAssembler.Folktails", standin = "new model", recipes = ["PandabornWoodenOx"] }
-PandabornStarTower = { basis = "Observatory.Folktails", standin = "new model", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory" }
+PandabornStarTower = { basis = "Observatory.Folktails", standin = "new model", waits_for = "Ringtails", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory" }
 
 # ------------------------------------------------------------------ storage
 SmallWarehouse = {}
@@ -155,17 +156,17 @@ PandabornTeahouse = { model = "Teahouse", needs_map = { Campfire = "PandabornTea
 PandabornSlideAndSwing = { basis = "Lido.Folktails", standin = "new model", needs_map = { Lido = "PandabornPlay" } }
 PandabornKindergarten = { model = "Kindergarten", needs_map = { Campfire = "PandabornCubWatching" }, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
 PandabornInkStudio = { basis = "ContemplationSpot.Folktails", standin = "new model", needs_map = { ContemplationSpot = "PandabornContemplation" } }
-PandabornHotSpringBath = { basis = "MudPit.Folktails", standin = "new model", needs_map = { MudPit = "PandabornSoak" }, cost = { Log = 60, TreatedPlank = 40, PandabornRice = 20 }, note = "vanilla Mud Pit cost with rice in place of wheat" }
-PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, needs_code = "run by Ringtails" }
+PandabornHotSpringBath = { basis = "MudPit.Folktails", standin = "new model", needs_map = { MudPit = "PandabornSoak" } }
+PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "Ringtails", needs_code = "run by Ringtails" }
 TeethGrindstone = {}
 MedicalBed = {}
 Herbalist = {}
 Shower = {}
 
 # ------------------------------------------------------------------ Ringtail workplaces (need the Ringtails module; vanilla-behaving until then)
-PandabornNightBuildersPost = { basis = "BuildersHut.Folktails", standin = "new model", needs_code = "Ringtail-only, works from the bell to dawn; until then a builders' hut" }
-PandabornNightCourierPost = { basis = "HaulingPost.Folktails", standin = "new model", needs_code = "Ringtail-only hauling; until then a hauling post" }
-PandabornNightForagersPost = { basis = "GathererFlag.Folktails", standin = "new model", needs_code = "Ringtail-only gathering; until then a gatherer flag" }
+PandabornNightBuildersPost = { basis = "BuildersHut.Folktails", standin = "new model", waits_for = "Ringtails", needs_code = "Ringtail-only, works from the bell to dawn; until then a builders' hut" }
+PandabornNightCourierPost = { basis = "HaulingPost.Folktails", standin = "new model", waits_for = "Ringtails", needs_code = "Ringtail-only hauling; until then a hauling post" }
+PandabornNightForagersPost = { basis = "GathererFlag.Folktails", standin = "new model", waits_for = "Ringtails", needs_code = "Ringtail-only gathering; until then a gatherer flag" }
 
 # ------------------------------------------------------------------ decoration
 PandabornStandingLantern = { basis = "Lantern.Folktails", standin = "new model" }

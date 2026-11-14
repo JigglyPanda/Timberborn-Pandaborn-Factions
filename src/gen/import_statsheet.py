@@ -73,6 +73,7 @@ NEEDS_BASIS = {
 AWE = {"PandabornMemorialArch": ("BrazierOfBonding", 6), "PandabornGreatSittingPanda": ("HallOfAbundance", 12),
        "PandabornSkyLantern": ("EarthRecultivator", 10)}
 DECORATION_NEEDS = {"PandabornPandaStatue": "BeaverStatue", "PandabornBambooPinwheel": "Weathervane"}
+BUILDING_IDS = {"PandabornFarmstead": "EfficientFarmHouse"}   # the Farmstead keeps the vanilla Farmhouse (2026-11-14)
 PLANT_BASIS = {
     "PandabornShootBamboo": "Carrot", "PandabornCabbage": "Carrot", "PandabornTimberBamboo": "ChestnutTree",
     "PandabornRice": "Cattail", "PandabornTeaBush": "BlueberryBush", "PandabornSichuanPepper": "Sunflower",
@@ -107,7 +108,7 @@ def sub(table):
 # ------------------------------------------------------------------------------------------------ sheet -> items
 def sheet_items(sheet):
     """kind -> {id: {field: value}} as the catalogue would hold them, plus 'src' notes."""
-    out = {"good": {}, "need": {}, "recipe": {}, "plant": {}}
+    out = {"good": {}, "need": {}, "recipe": {}, "plant": {}, "building": {}}
     for g in sheet["goods"]:
         gid = g["id"]
         cons = dict(g.get("ConsumptionEffects") or {})
@@ -187,6 +188,26 @@ def sheet_items(sheet):
                                                               PLANT_BASIS[pid] in ("ChestnutTree", "BlueberryBush")):
             e["reproduction"] = p["ReproductionChance"]   # crops have no ReproducibleSpec: 0 is their default
         out["plant"][pid] = e
+    for b in sheet.get("buildings", []):
+        bid = BUILDING_IDS.get(b["id"], b["id"])
+        if "/" in bid or b.get("cost") == "vanilla":
+            continue
+        e = {"src": b.get("basis", "")}
+        if isinstance(b.get("cost"), dict):
+            e["cost"] = sub(b["cost"])
+        if num(b.get("science")) is not None:
+            e["science"] = b["science"]
+        w = b.get("workers")
+        if num(w) is not None and w > 0:
+            e["workers"] = w
+        elif isinstance(w, str):
+            m = re.match(r"\s*(\d+)\s*\((\d+)\)", w)
+            if m:
+                e["workers"], e["default_workers"] = int(m.group(1)), int(m.group(2))
+        cap = b.get("capacity")
+        if num(cap) is not None:
+            e["capacity"] = cap
+        out["building"][bid] = e
     for k, v in SETTLED.items():
         kind, i, field = k
         if i in out[kind]:
@@ -202,9 +223,10 @@ def sheet_items(sheet):
 COMPARE = {"good": ("good_type", "weight", "consumption"),
            "need": ("group", "daily_delta", "favorable_wellbeing", "importance", "wastable"),
            "recipe": ("cycle_hours", "ingredients", "products", "capacity", "fuel", "cycles_fuel_lasts"),
+           "building": ("cost", "science", "workers", "default_workers", "capacity"),
            "plant": ("plant_hours", "growth_days", "cut_yield", "cut_hours", "gather_yield", "gather_days",
                      "gather_hours", "dry_days", "flood_min", "flood_max", "flood_days", "wet_days", "reproduction")}
-FILES = {"good": ("goods", "goods"), "need": ("needs", "needs"), "recipe": ("recipes", "recipes"),
+FILES = {"building": ("building_stats", "stats"), "good": ("goods", "goods"), "need": ("needs", "needs"), "recipe": ("recipes", "recipes"),
          "plant": ("plants", "plants")}
 
 
@@ -274,6 +296,12 @@ vanilla = ["Antidote", "Scarecrow"]
 """,
     "recipe": """# Inkpaws recipes (imported from the stat sheet, see goods.toml). basis = the vanilla recipe copied.
 # Name and icon follow the first product. Plank and TreatedPlank are the poles and cured poles (rules.toml [poles]).
+""",
+    "building": """# Building numbers (cost, science, workers, capacity) from the balance model's stat sheet, imported %s.
+# Kept apart from buildings.toml so a balance change is one edit here; the generator merges them into each building
+# and refuses a building that sets the same field in both files. Poles are written as Plank and cured poles as
+# TreatedPlank (rules.toml [poles]). capacity only where the sheet gives a plain number (storage); seats and beds
+# follow the adopted model's slots. src = provenance: M model, V vanilla, G guess.
 """,
     "plant": """# Inkpaws plants (imported from the stat sheet, see goods.toml). basis = the vanilla plant copied: its model
 # is the stand-in until the growth-stage models exist. planter = PlantableSpec.ResourceGroup (Farmhouse, Forester,

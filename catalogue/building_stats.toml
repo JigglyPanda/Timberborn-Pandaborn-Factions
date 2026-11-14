@@ -1,0 +1,374 @@
+# Building numbers (cost, science, workers, capacity) from the balance model's stat sheet, imported 2026-11-14.
+# Kept apart from buildings.toml so a balance change is one edit here; the generator merges them into each building
+# and refuses a building that sets the same field in both files. Poles are written as Plank and cured poles as
+# TreatedPlank (rules.toml [poles]). capacity only where the sheet gives a plain number (storage); seats and beds
+# follow the adopted model's slots. src = provenance: M model, V vanilla, G guess.
+
+
+[stats.PandabornVillageHall]
+cost = {  }
+science = 0
+workers = 4
+default_workers = 2
+src = "V"
+
+[stats.BuildersHut]
+cost = { Log = 20, Plank = 10 }
+science = 100
+workers = 4
+default_workers = 4
+src = "V"
+
+[stats.HaulingPost]
+cost = { Log = 20, Plank = 10 }
+science = 0
+workers = 10
+default_workers = 5
+src = "V"
+
+[stats.DistrictCrossing]
+cost = { Log = 30, Plank = 15 }
+science = 600
+workers = 10
+default_workers = 4
+src = "V"
+
+[stats.PandabornFestivalSquare]
+cost = { Log = 30, Plank = 30, Paper = 10 }
+science = 300
+src = "M q7 (reachable in cycle 2)"
+
+[stats.PandabornDen]
+cost = { Log = 12 }
+science = 0
+src = "V"
+
+[stats.PandabornCourtyardHouse]
+cost = { Log = 20 }
+science = 150
+src = "V"
+
+[stats.PandabornTerraceHouse]
+cost = { Log = 25, Plank = 10 }
+science = 250
+src = "V · M (poles for the stackable frame)"
+
+[stats.PandabornMoonLoft]
+cost = { Log = 10, Plank = 10 }
+science = 200
+src = "M q5/q6"
+
+[stats.GathererFlag]
+cost = {  }
+science = 0
+workers = 1
+src = "V"
+
+[stats.EfficientFarmHouse]
+cost = { Log = 25 }
+science = 0
+workers = 3
+src = "V"
+
+[stats.PandabornSteamer]
+cost = { Log = 20, Plank = 5 }
+science = 40
+workers = 1
+src = "M q1/q3"
+
+[stats.PandabornPickleYard]
+cost = { Log = 20, Plank = 15 }
+science = 120
+workers = 1
+src = "M q3"
+
+[stats.PandabornPaddyHouse]
+cost = { Log = 30, Plank = 10 }
+science = 150
+workers = 2
+src = "V"
+
+[stats.PandabornTeaRoastery]
+cost = { Log = 15, Plank = 20 }
+science = 250
+workers = 1
+src = "M q4"
+
+[stats.PandabornTripHammerMill]
+cost = { Log = 30, Plank = 20, Gear = 10 }
+science = 200
+workers = 1
+src = "V · G (cheaper: no power plant)"
+
+[stats.PandabornKitchen]
+cost = { Log = 15, Plank = 15, Gear = 10 }
+science = 300
+workers = 1
+src = "V"
+
+[stats.PandabornHotPotHall]
+cost = { Log = 40, Plank = 40, Gear = 20 }
+science = 800
+workers = 1
+src = "M q3"
+
+[stats.LumberjackFlag]
+cost = {  }
+science = 0
+workers = 1
+src = "V"
+
+[stats.Forester]
+cost = { Log = 12 }
+science = 0
+workers = 1
+src = "M q1 (log-only: built before the first pole)"
+
+[stats.GearWorkshop]
+cost = { Log = 15, Plank = 25 }
+science = 100
+workers = 1
+src = "V"
+
+[stats.PaperMill]
+cost = { Log = 40, Plank = 40, Gear = 15 }
+science = 250
+workers = 1
+src = "V"
+
+[stats.PandabornLanternWorkshop]
+cost = { Log = 10, Plank = 20 }
+science = 200
+workers = 1
+src = "M q7"
+
+[stats.PandabornSmokeKiln]
+cost = { Log = 20, Plank = 40, Gear = 20 }
+science = 600
+workers = 1
+src = "M q8 (no power, so cheaper than the Wood Workshop)"
+
+[stats.ExplosivesFactory]
+cost = { Plank = 30, Gear = 30, MetalBlock = 30 }
+science = 400
+workers = 1
+src = "V"
+
+[stats.ScavengerFlag]
+cost = {  }
+science = 250
+workers = 1
+src = "V"
+
+[stats.Smelter]
+cost = { Plank = 50, Gear = 20, ScrapMetal = 30 }
+science = 300
+workers = 1
+src = "V"
+
+[stats.Mine]
+cost = { Log = 250, Gear = 350, TreatedPlank = 200 }
+science = 4000
+workers = 10
+src = "V"
+
+[stats.WaterPump]
+cost = { Log = 12 }
+science = 0
+workers = 1
+src = "V"
+
+[stats.PandabornCisternSmall]
+cost = { Log = 15 }
+science = 0
+capacity = 40
+src = "M q4"
+
+[stats.PandabornCisternMedium]
+cost = { Log = 20, Plank = 30 }
+science = 100
+capacity = 300
+src = "M q4 (no gears: reachable before the first drought)"
+
+[stats.PandabornCisternLarge]
+cost = { Plank = 80, Gear = 40, MetalBlock = 20 }
+science = 500
+capacity = 1200
+src = "V · M"
+
+[stats.PandabornFlume]
+cost = { Plank = 2 }
+science = 60
+src = "G"
+
+[stats.PandabornFlumeCorner]
+cost = { Plank = 3 }
+science = 60
+src = "G"
+
+[stats.PandabornFlumeDrop]
+cost = { Plank = 3 }
+science = 60
+src = "G"
+
+[stats.PandabornFlumeBridge]
+cost = { Plank = 4, Log = 1 }
+science = 120
+src = "G"
+
+[stats.PandabornFlumeGate]
+cost = { Log = 6, Plank = 6 }
+science = 80
+src = "G · design"
+
+[stats.PandabornScoopWheel]
+cost = { Log = 20, Plank = 30, Gear = 5 }
+science = 250
+src = "G (prototype measures)"
+
+[stats.PandabornPaddySpout]
+cost = { Plank = 6 }
+science = 150
+src = "G"
+
+[stats.PandabornCisternTap]
+cost = { Log = 8, Plank = 8 }
+science = 250
+src = "M q4"
+
+[stats.PandabornDewCollector]
+cost = { Plank = 15, Paper = 4 }
+science = 300
+src = "M q4"
+
+[stats.PandabornTreadwheelLift]
+cost = { Plank = 30, Gear = 10 }
+science = 300
+workers = 1
+src = "G"
+
+[stats.PandabornDryStoneWall]
+cost = { Log = 4, Dirt = 2 }
+science = 120
+src = "G"
+
+[stats.PandabornBambooWaterWheel]
+cost = { Log = 30, Plank = 15 }
+science = 0
+src = "V"
+
+[stats.PowerWheel]
+cost = { Log = 20 }
+science = 0
+workers = 1
+src = "V"
+
+[stats.PandabornKiteWindmill]
+cost = { Log = 20, Plank = 20 }
+science = 120
+src = "V"
+
+[stats.PandabornLargeKiteWindmill]
+cost = { Plank = 40, Gear = 20, Paper = 30 }
+science = 1400
+src = "V"
+
+[stats.Inventor]
+cost = { Log = 12 }
+science = 0
+workers = 1
+src = "V"
+
+[stats.PandabornStarTower]
+cost = { Plank = 60, Gear = 30, Paper = 10 }
+science = 1000
+workers = 4
+src = "V · M q5"
+
+[stats.PandabornOxWorkshop]
+cost = { Plank = 100, Gear = 50, MetalBlock = 40 }
+science = 1000
+workers = 2
+src = "M q8"
+
+[stats.PandabornNightBuildersPost]
+cost = { Log = 15, Plank = 10 }
+science = 0
+workers = 4
+default_workers = 4
+src = "M q5"
+
+[stats.PandabornNightCourierPost]
+cost = { Log = 20, Plank = 10 }
+science = 150
+workers = 6
+default_workers = 3
+src = "M q5"
+
+[stats.PandabornNightForagersPost]
+cost = { Plank = 10 }
+science = 100
+workers = 2
+default_workers = 2
+src = "M q5"
+
+[stats.PandabornOperaStage]
+cost = { Log = 100, TreatedPlank = 40, MetalBlock = 20 }
+science = 1200
+# workers 2 (2) in the sheet: the Ringtail performers need the Ringtails module; data alone has no workplace here
+src = "V · M q5"
+
+[stats.Campfire]
+cost = { Log = 15 }
+science = 0
+src = "V"
+
+[stats.PandabornHammock]
+cost = { Log = 4 }
+science = 0
+src = "M q2 (log-only: buildable on day 1)"
+
+[stats.PandabornNapPlatform]
+cost = { Log = 10, Plank = 15 }
+science = 100
+src = "M q2"
+
+[stats.PandabornTeahouse]
+cost = { Log = 25, Plank = 25 }
+science = 150
+src = "M q2/q4"
+
+[stats.PandabornSlideAndSwing]
+cost = { Log = 25, Plank = 20 }
+science = 250
+src = "V"
+
+[stats.PandabornKindergarten]
+cost = { Log = 60, Plank = 40 }
+science = 400
+src = "V · M"
+
+[stats.PandabornInkStudio]
+cost = { Log = 10, Paper = 10 }
+science = 200
+src = "V"
+
+[stats.PandabornHotSpringBath]
+cost = { Log = 60, TreatedPlank = 30, Dirt = 20 }
+science = 1500
+src = "V"
+
+[stats.PandabornMemorialArch]
+cost = { Log = 250, Plank = 800 }
+science = 3000
+src = "M q8 (labour of Farmer Monument + Brazier)"
+
+[stats.PandabornGreatSittingPanda]
+cost = { Plank = 1400, TreatedPlank = 700, MetalBlock = 650 }
+science = 15000
+src = "M q8 (labour of Fountain + Hall)"
+
+[stats.PandabornSkyLantern]
+cost = { Gear = 2400, TreatedPlank = 2400, MetalBlock = 1800, Paper = 500 }
+science = 20000
+src = "V · M q8"

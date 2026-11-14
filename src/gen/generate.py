@@ -97,6 +97,7 @@ def generate(a, v):
     prov = g.provenance(files)
     report = {"adoptedModels": dict(sorted(g.adopted_models.items())),
               "standIns": sorted({i for i, n in g.notes if n.startswith("stand-in on")}),
+              "waitingForCode": {k: v for k, v in sorted(g.code_waits.items())},
               "notes": [{"item": i, "note": n} for i, n in g.notes],
               "counts": {k: len(x) for k, x in sorted(g.ids.items())}}
     placeable = []

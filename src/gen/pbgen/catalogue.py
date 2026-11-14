@@ -9,7 +9,7 @@ from .util import GenError, load_json
 BUILDING_FIELDS = {
     "basis", "archetype", "vanilla", "text", "template", "cost", "science", "workers", "default_workers", "worker_type",
     "disallow_other_workers", "recipes", "capacity", "tool_group", "tool_order", "models", "icon", "retire", "aliases",
-    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects", "model",
+    "set", "delete", "standin", "needs_code", "note", "retire_when", "path", "needs_map", "add", "src", "effects", "model", "waits_for",
 }
 CHARACTER_FIELDS = {"basis", "template", "path", "models", "set", "note"}
 GOOD_FIELDS = {"basis", "vanilla", "text", "icon", "weight", "good_type", "group", "order", "consumption", "set",
@@ -21,7 +21,7 @@ RECIPE_FIELDS = {"basis", "text", "cycle_hours", "ingredients", "products", "fue
 PLANT_FIELDS = {"basis", "archetype", "text", "template", "planter", "growth_days", "yield", "gatherable",
                 "dry_days", "flood", "models", "icon", "set", "delete", "aliases", "note", "provenance", "path"}
 
-FILES = ("rules", "faction", "buildings", "goods", "needs", "recipes", "plants", "archetypes", "modifiers")
+FILES = ("rules", "faction", "buildings", "building_stats", "goods", "needs", "recipes", "plants", "archetypes", "modifiers")
 TEXT_FILES = ("buildings", "goods", "needs", "plants", "faction", "messages", "names")
 
 
