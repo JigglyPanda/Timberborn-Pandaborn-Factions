@@ -509,17 +509,17 @@ Everything follows the hook points of sections 3–8; no Harmony anywhere.
 
 | Piece | How | Lines (runtime C#) |
 |---|---|---|
-| Hidden Ringtail adult and kit templates | `Characters/Pandaborn/RingtailAdult|RingtailChild.Inkpaws`, generated from the vanilla beaver by `proto/ringtails/tools/derive.py`, in **no** template collection. Inkpaw body (`InkpawAdult.Model`), red panda coats, body scaled to 0.82 with `TransformSpec` on `Model_Preserved`, walking speed ×1.3 (2.7 → 3.51), animation ×1.25, normal lifting (14), vanilla label keys | data |
+| Hidden Ringtail adult and kit templates | `Characters/Pandaborn/RingtailAdult|RingtailChild.Inkpaws`, generated from the vanilla beaver by `proto/ringtails/tools/derive.py`, in **no** template collection. Inkpaw body (`InkpawAdult.Model`), red panda coats, body scaled to 0.82 with `TransformSpec` on `Model_Preserved`, normal lifting (14), vanilla label keys. Gate runs used walking ×1.3 (3.51); after the gate: Inkpaw speed 2.7 with no slowdown when carrying | data |
 | Worker type `PandabornRingtail` | `WorkerTypeSpec`, `IgnoresWorkingHours: true` | data |
 | Ringtail-only workplaces | Copies of the Folktails Hauling Post (Courier Loft) and Gatherer Flag (Forager's Nest): `DefaultWorkerType: PandabornRingtail`, `DisallowOtherWorkerTypes: true`, no unlock costs. Collection `Buildings.PandabornRingtails` appended to the Inkpaws faction by a `FactionSpec` merge (`TemplateCollectionIds#append`), so Folktails and Iron Teeth never see them | data |
 | Loft | A Lodge copy without `ProcreationHouseSpec`, marked `PandabornLoftSpec` | data |
 | Outfits | `WorkerOutfitSpec` Hauler/Gatherer for the Ringtail worker type | data |
 | Feature switch, factory, save registration | `RingtailService`: active only in an Inkpaws game; creates Ringtails with public API (mirrors `BeaverFactory`); registers both templates in `TemplateNameMapper` (private field, see 17.6) and verifies the read-back | 160 |
 | Save fallback alias | The Inkpaw templates list `RingtailAdult|RingtailChild.Inkpaws` in `BackwardCompatibleTemplateNames` (merge file) | data |
-| Day rest | `RingtailRestRootBehavior`, inserted just above `WorkerRootBehavior` (private list, see 17.6). In the rest window (0–8 h after dawn) it keeps the Ringtail off work and runs the game's own `SleepNeedBehavior` while Sleep < 0.55, then the game's `NeederRootBehavior`, then `WanderRootBehavior` | 130 |
+| Day rest | `RingtailRestRootBehavior`, inserted just above `WorkerRootBehavior` (private list, see 17.6). In the rest window (gate runs: 0–8 h after dawn; now: dawn to the bell, 4–16 h) it keeps the Ringtail off work and runs the game's own `SleepNeedBehavior` while Sleep < 0.55, then the game's `NeederRootBehavior`, then `WanderRootBehavior` | 130 |
 | Coat | `RingtailCoat` replaces the faction coat in `PostInitializeEntity` | 40 |
 | Kit growth | `RingtailGrowth`: at growth 0.995 the kit becomes a Ringtail adult through our factory (vanilla would make an Inkpaw at 1.0) | 50 |
-| Light appetite | `RingtailAppetite`: skips a quarter of the Hunger/Thirst decay ticks (see 17.6) | 60 |
+| Light appetite (gate runs only; removed after the gate) | `RingtailAppetite`: skipped a quarter of the Hunger/Thirst decay ticks (see 17.6) | — |
 | Housing rule | `LoftHousingRule`: see 17.4 | 110 |
 | Test probe | `src/Dev/*`: spawns Ringtails, places buildings on the district terrace and lays paths, stocks the district center, logs every colonist and workplace each in-game hour, opens panels and takes screenshots. Talks to the harness by reflection; inert without a test request | dev only |
 
@@ -570,7 +570,8 @@ hours after dawn; `rt-gate3` shows the same pattern for all 4 couriers):
   workplaces only ever held Ringtails, Inkpaws never took them, Ringtails never took an Inkpaw job (vanilla
   `DistrictWorkplaceAssigner` keys workplaces and workers by worker type).
 * **Throughput:** <!-- THROUGHPUT -->
-* **Speed:** Ringtail base walking speed 3.51 vs Inkpaw 2.70 (×1.30); lifting 14 for both.
+* **Speed (gate runs):** Ringtail base walking speed 3.51 vs Inkpaw 2.70 (×1.30); lifting 14 for both. Since changed
+  to equal speed with no load slowdown (17.8).
 * **Kits:** the kit grew into a Ringtail adult (`RingtailAdult.Inkpaws`, "… grew up" notification) in every run;
   Inkpaw cubs kept growing into Inkpaws.
 * **Save and reload:** all colonists came back with the same kind, template, workplace and home (`rt-gate3`: 18 of
@@ -633,7 +634,7 @@ What the player sees today and what a release needs:
 | 2 | `BehaviorManager._rootBehaviors` (private `List<RootBehavior>`), one insert per Ringtail at initialisation | The day rest | Reflection, 1 field | Low–medium. Same field has existed through 1.0–1.1 | Detected per entity: one error logged, Ringtails then behave as round-the-clock workers whose only rest is critical sleep (vanilla `CriticalNeederRootBehavior`). They survive but are exhausted part of the time | Check the field once at load (on a throwaway list type check, before any Ringtail exists). If it is gone: keep the feature but fall back to a public-API rest — pause the Ringtail workplaces (`PausableBuilding`) during the rest window, so Ringtails are unemployed and the vanilla needer/sleep logic runs — and log one warning. Never crash |
 | 3 | Behaviour order from `BeaverBehaviorInitializer` (Worker root before Needer root) | Where the rest root is inserted (just above `WorkerRootBehavior`) | Implicit (public types, internal order) | Low | If `WorkerRootBehavior` disappears the insert falls back to "above `NeederRootBehavior`", else reports error #2 | Same |
 | 4 | Vanilla growth at `GrowthProgress >= 1.0` inside `ChildRootBehavior` | Kits grow into Ringtails (we act at 0.995) | Implicit | Low. If vanilla started growing earlier, a kit would become an **Inkpaw** (safe, no crash) | Kit becomes an Inkpaw | Acceptable; or check the produced adult in `CharacterCreatedEvent` |
-| 4b | Vanilla `Need.Update` skips a tick's decay when an effect was applied since the last update | Light appetite (we apply a negligible effect on a quarter of the ticks) | Implicit | Low | Ringtails eat and drink like Inkpaws (safe) | Same; or the per-entity `Need._deltaPointsPerUpdate` (private) if exact control is wanted |
+| 4b (removed) | Vanilla `Need.Update` skips a tick's decay when an effect was applied since the last update | Light appetite (we apply a negligible effect on a quarter of the ticks) | Implicit | Low | Ringtails eat and drink like Inkpaws (safe) | Same; or the per-entity `Need._deltaPointsPerUpdate` (private) if exact control is wanted |
 | 5 | `BeaverTextureSetter` sets the coat in `InitializeEntity` | Our coat replaces it in `PostInitializeEntity` | Implicit | Low | Ringtails wear Inkpaw coats (cosmetic) | Same |
 | 6 | `WorkplaceSpec.DisallowOtherWorkerTypes` + `DefaultWorkerType` | Ringtail-only workplaces | Public data | Very low | — | — |
 | 7 | `WorkerTypeSpec.IgnoresWorkingHours` | Ringtails work afternoon and night regardless of the Inkpaw working-hours slider | Public data | Very low | — | — |
@@ -665,17 +666,21 @@ automated save/reload test after each game update.
 
 ### 17.8 Design recommendations
 
-* **Hours window: keep "rest 0–8 h after dawn", but call it what the game does with it: sleep ~3 h, then leisure.**
+* **Hours window: the rest is "sleep ~3 h, then leisure", whatever its length.**
   The game's sleep logic does not want an 8-hour sleep: a Ringtail coming off a 16-hour shift has Sleep ≈ 0.3, the
   home restores 0.2/h, and the vanilla `Sleeper` wakes it when full, so it sleeps about 2.5–3 h (dawn to ~3 h) and
   then eats, drinks and takes leisure (or wanders) until 8 h, when it goes back to work. That is the natural shape of
   the game's own logic (vanilla Inkpaws sleep ~3 h before dawn, from ~21 h, for the same reason), and it gives the
   design a nice beat: **Ringtails have the morning to themselves at the teahouse while the Inkpaws work.** Forcing an
   8-hour sleep is possible (launch the sleep executor to the window's end) but costs the Ringtails their only leisure
-  time and makes them look idle in bed. The window is data (`RestStartHours`/`RestEndHours` on the template), so it
-  can be tuned without code.
-* **Do not tie the window to the Inkpaw working-hours slider.** Ringtails ignore working hours, so the slider stays an
-  Inkpaw lever; the afternoon overlap shrinks or grows with it, which is the intended "dusk and dawn are shared" feel.
+  time and makes them look idle in bed. The gate runs used a fixed 0–8 h window; its end is now the bell (next point).
+* **Decided after the gate (coordinator, 2026-11-14): the window ends at the bell.** The rest window now runs from
+  dawn to the end of the Inkpaw working hours (`WorkingHoursManager.EndHours`, read live, so moving the slider takes
+  effect at once), clamped to 4–16 h after dawn: never so early that a Ringtail cannot sleep, never later than
+  nightfall, so Ringtails always hold the night. The handover at the bell is the faction's pitch; at the default
+  16-hour day it means no afternoon overlap (morning and afternoon Inkpaws, night Ringtails), and a shorter day opens
+  a shared stretch. This overrules the "do not tie" advice of the first draft of this section. Implemented in the
+  prototype (`RestEndsAtBell`, `RestMinEndHours`, `RestMaxEndHours` on `PandabornRingtailSpec`) and in the module.
 * **Housing rule: "lofts are for Ringtails, anyone may sleep anywhere else".** Use the swap rule of 17.4. Do not try to
   keep Ringtails out of dens (needs Harmony; also cruel to a homeless Ringtail). In the UI, call a loft a Ringtail home
   and show a small "Inkpaw in a loft" warning only if the rule cannot fix it (no free beds).
@@ -683,8 +688,12 @@ automated save/reload test after each game update.
   row in the population panel ("Ringtails: 5 · working 5 · idle 0"), the Ringtail badge with a moon, and the Courier
   Loft/Forager's Nest grouped in their own tool group. Because Ringtail workplaces are separate buildings, there is no
   crew switching to explain: "these buildings are staffed by Ringtails, at night" is the whole rule.
-* **Stats:** walking speed ×1.3 and appetite ×0.75 are data or tiny code; keep normal lifting. The faster walk is the
-  only number the player needs to feel; hauling throughput per Ringtail (17.3) shows it.
+* **Stats (decided after the gate):** equal appetite (the light-appetite component was removed: one set of food numbers,
+  and it leaned on an unwritten rule of `Need.Update`); unladen walking speed equal to the Inkpaws'; lifting 14; and
+  **carrying never slows them**, which is pure data: `WalkerSpeedManager` uses `BaseSlowedSpeed` whenever the colonist
+  carries anything (`GoodCarrier.IsMovementSlowed`), so the Ringtail template sets `BaseSlowedSpeed = BaseWalkingSpeed`
+  (2.7). Overloading beyond the lifting capacity still slows them through vanilla `Overburdenable` (a bonus), which is
+  fine. No Harmony, no code.
 * **Kits:** kits grow into Ringtails with our hook; births belong in a loft nursery (stage 2 of section 14), still
   needed for the "born in lofts" part of the design.
 
@@ -700,6 +709,8 @@ automated save/reload test after each game update.
 | Balance pass (rest window, appetite, speed, loft size) and the "Inkpaw workshops get roomier input shelves" change | 2 days |
 | Automated regression: the gate test of this section in CI-like form, plus a "feature removed" reload test (needs a script option to reload with a different mod set) | 1 day |
 
-Code: roughly 1,000–1,500 lines on top of the prototype's 640, all without Harmony.
+Code: roughly 1,000–1,500 lines on top of the prototype's 640, all without Harmony. Started: `src/code/Pandaborn.Ringtails`
+(the prototype's runtime code ported as a feature module with the load-time compatibility check; not wired until its
+spec records, proposed in `proposed/RingtailSpecs.cs`, are added to `Pandaborn.Specs`).
 
 <!-- RESULTS -->
