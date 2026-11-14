@@ -1,7 +1,7 @@
 {
   "BuildingSpec": {
-    "SelectionSoundName": "Warehouse",
-    "LoopingSoundName": "",
+    "SelectionSoundName": "DanceHall",
+    "LoopingSoundName": "DanceHall",
     "BuildingCost": [],
     "ScienceCost": 0,
     "PlaceFinished": false,
@@ -16,14 +16,31 @@
     "ConstructionModeModel": "Finished",
     "UndergroundModelDepth": 0
   },
-  "StockpileSpec": {
-    "MaxCapacity": 30,
-    "WhitelistedGoodType": "Box"
+  "AttractionSpec": {
+    "Effects": [
+      {
+        "NeedId": "DanceHall",
+        "PointsPerHour": 0.6,
+        "SatisfyToMaxValue": false
+      }
+    ]
+  },
+  "FixedSlotManagerSpec": {},
+  "TransformSlotInitializerSpec": {
+    "Slots": [
+      {
+        "SlotKeyword": "Spot",
+        "Animation": "Dancing",
+        "Inanimate": false,
+        "RandomizeYRotation": false,
+        "WaterSlot": false
+      }
+    ]
   },
   "EnterableSpec": {
     "OperatingState": "Finished",
-    "LimitedCapacityFinished": false,
-    "CapacityFinished": 0,
+    "LimitedCapacityFinished": true,
+    "CapacityFinished": 20,
     "LimitedCapacityUnfinished": false,
     "CapacityUnfinished": 0
   },
@@ -35,8 +52,8 @@
   },
   "BlockObjectSpec": {
     "Size": {
-      "X": 3,
-      "Y": 3,
+      "X": 5,
+      "Y": 5,
       "Z": 2
     },
     "Blocks": [
@@ -99,6 +116,230 @@
       {
         "MatterBelow": "GroundOrStackable",
         "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "None",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -170,7 +411,7 @@
     "Entrance": {
       "HasEntrance": true,
       "Coordinates": {
-        "X": 1,
+        "X": 2,
         "Y": -1,
         "Z": 0
       }
@@ -179,26 +420,19 @@
     "Overridable": false,
     "Flippable": false
   },
-  "BlockObjectNavMeshSettingsSpec": {
-    "NoAutoWalls": false,
-    "GenerateFloorsOnStackable": true,
-    "EdgeGroups": [],
-    "UnblockedCoordinates": [],
-    "BlockedEdges": []
-  },
   "BuildingAccessibleSpec": {
     "LocalAccess": {
-      "X": 1.5,
+      "X": 2.5,
       "Y": 0.06,
-      "Z": 0.6
+      "Z": 0.3
     },
     "ForceOneFinalAccess": false
   },
   "PlaceableBlockObjectSpec": {
-    "ToolGroupId": "Storage",
-    "ToolOrder": 30,
+    "ToolGroupId": "Wellbeing",
+    "ToolOrder": 140,
     "ToolShape": "Square",
-    "Layout": "SideLine",
+    "Layout": "Single",
     "CustomPivot": {
       "HasCustomPivot": false,
       "Coordinates": {
@@ -214,20 +448,50 @@
     "DisplayNameLocKey": "Building.PandabornModelFestivalSquare.DisplayName",
     "DescriptionLocKey": "Building.PandabornModelFestivalSquare.Description",
     "FlavorDescriptionLocKey": "",
-    "Icon": "Buildings/Storage/SmallWarehouse/SmallWarehouseIcon"
+    "Icon": "Buildings/Wellbeing/DanceHall/DanceHallIcon"
   },
-  "StockpileGoodColumnVisualizerSpec": {
-    "CenterOffset": {
-      "X": 0.5,
-      "Y": 0.5,
-      "Z": 0.04
-    },
-    "GoodVisualizationId": "Box",
-    "GoodVisualizationVariant": "4H"
+  "EnterableIlluminatorSpec": {},
+  "IlluminatorLightObjectsSpec": {
+    "AttachmentIds": [
+      "Light"
+    ]
   },
+  "OrderedSlotRetrieverSpec": {},
+  "SlotAnimationSynchronizerSpec": {
+    "MaxTimeOffset": 0.2
+  },
+  "NightTimeLightControllerSpec": {},
   "ConstructionSiteProgressVisualizerSpec": {
     "ProgressThresholds": [
       0.0
+    ]
+  },
+  "EntererBoundsScalerSpec": {
+    "Scale": 2.0
+  },
+  "TemplateAttachmentsSpec": {
+    "Attachments": [
+      {
+        "AttachmentId": "Light",
+        "Prefab": "Buildings/Wellbeing/DanceHall/DanceHallLight",
+        "Parent": "#Finished",
+        "Position": {
+          "X": 2.5,
+          "Y": 1.375,
+          "Z": 2.5
+        },
+        "Rotation": {
+          "X": 90.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Scale": {
+          "X": 1.0,
+          "Y": 1.0,
+          "Z": 1.0
+        },
+        "CreateInstantly": true
+      }
     ]
   },
   "Children": {
@@ -239,38 +503,50 @@
         "BoxColliders": [
           {
             "Center": {
-              "X": 1.5,
+              "X": 2.5,
+              "Y": 0.05,
+              "Z": 2.5
+            },
+            "Size": {
+              "X": 5.0,
               "Y": 0.1,
-              "Z": 1.5
-            },
-            "Size": {
-              "X": 3.0,
-              "Y": 0.2,
-              "Z": 3.0
+              "Z": 5.0
             }
           },
           {
             "Center": {
-              "X": 1.5,
-              "Y": 1.4,
-              "Z": 0.12
-            },
-            "Size": {
-              "X": 2.3,
-              "Y": 0.6,
-              "Z": 0.4
-            }
-          },
-          {
-            "Center": {
-              "X": 1.5,
-              "Y": 1.4,
-              "Z": 1.6
+              "X": 2.5,
+              "Y": 1.8,
+              "Z": 2.5
             },
             "Size": {
               "X": 0.3,
-              "Y": 2.8,
+              "Y": 3.6,
               "Z": 0.3
+            }
+          },
+          {
+            "Center": {
+              "X": 0.93,
+              "Y": 0.4,
+              "Z": 4.3
+            },
+            "Size": {
+              "X": 1.3,
+              "Y": 0.8,
+              "Z": 1.1
+            }
+          },
+          {
+            "Center": {
+              "X": 4.05,
+              "Y": 0.6,
+              "Z": 4.3
+            },
+            "Size": {
+              "X": 1.4,
+              "Y": 1.2,
+              "Z": 1.0
             }
           }
         ],
@@ -280,8 +556,8 @@
     },
     "#Unfinished": {
       "Children": {
-        "ConstructionBase3x3#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase3x3/ConstructionBase3x3.blueprint"
+        "ConstructionBase5x5#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase5x5/ConstructionBase5x5.blueprint"
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
@@ -291,14 +567,14 @@
             "BoxColliders": [
               {
                 "Center": {
-                  "X": 1.5,
+                  "X": 2.5,
                   "Y": 0.05,
-                  "Z": 1.5
+                  "Z": 2.5
                 },
                 "Size": {
-                  "X": 3,
+                  "X": 5,
                   "Y": 0.1,
-                  "Z": 3
+                  "Z": 5
                 }
               }
             ],

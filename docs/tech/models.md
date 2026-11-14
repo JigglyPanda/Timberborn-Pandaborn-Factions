@@ -527,6 +527,48 @@ half planked, closed body) and the vanilla ring/drill names; the Sky Lantern rem
 `#Name` a stand-in's specs reference that the model lacks (only the optional `#Underground` of the Campfire basis
 remains, looked up with `FindChildIfNameNotEmpty`).
 
+### Festival Square on the Dance Hall (events lane, events.md section 9)
+
+Rebuilt as a 5x5x2 open village square on `DanceHall.Folktails`: flagstones in running bond inside a stone kerb, low
+plastered walls with tile coping and potted bamboo on three sides, a roofed timber gateway at the entrance (2, -1) with
+two red lanterns, a round stone dais with a 4.25-high lantern pole (tiled cap, a crown of four lanterns), a raised drum
+stand with a barrel drum (back left), a festival stall under an indigo awning with lantern boxes and paper (back
+right), a bench for onlookers, four bamboo corner masts. The twenty Dance Hall `Spot` slots are two rings round the
+pole (8 at r 1.0, 12 at r 1.65), dancing in the open. Blocks: ground layer `Floor, Bottom, Corners, Path, Middle`,
+upper layer free. The vanilla `Light` attachment sits on the pole. 8702 triangles (the lanterns are most of it; the
+Dance Hall's vanilla high is 6400: accepted for the faction's one landmark per district).
+
+Nodes for `Pandaborn.Festival`:
+
+| Node | What it is |
+|---|---|
+| `#FestivalLights` | a static child node: the lantern strings from the pole top to the four masts, round the back and sides, from the masts to the gateway, and the stall's three lanterns (lit `WindowsAtlas` paper). Hide/show it with `SetActive`. |
+| `#FireworkMount` | an empty at (2.5, 4.63, 2.5), just above the pole's cap |
+| `#LanternRise` | an empty on the dais in front of the pole, (2.5, 0.26, 2.05): the parent for the rising-lantern effect |
+
+**Lantern rise: what the node can really be.** A timbermesh holds meshes, node transforms and node animations, never a
+particle system. The game attaches particles the way it attaches the Bakery smoke and the brazier fire:
+`TemplateAttachmentsSpec.Attachments[] = {AttachmentId, Prefab, Parent, Position, Rotation, Scale, CreateInstantly}`.
+`TemplateAttachments.CreateAttachment` instantiates the prefab (a Unity GameObject asset: a vanilla resource path or a
+prefab in a mod asset bundle) under `GameObject.FindChildTransform(Parent)`, so **Parent may be any model node**,
+`#LanternRise` included (a missing parent node is a null parent, not an error). With `CreateInstantly: false` the code
+calls `GetComponent<TemplateAttachments>().GetOrCreateAttachment("LanternRise")` at dusk and plays the
+`ParticleSystem` in the returned GameObject, once per lantern. So the answer for the events lane:
+
+1. `#LanternRise` is an **attachment point** (now in the model). Add to the square's blueprint
+   `{"AttachmentId": "LanternRise", "Prefab": <prefab>, "Parent": "#LanternRise", "Position": {0,0,0},
+   "CreateInstantly": false}`.
+2. The prefab must be a GameObject with a ParticleSystem: either a **vanilla particle prefab** (no vanilla prefab
+   looks like a paper lantern; the nearest are the firework pieces, e.g. `Fireworks/Content/Sparks_Trail` or
+   `Fireworks/Content/Common_Trail_Sparks`, fine for a first test), or the **art lane's own prefab** in a mod bundle (a
+   particle system emitting one lantern quad, warm additive material, 8-12 s life, slow rise with drift): that needs a
+   Unity prefab built by the look/plants bundle pipeline, not the kit.
+3. A baked mesh (a few lanterns on a one-shot `rise` animation, as the Sky Lantern) is possible but I did not bake it:
+   a model has one animator that plays its first animation while enabled, and the Dance Hall basis has no controller
+   that stops it, so the lanterns would loop for ever when the module is off; the code would have to own the
+   animator (`IAnimator.Play("Default", looped: false)`, as the test harness's `animations` request does). Say if
+   you want it as a fallback; it would sit under its own node `#LanternRiseMesh`.
+
 ### Catalogue adoption list for pass 4
 
 * Regenerate every adopted model: meshes changed (lantern paper region) and these model.json files changed:
@@ -541,4 +583,6 @@ remains, looked up with `FindChildIfNameNotEmpty`).
   (LargeWindTurbine; WindRotationAnimatorSpec), FlumeBridgeSpan (water module).
 * OxWorkshop and SkyLantern again after `aad784b` (progress nodes; ground-cutoff spec removed): the build installed
   at 11:28 crashes every Inkpaws game until regenerated.
+* FestivalSquare: basis now `DanceHall.Folktails` (5x5x2), blocks/entrance/access/slots from model.json; keep the
+  `Light` attachment; add the `LanternRise` attachment above when the prefab exists.
 * Faction: `FactionSpec.WonderCompletionImage` = `Sprites/Pandaborn/WonderCompletion/wonder-completion-inkpaws`.

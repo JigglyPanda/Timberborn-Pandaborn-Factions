@@ -1,14 +1,14 @@
 {
  "id": "FestivalSquare",
- "standIn": "SmallWarehouse.Folktails",
+ "standIn": "DanceHall.Folktails",
  "generatedBy": "art/models/FestivalSquare/build.py (src/pipeline/kit); AI-generated, code-made",
  "models": {
   "finished": "FestivalSquare.Model",
   "constructionStage0": "FestivalSquare.ConstructionStage0.Model"
  },
  "size": {
-  "X": 3,
-  "Y": 3,
+  "X": 5,
+  "Y": 5,
   "Z": 2
  },
  "blocks": [
@@ -71,6 +71,230 @@
   {
    "MatterBelow": "GroundOrStackable",
    "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "GroundOrStackable",
+   "Occupations": "Floor, Bottom, Corners, Path, Middle",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
+   "Stackable": "None",
+   "OccupyAllBelow": false,
+   "Underground": false
+  },
+  {
+   "MatterBelow": "Any",
+   "Occupations": "None",
    "Stackable": "None",
    "OccupyAllBelow": false,
    "Underground": false
@@ -140,74 +364,327 @@
   }
  ],
  "entrance": {
-  "X": 1,
+  "X": 2,
   "Y": -1,
   "Z": 0
  },
- "slots": [],
- "animatedNodes": [],
+ "slots": [
+  {
+   "node": "#FireworkMount",
+   "parent": null,
+   "localPosition": [
+    2.5,
+    4.57,
+    2.5
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#LanternRise",
+   "parent": null,
+   "localPosition": [
+    2.5,
+    0.26,
+    2.05
+   ],
+   "localRotation": null
+  },
+  {
+   "node": "#Slot#Spot1",
+   "position": {
+    "X": 3.423879532511287,
+    "Y": 0.08,
+    "Z": 2.8826834323650896
+   },
+   "yaw": -22.5
+  },
+  {
+   "node": "#Slot#Spot2",
+   "position": {
+    "X": 2.8826834323650896,
+    "Y": 0.08,
+    "Z": 3.423879532511287
+   },
+   "yaw": -67.5
+  },
+  {
+   "node": "#Slot#Spot3",
+   "position": {
+    "X": 2.1173165676349104,
+    "Y": 0.08,
+    "Z": 3.423879532511287
+   },
+   "yaw": -112.5
+  },
+  {
+   "node": "#Slot#Spot4",
+   "position": {
+    "X": 1.5761204674887133,
+    "Y": 0.08,
+    "Z": 2.88268343236509
+   },
+   "yaw": -157.5
+  },
+  {
+   "node": "#Slot#Spot5",
+   "position": {
+    "X": 1.576120467488713,
+    "Y": 0.08,
+    "Z": 2.1173165676349104
+   },
+   "yaw": -202.5
+  },
+  {
+   "node": "#Slot#Spot6",
+   "position": {
+    "X": 2.1173165676349095,
+    "Y": 0.08,
+    "Z": 1.5761204674887135
+   },
+   "yaw": -247.49999999999997
+  },
+  {
+   "node": "#Slot#Spot7",
+   "position": {
+    "X": 2.88268343236509,
+    "Y": 0.08,
+    "Z": 1.5761204674887135
+   },
+   "yaw": -292.5
+  },
+  {
+   "node": "#Slot#Spot8",
+   "position": {
+    "X": 3.4238795325112865,
+    "Y": 0.08,
+    "Z": 2.1173165676349095
+   },
+   "yaw": -337.5
+  },
+  {
+   "node": "#Slot#Spot9",
+   "position": {
+    "X": 4.093777613376963,
+    "Y": 0.08,
+    "Z": 2.927051424419159
+   },
+   "yaw": -14.999999999999998
+  },
+  {
+   "node": "#Slot#Spot10",
+   "position": {
+    "X": 3.6667261889578033,
+    "Y": 0.08,
+    "Z": 3.6667261889578033
+   },
+   "yaw": -45.0
+  },
+  {
+   "node": "#Slot#Spot11",
+   "position": {
+    "X": 2.927051424419159,
+    "Y": 0.08,
+    "Z": 4.093777613376963
+   },
+   "yaw": -75.0
+  },
+  {
+   "node": "#Slot#Spot12",
+   "position": {
+    "X": 2.072948575580841,
+    "Y": 0.08,
+    "Z": 4.093777613376963
+   },
+   "yaw": -105.0
+  },
+  {
+   "node": "#Slot#Spot13",
+   "position": {
+    "X": 1.3332738110421967,
+    "Y": 0.08,
+    "Z": 3.6667261889578033
+   },
+   "yaw": -135.0
+  },
+  {
+   "node": "#Slot#Spot14",
+   "position": {
+    "X": 0.9062223866230374,
+    "Y": 0.08,
+    "Z": 2.92705142441916
+   },
+   "yaw": -165.0
+  },
+  {
+   "node": "#Slot#Spot15",
+   "position": {
+    "X": 0.9062223866230374,
+    "Y": 0.08,
+    "Z": 2.0729485755808406
+   },
+   "yaw": -195.0
+  },
+  {
+   "node": "#Slot#Spot16",
+   "position": {
+    "X": 1.333273811042196,
+    "Y": 0.08,
+    "Z": 1.3332738110421973
+   },
+   "yaw": -224.99999999999997
+  },
+  {
+   "node": "#Slot#Spot17",
+   "position": {
+    "X": 2.072948575580841,
+    "Y": 0.08,
+    "Z": 0.9062223866230374
+   },
+   "yaw": -255.00000000000003
+  },
+  {
+   "node": "#Slot#Spot18",
+   "position": {
+    "X": 2.9270514244191586,
+    "Y": 0.08,
+    "Z": 0.9062223866230372
+   },
+   "yaw": -285.0
+  },
+  {
+   "node": "#Slot#Spot19",
+   "position": {
+    "X": 3.666726188957803,
+    "Y": 0.08,
+    "Z": 1.3332738110421964
+   },
+   "yaw": -315.0
+  },
+  {
+   "node": "#Slot#Spot20",
+   "position": {
+    "X": 4.093777613376963,
+    "Y": 0.08,
+    "Z": 2.0729485755808392
+   },
+   "yaw": -344.99999999999994
+  }
+ ],
+ "animatedNodes": [
+  {
+   "node": "#FestivalLights",
+   "driver": "",
+   "pivot": {
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "axis": {
+    "X": 0.0,
+    "Y": 1.0,
+    "Z": 0.0
+   },
+   "animation": "Default",
+   "kind": "static",
+   "frames": 100,
+   "fps": 24.0,
+   "turns": 1,
+   "drivenBy": "Pandaborn.Festival (shown from the festival's call to its end)"
+  }
+ ],
  "colliders": [
   {
    "Center": {
-    "X": 1.5,
+    "X": 2.5,
+    "Y": 0.05,
+    "Z": 2.5
+   },
+   "Size": {
+    "X": 5.0,
     "Y": 0.1,
-    "Z": 1.5
-   },
-   "Size": {
-    "X": 3.0,
-    "Y": 0.2,
-    "Z": 3.0
+    "Z": 5.0
    }
   },
   {
    "Center": {
-    "X": 1.5,
-    "Y": 1.4,
-    "Z": 0.12
-   },
-   "Size": {
-    "X": 2.3,
-    "Y": 0.6,
-    "Z": 0.4
-   }
-  },
-  {
-   "Center": {
-    "X": 1.5,
-    "Y": 1.4,
-    "Z": 1.6
+    "X": 2.5,
+    "Y": 1.8,
+    "Z": 2.5
    },
    "Size": {
     "X": 0.3,
-    "Y": 2.8,
+    "Y": 3.6,
     "Z": 0.3
+   }
+  },
+  {
+   "Center": {
+    "X": 0.93,
+    "Y": 0.4,
+    "Z": 4.3
+   },
+   "Size": {
+    "X": 1.3,
+    "Y": 0.8,
+    "Z": 1.1
+   }
+  },
+  {
+   "Center": {
+    "X": 4.05,
+    "Y": 0.6,
+    "Z": 4.3
+   },
+   "Size": {
+    "X": 1.4,
+    "Y": 1.2,
+    "Z": 1.0
    }
   }
  ],
- "attachments": [],
+ "attachments": [
+  {
+   "AttachmentId": "Light",
+   "Position": {
+    "X": 2.5,
+    "Y": 1.375,
+    "Z": 2.5
+   },
+   "note": "the vanilla dance-hall light, high on the lantern pole"
+  }
+ ],
  "triangles": {
-  "finished": 3360,
-  "constructionStage0": 690,
-  "vanillaMedianForFootprint": 1600
+  "finished": 8702,
+  "constructionStage0": 760,
+  "vanillaMedianForFootprint": 2900
  },
  "materials": [
+  "BaseMetal.Folktails",
   "BaseWood_Brown.Folktails",
   "BaseWood_LightBrown.Folktails",
+  "BaseWood_Yellow.Folktails",
   "Details.Folktails",
   "IrregularPlanks_LightBrown.Folktails",
-  "IrregularPlanks_White.Folktails",
+  "PaintedMetal.Folktails",
   "Paper.Folktails",
   "Plaster_White.Folktails",
+  "PlasteredWood_White.Folktails",
   "Sand.Folktails",
   "ThatchedRoof.Folktails",
   "WindowsAtlas.Folktails"
  ],
  "notes": [
-  "Stand-in Small Warehouse is 1x1: take size, blocks (walkable floor, open above), entrance and access from this file. Lanterns glow at night with an illuminator (StockpileIlluminatorSpec or EnterableIlluminatorSpec)."
+  "Blocks: an open square (ground layer Floor/Bottom/Corners/Path/Middle, upper layer free), entrance at the gateway (2, -1). Twenty 'Spot' slots in two rings round the pole (the Dance Hall's 'Dancing').",
+  "Events-module nodes: #FestivalLights (static, shown/hidden by code), #FireworkMount, #LanternRise."
  ],
  "access": {
-  "X": 1.5,
+  "X": 2.5,
   "Y": 0.06,
-  "Z": 0.6
+  "Z": 0.3
+ },
+ "festivalNodes": {
+  "lights": "#FestivalLights",
+  "fireworkMount": "#FireworkMount",
+  "lanternRise": "#LanternRise (attachment parent, see models.md 'Lantern rise')"
  }
 }

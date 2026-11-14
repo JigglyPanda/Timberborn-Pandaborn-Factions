@@ -22,7 +22,7 @@ Building.PandabornModelDewCollector.Description,"Model prototype of the DewColle
 Building.PandabornModelDryStoneWall.DisplayName,"[Model] DryStoneWall",
 Building.PandabornModelDryStoneWall.Description,"Model prototype of the DryStoneWall, on the Levee.Folktails blueprint.",
 Building.PandabornModelFestivalSquare.DisplayName,"[Model] FestivalSquare",
-Building.PandabornModelFestivalSquare.Description,"Model prototype of the FestivalSquare, on the SmallWarehouse.Folktails blueprint.",
+Building.PandabornModelFestivalSquare.Description,"Model prototype of the FestivalSquare, on the DanceHall.Folktails blueprint.",
 Building.PandabornModelFlumeBridgeSpan.DisplayName,"[Model] FlumeBridgeSpan",
 Building.PandabornModelFlumeBridgeSpan.Description,"Model prototype of the FlumeBridgeSpan, on the ThrottlingValve.Folktails blueprint.",
 Building.PandabornModelFlumeBridge.DisplayName,"[Model] FlumeBridge",
