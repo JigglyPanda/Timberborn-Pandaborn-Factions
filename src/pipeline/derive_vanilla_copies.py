@@ -19,14 +19,18 @@ MOD = os.path.join(REPO, "mod", "PandabornFactions")
 FACTION = "Inkpaws"
 SOURCE_FACTION = "Folktails"
 
-# vanilla blueprint (relative to the dump) -> (mod path, edit function)
+# vanilla blueprint (relative to the dump) -> (mod path, template name, body model).
+# SimpleLabeledEntitySpec.EntityNameLocKey is deliberately left at the vanilla value
+# (Beaver.Adult.TemplateName / Beaver.Child.TemplateName / Bot.TemplateName): the Population tab of the
+# batch-control window (CharacterBatchControlTab.GetSortingKey) throws ArgumentOutOfRangeException for any
+# other key. tools/validate.py enforces this.
 CHARACTERS = {
     "Characters/Beaver/BeaverAdult.blueprint.json": (
         "Characters/Pandaborn/InkpawAdult.Inkpaws.blueprint.json",
-        "InkpawAdult.Inkpaws", "Characters/Pandaborn/InkpawAdult.Model", "Inkpaws.Adult.TemplateName"),
+        "InkpawAdult.Inkpaws", "Characters/Pandaborn/InkpawAdult.Model"),
     "Characters/Beaver/BeaverChild.blueprint.json": (
         "Characters/Pandaborn/InkpawChild.Inkpaws.blueprint.json",
-        "InkpawChild.Inkpaws", "Characters/Pandaborn/InkpawChild.Model", "Inkpaws.Child.TemplateName"),
+        "InkpawChild.Inkpaws", "Characters/Pandaborn/InkpawChild.Model"),
 }
 
 
@@ -45,11 +49,10 @@ def save(rel, data):
 
 
 def derive_characters(bp):
-    for src, (dst, template_name, model, label_key) in CHARACTERS.items():
+    for src, (dst, template_name, model) in CHARACTERS.items():
         data = load(os.path.join(bp, src))
         data["TemplateSpec"]["TemplateName"] = template_name
         data["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
-        data["SimpleLabeledEntitySpec"]["EntityNameLocKey"] = label_key
         data["Children"]["Model_Preserved"]["TimbermeshSpec"]["Model"] = model
         save(dst, data)
 

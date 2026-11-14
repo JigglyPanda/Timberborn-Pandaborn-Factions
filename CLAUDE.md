@@ -118,9 +118,15 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   shaft factories take `TemplateService.GetSingle<AdultSpec|ChildSpec|BotSpec|ModularShaftPartsSpec>()` over the
   active collections only. No game code loads `Characters/Beaver/...` by string or compares a template name to
   `BeaverAdult`/`BeaverChild` (only the Folktails-only tutorial stage `Wellbeing.SelectBeaver` lists them).
-  The mesh is imported per path (no cache by node or animation name). *Untested in game:* the Inkpaws
-  faction-only bodies `Characters/Pandaborn/InkpawAdult|InkpawChild.Inkpaws.blueprint.json` →
-  `Characters/Pandaborn/InkpawAdult|InkpawChild.Model.timbermesh` (Milestone 0).
+  The mesh is imported per path (no cache by node or animation name). Verified in game 2026-11-14 (Reskin off):
+  Inkpaws colonists use `Characters/Pandaborn/InkpawAdult|InkpawChild.Model` with coats
+  `Materials/Pandaborn/Inkpaws/...` (adult body 1,716 vertices, kit 1,608).
+* Character templates must keep the vanilla label keys in `SimpleLabeledEntitySpec.EntityNameLocKey`
+  (`Beaver.Adult.TemplateName`, `Beaver.Child.TemplateName`, `Bot.TemplateName`): the Population tab of the
+  batch-control window (`CharacterBatchControlTab.GetSortingKey`) throws `ArgumentOutOfRangeException` on any other
+  key. So the tab's group headers read "Beaver adult"/"Beaver child" in an Inkpaws game; changing that needs code
+  (a faction-aware label at runtime), never a vanilla loc override. `tools/validate.py` enforces the keys and the
+  test harness opens every batch-control tab.
 * The Reskin's panda meshes keep the beaver layout: adult nodes `Beaver_mesh_default`, `#BeaverAdult.001`
   (1,716 vertices, material `BeaverAdult`), `#Backpack`, `#CarriedInHands`, `#Head`, `#Teeth`, `#ZiplineHarness`,
   `#PlantingParticles`, `#BuildingParticles`, `#Collider`; 61 animations. Kit: `#BeaverChild` (1,608 vertices,
@@ -152,24 +158,56 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Diorama -RunSeconds 60
-# more: -InGameDays 1 -Speed 3 -Buildings 'Lodge.Folktails' -Checks @{ minChildren = 1; adultTemplate = 'X' }
-#       -Screenshots 'overview@start','adult@start','child@start','overview@30','screen@end' -RequestJson <file>
+# more: -InGameDays 1 -Speed 3 -Buildings 'Lodge.Folktails,EfficientFarmHouse.Folktails'
+#       -Screenshots 'overview@start,adult@start,child@start,overview@30,screen@end' -RequestJson <file>
+#       -DisableMods JigglyPanda.Pandaborn | -OnlyMods JigglyPanda.PandabornFactions   (this run only, restored after)
+#       -ExtraMods E:\PandabornDev\build\proto\<name>   (junction + enable a dev mod for this run only)
+#       -FactionPanelShots -SaveAndReload -WaitForGameSeconds 1800 -DryRun -NoBatchControl
+# -Checks needs a hashtable, so call it from PowerShell (& tools\run_game_test.ps1 ...) rather than -File:
+#       -Checks @{ adultTemplate = 'InkpawAdult.Inkpaws'; adultModel = 'Characters/Pandaborn/InkpawAdult.Model';
+#                  adultTextureAsset = 'Materials/Pandaborn/Inkpaws/'; botTemplateActive = 'Bot.Inkpaws'; minChildren = 1 }
+powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModState <run>\modstate.json   # manual undo
 ```
 
+* One test at a time per machine: the script holds the named mutex `Global\PandabornGameTest` for the whole run
+  (holder in `E:\PandabornDev\build\test\gametest.lock.json`) and waits while another run holds it or any Timberborn
+  process is open, printing who it waits on. Exit code 2 only after `-WaitForGameSeconds` (default 1800). The mutex is
+  released on every exit path; a holder that died is taken over.
 * Builds `src/devharness` (dev-only mod) to `E:\PandabornDev\build\PandabornDevHarness`, junctions it into `Mods`,
   writes `E:\PandabornDev\build\test\request.json`, launches the game, waits, kills it on timeout, then removes the
   junction (`-KeepInstalled` keeps it; it is inert without a request), deletes the `PB_AutoTest_<run>` save and
-  restores the `Screenmanager*` window prefs Unity saves on exit.
-* Output in `E:\PandabornDev\build\test\<run id>\`: `result.json` (faction, mods, population, per-colonist template /
-  mesh / coat texture, available templates, placed buildings, captured errors, checks, verdict), `summary.json`,
-  `harness.log`, `Player.log`, PNGs (`overview` = off-screen render of the game view, `screen` = real screen with UI,
-  `adult`/`child`/`bot` = studio close-up, front and back). Look at the PNGs.
-* Exit code 0 pass, 1 fail, 2 could not test. It refuses to run while Timberborn is already open.
-* Errors are "ours" when message or stack contains `PandabornFactions`, `PandabornDevHarness` or `Inkpaws`
-  (`-OwnPatterns`). Other mods' noise is reported but only fails with `-StrictLog`. Known noise on this machine:
-  31x `Assertion failed` right after "Too many atlases loaded (3)!" when the game scene loads.
-* The test runs with all of the owner's enabled mods. That includes the Pandaborn **Reskin**, so vanilla Folktails
-  colonists render as pandas. There is no supported way to isolate mods without changing the owner's mod settings.
+  restores the `Screenmanager*` window prefs Unity saves on exit. List parameters accept `a,b` (also through `-File`).
+* Output in `E:\PandabornDev\build\test\<run id>\`: `result.json` (faction, mods loaded, population, per-colonist
+  template / model asset path / mesh + vertices / coat texture and its asset path, active adult/child/bot templates
+  with model path and which asset provider (game or mod) supplies it, faction coats, available templates, placed
+  buildings, batch-control tabs, save, captured errors, checks, verdict), `summary.json`, `overall.json`, `harness.log`,
+  `Player.log`, PNGs (`overview` = off-screen render of the game view, `screen` = real screen with UI,
+  `adult`/`child`/`bot` = studio close-up, front and back, `batch_population` = Population tab open,
+  `factionPanel_<Id>` = new-game faction panel). Look at the PNGs.
+* At the end of every run the harness opens each batch-control tab (Population last) and fails `batchControlTabs` if
+  one throws. `-SaveAndReload` saves as `PB_AutoTest` in `Saves\PB_AutoTest_<run>\`, relaunches with
+  `-saveName/-settlementName`, re-checks faction and characters in `<run>\reload\`, then deletes that settlement only.
+* Exit code 0 pass, 1 fail, 2 could not test.
+* Errors are "ours" when message or stack contains `PandabornFactions`, `PandabornDevHarness`, `Inkpaws` or an
+  `-ExtraMods` mod's id/folder/name (`-OwnPatterns`). Other mods' noise is reported but only fails with `-StrictLog`.
+  Known noise: 31x `Assertion failed` right after "Too many atlases loaded (3)!" when the game scene loads.
+* **Mod isolation.** The game keeps each mod's enable flag in Unity PlayerPrefs, `HKCU\Software\Mechanistry\Timberborn`,
+  value `ModEnabled.<Local|Steam Workshop>.<top folder>.<manifest Id>_h<hash>` (REG_DWORD 1/0; absent = enabled, so a
+  new mod loads enabled; hash = djb2-xor of the UTF-8 key, `h = (h*33) ^ byte` from 5381, uint32). Workshop items use
+  the same flags (`Steam Workshop.<item id>`). `RequiredMods` are not enforced at load (the mod manager UI only warns),
+  so `-OnlyMods` keeps the listed mods, the harness, `-ExtraMods` and, transitively, everything they require.
+  `-DisableMods`/`-OnlyMods`/`-ExtraMods` write the exact prior values to `<run>\modstate.json` and
+  `test\modstate.pending.json` before changing anything, change only those values, and restore them in a `finally`
+  (also on timeout, crash and Ctrl-C) after the game has exited (Unity rewrites prefs on exit), then re-read and
+  compare (`modstate.restore.json`). While `modstate.pending.json` exists the script refuses to start; undo with
+  `-RestoreModState`. `-DryRun` prints the plan without changing anything. `result.json` `mods` proves what loaded.
+* `-ExtraMods <folder>[,<folder>]` junctions each folder (it needs a `manifest.json`) into `Mods\<folder name>` for the
+  run, refusing to replace a real folder, and removes the junctions it created on every exit path; if a stale flag
+  had the mod switched off it is switched on for the run (same record/restore). Prototypes live in `proto/<name>/`,
+  built to `E:\PandabornDev\build\proto\<name>`.
+* The Pandaborn **Reskin** (`JigglyPanda.Pandaborn`) turns vanilla beavers into pandas and re-skins other factions;
+  test vanilla looks and Inkpaws coats with `-DisableMods JigglyPanda.Pandaborn`. Another mod on this machine
+  Harmony-patches `CharacterBatchControlTab.GetSortingKey` (stack shows `GetSortingKey_Patch1`).
 * Launch facts: `Timberborn.exe` started directly with env `SteamAppId=1062090` does not bounce through Steam, so
   Unity arguments work: `-skipModManager`, `-logFile <path>`, `-screen-fullscreen 0 -screen-width W -screen-height H`.
   The game's own arguments: `-skipModManager`, `-saveName`/`-settlementName` (auto-load a save), `-uncapped`,

@@ -40,9 +40,14 @@ namespace PandabornDevHarness
     ///   "screenshots": [ { "name", "kind": "overview|screen|adult|child|bot", "at": "start|end|&lt;seconds into run&gt;" } ],
     ///   "screenshotSize": [1280, 720], "closeupSize": 640, "samplePerKind": 3,
     ///   "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws" ],
+    ///   "batchControl": true (open every batch-control tab at the end; a throwing tab fails the run),
+    ///   "factionPanelShots": false (screen captures of the main menu's new-game faction panel, one per faction),
+    ///   "save": "PB_AutoTest" (save name; the game is saved to Saves/&lt;settlementName&gt;/ at the end),
+    ///   "loadSave": false (the game was launched with -saveName/-settlementName: do not start a new game),
     ///   "checks": { "minAdults": 1, "minChildren": 0, "minBots": 0, "noOwnErrors": true, "maxErrors": n,
-    ///               "adultTemplate", "childTemplate", "botTemplate", "adultMeshContains", "adultTextureContains", ...,
-    ///               "templatesAvailable": [], "templatesUnavailable": [] } }
+    ///               "adultTemplate", "childTemplate", "botTemplate", "adultMeshContains", "adultTextureContains",
+    ///               "adultModel" (exact model asset path), "adultTextureAsset" (substring of the coat's asset path), ...,
+    ///               "botTemplateExists": true, "templatesAvailable": [], "templatesUnavailable": [] } }
     /// </code>
     /// With an in-game duration, realSeconds is only a cap (default 900).
     /// </summary>
@@ -82,6 +87,11 @@ namespace PandabornDevHarness
         public JObject Checks = new JObject();
         public bool Quit = true;
 
+        public bool BatchControl = true;
+        public bool FactionPanelShots;
+        public string SaveName;
+        public bool LoadSave;
+
         public static Request Parse(string path)
         {
             var raw = JObject.Parse(File.ReadAllText(path));
@@ -102,6 +112,11 @@ namespace PandabornDevHarness
             r.DevMode = Bool(raw, "devMode", r.DevMode);
             r.Mute = Bool(raw, "mute", r.Mute);
             r.Quit = Bool(raw, "quit", r.Quit);
+            r.BatchControl = Bool(raw, "batchControl", r.BatchControl);
+            r.FactionPanelShots = Bool(raw, "factionPanelShots", r.FactionPanelShots);
+            r.SaveName = Str(raw, "save", null);
+            if (string.IsNullOrWhiteSpace(r.SaveName)) r.SaveName = null;
+            r.LoadSave = Bool(raw, "loadSave", r.LoadSave);
 
             if (raw["window"] is JObject window)
             {

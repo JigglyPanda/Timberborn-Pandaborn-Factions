@@ -48,7 +48,7 @@
     "UpperSwimmingDepthThreshold": 0.2
   },
   "SimpleLabeledEntitySpec": {
-    "EntityNameLocKey": "Inkpaws.Child.TemplateName"
+    "EntityNameLocKey": "Beaver.Child.TemplateName"
   },
   "BeaverInjuryTextureSetterSpec": {
     "InjuryTextureSets": [

@@ -67,7 +67,9 @@ namespace PandabornDevHarness
                 string template = Str(options, kind + "Template");
                 string mesh = Str(options, kind + "MeshContains");
                 string texture = Str(options, kind + "TextureContains");
-                if (template == null && mesh == null && texture == null) continue;
+                string model = Str(options, kind + "Model");
+                string textureAsset = Str(options, kind + "TextureAsset");
+                if (template == null && mesh == null && texture == null && model == null && textureAsset == null) continue;
                 var samples = new List<JObject>();
                 if (result["characterSamples"] is JArray sampled)
                     foreach (var c in sampled) if ((string)c["kind"] == kind) samples.Add((JObject)c);
@@ -75,11 +77,47 @@ namespace PandabornDevHarness
                 foreach (var s in samples)
                 {
                     string t = (string)s["template"] ?? "", m = (string)s["body"]?["mesh"] ?? "", x = (string)s["body"]?["baseMap"] ?? "";
+                    string ma = (string)s["body"]?["modelAsset"] ?? "", xa = (string)s["body"]?["baseMapAsset"] ?? "";
+                    string v = (string)s["body"]?["vertices"] ?? "?";
                     bool pass = (template == null || t == template)
                                 && (mesh == null || m.IndexOf(mesh, StringComparison.OrdinalIgnoreCase) >= 0)
-                                && (texture == null || x.IndexOf(texture, StringComparison.OrdinalIgnoreCase) >= 0);
-                    Add(kind + "Look", pass, (string)s["name"] + ": template " + t + ", mesh " + m + ", baseMap " + x);
+                                && (texture == null || x.IndexOf(texture, StringComparison.OrdinalIgnoreCase) >= 0)
+                                && (model == null || string.Equals(ma, model, StringComparison.OrdinalIgnoreCase))
+                                && (textureAsset == null || xa.IndexOf(textureAsset, StringComparison.OrdinalIgnoreCase) >= 0);
+                    Add(kind + "Look", pass, (string)s["name"] + ": template " + t + ", model " + ma + " (" + m + ", " + v
+                                             + " vertices), baseMap " + x + (xa.Length > 0 ? " = " + xa : " (not a faction coat)"));
                 }
+            }
+
+            string botActive = Str(options, "botTemplateActive");
+            if (botActive != null)
+            {
+                var botNames = new List<string>();
+                if (result["characterTemplatesActive"]?["BotSpec"] is JArray botList)
+                    foreach (var b in botList) botNames.Add((string)b["template"]);
+                Add("botTemplateActive", botNames.Count == 1 && botNames[0] == botActive,
+                    "active bot templates: " + (botNames.Count > 0 ? string.Join(", ", botNames.ToArray()) : "none") + " (want " + botActive + ")");
+            }
+
+            if (request.BatchControl && status == "completed")
+            {
+                var failed = new List<string>();
+                int opened = 0;
+                if (result["batchControl"]?["tabs"] is JArray tabs)
+                    foreach (var tab in tabs)
+                    {
+                        if ((bool?)tab["opened"] == true) opened++;
+                        else failed.Add((string)tab["type"] + ": " + (string)tab["error"]);
+                    }
+                Add("batchControlTabs", opened > 0 && failed.Count == 0,
+                    opened + " tab(s) opened" + (failed.Count > 0 ? "; failed: " + string.Join("; ", failed.ToArray()) : ""));
+            }
+
+            if (request.SaveName != null)
+            {
+                var save = result["save"] as JObject;
+                bool saved = save != null && (bool?)save["saved"] == true && (bool?)save["exists"] == true;
+                Add("saved", saved, save != null ? (string)save["file"] + (saved ? "" : " not written") : "no save attempted");
             }
 
             var templates = new HashSet<string>();

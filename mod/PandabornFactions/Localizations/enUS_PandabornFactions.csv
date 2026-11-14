@@ -7,5 +7,3 @@ ID,Text,Comment
 "Faction.Inkpaws.WonderCompletionFlavor","With full bellies and patient paws, your Inkpaws gave the tired world something it had long forgotten: time to rest and regrow. The mist lifts, and the valley turns green once more.","Shown when the player has mastered a map with the Inkpaws faction by building and activating its Wonder"
 "Faction.Inkpaws.WonderCompletionMessage","Congratulations! You mastered the gentle, unhurried ways of the Inkpaws and used this map's resources to build the faction's wonder.","Shown when the player has mastered a map with the Inkpaws faction by building and activating its Wonder"
 "Bot.DisplayName.Inkpaws","Bamboobot {0}","{0} is the bot's serial number. Name of bots from the Inkpaws faction"
-"Inkpaws.Adult.TemplateName","Inkpaw adult","Name of an adult Inkpaws colonist (a giant panda)"
-"Inkpaws.Child.TemplateName","Inkpaw cub","Name of a young Inkpaws colonist (a giant panda cub)"

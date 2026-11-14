@@ -59,7 +59,7 @@
     "UpperSwimmingDepthThreshold": 0.27
   },
   "SimpleLabeledEntitySpec": {
-    "EntityNameLocKey": "Inkpaws.Adult.TemplateName"
+    "EntityNameLocKey": "Beaver.Adult.TemplateName"
   },
   "YieldRemoverNeedApplierSpec": {},
   "OverburdenableSpec": {

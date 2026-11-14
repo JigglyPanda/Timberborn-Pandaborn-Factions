@@ -29,6 +29,9 @@ MOD_ID = "JigglyPanda.PandabornFactions"
 VANILLA_FACTIONS = ("Folktails", "IronTeeth")
 VANILLA_COLLECTION_PREFIXES = ("Common",)
 SINGLE_SPECS = ("AdultSpec", "ChildSpec", "BotSpec", "ModularShaftPartsSpec")
+# the only label keys CharacterBatchControlTab.GetSortingKey accepts (plus Beaver.Population.Contaminated)
+CHARACTER_LABEL_KEYS = {"AdultSpec": "Beaver.Adult.TemplateName", "ChildSpec": "Beaver.Child.TemplateName",
+                        "BotSpec": "Bot.TemplateName"}
 SPRITE_FIELDS = ("Avatar", "ChildAvatar", "BotAvatar", "ContaminatedAdultAvatar", "ContaminatedChildAvatar", "Logo",
                  "NewGameFullAvatar")
 ROOT_FILES_ALLOWED = ("manifest.json", "thumbnail.png", "thumbnail.jpg", "workshop_data.json", "readme.md")
@@ -666,6 +669,17 @@ def check_faction(c, fid, bp):
         for _, mcs in collection_members(c, "MaterialCollectionSpec", cid):
             for m in mcs.get("Materials", []):
                 material_names.add(m.replace("\\", "/").rsplit("/", 1)[-1])
+
+    # character labels: the Population tab of the batch-control window groups characters by
+    # SimpleLabeledEntitySpec.EntityNameLocKey and CharacterBatchControlTab.GetSortingKey throws
+    # ArgumentOutOfRangeException for anything but these vanilla keys
+    for spec, wanted_key in CHARACTER_LABEL_KEYS.items():
+        for k in counts[spec]:
+            t = get_bp(c, k)
+            label = specs_of(t).get("SimpleLabeledEntitySpec", {}).get("EntityNameLocKey") if t else None
+            if label != wanted_key:
+                R.error("%s: %s SimpleLabeledEntitySpec.EntityNameLocKey is %s; must be %s or the Population "
+                        "batch-control tab throws" % (where, c.keys.get(k, [k])[0], label, wanted_key))
 
     # character bodies: mesh exists, animations, attachment points and materials match the blueprint
     for spec in ("AdultSpec", "ChildSpec"):

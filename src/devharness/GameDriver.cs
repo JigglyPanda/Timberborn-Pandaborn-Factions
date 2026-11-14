@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using Bindito.Core;
 using Newtonsoft.Json.Linq;
+using Timberborn.AssetSystem;
+using Timberborn.BatchControl;
 using Timberborn.Beavers;
 using Timberborn.BlockObjectTools;
 using Timberborn.BlockSystem;
@@ -14,13 +16,18 @@ using Timberborn.CharacterModelSystem;
 using Timberborn.Characters;
 using Timberborn.ConstructionSites;
 using Timberborn.Coordinates;
+using Timberborn.CoreUI;
 using Timberborn.Debugging;
 using Timberborn.EntitySystem;
 using Timberborn.GameDistricts;
 using Timberborn.GameFactionSystem;
+using Timberborn.GameSaveRepositorySystem;
+using Timberborn.GameSaveRuntimeSystem;
+using Timberborn.PlatformUtilities;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.TerrainSystem;
+using Timberborn.Timbermesh;
 using Timberborn.TimeSystem;
 using Timberborn.UILayoutSystem;
 using UnityEngine;
@@ -40,7 +47,7 @@ namespace PandabornDevHarness
     /// <summary>Runs the requested scenario once the new game is playable, then reports and quits.</summary>
     public class GameDriver : ILoadableSingleton, IUpdatableSingleton
     {
-        private enum Phase { WaitingForStart, Settling, StartShots, Running, EndShots, Finishing, Done }
+        private enum Phase { WaitingForStart, Settling, StartShots, Running, EndShots, BatchControl, Saving, Finishing, Done }
 
         private readonly EventBus _eventBus;
         private readonly SpeedManager _speedManager;
@@ -57,6 +64,10 @@ namespace PandabornDevHarness
         private readonly PreviewPlacerFactory _previewPlacerFactory;
         private readonly BlockObjectPlacerService _blockObjectPlacerService;
         private readonly ConstructionFactory _constructionFactory;
+        private readonly IBatchControlBox _batchControlBox;
+        private readonly List<BatchControlModule> _batchControlModules;
+        private readonly GameSaver _gameSaver;
+        private readonly List<IAssetProvider> _assetProviders;
 
         private Phase _phase = Phase.WaitingForStart;
         private bool _primaryUiShown;
@@ -65,14 +76,25 @@ namespace PandabornDevHarness
         private readonly List<ShotRequest> _timedShots = new List<ShotRequest>();
         private readonly List<string> _pendingScreenFiles = new List<string>();
         private float _waitUntil;
+        private int _batchStep;
+        private List<BatchControlTab> _batchTabs;
+        private JArray _batchResults;
+        private bool _saveCompleted;
+        private Dictionary<Texture, string> _coatPaths;
 
         public GameDriver(EventBus eventBus, SpeedManager speedManager, IDayNightCycle dayNightCycle, DevModeManager devModeManager,
                           FactionService factionService, CharacterPopulation characterPopulation, BeaverPopulation beaverPopulation,
                           BotPopulation botPopulation, TemplateService templateService, CameraService cameraService,
                           DistrictCenterRegistry districtCenterRegistry, ITerrainService terrainService,
                           PreviewPlacerFactory previewPlacerFactory, BlockObjectPlacerService blockObjectPlacerService,
-                          ConstructionFactory constructionFactory)
+                          ConstructionFactory constructionFactory, IBatchControlBox batchControlBox,
+                          IEnumerable<BatchControlModule> batchControlModules, GameSaver gameSaver,
+                          IEnumerable<IAssetProvider> assetProviders)
         {
+            _batchControlBox = batchControlBox;
+            _batchControlModules = batchControlModules.ToList();
+            _gameSaver = gameSaver;
+            _assetProviders = assetProviders.ToList();
             _eventBus = eventBus;
             _speedManager = speedManager;
             _dayNightCycle = dayNightCycle;
@@ -182,6 +204,24 @@ namespace PandabornDevHarness
 
                 case Phase.EndShots:
                     if (TakeNextShot()) return;
+                    if (request.BatchControl) { _batchStep = 0; Enter(Phase.BatchControl); }
+                    else EnterSavingOrFinishing(request);
+                    return;
+
+                case Phase.BatchControl:
+                    if (StepBatchControl(now)) EnterSavingOrFinishing(request);
+                    return;
+
+                case Phase.Saving:
+                    if (!_saveCompleted && now - _phaseStartedAt < 60f) return;
+                    if (Harness.Result["save"] is JObject save)
+                    {
+                        save["saved"] = _saveCompleted;
+                        save["seconds"] = Math.Round(now - _phaseStartedAt, 1);
+                        save["exists"] = File.Exists((string)save["file"]);
+                        if (!_saveCompleted) Harness.Error("saving the game did not complete within 60 s");
+                        else Harness.Info("saved the game to " + save["file"]);
+                    }
                     Enter(Phase.Finishing);
                     return;
 
@@ -193,6 +233,87 @@ namespace PandabornDevHarness
                     Harness.Finish("completed");
                     return;
             }
+        }
+
+        private void EnterSavingOrFinishing(Request request)
+        {
+            if (request.SaveName == null) { Enter(Phase.Finishing); return; }
+            Enter(Phase.Saving);
+            try
+            {
+                string dir = Path.Combine(UserDataFolder.Folder, "Saves");
+                var reference = new SaveReference(request.SaveName, new SettlementReference(request.SettlementName, dir));
+                Harness.Result["save"] = new JObject
+                {
+                    ["settlementName"] = request.SettlementName,
+                    ["saveName"] = request.SaveName,
+                    ["file"] = Path.Combine(dir, request.SettlementName, request.SaveName + ".timber"),
+                    ["day"] = Math.Round(_dayNightCycle.PartialDayNumber, 3)
+                };
+                _gameSaver.QueueSaveSkippingNameValidation(reference, () => _saveCompleted = true);
+                Harness.Info("saving as " + reference);
+            }
+            catch (Exception e)
+            {
+                Harness.Error("queueing the save failed", e);
+                Enter(Phase.Finishing);
+            }
+        }
+
+        /// <summary>
+        /// Opens every batch-control tab once, the Population (characters) tab last, captures the screen with it open, then
+        /// closes the window. A tab that throws is recorded and fails the batchControlTabs check. Returns true when done.
+        /// </summary>
+        private bool StepBatchControl(float now)
+        {
+            if (_batchTabs == null)
+            {
+                _batchTabs = _batchControlModules.SelectMany(m => m.Tabs).OrderBy(kv => kv.Key).Select(kv => kv.Value).ToList();
+                _batchResults = new JArray();
+                Harness.Result["batchControl"] = new JObject { ["tabs"] = _batchResults };
+            }
+            int count = _batchTabs.Count;
+            int population = _batchTabs.FindIndex(t => t.GetType().Name == "CharacterBatchControlTab");
+            // order: every other tab, then Population, then capture, then close
+            var order = Enumerable.Range(0, count).Where(i => i != population).ToList();
+            if (population >= 0) order.Add(population);
+            if (_batchStep < order.Count)
+            {
+                int index = order[_batchStep++];
+                var tab = _batchTabs[index];
+                var entry = new JObject { ["index"] = index, ["type"] = tab.GetType().Name, ["nameLocKey"] = tab.TabNameLocKey, ["opened"] = false };
+                _batchResults.Add(entry);
+                try
+                {
+                    _batchControlBox.OpenTab(index);
+                    entry["opened"] = true;
+                }
+                catch (Exception e)
+                {
+                    entry["error"] = e.GetType().Name + ": " + e.Message;
+                    Harness.Error("batch-control tab " + index + " (" + tab.GetType().Name + ") threw", e);
+                }
+                _waitUntil = now + (index == population ? 1.2f : 0.3f);
+                return false;
+            }
+            if (_batchStep == order.Count)
+            {
+                _batchStep++;
+                string file = Path.Combine(Harness.OutputDir, "batch_population.png");
+                ScreenCapture.CaptureScreenshot(file);
+                _pendingScreenFiles.Add(file);
+                Harness.RecordScreenshot("batch_population", "screen", Path.GetFileName(file), new JObject { ["tabIndex"] = population }, null);
+                _waitUntil = now + 0.6f;
+                return false;
+            }
+            try
+            {
+                if (_batchControlBox is IPanelController panel) panel.OnUICancelled();
+                else Harness.Warn("batch-control box is not an IPanelController; left open");
+            }
+            catch (Exception e) { Harness.Error("closing the batch-control window failed", e); }
+            _waitUntil = now + 0.5f;
+            return true;
         }
 
         private void Enter(Phase phase)
@@ -490,6 +611,31 @@ namespace PandabornDevHarness
                     ["building"] = spec.HasSpec<BuildingSpec>(),
                     ["devOnly"] = spec.DevModeTool
                 });
+            var characterTemplates = new JObject();
+            foreach (var kind in new[] { "AdultSpec", "ChildSpec", "BotSpec" })
+            {
+                var list = new JArray();
+                foreach (var t in _templateService.GetAll<TemplateSpec>())
+                {
+                    var blueprint = t.Blueprint;
+                    if (blueprint == null || !blueprint.Specs.Any(sp => sp.GetType().Name == kind)) continue;
+                    string model = FindModelPath(blueprint);
+                    list.Add(new JObject
+                    {
+                        ["template"] = t.TemplateName,
+                        ["model"] = model,
+                        ["modelProviders"] = model != null ? AssetProviders<BinaryData>(model) : null,
+                        ["label"] = blueprint.GetSpec<SimpleLabeledEntitySpec>()?.EntityNameLocKey
+                    });
+                }
+                characterTemplates[kind] = list;
+            }
+            result["characterTemplatesActive"] = characterTemplates;
+            var coats = new JArray();
+            if (faction != null)
+                foreach (var t in faction.Textures.Concat(faction.ChildTextures))
+                    coats.Add(new JObject { ["path"] = t.Path, ["name"] = t.Asset ? t.Asset.name : null, ["providers"] = AssetProviders<Texture2D>(t.Path) });
+            result["factionCoats"] = coats;
             var all = _templateService.GetAll<TemplateSpec>().Select(t => t.TemplateName).Where(n => n != null).Distinct().OrderBy(n => n).ToList();
             result["templates"] = new JObject
             {
@@ -534,7 +680,18 @@ namespace PandabornDevHarness
                 ["age"] = character.Age,
                 ["object"] = character.GameObject.name
             };
-            if (body) o["body"] = DescribeRenderer(body);
+            if (body)
+            {
+                var b = DescribeRenderer(body);
+                var description = body.GetComponentInParent<TimbermeshDescription>(true);
+                b["modelAsset"] = description ? description.ModelName : null;
+                b["baseMapAsset"] = CoatPath(body);
+                o["body"] = b;
+            }
+            var models = new JArray();
+            foreach (var d in character.GameObject.GetComponentsInChildren<TimbermeshDescription>(true))
+                if (!models.Any(m => (string)m == d.ModelName)) models.Add(d.ModelName);
+            o["models"] = models;
             var visible = new JArray();
             var hidden = new JArray();
             foreach (var r in character.GameObject.GetComponentsInChildren<Renderer>(true))
@@ -546,6 +703,58 @@ namespace PandabornDevHarness
             o["otherVisibleRenderers"] = visible;
             o["hiddenRenderers"] = hidden;
             return o;
+        }
+
+        /// <summary>The faction texture asset path of the coat on this renderer, or null if it is not one of the faction's coats.</summary>
+        private string CoatPath(Renderer renderer)
+        {
+            var faction = _factionService.Current;
+            if (faction == null) return null;
+            if (_coatPaths == null)
+            {
+                _coatPaths = new Dictionary<Texture, string>();
+                foreach (var t in faction.Textures.Concat(faction.ChildTextures))
+                    if (t.Asset && !_coatPaths.ContainsKey(t.Asset)) _coatPaths[t.Asset] = t.Path;
+            }
+            foreach (var material in renderer.sharedMaterials)
+            {
+                if (!material || !material.HasProperty("_BaseMap")) continue;
+                var texture = material.GetTexture("_BaseMap");
+                if (texture && _coatPaths.TryGetValue(texture, out string path)) return path;
+            }
+            return null;
+        }
+
+        private static string FindModelPath(Timberborn.BlueprintSystem.Blueprint blueprint)
+        {
+            var spec = blueprint.GetSpec<TimbermeshSpec>();
+            if (spec?.Model != null) return spec.Model.Path;
+            foreach (var child in blueprint.Children)
+            {
+                string path = FindModelPath(child);
+                if (path != null) return path;
+            }
+            return null;
+        }
+
+        /// <summary>Which asset providers can supply this path: built-in (game) and/or mods, with load order. The highest order wins.</summary>
+        private JArray AssetProviders<T>(string path) where T : UnityEngine.Object
+        {
+            var list = new JArray();
+            string normalized = AssetPathHelper.NormalizePath(path);
+            foreach (var provider in _assetProviders)
+            {
+                try
+                {
+                    if (provider.TryLoad<T>(normalized, out var asset))
+                        list.Add(new JObject { ["provider"] = provider.GetType().Name, ["builtIn"] = provider.IsBuiltIn, ["order"] = asset.Order });
+                }
+                catch (Exception e)
+                {
+                    list.Add(new JObject { ["provider"] = provider.GetType().Name, ["error"] = e.GetType().Name });
+                }
+            }
+            return list;
         }
 
         private static JObject DescribeRenderer(Renderer renderer)
