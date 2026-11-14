@@ -22,7 +22,7 @@ param(
     [switch]$NoLink
 )
 $ErrorActionPreference = 'Stop'
-$stages = if ($SkipValidate) { 'models,generate,assemble,install' } else { 'models,generate,assemble,validate,install' }
+$stages = if ($SkipValidate) { 'models,generate,code,bundles,assemble,install' } else { 'models,generate,code,bundles,assemble,validate,install' }
 $a = @('-ExecutionPolicy', 'Bypass', '-File', (Join-Path $PSScriptRoot 'pandaborn.ps1'), $stages,
        '-InstallDir', $BuildDir, '-ModsDir', $ModsDir, '-LinkName', $LinkName)
 if ($NoLink) { $a += '-NoLink' }

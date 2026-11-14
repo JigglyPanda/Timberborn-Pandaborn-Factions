@@ -35,6 +35,9 @@ class Generator:
         self.model_files = {}     # mod rel path -> built mesh (E:\PandabornDev\build\models), copied by assemble
         self.adopted_models = {}  # model id -> {item, modelJson, standIn}
         self.mesh_dir = None
+        self.material_collections = {}   # generated material collection id -> material asset paths (plant bundle)
+        self.bundles_needed = set()      # asset bundles the adopted models need (the bundles stage provides them)
+        self.plant_dir = None
         self.code_waits = {}      # code module -> buildings that are vanilla-behaving stand-ins until it ships
         self.rules = catalogue["rules"]
         self.suffix = self.rules.get("names", {}).get("template_suffix", ".Inkpaws")
@@ -519,6 +522,14 @@ class Generator:
 
     # ---------------------------------------------------------------------------------------------- collections
     def gen_collections(self):
+        for cid, mats in sorted(self.material_collections.items()):
+            self.add_id("collection", cid, "adopted plant models")
+            self.emit("MaterialCollections/Pandaborn/MaterialCollection.%s" % cid,
+                      {"MaterialCollectionSpec": {"CollectionId": cid, "Materials": sorted(mats)}},
+                      "adopted plant models: materials of their bundle", "collection")
+            if cid not in self.cat["faction"]["faction"]["material_collections"]:
+                raise GenError("catalogue/faction.toml: material_collections must list %s (the adopted plant models' "
+                               "materials); a model whose material is not in the faction's collections throws" % cid)
         for cid, items in self.collections.items():
             self.add_id("collection", cid, "generated")
             self.emit("TemplateCollections/Pandaborn/TemplateCollection.%s" % cid,

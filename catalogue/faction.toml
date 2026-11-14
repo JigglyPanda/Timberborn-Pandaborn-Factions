@@ -25,7 +25,7 @@ child_textures = [
   "Materials/Pandaborn/Inkpaws/Child/InkpawChild3",
 ]
 # Keep listing Folktails: the look is applied by the material swap in code (CLAUDE.md, docs/tech/look.md).
-material_collections = ["Folktails"]
+material_collections = ["Folktails", "PandabornPlants.Inkpaws"]   # + the plant models' bundle materials
 # Collections this catalogue generates (buildings.toml, plants.toml, the characters below). Order is kept.
 template_collections = ["Buildings.Inkpaws", "Characters.Inkpaws", "ModularShaftParts.Inkpaws", "NaturalResources.Inkpaws"]
 need_collections = ["Needs.Inkpaws"]    # needs.toml [collection]

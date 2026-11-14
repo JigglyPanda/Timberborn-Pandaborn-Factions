@@ -54,6 +54,7 @@ def main(argv=None):
     ap.add_argument("--accept", action="store_true", help="pin: accept the current game as the new pin")
     ap.add_argument("--accept-pin", action="store_true", help="generate even if the game differs from the pin")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--plants", default=os.path.join(DEFAULT_BUILD, "plants"), help="built plant meshes and bundle")
     ap.add_argument("--models", default=os.path.join(DEFAULT_BUILD, "models"), help="built model meshes (models stage)")
     a = ap.parse_args(argv)
     try:
@@ -86,6 +87,7 @@ def generate(a, v):
     cat = Catalogue(a.catalogue)
     g = Generator(cat, v)
     g.mesh_dir = a.models
+    g.plant_dir = a.plants
     g.run()
     files = g.files()
     lock = lockmod.read_lock(a.catalogue)
@@ -168,6 +170,7 @@ def generate(a, v):
     # meshes of adopted models: assemble copies them into the mod (built by the models stage, never in git)
     missing = sorted(src for src in g.model_files.values() if not os.path.isfile(src))
     write_text(a.out + ".models.json", dumps({"files": dict(sorted(g.model_files.items())),
+                                               "bundles": sorted(g.bundles_needed),
                                                "adopted": dict(sorted(g.adopted_models.items()))}))
     if missing:
         print("generate: WARNING %d model mesh(es) not built yet (run: tools/pandaborn.ps1 models): %s"

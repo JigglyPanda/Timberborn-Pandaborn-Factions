@@ -10,6 +10,7 @@ vanilla = ["Dandelion"]
 
 [plants.PandabornShootBamboo]
 basis = "Carrot"
+model = "PandabornShootBamboo"   # art/plants/PandabornShootBamboo/model.json
 plant_hours = 0.2
 growth_days = 3
 cut_yield = { PandabornBambooShoots = 2 }
@@ -22,6 +23,7 @@ src = { GrowthTimeInDays = "M q1", Yield = "M q1", DaysToDieDry = "M q1/q4", Pla
 
 [plants.PandabornCabbage]
 basis = "Carrot"
+model = "PandabornCabbage"   # art/plants/PandabornCabbage/model.json
 plant_hours = 0.2
 growth_days = 5
 cut_yield = { PandabornCabbage = 3 }
@@ -34,6 +36,7 @@ src = { GrowthTimeInDays = "M q3", Yield = "M q3", DaysToDieDry = "M q1", PlantT
 
 [plants.PandabornTimberBamboo]
 basis = "ChestnutTree"
+model = "PandabornTimberBamboo"   # art/plants/PandabornTimberBamboo/model.json
 plant_hours = 0.5
 growth_days = 5
 cut_yield = { Plank = 2 }
@@ -50,6 +53,7 @@ src = { GrowthTimeInDays = "M q1", Yield = "M q1/q8", DaysToDieDry = "M q1", Pla
 
 [plants.PandabornRice]
 basis = "Cattail"
+model = "PandabornRice"   # art/plants/PandabornRice/model.json
 plant_hours = 0.2
 growth_days = 8
 cut_yield = { PandabornRice = 3 }
@@ -62,6 +66,7 @@ src = { GrowthTimeInDays = "V (Cattail)", Yield = "V", Water = "M q4" }
 
 [plants.PandabornTeaBush]
 basis = "BlueberryBush"
+model = "PandabornTeaBush"   # art/plants/PandabornTeaBush/model.json
 plant_hours = 0.4
 growth_days = 6
 gather_yield = { PandabornTeaLeaves = 3 }
@@ -74,6 +79,7 @@ src = { Yield = "M q4", GrowthTimeInDays = "G", PlantTimeInHours = "V", Water = 
 
 [plants.PandabornSichuanPepper]
 basis = "Sunflower"
+model = "PandabornSichuanPepper"   # art/plants/PandabornSichuanPepper/model.json
 plant_hours = 0.2
 growth_days = 5
 cut_yield = { PandabornSichuanPepper = 2 }
@@ -83,6 +89,7 @@ src = { Yield = "M q3", GrowthTimeInDays = "V (Sunflower)" }
 
 [plants.PandabornPersimmonTree]
 basis = "ChestnutTree"
+model = "PandabornPersimmonTree"   # art/plants/PandabornPersimmonTree/model.json
 plant_hours = 0.75
 growth_days = 14
 gather_yield = { PandabornPersimmons = 3 }

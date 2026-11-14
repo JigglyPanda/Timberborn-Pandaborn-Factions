@@ -147,7 +147,9 @@ def main():
          {"NeedCollections/Pandaborn/NeedCollection.PandabornFixture.blueprint.json": nc3})
 
     case("bundle_without_pair", ["asset bundle pandabornfactionsfixture has no _mac build"],
-         {"AssetBundles/pandabornfactionsfixture_win": b"not a real bundle"})
+         {"AssetBundles/pandabornfactionsfixture_win": b"not a real bundle"}, args=["--release"])
+    case("bundle_without_win", ["asset bundle pandabornfactionsfixture has no _win build"],
+         {"AssetBundles/pandabornfactionsfixture_mac": b"not a real bundle"})
     case("vanilla_loc_override", ["loc key Good.Plank.DisplayName overrides vanilla text"],
          {"Localizations/enUS_PandabornFixture.csv": 'ID,Text,Comment\n"Good.Plank.DisplayName","Pole",""\n'})
     case("loc_comma_quote", ["space between comma and quote"],

@@ -7,6 +7,7 @@ report says so.
 """
 import os
 
+from . import models as model_adopter
 from .util import GenError, load_json
 
 # shorthand -> (dotted path, transform). Transforms: None (as is), "amounts" ({Good: n} -> [{Id, Amount}]),
@@ -283,8 +284,10 @@ def gen_plants(gen):
         if "wet_days" in p:   # the arid rule: dies on moist soil instead of dry soil
             data.pop("WateredNaturalResourceSpec", None)
             data.setdefault("AridNaturalResourceSpec", {})
-        apply_fields(gen, data, p, PLANT_FIELDS, item)
+        apply_fields(gen, data, p, PLANT_FIELDS, item, allowed_extra=("model",))
         gen.apply_models(data, p.get("models"), item)
+        if p.get("model"):
+            model_adopter.apply_plant_model(gen, data, p["model"], item)
         t = text.get(p.get("text") or pid)
         les = data.get("LabeledEntitySpec")
         if t and les is not None:
@@ -302,7 +305,9 @@ def gen_plants(gen):
             les["Icon"] = icon
         elif not icon:
             gen.note(item, "no icon Sprites/Pandaborn/Plants/%sIcon; keeps the basis icon" % pid)
-        gen.note(item, "stand-in model of %s; growth-stage models to come" % gen.v.get(key)["TemplateSpec"]["TemplateName"])
+        if not p.get("model"):
+            gen.note(item, "stand-in on %s; growth-stage models to come"
+                     % gen.v.get(key)["TemplateSpec"]["TemplateName"])
         kind = gen.v.rel(key).split("/")[1] if gen.v.rel(key).startswith("NaturalResources/") else "Plants"
         members.append(gen.emit("NaturalResources/Pandaborn/%s/%s/%s" % (kind, pid, template), data, item, "plant", key))
     if coll.get("id"):

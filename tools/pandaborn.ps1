@@ -14,12 +14,12 @@
   models    Runs every art/models/<Id>/build.py (the building kit; -Plants adds art/plants/<Id>/build.py) with the
             art venv into E:\PandabornDev\build\models\<Id>. The meshes never enter git; assemble copies the
             ones the catalogue adopts (model = "<Id>") into the mod, from <GenDir>.models.json.
-  code      HOOK (owner switch): builds src/code into the staging folder. Off unless -WithCode, because the owner has
-            not switched the code on in the faction mod yet (src/code/README.md). Feature tests use
-            tools/build_code_devmod.ps1 meanwhile.
-  bundles   HOOK: asset bundles. Off unless -WithBundles; then runs tools/build_look.ps1 and copies
-            E:\PandabornDev\build\look\AssetBundles\pandabornfactions*_win|_mac into the staging folder. A future bundle
-            builder only has to drop pandabornfactions*_win/_mac pairs into -BundleDir.
+  code      Builds src/code (Bootstrap, Specs, Core, every module; the Look module brings the pandabornlook bundle)
+            into E:\PandabornDev\build\code, and dumps the mod's own spec classes for the validator. On by default;
+            -NoCode builds the data-only fallback (the mod must still be playable, with the Folktails look).
+  bundles   Copies every built Pandaborn asset bundle (pandaborn*_win / _mac, never renamed) from -BundleDirs into the
+            staging folder: today the plants (E:\PandabornDev\build\plants\AssetBundles, tools/build_plants.ps1).
+            The look bundle comes with the code. Fails when an adopted model needs a bundle that is not built.
   assemble  Mirrors mod/PandabornFactions (hand-written files), the generated data, the two panda body meshes (not in
             git) and the code/bundle outputs into the staging folder E:\PandabornDev\build\stage\PandabornFactions.
             A generated file landing on a hand-written one is an error. Nothing installed is touched.
@@ -45,8 +45,9 @@ param(
     [switch]$AcceptPin,
     [switch]$Lock,
     [switch]$DryRun,
-    [switch]$WithCode,
-    [switch]$WithBundles,
+    [switch]$NoCode,
+    [switch]$WithCode,      # kept for old callers: code is on by default now
+    [switch]$WithBundles,   # kept for old callers: bundles are always copied
     [switch]$NoLink,
     [switch]$Plants,
     [string]$ArtPython = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
@@ -55,7 +56,7 @@ param(
     [string]$StageDir = 'E:\PandabornDev\build\stage\PandabornFactions',
     [string]$InstallDir = 'E:\PandabornDev\build\PandabornFactions',
     [string]$PackageDir = 'E:\PandabornDev\build\package',
-    [string]$BundleDir = 'E:\PandabornDev\build\look\AssetBundles',
+    [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles'),
     [string]$MeshSource = 'E:\PandabornDev\assets\Pandaborn-Reskin-release\Characters\Beaver',
     [string]$ModsDir = 'C:\Users\Israel Gonzalez\Documents\Timberborn\Mods',
     [string]$LinkName = 'PandabornFactions',
@@ -171,7 +172,7 @@ foreach ($s in $stages) {
             if ($bad) { $failed += $s; break }
         }
         'code' {
-            if (-not $WithCode) { Say 'code: skipped (HOOK; pass -WithCode once the owner switches the code on in the faction mod)' 'DarkYellow'; continue }
+            if ($NoCode) { Say 'code: skipped (-NoCode: data-only fallback build)' 'DarkYellow'; continue }
             if (Test-Path $codeOut) { Remove-Item -Recurse -Force $codeOut }
             New-Item -ItemType Directory -Force $codeOut | Out-Null
             $log = & dotnet build (Join-Path $repo 'src\code\Pandaborn.Code.sln') -c Release -v q --nologo "-p:ModOut=$codeOut" 2>&1
@@ -190,21 +191,30 @@ foreach ($s in $stages) {
             Say "code: spec schema with the mod's own classes in $modSchema"
         }
         'bundles' {
-            if (-not $WithBundles) { Say 'bundles: skipped (HOOK; pass -WithBundles; drop pandabornfactions*_win/_mac pairs into -BundleDir)' 'DarkYellow'; continue }
             if (Test-Path $bundleOut) { Remove-Item -Recurse -Force $bundleOut }
             New-Item -ItemType Directory -Force (Join-Path $bundleOut 'AssetBundles') | Out-Null
-            $n = 0
-            foreach ($f in Get-ChildItem -LiteralPath $BundleDir -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^pandabornfactions.*_(win|mac)$' }) {
-                Copy-Item -LiteralPath $f.FullName (Join-Path $bundleOut "AssetBundles\$($f.Name)"); $n++
+            $n = 0; $have = @{}
+            foreach ($dir in $BundleDirs) {
+                foreach ($f in Get-ChildItem -LiteralPath $dir -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^pandaborn.*_(win|mac)$' -and $_.Name -notmatch '^pandabornlook_' }) {
+                    Copy-Item -LiteralPath $f.FullName (Join-Path $bundleOut "AssetBundles\$($f.Name)"); $n++
+                    $have[($f.Name -replace '_(win|mac)$', '')] = $true
+                }
             }
-            Say "bundles: $n file(s) from $BundleDir"
+            $manifest = "$GenDir.models.json"
+            $needed = @(); if (Test-Path -LiteralPath $manifest) { $needed = @((Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).bundles) }
+            $missingB = @($needed | Where-Object { $_ -and -not $have.ContainsKey($_) })
+            Say "bundles: $n file(s) from $($BundleDirs -join ', ')"
+            if ($missingB.Count -gt 0) { Say "bundles: adopted models need bundle(s) not built: $($missingB -join ', ') (tools/build_plants.ps1)" 'Red'; $failed += $s; break }
         }
         'assemble' {
             if (-not (Test-Path (Join-Path $GenDir 'Factions'))) { Say "assemble: no generated data in $GenDir (run generate first)" 'Red'; $failed += $s; break }
             $map = [ordered]@{}; $origins = @{}
             Add-Tree $map $source 'mod/PandabornFactions' $origins
             Add-Tree $map $GenDir 'generated' $origins
-            if ($WithCode) { Add-Tree $map $codeOut 'code' $origins }
+            if (-not $NoCode) {
+                if (-not (Test-Path (Join-Path $codeOut 'Scripts'))) { Say "assemble: no code build in $codeOut (run the code stage, or pass -NoCode)" 'Red'; $failed += $s; break }
+                Add-Tree $map $codeOut 'code' $origins
+            }
             # meshes of the models the catalogue adopts (built by the models stage, outside git)
             $manifest = "$GenDir.models.json"
             if (Test-Path -LiteralPath $manifest) {
@@ -219,7 +229,7 @@ foreach ($s in $stages) {
                 }
                 if ($missingMesh) { Say ("assemble: {0} model mesh(es) missing; run the models stage first: {1}" -f $missingMesh.Count, ($missingMesh | Select-Object -First 3) -join ', ') 'Red'; $failed += $s; break }
             }
-            if ($WithBundles) { Add-Tree $map $bundleOut 'bundles' $origins }
+            if (Test-Path $bundleOut) { Add-Tree $map $bundleOut 'bundles' $origins }
             foreach ($rel in $meshes.Keys) {
                 $from = $meshes[$rel]
                 if (-not (Test-Path -LiteralPath $from)) { throw "large mesh missing: $from" }
@@ -234,7 +244,7 @@ foreach ($s in $stages) {
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
             if ($Catalogue) { $a += @('--lock', (Join-Path $Catalogue 'ids.lock.json')) }
             $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
-            if ($WithCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
+            if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
             $validated = $true
             # report only: numbers in the balance model's stat sheet the catalogue has not carried over
@@ -244,6 +254,8 @@ foreach ($s in $stages) {
             if ($failed.Count -gt 0) { Say "install: refused, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
             if (-not $validated) {
                 $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
+                $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
+                if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
                 if ((Invoke-Py $a) -ne 0) { Say 'install: refused, the staging folder does not validate' 'Red'; $failed += $s; break }
                 $validated = $true
             }
@@ -280,6 +292,11 @@ foreach ($s in $stages) {
             if ($LASTEXITCODE -ne 0) { $failed += $s }
         }
         'package' {
+            # release rules: a missing _mac bundle twin is an error here (dev stages only warn)
+            $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet', '--release')
+            $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
+            if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
+            if ((Invoke-Py $a) -ne 0) { Say 'package: refused, the staging folder fails the release rules' 'Red'; $failed += $s; break }
             $out = Join-Path $PackageDir 'PandabornFactions'
             $map = [ordered]@{}; $origins = @{}
             Add-Tree $map $StageDir 'stage' $origins

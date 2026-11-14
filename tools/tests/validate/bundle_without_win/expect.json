@@ -1,0 +1,10 @@
+{
+  "errors": [
+    "asset bundle pandabornfactionsfixture has no _win build"
+  ],
+  "args": [
+    "--template-suffix",
+    ".PandabornFixture"
+  ],
+  "clean": false
+}

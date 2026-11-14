@@ -303,6 +303,8 @@ def main(argv=None):
     ap.add_argument("--base-mod", action="append", default=[],
                     help="a mod this folder merges into (e.g. the faction build under a prototype that adds fragments "
                          "at the same paths); its files are merged under this mod's, as the game merges them")
+    ap.add_argument("--release", action="store_true",
+                    help="release rules: a missing _mac bundle twin is an error (dev builds only warn)")
     ap.add_argument("--quiet", action="store_true", help="only print problems and the summary")
     ap.add_argument("--self-test", action="store_true", help="run the broken-fixture suite in tools/tests/validate")
     a = ap.parse_args(argv)
@@ -1387,7 +1389,8 @@ def check_material_coverage(c, fid, bp):
 
 
 # bundles whose file name is fixed by a recorded decision (docs/ENGINEERING.md asks for pandabornfactions*)
-BUNDLE_NAME_EXCEPTIONS = {"pandabornlook": "docs/tech/look.md (the material swap finds its materials by this bundle)"}
+BUNDLE_NAME_EXCEPTIONS = {"pandabornlook": "docs/tech/look.md (the Look module loads its materials from this bundle)",
+                          "pandabornplants": "docs/tech/plants.md (never renamed: look.md problem 10)"}
 
 
 def check_bundles(c):
@@ -1411,7 +1414,13 @@ def check_bundles(c):
     for base, plats in sorted(bundles.items()):
         for p in ("win", "mac"):
             if p not in plats:
-                R.error("asset bundle %s has no _%s build; every bundle ships as a _win/_mac pair" % (base, p))
+                msg = "asset bundle %s has no _%s build; every bundle ships as a _win/_mac pair" % (base, p)
+                if p == "mac" and not c.args.release:
+                    # dev builds may lack the Mac twin until Mac bundle builds exist; a release (--release, the
+                    # package stage) may not
+                    R.warn(msg + " (allowed for a dev build; the package stage refuses it)")
+                else:
+                    R.error(msg)
 
 
 def produced_ids(c):
@@ -1570,7 +1579,8 @@ def check_models(c):
                 for an in mj.get("animatedNodes") or []:
                     if an.get("node") not in nodes:
                         R.error("%s: animated node %s is not in the mesh" % (where, an.get("node")))
-                    driver = re.findall(r"([A-Z][A-Za-z]+Spec)", an.get("drivenBy") or "")
+                    driver = [an["driver"]] if an.get("driver") else re.findall(r"([A-Z][A-Za-z]+Spec)",
+                                                                                     an.get("drivenBy") or "")
                     if driver and driver[0] not in bp:
                         R.error("%s: animated node %s is driven by %s, which the blueprint lacks (it would never move)"
                                 % (where, an.get("node"), driver[0]))
