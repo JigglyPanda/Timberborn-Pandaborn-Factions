@@ -289,3 +289,60 @@ The first ten days must work with one obvious crop and no pipes.
 * A Folktails game with the mod enabled is unchanged.
 * Works with the Reskin installed and without it.
 * Works with no other mods installed.
+
+## Candidate changes for the next revision
+
+Written 2026-11-14 after the water and two-peoples studies. None of this is adopted until it has been checked
+against `docs/tech/game-mechanics.md` and survived the critic rounds.
+
+### Two peoples: Ringtails as the night folk
+
+* The story everyone already knows: while the big ones sleep, the little helpers tidy the workshop.
+* Ringtails staff **their own** small buildings — courier loft, forager's nest, dew nets, star tower, lantern and
+  firework workshops — and sleep through the morning. Inkpaws staff everything else by day.
+* A day has three acts: morning (Inkpaws alone, working from what was stocked overnight), afternoon (both awake,
+  couriers supplying workshops live), night (Ringtails restock, deliver building materials, clear outputs,
+  forage, craft and stargaze).
+* It is strictly additive. Inkpaws still fetch their own supplies as beavers do, so a colony with no Ringtails,
+  or with too few, slows down but never stalls. Inkpaw workshops get roomier input shelves so a night's
+  restocking lasts the morning.
+* Ringtails carry full loads on shoulder poles: fast walkers with normal capacity, so they are better haulers
+  than beavers, not worse.
+* No two crews in one workplace and no switching at dusk. The study found a workplace can only ever hold one
+  kind of worker, and the switching scheduler is the largest and most fragile piece of code in the plan.
+* Later option: let the player hand other workplaces to Ringtails.
+
+### Water and seasons: every season has its harvest
+
+* The pipeline becomes an open **bamboo flume**: one tile wide, one-way, level or downhill, with turning boxes
+  at corners. Water is visible running along it.
+* Drought stops being dead time. The wet season is for rice and bamboo; in the dry season the same terraces
+  can carry fast dry-ground crops, and permanent tea bushes sit on slopes that are always dry. The longer the
+  drought, the bigger the dry harvest.
+* Bamboo and groves brown in drought and spring back, so the Inkpaw drought is restful: fill cisterns and the
+  pantry, nap, and let the land sleep. No giant reservoir needed just to keep fields alive.
+* Dry-ground crops must stay luxuries and ingredients, never staple calories, because dry land is unlimited.
+* The treadwheel lift is a Ringtail job (its power follows walking speed). The mist catcher becomes a dawn
+  dew collector. The charcoal filter is postponed.
+
+### Bamboo as a fast tree
+
+* Bamboo reuses three jobs players already know: a forester plants it, a gatherer picks shoots, a woodcutter
+  cuts poles. Groves left unmarked spread, as wild trees do.
+* Poles are the Inkpaws' planks and need no mill, which makes the opening smoother than vanilla. The price is
+  that the supply browns in drought and dies in a Flowering, so poles must be stockpiled.
+* Bamboo mushrooms grow in standing groves and are foraged by Ringtails.
+
+### Population the player can trust
+
+* Inkpaws breed slowly and only when content, and each den has a "welcome cubs" switch. Runaway population is a
+  well-known vanilla frustration; here it cannot happen by accident.
+
+### Look
+
+* Test whether a faction-only material set can reuse vanilla material names. If it can, every vanilla building
+  model is re-themed for the Inkpaws at no modelling cost, and new models are spent on signature buildings.
+
+### Events
+
+* The Great Flowering never comes before a set cycle, is forecast, and has an off / rare / normal setting.
