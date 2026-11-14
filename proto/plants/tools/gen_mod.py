@@ -9,6 +9,12 @@
   lane has to emit to adopt the models (docs/tech/plants.md)
 * AssetBundles/pandabornplants_win (built by tools/build_plants.ps1; copied with its own name, never renamed)
 The DLL (Scripts/PandabornProtoPlants.dll) is built by proto/plants/build.ps1. Never touches the Mods folder.
+
+Once the faction itself ships the plants (its build has AssetBundles/pandabornplants_win, the collection and the
+models: the catalogue lane adopted them on 2026-11-14), a second copy of the bundle crashes every game load ("another
+AssetBundle with the same files is already loaded", run plants-pass2-1). Then (detected from the installed faction
+build, or forced with --adopted) only the manifest, the plant lab DLL and the blueprint merges are written: the merges
+point at the faction's own model files and add what the adopter does not read yet (per-state colliders).
 """
 import argparse
 import glob
@@ -19,6 +25,7 @@ import shutil
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 BUNDLE = r"E:\PandabornDev\build\plants\AssetBundles\pandabornplants_win"
+FACTION = r"E:\PandabornDev\build\PandabornFactions"
 
 
 def vec(v):
@@ -64,13 +71,20 @@ def blueprint(info):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=r"E:\PandabornDev\build\proto\plants")
+    ap.add_argument("--adopted", action="store_true", help="the faction ships the plants: lab and merges only")
+    ap.add_argument("--standalone", action="store_true", help="ship bundle, collection and models even if adopted")
     a = ap.parse_args()
     out = a.out
+    adopted = a.adopted or (not a.standalone and
+                            os.path.exists(os.path.join(FACTION, "AssetBundles", os.path.basename(BUNDLE))))
+    print("mode:", "adopted by the faction (lab + merges only)" if adopted else "standalone (bundle, collection, models)")
     keep = {os.path.join("scripts", "pandabornprotoplants.dll")}
     src = os.path.join(REPO, "proto", "plants", "mod")
     for root, _, files in os.walk(src):
         for f in files:
             rel = os.path.relpath(os.path.join(root, f), src)
+            if adopted and rel != "manifest.json":
+                continue
             os.makedirs(os.path.dirname(os.path.join(out, rel)), exist_ok=True)
             shutil.copyfile(os.path.join(root, f), os.path.join(out, rel))
             keep.add(rel.lower())
@@ -78,7 +92,7 @@ def main():
         info = json.load(open(mj))
         d = os.path.join(out, *info["modelDir"].split("/"))
         os.makedirs(d, exist_ok=True)
-        for path in set(info["models"].values()):
+        for path in ([] if adopted else set(info["models"].values())):
             name = path.split("/")[-1] + ".timbermesh"
             shutil.copyfile(os.path.join(info["builtTo"], name), os.path.join(d, name))
             keep.add(os.path.relpath(os.path.join(d, name), out).lower())
@@ -87,9 +101,10 @@ def main():
             json.dump(blueprint(info), fh, indent=2)
         keep.add(os.path.relpath(bp_path, out).lower())
         print("plant", info["id"], "->", info["modelDir"], "(%d models)" % len(set(info["models"].values())))
-    os.makedirs(os.path.join(out, "AssetBundles"), exist_ok=True)
-    shutil.copyfile(BUNDLE, os.path.join(out, "AssetBundles", os.path.basename(BUNDLE)))
-    keep.add(os.path.join("assetbundles", os.path.basename(BUNDLE)).lower())
+    if not adopted:
+        os.makedirs(os.path.join(out, "AssetBundles"), exist_ok=True)
+        shutil.copyfile(BUNDLE, os.path.join(out, "AssetBundles", os.path.basename(BUNDLE)))
+        keep.add(os.path.join("assetbundles", os.path.basename(BUNDLE)).lower())
     for root, _, files in os.walk(out):
         for f in files:
             rel = os.path.relpath(os.path.join(root, f), out)
