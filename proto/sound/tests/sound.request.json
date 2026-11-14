@@ -63,7 +63,8 @@
    "UI.Beavers.Pandaborn.Selected.Child_Content",
    "UI.Beavers.Pandaborn.Selected.Child_Discontent",
    "UI.Beavers.Pandaborn.Selected.Child_Sleepy",
-   "UI.Beavers.Pandaborn.Selected.Child_Sleeping"
+   "UI.Beavers.Pandaborn.Selected.Child_Sleeping",
+   "Environment.Pandaborn.RingtailTwitter"
   ],
   "bundle": "pandabornsounds",
   "watch": "Pandaborn",
@@ -122,6 +123,11 @@
    {
     "id": "Environment.Pandaborn.LanternRise",
     "at": 45,
+    "mode": "2d"
+   },
+   {
+    "id": "Environment.Pandaborn.RingtailTwitter",
+    "at": 47,
     "mode": "2d"
    }
   ],
@@ -237,7 +243,8 @@
    "UI.Beavers.Pandaborn.Selected.Child_Content",
    "UI.Beavers.Pandaborn.Selected.Child_Discontent",
    "UI.Beavers.Pandaborn.Selected.Child_Sleepy",
-   "UI.Beavers.Pandaborn.Selected.Child_Sleeping"
+   "UI.Beavers.Pandaborn.Selected.Child_Sleeping",
+   "Environment.Pandaborn.RingtailTwitter"
   ],
   "soundsPlayed": [
    "Environment.Pandaborn.ShiftBell.End",
@@ -264,7 +271,8 @@
    "UI.Buildings.Selected.Pandaborn.VillageHall",
    "UI.Beavers.Pandaborn.Selected.Adult",
    "UI.Beavers.Pandaborn.Selected.Child",
-   "UI.Buildings.Wonder.PandabornSkyLantern"
+   "UI.Buildings.Wonder.PandabornSkyLantern",
+   "Environment.Pandaborn.RingtailTwitter"
   ]
  },
  "then": {

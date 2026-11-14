@@ -832,6 +832,23 @@ def panda_sleeping(v, child=False):
     return S.fade(tl.buf, 0, 0.1)
 
 
+def ringtail_twitter(v):
+    """A red panda's twitter: a quick run of soft rising chirps (kept low and round: never a whistle)."""
+    r = S.rng(6500 + v)
+    count = [5, 4, 6][v % 3]
+    tl = S.Timeline(1.2)
+    at = 0.02
+    for k in range(count):
+        d = r.uniform(0.045, 0.07)
+        f = r.uniform(760, 900) * (1 - 0.04 * k)          # each chirp a little lower: a falling run
+        y = V.voice(d, [(0, f * 0.8), (0.6, f * 1.2), (1, f * 1.05)], [(0, 0), (0.25, 1), (0.7, 0.8), (1, 0)],
+                    [(0, V.formants("i", 1.1)), (1, V.formants("e", 1.1))], r, breath=0.1, jitter=0.012,
+                    tilt_db_oct=-11.0)
+        tl.add(y, at, 1.0 - 0.08 * k, wrap=False)
+        at += d + r.uniform(0.05, 0.085)
+    return S.fade(tl.buf, 0, 0.05)
+
+
 # ============================================================================================== registry
 # slot: what plays it in the game. "data": a blueprint field adopted by the catalogue lane; "code": the code lane plays it.
 SOUNDS = []
@@ -853,6 +870,9 @@ reg("Environment.Pandaborn.NightClapper", night_clapper, 2, "oneshot", -24.0,
 reg("UI.Buildings.Selected.Pandaborn.VillageHall", village_hall_select, 1, "oneshot", -25.0,
     "data: BuildingSpec.SelectionSoundName = \"Pandaborn.VillageHall\" on PandabornVillageHall.Inkpaws", ceiling=-7.0,
     ref="UI.Buildings.Selected.Bell")
+reg("Environment.Pandaborn.RingtailTwitter", ringtail_twitter, 3, "oneshot", -26.0,
+    "code: Ringtails module (a Ringtail family arrives at a Moon Loft; or a Ringtail-only selection sound)", ceiling=-10.0,
+    ref="UI.Beavers.Common.Selected.Child_Content_01")
 # --- water
 reg("Environment.Pandaborn.FlumeWater", flume_water, 1, "loop", -24.0,
     "code: Water module, one area sound over every flowing flume tile (ISoundSystem.AddLargeAreaSound + IEmitterMap)",
