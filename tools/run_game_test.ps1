@@ -75,6 +75,10 @@ param(
     [int]$WaitForGameSeconds = 1800,
     # print the mod flag plan (what -DisableMods/-OnlyMods/-ExtraMods would change) and exit without launching
     [switch]$DryRun,
+    # show the game window on the real desktop (default: the game runs on a hidden desktop and never takes the focus)
+    [switch]$Visible,
+    # run although the queue is held (tools\game_test_hold.ps1): only for the session that started the hold
+    [switch]$DuringHold,
     [string]$RunId = '',
     [string]$GameDir = 'C:\Program Files (x86)\Steam\steamapps\common\Timberborn',
     [string]$WorkshopDir = 'C:\Program Files (x86)\Steam\steamapps\workshop\content\1062090',
@@ -106,6 +110,51 @@ $saveName = 'PB_AutoTest'
 $utf8 = New-Object Text.UTF8Encoding($false)
 
 function Say([string]$text, [string]$color = 'Gray') { Write-Host $text -ForegroundColor $color }
+
+# Runs the game on a separate Windows desktop (same session, so the GPU, the registry and the files are the same), where
+# its window is never on the owner's screen and gets none of the owner's input. The desktop goes away with its last
+# process and handle.
+$hiddenDesktopName = 'PandabornTest'
+if (-not $Visible -and -not ('PandabornTest.HiddenDesktop' -as [type])) {
+    Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+namespace PandabornTest {
+    public static class HiddenDesktop {
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        struct STARTUPINFO {
+            public int cb; public string lpReserved; public string lpDesktop; public string lpTitle;
+            public int dwX, dwY, dwXSize, dwYSize, dwXCountChars, dwYCountChars, dwFillAttribute, dwFlags;
+            public short wShowWindow, cbReserved2; public IntPtr lpReserved2, hStdInput, hStdOutput, hStdError;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        struct PROCESS_INFORMATION { public IntPtr hProcess, hThread; public int dwProcessId, dwThreadId; }
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern IntPtr CreateDesktop(string name, IntPtr device, IntPtr devmode, int flags, uint access, IntPtr security);
+        [DllImport("user32.dll", SetLastError = true)] static extern bool CloseDesktop(IntPtr desktop);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern bool CreateProcess(string app, System.Text.StringBuilder commandLine, IntPtr processAttributes, IntPtr threadAttributes,
+            bool inheritHandles, uint flags, IntPtr environment, string currentDirectory, ref STARTUPINFO startupInfo, out PROCESS_INFORMATION info);
+        [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr handle);
+        static IntPtr _desktop = IntPtr.Zero;
+        public static int Start(string desktopName, string commandLine, string workingDirectory) {
+            if (_desktop == IntPtr.Zero) {
+                _desktop = CreateDesktop(desktopName, IntPtr.Zero, IntPtr.Zero, 0, 0x10000000 /* GENERIC_ALL */, IntPtr.Zero);
+                if (_desktop == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error(), "CreateDesktop failed");
+            }
+            var si = new STARTUPINFO(); si.cb = Marshal.SizeOf(typeof(STARTUPINFO)); si.lpDesktop = "WinSta0\\" + desktopName;
+            PROCESS_INFORMATION pi;
+            if (!CreateProcess(null, new System.Text.StringBuilder(commandLine), IntPtr.Zero, IntPtr.Zero, false, 0, IntPtr.Zero, workingDirectory, ref si, out pi))
+                throw new Win32Exception(Marshal.GetLastWin32Error(), "CreateProcess failed");
+            CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
+            return pi.dwProcessId;
+        }
+        public static void Close() { if (_desktop != IntPtr.Zero) { CloseDesktop(_desktop); _desktop = IntPtr.Zero; } }
+    }
+}
+'@
+}
 
 function Get-TestProcesses([datetime]$since) {
     @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object {
@@ -303,9 +352,24 @@ function Invoke-GameRun([string]$outDir, $request, [string[]]$extraArgs) {
     $script:launchTime = Get-Date
     $launchTime = $script:launchTime
     Say "Run $RunId : $($request.faction) on $($request.map); output $outDir" 'Cyan'
-    $game = [Diagnostics.Process]::Start($psi)
-    $game.BeginOutputReadLine()
-    $game.BeginErrorReadLine()
+    if ($Visible) {
+        $game = [Diagnostics.Process]::Start($psi)
+        $game.BeginOutputReadLine()
+        $game.BeginErrorReadLine()
+    } else {
+        # Default: the game runs on its own hidden Windows desktop. It has no window on the owner's screen, cannot take
+        # the focus, and never sees the real keyboard or mouse, so the PC stays usable during a run. The child inherits
+        # this process's environment, so the variables are set here for the moment of the launch.
+        $saved = @{}
+        foreach ($name in @('SteamAppId', 'SteamGameId', 'PANDABORN_TEST_REQUEST')) { $saved[$name] = [Environment]::GetEnvironmentVariable($name, 'Process') }
+        try {
+            $env:SteamAppId = '1062090'; $env:SteamGameId = '1062090'; $env:PANDABORN_TEST_REQUEST = $requestPath
+            $hiddenPid = [PandabornTest.HiddenDesktop]::Start($hiddenDesktopName, "`"$($psi.FileName)`" $($psi.Arguments)", $GameDir)
+        } finally {
+            foreach ($name in $saved.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name], 'Process') }
+        }
+        Say "  hidden desktop '$hiddenDesktopName', pid $hiddenPid (use -Visible to see the game)" 'DarkGray'
+    }
 
     $deadline = $launchTime.AddSeconds($TimeoutSeconds)
     $resultPath = Join-Path $outDir 'result.json'
@@ -606,8 +670,14 @@ $links = @()        # junctions to remove at the end: @{ path; target }
 $exitCode = 2
 try {
     $what = if ($RestoreModState) { "restore $RestoreModState" } else { "$Faction test $RunId".Trim() }
-    $lock = Enter-GameLock $WaitForGameSeconds $what
-    if ($null -eq $lock) { exit 2 }
+    if ($DuringHold) {
+        # the queue is held by tools\game_test_hold.ps1, which owns the lock for us: nobody else can start a game
+        if (-not (Test-Path (Join-Path $TestRoot 'HOLD'))) { Say '-DuringHold needs the queue to be held (tools\game_test_hold.ps1).' 'Red'; exit 2 }
+        if (@(Get-Process Timberborn -ErrorAction SilentlyContinue).Count -gt 0) { Say 'A Timberborn process is open; not starting.' 'Red'; exit 2 }
+    } else {
+        $lock = Enter-GameLock $WaitForGameSeconds $what
+        if ($null -eq $lock) { exit 2 }
+    }
 
     # -------------------------------------------------------------- -RestoreModState mode
     if ($RestoreModState) {
