@@ -632,3 +632,31 @@ icons are enough to stop silent failure.
   terrain under the output changes.
 * Rule (with the solid cap): water behind a spout may stand up to 2 blocks above the spout's base; without the cap the
   limit is 1 block, beyond which it runs over the spout and floods the field and the ground around it.
+
+### Water Trip-Hammer (water as the power line): works (run `water-scoop-0247`)
+
+* One building, one mechanical node that is both generator (`WaterPoweredGeneratorSpec`, 100 nominal) and consumer
+  (100), `TransputProviderSpec` with no transputs (joins no shafts), a manufactory with `ProductionIncreaserSpec` and a
+  test recipe without ingredients (1 Plank per 2 h). Pure data, no code.
+* The node forms its own one-node graph (`graphNodes` 1). Supply = 100 × the current at the wheel cell; production
+  speed = supply / demand. Measured in a 1-wide channel: current 0.44 → supply 45 / demand 100 → 45 % speed; 0.36 → 36 %;
+  0.51 → 52 %; when the current at its cell fell below 0.15 (0.08) the supply dropped to 0 and it showed the vanilla
+  "Building needs power to operate" status. It made 4 planks in about 1,000 ticks of mixed current.
+* What the panel shows: the vanilla power numbers of its private graph ("45 / 100 hp", 45 %). Readable, but it should
+  be relabelled as "current" rather than power, and the "connect it to a generator" status text is misleading for a
+  mill that is its own generator (replace it with our own status, small code).
+* Design rule: a trip-hammer runs at (current at its wheel ÷ 1.0) of full speed, nothing below a current of 0.15. A
+  1-wide channel with a strong through-flow only reached currents of 0.26–0.51, so the building should be rated so that
+  ~0.4 is a good site (e.g. demand 40 instead of 100).
+
+### Dew Collector: works (run `water-dew-0404`)
+
+* Workerless manufactory (`ManufactorySpec` + `ProductionIncreaserSpec`), recipe `PandabornDewWater` (no ingredients,
+  1 Water per 4 h, 30 cycles of storage), plus our `DewLimiter : IManufactoryLimiter` (efficiency 1.0 temperate, 0.35
+  in drought; badtide counts as temperate air).
+* Measured: **6.0 Water in a temperate day, 2.1 Water in a drought day**, linear (0.25 per game hour, then 0.0875).
+  Drought was started with the vanilla `WeatherFastForwarder.JumpToNextSeason` (it skipped 15 days instantly).
+* Haulers empty it like any workshop output (not tested: the test area had no path to the district, and the building
+  correctly showed the vanilla "not connected" status).
+* Rule: one collector keeps about 2 pandas in water in good weather (vanilla beavers drink ≈ 2–3 per day; to be
+  balanced) and a third of that in drought. The weather scaling costs one ~40-line component.
