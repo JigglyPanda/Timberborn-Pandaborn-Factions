@@ -1,28 +1,28 @@
 # Inkpaws content catalogue
 
-Draft 1, 2026-11-14. The full list of what the faction contains, so that it is complete next to Folktails
-(about 157 buildings, 12 crops, 60 goods). Numbers (costs, yields, cycle times) come later from the colony
-model and play tests; this file fixes *what exists and why*.
+Draft 2, 2026-11-14, following design revision 4 and the four reviews in `docs/reviews/`. It fixes *what
+exists and why*. Numbers come from `docs/tech/balance.md`. The machine-readable source of truth will be the
+files in `catalogue/`; this page is the human overview.
 
 ## How to read it
 
-* **Basis** says where the model comes from:
-  * *re-themed* — a vanilla model shown in the Inkpaws' own materials, renamed and re-costed;
-  * *new* — its own model from the building kit;
-  * *new (set)* — several pieces sharing one kit.
-* **Who** is `I` (Inkpaws, day), `R` (Ringtails, afternoon and night), `—` (no workers), `any`.
-* **Tier** is roughly when a player meets it: 0 start, 1 first days, 2 first cycles, 3 mid game, 4 late game.
+* **Basis:** *re-themed* is a vanilla model in the Inkpaws' materials; *new* is a model from the building kit.
+* **Who:** `I` Inkpaws (dawn to the bell), `R` Ringtails (the bell to dawn), `—` no workers.
+* **When:** roughly when a player meets it. `0` at the start, `1` first cycle, `2` second and third cycles,
+  `3` mid game, `4` late game.
 
 ## Rules for the whole catalogue
 
-1. **Shared infrastructure stays familiar.** Automation, paths, platforms, basic landscaping and storage are
-   re-themed vanilla. A player never has to relearn a floodgate.
-2. **Identity lives in food, water, homes, leisure and power.** That is where new buildings and models go.
-3. **Bamboo poles are the Inkpaws' planks.** Every cost that is Planks for Folktails is Poles here. Poles come
-   straight from cut bamboo; there is no mill.
-4. **Vanilla goods are reused wherever the thing is the same** (logs, gears, paper, metal, water, berries).
-   New goods are only for new things. New ids carry the `Pandaborn` prefix.
-5. **One real place.** Names and motifs come from Sichuan and its neighbours. Nothing Japanese-coded.
+1. **Vanilla functions keep vanilla names and behaviour.** Levee, Dam, Floodgate, Water Pump, Warehouse,
+   Platform, Stairs and all automation are re-themed and otherwise untouched.
+2. **Identity lives in food, water, homes, leisure and power.** New models go there.
+3. **Poles are the Inkpaws' planks.** Wherever Folktails pay planks, Inkpaws pay poles. If the game allows a
+   faction-only rename, a pole *is* the vanilla plank, and cured poles *are* treated planks; other mods'
+   buildings then work unchanged.
+4. **Vanilla goods are reused wherever the thing is the same.** New goods are only for new things.
+5. **A colony with no Ringtails is complete.** Nothing it needs is made only by Ringtails.
+6. **One real place.** Sichuan. No writing on textures, nothing Japanese-coded, no red-and-gold palace style,
+   no religious imagery.
 
 ## Goods
 
@@ -30,204 +30,194 @@ model and play tests; this file fixes *what exists and why*.
 
 | Good | Kind | From | Used for |
 |---|---|---|---|
-| Bamboo shoots | Raw food | Gathered from bamboo | Staple; ingredient |
-| Bamboo poles | Material | Cut bamboo | Construction in place of planks; paper; charcoal |
+| Bamboo shoots | Raw food | Shoot bamboo, a field crop | Starter staple; steamed shoots |
+| Poles | Material | Timber bamboo, cut | Construction in place of planks; paper |
+| Cured poles | Material | Smoke Kiln | Late construction in place of treated planks |
+| Cabbage | Raw food | Farmstead | Second staple; pickles, hot pot |
 | Rice | Crop | Paddy | Steamed rice, rice flour |
-| Rice flour | Ingredient | Rice mill | Dumplings, rice cakes |
+| Rice flour | Ingredient | Trip-Hammer Mill | Sweet rice balls, seed cakes |
+| Steamed shoots | Food | Steamer | The first cooked dish |
 | Steamed rice | Food | Steamer | Staple meal |
-| Cabbage | Crop | Farmstead | Dumplings, pickles, hot pot |
-| Soybeans | Crop (vanilla good) | Farmstead | Tofu |
-| Tofu | Food | Tofu press | Meal; hot pot |
-| Dumplings | Food | Dumpling kitchen | Meal |
-| Pickles | Food | Pickle cellar | Meal; the pantry food for hard times |
-| Sichuan pepper | Crop | Hill farm (dry ground) | Pickles, hot pot, fireworks |
-| Hot pot | Food | Hot pot hall | Best everyday meal |
-| Tea leaves | Crop | Tea bushes (dry ground) | Tea |
-| Tea | Drink | Tea drier | Its own need; stretches water |
-| Persimmons | Raw food | Persimmon trees | Snack; dried cakes |
-| Persimmon cakes | Food | Drying rack | Sweet |
-| Lotus root | Raw food | Paddy (deeper water) | Second paddy food |
-| Bamboo mushrooms | Raw food | Foraged in standing groves by Ringtails | Hot pot; delicacy |
-| Bamboo rice | Rare crop | Left behind by a Great Flowering | Bamboo rice cakes |
-| Bamboo rice cakes | Food | Dumpling kitchen | Festival feast; best food in the mod |
-| Bamboo charcoal | Fuel | Charcoal kiln | Forge, steamer, fireworks |
-| Lacquer | Material | Tapped from lacquer trees | Lacquered poles, lanterns |
-| Lacquered poles | Material | Lacquer workshop | Late construction in place of treated planks |
-| Paper lanterns | Festival good | Lantern workshop (R) | Festival; decoration cost |
-| Ox parts | Component | Ox workshop | Wooden Oxen |
+| Pickles | Food | Pickle Yard | One cabbage makes several: the way to stretch a harvest |
+| Sweet rice balls | Food | Kitchen | The festival sweet |
+| Sichuan pepper | Crop | Farmstead, dry ground | Hot pot |
+| Hot pot | Food | Hot Pot Hall | Best everyday meal |
+| Tea leaves | Crop | Tea bushes, dry ground | Tea |
+| Tea | Drink | Tea Roastery | Its own need, and quenches thirst: three cups from one water |
+| Persimmons | Raw food | Persimmon trees | Snack |
+| Bamboo mushrooms | Raw food | Foraged in standing timber groves | Delicacy; enriches hot pot |
+| Bamboo seed | Rare crop | Left by a Great Flowering | Seed cakes |
+| Bamboo seed cakes | Food | Kitchen | The best food in the mod |
+| Paper lanterns | Festival good | Lantern Workshop | Festival; lantern decorations |
 
-Fireworks, paper, gears, scrap metal, metal blocks, logs, water, berries, badwater, extract, explosives, dirt,
-antidote and biofuel are the vanilla goods.
+Logs, gears, paper, scrap metal, metal blocks, water, berries, badwater, explosives, fireworks, dirt and
+antidote are the vanilla goods.
 
-### Why this food list
+Twelve things to eat and drink, in the order a player reaches them: berries, shoots, cabbage, steamed shoots,
+persimmons, pickles, steamed rice, tea, sweet rice balls, mushrooms, hot pot, seed cakes.
 
-Ten foods plus tea, against Folktails' nine. Each is a recognisable dish, each asks for one more step of the
-chain, and three of them answer a specific hardship: pickles for drought and Flowering, tea for thirst,
-bamboo rice cakes as the reward for surviving a Flowering.
+### Cut from draft 1
+
+Tofu and soybeans, dumplings (now sweet rice balls), lacquer and lacquered poles (now cured poles), bamboo
+charcoal, persimmon cakes, lotus root, ox parts and ox upkeep goods, scrolls.
 
 ## Plants
 
 | Plant | Zone | Planted by | Harvest | Notes |
 |---|---|---|---|---|
-| River bamboo | Moist | Grove keeper | Poles (cut), shoots (gathered) | Fast; spreads when left unmarked; browns in drought and regrows |
-| Cloud bamboo | Moist | Grove keeper | Poles, shoots | Slower, hardier; flowers on a different schedule |
-| Rice | Flooded, up to one block | Paddy house | Rice | The staple of the wet season |
-| Lotus | Flooded, deeper | Paddy house | Lotus root | For reservoirs and ponds |
-| Cabbage | Moist | Farmstead | Cabbage | The plain early field crop |
-| Soybean | Moist | Farmstead | Soybeans | Vanilla crop |
-| Tea bush | Dry | Hill farm | Tea leaves, repeatedly | Permanent; dies if flooded |
-| Sichuan pepper | Dry | Hill farm | Pepper | Fast; can follow rice in a drained paddy |
-| Persimmon tree | Moist | Grove keeper | Persimmons; logs when felled | Slow orchard tree |
-| Lacquer tree | Moist | Grove keeper | Lacquer by tapping; logs | Late |
+| Shoot bamboo | Moist | Farmstead | Shoots | Field crop, like carrots; edible raw; about three days |
+| Timber bamboo | Moist | Forester | Poles; mushrooms foraged while standing | Fast tree |
+| Cabbage | Moist | Farmstead | Cabbage | Edible raw |
+| Rice | Flooded, up to one block | Paddy House | Rice | Staple of the second cycle onward |
+| Tea bush | Dry | Farmstead | Tea leaves, repeatedly | Permanent; dies if its roots get wet |
+| Sichuan pepper | Dry | Farmstead | Pepper | Dies if its roots get wet |
+| Persimmon tree | Moist | Forester | Persimmons; logs when felled | Orchard tree |
 
-Birch, pine, oak and blueberries are the vanilla common plants and remain available.
+Birch, pine, oak and blueberries remain. Both bamboos survive a short drought and die in a long one.
 
 ## Buildings
 
 ### Village and logistics
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
-| Village Hall | new | I | 0 | District center; the Long Nap switch lives here |
+| Village Hall | new | I | 0 | District center |
 | Builders' Hut | re-themed | I | 1 | Builders |
-| Porters' Hall | re-themed | I | 1 | Day hauling |
-| Courier Loft | new | R | 2 | Afternoon and night hauling; the first Ringtail workplace |
-| District Crossing | re-themed | any | 3 | Districts |
-| Festival Square | new | — | 3 | Stockpiles festival goods; calls the Lantern Festival |
+| Hauling Post | re-themed | I | 1 | Hauling |
+| District Crossing | re-themed | I | 3 | Districts |
+| Festival Square | new | — | 2 | Holds festival goods; calls the Lantern Festival |
 
 ### Homes
 
-| Building | Basis | For | Tier | Role |
-|---|---|---|---|---|
-| Den | new | Inkpaws | 0 | Starter home |
-| Courtyard House | new | Inkpaws | 2 | Larger home around a small garden |
-| Terrace House | new | Inkpaws | 3 | Stackable hillside home |
-| Loft | new | Ringtails | 2 | Small rooftop home with a lantern; building the first one brings the Ringtails |
-| Loft Tower | new | Ringtails | 3 | A scaffold of lofts |
+| Building | Basis | When | Role |
+|---|---|---|---|
+| Den | new | 0 | Starter home |
+| Courtyard House | new | 2 | Larger home in the Sichuan farmstead style |
+| Terrace House | new | 3 | Stackable hillside home |
+| Moon Loft | new | 1–2 | A snug home on stilts above a path. The first one invites the Ringtails; it also raises their kits |
 
-Dens raise Inkpaw cubs; lofts raise Ringtail kits. Each home has a "welcome cubs" switch.
+Any home takes anyone.
 
 ### Food
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
-| Forager's Post | re-themed | I | 0 | Berries, shoots |
-| Forager's Nest | new | R | 2 | Night foraging: bamboo mushrooms, shoots from far groves |
-| Farmstead | re-themed | I | 1 | Cabbage, soybeans |
-| Paddy House | new | I | 2 | Rice, lotus |
-| Hill Farm | new | I | 2 | Tea bushes, pepper |
-| Steamer | new | I | 1 | Steamed rice; the first kitchen |
-| Rice Mill | re-themed | I | 2 | Rice flour |
-| Dumpling Kitchen | new | I | 2 | Dumplings, bamboo rice cakes |
-| Tofu Press | re-themed | I | 3 | Tofu |
-| Pickle Cellar | new | I | 2 | Pickles |
-| Drying Rack | new | — | 2 | Persimmon cakes, slowly, with no worker |
-| Tea Drier | new | I | 2 | Tea |
+| Gatherer Flag | re-themed | I | 0 | Berries, persimmons, mushrooms |
+| Farmstead | re-themed | I | 0 | Shoot bamboo, cabbage; later tea and pepper on dry ground |
+| Steamer | new | I | 1 | Steamed shoots, then steamed rice |
+| Pickle Yard | new | I | 1 | Pickles |
+| Paddy House | new | I | 2 | Rice |
+| Tea Roastery | new | I | 2 | Tea |
+| Trip-Hammer Mill | new | I | 2 | Rice flour, driven by flowing water |
+| Kitchen | new | I | 2 | Sweet rice balls, seed cakes |
 | Hot Pot Hall | new | I | 3 | Hot pot |
 
-### Bamboo, wood and materials
+### Wood and materials
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
-| Woodcutter's Flag | re-themed | I | 0 | Cuts trees and bamboo |
-| Grove Keeper | re-themed | I | 1 | Plants bamboo and trees |
+| Lumberjack Flag | re-themed | I | 0 | Cuts trees and timber bamboo |
+| Forester | re-themed | I | 0 | Plants timber bamboo and trees; free to unlock |
 | Gear Workshop | re-themed | I | 1 | Gears |
-| Charcoal Kiln | new | I | 2 | Bamboo charcoal |
-| Paper Maker | re-themed | I | 2 | Paper from poles |
-| Tapper's Shack | re-themed | I | 3 | Lacquer |
-| Lacquer Workshop | re-themed | I | 3 | Lacquered poles |
-| Scroll Workshop | re-themed | I | 3 | Scrolls and ox instruction cards |
-| Lantern Workshop | new | R | 3 | Paper lanterns |
-| Firework Workshop | re-themed | R | 3 | Fireworks, explosives |
+| Paper Mill | re-themed | I | 2 | Paper from poles |
+| Lantern Workshop | new | I | 2 | Paper lanterns |
+| Smoke Kiln | new | I | 3 | Cured poles |
+| Explosives Factory | re-themed | I | 3 | Explosives, fireworks |
 
 ### Metal
 
-Scavenger's Flag, Forge and Mine: re-themed, `I`.
+Scavenger Flag, Smelter, Mine: re-themed, `I`.
 
 ### Water
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
-| Water Carrier | re-themed | I | 0 | Pump |
-| Clay Cistern (small, medium, large) | new (set) | — | 0–3 | Water storage |
-| Bamboo Spout | new | — | 1 | Holds the pool below at a shallow set depth |
-| Bamboo Flume: run, gate, turning box, step, trestle run, covered run | new (set) | — | 2 | Leads water one way, level or downhill |
-| Noria | new | — | 2 | Lifts water using the current |
-| Treadwheel Lift | new | R | 2 | Lifts water where there is no current |
-| Dew Collector | new | — | 2 | A trickle of water at dawn, even in drought |
-| Large Water Carrier, Mechanical Pumps, Aquifer Drill | re-themed | I / — | 3–4 | Deep and powered pumping |
+| Water Pump | re-themed | I | 0 | Drinking water |
+| Cistern (small, medium, large) | new (set) | — | 0–3 | Water storage |
+| Flume, Flume Corner, Flume Drop, Flume Bridge | new (set) | — | 1 | Lead water one way, level or downhill |
+| Flume Gate | new | — | 1 | Intake; sets flow; shuts itself on badwater |
+| Scoop Wheel | new | — | 1 | Lifts water using the current |
+| Paddy Spout | new | — | 2 | Holds a field at a shallow depth |
+| Cistern Tap | re-themed | — | 2 | Pours stored water into a flume or basin |
+| Dew Collector | new | — | 2 | A little water each dawn |
+| Treadwheel Lift | new | I | 2 | Lifts water where there is no current |
+| Large Water Pump, Mechanical Pumps, Aquifer Drill | re-themed | I / — | 3–4 | Deep and powered pumping |
 | Badwater Pump, Discharge, Centrifuge, Dome, Rig | re-themed | I | 3–4 | Badwater |
 
 ### Landscaping
 
-Terrace Wall (levee), Weir (dam), Floodgates, Fill Valve, Throttling Valve, Impermeable Floor, Contamination
-Barrier, Dynamite, Tunnel, Dirt Excavator and Terrain Block: all re-themed vanilla.
+Levee, Dam, Floodgates, Fill Valve, Throttling Valve, Impermeable Floor, Contamination Barrier, Dynamite,
+Tunnel, Dirt Excavator, Terrain Block: re-themed. One addition: **Dry-Stone Wall**, which keeps moisture out
+of a tea slope.
 
 ### Power
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
 | Bamboo Water Wheel | new | — | 1 | Water power |
-| Treadwheel | new | R (or I) | 1 | Worker power; stronger with a quick Ringtail |
-| Kite Windmill | new | — | 2 | Wind power |
-| Great Kite Array | new | — | 3 | Large wind power |
-| Shafts, Clutch, Counterweight (gravity battery), Power Meter | re-themed | — | 1–3 | Network |
+| Power Wheel | re-themed | I | 1 | Worker power |
+| Kite Windmill (small, large) | new | — | 2–3 | Wind power |
+| Shafts, Clutch, Gravity Battery | re-themed | — | 1–3 | Network |
 
 No fuel engines.
 
 ### Science and Wooden Oxen
 
-| Building | Basis | Who | Tier | Role |
+| Building | Basis | Who | When | Role |
 |---|---|---|---|---|
-| Scholar's Desk | re-themed | I | 0 | Science |
-| Star Tower | new | R | 3 | Science from watching the night sky |
-| Ox Workshop | re-themed | I | 4 | Builds Wooden Oxen and their parts |
-| Oil Press | re-themed | I | 4 | Ox upkeep |
+| Inventor | re-themed | I | 0 | Science |
+| Star Tower | new | R | 3 | Science from the night sky |
+| Ox Workshop | re-themed | I | 4 | Builds Wooden Oxen: tireless, strong, slow, and able to do what vanilla bots do |
 
 ### Storage
 
-Woven Granary (small, medium, large), Pole Stack (small, large), Cellar (underground): re-themed. Clay
-Cisterns are listed under Water.
+Warehouses, piles and the underground pile: re-themed. Cisterns are listed under Water.
 
 ### Paths and getting around
 
-Paths, stairs, platforms, overhangs, rope bridges, gate and airlock: re-themed as bamboo scaffolding and rope.
-Rope-way (zipline pylon, beam, station): re-themed, tier 3.
+Paths, stairs, platforms, overhangs, bridges, gate, airlock and ziplines: re-themed as bamboo scaffolding and
+rope.
 
 ### Leisure and care
 
-| Building | Basis | Need it serves | Tier |
+| Building | Basis | Need | How often | When |
+|---|---|---|---|---|
+| Campfire | re-themed | Company | Every few days | 0 |
+| Hammock | new | Nap | Daily | 0 |
+| Nap Platform | new | Nap, for several at once | Daily | 2 |
+| Teahouse | new | Tea, company | Daily | 1 |
+| Slide and Swing | new | Play | Every few days | 2 |
+| Panda Kindergarten | new | Cub-watching for adults; play for cubs and kits | Every few days | 2 |
+| Ink Studio | new | Contemplation | Weekly | 2 |
+| Hot Spring Bath | new | Soak | Every few days | 3 |
+| Opera Stage | new | Performance (run by Ringtails) | Weekly | 3 |
+| Teeth Grindstone, Medical Bed, Herbalist, Shower | re-themed | As vanilla | As vanilla | 0–2 |
+
+### Ringtail workplaces
+
+All in one toolbar group marked with a moon.
+
+| Building | Basis | When | Role |
 |---|---|---|---|
-| Hearth Circle | re-themed | Company | 0 |
-| Hammock | new | Nap | 1 |
-| Nap Platform | new | Nap (several pandas) | 2 |
-| Teahouse | new | Tea, company | 2 |
-| Rooftop Terrace | re-themed | Rest | 1 |
-| Panda Kindergarten | new | Cub-watching (adults), play (cubs) | 2 |
-| Swing and Slide | new | Play | 2 |
-| Hot Spring Bath | new | Bathing | 3 |
-| Ink Studio | new | Contemplation | 2 |
-| Opera Stage | new | Performance; run by Ringtails | 3 |
-| Moon Gate Garden | new | Beauty | 3 |
-| Chewing Post | re-themed | Teeth | 0 |
-| Healer's Mat, Herbalist | re-themed | Injury, antidote | 1–2 |
-| Shower | re-themed | Washing off badwater | 1 |
+| Night Builders' Post | new | With the first Moon Loft | Builders through the evening and night |
+| Night Courier Post | new | 2 | Hauling |
+| Night Forager's Post | new | 2 | Mushrooms and wild food |
+| Star Tower | new | 3 | Science |
+| Opera Stage | new | 3 | Performances |
 
 ### Decoration
 
-Paper lantern (standing, hanging, string), stone lantern, bamboo fence, hedge, shrub, bonsai, panda statue,
-fish-kite weathervane, scarecrow, bench, banners, goldfish pond, curved tile roofs in the vanilla sizes.
-Lantern colours unlock with Tradition.
+Standing, hanging and string lanterns; bamboo fence; hedge; shrub; potted pine; panda statue; bamboo pinwheel;
+scarecrow; bench; banners; goldfish bowl; garden moon gate; grey tile roofs in the vanilla sizes. Each kind is
+its own small need, as in vanilla. Tradition unlocks lantern shapes and colours.
 
 ### Monuments and the wonder
 
-| Building | Basis | Tier | Note |
+| Building | Basis | When | Note |
 |---|---|---|---|
-| Paifang Gate | new | 3 | First monument |
-| Drum Tower | new | 3 | Second monument |
-| Great Sitting Panda | new | 4 | A colossal panda carved into a cliff face, after the Leshan Giant Buddha |
-| Hall of Harvests | new | 4 | Top-tier monument |
-| Sky Lantern | new | 4 | The wonder: a giant lantern that carries seeds over the wasteland |
+| Memorial Arch | new | 3 | First monument |
+| Great Sitting Panda | new | 4 | A freestanding cliff carving with water at its feet, showing both peoples |
+| Sky Lantern | new | 4 | The wonder |
 
 ### Automation
 
@@ -235,30 +225,31 @@ All nineteen vanilla automation buildings, re-themed.
 
 ## Needs
 
-Shared with vanilla: hunger, thirst, sleep, shelter, wet fur, injury, contamination, teeth.
+Shared with vanilla: hunger, thirst, sleep, shelter, wet fur, injury, contamination, teeth, company.
 
 | New need | Satisfied by |
 |---|---|
-| One per food (ten) | Eating it |
-| Tea | Drinking tea |
-| Nap | Hammock, nap platform |
-| Play | Swing and slide, kindergarten |
+| One per dish (nine) | Eating it |
+| Tea | Drinking tea; daily |
+| Nap | Hammock, nap platform; daily |
+| Play | Slide and swing, kindergarten |
 | Cub-watching | Panda Kindergarten |
-| Bathing | Hot spring bath |
-| Performance | Opera stage |
+| Soak | Hot spring bath |
 | Contemplation | Ink studio |
-| Beauty | Lanterns, gardens, monuments |
-| Festive spirit | A Lantern Festival; fades slowly |
+| Performance | Opera stage |
+| One per decoration kind | Standing near it |
+| Awe | Monuments |
+| Festive spirit | A Lantern Festival; fades over most of a cycle |
 
-## New models needed
+## New models
 
-About 45 buildings and set pieces, 10 plants with growth stages, 4 hats and outfits, and the Ringtail body.
-Everything else rides on re-themed vanilla models.
+About 40: Village Hall, Festival Square; Den, Courtyard House, Terrace House, Moon Loft; Steamer, Pickle Yard,
+Paddy House, Tea Roastery, Trip-Hammer Mill, Kitchen, Hot Pot Hall; Lantern Workshop, Smoke Kiln; cistern set,
+flume set, Flume Gate, Scoop Wheel, Paddy Spout, Dew Collector, Treadwheel Lift, Dry-Stone Wall; Bamboo Water
+Wheel, Kite Windmills; Star Tower; Hammock, Nap Platform, Teahouse, Slide and Swing, Kindergarten, Ink Studio,
+Hot Spring Bath, Opera Stage; the four night posts; Memorial Arch, Great Sitting Panda, Sky Lantern;
+decorations. Seven plants with growth stages. Hats, head-wraps and back-baskets. The Ringtail body.
 
-## Open points for the critics
+## Later updates
 
-* Is ten foods plus tea too long a ladder before the first festival?
-* Do Ringtails have enough distinct jobs (courier, forager, lift treader, lantern and firework maker,
-  stargazer, performer) to feel like a people rather than a hauling upgrade?
-* Does replacing planks with poles leave logs with enough to do?
-* Which re-themed buildings will still read as "Folktails with a paint job" and need their own model?
+Lotus and lotus root, tofu, a second kitchen tier, more monuments, rope-way variants, the showcase map.

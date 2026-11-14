@@ -1,18 +1,18 @@
 # Pandaborn - Factions: design
 
-Revision 3, 2026-11-14. Rewritten against `docs/tech/game-mechanics.md` (how the game really behaves),
-`docs/tech/water.md` and `docs/tech/two-peoples.md`. The full list of buildings, goods and plants is in
-`docs/CONTENT.md`. Numbers are placeholders until the colony model and play tests.
+Revision 4, 2026-11-14. Revision 3 was reviewed by four independent critics (in `docs/reviews/`) against
+`docs/tech/game-mechanics.md`. This revision resolves what they found. The catalogue is `docs/CONTENT.md`;
+engineering rules are `docs/ENGINEERING.md`.
 
 The owner has given the orchestrator executive authority over design, with one yardstick: **player
-satisfaction**. Changes and their reasons are logged at the end of this file.
+satisfaction**. Every change and its reason is logged at the end.
 
 ## The test for every idea
 
 1. Would a player enjoy it, and notice it within a minute?
-2. Does it work the way the game actually runs, hour by hour? (Checked against the mechanics reference.)
+2. Does it work the way the game actually runs, hour by hour?
 3. Can a new player ignore it and still be fine?
-4. Will it survive a game update?
+4. Will it survive a game update, and fail safely if it does not?
 
 ## Fixed by the owner
 
@@ -26,244 +26,263 @@ satisfaction**. Changes and their reasons are logged at the end of this file.
 
 ## Pitch
 
-Beavers hold water back; the Inkpaws lead it. Two panda peoples share one village in the misty bamboo
-highlands: the big ones work the day and laze through golden afternoons, the small ones keep the lanterns lit
-at night, and together they guide mountain water down bamboo flumes into rice terraces.
+The cozy panda faction: you run bamboo aqueducts down to rice terraces, and when the afternoon bell rings the
+big pandas put down their tools and the red pandas take over the village for the night.
 
 ## Setting
 
-Sichuan, where giant and red pandas really live. One real place, used closely.
+The bamboo-grove farmsteads of Sichuan, where giant and red pandas really live. One real place, used closely.
 
 | Real thing | In the mod |
 |---|---|
-| Dujiangyan, a 2,200-year-old system that waters a plain with no dam | Flumes, spouts and norias |
-| Rice terraces, hill tea, Sichuan pepper, pickles, hot pot | Farming and food |
+| Dujiangyan, a 2,200-year-old system that waters a plain with no dam | Flumes, spouts and scoop wheels |
+| The water-powered trip-hammer | A mill driven straight from a flume |
+| Rice terraces, hill tea, Sichuan pepper, pickles, hot pot, bamboo mushrooms | Farming and food |
 | Bamboo mass flowering, which really starves pandas | The Great Flowering |
-| The Wooden Ox, a walking hauler of Sichuan legend | The faction's bots |
-| The sky lantern, credited to the same inventor | The wonder and the festival |
+| The night watchman's clapper | The Ringtails as the village's Night Watch |
+| Face-changing opera | The Opera Stage |
+| The Wooden Ox of legend; the sky lantern | Late-game haulers; the wonder and the festival |
 | Panda nurseries | The Kindergarten |
-| The Leshan Giant Buddha | The Great Sitting Panda monument |
-| Red pandas being active from dusk to dawn | The Ringtails' hours |
+
+Cultural rules: no writing on any texture; nothing Japanese-coded; no imperial red-and-gold; no religious
+imagery; both peoples share one architecture, differing only in scale. Details are in the art direction
+section.
 
 ## What the game allows (the facts this design stands on)
 
-| Fact | Consequence for the design |
+| Fact | Consequence |
 |---|---|
-| Work is one colony-wide block that always starts at dawn; default 16 of 24 hours; night is the last 8 | Inkpaws cannot have a midday break. Their leisure is the afternoon and evening |
-| Workers on shift ignore every need that is not critical; attractions are used only off duty | Leisure buildings only matter if pandas have off-duty daylight |
-| Colonists sleep about 3 hours, late at night | Evenings are long and free |
-| Area effects (decorations, lanterns) reach anyone in range at any hour, including at work | Decorating workplaces has real value |
-| Workshop workers fetch their own inputs and carry out their own outputs; haulers only help, with double loads | A colony never needs haulers to function; they are a boost |
-| Haulers never supply building sites; builders do, and building is mostly walking | Faster building means better carriers and lighter materials, not more haulers |
-| Carrying anything halves walking speed, so load size decides hauling | A good carrier lifts a lot. Walking speed helps everything else |
-| Every food fills the same hunger; a dish's bonus needs only a bite every few days | Variety is cheap in volume. The staple can be anything |
-| Plants grow on fixed timers; drought only starts a dying countdown; death is permanent; planted plants do not spread | "Regrows by itself" means quick replanting by workers unless we add code |
-| Night changes nothing in play | Night work is a rhythm and a mood, plus the gain of work continuing while others rest |
-| A workplace holds one kind of worker | Each people has its own buildings |
+| Work is one colony-wide block from dawn; default 16 of 24 hours; the first day has only 12 | Leisure is the afternoon and evening. Shortening the day must never be the default at minute one |
+| Workers on shift ignore every need that is not critical | Leisure only happens off duty |
+| A leisure visit lasts under two hours and holds for about a week; colonists sleep about three hours | Off-duty time is mostly empty unless there are daily rituals |
+| Working speed does not speed walking, and building, hauling and foraging are mostly walking | A shorter day needs a walking bonus too, or those jobs lose a quarter of their output |
+| Workshop workers supply themselves; haulers only help, with double loads | A colony never needs haulers to function |
+| Haulers never supply building sites; builders do | Night builders, not night couriers, are what a player feels |
+| Carrying halves walking speed whatever the load | A colonist who keeps full speed while loaded is a natural courier |
+| Every food fills the same hunger; a dish's bonus needs a bite every few days | The staple can be anything; variety is cheap in volume |
+| Plants grow on fixed timers; dryness starts a dying countdown that resets when water returns; death is permanent | Drought tolerance is one number per plant. Dead plants must be cleared |
+| Any soil contamination kills plants within hours | Flumes must never carry badwater |
+| Power wheels only turn while staffed | Staffed power belongs to the people who use it |
+| Night changes nothing in play | Night work is rhythm, mood, and work that continues while others rest |
+| A workplace holds one kind of worker; homes cannot be restricted by kind | Each people has its own workplaces; any home takes anyone |
+| Unknown data in goods, needs, recipes or the faction file crashes every game, not just ours | Global data stays plain and validated; our own code only ever adds |
 
 ## Pillar 1 — Lead the water
 
-Inkpaws keep terrace walls, weirs and floodgates, so every vanilla map plays from day one. What they add is a
-toolkit for shallow water at many heights.
+Inkpaws keep levees, dams and floodgates under their vanilla names, so every map plays from day one. What they
+add is a toolkit for shallow water at many heights.
 
 | Tool | What it does |
 |---|---|
-| Bamboo spout | Holds the pool below it at a shallow set depth. A paddy that looks after itself |
-| Bamboo flume | An open channel one tile wide. Water runs one way along it, level or downhill, on the ground or on trestles, and cannot leak sideways. Corners use turning boxes |
-| Noria | Sits in a current and lifts water with no workers |
-| Treadwheel lift | The same lift where there is no current, turned by a Ringtail |
-| Dew collector | A trickle of drinking water at dawn, even in drought |
-| Clay cisterns | Water storage, from day one |
+| Flume | An open bamboo aqueduct one tile wide. Water runs one way, along the arrow, level or downhill. It never climbs and never leaks |
+| Flume Corner, Drop, Bridge | Turn, step down, and cross above the ground |
+| Flume Gate | The intake. Sets the flow, and **shuts itself when the water turns bad** |
+| Paddy Spout | Keeps the field in front of it flooded to a shallow set depth |
+| Scoop Wheel | Sits in a current and lifts water with no workers |
+| Treadwheel Lift | Lifts water where there is no current, turned by a worker |
+| Trip-Hammer Mill | A mill driven straight from a flume or stream, with no shafts |
+| Dew Collector | A little drinking water each dawn, less in drought |
+| Cistern and Cistern Tap | Store water; pour it into a flume to keep one strip alive in a drought |
 
-Why it is fun: water visibly runs along something the player drew across a hillside, farmland can go anywhere a
-flume can reach, and each piece has one clear job.
+Rules that keep it pleasant:
+
+* **A flume never fails silently.** A dry intake, a missing corner and a starved run each say so on the piece.
+* **The taught unit is flume, spout, pool.** A flume carries; the pool at its end is what waters a field.
+* **Bamboo along a flume is the first payoff**, reachable in the first hour: the strip beside a ground flume
+  is moist.
+* **Drought has its own moment.** Sources stop and scoop wheels fall still; a cistern tap keeps the best strip
+  alive; when the water returns it races back down every flume.
 
 ## Pillar 2 — Every kind of land has a use
 
 | Zone | Plants |
 |---|---|
-| Flooded | Rice (up to one block deep), lotus (deeper) |
-| Moist | Bamboo, cabbage, soybean, persimmon and lacquer trees |
+| Flooded | Rice |
+| Moist | Shoot bamboo, timber bamboo, cabbage, persimmon trees |
 | Dry | Tea bushes, Sichuan pepper |
 
-* To a beaver, dry land is dead land. To an Inkpaw it is tea country, and a drought does not touch it.
-* Dry-ground plants are luxuries and ingredients, never staple calories, because dry land is unlimited.
+* Dry-ground plants are luxuries and ingredients, never staple calories.
+* Tea and pepper die if their roots get wet, and say so. A dry-stone wall keeps moisture out of a tea slope.
 
-### Bamboo, the fast tree
+### Bamboo, as two ordinary plants
 
-* It uses three jobs players already know: a grove keeper plants it, a forager picks shoots, a woodcutter cuts
-  poles. The grove keeper is free to unlock.
-* Shoots are ready within three days, because a Normal start has under four days of food.
-* **Poles are the Inkpaws' planks, and there is no mill.** Poles are light, so builders carry more per trip
-  and everything goes up faster. Fast building is the first thing a player will feel.
-* Bamboo is thirsty: it is the first plant to die in a drought. It grows back fast, and grove keepers replant
-  marked groves without being asked.
-* Two kinds, river bamboo (fast) and cloud bamboo (slower, hardier). This matters in the Flowering.
-* Spreading into neighbouring soil needs added code and is decided after the prototype.
+Revision 3 put food and building material on one plant. In practice the woodcutter would cut every stalk
+before it bore a shoot, and one drought would end food and construction together. So:
 
-## Pillar 3 — The golden afternoon
+* **Shoot bamboo is a field crop.** The Farmstead plants and harvests it like carrots. It is edible raw, ready
+  in about three days, and is the starter crop. A vanilla player's first reflex — farmhouse and the first
+  crop on the list — is exactly right.
+* **Timber bamboo is a fast tree.** The forester plants it and woodcutters cut it for **poles**.
+* **Poles are the Inkpaws' planks: no mill, no power.** Poles are light, so builders carry more per trip.
+* Both shrug off a short drought and die in a long one. Cabbage is a second raw staple, so the colony never
+  rests on one plant.
+* Bamboo mushrooms grow in standing timber groves and are foraged.
 
-* **Inkpaws work a shorter day, faster.** A new Inkpaws game starts at twelve working hours instead of sixteen,
-  and Inkpaws work quicker to match. The four daylight hours they gain are off duty: hammocks, the teahouse,
-  the slide, the hot spring, the kindergarten. This is how "lazy, content pandas" becomes something the player
-  watches, inside the game's real schedule.
-* **Overwork backfires.** A Rest need, filled in hammocks and on nap platforms, cannot keep up with a
-  sixteen-hour day. Rested pandas work fast; tired ones do not. The slider stays in the player's hands.
-* **Decorate the workplace.** Lanterns and gardens reach pandas at work, so beauty around workshops pays.
-* **Cooking is the ladder.** Shoots keep pandas alive; each dish is a recognisable Sichuan food and a step up
-  in wellbeing. Tea is a drink with its own need and makes water go further.
-* **Cubs are a joy.** Adults gain wellbeing from the Panda Kindergarten.
-* **Population the player can trust.** Inkpaws breed slowly, live long, and each home has a "welcome cubs"
-  switch. Runaway breeding into famine, a familiar vanilla frustration, cannot happen by accident.
+## Pillar 3 — The afternoon bell
+
+* **One bell divides the day.** It is the vanilla working-hours slider. A new game starts where vanilla does.
+* **Rested pandas are quick pandas.** The shorter the working day, the faster Inkpaws work *and walk*: at
+  twelve hours they get as much done as beavers do in sixteen. The bonus is shown on the slider. Long days are
+  allowed and simply remove it. There is no punishment and no hidden need.
+* **The game suggests it once the village is settled**: "Inkpaws work a short day and work it well."
+* **Afternoons have rituals**, so off-duty pandas are doing something:
+
+| Ritual | Building | How often |
+|---|---|---|
+| Tea | Teahouse | Daily |
+| A nap in the sun | Hammock, Nap Platform | Daily |
+| Play | Slide and Swing | Every few days |
+| Watching the cubs | Panda Kindergarten | Every few days |
+| A soak | Hot Spring Bath | Every few days |
+| Ink painting | Ink Studio | Weekly |
+
+* **Decorate the workplace.** Decorations reach pandas at work. Each kind of decoration is its own small need,
+  as in vanilla.
+* **Cooking is the ladder.** Each dish is a recognisable Sichuan food and a step up in wellbeing. Tea also
+  quenches thirst, three cups from one measure of water.
+* **Cubs are a joy.** Adults gain wellbeing from the Kindergarten.
 
 ## Pillar 4 — Two peoples, one village
 
 ### The one rule
 
-**Inkpaws keep the day. Ringtails keep the night.**
+**Inkpaws work from dawn to the bell. Ringtails work from the bell to dawn.**
+
+One slider, one clock. Twelve and twelve is the natural balance: both peoples are at their best.
 
 ### How it is learned
 
-1. The game opens with Inkpaws only, and plays like a familiar faction with new crops and tools.
-2. The first **loft** — a small lantern-lit home on a rooftop — brings a family of Ringtails. One message, one
-   rule, at a moment the player chose.
-3. Ringtails work in their own small buildings. There is nothing to configure.
-4. A player who never builds a loft has a complete colony.
+1. The game opens with Inkpaws only.
+2. A **Moon Loft** — a snug home raised on stilts above a path, with a lantern in its window — is an old
+   invitation. Building the first one brings a Ringtail family and unlocks their first workplace.
+3. Every Ringtail building sits in one toolbar group marked with a moon. Nothing needs configuring.
+4. A player who never builds a Moon Loft has a complete colony. Nothing else depends on Ringtails.
 
-### A day in the village
+### What the Ringtails are
 
-| Hours | Inkpaws | Ringtails |
-|---|---|---|
-| Dawn to mid-morning | At work | Asleep, then at leisure in the gardens |
-| Late morning to noon | At work | Starting work: both peoples busy together |
-| Afternoon | Off duty: the golden afternoon | At work |
-| Evening | Off duty, then asleep | At work under lanterns |
-| Night | Asleep | At work |
+The village's **Night Watch**, its stargazers and its artists. Not helpers.
 
-Each people rests in the spaces the other is keeping. Neither serves the other: the Inkpaws grow, cook and
-build by day; the Ringtails carry, craft, perform and watch the stars by night.
-
-### What Ringtails do
-
-| Building | Job |
+| Building | What it does |
 |---|---|
-| Courier Loft | Hauling: tops up workshop inputs and clears outputs so Inkpaws start the day with full shelves |
-| Scaffolders' Loft | Builders: sites are stocked and raised overnight |
-| Forager's Nest | Gathering, including bamboo mushrooms from standing groves |
-| Lantern and firework workshops | Festival crafts |
-| Treadwheel and treadwheel lift | Power and water lifting; a wheel turns faster under a quick walker |
+| Night Builders' Post | Sites are stocked and raised overnight. The first Ringtail workplace, because it is the one a player sees |
+| Night Courier Post | Hauling through the evening and night |
+| Night Forager's Post | Gathers bamboo mushrooms and wild food |
 | Star Tower | Science from the night sky |
-| Opera Stage | Evening performances for off-duty Inkpaws |
+| Opera Stage | Face-changing opera for whoever is off duty |
 
 ### How they differ
 
 | | Inkpaws | Ringtails |
 |---|---|---|
-| Strength | Lift more; work faster | Walk faster |
-| Homes | Dens, courtyard houses: roomy, few beds | Lofts: tiny, on roofs and scaffolds |
-| Lives | Long; cubs arrive slowly | Shorter; kits arrive sooner |
+| Hours | Dawn to the bell | The bell to dawn |
+| Strength | Lift more | Run with their loads: no slowing when carrying |
+| Young | Cubs, born in homes as beavers are | Kits, raised in the Moon Loft while there is work for them |
 
-Differences are moderate. Food and wellbeing rules are the same for both, so there is one set of numbers to
-learn. The interface shows a sun or a moon.
+Everything else — food, wellbeing, lifespan, homes — is the same, so there is one set of numbers to learn.
+Each people takes its leisure while the other works: Ringtails fill the teahouse in the morning.
 
-### What the player gains
+### What the interface shows
 
-* Building work and hauling continue through the night.
-* Leisure buildings are shared across two shifts instead of crowding in one evening.
-* A village that is alive at every hour, with lanterns lit and small red figures at work.
-* The mix is the player's: more dens or more lofts.
+* A sun or a moon on every workplace, in the toolbar and on the panel.
+* A moon arc on the working-hours clock.
+* The population panel in two rows: Inkpaws and Ringtails, each with idle workers.
+* "Closed for the day. Ringtails start at the afternoon bell" in place of the vanilla no-workers alert.
 
 ### The gate
 
-A prototype must show Ringtails holding their own jobs, working these hours, sleeping, surviving save and
-reload, and leaving Folktails games untouched. If it fails, or proves fragile, the faction ships with one
-people and Ringtail coats as variety. Nothing else in this design depends on Ringtails.
+A prototype must show Ringtails holding their jobs, keeping these hours, sleeping, surviving save and reload,
+and leaving other factions untouched, and then pass a multi-day soak. If it fails or proves fragile, the
+faction ships with one people and Ringtail coats as variety. If a game update ever breaks the Ringtail code,
+existing Ringtails load as Inkpaws rather than vanishing.
 
 ## Pillar 5 — A third rhythm
 
-### The Great Flowering
-
-* Never before a set cycle; then every few cycles, forecast like a drought. One of the two bamboo kinds
-  blooms and dies across the map.
-* The hillsides turn gold, and pandas enjoy the blossoms while the player counts the food.
-* Answers, all visible in advance: grow both kinds, lean on rice and persimmons, keep a cellar of pickles.
-* Cutting the dead groves yields **bamboo rice**, the rarest food in the mod.
-* Grove keepers replant by themselves afterwards.
-* A setting offers off, rare or normal.
-
 ### Lantern Festival
 
-* Called by the player from the Festival Square, at most once per cycle, by spending stockpiled lanterns,
-  fireworks and feast food.
-* For one evening and night both peoples are off duty together: dancing, rising lanterns, fireworks.
-* Rewards: a long-lasting festive wellbeing boost, a wave of cubs and kits, and one step of **Tradition**, a
-  permanent count that unlocks lantern colours and decorations.
+* **Small Festival**, reachable in the second cycle: paper lanterns and any three cooked dishes.
+* **Grand Festival**: adds fireworks. Bamboo-seed cakes make it grander still.
+* The player calls it from the Festival Square, at most once per cycle, or lets it call itself when stocked.
+* Everyone takes a day and a night off: dancing, rising lanterns, fireworks. The cost is a day's work.
+* Rewards: festive spirit that lasts most of a cycle, and one step of **Tradition**, which unlocks decorations.
 
-### The Long Nap (later)
+### The Great Flowering
 
-In a drought the player can send the Inkpaws to bed, where they need far less food and water, while the
-Ringtails keep the village running. It is all custom code and is built last.
+* Never before a set cycle, never in a drought or badtide, and announced a full cycle ahead with visible buds.
+* One of the two bamboos flowers, drops its seed and dies across the map. Shoot bamboo means a food season to
+  bridge; timber bamboo means building material to have stocked.
+* The fallen **bamboo seed** is a large one-time harvest and makes the best food in the mod. It is a windfall
+  to prepare for, not only a loss.
+* A setting offers off, rare or normal.
 
-## Pillar 6 — Legend as late game
+## Pillar 6 — Late game
 
-* **Wooden Oxen** replace bots: slow, tireless haulers with enormous loads.
-* **Kite windmills** and **treadwheels** replace fuel engines.
+* **Wooden Oxen** are the faction's bots: tireless, strong and slow.
+* **Kite windmills** and **bamboo water wheels** replace fuel engines.
 * **Bamboo scaffolding and rope bridges** make tall building cheap and light.
-* **The Great Sitting Panda**, carved into a cliff, is the top monument.
+* **The Great Sitting Panda**, a freestanding cliff carving with water at its feet and both peoples on it, is
+  the top monument.
 * **The wonder** is a colossal sky lantern that carries seeds over the wasteland.
 
-## The first hour (Normal difficulty)
+## The first two hours (Normal difficulty)
 
-| When | What the player does | What they learn |
+| When | What the player does | The new idea |
 |---|---|---|
-| First minutes | Nine Inkpaws and four cubs, some berries, no water. Places a water carrier, forager's post and woodcutter | Familiar opening |
-| Day 1 | Marks a bamboo grove by the river. Builds dens from logs | Bamboo is a tree you farm |
-| Days 2–3 | First shoots and first poles. Buildings go up noticeably faster | Poles need no mill and are light |
-| Days 3–8 | Steamer, hammocks, cisterns. Notices pandas off duty in the afternoon | The golden afternoon |
-| First drought | Bamboo dies back; cisterns and stored shoots carry the village; groves are replanted by themselves | Droughts are survivable |
-| Cycle 2 | First spout-fed paddy; a tea slope on dry ground; pickles | Three zones; a pantry |
-| Cycle 2–3 | First flume to a higher terrace; first loft, and the Ringtails arrive | Leading water; the one rule |
-| Cycle 3–4 | Cubs, the Kindergarten, lanterns, the first Festival | Happiness pays |
-| Later | Flowering forecast, cloud bamboo, Wooden Oxen, the Great Sitting Panda, the sky lantern | The long game |
+| First minutes | Water pump, forager, woodcutter, Farmstead with shoot bamboo | None: the vanilla reflexes work |
+| Day 1–2 | Forester with timber bamboo; dens from logs | Poles come from bamboo and need no mill |
+| Days 3–5 | First shoots and poles. Steamer cooks shoots. Hammock and Teahouse | Dishes; afternoon rituals |
+| Around day 5 | The game suggests a shorter day | The afternoon bell |
+| Days 5–8 | A scoop wheel and a short flume water a second grove | Leading water |
+| First drought | Bamboo browns and survives; cisterns carry the village | Droughts are survivable |
+| End of cycle 1 | First Moon Loft: the Ringtails arrive, and building continues overnight | The one rule |
+| Cycle 2 | Paddy spout and rice; pickles; lanterns; the Small Festival | Flooded fields; the festival |
+| Cycle 3 | Tea on dry ground; trip-hammer mill; sweet rice balls | Dry land; water as power |
+| Later | Hot pot, Star Tower, Opera, Flowering forecast, Oxen, the cliff carving, the sky lantern | The long game |
 
-## Look
+Seven new ideas in two hours, never two at once.
 
-* Palette: ink black and white, bamboo green, lacquer red, paper cream, tea green.
-* Vanilla buildings re-themed through the faction's own materials where that proves possible; new models from
-  one code-driven kit of parts (poles, lashings, woven panels, curved tile roofs, paper screens, lanterns) for
-  everything that carries identity.
-* Lanterns and paper windows glow at night.
-* Outfits: conical bamboo hats, straw capes, headbands; shoulder poles for couriers.
-* Characters: the Reskin's proportions and coats for Inkpaws; a true red panda body for Ringtails if the
-  character pipeline allows, a smaller red-coated body if not.
+## Art direction
+
+* **Buildings:** dark timber frames with white lime-plaster infill, grey clay roof tiles, fresh and cured
+  bamboo, woven bamboo panels, rammed earth and river stone.
+* **Red is an accent:** lanterns, small trim, festival goods.
+* **Lattice windows** that glow at night. Lanterns light in a wave at the bell.
+* **Outfits:** conical hats on paddy farmers only; cloth head-wraps; back-baskets for couriers.
+* **Characters:** the Reskin's proportions and coats for Inkpaws. Ringtails start as a smaller red-coated body
+  and get a true red panda body when the character pipeline allows.
+* **Sound:** panda bleats, a red panda's twitter, a bamboo "tok" as a flume fills, different bells for the two
+  shifts, the watchman's clapper.
+* **Names:** colonists get real doubled names with their meaning shown, such as "Le Le (Joy)"; Ringtails get
+  star, fruit and spice names.
 
 ## What sinks faction mods (design against these)
 
-1. Breaking on game updates: data first, small defensive code, automated tests, features that switch
-   themselves off rather than crash.
+1. Breaking on game updates.
 2. Dependency chains: none required.
 3. Id clashes: everything prefixed.
 4. Brutal or opaque starts.
 5. Reusing a vanilla faction's look, emblem or text.
 6. Side effects outside the faction.
 
-## Milestones
+## Build order
 
-| # | Goal |
+Every step ends in a mod that could be released.
+
+| Step | Contents |
 |---|---|
-| 0 | Done: the faction loads with its own panda bodies; automated in-game test |
-| 1 | Prototypes: water toolkit, Ringtails, re-themed look, measured in game |
-| 2 | Playable core: the full catalogue in data on re-themed and stand-in models; first hour tuned |
-| 3 | Its own look: materials, building kit, plants, outfits, icons, portraits |
-| 4 | Code features: Ringtails, golden afternoon, kindergarten, festival, Flowering, oxen, tutorial, settings |
-| 5 | Balance on every difficulty; soak tests; compatibility; Workshop and mod.io pages |
+| A. Foundation | Frozen ids; catalogue and generator; validator against the game's own definitions; code skeleton with safe feature loading; in-game checks of the mechanisms everything rests on |
+| B. Playable core | The whole catalogue in data on re-themed and stand-in models; water tools; the afternoon bell; first two hours tuned with the colony model |
+| C. Its own look | Materials, the building kit, identity models, plants, icons, portraits, outfits |
+| D. Ringtails | If the gate passes: Moon Loft, the night posts, Star Tower, panels |
+| E. Events and depth | Festival, Kindergarten extras, Flowering, Oxen, monuments, wonder, tutorial |
+| F. Release | Balance on every difficulty, soak tests, compatibility, Mac, store pages |
 
-## Quality bar for every milestone
+## Quality bar for every step
 
-* The automated test starts a new Inkpaws game, runs it for several days, and finds no errors in the log.
-* A Folktails game with the mod enabled is unchanged.
+* The automated test starts a new Inkpaws game on each difficulty, runs it for days, and finds no errors.
+* Folktails and Iron Teeth games with the mod enabled are unchanged.
 * Works with the Reskin installed and without it, and with no other mods at all.
-* Save and reload works.
+* Save and reload works, and saves from the previous build still load.
+* With any optional feature switched off, the game still loads and plays.
 
 ## Change log
 
@@ -271,17 +290,27 @@ Ringtails keep the village running. It is all custom code and is built last.
 |---|---|---|
 | 2026-11-13 | Two factions cut to one | Depth sells a faction mod; two doubles art and upkeep |
 | 2026-11-14 | Three-way workplace toggle, restricted jobs and extreme stats cut | Owner: two species must not be a steep learning curve |
-| 2026-11-14 | "Day makes, night moves" split dropped | Owner caught it: workshops supply themselves all day; haulers only help |
-| 2026-11-14 | Two crews sharing a workplace dropped; Ringtails get their own buildings | A workplace holds one kind of worker; the switching scheduler was the most fragile code in the plan |
-| 2026-11-14 | Pipeline became an open flume | The water system already has one-way, watertight-sided cells; visible water is better than a hidden pipe |
-| 2026-11-14 | Midday naps became the golden afternoon (twelve-hour day, faster work) | Workers never nap on shift; work is one block from dawn |
-| 2026-11-14 | "Dusk and dawn shared hours" replaced by the day table above | Dawn can never be off duty |
-| 2026-11-14 | Night hauling of building materials became night builders | Haulers never supply building sites |
-| 2026-11-14 | Ringtails no longer "carry little" | Carrying halves speed whatever the load, so load size is what makes a good carrier |
-| 2026-11-14 | "Raw shoots fill little" and the doubled appetite dropped | Every food fills the same; a weaker food only adds walking trips |
-| 2026-11-14 | Bamboo "regrows from its roots" became quick replanting by grove keepers | Plant death is permanent without added code |
-| 2026-11-14 | Crop rotation in drained paddies dropped | A tile is marked for one crop; re-marking every season is a chore |
-| 2026-11-14 | Poles replace planks with no mill; mulberry cut; paper comes from bamboo | Smoother opening; fewer goods |
-| 2026-11-14 | Lantern speed bonus dropped; lanterns give beauty to anyone in range | There is no night penalty to remove |
-| 2026-11-14 | Charcoal water filter postponed | Lowest value for its risk |
-| 2026-11-14 | The Long Nap moved to last | Entirely custom code; the core stands without it |
+| 2026-11-14 | "Day makes, night moves" split dropped | Owner caught it: workshops supply themselves all day |
+| 2026-11-14 | Two crews sharing a workplace dropped; Ringtails get their own buildings | A workplace holds one kind of worker |
+| 2026-11-14 | Pipeline became an open flume | The water system already has one-way, watertight-sided cells |
+| 2026-11-14 | Bamboo split into a crop and a tree | On one plant the woodcutter destroys the food, and one drought ends food and building together |
+| 2026-11-14 | Bamboo survives short droughts instead of dying first | The first drought was the likeliest place for a new player to quit; Hard was unplayable |
+| 2026-11-14 | Twelve-hour default day and the Rest need replaced by a rested bonus shown on the slider | A twelve-hour first day leaves pandas thirsty and idle at noon; a Rest need cannot be tuned and means walls of hammocks |
+| 2026-11-14 | The bonus covers walking as well as working | Building, hauling and foraging are mostly walking |
+| 2026-11-14 | Daily rituals added to the afternoon | One leisure visit lasts a week, so off-duty pandas only wandered |
+| 2026-11-14 | Ringtail hours became "from the bell to dawn" | The earlier overlapping schedule was eleven things to learn, and made Ringtails work half as long again as Inkpaws |
+| 2026-11-14 | Night builders are the first Ringtail job; treadwheel power is not a Ringtail job | Haulers never supply sites; power wheels turn only while staffed, at the wrong hours |
+| 2026-11-14 | Ringtails keep full speed when loaded instead of walking fast and lifting little | Load size and carrying speed are what make a courier |
+| 2026-11-14 | Ringtails reframed as Night Watch, stargazers and artists; same lifespan and homes; back-baskets | As written they read as a servant caste |
+| 2026-11-14 | Kits are raised in the Moon Loft while there is work for them | Homes cannot be restricted by kind; unseen idle Ringtails would pile up |
+| 2026-11-14 | Nothing a one-people colony needs is a Ringtail job | Lanterns, explosives and water lifting had drifted behind the Ringtail gate |
+| 2026-11-14 | Flume gate shuts itself on badwater; flumes report why they are dry | A flume would have poisoned every terrace in the first badtide; four failures were silent |
+| 2026-11-14 | Trip-hammer mill and cistern tap added | Leading water should power things, and should still matter in a drought |
+| 2026-11-14 | Festival tiered and moved to the second cycle; it costs a day's work | It was gated behind the deepest chains and changed nothing for Inkpaws |
+| 2026-11-14 | Flowering announced a cycle ahead, never in bad weather | Three days cannot answer "grow something else" |
+| 2026-11-14 | The Long Nap cut | All custom code, and the worst framing in the design |
+| 2026-11-14 | A third of the identity catalogue cut: lacquer chain, tofu and soy, ox upkeep, lotus, persimmon cakes, two monuments | So the rest can be made well |
+| 2026-11-14 | Vanilla functions keep vanilla names; noria became Scoop Wheel | A player should never relearn a levee |
+| 2026-11-14 | Poles are the vanilla plank under a new name, if the game allows a faction-only rename | Hundreds fewer cost edits, and other mods' buildings keep working |
+| 2026-11-14 | Art direction moved from lacquer red to Sichuan timber, plaster and grey tile; no writing on textures | Red and gold reads as Chinatown; generated characters are gibberish |
+| 2026-11-14 | Charcoal filter, crop rotation, raw-shoot penalty, lantern speed bonus dropped | Low value, a chore, extra walking, and nothing to remove |
