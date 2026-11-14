@@ -1,0 +1,1650 @@
+{
+ "faction": "Inkpaws",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 2400,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "PandabornProtoPlants",
+  "PandabornPlants"
+ ],
+ "water": {
+  "name": "plants-states",
+  "speed": 7,
+  "area": [
+   36,
+   22
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "flatten",
+    "rect": [
+     27,
+     0,
+     34,
+     8
+    ],
+    "z": -1
+   },
+   {
+    "op": "wait",
+    "ticks": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "water",
+    "id": "paddy",
+    "at": [
+     30,
+     4,
+     -1
+    ],
+    "rate": 3.0,
+    "maxDepth": 0.3
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     3,
+     0,
+     4,
+     1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     6,
+     0,
+     7,
+     1
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     9,
+     0,
+     10,
+     1
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     9,
+     0,
+     10,
+     1
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     12,
+     0,
+     13,
+     1
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     12,
+     0,
+     13,
+     1
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     15,
+     0,
+     16,
+     1
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     15,
+     0,
+     16,
+     1
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     18,
+     0,
+     19,
+     1
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     18,
+     0,
+     19,
+     1
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     0,
+     22,
+     1
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     0,
+     22,
+     1
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     3,
+     3,
+     4,
+     4
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     6,
+     3,
+     7,
+     4
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     9,
+     3,
+     10,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     9,
+     3,
+     10,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     12,
+     3,
+     13,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     12,
+     3,
+     13,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     15,
+     3,
+     16,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     15,
+     3,
+     16,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     18,
+     3,
+     19,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     18,
+     3,
+     19,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     21,
+     3,
+     22,
+     4
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     21,
+     3,
+     22,
+     4
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     6,
+     1,
+     7
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     3,
+     6,
+     4,
+     7
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     6,
+     6,
+     7,
+     7
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     9,
+     6,
+     10,
+     7
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     9,
+     6,
+     10,
+     7
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     12,
+     6,
+     13,
+     7
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     12,
+     6,
+     13,
+     7
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     15,
+     6,
+     16,
+     7
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     15,
+     6,
+     16,
+     7
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     18,
+     6,
+     19,
+     7
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     18,
+     6,
+     19,
+     7
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     9,
+     1,
+     10
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     3,
+     9,
+     4,
+     10
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     6,
+     9,
+     7,
+     10
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     9,
+     9,
+     10,
+     10
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     9,
+     9,
+     10,
+     10
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     15,
+     9,
+     16,
+     10
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     15,
+     9,
+     16,
+     10
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     18,
+     9,
+     19,
+     10
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     18,
+     9,
+     19,
+     10
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     0,
+     12,
+     1,
+     13
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     3,
+     12,
+     4,
+     13
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     6,
+     12,
+     7,
+     13
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     9,
+     12,
+     10,
+     13
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     9,
+     12,
+     10,
+     13
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     15,
+     12,
+     16,
+     13
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     15,
+     12,
+     16,
+     13
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     18,
+     12,
+     19,
+     13
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     18,
+     12,
+     19,
+     13
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     0,
+     15,
+     1,
+     16
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     3,
+     15,
+     4,
+     16
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     6,
+     15,
+     7,
+     16
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     9,
+     15,
+     10,
+     16
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     9,
+     15,
+     10,
+     16
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     15,
+     15,
+     16,
+     16
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     15,
+     15,
+     16,
+     16
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     18,
+     15,
+     19,
+     16
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     18,
+     15,
+     19,
+     16
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     0,
+     18,
+     1,
+     19
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     3,
+     18,
+     4,
+     19
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     6,
+     18,
+     7,
+     19
+    ]
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     9,
+     18,
+     10,
+     19
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     9,
+     18,
+     10,
+     19
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     15,
+     18,
+     16,
+     19
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     15,
+     18,
+     16,
+     19
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     18,
+     18,
+     19,
+     19
+    ]
+   },
+   {
+    "op": "grow",
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     18,
+     18,
+     19,
+     19
+    ],
+    "progress": 1.0
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     28,
+     1,
+     30,
+     7
+    ],
+    "z": -1
+   },
+   {
+    "op": "plant",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     31,
+     1,
+     33,
+     7
+    ],
+    "z": -1
+   },
+   {
+    "op": "grow",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     31,
+     1,
+     33,
+     7
+    ],
+    "z": -1,
+    "progress": 1.0
+   },
+   {
+    "op": "wait",
+    "hours": 0.5,
+    "speed": 3,
+    "capSeconds": 300
+   },
+   {
+    "op": "plants",
+    "label": "paddyRice",
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     28,
+     1,
+     33,
+     7
+    ],
+    "z": -1
+   },
+   {
+    "op": "probe",
+    "label": "paddyDepth",
+    "at": [
+     30,
+     4,
+     -1
+    ]
+   },
+   {
+    "op": "shot",
+    "name": "matrix_day",
+    "focus": [
+     11,
+     10,
+     0
+    ],
+    "distance": 44,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_TimberBamboo_day",
+    "focus": [
+     11,
+     0.5,
+     0
+    ],
+    "distance": 21,
+    "pitch": 42,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_PersimmonTree_day",
+    "focus": [
+     11,
+     3.5,
+     0
+    ],
+    "distance": 21,
+    "pitch": 42,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_TeaBush_day",
+    "focus": [
+     11,
+     6.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_ShootBamboo_day",
+    "focus": [
+     11,
+     9.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_Cabbage_day",
+    "focus": [
+     11,
+     12.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_Rice_day",
+    "focus": [
+     11,
+     15.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_SichuanPepper_day",
+    "focus": [
+     11,
+     18.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "paddy_day",
+    "focus": [
+     30.5,
+     4,
+     -1
+    ],
+    "distance": 13,
+    "pitch": 52,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "game_day",
+    "focus": [
+     16,
+     9,
+     0
+    ],
+    "distance": 30,
+    "pitch": 58,
+    "yaw": 25,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "wait",
+    "hours": 12.5,
+    "speed": 7,
+    "capSeconds": 900
+   },
+   {
+    "op": "shot",
+    "name": "matrix_night",
+    "focus": [
+     11,
+     10,
+     0
+    ],
+    "distance": 44,
+    "pitch": 55,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_TimberBamboo_night",
+    "focus": [
+     11,
+     0.5,
+     0
+    ],
+    "distance": 21,
+    "pitch": 42,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_PersimmonTree_night",
+    "focus": [
+     11,
+     3.5,
+     0
+    ],
+    "distance": 21,
+    "pitch": 42,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_TeaBush_night",
+    "focus": [
+     11,
+     6.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_ShootBamboo_night",
+    "focus": [
+     11,
+     9.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_Cabbage_night",
+    "focus": [
+     11,
+     12.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_Rice_night",
+    "focus": [
+     11,
+     15.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "row_SichuanPepper_night",
+    "focus": [
+     11,
+     18.5,
+     0
+    ],
+    "distance": 15,
+    "pitch": 48,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "paddy_night",
+    "focus": [
+     30.5,
+     4,
+     -1
+    ],
+    "distance": 13,
+    "pitch": 52,
+    "yaw": 0,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "shot",
+    "name": "game_night",
+    "focus": [
+     16,
+     9,
+     0
+    ],
+    "distance": 30,
+    "pitch": 58,
+    "yaw": 25,
+    "width": 1600,
+    "height": 900
+   },
+   {
+    "op": "plants",
+    "label": "end",
+    "rect": [
+     0,
+     0,
+     34,
+     21
+    ],
+    "detail": false
+   }
+  ]
+ },
+ "plantLab": {
+  "rules": [
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     0,
+     0,
+     1,
+     1
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     3,
+     0,
+     4,
+     1
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     6,
+     0,
+     7,
+     1
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     9,
+     0,
+     10,
+     1
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     12,
+     0,
+     13,
+     1
+    ],
+    "state": "ripe"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     15,
+     0,
+     16,
+     1
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     18,
+     0,
+     19,
+     1
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTimberBamboo.Inkpaws",
+    "rect": [
+     21,
+     0,
+     22,
+     1
+    ],
+    "state": "cut"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     0,
+     3,
+     1,
+     4
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     3,
+     3,
+     4,
+     4
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     6,
+     3,
+     7,
+     4
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     9,
+     3,
+     10,
+     4
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     12,
+     3,
+     13,
+     4
+    ],
+    "state": "ripe"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     15,
+     3,
+     16,
+     4
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     18,
+     3,
+     19,
+     4
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornPersimmonTree.Inkpaws",
+    "rect": [
+     21,
+     3,
+     22,
+     4
+    ],
+    "state": "cut"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     0,
+     6,
+     1,
+     7
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     3,
+     6,
+     4,
+     7
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     6,
+     6,
+     7,
+     7
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     9,
+     6,
+     10,
+     7
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     12,
+     6,
+     13,
+     7
+    ],
+    "state": "ripe"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     15,
+     6,
+     16,
+     7
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornTeaBush.Inkpaws",
+    "rect": [
+     18,
+     6,
+     19,
+     7
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     0,
+     9,
+     1,
+     10
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     3,
+     9,
+     4,
+     10
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     6,
+     9,
+     7,
+     10
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     9,
+     9,
+     10,
+     10
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     15,
+     9,
+     16,
+     10
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornShootBamboo.Inkpaws",
+    "rect": [
+     18,
+     9,
+     19,
+     10
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     0,
+     12,
+     1,
+     13
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     3,
+     12,
+     4,
+     13
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     6,
+     12,
+     7,
+     13
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     9,
+     12,
+     10,
+     13
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     15,
+     12,
+     16,
+     13
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornCabbage.Inkpaws",
+    "rect": [
+     18,
+     12,
+     19,
+     13
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     0,
+     15,
+     1,
+     16
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     3,
+     15,
+     4,
+     16
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     6,
+     15,
+     7,
+     16
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     9,
+     15,
+     10,
+     16
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     15,
+     15,
+     16,
+     16
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornRice.Inkpaws",
+    "rect": [
+     18,
+     15,
+     19,
+     16
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     0,
+     18,
+     1,
+     19
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     3,
+     18,
+     4,
+     19
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     6,
+     18,
+     7,
+     19
+    ],
+    "state": "dead"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     9,
+     18,
+     10,
+     19
+    ],
+    "state": "alive"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     15,
+     18,
+     16,
+     19
+    ],
+    "state": "dying"
+   },
+   {
+    "template": "PandabornSichuanPepper.Inkpaws",
+    "rect": [
+     18,
+     18,
+     19,
+     19
+    ],
+    "state": "dead"
+   }
+  ]
+ }
+}

@@ -1,0 +1,171 @@
+{
+ "id": "PandabornTimberBamboo",
+ "template": "PandabornTimberBamboo.Inkpaws",
+ "kind": "Trees",
+ "material": "PandabornTimberBamboo",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornTimberBamboo",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooMatureDead",
+  "#Leftover": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooMatureStump"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Trees/PandabornTimberBamboo/PandabornTimberBambooMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornTimberBamboo",
+ "stats": {
+  "PandabornTimberBambooSeedling": {
+   "triangles": 128,
+   "vertices": 126,
+   "bboxMin": [
+    -0.002,
+    -0.002,
+    0.226
+   ],
+   "bboxMax": [
+    0.885,
+    0.934,
+    0.857
+   ]
+  },
+  "PandabornTimberBambooSeedlingDry": {
+   "triangles": 128,
+   "vertices": 126,
+   "bboxMin": [
+    -0.002,
+    -0.002,
+    0.226
+   ],
+   "bboxMax": [
+    0.885,
+    0.934,
+    0.857
+   ]
+  },
+  "PandabornTimberBambooSeedlingDead": {
+   "triangles": 116,
+   "vertices": 102,
+   "bboxMin": [
+    0.103,
+    -0.002,
+    0.235
+   ],
+   "bboxMax": [
+    0.855,
+    0.836,
+    0.681
+   ]
+  },
+  "PandabornTimberBambooMature": {
+   "triangles": 252,
+   "vertices": 288,
+   "bboxMin": [
+    -0.305,
+    -0.004,
+    -0.444
+   ],
+   "bboxMax": [
+    1.31,
+    3.12,
+    1.388
+   ]
+  },
+  "PandabornTimberBambooMatureDry": {
+   "triangles": 240,
+   "vertices": 264,
+   "bboxMin": [
+    -0.305,
+    -0.004,
+    -0.444
+   ],
+   "bboxMax": [
+    1.31,
+    3.12,
+    1.388
+   ]
+  },
+  "PandabornTimberBambooMatureDead": {
+   "triangles": 188,
+   "vertices": 160,
+   "bboxMin": [
+    -0.232,
+    -0.006,
+    -0.273
+   ],
+   "bboxMax": [
+    1.215,
+    2.879,
+    0.775
+   ]
+  },
+  "PandabornTimberBambooMatureStump": {
+   "triangles": 60,
+   "vertices": 72,
+   "bboxMin": [
+    0.41,
+    0.0,
+    0.295
+   ],
+   "bboxMax": [
+    0.626,
+    0.258,
+    0.721
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "ChestnutTree",
+ "gatherableDetail": "bamboo fungus at the culm bases (detail sheet 'mushrooms'), shown while the grove has mushrooms",
+ "blockHeight": 3,
+ "treeCuttingRadius": 0.22,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.9,
+  "MaxHeightScaleFactor": 1.08,
+  "MinWidthScaleFactor": 0.9,
+  "MaxWidthScaleFactor": 1.1,
+  "RandomizedRotation": "BetweenMinAndMax",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": {
+  "Seedling": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.35,
+     0.5
+    ],
+    "radius": 0.2,
+    "height": 0.9
+   }
+  },
+  "Mature": {
+   "capsule": {
+    "center": [
+     0.5,
+     1.3,
+     0.5
+    ],
+    "radius": 0.28,
+    "height": 2.7
+   }
+  },
+  "#Leftover": {
+   "capsule": {
+    "center": [
+     0.5,
+     0.12,
+     0.5
+    ],
+    "radius": 0.25,
+    "height": 0.3
+   }
+  }
+ }
+}

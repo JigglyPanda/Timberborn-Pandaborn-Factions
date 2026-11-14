@@ -1,0 +1,121 @@
+{
+ "id": "PandabornTeaBush",
+ "template": "PandabornTeaBush.Inkpaws",
+ "kind": "Bushes",
+ "material": "PandabornTeaBush",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornTeaBush",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushMatureDead"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Bushes/PandabornTeaBush/PandabornTeaBushMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornTeaBush",
+ "stats": {
+  "PandabornTeaBushSeedling": {
+   "triangles": 28,
+   "vertices": 50,
+   "bboxMin": [
+    0.314,
+    0.0,
+    0.287
+   ],
+   "bboxMax": [
+    0.694,
+    0.28,
+    0.71
+   ]
+  },
+  "PandabornTeaBushSeedlingDry": {
+   "triangles": 28,
+   "vertices": 50,
+   "bboxMin": [
+    0.314,
+    0.0,
+    0.287
+   ],
+   "bboxMax": [
+    0.694,
+    0.28,
+    0.71
+   ]
+  },
+  "PandabornTeaBushSeedlingDead": {
+   "triangles": 20,
+   "vertices": 34,
+   "bboxMin": [
+    0.314,
+    0.0,
+    0.287
+   ],
+   "bboxMax": [
+    0.694,
+    0.259,
+    0.71
+   ]
+  },
+  "PandabornTeaBushMature": {
+   "triangles": 52,
+   "vertices": 104,
+   "bboxMin": [
+    -0.074,
+    -0.027,
+    -0.077
+   ],
+   "bboxMax": [
+    1.058,
+    0.503,
+    1.072
+   ]
+  },
+  "PandabornTeaBushMatureDry": {
+   "triangles": 52,
+   "vertices": 104,
+   "bboxMin": [
+    -0.074,
+    -0.027,
+    -0.077
+   ],
+   "bboxMax": [
+    1.058,
+    0.503,
+    1.072
+   ]
+  },
+  "PandabornTeaBushMatureDead": {
+   "triangles": 52,
+   "vertices": 104,
+   "bboxMin": [
+    -0.074,
+    -0.027,
+    -0.077
+   ],
+   "bboxMax": [
+    1.058,
+    0.503,
+    1.072
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "BlueberryBush",
+ "gatherableDetail": "young tips on the clipped top and upper ring (detail sheet tea_flush*), shown while there is tea to pick",
+ "blockHeight": 1,
+ "randomizer": {
+  "ConstrainProportion": false,
+  "MinHeightScaleFactor": 0.95,
+  "MaxHeightScaleFactor": 1.05,
+  "MinWidthScaleFactor": 0.95,
+  "MaxWidthScaleFactor": 1.05,
+  "RandomizedRotation": "By90Degree",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": "keep the basis's (BlueberryBush has none)"
+}

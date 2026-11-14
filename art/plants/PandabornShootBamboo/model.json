@@ -1,0 +1,150 @@
+{
+ "id": "PandabornShootBamboo",
+ "template": "PandabornShootBamboo.Inkpaws",
+ "kind": "Crops",
+ "material": "PandabornShootBamboo",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornShootBamboo",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooMatureDead"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Crops/PandabornShootBamboo/PandabornShootBambooMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornShootBamboo",
+ "stats": {
+  "PandabornShootBambooSeedling": {
+   "triangles": 86,
+   "vertices": 97,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.362,
+    0.888
+   ]
+  },
+  "PandabornShootBambooSeedlingDry": {
+   "triangles": 86,
+   "vertices": 97,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.362,
+    0.888
+   ]
+  },
+  "PandabornShootBambooSeedlingDead": {
+   "triangles": 86,
+   "vertices": 97,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.273,
+    0.888
+   ]
+  },
+  "PandabornShootBambooMature": {
+   "triangles": 138,
+   "vertices": 162,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.636,
+    0.88
+   ]
+  },
+  "PandabornShootBambooMatureDry": {
+   "triangles": 138,
+   "vertices": 162,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.636,
+    0.88
+   ]
+  },
+  "PandabornShootBambooMatureDead": {
+   "triangles": 130,
+   "vertices": 146,
+   "bboxMin": [
+    0.1,
+    -0.009,
+    0.12
+   ],
+   "bboxMax": [
+    0.9,
+    0.431,
+    0.88
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "Carrot",
+ "blockHeight": 1,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.92,
+  "MaxHeightScaleFactor": 1.08,
+  "MinWidthScaleFactor": 0.95,
+  "MaxWidthScaleFactor": 1.05,
+  "RandomizedRotation": "BetweenMinAndMax",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0,
+  "note": "Carrot has no randomizer; add this one (NaturalResourceModelRandomizerSpec) so a field is not a stamp"
+ },
+ "colliders": {
+  "Seedling": {
+   "box": {
+    "center": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.2,
+     1.0
+    ]
+   }
+  },
+  "Mature": {
+   "box": {
+    "center": [
+     0.5,
+     0.25,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.5,
+     1.0
+    ]
+   }
+  }
+ }
+}

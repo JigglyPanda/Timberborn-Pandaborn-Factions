@@ -1,0 +1,149 @@
+{
+ "id": "PandabornCabbage",
+ "template": "PandabornCabbage.Inkpaws",
+ "kind": "Crops",
+ "material": "PandabornCabbage",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornCabbage",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Crops/PandabornCabbage",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageMatureDead"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Crops/PandabornCabbage/PandabornCabbageMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornCabbage",
+ "stats": {
+  "PandabornCabbageSeedling": {
+   "triangles": 40,
+   "vertices": 73,
+   "bboxMin": [
+    0.04,
+    0.002,
+    0.04
+   ],
+   "bboxMax": [
+    0.96,
+    0.173,
+    0.96
+   ]
+  },
+  "PandabornCabbageSeedlingDry": {
+   "triangles": 40,
+   "vertices": 73,
+   "bboxMin": [
+    0.04,
+    0.002,
+    0.04
+   ],
+   "bboxMax": [
+    0.96,
+    0.147,
+    0.96
+   ]
+  },
+  "PandabornCabbageSeedlingDead": {
+   "triangles": 40,
+   "vertices": 73,
+   "bboxMin": [
+    0.04,
+    0.002,
+    0.04
+   ],
+   "bboxMax": [
+    0.96,
+    0.114,
+    0.96
+   ]
+  },
+  "PandabornCabbageMature": {
+   "triangles": 264,
+   "vertices": 361,
+   "bboxMin": [
+    0.04,
+    0.002,
+    0.04
+   ],
+   "bboxMax": [
+    0.963,
+    0.41,
+    0.981
+   ]
+  },
+  "PandabornCabbageMatureDry": {
+   "triangles": 264,
+   "vertices": 361,
+   "bboxMin": [
+    0.04,
+    0.002,
+    0.032
+   ],
+   "bboxMax": [
+    0.977,
+    0.369,
+    0.996
+   ]
+  },
+  "PandabornCabbageMatureDead": {
+   "triangles": 264,
+   "vertices": 361,
+   "bboxMin": [
+    0.036,
+    0.002,
+    0.007
+   ],
+   "bboxMax": [
+    1.003,
+    0.295,
+    1.024
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "Carrot",
+ "blockHeight": 1,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.92,
+  "MaxHeightScaleFactor": 1.08,
+  "MinWidthScaleFactor": 1.0,
+  "MaxWidthScaleFactor": 1.0,
+  "RandomizedRotation": "By90Degree",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0
+ },
+ "colliders": {
+  "Seedling": {
+   "box": {
+    "center": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.2,
+     1.0
+    ]
+   }
+  },
+  "Mature": {
+   "box": {
+    "center": [
+     0.5,
+     0.2,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.4,
+     1.0
+    ]
+   }
+  }
+ }
+}

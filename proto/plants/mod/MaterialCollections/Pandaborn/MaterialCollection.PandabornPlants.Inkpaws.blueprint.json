@@ -1,0 +1,14 @@
+{
+  "MaterialCollectionSpec": {
+    "CollectionId": "PandabornPlants.Inkpaws",
+    "Materials": [
+      "Materials/Pandaborn/Plants/PandabornTimberBamboo",
+      "Materials/Pandaborn/Plants/PandabornShootBamboo",
+      "Materials/Pandaborn/Plants/PandabornCabbage",
+      "Materials/Pandaborn/Plants/PandabornRice",
+      "Materials/Pandaborn/Plants/PandabornTeaBush",
+      "Materials/Pandaborn/Plants/PandabornSichuanPepper",
+      "Materials/Pandaborn/Plants/PandabornPersimmonTree"
+    ]
+  }
+}

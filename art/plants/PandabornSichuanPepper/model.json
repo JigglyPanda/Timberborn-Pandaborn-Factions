@@ -1,0 +1,150 @@
+{
+ "id": "PandabornSichuanPepper",
+ "template": "PandabornSichuanPepper.Inkpaws",
+ "kind": "Crops",
+ "material": "PandabornSichuanPepper",
+ "materialAsset": "Materials/Pandaborn/Plants/PandabornSichuanPepper",
+ "materialCollection": "PandabornPlants.Inkpaws",
+ "bundle": "pandabornplants",
+ "modelDir": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper",
+ "models": {
+  "Seedling/#Alive": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperSeedling",
+  "Seedling/#Dying": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperSeedlingDry",
+  "Seedling/#Dead": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperSeedlingDead",
+  "Mature/#Alive": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperMature",
+  "Mature/#Dying": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperMatureDry",
+  "Mature/#Dead": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperMatureDead"
+ },
+ "PlantablePreviewModelSpec.Model": "NaturalResources/Pandaborn/Crops/PandabornSichuanPepper/PandabornSichuanPepperMature",
+ "builtTo": "E:\\PandabornDev\\build\\plants\\PandabornSichuanPepper",
+ "stats": {
+  "PandabornSichuanPepperSeedling": {
+   "triangles": 32,
+   "vertices": 49,
+   "bboxMin": [
+    0.18,
+    -0.0,
+    0.196
+   ],
+   "bboxMax": [
+    0.82,
+    0.32,
+    0.804
+   ]
+  },
+  "PandabornSichuanPepperSeedlingDry": {
+   "triangles": 32,
+   "vertices": 49,
+   "bboxMin": [
+    0.18,
+    -0.0,
+    0.196
+   ],
+   "bboxMax": [
+    0.82,
+    0.32,
+    0.804
+   ]
+  },
+  "PandabornSichuanPepperSeedlingDead": {
+   "triangles": 20,
+   "vertices": 25,
+   "bboxMin": [
+    0.18,
+    -0.0,
+    0.196
+   ],
+   "bboxMax": [
+    0.82,
+    0.3,
+    0.804
+   ]
+  },
+  "PandabornSichuanPepperMature": {
+   "triangles": 108,
+   "vertices": 139,
+   "bboxMin": [
+    -0.001,
+    0.0,
+    0.006
+   ],
+   "bboxMax": [
+    1.016,
+    0.84,
+    0.981
+   ]
+  },
+  "PandabornSichuanPepperMatureDry": {
+   "triangles": 108,
+   "vertices": 139,
+   "bboxMin": [
+    -0.001,
+    0.0,
+    0.006
+   ],
+   "bboxMax": [
+    1.016,
+    0.84,
+    0.981
+   ]
+  },
+  "PandabornSichuanPepperMatureDead": {
+   "triangles": 86,
+   "vertices": 95,
+   "bboxMin": [
+    0.1,
+    0.0,
+    0.12
+   ],
+   "bboxMax": [
+    1.059,
+    0.84,
+    1.051
+   ]
+  }
+ },
+ "budgetFlags": [],
+ "basis": "Sunflower",
+ "blockHeight": 2,
+ "randomizer": {
+  "ConstrainProportion": true,
+  "MinHeightScaleFactor": 0.9,
+  "MaxHeightScaleFactor": 1.1,
+  "MinWidthScaleFactor": 0.9,
+  "MaxWidthScaleFactor": 1.1,
+  "RandomizedRotation": "BetweenMinAndMax",
+  "MinRotation": 0.0,
+  "MaxRotation": 360.0,
+  "note": "Sunflower turns only -40..40 degrees (its heads face the sun); the shrub can turn freely"
+ },
+ "colliders": {
+  "Seedling": {
+   "box": {
+    "center": [
+     0.5,
+     0.15,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.3,
+     1.0
+    ]
+   }
+  },
+  "Mature": {
+   "box": {
+    "center": [
+     0.5,
+     0.4,
+     0.5
+    ],
+    "size": [
+     1.0,
+     0.8,
+     1.0
+    ]
+   }
+  }
+ }
+}

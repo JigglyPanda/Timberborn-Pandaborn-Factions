@@ -1,0 +1,11 @@
+{
+  "Name": "Pandaborn - Plants prototype (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoPlants",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only prototype of the Inkpaws' own plant models (seven plants with growth, dry, dead and stump stages) for Pandaborn - Factions, plus a plant lab that forces plant states for automated filming. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [
+    { "Id": "JigglyPanda.PandabornFactions" }
+  ],
+  "OptionalMods": []
+}
