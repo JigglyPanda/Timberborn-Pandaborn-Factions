@@ -200,7 +200,7 @@ existing Ringtails load as Inkpaws rather than vanishing.
 ### Lantern Festival
 
 * **Small Festival**, reachable in the second cycle: paper lanterns and any three cooked dishes.
-* **Grand Festival**: adds fireworks. Bamboo-seed cakes make it grander still.
+* **Grand Festival**: adds fireworks. Two tiers only; bamboo-seed cakes simply count as a dish.
 * The player calls it from the Festival Square, at most once per cycle, or lets it call itself when stocked.
 * Everyone takes a day and a night off: dancing, rising lanterns, fireworks. The cost is a day's work.
 * Rewards: festive spirit that lasts most of a cycle, and one step of **Tradition**, which unlocks decorations.
@@ -319,4 +319,6 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Births, lifespan and childhood stay as vanilla | The model: slow breeding took 46 days to reach fifty colonists against 24, which is an hour of watching thirteen pandas |
 | 2026-11-14 | "Fast building in the first hour" withdrawn as a claim | The model: the first week is limited by logs, not builders. The smoother start is food: shoots on day 4.5 against carrots on day 5.9 |
 | 2026-11-14 | Dry-day tolerance set: shoot bamboo 5, cabbage 7, timber bamboo 7 | The model: shoots survive every first drought on Normal; on Hard cabbage is the staple |
+| 2026-11-14 | Rule: if a mechanic cannot be explained in one sentence, simplify the mechanic. Festival cut to two tiers; the rested bonus is stated as one rule and its walking-speed limit is handled in code, not explained to the player | The writer could not fit the rested bonus, the festival tiers, kit-raising or the Flowering into a tooltip |
+| 2026-11-14 | Needs renamed "Watching the young", "Ink painting", "Opera"; "Kindergarten" without "Panda"; "Night Gatherers' Post"; the farmhouse keeps its vanilla name | The writer's review: one word per job, and both peoples share the kindergarten |
 | 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
