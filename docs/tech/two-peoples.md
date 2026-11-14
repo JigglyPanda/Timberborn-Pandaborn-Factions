@@ -862,10 +862,25 @@ line "Ringtails: ForcedOff; RingtailsFallback: On"): the same three colonists, s
 Guang (Candlelight)", "Hong Xia (Red sunset)") and the same loft home, now `InkpawAdult/InkpawChild.Inkpaws`; the
 fallback switched all three posts to `Beaver` and Inkpaws staffed them (4, 3 and 2 workers); 16 colonists before and
 after; the dev-switch file was removed by the reload |
-| `rt2-soak` | Five days (2.5 + save/reload + 2.5), Bell on with a 12-hour day, three posts, ten Moon Lofts requested, workshops, a post demolished on day 1 | <!-- SOAK --> |
-| `rt2-folktails` | Folktails with the module and test data | <!-- FOLKTAILS --> |
+| `rt2-soak` | Five days (2.5 + save/reload + 2.5), Bell on with a 12-hour day, three posts, ten Moon Lofts requested, workshops, a post demolished on day 1 | Passed both launches (exit 0, 0 errors from our code). Five in-game days with the Bell on (Bell's test numbers, slider
+set to 12 h: day 1 kept the 16-hour day Bell had locked at the start, from day 2 the Ringtails' shift started at the
+12-hour bell, as the Bell locked it at dawn). 0 job violations in 127 hourly samples; no critical need for anyone
+(lowest Ringtail Sleep 0.26, Hunger 0.25, Thirst 0.23); the Night Builders' Post Ringtails carried 36 goods to the dens
+queued after the bell (18 trips, all at night); the Night Gatherers' Post was demolished on day 1 and nothing broke;
+16 of 16 colonists came back from the save with the same kind, template, job and home, and kept the cycle for the 2.6
+days after it. Only 3 of the 10 Moon Lofts fitted on the Diorama terrace (so "ten lofts" is proven only as "three").
+**No kit was raised in five days**, and the loft panel said why: "Kits: no room for a kit." The arriving family (2
+adults and a kit) fills its own loft, and the nursery then wanted a Ringtail adult *living in* the raising loft. Fixed
+after the soak (any Ringtail adult of the district counts, kits go to any loft with a free kit slot); the fix is
+compiled but not yet run in game |
+| `rt2-folktails` | Folktails with the module and test data | Passed (exit 0, 0 errors). Module loaded and inactive ("ringtailsGame: false"), no Ringtail created although the probe
+asked for 2 adults and a kit, 332 placeable / 368 templates, identical to every earlier Folktails run |
 
-Unproven: Ringtail names (data not there yet); walking in from the map edge (they appear at the loft); the toolbar moon
+Ringtail names work with the pool from `names.json` (test data: key `Pandaborn.NamePool.Ringtails`; seen in game:
+"Dan Xia (Red clouds)", "Ma La (Numbing and hot)").
+
+Unproven: kits being raised in game (see the soak: the blocking rule is fixed in code but not yet run); ten Moon Lofts
+(three fitted); walking in from the map edge (they appear at the loft); the toolbar moon
 mark and the clock arc; the Night Builders' Post actually raising sites at night (it needs sites queued after the bell
 in a layout with room; the soak queues dens after the bell); births over many days (one kit per loft per dawn was seen
 blocked by the cub, then fixed, but a long breeding run was not done); the module-off case where the API check fails
