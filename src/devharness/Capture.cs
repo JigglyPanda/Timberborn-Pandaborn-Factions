@@ -58,7 +58,7 @@ namespace PandabornDevHarness
                                         int width, int height, string path, float? baseHeading = null,
                                         float minDistance = 0f)
         {
-            var renderers = root.GetComponentsInChildren<Renderer>(false);
+            var renderers = root.GetComponentsInChildren<MeshRenderer>(false);   // not particles: their bounds are huge
             if (renderers.Length == 0) throw new InvalidOperationException(root.name + " has no visible renderers");
             var bounds = renderers[0].bounds;
             foreach (var r in renderers) bounds.Encapsulate(r.bounds);
