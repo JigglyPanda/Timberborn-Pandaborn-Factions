@@ -17,8 +17,9 @@ and the vanilla assets extracted for reference into `E:\PandabornDev\reference\v
 * **The fix is ~100 lines of C# with no Harmony ("swap" variant).** The faction keeps `Folktails`; in an Inkpaws
   game a tiny `IMaterialCollectionIdsProvider` copies our bundle materials into the vanilla materials of the same
   name (`Material.CopyPropertiesFromMaterial`) during `MaterialRepository.Load`, and restores them when the game
-  unloads. The game's own shader stays on every material. This is the recommended form. See *Results* for its
-  in-game test.
+  unloads. The game's own shader stays on every material. **In game it passed with all 35 of the owner's mods
+  enabled (ChooChoo and KnatteAnka included), and a Folktails game with it enabled is unchanged.** The vanilla
+  runtime atlas even picks up our textures, so draw calls stay as in vanilla. This is the recommended form.
 * **Cost:** one 39 MB asset bundle (61 BC7 1024² textures incl. mips), ~15 s to repaint the textures, ~1 min for the
   Unity batch build after the first import (~5 min once). Runtime memory ~+80 MB in Inkpaws games only. Draw calls:
   see *Costs*.
@@ -150,7 +151,7 @@ and `{day,night}_screen.png` (real screen with UI).
 | `look-inkpaws-3` | names, only Factions + Reskin, first (red-leaning) palette | PASS, 20/20 placed, 0 errors: the trick works |
 | `look-inkpaws-4` | names, only Factions + Reskin, Sichuan palette | PASS, 0 errors |
 | `look-swap-inkpaws-2` | **swap, all 35 mods** | **PASS**, 20/20 placed, 0 errors from us or the mods (only the known 31 `Assertion failed`); log: `re-themed 19 materials for faction Inkpaws`, `restored 19 materials on game unload` |
-| `look-swap-folktails-2` | swap, all 35 mods, Folktails | FOLKTAILS_RESULT |
+| `look-swap-folktails-2` | swap, all 35 mods, **Folktails** | **PASS**, 20/20, 0 errors; no swap log line (the provider did nothing); `day_overview_crop.png` shows vanilla thatch, brown wood and teal banners, i.e. unchanged (the colonists are pandas only because the Reskin is enabled) |
 
 What the screenshots show (`look-swap-inkpaws-2/day_overview_crop.png`, same as `look-inkpaws-4`):
 
@@ -167,6 +168,9 @@ What the screenshots show (`look-swap-inkpaws-2/day_overview_crop.png`, same as 
 * Night (`night_overview_crop.png`): the district center's lantern and the campfire glow; lodge and workshop
   windows give a faint warm glow; at this zoom the lattice pattern in the glow cannot be judged. A close-up camera
   in the harness would be needed to review windows properly.
+* Not yet tested: an Inkpaws game followed by a Folktails game *in the same session* (main menu in between). The
+  restore ran on unload (`restored 19 materials on game unload`) and the main menu has a second safety restore,
+  but a two-game session needs a harness option to prove it.
 * Honest assessment: convincing as a first pass and far better than expected for zero modelling. Weak spots: the
   woven panels are too yellow and too uniform on big walls; roof tiles read as grey stripes from above (the arched
   lips only show close up); the beaver-dome lodges and round domes stay beaver-shaped; the Beaver Statue is still
@@ -258,7 +262,7 @@ still keeps a small Bee cache in `%LOCALAPPDATA%\Unity\Caches` (43 MB in total, 
   because they are imported **readable** (needed only if they are to be atlased, as the vanilla ones are). Loaded
   only when the materials are loaded, i.e. in Inkpaws games. Turning `readable` off in `look_spec.json` halves it if
   atlasing is given up. Fewer, shared sets (the three bamboo materials already share one) bring it down further.
-* **Draw calls:** vanilla Folktails buildings are atlased into one material per building at load. Our materials
+* **Draw calls:** (swap variant: measured indirectly, the vanilla atlas was built from our textures in `look-swap-inkpaws-2`, so as vanilla.) Vanilla Folktails buildings are atlased into one material per building at load. Our materials
   are not atlas fragments in the "names" variant, so a building renders one submesh per distinct material (about
   3–6 instead of 1–2). In the "swap" variant the vanilla `FactionAtlas.Folktails` entry points at the very material
   objects we overwrite; whether the atlas is then built from our textures or skipped depends on whether
