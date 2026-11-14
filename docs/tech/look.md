@@ -228,8 +228,13 @@ the re-themed vanilla ones, day and lit night). Sheets: `E:\PandabornDevuild\lo
 * Result: the village reads dark timber, grey tile and lime plaster, with bamboo as the warm note; no lemon-yellow
   surfaces remain. Flat roofs (`IrregularPlanks_Mossy`: lodges, warehouses, mine, Roof3x2) are mossy grey tile laid
   flat. Plaster is a warm off-white with damp at the foot; it no longer reads as blank white.
-* Still to watch: the tile is a light silver-grey with bright highlights under strong sun; a little darker would sit
-  better next to the dark timber. Close-ups of the Steamer, Pickle Yard and Kitchen framed the whole map (their smoke
+* Tile (pass 3b, `look-close-inkpaws-8`, sheet `E:\PandabornDevuild\look\preview\p4_tiles.png`: Folktails |
+  old tile | new tile, night rows first): the light silver tile turned electric blue under the night light. It is now a
+  warm charcoal (base 88,84,81, about 30% darker), matte (smoothness 0.10, no metal), with a soft crown instead of a
+  hard streak, more per-tile variation and lichen; flat tiles likewise (84,81,78). At night the roofs are now about as
+  quiet as the Folktails thatch; the ridge pattern from the normal map still shows faintly. Vanilla gives no separate
+  roof material for farm buildings (`ThatchedRoof.Folktails` covers farmhouses, homes, workshops, the district center
+  and the Roof pieces), so a town/country roof contrast would need new models or a new material name. Close-ups of the Steamer, Pickle Yard and Kitchen framed the whole map (their smoke
   particles inflated the bounds; harness fixed in `a6f6299`, not re-shot).
 
 ## Pandaborn.Look module
@@ -319,7 +324,8 @@ powershell -ExecutionPolicy Bypass -File tools\build_look.ps1
 #   -BundleName pandabornlook   the shipping bundle for the Pandaborn.Look module, into E:\PandabornDev\build\look\AssetBundles
 #   -SkipTextures      reuse the PNGs already in the Unity project
 #   -Only Windows,RoofTiles   repaint only these sets
-#   -Mac               also build <name>_mac (fails with a clear message until Mac Build Support is installed)
+#   -Mac               build <name>_mac in the Mac project (docs/tech/mac.md). Never with -SkipTextures: the Mac
+#                      project keeps its own copy of the textures, which -SkipTextures leaves stale
 #   -Setup             recreate E:\PandabornDev\unity\PandabornLook from the official template + Shaders.zip
 # default output: E:\PandabornDev\build\proto\look (data-only prototype mod + pandabornprotolook_win)
 
