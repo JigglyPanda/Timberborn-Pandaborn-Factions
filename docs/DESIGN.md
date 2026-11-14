@@ -174,7 +174,9 @@ One slider, one clock. Twelve and twelve is the natural balance: both peoples ar
 
 1. The game opens with Inkpaws only.
 2. A **Moon Loft** — a snug home raised on stilts above a path, with a lantern in its window — is an old
-   invitation. Building the first one brings a Ringtail family and unlocks their first workplace.
+   invitation. Building the first one brings a Ringtail family (two adults and a kit, at its door), one
+   message that states the rule, and the night posts, unlocked free. Before that the posts sit behind a
+   science cost and nothing about Ringtails is on screen.
 3. Every Ringtail building sits in one toolbar group marked with a moon. Nothing needs configuring.
 4. A player who never builds a Moon Loft has a complete colony. Nothing else depends on Ringtails.
 
@@ -185,7 +187,7 @@ The village's **Night Watch**, its stargazers and its artists. Not helpers.
 | Building | What it does |
 |---|---|
 | Night Builders' Post | Sites are stocked and raised overnight. The first Ringtail workplace, because it is the one a player sees |
-| Night Courier Post | Restocks every workshop and clears every flag overnight, so Inkpaws spend the day working instead of carrying. Inkpaw workplaces hold about a day's goods to make that possible; without couriers, workers fetch their own as in vanilla |
+| Night Courier Post | Restocks every workshop and clears every flag overnight, so Inkpaws spend the day working instead of carrying. Inkpaw workplaces hold about three working days of goods to make that possible; without couriers, workers fetch their own as in vanilla |
 | Night Gatherers' Post | Gathers bamboo mushrooms and wild food |
 | Star Tower | Science from the night sky |
 | Opera Stage | Face-changing opera for whoever is off duty |
@@ -386,3 +388,5 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Scoop Wheel costs logs and poles, no gears | The "days 5-8" flume beat was not reachable before day thirteen |
 | 2026-11-14 | Wellbeing total at least matches the Folktails': the Nap Platform keeps the rooftop effect, and the goldfish bowl, moon gate and string lanterns are each their own small need | Reachable wellbeing was about nine below the Folktails', with rows that could never fill |
 | 2026-11-14 | Wooden Ox lifts 30 and lasts ninety days; the faction uses its own tail and banner decals | "Strong" oxen lifted about what a panda does, and beaver tails showed on panda banners |
+| 2026-11-14 | Inkpaw workplaces hold three working days of inputs and outputs (was "about a day"), set by one number | Measured: day-sized shelves gave the couriers 24 goods to move in two nights; three-day shelves gave 107 and 46% more produced, and without Ringtails they changed nothing for the worse. To be re-checked for workshops hoarding scarce logs and poles early |
+| 2026-11-14 | The first Moon Loft brings two adults and a kit to its door and unlocks the night posts free; a loft says in its panel why it is or is not raising a kit | The Ringtail module passed a five-day soak with a reload. If the module is switched off or a game update breaks it, the same colonists load as Inkpaws and the posts become ordinary workplaces |
