@@ -10,8 +10,6 @@
   "PandabornTeaRoastery.Inkpaws",
   "PandabornPickleYard.Inkpaws",
   "PandabornLanternWorkshop.Inkpaws",
-  "PandabornSmokeKiln.Inkpaws",
-  "PandabornKitchen.Inkpaws",
   "PandabornHotPotHall.Inkpaws",
   "PandabornKiteWindmill.Inkpaws",
   "PandabornTeahouse.Inkpaws",
@@ -139,6 +137,12 @@
     "at": 44.0,
     "mode": "3d",
     "target": "PandabornVillageHall.Inkpaws"
+   },
+   {
+    "id": "Environment.Buildings.Loop.Pandaborn.SmokeKiln",
+    "at": 45.5,
+    "mode": "3d",
+    "target": "PandabornVillageHall.Inkpaws"
    }
   ],
   "loops": [
@@ -160,16 +164,6 @@
    {
     "target": "PandabornLanternWorkshop.Inkpaws",
     "at": 15,
-    "stopAt": 58
-   },
-   {
-    "target": "PandabornSmokeKiln.Inkpaws",
-    "at": 16,
-    "stopAt": 58
-   },
-   {
-    "target": "PandabornKitchen.Inkpaws",
-    "at": 18,
     "stopAt": 58
    },
    {

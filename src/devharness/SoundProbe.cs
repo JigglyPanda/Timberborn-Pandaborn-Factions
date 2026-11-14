@@ -39,6 +39,7 @@ namespace PandabornDevHarness
     ///   "wonderLaunch": [ 40 ],                                    // GameUISoundController.PlayWonderLaunchSound() at
     ///              these times: the data path FactionWonderSpec.WonderLaunchSound (no wonder is activated)
     ///   "sampleEvery": 0.5, "watch": "Pandaborn"                   // which playing clips get a detailed record
+    ///   (every "at" counts real seconds from the game's first frame update, not from PostLoad)
     /// }
     /// </code>
     /// Result "soundProbe": "clips" (per expected id: the variants the game knows, length, channels, rate, load type and
@@ -59,6 +60,7 @@ namespace PandabornDevHarness
         private readonly GameUISoundController _gameUISoundController;
         private JObject _spec;
         private float _loadedAt = -1f, _nextSample;
+        private bool _ready;
         private readonly List<JObject> _pending = new List<JObject>();
         private readonly JObject _playing = new JObject();
         private readonly HashSet<string> _vanilla = new HashSet<string>();
@@ -99,7 +101,7 @@ namespace PandabornDevHarness
                                 _pending.Add(new JObject { ["kind"] = "stop", ["target"] = a["target"], ["at"] = a["stopAt"] });
                         }
                 _root2D = new GameObject("PandabornSoundProbe2D");
-                _loadedAt = Time.unscaledTime;
+                _ready = true;   // the clock starts at the first frame update: the scene can take a minute after PostLoad
                 Harness.Info("sound probe: " + ((JObject)result["clips"]).Count + " ids looked up, " + _pending.Count + " actions queued");
             }
             catch (Exception e) { Harness.Warn("sound probe failed at load: " + e.GetType().Name + ": " + e.Message); }
@@ -107,7 +109,8 @@ namespace PandabornDevHarness
 
         public void UpdateSingleton()
         {
-            if (_loadedAt < 0f || Harness.Finished) return;
+            if (!_ready || Harness.Finished) return;
+            if (_loadedAt < 0f) _loadedAt = Time.unscaledTime;
             float now = Time.unscaledTime - _loadedAt;
             for (int i = _pending.Count - 1; i >= 0; i--)
             {
