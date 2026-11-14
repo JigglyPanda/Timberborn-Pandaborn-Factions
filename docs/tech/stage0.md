@@ -112,8 +112,7 @@ on this machine). In `s0-inkpaws-2` the probe switched that setting off for two 
 Constraints: vanilla step types only (place/finish/connect buildings, mark trees or plantables, select an entity, set
 working hours, unlock or accumulate science, camera and speed); no "have N of a good" step without code (a small
 `IStepDeserializer`). `BuildingTutorialStepSpec` needs each template to have exactly one toolbar button in the faction, and **a step that names a template the faction does not have crashes the game at load** (`BuildingService.GetBuildingTemplate` throws inside `TutorialService.Load`; run `s0-inkpaws-3`, after the main mod stopped listing `Buildings.Folktails`). Every stage blueprint of the Inkpaws tutorial must therefore be validated against the faction's templates, by the generator or the validator; the prototype's first stage now uses `MarkTreesTutorialStepSpec`, which names no template.
-`StairsUnlockedTrigger` throws in a starting faction unless a template answers to `Stairs.Folktails` (a
-`BackwardCompatibleTemplateNames` alias on our stairs once Inkpaws stop listing `Buildings.Folktails`).
+`StairsUnlockedTrigger` throws `TemplateMappingException: No template found with name 'Stairs.Folktails'` at load in a starting faction that has no such template (verified, run `s0-inkpaws-4`, once the main mod stopped listing `Buildings.Folktails`); the fix is `"BackwardCompatibleTemplateNames": ["Stairs.Folktails"]` on `Stairs.Inkpaws` (the prototype merges it in).
 
 ### 5. Per-faction names: an `IEntityNamer` decorator, no Harmony
 
