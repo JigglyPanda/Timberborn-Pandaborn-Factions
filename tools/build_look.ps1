@@ -6,7 +6,9 @@
 .DESCRIPTION
   1. Paints the textures and writes the material spec (src/pipeline/look_textures.py) into the Unity project.
   2. Copies the editor builder (src/unity/PandabornLook/Editor) into the Unity project.
-  3. Runs Unity 6000.5.11f1 in batch mode: PandabornLookBuilder.Build -> <BundleName>_win (and _mac with -Mac).
+  3. Runs Unity 6000.5.11f1 in batch mode: PandabornLookBuilder.Build -> <BundleName>_win, or with -Mac <BundleName>_mac
+     only, built in its own project (<Project>-mac) by an editor with Mac Build Support (docs/tech/mac.md); run the
+     script twice (in any order, also concurrently) for both.
   4. Default (-BundleName pandabornprotolook): the bundle goes to <Out>\AssetBundles and proto/look/mod (the data-only
      "names" variant) is mirrored next to it.
      -BundleName pandabornlook (the shipping name): the bundle goes to -BundleOut (E:\PandabornDev\build\look\AssetBundles)
@@ -31,8 +33,11 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$UnityExe = 'C:\Program Files\Unity\Hub\Editor\6000.5.11f1\Editor\Unity.exe',
+    # Unity editor folder or Unity.exe; empty = auto (tools\unity_editor.ps1: C: install, or with -Mac the E: copy with Mac support)
+    [Alias('UnityExe')][string]$UnityPath = '',
     [string]$Project = 'E:\PandabornDev\unity\PandabornLook',
+    # -Mac builds in its own project (default <Project>-mac) so the Windows project is never switched or locked
+    [string]$MacProject = '',
     [string]$Out = 'E:\PandabornDev\build\proto\look',
     # bundle file name without _win/_mac; any other name than the prototype's builds the bundle only, into -BundleOut
     [string]$BundleName = 'pandabornprotolook',
@@ -48,6 +53,11 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $logDir = 'E:\PandabornDev\build\look'
 New-Item -ItemType Directory -Force $logDir | Out-Null
+. "$PSScriptRoot\unity_editor.ps1"
+$UnityExe = Resolve-UnityEditor $UnityPath -Mac:$Mac
+# -Mac: only <name>_mac, built in the Mac project with the macOS target active (docs/tech/mac.md)
+if ($Mac) { $Project = Get-MacProject $Project $MacProject }
+"Unity $UnityExe; project $Project"
 
 # keep Unity's package caches and temp files off C:
 $env:UPM_CACHE_ROOT = 'E:\PandabornDev\unity\cache\upm'
@@ -71,6 +81,8 @@ if (-not $SkipTextures) {
     if ($Only) { $a += @('--only', $Only) }
     & $Python @a
     if ($LASTEXITCODE -ne 0) { throw "look_textures.py failed ($LASTEXITCODE)" }
+} elseif ($Mac -and -not (Test-Path "$Project\Assets\PandabornLook\look_spec.json")) {
+    throw "-SkipTextures: $Project has no painted textures yet; run once without -SkipTextures"
 }
 
 $editorDst = "$Project\Assets\PandabornLook\Editor"
@@ -90,9 +102,16 @@ if ($prototype) {
 New-Item -ItemType Directory -Force $bundleDir | Out-Null
 
 $log = "$logDir\unity_build.log"
+$unityOut = $bundleDir
+if ($Mac) {
+    # own log and staging folder, so a concurrent Windows build's log and folder manifest are never touched
+    $log = "$logDir\unity_build_mac.log"
+    $unityOut = "$logDir\mac-stage"
+    New-Item -ItemType Directory -Force $unityOut | Out-Null
+}
 $uargs = @('-batchmode', '-quit', '-nographics', '-projectPath', $Project, '-logFile', $log,
-          '-executeMethod', 'PandabornLookBuilder.Build', '-lookOut', $bundleDir, '-bundleName', $BundleName)
-if ($Mac) { $uargs += '-mac' }
+          '-executeMethod', 'PandabornLookBuilder.Build', '-lookOut', $unityOut, '-bundleName', $BundleName)
+if ($Mac) { $uargs += @('-buildTarget', 'OSXUniversal', '-mac', '-macOnly') }
 $sw = [Diagnostics.Stopwatch]::StartNew()
 $p = Start-Process -FilePath $UnityExe -ArgumentList $uargs -Wait -PassThru -NoNewWindow
 $sw.Stop()
@@ -100,6 +119,7 @@ $ok = Select-String -Path $log -SimpleMatch '[PandabornLook] OK' -Quiet
 Select-String -Path $log -Pattern '\[PandabornLook\]|error CS|Shader error' | ForEach-Object { $_.Line }
 "Unity exit $($p.ExitCode) after $([int]$sw.Elapsed.TotalSeconds) s; log $log"
 if ($p.ExitCode -ne 0 -or -not $ok) { exit 1 }
+if ($Mac) { Copy-Item -Force "$unityOut\$($BundleName)_mac", "$unityOut\$($BundleName)_mac.manifest" $bundleDir }
 Get-ChildItem $bundleDir | Select-Object Name, Length | Format-Table -AutoSize | Out-String | Write-Host
 if (-not $prototype) { "bundle $BundleName in $bundleDir; the code build copies it into a mod (tools\build_code_devmod.ps1 for tests)" }
 exit 0

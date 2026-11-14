@@ -70,6 +70,8 @@ public static class PandabornPlantsBuilder
         if (string.IsNullOrEmpty(outDir)) throw new Exception("no -plantsOut given");
         string bundleName = Arg("-bundleName", "pandabornplants");
         bool mac = Environment.GetCommandLineArgs().Contains("-mac");
+        // -macOnly: the Mac project (tools/build_plants.ps1 -Mac) builds only <name>_mac; the Windows project builds _win
+        bool macOnly = Environment.GetCommandLineArgs().Contains("-macOnly");
 
         AssetDatabase.StartAssetEditing();
         try
@@ -93,14 +95,14 @@ public static class PandabornPlantsBuilder
         AssetDatabase.SaveAssets();
 
         Directory.CreateDirectory(outDir);
-        BuildFor(outDir, bundleName + "_win", matPaths, BuildTarget.StandaloneWindows64);
-        if (mac)
+        if (!macOnly) BuildFor(outDir, bundleName + "_win", matPaths, BuildTarget.StandaloneWindows64);
+        if (mac || macOnly)
         {
             if (BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX))
                 BuildFor(outDir, bundleName + "_mac", matPaths, BuildTarget.StandaloneOSX);
             else
-                throw new Exception("-mac given but Mac Build Support (Mono) is not installed for this editor: install the "
-                                    + "module (Unity Hub > Installs > 6000.5.11f1 > Add modules), then rerun");
+                throw new Exception("-mac given but Mac Build Support (Mono) is not installed for this editor: use the "
+                                    + "E: editor copy that has it (docs/tech/mac.md), then rerun");
         }
         foreach (var extra in new[] { Path.GetFileName(outDir.TrimEnd('/', '\\')), "AssetBundles" })
         {
