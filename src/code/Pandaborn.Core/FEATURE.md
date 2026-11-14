@@ -21,6 +21,7 @@
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
+  * method `To<1>()`
   * method `ToProvider(System.Func`1<!0>)`
 * type `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.IMultiBindingBuilder`1`

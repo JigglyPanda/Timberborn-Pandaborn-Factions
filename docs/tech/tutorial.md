@@ -1,6 +1,7 @@
 # The Inkpaws tutorial: a proposal the content lane can generate
 
-Status: proposal (not built). Mechanism verified in game in stage 0 (`docs/tech/stage0.md`, check 4): a faction gets the
+Status: proposal (not built); revised for DESIGN.md 4bf5c97 (Pole Mill first, forester-planted tea and pepper, tea at the
+Teahouse, buildings hidden until their code's data ships). The content lane generates the tutorial from `catalogue/tutorial.toml`. Mechanism verified in game in stage 0 (`docs/tech/stage0.md`, check 4): a faction gets the
 tutorial system with `StartingFactionSpec`, every vanilla `TutorialSpec` is switched off for it by faction blueprint
 modifiers, and its own tutorial (a dormant `TutorialSpec` switched on by a modifier) runs with vanilla step types.
 
@@ -14,11 +15,13 @@ One short tutorial per idea, chained by `RequiredTutorialIds`, each one or two s
 | `PandabornTutorial.Basics` | start | Look around (camera, speed) | `CameraMovementStepSpec`, `GameSpeedStepSpec` | moved, sped up |
 | `PandabornTutorial.Water` | Basics | Pump water | `BuildingTutorialStepSpec` (`WaterPump.Inkpaws`, 1) | placed |
 | `PandabornTutorial.Food` | Water | Forage and plant shoots | `BuildingTutorialStepSpec` (`GathererFlag.Inkpaws`, 1), `BuildingTutorialStepSpec` (`EfficientFarmHouse.Inkpaws`, 1), `MarkPlantablesTutorialStepSpec` (`PandabornShootBamboo.Inkpaws`, 6) | placed, 6 marked |
-| `PandabornTutorial.Poles` | Food | Bamboo is cut straight into poles | `BuildingTutorialStepSpec` (`LumberjackFlag.Inkpaws`, 1), `MarkTreesTutorialStepSpec`, `BuildingTutorialStepSpec` (`Forester.Inkpaws`, 1) + `MarkPlantablesTutorialStepSpec` (`PandabornTimberBamboo.Inkpaws`, 4) | flag, trees marked, grove planted |
-| `PandabornTutorial.Homes` | Poles | Dens for the village | `BuildingTutorialStepSpec` (`PandabornDen.Inkpaws`, 2, finished) | two finished |
-| `PandabornTutorial.Rituals` | Homes | Afternoons are for tea and naps | `BuildingTutorialStepSpec` (`PandabornHammock.Inkpaws`, 1), `BuildingTutorialStepSpec` (`PandabornTeahouse.Inkpaws`, 1) | placed |
+| `PandabornTutorial.Poles` | Food | Poles from the Pole Mill (it works like a lumber mill) | `BuildingTutorialStepSpec` (`LumberjackFlag.Inkpaws`, 1), `BuildingTutorialStepSpec` (`LumberMill.Inkpaws` = the Pole Mill, 1), `BuildingTutorialStepSpec` (`PowerWheel.Inkpaws`, 1) | placed |
+| `PandabornTutorial.Grove` | Poles | Plant a timber-bamboo grove | `BuildingTutorialStepSpec` (`Forester.Inkpaws`, 1), `MarkPlantablesTutorialStepSpec` (`PandabornTimberBamboo.Inkpaws`, 4) | placed, 4 marked |
+| `PandabornTutorial.Homes` | Grove | Dens for the village | `BuildingTutorialStepSpec` (`PandabornDen.Inkpaws`, 2, finished) | two finished |
+| `PandabornTutorial.Rituals` | Homes | Afternoons are for tea and naps (tea is drunk at the Teahouse) | `BuildingTutorialStepSpec` (`PandabornHammock.Inkpaws`, 1), `BuildingTutorialStepSpec` (`PandabornTeahouse.Inkpaws`, 1) | placed |
 | `PandabornTutorial.Bell` | Rituals | The afternoon bell | `SetWorkingHoursStepSpec` (12) | hours at 12 (the bell's own suggestion message appears too) |
-| `PandabornTutorial.Flume` | Bell | Lead the water | `BuildingTutorialStepSpec` (`PandabornScoopWheel.Inkpaws`, 1), `BuildingTutorialStepSpec` (`PandabornFlume.Inkpaws`, 3) | placed |
+| `PandabornTutorial.Bamboo` | Bell | The first bamboo: poles with no mill | `MarkTreesTutorialStepSpec` | trees marked (days 5 to 8, when the grove is grown) |
+| `PandabornTutorial.Flume` | Bamboo | Lead the water to a second grove | `BuildingTutorialStepSpec` (`PandabornScoopWheel.Inkpaws`, 1; logs and poles, no gears), `BuildingTutorialStepSpec` (`PandabornFlume.Inkpaws`, 3) | placed |
 | `PandabornTutorial.Drought` | trigger `SurvivedFirstDroughtTrigger`-style, or Flume | Cisterns carry the village | `BuildingTutorialStepSpec` (`PandabornCisternSmall.Inkpaws`, 1) | placed |
 | `PandabornTutorial.Ringtails` | Drought | The Moon Loft | `BuildingTutorialStepSpec` (`PandabornMoonLoft.Inkpaws`, 1, finished) | finished (only when the Ringtails module ships) |
 
@@ -48,7 +51,11 @@ Stage text is our loc (`Pandaborn.Tutorial.<Id>.<Stage>`); step text is the game
    and Iron Teeth games (which build every `TutorialSpec`) never run or build them; the Inkpaws faction modifier gives
    them their real requirements and stages. Stage files may carry their steps directly: stage blueprints are only built
    when a tutorial lists them.
-5. `PowerBuildingsTutorialStepSpec` is unusable (it hard-codes the Folktails shaft buttons). `BeaverBirthStepSpec` is not
+5. **Only buildings that are visible.** Buildings that wait for code are hidden until the code's data ships (DESIGN.md,
+   2026-11-14). A hidden building has no toolbar button, and a building step needs exactly one, so the generator must
+   emit a stage only when every template it names is visible in that build, and drop or replace it otherwise (for example
+   the flume stage while the water module's data is off).
+6. `PowerBuildingsTutorialStepSpec` is unusable (it hard-codes the Folktails shaft buttons). `BeaverBirthStepSpec` is not
    saved (after a reload it waits for a new birth).
 
 ## "Have N of a good": worth one small step type

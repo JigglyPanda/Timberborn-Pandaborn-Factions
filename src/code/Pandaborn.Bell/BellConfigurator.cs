@@ -11,6 +11,7 @@ namespace Pandaborn.Bell
         protected override void Configure()
         {
             Bind<BellService>().AsSingleton();
+            MultiBind<Pandaborn.Core.IWorkdayClock>().ToExisting<BellService>();
             Bind<BellHoursHint>().AsSingleton();
             Bind<BellColonistFragment>().AsSingleton();
             Bind<BellRestedBonus>().AsTransient();

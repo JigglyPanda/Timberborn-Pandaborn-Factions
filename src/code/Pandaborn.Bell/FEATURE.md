@@ -41,6 +41,7 @@ marker is inert. Interface pieces sit behind `SafeUi`.
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
+  * method `ToExisting<1>()`
   * method `ToProvider(System.Func`1<!0>)`
   * method `ToProvider<1>()`
 * type `Bindito.Core.IExportAssignee`

@@ -23,7 +23,7 @@ namespace Pandaborn.Bell
     /// faction's adult template carries PandabornBellSpec (only Inkpaws templates do), so no faction id is hard-coded.
     /// Saved state (Pandaborn store, feature "Bell", version 1): the locked hours and whether the suggestion was shown.
     /// </summary>
-    public class BellService : ILoadableSingleton, IPostLoadableSingleton
+    public class BellService : ILoadableSingleton, IPostLoadableSingleton, IWorkdayClock
     {
         public const string StoreFeature = "Bell";
         private const int StoreVersion = 1;
@@ -63,6 +63,11 @@ namespace Pandaborn.Bell
 
         /// <summary>The working day the bonus is based on: the slider as it stood at the last dawn.</summary>
         public int LockedHours => _lockedHours;
+
+        // IWorkdayClock (Core): what other modules (Ringtails) read instead of finding this class by name.
+        public bool HasLockedDay => Active && _lockedHours >= 0;
+
+        public int LockedWorkdayHours => _lockedHours;
 
         /// <summary>The slider right now (whole hours, as the vanilla panel shows it).</summary>
         public int SliderHours => Mathf.CeilToInt(_workingHoursManager.WorkedPartOfDay * 24f - 0.001f);
