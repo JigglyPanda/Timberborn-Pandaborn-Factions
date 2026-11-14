@@ -1,0 +1,27 @@
+{
+  "speed": 7,
+  "run": { "inGameHours": 40 },
+  "buildings": [ "PandabornFestivalSquare.Inkpaws", "EfficientFarmHouse.Inkpaws", "PandabornKitchen.Inkpaws" ],
+  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
+  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Events", "pblanterns" ],
+  "checks": { "noOwnErrors": true },
+  "events": {
+    "stock": { "Water": 300, "Log": 60, "PandabornPaperLantern": 40, "PandabornSteamedShoots": 25, "PandabornPickles": 22,
+               "PandabornSteamedRice": 30, "PandabornRiceFlour": 30 },
+    "actions": [ { "atRunHour": 0.2, "do": "callFestival" } ],
+    "shots": [
+      { "name": "l_d1_h11_square", "day": 1, "hour": 11, "select": "square" },
+      { "name": "l_d1_h1590_first", "day": 1, "hour": 15.9, "select": "none" },
+      { "name": "l_d1_h1610", "day": 1, "hour": 16.1, "select": "none" },
+      { "name": "l_d1_h1630", "day": 1, "hour": 16.3, "select": "none" },
+      { "name": "l_d1_h1650", "day": 1, "hour": 16.5, "select": "none" },
+      { "name": "l_d1_h1670", "day": 1, "hour": 16.7, "select": "none" },
+      { "name": "l_d1_h1690", "day": 1, "hour": 16.9, "select": "none" },
+      { "name": "l_d1_h1710", "day": 1, "hour": 17.1, "select": "none" },
+      { "name": "l_d1_h1730", "day": 1, "hour": 17.3, "select": "none" },
+      { "name": "l_d1_h1750", "day": 1, "hour": 17.5, "select": "none" },
+      { "name": "l_d1_h1780", "day": 1, "hour": 17.8, "select": "none" },
+      { "name": "l_d1_h1900_night", "day": 1, "hour": 19.0, "select": "none" }
+    ]
+  }
+}
