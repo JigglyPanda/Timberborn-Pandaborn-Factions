@@ -65,6 +65,7 @@ namespace PandabornDevHarness
     ///   "areaTries": 400,                             // per template: game validity checks tried inside the area
     ///   "exercise": {                                 // after every template is done: run the finished-state and
     ///     "recipes": true,                            // working-state code (animation controllers, sound emitters,
+    ///     "bots": 2,                                  // (bots spawned at the district centre: the faction's bot body)
     ///     "speeds": [1, 3, 0, 2, 3],                  // particles, progress visualisers): give every manufactory with
     ///     "everySeconds": 4,                          // no recipe its first one, then change the game speed through
     ///     "holdHours": 3                              // the list, one step every N real seconds, then let N in-game
@@ -101,6 +102,7 @@ namespace PandabornDevHarness
         private readonly IBlockOccupancyService _blockOccupancyService;
         private readonly Timberborn.TimeSystem.SpeedManager _speedManager;
         private readonly EntityRegistry _entityRegistry;
+        private readonly Timberborn.Bots.BotFactory _botFactory;
 
         private JObject _spec, _out, _summary;
         private JObject _exercise;
@@ -164,8 +166,10 @@ namespace PandabornDevHarness
                        ITerrainService terrainService, IThreadSafeWaterMap waterMap, MapIndexService mapIndexService, EntityService entityService,
                        DistrictCenterRegistry districtCenterRegistry, EntitySelectionService entitySelectionService,
                        IBlockOccupancyService blockOccupancyService, Timberborn.TimeSystem.SpeedManager speedManager,
-                       EntityRegistry entityRegistry, Timberborn.TimeSystem.IDayNightCycle dayNightCycle)
+                       EntityRegistry entityRegistry, Timberborn.TimeSystem.IDayNightCycle dayNightCycle,
+                       Timberborn.Bots.BotFactory botFactory)
         {
+            _botFactory = botFactory;
             _dayNightCycle = dayNightCycle;
             _speedManager = speedManager;
             _entityRegistry = entityRegistry;
@@ -971,6 +975,16 @@ namespace PandabornDevHarness
                     }
                     _exercise["recipesSet"] = n;
                     Harness.Info("grid exercise: recipes set on " + n + " manufactories");
+                }
+                int bots = (int)Request.Num(ex, "bots", 0f);
+                var dc = _districtCenterRegistry.AllDistrictCenters.FirstOrDefault();
+                if (bots > 0 && dc != null)
+                {
+                    var bo = dc.GetComponent<BlockObject>();
+                    var at = CoordinateSystem.GridToWorldCentered(bo != null ? bo.PositionedEntrance.Coordinates : dc.CenterCoordinates);
+                    for (int i = 0; i < bots; i++) _botFactory.Create(at);
+                    _exercise["botsSpawned"] = bots;
+                    Harness.Info("grid exercise: " + bots + " bot(s) spawned at the district centre");
                 }
                 _exerciseStep = 0;
                 _exerciseAt = Time.unscaledTime;

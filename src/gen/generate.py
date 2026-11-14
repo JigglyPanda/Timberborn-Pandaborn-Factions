@@ -116,7 +116,7 @@ def generate(a, v):
     # every placeable template placed and finished, then recipes on, a speed ladder and a few in-game hours, so
     # finished-state and working-state code runs (the install gate, CLAUDE.md)
     grid = {"speed": 3, "grid": {"templates": placeable,
-                                 "exercise": {"recipes": True, "speeds": [1, 3, 0, 2, 3], "everySeconds": 4,
+                                 "exercise": {"recipes": True, "bots": 2, "speeds": [1, 3, 0, 2, 3], "everySeconds": 4,
                                               "holdHours": 3}}}
 
     existing = {}

@@ -58,6 +58,8 @@ models = { "Model_Preserved" = "Characters/Pandaborn/InkpawAdult.Model" }
 name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -NoCode)
 # BaseLiftingCapacity 18 (vanilla 14): settled 2026-11-14 (balance model q1: 3 logs and 6 poles a trip)
 set = { "GoodCarrierSpec.BaseLiftingCapacity" = 18 }
+# conical hat and back basket (character pass 3, docs/tech/ringtail-body.md 8.6; bundle pandabornattachments)
+append = { "TemplateAttachmentsSpec.Attachments" = [{ AttachmentId = "PandabornConicalHat", Prefab = "Characters/Pandaborn/Attachments/ConicalHat", Parent = "#Head", Position = { X = 0.0, Y = 0.0, Z = 0.0 }, Rotation = { X = 0.0, Y = 0.0, Z = 0.0 }, Scale = { X = 1.0, Y = 1.0, Z = 1.0 }, CreateInstantly = false }, { AttachmentId = "PandabornBackBasket", Prefab = "Characters/Pandaborn/Attachments/BackBasket", Parent = "#Backpack", Position = { X = 0.0, Y = 0.0, Z = 0.0 }, Rotation = { X = 0.0, Y = 0.0, Z = 0.0 }, Scale = { X = 1.0, Y = 1.0, Z = 1.0 }, CreateInstantly = false }] }
 # The afternoon bell (src/code/Pandaborn.Bell, DESIGN.md pillar 3): +33% work and walk at a 12 h day or shorter, none at 16 h.
 # Proven in stage 0 (docs/tech/stage0.md); the Inkpaws-only MovementSpeed cap is in modifiers.toml.
 # Ringtails (docs/tech/two-peoples.md 18.1): the alias is permanent, it lets a save keep its Ringtails (as Inkpaws) whenever
@@ -86,6 +88,7 @@ name_pool = "ringtails"
 in_collection = false
 waits_for = "Ringtails"
 set = { "WorkerSpec.WorkerType" = "PandabornRingtail", "GoodCarrierSpec.BaseLiftingCapacity" = 14, "WalkerSpeedManagerSpec.BaseSlowedSpeed" = 2.7, "MovementAnimatorSpec.AnimationSpeedScale" = 1.25 }
+append = { "TemplateAttachmentsSpec.Attachments" = [{ AttachmentId = "PandabornConicalHat", Prefab = "Characters/Pandaborn/Attachments/ConicalHat", Parent = "#Head", Position = { X = 0.0, Y = 0.0, Z = 0.0 }, Rotation = { X = 0.0, Y = 0.0, Z = 0.0 }, Scale = { X = 1.0, Y = 1.0, Z = 1.0 }, CreateInstantly = false }, { AttachmentId = "PandabornBackBasket", Prefab = "Characters/Pandaborn/Attachments/BackBasket", Parent = "#Backpack", Position = { X = 0.0, Y = 0.0, Z = 0.0 }, Rotation = { X = 0.0, Y = 0.0, Z = 0.0 }, Scale = { X = 1.0, Y = 1.0, Z = 1.0 }, CreateInstantly = false }] }
 module_specs = { Festival = { PandabornFestivalGoerSpec = {} }, Ringtails = { PandabornRingtailSpec = { Kind = "Ringtail", Textures = ["Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat2", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat3", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat4", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat5"], Avatar = "Sprites/Pandaborn/Avatars/RingtailAdult", ContaminatedAvatar = "Sprites/Pandaborn/Avatars/RingtailContaminatedAdult", RestStartHours = 0.0, RestEndHours = 8.0, RestEndsAtBell = true, RestMinEndHours = 4.0, RestMaxEndHours = 16.0, SleepBelow = 0.55 } } }
 
 [characters.ringtail_child]
@@ -109,6 +112,8 @@ basis = "Bot.Folktails"
 template = "Bot.Inkpaws"
 path = "Characters/Pandaborn/Bot.Inkpaws"
 # lift 30 (vanilla 20) and 90 days before it wears out (vanilla 70): settled 2026-11-14 (DESIGN.md, the Wooden Ox)
+# the Wooden Ox body (character pass 3; the material stays Bot.Folktails)
+models = { "Model_Preserved" = "Characters/Pandaborn/WoodenOx.Model" }
 set = { "NumberedEntityNamerSpec.FormatLocKey" = "Bot.DisplayName.Inkpaws", "GoodCarrierSpec.BaseLiftingCapacity" = 30, "DeteriorableSpec.DeteriorationInDays" = 90 }
 
 [shaft_parts]
@@ -137,8 +142,10 @@ copy_faction = "Folktails"
 # the Ringtails' outfits: the Beaver ones for worker type PandabornRingtail; the builder wears the night builder overlay
 # and the courier and forager their own overlays (ringtail-body lane, docs/tech/ringtail-body.md 7.3; head-wraps, never
 # vanilla hats: they clip the ears). Stargazer and Opera overlays wait for the Star Tower and Opera Stage.
+# the Inkpaw farmer wears the conical hat, the gatherer the back basket (character pass 3)
+override = { "Farmer.Beaver" = { Attachments = ["PandabornConicalHat"] }, "Gatherer.Beaver" = { Attachments = ["PandabornBackBasket"] } }
 extra = [
   { copy = "Builder", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightBuilder_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightBuilder_N" } },
   { copy = "Hauler", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightCourier_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightCourier_N" } },
-  { copy = "Gatherer", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_N" } },
+  { copy = "Gatherer", worker_type = "PandabornRingtail", set = { DiffuseTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_D", NormalTexture = "Materials/Pandaborn/Outfits/Ringtail/RingtailNightForager_N", Attachments = ["PandabornBackBasket"] } },
 ]

@@ -182,6 +182,7 @@ class Generator:
             self.set_template(data, c["template"], c.get("aliases"), item)
             self.apply_models(data, c.get("models"), item)
             self.apply_set(data, c.get("set"), item)
+            self.apply_append(data, c.get("append"), item)
             if c.get("name_pool"):
                 self.apply_name_pool(data, c["name_pool"], item)
             for spec, body in (c.get("add") or {}).items():
@@ -398,6 +399,12 @@ class Generator:
                 new_name = name[:-len("." + src + ".blueprint")] + "." + self.faction_id
                 data = self.v.copy(key)
                 data[spec]["FactionId"] = self.faction_id
+                # [outfits] override = { "<Id>.<WorkerType>" = { Field = value } }: a copied outfit's own fields
+                for f, v in ((conf.get("override") or {}).get("%s.%s" % (data[spec].get("Id"), data[spec].get("WorkerType")))
+                             or {}).items():
+                    if f not in data[spec]:
+                        raise GenError("catalogue/faction.toml [%s] override: %s has no field %s" % (folder.lower(), new_name, f))
+                    data[spec][f] = copy.deepcopy(v)
                 self.emit("%s/Pandaborn/%s" % (folder, new_name), data, self.cat.where("faction", folder.lower()),
                           folder.lower(), key)
                 n += 1
@@ -719,6 +726,19 @@ class Generator:
             if not isinstance(node, dict):
                 raise GenError("%s: set %s: parent is not an object" % (item, path))
             node[parts[-1]] = copy.deepcopy(value)
+
+    def apply_append(self, data, appends, item):
+        """append = { "Spec.Field" = [items] }: adds to a list the basis already has (set replaces lists)."""
+        for path, items in (appends or {}).items():
+            parts = path.split(".")
+            node = data
+            for p in parts[:-1]:
+                if not isinstance(node, dict) or p not in node:
+                    raise GenError("%s: append %s: %s does not exist on the basis" % (item, path, p))
+                node = node[p]
+            if not isinstance(node.get(parts[-1]), list):
+                raise GenError("%s: append %s: not a list on the basis" % (item, path))
+            node[parts[-1]] = list(node[parts[-1]]) + copy.deepcopy(list(items))
 
     def apply_delete(self, data, keys, item):
         for path in keys or []:

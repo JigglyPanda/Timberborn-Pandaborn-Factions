@@ -64,7 +64,8 @@ param(
     # plants (tools/build_plants.ps1) and sounds (tools/build_sound.ps1); the look bundle comes with the code. Planned:
     # E:\PandabornDev\build\characters\attachments (pandabornattachments, hats and baskets) once that lane's real
     # geometry and _mac twin are in (docs/tech/ringtail-body.md 7.3)
-    [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles', 'E:\PandabornDev\build\sound\AssetBundles'),
+    [string[]]$BundleDirs = @('E:\PandabornDev\build\plants\AssetBundles', 'E:\PandabornDev\build\sound\AssetBundles',
+                              'E:\PandabornDev\build\characters\attachments'),
     [string]$MeshSource = 'E:\PandabornDev\assets\Pandaborn-Reskin-release\Characters\Beaver',
     [string]$RingtailMeshSource = 'E:\PandabornDev\build\characters\out',
     [string]$ModsDir = 'C:\Users\Israel Gonzalez\Documents\Timberborn\Mods',
@@ -86,6 +87,8 @@ foreach ($s in $stages) { if ($known -notcontains $s) { throw "unknown stage '$s
 $meshes = [ordered]@{
     'Characters\Pandaborn\InkpawAdult.Model.timbermesh' = Join-Path $MeshSource 'BeaverAdult.Model.timbermesh'
     'Characters\Pandaborn\InkpawChild.Model.timbermesh' = Join-Path $MeshSource 'BeaverChild.Model.timbermesh'
+    # the Wooden Ox (character pass 3, docs/tech/ringtail-body.md 8.6), shipped always
+    'Characters\Pandaborn\WoodenOx.Model.timbermesh' = Join-Path $RingtailMeshSource 'WoodenOx.Model.timbermesh'
 }
 # the Ringtail bodies (ringtail-body lane, docs/tech/ringtail-body.md), shipped only when the generated data has the
 # Ringtail templates (catalogue/rules.toml [modules] Ringtails)
