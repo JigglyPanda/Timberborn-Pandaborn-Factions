@@ -79,6 +79,9 @@ def apply_model(bp, mj):
     if "BuildingSpec" in bp:
         bp["BuildingSpec"]["BuildingCost"] = []          # builders only: finishes in tests without logs
         bp["BuildingSpec"]["ScienceCost"] = 0
+        # a site that "finishes" with colonists standing on it waits for them to leave (FinishIfRequirementsMet):
+        # test placements next to the district centre then show the construction stage in "finished" shots
+        bp["BuildingSpec"]["FinishableWithBeaversOnSite"] = True
     bos = bp["BlockObjectSpec"]
     s = mj["size"]
     if mj.get("blocks"):

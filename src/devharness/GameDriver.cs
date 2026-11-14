@@ -667,8 +667,10 @@ namespace PandabornDevHarness
                             return _shotQueue.Count > 0;
                         }
                         subject = new JObject { ["template"] = shot.Target, ["yaw"] = shot.Yaw, ["pitch"] = shot.Pitch, ["zoom"] = shot.Zoom };
+                        if (shot.Front) subject["front"] = true;
                         Capture.RenderFramed(source, framed, shot.Yaw, shot.Pitch, shot.Zoom,
-                                             request.ShotWidth, request.ShotHeight, file);
+                                             request.ShotWidth, request.ShotHeight, file,
+                                             shot.Front ? framed.transform.eulerAngles.y : (float?)null, shot.MinDistance);
                         break;
                     case "adult":
                     case "child":

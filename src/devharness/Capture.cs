@@ -55,7 +55,8 @@ namespace PandabornDevHarness
         /// <paramref name="pitch"/> degrees down, from a distance at which the bounds fill the frame (divided by zoom).
         /// </summary>
         public static void RenderFramed(Camera source, GameObject root, float yawOffset, float pitch, float zoom,
-                                        int width, int height, string path)
+                                        int width, int height, string path, float? baseHeading = null,
+                                        float minDistance = 0f)
         {
             var renderers = root.GetComponentsInChildren<Renderer>(false);
             if (renderers.Length == 0) throw new InvalidOperationException(root.name + " has no visible renderers");
@@ -64,7 +65,9 @@ namespace PandabornDevHarness
             float radius = Mathf.Max(bounds.extents.magnitude, 0.5f);
             float fov = source ? source.fieldOfView : 30f;
             float distance = radius / Mathf.Sin(fov * 0.5f * Mathf.Deg2Rad) * 1.02f / Mathf.Max(zoom, 0.05f);
-            float heading = source ? source.transform.eulerAngles.y : 45f;
+            distance = Mathf.Max(distance, minDistance, radius * 1.2f);
+            // baseHeading: the building's own heading; its entrance is on its local -z side, so look along +z
+            float heading = baseHeading ?? (source ? source.transform.eulerAngles.y : 45f);
             var rotation = Quaternion.Euler(pitch, heading + yawOffset, 0f);
             var position = bounds.center - rotation * Vector3.forward * distance;
             var texture = Render(source, width, height, position, rotation, null);

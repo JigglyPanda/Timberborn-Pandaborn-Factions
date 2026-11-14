@@ -36,7 +36,7 @@ def region_uv(local_u, local_v, region, density=TEXEL, rng=None):
 
 # ------------------------------------------------------------------------------------------- tubes and poles
 def tube(geo, path, radii, material, sides=6, strips=None, caps=True, twist=0.0, up=(0, 1, 0), tags=(),
-         v_density=TEXEL, flat=False):
+         v_density=TEXEL, flat=False, aspect=(1.0, 1.0)):
     """A prism swept along a polyline. Each segment maps its length along a wood strip (v) and the circumference
     across it (u), restarting where a strip runs out, so long poles keep the vanilla texel density. Caps use the
     log-end / culm cross-section discs."""
@@ -52,8 +52,8 @@ def tube(geo, path, radii, material, sides=6, strips=None, caps=True, twist=0.0,
         ring = []
         for k in range(sides + 1):
             a = ang0 + 2 * math.pi * k / sides
-            off = F[:, 0] * math.cos(a) + F[:, 1] * math.sin(a)
-            ring.append((p + off * radii[i], off))
+            off = F[:, 0] * math.cos(a) * aspect[0] + F[:, 1] * math.sin(a) * aspect[1]
+            ring.append((p + off * radii[i], off / max(np.linalg.norm(off), 1e-9)))
         rings.append(ring)
     P, N, UV, T = [], [], [], []
     vpos = strip[1] + geo.rng.uniform(0, 0.25) * (strip[3] - strip[1])
@@ -144,7 +144,9 @@ def beam(geo, a, b, w=0.09, h=None, material=TIMBER, up=(0, 1, 0), tags=(), caps
     h = h or w
     pts = [a + (b - a) * (i / segs) + V([0, -sag * math.sin(math.pi * i / segs), 0]) for i in range(segs + 1)]
     r = math.hypot(w, h) / 2
-    tube(geo, pts, [r] * len(pts), material, 4, caps=caps, up=up, tags=tags, flat=True)
+    # a true w x h section: the 4-sided tube's corners sit on the diagonals, so scale them to the rectangle
+    asp = (math.sqrt(2) * w / (2 * r), math.sqrt(2) * h / (2 * r))
+    tube(geo, pts, [r] * len(pts), material, 4, caps=caps, up=up, tags=tags, flat=True, aspect=asp)
 
 
 def lashing(geo, at, direction, r=0.06, tags=()):

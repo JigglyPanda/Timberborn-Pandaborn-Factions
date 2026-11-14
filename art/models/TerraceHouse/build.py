@@ -46,15 +46,23 @@ K.box(g, (X0, 1.86, UZ0 - 0.02), (X1, 2.0, Z1), EARTH, (0.02, 0.02, 0.98, 0.98),
 for x in (X0 + 0.14, X1 - 0.14):
     K.lathe(g, [(0.0, 0.0), (0.1, 0.0), (0.12, 0.12)], (x, 0.96, Z0 + 0.02), 7, EARTH, cap_top=True)
     K.lathe(g, [(0.0, 0.0), (0.1, 0.05), (0.07, 0.14), (0.0, 0.18)], (x, 1.08, Z0 + 0.02), 5, MOSS)
-# round drying mats on the roof, chillies and greens spread out to dry (flat: nothing stops a house stacking here)
-for (x, z, rr, mat, reg, fill) in ((0.62, 1.2, 0.3, DETAILS, DET_RED, 0.5), (1.5, 1.42, 0.3, MOSS, None, 0.8),
-                                   (2.3, 1.1, 0.36, DETAILS, DET_SACK, 0.8)):
-    K.lathe(g, [(0.0, 0.0), (rr, 0.0), (rr + 0.02, 0.02)], (x, 2.0, z), 10, WEAVE_GOLD, cap_top=False)
-    K.lathe(g, [(rr * fill, 0.012), (0.0, 0.012)], (x, 2.0, z), 8, mat, uv_region=reg or (0.1, 0.1, 0.9, 0.9),
+# the roof terrace: a plank deck inside a low lime parapet with a grey-tile coping (low enough for another
+# Terrace House to stand on it), drying trays of chillies and tea and a basket in the corners
+K.boards(g, (X0 + 0.08, 2.0, UZ0 + 0.06), (0, 0, 1), (1, 0, 0), Z1 - UZ0 - 0.14, X1 - X0 - 0.16, 9, TIMBER,
+         thick=0.02, warp=0.004)
+for (a0, b0, a1, b1) in ((X0, UZ0, X1, UZ0 + 0.07), (X0, Z1 - 0.07, X1, Z1), (X0, UZ0, X0 + 0.07, Z1),
+                         (X1 - 0.07, UZ0, X1, Z1)):
+    K.box(g, (a0, 2.0, b0), (a1, 2.1, b1), PLASTER, (0.1, 0.1, 0.9, 0.9), skip=(3,))
+    K.box(g, (a0 - 0.015, 2.1, b0 - 0.015), (a1 + 0.015, 2.13, b1 + 0.015), TILE,
+          (0.0, TILE_COURSES[0][0], 0.3, TILE_COURSES[0][1]), skip=(3,))
+for (x, z, mat, reg) in ((0.45, 1.6, DETAILS, DET_RED), (0.95, 1.65, MOSS, None)):
+    K.lathe(g, [(0.0, 0.0), (0.22, 0.0), (0.24, 0.03)], (x, 2.02, z), 9, WEAVE_GOLD, cap_top=False)
+    K.lathe(g, [(0.18, 0.015), (0.0, 0.015)], (x, 2.02, z), 8, mat, uv_region=reg or (0.1, 0.1, 0.9, 0.9),
             cap_top=False)
     lid = g.parts[-1]
     lid.N[:] = (0, 1, 0)
     lid.T = fix_winding(lid.P, lid.N, lid.T)
+K.basket(g, (2.7, 2.02, 1.7), h=0.16, r=0.12)
 K.lantern(g, (2.86, 1.8, 0.46), r=0.06, h=0.14)
 K.chilli_string(g, (0.3, 1.66, 0.36), length=0.3, n=5)
 cells = []

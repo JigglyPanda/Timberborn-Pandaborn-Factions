@@ -15,7 +15,7 @@ R_IN = 0.34
 CX = 0.5
 
 
-def straight(geo, z0, z1, y_floor, material=BAMBOO_GREEN, sleeve=True, tilt=0.0, tags=(), tint=(0.8, 0.84, 0.78),
+def straight(geo, z0, z1, y_floor, material=BAMBOO_GREEN, sleeve=True, tilt=0.0, tags=(), tint=(0.64, 0.64, 0.48),
              nodes=(0.3, 0.78), rims=True):
     """One run of split giant culm from z0 to z1: the half-pipe, weathered dark and mossy below the waterline and
     fresher above, proud culm nodes round the outside, a lighter split-culm rim along both edges, and a rope-lashed
@@ -31,7 +31,7 @@ def straight(geo, z0, z1, y_floor, material=BAMBOO_GREEN, sleeve=True, tilt=0.0,
         K.channel(geo, zn, zn + 0.04 * sg, yf - 0.06 + tilt * (1 - f), CX, r_in=R_IN + 0.045, wall=0.02,
                   material=material, around=6, sleeve=False, tags=tags)
     # weathering by height: dark and green-brown at the bottom where water stands, cleaner toward the rims
-    lo, hi = np.array([0.46, 0.52, 0.38]), np.array(tint)
+    lo, hi = np.array([0.34, 0.36, 0.25]), np.array(tint)   # weathered olive, darker at the waterline
     for p in geo.parts[n0:]:
         if p.material == material:
             t = np.clip((p.P[:, 1] - yf) / 0.3, 0, 1)[:, None] ** 0.8
@@ -129,7 +129,7 @@ def cistern_vessel(geo, cx, cz, r, h, floor, sides=12, tags=()):
 
 
 GLAZE_BROWN = (0.2, 0.13, 0.08)
-GLAZE_CELADON = (0.48, 0.56, 0.5)
+GLAZE_CELADON = (0.26, 0.34, 0.3)
 
 
 def vat(geo, cx, cz, r, h, floor, glaze=GLAZE_BROWN, sides=12, lid=0.45, plinth=0.14, tags=()):

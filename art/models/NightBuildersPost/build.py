@@ -19,6 +19,10 @@ K.plinth(g, 0.04, 0.06, 2.96, 1.94, h=B)
 with g.tagged("walls"):
     K.wall(g, (2.86, 1.78), (0.14, 1.78), B, 1.35, rail=False)
 K.moon_window(g, (1.5, 0.82, 1.75), (0, 0, -1), r=0.36)
+# a plastered end wall on the right closes the shed; the moon window there faces out, clear of the eave
+with g.tagged("walls"):
+    K.wall(g, (2.86, 0.3), (2.86, 1.78), B, 1.2, rail=False)
+K.moon_window(g, (2.9, 0.72, 1.04), (1, 0, 0), r=0.32)
 for x in (0.16, 1.5, 2.84):
     K.pole(g, (x, B, 0.3), (x, 1.15, 0.3), r=0.05, material=TIMBER, sides=6, bend=0.01, taper=0.9, tags={"frame"})
 K.beam(g, (0.06, 1.15, 0.3), (2.94, 1.15, 0.3), w=0.08, sag=0.02, segs=2, tags={"frame"})

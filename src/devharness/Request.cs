@@ -20,6 +20,12 @@ namespace PandabornDevHarness
         public float Zoom = 1f;
         /// <summary>Kind "building": switch the building's night lighting on before the shot (as when occupied).</summary>
         public bool Lit;
+        /// <summary>Kind "building": aim from the building's front (its entrance side) instead of the game camera's
+        /// heading; Yaw is then added to the building's own heading (e.g. 35 for a three-quarter view).</summary>
+        public bool Front;
+        /// <summary>Kind "building": the closest the camera may come, in tiles (keeps tiny objects from putting the camera
+        /// inside them or under the ground).</summary>
+        public float MinDistance = 3f;
 
         public bool IsTimed(out float seconds)
         {
@@ -180,7 +186,8 @@ namespace PandabornDevHarness
                     {
                         Kind = kind, At = at, Name = Str(s, "name", kind + "_" + at), Target = Str(s, "target", null),
                         Yaw = Num(s, "yaw", 0f), Pitch = Num(s, "pitch", 35f), Zoom = Num(s, "zoom", 1f),
-                        Lit = Bool(s, "lit", false)
+                        Lit = Bool(s, "lit", false), Front = Bool(s, "front", false),
+                        MinDistance = Num(s, "minDistance", 3f)
                     });
                 }
             }

@@ -38,6 +38,18 @@ for dz in (-0.09, 0.09):
     K.tube(g, [(x, y, WZ + dz) for x, y in ring], [0.05] * len(ring), TIMBER, sides=5, caps=False)
 K.roof(g, 0.12, WZ - 0.1, 2.88, WZ + 0.1, H, H + 0.32, kind="gable", overhang=0.2, sag=0.03, lift=0.04,
        ridge_ends=0.05, tile=0.28, course=0.26)
+# the yard is roofed: posts at the back and a grey-tile lean-to running down from the gate wall
+for x in (0.14, 1.5, 2.86):
+    K.pole(g, (x, B, 1.86), (x, 1.12, 1.86), r=0.045, material=TIMBER, sides=6, bend=0.01, taper=0.92)
+K.beam(g, (0.06, 1.12, 1.86), (2.94, 1.12, 1.86), w=0.07, sag=0.015, segs=2)
+# (kit lean-to roofs rise toward +z; build it in a scratch Geo and turn it 180 degrees so it rises to the wall)
+sub = Geo(5)
+K.roof(sub, 0.14, WZ + 0.1, 2.86, 1.86, 1.14, H - 0.12, kind="lean", overhang=0.12, sag=0.03, lift=0.03,
+       ridge=False, tile=0.3, course=0.32)
+cz = (WZ + 0.1 + 1.86) / 2
+Rr = rot_axis((0, 1, 0), math.pi)
+for p_ in sub.parts:
+    g.add(p_.transformed(Rr, np.array([1.5, 0, cz]) - Rr @ np.array([1.5, 0, cz])))
 # the yard behind: a rack of back-baskets, carrying poles, a bench
 for x in (0.35, 1.0):
     K.pole(g, (x, B, 1.7), (x, 1.05, 1.7), r=0.03, material=BAMBOO_GOLD, sides=5, bend=0.0)
