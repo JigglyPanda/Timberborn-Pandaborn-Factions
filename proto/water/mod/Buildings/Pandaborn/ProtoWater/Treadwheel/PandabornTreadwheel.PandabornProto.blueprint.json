@@ -307,7 +307,7 @@
       "Y": 2,
       "Z": 1
     },
-    "DistanceToGroundOffset": 0.0,
+    "DistanceToGroundOffset": 1.0,
     "OverflowAllowed": false
   }
 }

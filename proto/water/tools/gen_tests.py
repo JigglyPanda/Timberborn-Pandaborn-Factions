@@ -393,6 +393,19 @@ def district():
     request("district", s, [32, 12], speed=5, real_seconds=3600, origin={"nearDistrict": True})
 
 
+# ---------------------------------------------------------------------------------------------------------------- dew
+def dew():
+    """Dew Collector stock over one temperate day, then one drought day."""
+    s = [place("PandabornDewCollector", [4, 4, 0], "Cw0", id="dew"), shot("dew_setup", [5, 5, 0], 14),
+         {"op": "series", "id": "dew", "every": 64, "objects": ["dew"]},
+         {"op": "probe", "label": "dew_t0", "objects": ["dew"]}, {"op": "wait", "days": 1, "capSeconds": 400},
+         {"op": "probe", "label": "dew_temperate_day", "objects": ["dew"]},
+         {"op": "drought"}, {"op": "probe", "label": "dew_drought_start", "objects": ["dew"]},
+         {"op": "wait", "days": 1, "capSeconds": 400},
+         {"op": "probe", "label": "dew_drought_day", "objects": ["dew"]}]
+    request("dew", s, [10, 10], speed=10)
+
+
 if __name__ == "__main__":
     flume()
     longrun()
@@ -400,4 +413,5 @@ if __name__ == "__main__":
     scoop()
     crops()
     district()
+    dew()
     print("wrote", sorted(os.listdir(OUT)))

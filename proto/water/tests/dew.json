@@ -1,0 +1,108 @@
+{
+ "faction": "Folktails",
+ "map": "Plains",
+ "speed": 0,
+ "batchControl": false,
+ "run": {
+  "realSeconds": 1500,
+  "settleSeconds": 2
+ },
+ "screenshots": [
+  {
+   "name": "screen_end",
+   "kind": "screen",
+   "at": "end"
+  }
+ ],
+ "ownPatterns": [
+  "PandabornFactions",
+  "PandabornDevHarness",
+  "Inkpaws",
+  "Pandaborn.Water",
+  "PandabornProto"
+ ],
+ "water": {
+  "name": "dew",
+  "speed": 10,
+  "area": [
+   10,
+   10
+  ],
+  "origin": "auto",
+  "flattenMargin": 2,
+  "steps": [
+   {
+    "op": "place",
+    "template": "PandabornDewCollector.PandabornProto",
+    "at": [
+     4,
+     4,
+     0
+    ],
+    "orientation": "Cw0",
+    "id": "dew"
+   },
+   {
+    "op": "shot",
+    "name": "dew_setup",
+    "focus": [
+     5,
+     5,
+     0
+    ],
+    "distance": 14,
+    "pitch": 55,
+    "yaw": 20
+   },
+   {
+    "op": "series",
+    "id": "dew",
+    "every": 64,
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "probe",
+    "label": "dew_t0",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "days": 1,
+    "capSeconds": 400
+   },
+   {
+    "op": "probe",
+    "label": "dew_temperate_day",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "drought"
+   },
+   {
+    "op": "probe",
+    "label": "dew_drought_start",
+    "objects": [
+     "dew"
+    ]
+   },
+   {
+    "op": "wait",
+    "days": 1,
+    "capSeconds": 400
+   },
+   {
+    "op": "probe",
+    "label": "dew_drought_day",
+    "objects": [
+     "dew"
+    ]
+   }
+  ]
+ }
+}

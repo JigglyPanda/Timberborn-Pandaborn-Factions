@@ -238,7 +238,8 @@ def noria():
                                        "MinRequiredOutflow": 0.15}
     lift_common(bp, 0.1)
     bp["WaterInputSpec"] = {"WaterInputCoordinates": v3(0, 0, 0)}
-    bp["WaterOutputSpec"] = {"WaterCoordinates": v3(0, 2, LIFT), "DistanceToGroundOffset": 0.0, "OverflowAllowed": False}
+    # the outlet cell sits on the basin floor: pour up to 0.9 deep into it (offset 0 would leave no space at all)
+    bp["WaterOutputSpec"] = {"WaterCoordinates": v3(0, 2, LIFT), "DistanceToGroundOffset": 1.0, "OverflowAllowed": False}
     bp["Children"]["#Unfinished"]["Children"].pop("ConstructionBase3x2WaterWheel#nested", None)
     name_building(bp, "ScoopWheel", "Scoop Wheel",
                   f"Stands in a current and lifts water {LIFT} levels onto the bank behind it, with no workers. "
@@ -253,7 +254,7 @@ def treadwheel():
     bp["MechanicalNodeSpec"] = {"PowerOutput": 100, "PowerInput": 100, "IsShaft": False}
     lift_common(bp, 0.1)
     bp["WaterInputSpec"] = {"WaterInputCoordinates": v3(0, 1, -1)}
-    bp["WaterOutputSpec"] = {"WaterCoordinates": v3(2, 2, 1), "DistanceToGroundOffset": 0.0, "OverflowAllowed": False}
+    bp["WaterOutputSpec"] = {"WaterCoordinates": v3(2, 2, 1), "DistanceToGroundOffset": 1.0, "OverflowAllowed": False}
     name_building(bp, "Treadwheel", "Treadwheel lift",
                   "A worker walks the wheel and lifts water from the pit behind its left end to a ledge two rows "
                   "behind its right end, about two levels up.", "Water", 61, [{"Id": "Log", "Amount": 10}])
@@ -267,6 +268,12 @@ def dew_collector():
               "ManufactoryWaterConsumerSpec", "WaterInputSpec", "WaterInputPipeSpec"):
         bp.pop(k, None)
     bp["BuildingSpec"]["LoopingSoundName"] = ""
+    # the pump's own footprint hangs a level below the ground (BaseZ 1); a collector stands on flat ground
+    ground = block("GroundOrStackable", "Bottom, Top, Corners, Path, Middle")
+    cells = {(x, y, 0): ground for x in range(2) for y in range(3)}
+    cells.update({(x, y, 1): block("Any", "Bottom, Top, Corners, Path, Middle") for x in range(2) for y in range(3)})
+    bp["BlockObjectSpec"] = blocks_spec((2, 3, 2), cells, {"HasEntrance": True, "Coordinates": v3(1, -1, 0)})
+    bp["BuildingAccessibleSpec"]["LocalAccess"] = {"X": 1.1, "Y": 0.0, "Z": -0.01}
     bp["ManufactorySpec"] = {"ProductionRecipeIds": ["PandabornDewWater"]}
     bp["ProductionIncreaserSpec"] = {}
     bp["PandabornDewLimiterSpec"] = {"DroughtEfficiency": 0.35, "TemperateEfficiency": 1.0}
