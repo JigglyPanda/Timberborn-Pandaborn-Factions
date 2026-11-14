@@ -48,7 +48,7 @@ def apply_building_model(gen, data, mid, item, mesh_dir=None):
     if unknown:
         gen.note(item, "model %s: model.json keys not used by the generator: %s" % (mid, ", ".join(unknown)))
     water = sorted(set(mj) & WATER_KEYS)
-    if water:
+    if water and not gen.module_on("Water"):
         raise GenError("%s: model %s describes a water piece (%s); water pieces are adopted with the water module, "
                        "not by data alone" % (item, mid, ", ".join(water)))
     folder = "%s/%s" % (MOD_DIRS["building"], mid)
