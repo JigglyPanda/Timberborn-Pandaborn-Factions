@@ -48,6 +48,10 @@ namespace Pandaborn.Ringtails
 
         public bool Inserted { get; private set; }
 
+        /// <summary>Above this, a Ringtail coming off the night shift does not bother going to bed at dawn.</summary>
+        private const float NearlyRested = 0.75f;
+        private int _dawnSleepDay = -1;
+
         public RingtailRestRootBehavior(IDayNightCycle dayNightCycle, WorkingHoursManager workingHoursManager)
         {
             _dayNightCycle = dayNightCycle;
@@ -139,10 +143,21 @@ namespace Pandaborn.Ringtails
         public override Decision Decide(BehaviorAgent agent)
         {
             if (!InRestWindow) return Decision.ReleaseNow();
-            if (_sleepNeedBehavior != null && _needManager.HasNeed(SleepNeedId) && _needManager.GetNeedPoints(SleepNeedId) < _spec.SleepBelow)
+            if (_sleepNeedBehavior != null && _needManager.HasNeed(SleepNeedId))
             {
-                var sleep = _sleepNeedBehavior.Decide(agent);
-                if (!sleep.ShouldReleaseNow) return Decision.TransferNow(_sleepNeedBehavior, in sleep);
+                // first thing in the rest window: to bed unless nearly rested (a regular "sleep through the morning");
+                // later in the window only when tired (SleepBelow)
+                float points = _needManager.GetNeedPoints(SleepNeedId);
+                bool dawnSleep = _dawnSleepDay != _dayNightCycle.DayNumber && points < NearlyRested;
+                if (dawnSleep || points < _spec.SleepBelow)
+                {
+                    var sleep = _sleepNeedBehavior.Decide(agent);
+                    if (!sleep.ShouldReleaseNow)
+                    {
+                        if (dawnSleep) _dawnSleepDay = _dayNightCycle.DayNumber;
+                        return Decision.TransferNow(_sleepNeedBehavior, in sleep);
+                    }
+                }
             }
             if (_neederRootBehavior != null)
             {

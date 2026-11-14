@@ -1,0 +1,59 @@
+{
+  "buildings": [],
+  "ringtails": {
+    "spawn": 5,
+    "place": [
+      "RingtailHaulingPost.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      "RingtailLoft.Inkpaws",
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      },
+      {
+        "template": "PandabornDen.Inkpaws",
+        "finished": false
+      }
+    ],
+    "stock": {
+      "Water": 300,
+      "Log": 120
+    },
+    "shots": [
+      {
+        "name": "tp_d0_h20_night_courier",
+        "day": 0,
+        "hour": 20,
+        "select": "ringtailWorkplace"
+      },
+      {
+        "name": "tp_d1_h21_night_ringtail",
+        "day": 1,
+        "hour": 21,
+        "select": "ringtail"
+      },
+      {
+        "name": "tp_d1_h23_night_overview",
+        "day": 1,
+        "hour": 23,
+        "select": "none"
+      }
+    ]
+  }
+}

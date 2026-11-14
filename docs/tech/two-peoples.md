@@ -540,7 +540,7 @@ into the save and 200 more real seconds (≈ 31 in-game hours).
 |---|---|---|
 | `rt-gate3` | 4 Ringtails at the Courier Loft, housed in lofts; no water stocked (Inkpaws went thirsty; test-map artefact, since fixed); first appetite version (wrong, see below) | PASS, both launches; reload did not advance time (a loading-issue dialog from a probe path bug paused it) |
 | `rt-gate4` | 1 Ringtail at the Forager's Nest (the Courier Loft could not be connected on that layout), Inkpaw lumberjack + gatherer + builders, water stocked, fixed appetite; reload ran 31 h | PASS, both launches, 0 errors from our code |
-| `rt-gate5` | <!-- GATE5 --> | |
+| `rt-gate6` | **The decided design**: rest window ends at the bell (default day: 16 h), equal appetite, Inkpaw walking speed with no load slowdown; the main mod's own Inkpaws buildings (dens, village hall, Inkpaw lumberjack and gatherer), 5 Ringtails at the Courier Loft; 72 h + reload 31 h | PASS, both launches; 18/18 colonists back; 0 violations; 0 critical needs; 0 errors from our code |
 | `rt-fallback1` | Save with 3 Ringtails reloaded with the save registration switched off (17.7) | Ringtails loaded as Inkpaws; only our deliberate error logged |
 | `rt-folktails1` | Folktails game with the prototype enabled and asked to spawn Ringtails | No Ringtail created, template set identical to earlier Folktails runs (332 placeable / 368 templates), 0 errors; the Ringtail building is "not available to this faction" |
 
@@ -570,6 +570,13 @@ hours after dawn; `rt-gate3` shows the same pattern for all 4 couriers):
   workplaces only ever held Ringtails, Inkpaws never took them, Ringtails never took an Inkpaw job (vanilla
   `DistrictWorkplaceAssigner` keys workplaces and workers by worker type).
 * **Throughput:** <!-- THROUGHPUT -->
+* **With the rest ending at the bell** (`rt-gate6`, default 16-hour Inkpaw day, so the window is 0–16 h): Ringtails
+  worked 105 of 120 night samples (the rest: walking to work in the first night hour), were never at work in the
+  afternoon, and slept once a day; the first version slept only when Sleep fell below 0.55, which drifted the sleep
+  to mid-window on short nights (a Ringtail coming off an 8-hour night still has Sleep ≈ 0.6). Fixed after the run:
+  a Ringtail now goes to bed first thing in the window unless nearly rested (≥ 0.75), so the sleep sits at dawn again.
+  Lowest Ringtail needs with equal appetite: Sleep 0.40, Hunger 0.38, Thirst 0.43; none critical, before or after the
+  reload.
 * **Speed (gate runs):** Ringtail base walking speed 3.51 vs Inkpaw 2.70 (×1.30); lifting 14 for both. Since changed
   to equal speed with no load slowdown (17.8).
 * **Kits:** the kit grew into a Ringtail adult (`RingtailAdult.Inkpaws`, "… grew up" notification) in every run;
