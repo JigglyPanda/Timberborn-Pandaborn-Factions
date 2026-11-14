@@ -229,6 +229,10 @@ def main():
             # the stand-in's recipes name Folktails goods, which the Inkpaws faction does not have (a missing good
             # throws when the building is created); the model check needs no production
             bp["ManufactorySpec"]["ProductionRecipeIds"] = []
+        # a second planter building for the same plants (the faction's own Paddy House) breaks the fields tool
+        # ("Sequence contains more than one matching element", models-pass3-2): prototypes plant nothing
+        for k in [k for k in bp if "Planter" in k]:
+            bp.pop(k)
         for k in mj.get("removeSpecs", []):
             bp.pop(k, None)
         for k, v in mj.get("addSpecs", {}).items():
