@@ -2,14 +2,14 @@
 
 Vanilla conventions (naturalresources/*): 112 px, thin pen lines; crops stand on two or three rows of short
 horizontal ground lines, water plants on wavy water lines; trees are shown as one characteristic leaf or twig.
-These are proposals (ship=False): they render to E:\\PandabornDev\\build\\icons until the plant blueprints exist.
+Shipped to Sprites/Pandaborn/Plants/Pandaborn<Plant>Icon.png; lotus (a later update) renders to the build dir only.
 """
 import math
 
 import numpy as np
 
 from ink import PLANT, Path, arc, circle, ellipse, icon, line, spline
-from goods import grain
+from goods import calyx, grain
 
 G = "Plants"
 
@@ -67,68 +67,46 @@ def broad_leaf(c, x, y, length, width, ang, veins=4):
 
 # ------------------------------------------------------------------------------------------------- trees
 
-@icon("PandabornRiverBamboo", group=G, style=PLANT, ship=False,
-      note="River bamboo: a jointed stalk with a spray of long leaves, over river water")
-def river_bamboo(c):
-    water(c, 86, 2, gaps=((40, 58),))
-    for x0 in (42, 52):
-        c.stroke(line((x0, 92), (x0 + 6, 10)), 1.0, taper=0)
-    for y in (70, 46, 22):
-        c.stroke(arc(47 + (92 - y) * 0.065 + 0.5, y, 5.5, 200, 340, ry=2), 0.8)
-    for x, y, ln, a in ((54, 40, 36, 20), (54, 40, 30, -12), (52, 60, 34, 160), (52, 60, 28, 195),
-                        (57, 18, 30, 35), (56, 18, 28, 150)):
+@icon("PandabornTimberBamboo", group=G, style=PLANT,
+      note="Timber bamboo: a tall jointed culm with sprays of long leaves")
+def timber_bamboo(c):
+    for x0 in (44, 54):
+        c.stroke(line((x0, 100), (x0 + 6, 6)), 1.0, taper=0)
+    for y in (78, 54, 30):
+        c.stroke(arc(49 + (100 - y) * 0.064 + 0.5, y, 5.5, 200, 340, ry=2), 0.8)
+    for x, y, ln, a in ((56, 50, 36, 20), (56, 50, 30, -12), (52, 70, 34, 160), (52, 70, 28, 195),
+                        (59, 26, 30, 35), (57, 26, 28, 150), (60, 8, 24, 70)):
         blade(c, x, y, ln, a, 8)
 
 
-@icon("PandabornCloudBamboo", group=G, style=PLANT, ship=False,
-      note="Cloud bamboo: a tall jointed stalk with drooping leaves and a curl of mountain cloud")
-def cloud_bamboo(c):
-    # cloud behind: a classic curled cloud band
-    c.shape(spline((8, 52), (14, 42), (26, 42), (30, 34), (44, 34), (50, 42), (64, 40), (72, 48), (64, 56),
-                   (16, 58), closed=True))
-    c.stroke(spline((26, 50), (30, 44), (36, 48)), 0.7)
-    for x0 in (60, 70):
-        c.stroke(line((x0, 100), (x0 - 4, 4)), 1.0, taper=0)
-    for y in (78, 52, 26):
-        c.shape(Path(np.array([[59 - (100 - y) * 0.04, y - 1.5], [69 - (100 - y) * 0.04, y - 1.5],
-                               [69 - (100 - y) * 0.04, y + 1.5], [59 - (100 - y) * 0.04, y + 1.5]]), True), 0.5,
-                filled=True)
-    for x, y, ln, a in ((66, 24, 30, -30), (64, 24, 26, -70), (60, 50, 30, -150), (60, 50, 26, 210),
-                        (68, 6, 26, -10), (62, 6, 22, 200)):
-        blade(c, x, y, ln, a, 8)
+@icon("PandabornShootBamboo", group=G, style=PLANT,
+      note="Shoot bamboo: plump shoots breaking through the field, a young leaf spray behind")
+def shoot_bamboo(c):
+    ground(c, gaps=((22, 44), (54, 80)))
+    blade(c, 60, 40, 30, 60, 7)
+    blade(c, 60, 40, 26, 110, 7)
+    c.stroke(line((60, 40), (62, 86)), 0.9, taper=0)
+    for cx, s in ((33, 0.8), (67, 1.0)):
+        with c.at(cx, 88, s):
+            c.shape(spline((-14, 0), (-12, -20), (-4, -42), (4, -50), (6, -36), (13, -16), (14, 0), closed=True))
+            c.stroke(spline((-12, -12), (0, -16), (12, -24)), 0.7)
+            c.stroke(spline((-8, -30), (2, -30), (8, -40)), 0.7)
 
 
-@icon("PandabornPersimmonTree", group=G, style=PLANT, ship=False,
+@icon("PandabornPersimmonTree", group=G, style=PLANT,
       note="Persimmon tree: a broad persimmon leaf with a fruit hanging below it")
 def persimmon_tree(c):
     broad_leaf(c, 20, 86, 84, 46, 55, veins=4)
     c.stroke(spline((24, 82), (16, 92), (10, 96)))
-    with c.at(70, 74, 0.7):
-        c.shape(spline((-30, -2), (-27, -15), (-14, -19), (0, -16), (14, -19), (27, -15), (30, -2), (24, 15),
-                       (0, 21), (-24, 15), closed=True), 1.3)
-        pts = []
-        for k in range(48):
-            t = k / 48 * 2 * math.pi
-            rr = 22 * (0.3 + 0.7 * abs(math.cos(2 * t)) ** 0.55)
-            pts.append((math.cos(t) * rr, -16 - math.sin(t) * rr * 0.42))
-        c.shape(Path(np.asarray(pts), True), 1.2)
-
-
-@icon("PandabornLacquerTree", group=G, style=PLANT, ship=False,
-      note="Lacquer tree: a compound leaf (paired leaflets) and a drop of sap")
-def lacquer_tree(c):
-    c.stroke(spline((30, 98), (40, 70), (52, 40), (64, 6)))
-    for k, t in enumerate((0.25, 0.48, 0.7)):
-        x, y = 30 + 34 * t + 2, 98 - 92 * t
-        broad_leaf(c, x, y, 30, 14, 150 - k * 5, veins=2)
-        broad_leaf(c, x, y, 30, 14, 20 + k * 5, veins=2)
-    broad_leaf(c, 64, 8, 26, 13, 75, veins=2)
-    c.shape(spline((84, 66), (90, 78), (88, 86), (80, 86), (78, 78), closed=True))
+    with c.at(70, 76, 0.7):
+        c.shape(spline((-34, -8), (-28, -19), (-12, -22), (12, -22), (28, -19), (34, -8), (30, 12), (0, 22),
+                       (-30, 12), closed=True), 1.3)
+        calyx(c, 0, -20, 30)
 
 
 # ------------------------------------------------------------------------------------------------- crops
 
-@icon("PandabornRice", group=G, style=PLANT, ship=False,
+@icon("PandabornRice", group=G, style=PLANT,
       note="Rice: three tufts in the paddy, ears bowing over the water")
 def rice(c):
     water(c, 84, 2, gaps=((18, 34), (42, 58), (68, 84)))
@@ -144,7 +122,7 @@ def rice(c):
                 grain(c, p[0] + (2 if k % 2 else -2), p[1] + 3, -60 - 10 * k, 0.9, filled=False)
 
 
-@icon("PandabornLotus", group=G, style=PLANT, ship=False,
+@icon("PandabornLotus", group=G, style=PLANT, ship=False,  # later update
       note="Lotus: a round leaf with radiating veins and a bud on its stalk, over water")
 def lotus(c):
     water(c, 86, 2, gaps=((58, 70),))
@@ -159,7 +137,7 @@ def lotus(c):
         c.stroke(line((0, 1), (0, 22)), 1.0)
 
 
-@icon("PandabornCabbage", group=G, style=PLANT, ship=False,
+@icon("PandabornCabbage", group=G, style=PLANT,
       note="Napa cabbage standing in the field")
 def cabbage(c):
     ground(c, gaps=((30, 70),))
@@ -173,7 +151,7 @@ def cabbage(c):
             c.stroke(spline((56, 98), (58, 70), (58, 44)))
 
 
-@icon("PandabornTeaBush", group=G, style=PLANT, ship=False,
+@icon("PandabornTeaBush", group=G, style=PLANT,
       note="Tea bush: a clipped round bush of small leaves with a fresh bud and two leaves on top, dry ground")
 def tea_bush(c):
     ground(c, gaps=((44, 56),))
@@ -192,7 +170,7 @@ def tea_bush(c):
     c.shape(spline((52, 10), (49, 2), (52, -6), (55, 2), closed=True), 0.8)
 
 
-@icon("PandabornSichuanPepper", group=G, style=PLANT, ship=False,
+@icon("PandabornSichuanPepper", group=G, style=PLANT,
       note="Sichuan pepper: a small thorny shrub hung with husk clusters, dry ground")
 def sichuan_pepper(c):
     ground(c, gaps=((44, 56),))

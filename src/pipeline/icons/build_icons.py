@@ -11,7 +11,7 @@ Usage (venv python, from the repo root):
 
 Output:
   <mod>/Sprites/Pandaborn/<Group>/<Id>Icon.png (+ .png.meta.json)    shipped icons (IconDef.ship)
-  <out>/rendered/<Group>/<Id>Icon.png                                 every icon, shipped or proposal
+  <out>/rendered/<Group>/[unshipped/]<Id>Icon.png                    every icon; unshipped ones in a sub-folder
   <out>/preview/<Id>Icon.png                                          4x on the panel colour
   <out>/<group>_sheet.png, _large.png, _blind.png                     review sheets beside vanilla
 """
@@ -25,7 +25,8 @@ sys.path.insert(0, HERE)
 
 import ink  # noqa: E402
 import goods  # noqa: E402,F401  (registers the goods icons)
-import plants  # noqa: E402,F401  (registers the plant icons, proposals)
+import plants  # noqa: E402,F401  (registers the plant icons)
+import buildings  # noqa: E402,F401  (registers the building icons)
 import logo  # noqa: E402,F401  (registers the faction logo, proposal)
 import contact_sheet  # noqa: E402
 
@@ -43,6 +44,10 @@ META = {
 REVIEW = {
     "Goods": ("sprites/goods", contact_sheet.VANILLA_GOODS),
     "Plants": ("naturalresources", None),
+    "Buildings": ("buildings", ["lodge", "triplelodge", "farmhouse", "grill", "bakery", "gristmill", "waterwheel",
+                                "windturbine", "smalltank", "largetank", "campfire", "inventor", "medicalbed",
+                                "rooftopterrace", "powerwheel", "beehive", "lumberjackflag", "forester",
+                                "teethgrindstone", "detailer"]),
     "Avatars": ("sprites/avatars", ["folktailslogo", "ironteethlogo"]),
 }
 
@@ -61,7 +66,7 @@ def main():
     for d in defs:
         img = d.render()
         name = d.filename
-        rendered = os.path.join(a.out, "rendered", d.group)
+        rendered = os.path.join(a.out, "rendered", d.group, *([] if d.ship else ["unshipped"]))
         os.makedirs(rendered, exist_ok=True)
         img.save(os.path.join(rendered, name))
         ink.preview(img, scale=4).save(os.path.join(a.out, "preview", name))
@@ -79,7 +84,9 @@ def main():
         sub, sample = REVIEW.get(group, (None, None))
         vdir = os.path.join(a.vanilla, *sub.split("/")) if sub else None
         if vdir and os.path.isdir(vdir):
-            contact_sheet.make(os.path.join(a.out, "rendered", group), vdir, a.out, group.lower(), sample)
+            # the review sheets show what ships; logo candidates (unshipped) are shown beside the pick
+            contact_sheet.make(os.path.join(a.out, "rendered", group), vdir, a.out, group.lower(), sample,
+                               include_unshipped=(group == "Avatars"))
         else:
             print(f"{group}: no vanilla icons to compare with (run extract_vanilla_icons.py)")
 

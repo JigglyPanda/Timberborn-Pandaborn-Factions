@@ -220,7 +220,7 @@ class Style:
     center_dy: float = 0.0         # vertical placement of the ink box centre, px from canvas centre (+ = down)
 
 
-GOODS = Style("goods", canvas=80, extent=64, extent_tall=72, pen=3.7, ink=(202, 172, 107),
+GOODS = Style("goods", canvas=80, extent=64, extent_tall=72, pen=3.5, ink=(202, 172, 107),
               shadow_dy=2.5, shadow_grow=0.5, wobble=0.22, width_jitter=0.06, center_dy=-1.5)
 
 # Plant (planting tool) and building icons are drawn with a pen: thinner, slightly tapered and wobbly strokes,
@@ -230,7 +230,7 @@ PLANT = Style("plant", canvas=112, extent=92, extent_tall=98, pen=2.8, ink=(187,
               width_jitter=0.16, taper=0.5, center_dy=5.0)
 BUILDING = Style("building", canvas=112, extent=82, extent_tall=92, pen=3.0, ink=(187, 161, 108),
                  shadow_dy=1.5, shadow_grow=0.5, shadow_blur=1.8, shadow_alpha=0.5, wobble=0.45,
-                 width_jitter=0.16, taper=0.5, center_dy=3.0)
+                 width_jitter=0.16, taper=0.5, center_dy=-1.0)
 
 # Faction logo (FactionSpec.Logo): one flat colour, diamond frame, solid emblem, 98 px.
 LOGO = Style("logo", canvas=98, extent=66, extent_tall=66, pen=6.0, ink=(132, 214, 160),

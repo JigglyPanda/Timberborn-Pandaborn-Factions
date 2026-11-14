@@ -130,30 +130,32 @@ def bamboo_shoots(c):
         c.shape(spline((21, 70), (36, 78), (58, 76), (82, 58), (80, 72), (77, 88), (24, 88), closed=True))
         # root band with root nubs
         c.shape(spline((26, 86), (50, 88), (75, 86), (73, 97), (50, 99), (28, 97), closed=True))
-        for x in (36, 46, 56, 66):
-            c.dot(x, 93, 0.4)
     with c.at(-28, 26, 0.7):
         shoot()
     shoot()
 
 
-@icon("PandabornPersimmons", note="Two squat persimmons with their broad four-lobed caps")
+def calyx(c, x, y, r):
+    """The persimmon's cap seen from the side: a wide flat collar of four sepals (left, right, a front one
+    lying on the fruit, the back one behind the stem), as wide as the fruit's shoulders, with a stem stub."""
+    with c.at(x, y, r / 30):
+        c.shape(spline((-31, 1), (-22, -6), (-10, -8), (-4, -13), (4, -13), (10, -8), (22, -6), (31, 1), (18, 2),
+                       (8, 4), (0, 13), (-8, 4), (-18, 2), closed=True), 0.9)
+        c.stroke(line((-24, -1), (-10, -3)), 0.5)
+        c.stroke(line((24, -1), (10, -3)), 0.5)
+        c.stroke(line((0, 9), (0, 0)), 0.5)
+        c.shape(rrect(-4, -20, 8, 10, 3), 0.9)
+
+
+@icon("PandabornPersimmons", note="Two squat persimmons, each with its wide flat four-sepal cap")
 def persimmons(c):
     def fruit(x, y, s):
         with c.at(x, y, s):
-            c.shape(spline((-32, -2), (-29, -15), (-15, -20), (0, -17), (15, -20), (29, -15), (32, -2), (26, 15),
-                           (0, 22), (-26, 15), closed=True))
-            c.stroke(arc(-12, 3, 12, 200, 250), 0.7)                     # shine
-            pts = []
-            for k in range(64):
-                t = k / 64 * 2 * math.pi
-                rr = 25 * (0.3 + 0.7 * abs(math.cos(2 * t)) ** 0.55)
-                pts.append((math.cos(t) * rr, -17 - math.sin(t) * rr * 0.42))
-            c.shape(Path(np.asarray(pts), True), 0.9)
-            c.shape(rrect(-4, -27, 8, 9, 2), 0.9)
-    fruit(32, 38, 0.85)
-    leaf(c, 60, 32, 34, 15, 40, 0.85)
-    fruit(58, 64, 1.05)
+            c.shape(spline((-34, -8), (-28, -19), (-12, -22), (12, -22), (28, -19), (34, -8), (30, 12), (0, 22),
+                           (-30, 12), closed=True))
+            calyx(c, 0, -20, 30)
+    fruit(30, 36, 0.8)
+    fruit(58, 66, 1.08)
 
 
 @icon("PandabornBambooMushrooms", note="Bamboo mushroom (zhusun): thimble cap, white stem, lacy net veil")
@@ -168,7 +170,7 @@ def bamboo_mushrooms(c):
                                                                                    (64, 34))
     skirt = skirt.close()
     c.shape(skirt, 0.9)
-    for seg in hatch(skirt, 10.5, 60, margin=3.5) + hatch(skirt, 10.5, -60, margin=3.5):
+    for seg in hatch(skirt, 13, 60, margin=4) + hatch(skirt, 13, -60, margin=4):
         c.stroke(seg, 0.55)
     # conical cap, wider than the top of the veil
     c.shape(spline((28, 40), (34, 22), (44, 8), (50, 5), (56, 8), (66, 22), (72, 40), (50, 45), closed=True))
@@ -186,31 +188,37 @@ def cabbage(c):
             c.shape(spline((50, 102), (36, 94), (30, 70), *front, (68, 64), (64, 92), closed=True))
             c.stroke(spline((44, 98), (40, 70), (40, 44)), 0.8)
             c.stroke(spline((56, 98), (58, 70), (58, 44)), 0.8)
-            c.stroke(spline((73, 86), (76, 60), (74, 40)), 0.7)
 
 
-@icon("PandabornSichuanPepper", note="Sichuan pepper: a thorny twig with a cluster of small split husks and a leaf")
+def split_husk(c, x, y, r=13, ang=0.0, open_deg=34):
+    """A Sichuan pepper husk split open like a tiny clam: two half-shells hinged at the bottom, seed between."""
+    with c.at(x, y, 1, ang):
+        half = arc(0, -r, r, 90, 270) + line((0, 0), (0, -2 * r))
+        with c.at(0, 0, 1, open_deg):
+            c.shape(half.close())
+        with c.at(0, 0, 1, -open_deg, sx=-1, sy=1):
+            c.shape(half.close())
+        c.shape(circle(0, -r * 1.1, r * 0.48), 0.4, filled=True, halo=0.9)
+
+
+def open_husk(c, x, y, r=12):
+    """A Sichuan pepper husk split open at the top, its round black seed sitting in the opening."""
+    c.shape(circle(x, y, r))
+    c.erase(arc(x, y, r, 55, 125), 1.4)
+    c.shape(circle(x, y - r * 0.55, r * 0.52), 0.4, filled=True, halo=0.9)
+
+
+@icon("PandabornSichuanPepper", note="Sichuan pepper: three husks split open on their black seeds, a pinnate leaf sprig")
 def sichuan_pepper(c):
-    # twig with two thorns
-    c.stroke(spline((92, 6), (74, 22), (56, 40), (46, 52)), 0.9)
-    c.stroke(line((78, 18), (84, 24)), 0.7)
-    c.stroke(line((64, 32), (62, 24)), 0.7)
-    # compound leaf
-    c.stroke(spline((68, 28), (48, 18), (24, 8)), 0.7)
+    c.stroke(spline((96, 2), (74, 18), (50, 34)), 0.8)
     for t, side in ((0.3, 1), (0.3, -1), (0.62, 1), (0.62, -1)):
-        x, y = 68 - 44 * t, 28 - 20 * t
-        leaf(c, x, y, 16, 8, 160 + 40 * side - 20, 0.7, vein=False)
-    leaf(c, 24, 8, 16, 8, 160, 0.7, vein=False)
-    # a loose cluster of small round husks on short stalks, each with its seed dot
-    # four husks, each split in two halves with the black seed between them
-    husks = [(24, 66, -20), (52, 70, 15), (32, 92, 5), (60, 96, -10)]
-    for hx, hy, a in husks:
-        c.stroke(line((46, 52), (hx + (46 - hx) * 0.1, hy - 12)), 0.6)
-    for hx, hy, a in husks:
-        with c.at(hx, hy, 1, a):
-            c.shape(circle(0, 0, 12.5))
-            c.erase(line((0, -16), (0, 16)), 0.9)
-            c.shape(circle(0, 1, 4.6), 0.4, filled=True, halo=0.6)
+        x, y = 96 - 46 * t, 2 + 32 * t
+        leaf(c, x, y, 17, 9, 215 + 50 * side, 0.75, vein=False)
+    leaf(c, 50, 34, 18, 9, 215, 0.75, vein=False)
+    open_husk(c, 26, 66, 14)
+    open_husk(c, 58, 72, 14)
+    open_husk(c, 40, 92, 13)
+    c.shape(circle(78, 94, 5.5), 0.5, filled=True)
 
 
 # ------------------------------------------------------------------------------------------- crops, plants
@@ -235,14 +243,13 @@ def tea_leaves(c):
 @icon("PandabornBambooSeed", note="Bamboo seed: a pile of pale grains in a round woven tray")
 def bamboo_seed(c):
     c.shape(ellipse(50, 62, 46, 15))
-    pile = [(28, 60, 20), (44, 62, -10), (60, 60, 15), (74, 62, -25), (36, 50, -30), (52, 50, 10), (66, 51, 35),
-            (44, 39, -15), (59, 40, 25), (52, 29, 0)]
+    pile = [(30, 60, 20), (50, 62, -10), (70, 60, 25), (40, 47, -30), (60, 47, 15), (50, 34, 0)]
     for x, y, a in pile:
-        grain(c, x, y, a, 1.45, filled=False)
+        grain(c, x, y, a, 1.75, filled=False)
     front = arc(50, 62, 46, 180, 360, ry=15) + arc(50, 72, 44, 0, -180, ry=15)
     front = front.close()
     c.shape(front)
-    for seg in hatch(front, 8, 70, margin=3):
+    for seg in hatch(front, 14, 70, margin=3):
         c.stroke(seg, 0.55)
 
 
@@ -252,23 +259,42 @@ def bamboo_seed(c):
 def steamed_rice(c):
     rim_y, rx, ry = 56, 40, 10
     c.shape(spline((10, rim_y), (16, 40), (34, 30), (50, 28), (66, 30), (84, 40), (90, rim_y), closed=True))
-    for x, y, a in ((34, 44, 20), (50, 38, -10), (64, 46, 30), (44, 50, -30), (74, 52, 0)):
-        grain(c, x, y, a, 0.7)
+    for x, y, a in ((36, 44, 20), (54, 38, -10), (66, 48, 30)):
+        grain(c, x, y, a, 0.75)
     bowl_body(c, 50, rim_y, rx, ry, 34)
-    c.stroke(arc(50, rim_y + 4, rx - 4, 195, 345, ry=ry), 0.6)
     steam(c, 36, 22, 18)
     steam(c, 52, 18, 18)
     steam(c, 68, 22, 18)
 
 
-@icon("PandabornRiceBalls", note="Tangyuan: three glossy rice balls in a bowl, porcelain spoon")
+@icon("PandabornSteamedShoots", note="Steamed shoots: a round bamboo steamer with a woven lid, steam, a halved shoot")
+def steamed_shoots(c):
+    # a round bamboo steamer: one woven tier and a lid with a cross-woven top; steam from the top
+    rx, ry = 38, 10
+    lid_top = ellipse(50, 30, rx - 3, ry - 1)
+    for y in (52,):
+        c.shape((arc(50, y, rx, 180, 360, ry=ry) + line((88, y), (88, y + 24))
+                 + arc(50, y + 24, rx, 0, -180, ry=ry) + line((12, y + 24), (12, y))).close())
+    c.shape((arc(50, 34, rx, 180, 360, ry=ry) + line((88, 34), (87, 30)) + arc(50, 30, rx - 1, 0, 180, ry=ry)
+             + line((13, 30), (12, 34))).close())
+    c.shape(lid_top)
+    for seg in hatch(lid_top, 11, 45, margin=3) + hatch(lid_top, 11, -45, margin=3):
+        c.stroke(seg, 0.5)
+    steam(c, 40, 16, 16, 0.9)
+    steam(c, 60, 16, 16, 0.9)
+    # a halved shoot lying in front
+    with c.at(70, 90, 0.8, 8):
+        c.shape(spline((-30, 6), (-30, -6), (-10, -10), (14, -6), (34, 0), (14, 6), (-10, 10), closed=True))
+        c.stroke(spline((-20, -8), (-12, 0), (-20, 8)), 0.6)
+
+
+@icon("PandabornSweetRiceBalls", note="Tangyuan: three glossy rice balls in a bowl, porcelain spoon")
 def rice_balls(c):
     rim_y, rx, ry = 52, 44, 13
     c.shape(ellipse(50, rim_y, rx, ry))
     c.shape(spline((62, 48), (76, 28), (90, 12), (96, 11), (94, 17), (80, 32), (68, 52), closed=True), 0.9)
     for x, y in ((30, 46), (52, 42), (42, 56)):
         c.shape(circle(x, y, 13))
-        c.stroke(arc(x, y, 7.5, 105, 165), 0.6)
     bowl_body(c, 50, rim_y, rx, ry, 30, foot=0.34)
 
 
@@ -298,9 +324,6 @@ def hot_pot(c):
     c.shape(ellipse(50, rim_y, rx, ry))
     c.stroke(spline((14, rim_y - 9), (40, rim_y - 9), (60, rim_y + 9), (86, rim_y + 9)), 1.0)
     chili(c, 54, rim_y - 6, 15, 0.42)
-    chili(c, 64, rim_y + 4, -10, 0.42)
-    c.shape(circle(30, rim_y + 3, 3.4), 0.6)
-    c.shape(circle(42, rim_y + 10, 2.8), 0.6)
     steam(c, 32, rim_y - 22, 20)
     steam(c, 50, rim_y - 25, 20)
     steam(c, 68, rim_y - 22, 20)
@@ -309,7 +332,6 @@ def hot_pot(c):
 @icon("PandabornTea", note="Tea in a gaiwan: saucer, lidded bowl, steam from the gap")
 def tea(c):
     c.shape(ellipse(50, 84, 46, 11))
-    c.stroke(ellipse(50, 83, 30, 6), 0.6)
     c.shape(spline((16, 46), (20, 66), (34, 80), (50, 82), (66, 80), (80, 66), (84, 46), (50, 52), closed=True))
     c.shape(ellipse(50, 46, 34, 8))
     with c.at(46, 39, 1, -9):
@@ -329,10 +351,9 @@ def bamboo_seed_cakes(c):
             rr = r + (2.6 if j % 2 else -0.6)
             scal.append((math.cos(a) * rr, -math.sin(a) * rr * k))
         c.shape(spline(*scal, closed=True))
-        c.stroke(ellipse(0, 0, r * 0.62, r * 0.62 * k), 0.6)
         for j in range(4):
             a = j / 4 * 2 * math.pi + math.pi / 4
-            c.shape(ellipse(math.cos(a) * r * 0.3, -math.sin(a) * r * 0.3 * k, r * 0.17, r * 0.17 * k), 0.55)
+            c.dot(math.cos(a) * r * 0.3, -math.sin(a) * r * 0.3 * k, 0.5)
     # one cake standing up behind, facing us
     with c.at(36, 38, 1, 12):
         c.shape(ellipse(4, 0, 32, 32), 0.9)          # its thickness
@@ -347,7 +368,7 @@ def bamboo_seed_cakes(c):
 
 # --------------------------------------------------------------------------------------------- materials
 
-@icon("PandabornBambooPoles", note="A bundle of three hollow bamboo poles with a leafy twig")
+@icon("PandabornPoles", note="A bundle of three hollow bamboo poles with a leafy twig")
 def bamboo_poles(c):
     ang = 26
     with c.at(26, 50, 1, ang):
@@ -360,17 +381,22 @@ def bamboo_poles(c):
             pole(c, 84, 11, nodes=(0.32, 0.74))
 
 
-@icon("PandabornCuredPoles", note="Smoke-cured bamboo poles: dark solid poles with smoke curling up")
+@icon("PandabornCuredPoles", note="Cured poles: a lashed bundle of jointed poles with dark ends and the vanilla 'treated' sparkles")
 def cured_poles(c):
     ang = 26
-    for dx, dy in ((0, 0), (24, 6)):
-        with c.at(10 + dx, 74 + dy, 1, ang):
-            pole(c, 84, 12, nodes=(0.35, 0.7), solid=True)
-    for x, y in ((26, 48), (42, 40), (58, 32)):
-        c.stroke(spline((x, y), (x - 5, y - 9), (x + 3, y - 18), (x - 3, y - 27), (x + 2, y - 34)), 0.85)
+    for dx, dy in ((14, -20), (0, 0), (25, 6)):
+        with c.at(12 + dx, 72 + dy, 1, ang):
+            pole(c, 84, 11, nodes=(0.28, 0.82), face="fill")
+    # lashing: two wraps of cord around the middle of the bundle, and the loose end
+    with c.at(12, 72, 1, ang):
+        c.stroke(spline((48, -36), (52, -12), (52, 12), (48, 22)), 1.3, halo=0.8)
+        c.stroke(spline((50, 22), (58, 30), (54, 38)), 0.7)
+    sparkle(c, 14, 34, 10)
+    sparkle(c, 30, 18, 6)
+    sparkle(c, 90, 94, 7)
 
 
-@icon("PandabornBambooCharcoal", note="Bamboo charcoal: a pile of short black hollow pieces")
+@icon("PandabornBambooCharcoal", ship=False, note="Bamboo charcoal: a pile of short black hollow pieces")
 def bamboo_charcoal(c):
     # a stack of charred tube ends seen end-on: solid discs, a hollow centre, radial cracks
     r = 15
@@ -412,7 +438,7 @@ def rice_flour(c):
     c.stroke(spline((60, 62), (64, 76), (62, 90)), 0.7)
 
 
-# ------------------------------------------------------------------- likely cut from the catalogue (drawn last)
+# ------------------------------------------- cut from the catalogue (draft 2); kept in case they return, not shipped
 
 def sparkle(c, x, y, r):
     """A four-pointed glint (the vanilla 'treated' convention)."""
@@ -434,7 +460,7 @@ def cube(c, x, y, s, r=3.0):
     c.stroke(line(mid, (x, mid[1] + s - 2)), 0.75)
 
 
-@icon("PandabornTofu", note="Tofu: a soft white block and a small cube, two soybeans")
+@icon("PandabornTofu", ship=False, note="Tofu: a soft white block and a small cube, two soybeans")
 def tofu(c):
     cube(c, 40, 6, 40)
     cube(c, 78, 52, 22)
@@ -444,7 +470,7 @@ def tofu(c):
             c.stroke(arc(0, 0, 4, 200, 340, ry=2.5), 0.5)
 
 
-@icon("PandabornLacquer", note="Raw lacquer: a pot of dark glossy sap with a flat brush and a drip")
+@icon("PandabornLacquer", ship=False, note="Raw lacquer: a pot of dark glossy sap with a flat brush and a drip")
 def lacquer(c):
     c.shape(rrect(70, 2, 10, 46, 4), 0.85)                         # brush handle, leaning in the pot
     c.shape(spline((12, 40), (10, 66), (20, 88), (50, 94), (80, 88), (90, 66), (88, 40), closed=True))
@@ -455,7 +481,7 @@ def lacquer(c):
     c.stroke(arc(50, 68, 39, 195, 345, ry=9), 0.6)
 
 
-@icon("PandabornLacqueredPoles", note="Lacquered poles: glossy poles with sparkles (the vanilla 'treated' convention)")
+@icon("PandabornLacqueredPoles", ship=False, note="Lacquered poles: glossy poles with sparkles (the vanilla 'treated' convention)")
 def lacquered_poles(c):
     for dx, dy in ((0, 0), (24, 6)):
         with c.at(12 + dx, 70 + dy, 1, 26):
@@ -467,7 +493,7 @@ def lacquered_poles(c):
     sparkle(c, 92, 96, 7)
 
 
-@icon("PandabornPersimmonCakes", note="Persimmon cakes: flattened dried persimmons with caps and a sugar bloom")
+@icon("PandabornPersimmonCakes", ship=False, note="Persimmon cakes: flattened dried persimmons with caps and a sugar bloom")
 def persimmon_cakes(c):
     def cake(x, y, s):
         with c.at(x, y, s):
@@ -487,7 +513,7 @@ def persimmon_cakes(c):
     cake(56, 70, 1.05)
 
 
-@icon("PandabornLotusRoot", note="Lotus root: two linked segments and a slice showing the ring of holes")
+@icon("PandabornLotusRoot", ship=False, note="Lotus root: two linked segments and a slice showing the ring of holes")
 def lotus_root(c):
     with c.at(54, 36, 1, 25):
         c.shape(rrect(0, -16, 52, 32, 15))
@@ -500,7 +526,7 @@ def lotus_root(c):
             c.shape(circle(math.cos(a) * 13, math.sin(a) * 11, 3.6 if k % 2 else 4.2), 0.6)
 
 
-@icon("PandabornOxParts", note="Wooden ox parts: a carved horned ox head and a pegged dowel")
+@icon("PandabornOxParts", ship=False, note="Wooden ox parts: a carved horned ox head and a pegged dowel")
 def ox_parts(c):
     c.shape(rrect(52, 58, 46, 12, 6), 0.9)                            # dowel behind
     c.dot(62, 64, 0.5)

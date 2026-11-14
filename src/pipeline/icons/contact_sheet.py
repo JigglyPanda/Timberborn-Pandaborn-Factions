@@ -82,9 +82,9 @@ def _title(text, width, bg, font):
     return im
 
 
-def make(ours_dir, vanilla_dir, out_dir, name="goods", sample=None):
+def make(ours_dir, vanilla_dir, out_dir, name="goods", sample=None, include_unshipped=False):
     os.makedirs(out_dir, exist_ok=True)
-    ours = [(n.replace("Pandaborn", ""), im) for n, im in _load(ours_dir)]
+    ours = [(n.replace("Pandaborn", ""), im) for n, im in _load(ours_dir, recursive=include_unshipped)]
     if not ours:
         return
     vanilla_all = dict(_load(vanilla_dir, recursive=True))
