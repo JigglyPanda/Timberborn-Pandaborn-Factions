@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bindito.Core;
-using Pandaborn.Specs;
+using Timberborn.AssetSystem;
 using Timberborn.BlueprintSystem;
 using Timberborn.GameFactionSystem;
 using Timberborn.SingletonSystem;
@@ -31,10 +31,12 @@ namespace Pandaborn.Look
     }
 
     /// <summary>
-    /// Re-themes vanilla building models for a faction whose blueprint carries PandabornLookSpec. The faction keeps listing
-    /// the vanilla material collection (so other mods that add to it or inject its materials keep working); this provider is
-    /// enumerated by MaterialRepository.Load before any model is built, and on that first enumeration it copies every
-    /// material of the spec's collections into the loaded material of the same name (Material.CopyPropertiesFromMaterial:
+    /// Re-themes vanilla building models in an Inkpaws game. No blueprint data is involved (the faction file is read in every
+    /// game, so it stays plain): the module activates when the loaded faction's Id is "Inkpaws", and its replacements are
+    /// simply every material our asset bundle holds under Materials/Pandaborn/Look/. The faction keeps listing the vanilla
+    /// material collection (so other mods that add to it or inject its materials keep working); this provider is enumerated
+    /// by MaterialRepository.Load before any model is built, and on that first enumeration it copies each of our materials
+    /// into the loaded material of the same name from the faction's collections (Material.CopyPropertiesFromMaterial:
     /// textures, colours, floats; the game's own shader stays), keeping a backup of each. It yields no collection ids itself.
     /// The originals are put back when the game scene unloads, and again on the main menu as a safety net. Any failure
     /// restores what was changed, logs once and switches the look off for the rest of the session.
@@ -42,17 +44,22 @@ namespace Pandaborn.Look
     public class MaterialSwap : IMaterialCollectionIdsProvider, IUnloadableSingleton
     {
         private const string Tag = "[Pandaborn.Look] ";
+        private const string FactionId = "Inkpaws";
+        /// <summary>Bundle asset folder of the replacement materials (asset path after /Resources/).</summary>
+        private const string MaterialFolder = "Materials/Pandaborn/Look";
         private static readonly List<(Material Target, Material Backup)> Swapped = new List<(Material, Material)>();
         private static bool _failed;
 
         private readonly FactionService _factionService;
         private readonly ISpecService _specService;
+        private readonly IAssetLoader _assetLoader;
         private bool _done;
 
-        public MaterialSwap(FactionService factionService, ISpecService specService)
+        public MaterialSwap(FactionService factionService, ISpecService specService, IAssetLoader assetLoader)
         {
             _factionService = factionService;
             _specService = specService;
+            _assetLoader = assetLoader;
         }
 
         /// <summary>Number of materials currently re-themed (for tests).</summary>
@@ -93,40 +100,42 @@ namespace Pandaborn.Look
         private void Swap()
         {
             var faction = _factionService.Current;
-            var spec = faction?.Blueprint?.GetSpec<PandabornLookSpec>();
-            if (spec == null || spec.MaterialCollectionIds.IsDefaultOrEmpty) return;
-            var ours = new HashSet<string>(spec.MaterialCollectionIds.Where(id => !string.IsNullOrEmpty(id)), StringComparer.Ordinal);
-            var listed = new HashSet<string>(faction.MaterialCollectionIds, StringComparer.Ordinal);
-            listed.ExceptWith(ours);
+            if (faction == null || faction.Id != FactionId) return;
 
-            var collections = _specService.GetSpecs<MaterialCollectionSpec>().ToList();
             var loaded = new Dictionary<string, Material>(StringComparer.Ordinal);
-            foreach (var collection in collections.Where(c => listed.Contains(c.CollectionId)))
+            var listed = new HashSet<string>(faction.MaterialCollectionIds, StringComparer.Ordinal);
+            foreach (var collection in _specService.GetSpecs<MaterialCollectionSpec>().Where(c => listed.Contains(c.CollectionId)))
                 foreach (var reference in collection.Materials)
                 {
-                    var material = reference?.Asset;
+                    Material material;
+                    try { material = reference?.Asset; }
+                    catch (Exception) { material = null; }       // another mod's broken entry is not our business
                     if (material != null && !loaded.ContainsKey(material.name)) loaded[material.name] = material;
                 }
 
-            int unavailable = 0, unmatched = 0;
-            var done = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var collection in collections.Where(c => ours.Contains(c.CollectionId)))
-                foreach (var reference in collection.Materials)
-                {
-                    if (reference == null) continue;
-                    Material replacement;
-                    try { replacement = reference.Asset; }
-                    catch (Exception) { replacement = null; }
-                    if (replacement == null) { unavailable++; continue; }
-                    if (!loaded.TryGetValue(replacement.name, out var target)) { unmatched++; continue; }
-                    if (!done.Add(replacement.name)) continue;
-                    var backup = new Material(target) { name = target.name + " (Pandaborn backup)" };
-                    Swapped.Add((target, backup));
-                    target.CopyPropertiesFromMaterial(replacement);
-                }
+            // only mod-provided assets: an empty resource list keeps the game's own Resources out of the search
+            var ours = _assetLoader.LoadAll<Material>(MaterialFolder, Array.Empty<string>())
+                                   .Where(a => !a.IsBuiltIn && a.Asset != null)
+                                   .Select(a => a.Asset)
+                                   .ToList();
+            if (ours.Count == 0)
+            {
+                Debug.Log(Tag + "no replacement materials under " + MaterialFolder + " (asset bundle missing?): vanilla look");
+                return;
+            }
 
-            Debug.Log(Tag + "re-themed " + Swapped.Count + " materials for faction " + faction.Id + " from " + string.Join(", ", ours)
-                      + (unavailable > 0 ? "; " + unavailable + " not available (asset bundle missing?)" : "")
+            int unmatched = 0;
+            var done = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var replacement in ours)
+            {
+                if (!loaded.TryGetValue(replacement.name, out var target)) { unmatched++; continue; }
+                if (!done.Add(replacement.name)) continue;
+                var backup = new Material(target) { name = target.name + " (Pandaborn backup)" };
+                Swapped.Add((target, backup));
+                target.CopyPropertiesFromMaterial(replacement);
+            }
+
+            Debug.Log(Tag + "re-themed " + Swapped.Count + " materials for faction " + faction.Id + " from " + MaterialFolder
                       + (unmatched > 0 ? "; " + unmatched + " match no loaded material" : ""));
         }
 

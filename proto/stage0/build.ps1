@@ -69,9 +69,8 @@ foreach ($rel in 'Scripts\Pandaborn.Bootstrap.dll', 'Scripts\Pandaborn.Specs.bin
                  'Scripts\Pandaborn.Core.api.txt', 'Modules\modules.txt', 'Modules\Pandaborn.Bell.bin', 'Modules\Pandaborn.Bell.api.txt',
                  'Modules\Pandaborn.Names.bin', 'Modules\Pandaborn.Names.api.txt', 'Localizations\enUS_PandabornCore.csv',
                  'Localizations\enUS_PandabornBell.csv') { Expect $rel }
-# Pandaborn.Look: module, its data, and its bundle when tools/build_look.ps1 -BundleName pandabornlook has made one
-foreach ($rel in 'Modules\Pandaborn.Look.bin', 'Modules\Pandaborn.Look.api.txt', 'Factions\Pandaborn\Faction.Inkpaws.optional.blueprint.json',
-                 'MaterialCollections\Pandaborn\MaterialCollection.PandabornLook.Inkpaws.blueprint.json',
+# Pandaborn.Look: module, and its bundle when tools/build_look.ps1 -BundleName pandabornlook has made one (no blueprint data)
+foreach ($rel in 'Modules\Pandaborn.Look.bin', 'Modules\Pandaborn.Look.api.txt',
                  'AssetBundles\pandabornlook_win', 'AssetBundles\pandabornlook_mac') { Expect $rel }
 
 $probe = Join-Path $here 'src\PandabornProtoStage0.csproj'

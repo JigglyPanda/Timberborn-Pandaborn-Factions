@@ -9,7 +9,7 @@ already defines one of these names.
 
 ### Game API this module references
 
-Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `PandabornLookSpec`, `PandabornNamePoolSpec`
+Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `PandabornNamePoolSpec`
 
 **Timberborn.BlueprintSystem**
 

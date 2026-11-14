@@ -6,32 +6,27 @@
   "speed": 3,
   "batchControl": false,
   "buildings": [
-    "Lodge.Folktails",
-    "DoubleLodge.Folktails",
-    "LumberMill.Folktails",
-    "Inventor.Folktails",
-    "WaterWheel.Folktails",
-    "PowerShaft.Folktails",
-    "SmallWarehouse.Folktails",
-    "MediumTank.Folktails",
-    "Campfire.Folktails",
-    "Lantern.Folktails",
-    "PoleBanner.Folktails",
-    "WindTurbine.Folktails",
-    "GearWorkshop.Folktails",
-    "Bakery.Folktails",
-    "SmallPile.Folktails",
-    "Shrub.Folktails",
+    "PandabornDen.Inkpaws",
+    "PandabornMoonLoft.Inkpaws",
+    "PandabornTeahouse.Inkpaws",
+    "PandabornVillageHall.Inkpaws",
+    "PandabornSteamer.Inkpaws",
+    "PandabornPickleYard.Inkpaws",
+    "PandabornKindergarten.Inkpaws",
+    "PandabornHammock.Inkpaws",
+    "PandabornKiteWindmill.Inkpaws",
+    "PandabornBambooWaterWheel.Inkpaws",
+    "PandabornCisternSmall.Inkpaws",
+    "PandabornCourtyardHouse.Inkpaws",
+    "PandabornCisternMedium.Inkpaws",
+    "SmallWarehouse.Inkpaws",
+    "MediumWarehouse.Inkpaws",
+    "Inventor.Inkpaws",
+    "PandabornKitchen.Inkpaws",
     {
-      "template": "TripleLodge.Folktails",
+      "template": "PandabornTerraceHouse.Inkpaws",
       "finished": false
-    },
-    {
-      "template": "Gristmill.Folktails",
-      "finished": false
-    },
-    "WoodWorkshop.Folktails",
-    "BeaverStatue.Folktails"
+    }
   ],
   "screenshots": [
     {
