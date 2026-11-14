@@ -373,7 +373,7 @@ probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
 | `events-rtoff-3` | copy `pbevents-rt`: a Ringtail family moves in, festival called, then a reload with `force-off: Ringtails` mid-call | **PASS**, both launches. First launch: 3 Ringtails on the night post. Reload: 0 Ringtails, 16 Inkpaws (the saved Ringtails loaded as Inkpaws), the festival ran: 15/16 attended, festive 0.9; the lumberjack (a keep-working template in this variant) stayed at its flag all day; 24 lanterns. Shots `reload\ev_rt_off_gathering.png`, `reload\ev_rt_off_lumberjack.png`, `reload\ev_rt_off_square.png` |
 | `events-final-1` | copy `pbevents3` | **could not test**: crashed at load on another lane's new character attachment (`Characters/Pandaborn/Attachments/ConicalHat`, bundle `pandabornattachments`, which the copy lacked). `build.ps1` now copies every `pandaborn*` bundle the copy lacks from the last full build |
 | `events-final-2` | copy `pbevents3`: the square's `LanternRise` attachment (`Fireworks/Content/Sparks_Trail` on `#Finished`, until the model lane's node exists), crowd nearer, the panel layout fix, `BudsUseDetail` | **PASS, 0 own errors.** The farmhouse crew of 3 kept working; the 10 others all attended and spent the day at or walking to the square. **LanternRise:** the attachment played for each of the 24 lanterns (no comets in the sky); it shows as small pink sparks halfway up the pole (`ev_f_d1_h16_dusk_c.png`, `ev_f_d1_h17_dusk_d.png`). **Panel:** the bamboo line and its setting button no longer overlap (`ev_f_d0_inflower_panel.png`, `ev_f_d0_buds_plant.png`). **Buds:** not visible (`ev_f_d0_buds_plant.png`); see `events-buds-1` |
-| `events-buds-1` | copy `pbevents3`, short: a grown shoot-bamboo field, announcement, close-ups before and after; the probe lists each renderer under `Mature` with its material, `_EnableDetail` and detail textures | queued |
+| `events-buds-1` | copy `pbevents3`, short: a grown shoot-bamboo field, announcement, close-ups before and after; the probe lists each renderer under `Mature` with its material, `_EnableDetail` and detail textures | **PASS, 0 own errors. The switch works, the buds do not read.** Before the announcement the grown model's material (`PandabornShootBamboo - Uncolored21 (Instance)`, VegetationURP, re-created by the game's optimizer) has `_DetailMap PandabornPlants_Detail` and `_EnableDetail 0`; from the announcement on, `_EnableDetail 1` on every renderer under `Mature` (as the game's `GatherableModel` does). On screen the field looks the same before and after (`ev_b_before.png`, `ev_b_after.png`, `ev_b_after_field.png`): the bud clusters are too small and too close to the leaf green to see from the game camera. Art request to the plant lane: larger, paler (cream to white) clusters at the spray tips, or a pale tint over the upper sprays in the detail map. No code change is needed (why the plant lab's `buds` rule changed nothing is not known; the switch itself works) |
 
 ### Phase 1
 
@@ -407,7 +407,7 @@ fireworks (Grand only) are the game's own and look right.
 
 ## Unproven
 
-* **Buds** (see `events-buds-1`).
+* **Visible buds**: the switch is proven (`events-buds-1`), but the buds need stronger art before anyone can see them.
 * **A real pump crew**: keep-working is proven with the Efficient Farmhouse and the lumberjack as stand-ins (the same
   template check); no pump or lift stood in a test district.
 * **The festival with Ringtails on, through their morning rest**: in `events-main-3` the 3 Ringtails did not work on the
