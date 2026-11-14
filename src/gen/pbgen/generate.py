@@ -541,6 +541,10 @@ class Generator:
             self.apply_set(data, b.get("set"), item)
             self.apply_delete(data, b.get("delete"), item)
             self.apply_module_specs(data, b.get("module_specs"), item)
+            for module, sets in (b.get("module_set") or {}).items():
+                # numbers that change only while a module is on (a Tradition decoration costs no science)
+                if self.module_on(module):
+                    self.apply_set(data, sets, item)
             category = self.v.rel(key).split("/")[1] if self.v.rel(key).startswith("Buildings/") else "Misc"
             path = b.get("path") or "Buildings/Pandaborn/%s/%s/%s" % (category, bid, p["template"])
             coll.append(self.emit(path, data, item, "building", key))

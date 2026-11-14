@@ -139,6 +139,7 @@
       "name": "Festive spirit", "name_key": "own",
       "tooltip": "Set by a Lantern Festival. It fades over most of a cycle.",
       "note": "The stat sheet places it in the vanilla group Boosts, whose vanilla name was written for bots. If that reads wrongly on a panda's panel, the vanilla group 'Temporary effects' (NeedGroup.Temporary.DisplayName) fits the words better."
-    }
+    },
+    "Grand festival": { "id": "PandabornFestiveGrand", "group": "Boosts", "name": "Grand festival", "name_key": "own", "tooltip": "Set by a grand Lantern Festival, on top of the festive spirit." }
   }
 }

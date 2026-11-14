@@ -47,7 +47,7 @@ PLANT_FIELDS = {
     "demolish_hours": ("DemolishableSpec.DemolishTimeInHours", "float"),
 }
 COMMON_FIELDS = {"basis", "text", "icon", "set", "add", "delete", "aliases", "note", "src", "when_poles", "path", "not_in_sheet",
-                 "waits_for",
+                 "waits_for", "module_specs",
                  "name", "template", "standin", "models"}
 ICON_DIRS = {"good": "Goods", "plant": "Plants", "building": "Buildings"}
 
@@ -114,6 +114,7 @@ def apply_fields(gen, data, entry, table, item, allowed_extra=()):
                 value = gen.sub_goods(value)
             put(data, path, value, item, field)
     gen.apply_set(data, entry.get("set"), item)
+    gen.apply_module_specs(data, entry.get("module_specs"), item)
 
 
 def find_icon(gen, kind, ident, explicit):

@@ -63,7 +63,7 @@ set = { "GoodCarrierSpec.BaseLiftingCapacity" = 18 }
 # Ringtails (docs/tech/two-peoples.md 18.1): the alias is permanent, it lets a save keep its Ringtails (as Inkpaws) whenever
 # the module is off
 aliases = ["RingtailAdult.Inkpaws"]
-module_specs = { Ringtails = { PandabornRingtailsSpec = { AdultBlueprint = "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint", ChildBlueprint = "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint", WorkerType = "PandabornRingtail", ArrivalAdults = 2, ArrivalKits = 1 } }, Bell = { PandabornBellSpec = { WorkingSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], MovementSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], SuggestionDay = 4, SuggestionLocKey = "Pandaborn.Bell.Suggestion" } } }
+module_specs = { Festival = { PandabornFestivalSpec = { LanternGoodId = "PandabornPaperLantern", Lanterns = 40, Dishes = ["PandabornSteamedShoots", "PandabornPickles", "PandabornSteamedRice", "PandabornSweetRiceBalls", "PandabornHotPot", "PandabornBambooSeedCakes"], DishKinds = 3, DishAmount = 20, FireworksGoodId = "Fireworks", Fireworks = 20, FestiveNeedId = "PandabornFestive", GrandNeedId = "PandabornFestiveGrand", KeepWorkingTemplates = ["WaterPump.Inkpaws", "LargeWaterPump.Inkpaws", "MechanicalPump.Inkpaws", "CompactMechanicalPump.Inkpaws", "AquiferDrill.Inkpaws", "PandabornTreadwheelLift.Inkpaws", "PandabornScoopWheel.Inkpaws", "PandabornDewCollector.Inkpaws"], ShowStartHours = 15.5, ShowEndHours = 22.0, FireworksStartHours = 19.0, LanternRises = 24, LanternFireworkIds = ["Firework.CometRed", "Firework.CometWhite"], BurstFireworkIds = ["Firework.KamuroOrange", "Firework.PalmGold", "Firework.KamuroRed", "Firework.Willow", "Firework.PeonyYellowGreen"], Bursts = 20 }, PandabornFestivalGoerSpec = {} }, Flowering = { PandabornFloweringSpec = { Species = ["PandabornShootBamboo.Inkpaws", "PandabornTimberBamboo.Inkpaws"], FirstCycle = 6, NormalMinCycles = 5, NormalMaxCycles = 7, RareMinCycles = 9, RareMaxCycles = 11, RareDelayCycles = 3, SeedDays = 3.0, DormantDays = 9.0, DefaultSetting = "normal" } }, Ringtails = { PandabornRingtailsSpec = { AdultBlueprint = "Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint", ChildBlueprint = "Characters/Pandaborn/RingtailChild.Inkpaws.blueprint", WorkerType = "PandabornRingtail", ArrivalAdults = 2, ArrivalKits = 1 } }, Bell = { PandabornBellSpec = { WorkingSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], MovementSpeedCurve = [{ Hours = 12, Bonus = 0.33 }, { Hours = 16, Bonus = 0.0 }], SuggestionDay = 4, SuggestionLocKey = "Pandaborn.Bell.Suggestion" } } }
 
 [characters.child]
 basis = "Characters/Beaver/BeaverChild"
@@ -72,6 +72,7 @@ path = "Characters/Pandaborn/InkpawChild.Inkpaws"
 models = { "Model_Preserved" = "Characters/Pandaborn/InkpawChild.Model" }
 name_pool = "inkpaws"   # text/names.json; needs the Names module (left out by -NoCode)
 aliases = ["RingtailChild.Inkpaws"]   # permanent (see the adult)
+module_specs = { Festival = { PandabornFestivalGoerSpec = {} } }
 
 [characters.ringtail_adult]
 # The Ringtails (docs/tech/two-peoples.md 18.1): made by the Ringtails module from this blueprint path, so in no template
@@ -85,7 +86,7 @@ name_pool = "ringtails"
 in_collection = false
 waits_for = "Ringtails"
 set = { "WorkerSpec.WorkerType" = "PandabornRingtail", "GoodCarrierSpec.BaseLiftingCapacity" = 14, "WalkerSpeedManagerSpec.BaseSlowedSpeed" = 2.7, "MovementAnimatorSpec.AnimationSpeedScale" = 1.25 }
-module_specs = { Ringtails = { PandabornRingtailSpec = { Kind = "Ringtail", Textures = ["Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat2", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat3", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat4", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat5"], Avatar = "Sprites/Pandaborn/Avatars/RingtailAdult", ContaminatedAvatar = "Sprites/Pandaborn/Avatars/RingtailContaminatedAdult", RestStartHours = 0.0, RestEndHours = 8.0, RestEndsAtBell = true, RestMinEndHours = 4.0, RestMaxEndHours = 16.0, SleepBelow = 0.55 } } }
+module_specs = { Festival = { PandabornFestivalGoerSpec = {} }, Ringtails = { PandabornRingtailSpec = { Kind = "Ringtail", Textures = ["Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat2", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat3", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat4", "Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat5"], Avatar = "Sprites/Pandaborn/Avatars/RingtailAdult", ContaminatedAvatar = "Sprites/Pandaborn/Avatars/RingtailContaminatedAdult", RestStartHours = 0.0, RestEndHours = 8.0, RestEndsAtBell = true, RestMinEndHours = 4.0, RestMaxEndHours = 16.0, SleepBelow = 0.55 } } }
 
 [characters.ringtail_child]
 basis = "Characters/Beaver/BeaverChild"
@@ -96,7 +97,7 @@ name_pool = "ringtails"
 in_collection = false
 waits_for = "Ringtails"
 set = { "WalkerSpeedManagerSpec.BaseSlowedSpeed" = 1.35, "MovementAnimatorSpec.AnimationSpeedScale" = 1.0 }
-module_specs = { Ringtails = { PandabornRingtailSpec = { Kind = "Ringtail", Textures = ["Materials/Pandaborn/Ringtails/Child/RingtailChildCoat1", "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat2", "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat3"], Avatar = "Sprites/Pandaborn/Avatars/RingtailChild", ContaminatedAvatar = "Sprites/Pandaborn/Avatars/RingtailContaminatedChild", RestStartHours = 0.0, RestEndHours = 8.0, RestEndsAtBell = true, RestMinEndHours = 4.0, RestMaxEndHours = 16.0, SleepBelow = 0.55 } } }
+module_specs = { Festival = { PandabornFestivalGoerSpec = {} }, Ringtails = { PandabornRingtailSpec = { Kind = "Ringtail", Textures = ["Materials/Pandaborn/Ringtails/Child/RingtailChildCoat1", "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat2", "Materials/Pandaborn/Ringtails/Child/RingtailChildCoat3"], Avatar = "Sprites/Pandaborn/Avatars/RingtailChild", ContaminatedAvatar = "Sprites/Pandaborn/Avatars/RingtailContaminatedChild", RestStartHours = 0.0, RestEndHours = 8.0, RestEndsAtBell = true, RestMinEndHours = 4.0, RestMaxEndHours = 16.0, SleepBelow = 0.55 } } }
 
 [worker_types.PandabornRingtail]
 # Saves store a workplace's worker type and the game throws on an unknown one: this ships in every build, forever.

@@ -322,8 +322,9 @@ Pausing crops turn a colony-ending drought into a bad week. A pantry of six days
 | 150 | 20% | 380 | 1200 | 788 | 360 | 38 |
 
 If farmers may replant at once, a Flowering is a four-day blip. For "a food season to bridge", the flowered bamboo
-must not be replantable until the next temperate season (a planting check in code). Then the reserve is about 14
-food a colonist (8 above 60 colonists, when shoots matter less) and 5 poles a colonist, and the seed (3 a plant,
+must not be replantable at once: the shipped rule is **9 days of rest after the Flowering** (docs/tech/events.md 5;
+DESIGN.md 2decaec). Then the advised reserve is **about 11 food a colonist** (8 above 60 colonists, when shoots matter
+less) and 5 poles a colonist, and the seed (3 a plant,
 4 cakes a seed) keeps the best dish need for everyone for 5–10 weeks. First at cycle 6, then every 5–7 cycles,
 alternating: 4–5 Flowerings in a 30-cycle game.
 

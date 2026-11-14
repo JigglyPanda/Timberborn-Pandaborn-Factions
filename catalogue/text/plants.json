@@ -99,6 +99,16 @@
       "soil_rule": "Moist ground: it tolerates a long dry spell.",
       "soil_keyword": "moist_ground",
       "flavor": "The fruit ripens after the leaves have fallen, so the bare tree seems hung with small lanterns."
+    },
+    "Flowering shoot bamboo": {
+      "id": "PandabornShootBambooInFlower",
+      "name": "Flowering Shoot Bamboo",
+      "description": "Shoot bamboo in a Great Flowering. Cut it for bamboo seed; it does not grow back."
+    },
+    "Flowering timber bamboo": {
+      "id": "PandabornTimberBambooInFlower",
+      "name": "Flowering Timber Bamboo",
+      "description": "Timber bamboo in a Great Flowering. Cut it for bamboo seed; it does not grow back."
     }
   },
   "vanilla_plants_kept": {

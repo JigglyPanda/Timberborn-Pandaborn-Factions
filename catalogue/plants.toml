@@ -9,6 +9,7 @@ vanilla = ["Dandelion"]
 
 
 [plants.PandabornShootBamboo]
+module_specs = { Flowering = { PandabornFloweringPlantSpec = { InFlowerTemplate = "PandabornShootBambooInFlower.Inkpaws", BudsUseDetail = false } } }
 basis = "Carrot"
 model = "PandabornShootBamboo"   # art/plants/PandabornShootBamboo/model.json
 plant_hours = 0.2
@@ -35,6 +36,7 @@ flood_days = 2.0
 src = { GrowthTimeInDays = "M q3", Yield = "M q3", DaysToDieDry = "M q1", PlantTimeInHours = "V", RemovalTimeInHours = "V" }
 
 [plants.PandabornTimberBamboo]
+module_specs = { Flowering = { PandabornFloweringPlantSpec = { InFlowerTemplate = "PandabornTimberBambooInFlower.Inkpaws", BudsUseDetail = false } } }
 basis = "ChestnutTree"
 model = "PandabornTimberBamboo"   # art/plants/PandabornTimberBamboo/model.json
 plant_hours = 0.5
@@ -108,3 +110,23 @@ flood_max = 0
 flood_days = 10.0
 reproduction = 0.01
 src = { all = "V (Chestnut) with growth M q3" }
+
+# The flowering twins (docs/tech/events.md 8.6): what a bamboo becomes in a Great Flowering. Nobody plants them; cut,
+# they leave bamboo seed. Same models until the plant lane's flowering ones exist.
+[plants.PandabornShootBambooInFlower]
+waits_for = "Flowering"
+basis = "Carrot"
+model = "PandabornShootBamboo"
+cut_yield = { PandabornBambooSeed = 3 }
+delete = ["PlantableSpec", "PlantablePreviewModelSpec"]
+module_specs = { Flowering = { PandabornInFlowerSpec = { Species = "PandabornShootBamboo.Inkpaws" } } }
+src = "docs/tech/events.md 8.6"
+
+[plants.PandabornTimberBambooInFlower]
+waits_for = "Flowering"
+basis = "ChestnutTree"
+model = "PandabornTimberBamboo"
+cut_yield = { PandabornBambooSeed = 3 }
+delete = ["PlantableSpec", "PlantablePreviewModelSpec", "ReproducibleSpec", "GatherableSpec"]
+module_specs = { Flowering = { PandabornInFlowerSpec = { Species = "PandabornTimberBamboo.Inkpaws" } } }
+src = "docs/tech/events.md 8.6"

@@ -46,6 +46,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--blueprints", default=r"E:\PandabornDev\reference\Blueprints")
     ap.add_argument("--out", default=r"E:\PandabornDev\build\validate-fixtures")
+    ap.add_argument("--models", default=r"E:\PandabornDev\build\models")
     a = ap.parse_args(argv)
     out = os.path.abspath(a.out)
     bench = load(a.blueprints, "Buildings/Decoration/Bench/Bench.Folktails.blueprint.json")
@@ -208,6 +209,34 @@ def main(argv=None):
                            "need PandabornFixtureNeed is not in a need collection this mod's faction always lists",
                            "adds to vanilla need collection Folktails"],
          fx, args=["--template-suffix", SUFFIX])
+
+    # an adopted model whose blueprint keeps a spec that looks up a node the model lacks ("Child ... not found" crashed
+    # every Inkpaws game on 2026-11-14): our own Hammock model from the art build area, if it is built
+    mesh_dir = os.path.join(a.models, "Hammock")
+    mj_path = os.path.join(HERE, "..", "..", "..", "art", "models", "Hammock", "model.json")
+    if os.path.isfile(os.path.join(mesh_dir, "Hammock.Model.timbermesh")) and os.path.isfile(mj_path):
+        mj = json.load(open(mj_path, encoding="utf-8"))
+        h = load(a.blueprints, "Buildings/Decoration/Hammock/Hammock.Folktails.blueprint.json")
+        h["TemplateSpec"]["TemplateName"] = "Hammock" + SUFFIX
+        h["TemplateSpec"]["BackwardCompatibleTemplateNames"] = []
+        bos = h["BlockObjectSpec"]
+        bos["Size"] = {k: mj["size"][k] for k in "XYZ"}
+        if mj.get("blocks"):
+            bos["Blocks"] = mj["blocks"]
+        if mj.get("entrance"):
+            bos["Entrance"] = {"HasEntrance": True, "Coordinates": mj["entrance"]}
+        if mj.get("access"):
+            h["BuildingAccessibleSpec"]["LocalAccess"] = mj["access"]
+        mpath = "Buildings/Pandaborn/Models/Hammock/"
+        h["Children"]["#Finished"]["TimbermeshSpec"] = {"Model": mpath + "Hammock.Model"}
+        for node in (h["Children"].get("#Unfinished") or {}).get("Children", {}).values():
+            if "TimbermeshSpec" in node:
+                node["TimbermeshSpec"]["Model"] = mpath + "Hammock.ConstructionStage0.Model"
+        h["BuildingModelGroundCutoffSpec"] = {"Targets": ["#NoSuchNode"], "Offset": 0.0}
+        files = {"Buildings/Pandaborn/Fixture/Hammock" + SUFFIX + ".blueprint.json": h}
+        for f in ("Hammock.Model.timbermesh", "Hammock.ConstructionStage0.Model.timbermesh"):
+            files[mpath + f] = open(os.path.join(mesh_dir, f), "rb").read()
+        case("model_node_missing", ["looks up node #NoSuchNode"], files)
 
     os.makedirs(out, exist_ok=True)
     for name in os.listdir(out):

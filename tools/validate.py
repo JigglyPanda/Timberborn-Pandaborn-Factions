@@ -1652,6 +1652,16 @@ def check_models(c):
                 else:
                     R.unchecked.add("%s: mesh %s not in this folder (assemble copies it)" % (where, m))
             if nodes:
+                # every node a spec of the building looks up by name ("#Name": progress steps, animated parts, particle
+                # and sound emitters, lights...) must be in the adopted model: a missing one throws "Child ... not
+                # found" when the building is created and crashes the game (OxWorkshop, 2026-11-14). Children and
+                # attachment parents are blueprint nodes, not mesh nodes.
+                wanted, child_names = set(), set()
+                hash_names(dict((k, v) for k, v in bp.items() if k not in NODE_CHECK_SKIP), wanted)
+                child_keys(bp.get("Children") or {}, child_names)
+                for n in sorted(wanted - nodes - child_names):
+                    R.error("%s: a spec looks up node %s, which the model's meshes lack (\"Child not found\" crashes the "
+                            "game): add the node to the model or drop the spec with removeSpecs" % (where, n))
                 for slot in (bp.get("TransformSlotInitializerSpec") or {}).get("Slots", []):
                     kw = slot.get("SlotKeyword")
                     if kw and not any(n.startswith("#Slot#" + kw) for n in nodes):
@@ -1680,6 +1690,27 @@ MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "Pandabo
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
+NODE_CHECK_SKIP = {"Children", "TemplateAttachmentsSpec", "WaterInputPipeSpec", "BuildingModelSpec"}
+
+
+def hash_names(o, out):
+    if isinstance(o, dict):
+        for v in o.values():
+            hash_names(v, out)
+    elif isinstance(o, list):
+        for v in o:
+            hash_names(v, out)
+    elif isinstance(o, str) and o.startswith("#") and len(o) > 1:
+        out.add(o)
+
+
+def child_keys(children, out):
+    for k, v in children.items():
+        out.add(k.split("#nested")[0] if k.endswith("#nested") else k)
+        if isinstance(v, dict) and isinstance(v.get("Children"), dict):
+            child_keys(v["Children"], out)
+
+
 # components the game adds by itself to every entity with the given spec (decorators, no spec of their own)
 DECORATOR_DRIVERS = {"WonderAnimationControllerSpec": "WonderSpec"}
 # vanilla template names a tutorial faction must answer to (StairsUnlockedTrigger asks for Stairs.Folktails by name in
@@ -1785,6 +1816,11 @@ def faction_world(c, fs):
         for k, v in sp.items():
             if k in ("WorkshopRandomNeedApplierSpec", "YieldRemoverWorkplaceEffectsSpec"):
                 continue
+            if k.startswith("Pandaborn") and isinstance(v, dict):
+                # our own code raises needs it names (the festival's FestiveNeedId, GrandNeedId)
+                for fk, fv in v.items():
+                    if fk.endswith("NeedId") and isinstance(fv, str) and fv:
+                        add(w.satisfiers, fv, "%s (%s, code)" % (name, k))
             for nid, pts in walk_effects(v):
                 if pts and pts > 0:
                     add(w.satisfiers, nid, "%s (%s)" % (name, k))

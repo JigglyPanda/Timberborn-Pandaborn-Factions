@@ -234,8 +234,9 @@ def apply_plant_model(gen, data, mid, item):
     if "#Models" not in (data.get("Children") or {}):
         raise GenError("%s: basis has no #Models child for plant model %s" % (item, mid))
     _merge(data, {"Children": {"#Models": {"Children": tree}}})
-    if mj.get("PlantablePreviewModelSpec.Model"):
-        data.setdefault("PlantablePreviewModelSpec", {})["Model"] = mj["PlantablePreviewModelSpec.Model"]
+    if mj.get("PlantablePreviewModelSpec.Model") and "PlantablePreviewModelSpec" in data:
+        # (a plant nobody plants, such as a flowering twin, has no preview)
+        data["PlantablePreviewModelSpec"]["Model"] = mj["PlantablePreviewModelSpec.Model"]
     if mj.get("randomizer"):
         data["NaturalResourceModelRandomizerSpec"] = {k: v for k, v in mj["randomizer"].items() if k != "note"}
     if mj.get("treeCuttingRadius"):

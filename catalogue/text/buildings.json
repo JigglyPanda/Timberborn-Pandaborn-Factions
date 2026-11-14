@@ -59,7 +59,7 @@
     "Festival Square": {
       "id": "PandabornFestivalSquare", "basis": "new", "who": "-",
       "name": "Festival Square",
-      "description": "Holds paper lanterns, cooked dishes and fireworks for the Lantern Festival. Call the festival here once the square is stocked, at most once per cycle.",
+      "description": "Calls the Lantern Festival and hosts it. Pandas gather here in the evening.",
       "flavor": "Swept every morning, just in case.",
       "see": ["festival.*", "tradition.*"]
     },

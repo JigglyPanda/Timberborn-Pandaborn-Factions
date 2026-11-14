@@ -366,6 +366,10 @@
       "PandabornShootBamboo.Inkpaws": {
         "since": "2026-11-14"
       },
+      "PandabornShootBambooInFlower.Inkpaws": {
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
+      },
       "PandabornSichuanPepper.Inkpaws": {
         "since": "2026-11-14"
       },
@@ -405,6 +409,10 @@
       },
       "PandabornTimberBamboo.Inkpaws": {
         "since": "2026-11-14"
+      },
+      "PandabornTimberBambooInFlower.Inkpaws": {
+        "since": "2026-11-14",
+        "gatedBy": "Flowering"
       },
       "PandabornTreadwheelLift.Inkpaws": {
         "since": "2026-11-14",
@@ -680,6 +688,10 @@
         "since": "2026-11-14"
       },
       "PandabornFestive": {
+        "since": "2026-11-14",
+        "gatedBy": "Festival"
+      },
+      "PandabornFestiveGrand": {
         "since": "2026-11-14",
         "gatedBy": "Festival"
       },

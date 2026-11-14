@@ -243,3 +243,14 @@ basis = "Lantern"
 name_from = "building:PandabornStringLanterns"
 not_in_sheet = true
 src = "V (Lantern: wellbeing 1)"
+
+[needs.PandabornFestiveGrand]
+waits_for = "Festival"   # docs/tech/events.md 8: a grand festival adds one wellbeing while festive
+basis = "Bread"
+name_from = "own"
+group = "Boosts"
+daily_delta = -0.05
+favorable_wellbeing = 1
+importance = 1.0
+wastable = true
+src = "M q7 (Grand adds 1 well-being while festive)"

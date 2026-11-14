@@ -17,7 +17,7 @@ PandabornVillageHall = { model = "VillageHall", set = { "BuildingSpec.SelectionS
 BuildersHut = {}
 HaulingPost = {}
 DistrictCrossing = {}
-PandabornFestivalSquare = { archetype = "storage", model = "FestivalSquare", waits_for = "Festival", needs_code = "holds festival goods and calls the Lantern Festival; until then a small warehouse" }
+PandabornFestivalSquare = { basis = "DanceHall.Folktails", model = "FestivalSquare", needs_map = { DanceHall = "Campfire" }, waits_for = "Festival", module_specs = { Festival = { PandabornFestivalSquareSpec = {} } }, needs_code = "calls and hosts the Lantern Festival (Festival module, docs/tech/events.md 8)" }
 
 # ------------------------------------------------------------------ homes (all "new" in CONTENT; vanilla stand-ins)
 PandabornDen = { model = "Den" }
@@ -111,7 +111,7 @@ DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGener
 
 # ------------------------------------------------------------------ science and Wooden Oxen
 Inventor = {}
-PandabornOxWorkshop = { basis = "BotAssembler.Folktails", model = "OxWorkshop", recipes = ["PandabornWoodenOx"] }
+PandabornOxWorkshop = { basis = "BotAssembler.Folktails", standin = "new model", note = "model OxWorkshop un-adopted 2026-11-14: its nodes do not answer the BotAssembler progress steps (crashed every Inkpaws game)", recipes = ["PandabornWoodenOx"] }
 PandabornStarTower = { model = "StarTower", waits_for = "RingtailVenues", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory", tool_group = "PandabornNightWatch", tool_order = 50 }
 
 # ------------------------------------------------------------------ storage
@@ -171,8 +171,8 @@ PandabornNightForagersPost = { model = "NightForagersPost", waits_for = "Ringtai
 
 # ------------------------------------------------------------------ decoration
 PandabornStandingLantern = { model = "StandingLantern", tool_order = 20 }
-PandabornHangingLantern = { model = "HangingLantern", tool_order = 21 }
-PandabornStringLanterns = { model = "StringLanterns", needs_map = { Lantern = "PandabornStringLanterns" }, tool_order = 22 }
+PandabornHangingLantern = { model = "HangingLantern", tool_order = 21, module_specs = { Festival = { PandabornTraditionSpec = { Level = 2 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
+PandabornStringLanterns = { model = "StringLanterns", needs_map = { Lantern = "PandabornStringLanterns" }, tool_order = 22, module_specs = { Festival = { PandabornTraditionSpec = { Level = 1 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
 PandabornBambooFence = { basis = "WoodFence.Folktails", model = "BambooFence" }
 Hedge = {}
 Shrub = {}
@@ -183,8 +183,8 @@ Scarecrow = {}
 Bench = {}
 PoleBanner = {}
 SquareBanner = {}
-PandabornGoldfishBowl = { basis = "Shrub.Folktails", model = "GoldfishBowl", needs_map = { Shrub = "PandabornGoldfishBowl" }, tool_order = 12 }
-PandabornGardenMoonGate = { basis = "Shrub.Folktails", model = "GardenMoonGate", needs_map = { Shrub = "PandabornGardenMoonGate" }, tool_order = 13 }
+PandabornGoldfishBowl = { basis = "Shrub.Folktails", model = "GoldfishBowl", needs_map = { Shrub = "PandabornGoldfishBowl" }, tool_order = 12, module_specs = { Festival = { PandabornTraditionSpec = { Level = 1 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
+PandabornGardenMoonGate = { basis = "Shrub.Folktails", model = "GardenMoonGate", needs_map = { Shrub = "PandabornGardenMoonGate" }, tool_order = 13, module_specs = { Festival = { PandabornTraditionSpec = { Level = 3 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
 Roof1x1 = { text = "Roof" }
 Roof1x2 = { text = "Roof" }
 Roof2x2 = { text = "Roof" }
