@@ -40,6 +40,25 @@ namespace PandabornDevHarness
         public bool Finished = true;
         public int[] Offset;
         public string Orientation;
+        /// <summary>What Offset is relative to: null (the district center), "districtEntrance" (the cell in front of the
+        /// district center's door, where every connecting path starts) or "previous" (the previous placed building's
+        /// origin, for rows of fences and other mergeable pieces).</summary>
+        public string RelativeTo;
+    }
+
+    /// <summary>
+    /// Plays a named animation of a placed building at a time into the run ("animations": [ { "target", "at": seconds,
+    /// "name": "Default", "speed": 1, "looped": false, "backwards": false } ]), as WonderAnimationController does on
+    /// activation, without activating anything (so no wonder events or achievements).
+    /// </summary>
+    public class AnimationRequest
+    {
+        public string Target;
+        public float At;
+        public string Name = "Default";
+        public float Speed = 1f;
+        public bool Looped;
+        public bool Backwards;
     }
 
     /// <summary>
@@ -50,7 +69,9 @@ namespace PandabornDevHarness
     ///   "speed": 3, "devMode": true, "mute": true, "quit": true,
     ///   "window": { "windowed": true, "width": 1280, "height": 720 },
     ///   "run": { "realSeconds": 60, "inGameDays": 0, "inGameHours": 0, "settleSeconds": 4, "startTimeoutSeconds": 240 },
-    ///   "buildings": [ "Lodge.Folktails", { "template", "finished": true, "offset": [dx, dy, dz], "orientation": "Cw90" } ],
+    ///   "buildings": [ "Lodge.Folktails", { "template", "finished": true, "offset": [dx, dy, dz], "orientation": "Cw90",
+    ///                  "relativeTo": "districtEntrance|previous" } ],
+    ///   "animations": [ { "target", "at": seconds, "name": "Default", "speed": 1, "looped": false } ] (AnimationRequest),
     ///   "screenshots": [ { "name", "kind": "overview|screen|adult|child|bot|building", "at": "start|end|&lt;seconds into run&gt;",
     ///                      "target": "Lodge.Folktails" (kind building), "yaw": 0, "pitch": 35, "zoom": 1, "lit": false } ],
     ///   "screenshotSize": [1280, 720], "closeupSize": 640, "samplePerKind": 3,
@@ -97,6 +118,7 @@ namespace PandabornDevHarness
 
         public readonly List<BuildingRequest> Buildings = new List<BuildingRequest>();
         public readonly List<ShotRequest> Screenshots = new List<ShotRequest>();
+        public readonly List<AnimationRequest> Animations = new List<AnimationRequest>();
         public int ShotWidth = 1280;
         public int ShotHeight = 720;
         public int CloseupSize = 640;
@@ -167,11 +189,25 @@ namespace PandabornDevHarness
                     {
                         Template = Str(b, "template", null),
                         Finished = Bool(b, "finished", true),
-                        Orientation = Str(b, "orientation", null)
+                        Orientation = Str(b, "orientation", null),
+                        RelativeTo = Str(b, "relativeTo", null)
                     };
                     if (b["offset"] is JArray offset && offset.Count >= 2)
                         request.Offset = new[] { (int)offset[0], (int)offset[1], offset.Count > 2 ? (int)offset[2] : 0 };
                     if (!string.IsNullOrEmpty(request.Template)) r.Buildings.Add(request);
+                }
+            }
+
+            if (raw["animations"] is JArray animations)
+            {
+                foreach (var token in animations)
+                {
+                    if (!(token is JObject a) || Str(a, "target", null) == null) continue;
+                    r.Animations.Add(new AnimationRequest
+                    {
+                        Target = Str(a, "target", null), At = Num(a, "at", 0f), Name = Str(a, "name", "Default"),
+                        Speed = Num(a, "speed", 1f), Looped = Bool(a, "looped", false), Backwards = Bool(a, "backwards", false)
+                    });
                 }
             }
 

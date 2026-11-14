@@ -81,6 +81,7 @@ namespace PandabornDevHarness
         private readonly List<string> _pendingScreenFiles = new List<string>();
         // first placed building of each template, for "building" close-up shots
         private readonly Dictionary<string, BlockObject> _placedByTemplate = new Dictionary<string, BlockObject>();
+        private readonly List<AnimationRequest> _pendingAnimations = new List<AnimationRequest>();
         private float _waitUntil;
         private int _batchStep;
         private List<BatchControlTab> _batchTabs;
@@ -197,6 +198,7 @@ namespace PandabornDevHarness
                     if (TakeNextShot()) return;
                     _runStartedAt = now;
                     _runStartHours = _dayNightCycle.PartialDayNumber * 24f;
+                    _pendingAnimations.AddRange(request.Animations);
                     _speedManager.ChangeSpeed(request.Speed);
                     Harness.Info("running at speed " + request.Speed + " for " + DescribeRun(request));
                     Harness.Result["run"] = new JObject { ["startDay"] = Math.Round(_dayNightCycle.PartialDayNumber, 3) };
@@ -205,6 +207,12 @@ namespace PandabornDevHarness
 
                 case Phase.Running:
                     if (now >= _nextActivitySample) { SampleActivity(); _nextActivitySample = now + 2f; }
+                    for (int i = _pendingAnimations.Count - 1; i >= 0; i--)
+                        if (now - _runStartedAt >= _pendingAnimations[i].At)
+                        {
+                            StartAnimation(_pendingAnimations[i]);
+                            _pendingAnimations.RemoveAt(i);
+                        }
                     for (int i = _timedShots.Count - 1; i >= 0; i--)
                         if (_timedShots[i].IsTimed(out float at) && now - _runStartedAt >= at)
                         {
@@ -407,6 +415,10 @@ namespace PandabornDevHarness
                 return;
             }
             var anchor = center.CenterCoordinates;
+            var centerBlockObject = center.GetComponent<BlockObject>();
+            var entranceAnchor = centerBlockObject != null && centerBlockObject.HasEntrance
+                ? centerBlockObject.PositionedEntrance.Coordinates : anchor;
+            Vector3Int? previousOrigin = null;
             var specs = _templateService.GetAll<PlaceableBlockObjectSpec>().ToList();
             var used = new List<Vector3Int>();
             var created = new List<BlockObject>();
@@ -419,7 +431,10 @@ namespace PandabornDevHarness
                     var spec = specs.FirstOrDefault(s => TemplateName(s.Blueprint) == r.Template)
                                ?? specs.FirstOrDefault(s => s.GetSpec<TemplateSpec>()?.IsNamed(r.Template) == true);
                     if (spec == null) { entry["error"] = "template not available to this faction"; continue; }
-                    var placement = FindPlacement(spec, anchor, r, used);
+                    var relative = anchor;
+                    if (r.RelativeTo == "districtEntrance") relative = entranceAnchor;
+                    else if (r.RelativeTo == "previous" && previousOrigin.HasValue) relative = previousOrigin.Value;
+                    var placement = FindPlacement(spec, relative, r, used);
                     if (!placement.HasValue) { entry["error"] = "no valid spot found near the district center"; continue; }
                     var builder = new EntitySetup.Builder(spec.Blueprint);
                     if (spec.HasSpec<BuildingSpec>())
@@ -438,6 +453,7 @@ namespace PandabornDevHarness
                     }
                     var c = placement.Value.Coordinates;
                     used.Add(c);
+                    previousOrigin = c;
                     entry["placed"] = true;
                     entry["coordinates"] = new JArray(c.x, c.y, c.z);
                     entry["orientation"] = placement.Value.Orientation.ToString();
@@ -624,6 +640,42 @@ namespace PandabornDevHarness
         {
             var buildable = placer.GetBuildableCoordinates(new[] { new Placement(cell, orientation, FlipMode.Unflipped) }).ToList();
             return buildable.Count > 0 ? buildable[0] : (Placement?)null;
+        }
+
+        /// <summary>Plays a placed building's animation the way WonderAnimationController starts it on activation (every
+        /// IAnimator under the building; result "animations").</summary>
+        private void StartAnimation(AnimationRequest a)
+        {
+            var log = Harness.Result["animations"] as JArray;
+            if (log == null) { log = new JArray(); Harness.Result["animations"] = log; }
+            var entry = new JObject { ["target"] = a.Target, ["name"] = a.Name, ["at"] = a.At };
+            log.Add(entry);
+            try
+            {
+                if (!_placedByTemplate.TryGetValue(a.Target, out var building) || !building)
+                {
+                    entry["error"] = "target not placed";
+                    return;
+                }
+                var animators = building.GameObject.GetComponentsInChildren<Timberborn.TimbermeshAnimations.IAnimator>(true);
+                entry["animators"] = animators.Length;
+                var started = new JArray();
+                foreach (var animator in animators)
+                {
+                    animator.Enabled = true;
+                    animator.PlayBackwards = a.Backwards;
+                    animator.Speed = a.Speed;
+                    animator.Play(a.Name, a.Looped);
+                    started.Add(new JObject { ["animation"] = animator.AnimationName, ["length"] = Math.Round(animator.AnimationLength, 3) });
+                }
+                entry["started"] = started;
+                Harness.Info("animation " + a.Name + " started on " + a.Target + " (" + animators.Length + " animator(s))");
+            }
+            catch (Exception e)
+            {
+                entry["error"] = e.GetType().Name + ": " + e.Message;
+                Harness.Error("starting animation on " + a.Target + " failed", e);
+            }
         }
 
         // ------------------------------------------------------------------ screenshots
