@@ -23,7 +23,7 @@ DEFAULT_MESH_DIR = r"E:\PandabornDev\build\models"
 KNOWN_KEYS = {"id", "standIn", "generatedBy", "models", "size", "blocks", "entrance", "access", "slots", "animatedNodes",
               "colliders", "attachments", "triangles", "materials", "notes", "removeSpecs", "addSpecs",
               "connectionAnchor", "windRotationAnimator", "walkUnder", "liquidPlane", "displayName", "bell",
-              "observatoryAnimator"}
+              "observatoryAnimator", "surfaceName", "baseZ", "mergeableObjectModel", "botManufactoryAnimation"}
 WATER_KEYS = {"waterCells", "solidCells", "flow", "outputCell", "waterOutput", "waterInput", "expectedWaterDirection"}
 
 
@@ -88,6 +88,8 @@ def apply_building_model(gen, data, mid, item, mesh_dir=None):
                        "basis %s" % (item, mid, size, bos.get("Size")))
     if mj.get("entrance"):
         bos["Entrance"] = {"HasEntrance": True, "Coordinates": v3(mj["entrance"])}
+    if mj.get("baseZ") is not None:
+        bos["BaseZ"] = int(mj["baseZ"])
     if mj.get("access"):
         if "BuildingAccessibleSpec" not in data:
             raise GenError("%s: model %s has an access point but the basis has no BuildingAccessibleSpec" % (item, mid))
@@ -97,7 +99,25 @@ def apply_building_model(gen, data, mid, item, mesh_dir=None):
     fin = children.get("#Finished")
     if fin is None:
         raise GenError("%s: basis has no #Finished child" % item)
-    fin["TimbermeshSpec"] = {"Model": mesh(mj["models"]["finished"])}
+    mom = mj.get("mergeableObjectModel")
+    if mom:
+        # a mergeable piece (fence): one child per neighbour variant, named <prefix><code>; colliders follow the
+        # basis's variant with the same code
+        if "MergeableObjectModelSpec" not in data:
+            raise GenError("%s: model %s is mergeable but the basis has no MergeableObjectModelSpec" % (item, mid))
+        old_prefix = data["MergeableObjectModelSpec"]["ModelNamePrefix"]
+        old = (fin.get("Children") or {})
+        new = {}
+        for child, model in mom["children"].items():
+            code = child[len(mom["ModelNamePrefix"]):]
+            node = {"TimbermeshSpec": {"Model": mesh(model)}}
+            if old_prefix + code in old and "CollidersSpec" in old[old_prefix + code]:
+                node["CollidersSpec"] = copy.deepcopy(old[old_prefix + code]["CollidersSpec"])
+            new[child] = node
+        fin["Children"] = new
+        data["MergeableObjectModelSpec"]["ModelNamePrefix"] = mom["ModelNamePrefix"]
+    else:
+        fin["TimbermeshSpec"] = {"Model": mesh(mj["models"]["finished"])}
     if mj.get("colliders"):
         fin["CollidersSpec"] = {"BoxColliders": copy.deepcopy(mj["colliders"]), "SphereColliders": [],
                                 "CapsuleColliders": []}
@@ -123,8 +143,9 @@ def apply_building_model(gen, data, mid, item, mesh_dir=None):
         hits = [at for at in (data.get("TemplateAttachmentsSpec") or {}).get("Attachments", [])
                 if at.get("AttachmentId") == a["AttachmentId"]]
         if not hits:
-            raise GenError("%s: model %s places attachment %s, which the basis does not have"
-                           % (item, mid, a["AttachmentId"]))
+            # the model marks where an effect would go; the basis has no such effect (Smoke Kiln on WoodWorkshop)
+            gen.note(item, "model %s places attachment %s, which the basis does not have: left out"
+                     % (mid, a["AttachmentId"]))
         for at in hits:
             at["Position"] = v3(a["Position"])
     if mj.get("connectionAnchor"):
@@ -138,6 +159,16 @@ def apply_building_model(gen, data, mid, item, mesh_dir=None):
         data["ObservatoryAnimatorSpec"].update(copy.deepcopy(mj["observatoryAnimator"]))
     if mj.get("windRotationAnimator"):
         data["WindRotationAnimatorSpec"] = copy.deepcopy(mj["windRotationAnimator"])
+    if mj.get("surfaceName"):
+        if "GoodConsumingAttractionSurfaceControllerSpec" not in data:
+            raise GenError("%s: model %s names a surface but the basis has no GoodConsumingAttractionSurfaceControllerSpec"
+                           % (item, mid))
+        data["GoodConsumingAttractionSurfaceControllerSpec"]["SurfaceName"] = mj["surfaceName"]
+    if mj.get("botManufactoryAnimation"):
+        if "BotManufactoryAnimationControllerSpec" not in data:
+            raise GenError("%s: model %s names bot assembly nodes but the basis has no "
+                           "BotManufactoryAnimationControllerSpec" % (item, mid))
+        data["BotManufactoryAnimationControllerSpec"].update(copy.deepcopy(mj["botManufactoryAnimation"]))
     gen.adopted_models[mid] = {"item": item, "modelJson": os.path.relpath(path, REPO).replace("\\", "/"),
                                "standIn": mj.get("standIn")}
     return mj

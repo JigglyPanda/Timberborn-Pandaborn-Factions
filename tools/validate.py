@@ -1563,20 +1563,24 @@ def check_models(c):
             for a in mj.get("attachments") or []:
                 hits = [at for at in (bp.get("TemplateAttachmentsSpec") or {}).get("Attachments", [])
                         if at.get("AttachmentId") == a.get("AttachmentId")]
-                if not hits or any(at.get("Position") != a.get("Position") for at in hits):
+                # no hit: the basis has no such effect and the generator left it out (it says so in its report)
+                if hits and any(at.get("Position") != a.get("Position") for at in hits):
                     R.error("%s: attachment %s is not at the model's position %s" % (where, a.get("AttachmentId"),
                                                                                        a.get("Position")))
             # the mesh: slot nodes for every slot keyword; animated nodes and their drivers
-            fin = [m for child, m in meshes if child == "/#Finished" and model_of(m)[1] == mid]
+            # slots may sit in any of the model's meshes (the Sky Lantern's builders' slots are in its construction
+            # stage, models.md pass 3)
+            fin = [m for child, m in meshes if model_of(m)[1] == mid]
             nodes = set()
-            if fin and ref_key(fin[0]) in c.keys:
-                try:
-                    _, mesh_nodes = read_timbermesh(c.files[c.keys[ref_key(fin[0])][0]])
-                    nodes = {n["name"] for n in mesh_nodes}
-                except Exception as ex:  # noqa: BLE001
-                    R.error("%s: cannot read %s: %s" % (where, fin[0], ex))
-            elif fin:
-                R.unchecked.add("%s: mesh %s not in this folder (assemble copies it)" % (where, fin[0]))
+            for m in fin:
+                if ref_key(m) in c.keys:
+                    try:
+                        _, mesh_nodes = read_timbermesh(c.files[c.keys[ref_key(m)][0]])
+                        nodes |= {n["name"] for n in mesh_nodes}
+                    except Exception as ex:  # noqa: BLE001
+                        R.error("%s: cannot read %s: %s" % (where, m, ex))
+                else:
+                    R.unchecked.add("%s: mesh %s not in this folder (assemble copies it)" % (where, m))
             if nodes:
                 for slot in (bp.get("TransformSlotInitializerSpec") or {}).get("Slots", []):
                     kw = slot.get("SlotKeyword")
@@ -1588,7 +1592,7 @@ def check_models(c):
                         R.error("%s: animated node %s is not in the mesh" % (where, an.get("node")))
                     driver = [an["driver"]] if an.get("driver") else re.findall(r"([A-Z][A-Za-z]+Spec)",
                                                                                      an.get("drivenBy") or "")
-                    if driver and driver[0] not in bp:
+                    if driver and driver[0] not in bp and DECORATOR_DRIVERS.get(driver[0]) not in bp:
                         R.error("%s: animated node %s is driven by %s, which the blueprint lacks (it would never move)"
                                 % (where, an.get("node"), driver[0]))
     if checked:
@@ -1606,6 +1610,8 @@ MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "Pandabo
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
+# components the game adds by itself to every entity with the given spec (decorators, no spec of their own)
+DECORATOR_DRIVERS = {"WonderAnimationControllerSpec": "WonderSpec"}
 # vanilla template names a tutorial faction must answer to (StairsUnlockedTrigger asks for Stairs.Folktails by name in
 # any faction with StartingFactionSpec; docs/tech/tutorial.md): an alias for one of them is required, not a clash
 TUTORIAL_ALIASES = {"Stairs.Folktails"}
