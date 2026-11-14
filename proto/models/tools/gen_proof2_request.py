@@ -27,7 +27,7 @@ def at(h):
 buildings = [{"template": T("MoonLoft"), "relativeTo": "districtEntrance", "offset": [0, 0, 0]},
              {"template": T("MoonLoft"), "relativeTo": "districtEntrance", "offset": [-1, -1, 0]},
              T("Hammock"), T("Den"), T("Den"), T("Den"), T("CourtyardHouse"), T("TerraceHouse"), T("FestivalSquare"),
-             T("LanternWorkshop"), T("BambooPinwheel"), T("LargeKiteWindmill")]
+             T("LanternWorkshop"), T("BambooPinwheel"), T("LargeKiteWindmill"), T("TripHammerMill")]
 shots = [{"name": "day_overview", "kind": "overview", "at": "start"}]
 for k, t in enumerate((1.0, 1.15, 1.3)):
     shots.append({"name": f"BambooPinwheel_turn_{k}", "kind": "building", "target": T("BambooPinwheel"), "at": at(t),
@@ -36,6 +36,12 @@ for k, t in enumerate((1.0, 1.15, 1.3)):
 for k, t in enumerate((2.0, 2.15, 2.3)):
     shots.append({"name": f"LargeKiteWindmill_turn_{k}", "kind": "building", "target": T("LargeKiteWindmill"),
                   "at": at(t), "front": True, "yaw": 20, "pitch": 50, "zoom": 1.0, "minDistance": 6.0})
+# the Trip-Hammer Mill's wheel and hammers: the prototype cannot staff it (no power, no recipes of the faction's goods),
+# so the harness plays its animation as WorkshopAnimationController would while it works; four frames
+animations = [{"target": T("TripHammerMill"), "at": float(at(3.0)), "name": "Default", "speed": 1.0, "looped": True}]
+for k, t in enumerate((3.1, 3.15, 3.2, 3.25)):
+    shots.append({"name": f"TripHammerMill_work_{k}", "kind": "building", "target": T("TripHammerMill"), "at": at(t),
+                  "front": True, "yaw": 30, "pitch": 30, "zoom": 1.1, "minDistance": 5.0})
 # the walk home from work and the evening (colonists cross the district centre's door cell, under the loft)
 for k, h in enumerate((0.5, 1.0, 1.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0)):
     shots.append({"name": f"MoonLoft_walk_{k}", "kind": "building", "target": T("MoonLoft"), "at": at(h), "front": True,
@@ -52,6 +58,7 @@ for i in ("Den", "CourtyardHouse", "TerraceHouse", "MoonLoft", "FestivalSquare",
                       "front": True, "yaw": 25, "pitch": 35, "zoom": 1.1, "minDistance": md, "lit": lit})
 shots.append({"name": "night_screen", "kind": "screen", "at": "end"})
 req = {"run": {"inGameHours": 16.0, "realSeconds": 600}, "speed": 3, "batchControl": False, "buildings": buildings,
+       "animations": animations,
        "screenshots": shots, "screenshotSize": [1600, 1000],
        "ownPatterns": ["PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoModels", "PandabornModel"]}
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tests", "proof2.request.json")

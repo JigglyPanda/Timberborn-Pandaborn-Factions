@@ -33,7 +33,17 @@
   "PandabornModelFestivalSquare.PandabornProto",
   "PandabornModelLanternWorkshop.PandabornProto",
   "PandabornModelBambooPinwheel.PandabornProto",
-  "PandabornModelLargeKiteWindmill.PandabornProto"
+  "PandabornModelLargeKiteWindmill.PandabornProto",
+  "PandabornModelTripHammerMill.PandabornProto"
+ ],
+ "animations": [
+  {
+   "target": "PandabornModelTripHammerMill.PandabornProto",
+   "at": 20.4,
+   "name": "Default",
+   "speed": 1.0,
+   "looped": true
+  }
  ],
  "screenshots": [
   {
@@ -106,6 +116,50 @@
    "pitch": 50,
    "zoom": 1.0,
    "minDistance": 6.0
+  },
+  {
+   "name": "TripHammerMill_work_0",
+   "kind": "building",
+   "target": "PandabornModelTripHammerMill.PandabornProto",
+   "at": "21.1",
+   "front": true,
+   "yaw": 30,
+   "pitch": 30,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "TripHammerMill_work_1",
+   "kind": "building",
+   "target": "PandabornModelTripHammerMill.PandabornProto",
+   "at": "21.4",
+   "front": true,
+   "yaw": 30,
+   "pitch": 30,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "TripHammerMill_work_2",
+   "kind": "building",
+   "target": "PandabornModelTripHammerMill.PandabornProto",
+   "at": "21.8",
+   "front": true,
+   "yaw": 30,
+   "pitch": 30,
+   "zoom": 1.1,
+   "minDistance": 5.0
+  },
+  {
+   "name": "TripHammerMill_work_3",
+   "kind": "building",
+   "target": "PandabornModelTripHammerMill.PandabornProto",
+   "at": "22.1",
+   "front": true,
+   "yaw": 30,
+   "pitch": 30,
+   "zoom": 1.1,
+   "minDistance": 5.0
   },
   {
    "name": "MoonLoft_walk_0",
