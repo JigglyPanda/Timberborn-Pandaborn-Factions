@@ -461,7 +461,7 @@ def set_weave(name, strand=16, tones=None, moss=0.0, seed=3, patches=2):
                 Y(cy + rr * u * np.sin(2 * math.pi * v)), (10 + 2 * (1 - u)) / S + 0 * u, c[0], c[1], c[2]), mm)
 
 
-def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.18, tile_rgb=(112, 116, 122), seed=5):
+def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.22, tile_rgb=(88, 84, 81), seed=5):
     """Clay pan-and-cover tiles. Default: courses 256 px tall with their lower lip at y = 200 + 256k (the vanilla thatch
     rhythm), 16 pan/cover pairs across (64 px), three tiles per course with a small step at each tile's lower end.
     The flat-roof variant (FlatTiles) lays shorter, flatter courses with more moss."""
@@ -481,9 +481,9 @@ def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.1
             for col in range(-1, 17):
                 key = (col % 16, k % ncourse, t, seed)
                 r2 = random.Random(hash(key) & 0xFFFF)
-                c = jitter(tile, r2, 0.05)
+                c = jitter(tile, r2, 0.09)                             # per-tile value variation
                 if r2.random() < 0.03:
-                    c = jitter(srgb((88, 94, 102)), r2, 0.05)         # an odd newer, darker tile
+                    c = jitter(srgb((70, 68, 66)), r2, 0.05)           # an odd newer, darker tile
                 cx = col * pitch + pitch / 2
                 rise = 3 + rise_step * t                               # tiles further down a course sit higher
 
@@ -501,7 +501,7 @@ def set_tiles(course=256.0, edge0=200.0, per_course=3, rise_step=6.0, moss_p=0.1
                     th = math.pi * v
                     yy = ya + (yb - ya) * u
                     z = rise + 10 * u + 2 + rc * np.sin(th) * 0.9
-                    shade = (1.0 + 0.10 * u) * (0.9 + 0.35 * np.sin(th) ** 2)   # a lit crown on each cover tile
+                    shade = (1.0 + 0.08 * u) * (0.95 + 0.12 * np.sin(th) ** 2)   # a soft crown, no hard streak
                     return X(cx + rc * np.cos(th)), Y(yy), z / S, c[0] * shade, c[1] * shade, c[2] * shade
 
                 cc = jitter(c, r2, 0.05)
@@ -571,7 +571,7 @@ SETS = {
                                                                 srgb((112, 98, 74))], seed=4),
     # flat roofs (IrregularPlanks_Mossy: lodge, warehouse, mine roofs): grey clay tile laid flat, mossy
     "FlatTiles": lambda: set_tiles(course=128.0, edge0=0.0, per_course=2, rise_step=2.0, moss_p=0.45,
-                                   tile_rgb=(100, 104, 108), seed=9),
+                                   tile_rgb=(84, 81, 78), seed=9),
     "RoofTiles": set_tiles,
 }
 

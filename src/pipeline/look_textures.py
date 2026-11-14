@@ -182,7 +182,7 @@ BAKE = "E:/PandabornDev/build/look/bake"
 LIGHT = np.array([-0.45, 0.55, 0.70]) / np.linalg.norm([-0.45, 0.55, 0.70])   # painted light: upper left
 
 
-def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5, crisp=0.8, light=None):
+def from_bake(name, smooth, metal=0.0, paint=0.55, ao_paint=0.5, crisp=0.8, light=None):
     """A set baked by src/pipeline/bake_sheets.py (Cycles passes of modelled geometry). The albedo gets a painted
     light (soft top-left key + AO), the way the vanilla sheets are hand-painted, so models do not look flatter than
     Folktails ones under the game's own lighting."""
@@ -219,7 +219,7 @@ def baked_or(name, fallback, smooth, keep_emission=False, crisp=None):
         if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
             print("  (from Blender bake)", flush=True)
             st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8),
-                           paint=0.85 if name in ("RoofTiles", "FlatTiles") else 0.55,
+                           paint=0.65 if name in ("RoofTiles", "FlatTiles") else 0.55,
                            light=(-0.75, 0.25, 0.6) if name in ("RoofTiles", "FlatTiles") else None)   # grazing: rounds the covers
             if keep_emission:
                 st.e = fallback().e
@@ -782,8 +782,8 @@ SETS = {
     "Timber": baked_or("Timber", make_timber, 0.30), "Bamboo": baked_or("Bamboo", make_bamboo, 0.40),
     "Weave": baked_or("Weave", make_weave, 0.25),
     "WeaveCoarse": baked_or("WeaveCoarse", lambda: make_weave("WeaveCoarse", 48, 121), 0.22),
-    "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30, crisp=1.0),
-    "FlatTiles": baked_or("FlatTiles", make_tiles, 0.30, crisp=1.0),
+    "RoofTiles": baked_or("RoofTiles", make_tiles, 0.10, crisp=0.6),     # matte fired clay: no streak highlight,
+    "FlatTiles": baked_or("FlatTiles", make_tiles, 0.10, crisp=0.6),     # quiet under the blue night light
     "Plaster": lambda: make_plaster(damp=True, lath_patches=3),
     "PlasterLath": baked_or("PlasterLath", make_plastered_wood, 0.18, crisp=0.4),
     "LatticePaper": baked_or("LatticePaper", make_lattice_paper, 0.3, crisp=0.5),
