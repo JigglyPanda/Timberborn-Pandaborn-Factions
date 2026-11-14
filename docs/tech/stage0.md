@@ -229,3 +229,30 @@ E:\PandabornDev\build\proto\<copy>`), because the installed mod now carries its 
   and throws on any duplicated Id, with or without our code). With only our mods (`fd-dup-3`, `-OnlyMods`): the game
   starts, plays, saves and reloads; only the first copy runs code; the player gets one notice ("enabled twice ... Only the
   copy in ...\pbdupA runs its code") and the feature report ends "mod enabled 1 more time(s)"; not repeated after reload.
+
+## Code phase 3 (2026-11-14): tutorial step, Bell on data, no-data report, bell sound
+
+Same dev-copy method (`proto/foundation/build.ps1`; since this phase it copies every file: hard-linked copies crashed in
+`p3-bell-tutorial-1` and `p3-nodata-1` with "Child #BotAssembler.Folktails.Progress0 not found in PandabornOxWorkshop"
+after the content lane's reinstall rewrote the linked meshes under the copy's older blueprints).
+
+* **"Have N of a good" step** (`p3-bell-tutorial-2`, request `proto/foundation/tests/phase3_tutorial_bell.request.json`).
+  A hand-made two-stage Inkpaws tutorial (`PandabornDevGoods`: "Have 1 Berries", then "Have 25 Logs") in a faction with
+  `StartingFactionSpec`, every vanilla tutorial off by modifiers and the `Stairs.Folktails` alias. Stage 1 achieved
+  ("Dev test: goods in stock 1/1" with the tick, `f_tutorial_stage1.png`); stage 2 then read "Have 25 Logs (0/25)".
+  Saved mid-tutorial and reloaded: the tutorial resumed at stage 2. The tutorial-panel setting the probe switched on was
+  recorded before and verified restored after each launch (`settings.before.json`, `settings.restore.json`).
+* **Folktails untouched** (`p3-nodata-2`, Inkpaws game then a Folktails game in one launch): in the Folktails game the
+  vanilla chain is built as shipped (Tutorial -> Basics -> Wood -> WaterAndFood ..., triggers intact), every Pandaborn
+  tutorial (the dev one and the generated `PandabornBasics` ... `PandabornRingtails`) is dormant with no stages, no
+  feature is "no data", and Bell never rang.
+* **Bell on data** (`p3-bell-tutorial-2`): settled on day 1 by the Teahouse marker; the suggestion waited ("day 1 < 3",
+  "day 2 < 3") and was posted at dawn of day 3; after the reload it was not posted again (`suggested` is saved). The shift
+  bell rang from the district center, at most twice a day: "day 1 End; day 2 Dawn; day 2 End; day 3 Dawn" (clips from the
+  sound lane's `pandabornsounds` bundle). The slider's rested line reads "Rested +0%" in the screenshots. The
+  drought/badtide wait of the suggestion is not proven in game (no hazardous weather in the run).
+* **No data, reported** (`p3-nodata-2`, dev copy with `proto/foundation/variants/nodata`: the adult template without
+  `PandabornBellSpec` and `PandabornNamePoolSpec`): the feature report reads "The afternoon bell (rested Inkpaws): off (no
+  data in this game: the faction's adult template has no PandabornBellSpec); Inkpaw names: off (no data in this game: ...
+  PandabornNamePoolSpec)"; the events lane's Festival and Flowering report the same way. The no-data list is cleared per
+  game (empty in the Folktails game that followed). No exceptions in either game.

@@ -109,4 +109,4 @@ which the generator writes into the stage blueprint exactly as a vanilla step:
 * **It never throws**: a `GoodId` the faction lacks reads as its id and is never achieved (logged once). The validator
   should still check `GoodId` against the faction's goods, as it checks building steps' templates.
 * Unlike building steps it names no template and has no toolbar button, so the two crash rules above do not apply to it.
-* Proven in game: run `p3-bell-tutorial-1` (docs/tech/stage0.md, "Code phase 3").
+* Proven in game: run `p3-bell-tutorial-2` (docs/tech/stage0.md, "Code phase 3").
