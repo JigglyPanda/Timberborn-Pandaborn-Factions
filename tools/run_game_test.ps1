@@ -156,9 +156,20 @@ namespace PandabornTest {
 '@
 }
 
+# The game processes this run started. On the hidden desktop the pid is known, so a game the owner starts meanwhile is
+# never counted, waited for or killed. (-Visible launches may bounce through Steam, so they go by start time.)
+$script:testPids = @()
 function Get-TestProcesses([datetime]$since) {
+    if ($script:testPids.Count -gt 0) {
+        return @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object { $script:testPids -contains $_.Id })
+    }
     @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object {
         try { $_.StartTime -ge $since.AddSeconds(-3) } catch { $false } })
+}
+# Timberborn processes that are not this run's: the owner playing.
+function Get-OwnerGames {
+    if ($script:testPids.Count -eq 0) { return @() }
+    @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object { $script:testPids -notcontains $_.Id })
 }
 
 function Get-PrefsSnapshot {
@@ -368,6 +379,7 @@ function Invoke-GameRun([string]$outDir, $request, [string[]]$extraArgs) {
         } finally {
             foreach ($name in $saved.Keys) { [Environment]::SetEnvironmentVariable($name, $saved[$name], 'Process') }
         }
+        $script:testPids += $hiddenPid
         Say "  hidden desktop '$hiddenDesktopName', pid $hiddenPid (use -Visible to see the game)" 'DarkGray'
     }
 
@@ -384,6 +396,11 @@ function Invoke-GameRun([string]$outDir, $request, [string[]]$extraArgs) {
         }
         $procs = Get-TestProcesses $launchTime
         if ($procs.Count -gt 0) { $sawProcess = $true }
+        if (@(Get-OwnerGames).Count -gt 0) {
+            Say 'The owner started Timberborn during this run: stopping the test game and restoring mod flags.' 'Red'
+            $procs | Stop-Process -Force -ErrorAction SilentlyContinue
+            throw 'aborted: the owner started Timberborn during the run'
+        }
         if ((Test-Path $resultPath) -and -not $resultSeenAt) { $resultSeenAt = Get-Date }
         if ($procs.Count -eq 0) {
             # a Steam bounce briefly leaves no process; give it a moment before calling it over
@@ -885,6 +902,13 @@ try {
             $state = Get-Content -LiteralPath (Join-Path $runDir 'modstate.json') -Raw | ConvertFrom-Json
             $modRestore = Restore-ModState $state
             [IO.File]::WriteAllText((Join-Path $runDir 'modstate.restore.json'), ($modRestore | ConvertTo-Json -Depth 6), $utf8)
+            $ownerGames = @(Get-OwnerGames)
+            if ($ownerGames.Count -gt 0) {
+                Say "The owner's Timberborn (pid $($ownerGames.Id -join ', ')) is open. Flags are restored now and checked again when it closes; the queue waits." 'Yellow'
+                while (@(Get-OwnerGames).Count -gt 0) { Start-Sleep -Seconds 5 }
+                $modRestore = Restore-ModState $state
+                [IO.File]::WriteAllText((Join-Path $runDir 'modstate.restore.json'), ($modRestore | ConvertTo-Json -Depth 6), $utf8)
+            }
             if ($modRestore.ok -and -not $alive) {
                 Remove-Item $pendingStatePath -Force -ErrorAction SilentlyContinue
                 Say "Mod flags restored and verified: $(@($modRestore.entries).Count) value(s) match the recorded prior state." 'Green'
