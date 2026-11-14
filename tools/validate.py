@@ -1317,6 +1317,10 @@ def check_faction_goods(c, fid, bp):
                 R.error("Faction %s: %s costs %s, which is not in the faction's good collections (%s); placing it "
                         "throws in an %s game" % (fid, name, cost.get("Id"), ", ".join(fs.get("GoodCollectionIds", [])),
                                                     fid))
+        for where_, gid in goods_used_by(t):
+            if gid not in goods:
+                R.error("Faction %s: %s uses good %s (%s), which is not in the faction's good collections (%s)"
+                        % (fid, name, gid, where_, ", ".join(fs.get("GoodCollectionIds", []))))
         for rid in (sp.get("ManufactorySpec") or {}).get("ProductionRecipeIds") or []:
             r = recipes.get(rid)
             if r is None:
@@ -1329,6 +1333,26 @@ def check_faction_goods(c, fid, bp):
                 if g and g not in goods:
                     R.error("Faction %s: %s recipe %s uses %s, which is not in the faction's good collections"
                             % (fid, name, rid, g))
+
+
+def goods_used_by(bp):
+    """Goods a template names outside its cost and recipes: consumed supplies (GoodId) and plant or tree yields."""
+    out = []
+
+    def walk(o, path):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k == "GoodId" and isinstance(v, str) and v:
+                    out.append((path + "." + k, v))
+                elif k == "Yield" and isinstance(v, dict) and isinstance(v.get("Id"), str):
+                    out.append((path + ".Yield", v["Id"]))
+                else:
+                    walk(v, path + "." + k if path else k)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x, path)
+    walk(bp, "")
+    return out
 
 
 def check_material_coverage(c, fid, bp):
