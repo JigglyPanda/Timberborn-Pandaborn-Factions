@@ -222,6 +222,7 @@ What the game shots showed and what changed after them:
 ## Weak spots
 
 * **Mac.** The plants need their bundle on every platform: the faction lists `PandabornPlants.Inkpaws`, and a model
+  (Update 2026-11-14: `pandabornplants_mac` now builds; see [mac.md](mac.md).)
   whose material is missing throws. Mac Build Support for Unity 6000.5.11f1 is not installed on this machine
   (docs/tech/look.md, *Mac bundles*), so `pandabornplants_mac` cannot be built yet; `tools/build_plants.ps1 -Mac` is
   ready. Until then the validator rightly reports the missing `_mac` pair. (Unlike the Look module there is no safe

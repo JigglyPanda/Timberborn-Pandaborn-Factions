@@ -32,6 +32,7 @@ flatter than vanilla (see *Close-ups against Folktails*). The character material
 * **Character material:** possible the same way, but it needs a re-exported panda mesh whose material is renamed
   (e.g. `PandabornInkpawAdult`), a bundle material on a copy of `BeaverURP.shadergraph`, and that material listed in
   an Inkpaws-only collection. No other faction is affected. Details below.
+* **Mac bundles (update):** buildable since 2026-11-14 from an editor copy on E:; see [mac.md](mac.md). Earlier note follows.
 * **Mac bundles:** not buildable now. Mac Build Support (Mono) is not installed for 6000.5.11f1; it is a 523 MB
   download (≈1.5 GB installed) into the editor folder on C:.
 
@@ -437,6 +438,8 @@ still keeps a small Bee cache in `%LOCALAPPDATA%\Unity\Caches` (43 MB in total, 
   The Reskin's `PandabornFactionSkins` only rewrites textures, so it still works on top.
 
 ## Mac bundles
+
+> **Superseded 2026-11-14:** Mac bundles now build on this machine from a private editor copy on E: (`toolsuild_look.ps1 -Mac`, `toolsuild_plants.ps1 -Mac`). See [mac.md](mac.md). The text below is kept as history.
 
 * `C:\Program Files\Unity\Hub\Editor\6000.5.11f1\Editor\Data\PlaybackEngines` holds only
   `windowsstandalonesupport` (1.1 GB). `BuildTarget.StandaloneOSX` therefore cannot be built; `build_look.ps1 -Mac`
