@@ -29,7 +29,7 @@ def at_hour(h):
 # the water machines that need a river (Scoop Wheel, Bamboo Water Wheel, Paddy Spout, Treadwheel Lift)
 ids = ["Den", "Hammock", "Teahouse", "Kindergarten", "CourtyardHouse", "TerraceHouse", "PaddyHouse",
        "NightBuildersPost", "NightCourierPost", "NightForagersPost", "StarTower", "FestivalSquare", "HotSpringBath",
-       "InkStudio", "OperaStage", "SlideAndSwing", "Steamer", "PickleYard", "TeaRoastery", "LanternWorkshop",
+       "InkStudio", "OperaStage", "Steamer", "PickleYard", "TeaRoastery", "LanternWorkshop",
        "HotPotHall", "SmokeKiln", "Kitchen", "TripHammerMill", "OxWorkshop", "KiteWindmill", "LargeKiteWindmill",
        "NapPlatform", "DryStoneWall", "CisternTap", "FlumeBridgeSpan", "BambooPinwheel", "DewCollector", "MemorialArch",
        "GreatSittingPanda", "SkyLantern", "CisternLarge", "CisternMedium", "Cistern", "StandingLantern",
@@ -39,6 +39,9 @@ small = {"DryStoneWall", "CisternTap", "FlumeBridgeSpan", "Hammock", "InkStudio"
          "FlumeGate", "FlumeBridge", "NightForagersPost", "BambooPinwheel", "PandaStatue", "PottedPine",
          "GoldfishBowl", "BambooFence"}
 
+# the biggest footprints go first, before the ring search has filled the space round the district centre (the 7x7 Sky
+# Lantern found no spot in models-pass3-4)
+BIG_FIRST = ["SkyLantern", "GreatSittingPanda", "FestivalSquare", "OperaStage"]
 buildings = [
     # over the district centre's door: tried in all four orientations at the entrance cell, then one cell aside
     {"template": T("MoonLoft"), "relativeTo": "districtEntrance", "offset": [0, 0, 0]},
@@ -49,7 +52,7 @@ buildings = [
     {"template": T("BambooFence"), "relativeTo": "previous", "offset": [1, 0, 0], "orientation": "Cw0"},
     {"template": T("BambooFence"), "relativeTo": "previous", "offset": [0, 1, 0], "orientation": "Cw0"},
     {"template": T("BambooFence"), "relativeTo": "previous", "offset": [0, 1, 0], "orientation": "Cw0"},
-] + [T(i) for i in ids] + [T("Den"), T("Den")]
+] + [T(i) for i in BIG_FIRST] + [T(i) for i in ids if i not in BIG_FIRST] + [T("Den"), T("Den")]
 
 shots = [{"name": "day_overview", "kind": "overview", "at": "start"}]
 for i in ["MoonLoft", "BambooFence"] + ids:
