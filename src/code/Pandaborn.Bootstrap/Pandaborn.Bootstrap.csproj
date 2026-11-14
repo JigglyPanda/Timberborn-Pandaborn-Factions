@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The only assembly the game loads by itself (Scripts\Pandaborn.Bootstrap.dll). It must reference nothing but the
+       mod-starter interface and Debug.Log, so that it can never fail to load. See src/code/README.md. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Pandaborn.Bootstrap</AssemblyName>
+    <RootNamespace>Pandaborn.Bootstrap</RootNamespace>
+    <PandabornKind>Bootstrap</PandabornKind>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.ModManagerScene.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+  </ItemGroup>
+  <Target Name="CopyModuleManifest" AfterTargets="PandabornPackage">
+    <Copy SourceFiles="$(CodeRoot)modules.txt" DestinationFolder="$(ModOut)\Modules" />
+  </Target>
+</Project>

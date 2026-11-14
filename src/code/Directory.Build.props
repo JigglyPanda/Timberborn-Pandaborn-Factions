@@ -1,0 +1,19 @@
+﻿<Project>
+  <!-- Shared settings for every runtime-code project under src/code (see src/code/README.md).
+       Intermediates go to E:, never into the repo or onto C:. Override ModOut to build into another mod folder:
+         dotnet build src/code/Pandaborn.Code.sln -c Release -p:ModOut=E:\PandabornDev\build\proto\stage0 -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\code\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath>E:\PandabornDev\build\obj\code\$(MSBuildProjectName)\bin\</OutputPath>
+    <CodeRoot>$(MSBuildThisFileDirectory)</CodeRoot>
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\PandabornFactions</ModOut>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>CS1701;CS1702;MSB3277;NU1701</NoWarn>
+  </PropertyGroup>
+</Project>

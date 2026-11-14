@@ -1,0 +1,11 @@
+{
+  "Name": "Pandaborn - Stage-0 prototype (dev only)",
+  "Version": "0.0.1",
+  "Id": "JigglyPanda.PandabornProtoStage0",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Development-only stage-0 checks for Pandaborn - Factions: faction-scoped blueprint modifiers, a tree that yields planks, the code bootstrap with the afternoon bell and faction names, and a faction tutorial. Never shipped. Art and code are AI-generated.",
+  "RequiredMods": [
+    { "Id": "JigglyPanda.PandabornFactions" }
+  ],
+  "OptionalMods": []
+}

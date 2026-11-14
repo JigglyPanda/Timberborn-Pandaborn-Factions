@@ -1,0 +1,17 @@
+﻿{
+  "buildings": [ "PandabornStage0Teahouse.Inkpaws", "LumberjackFlag.Folktails" ],
+  "stage0": {
+    "devSwitchNext": "",
+    "dataAtRunHour": 0.5,
+    "shots": [
+      { "name": "off_screen", "atRunHour": 0.3, "select": "none" },
+      { "name": "off_inkpaw", "atRunHour": 0.8, "select": "inkpaw" }
+    ],
+    "reload": {
+      "dataAtRunHour": 0.6,
+      "shots": [
+        { "name": "back_on_inkpaw", "atRunHour": 0.4, "select": "inkpaw" }
+      ]
+    }
+  }
+}

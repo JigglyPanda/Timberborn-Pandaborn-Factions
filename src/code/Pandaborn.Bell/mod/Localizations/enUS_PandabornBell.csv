@@ -1,0 +1,8 @@
+ID,Text,Comment
+Pandaborn.Bell.PanelText,Rested +{0},Line under the working-hours panel; {0} = today's bonus
+Pandaborn.Bell.PanelTextTomorrow,"Rested +{0}; tomorrow +{1}",Line under the working-hours panel when the slider was moved today
+Pandaborn.Bell.Tooltip,"Rested Inkpaws: the shorter the working day, the faster they work and walk. Today's working day: {0} h, working speed +{1}, walking speed +{2} (on top of every other bonus).
+The day's length is set at dawn: moving the slider takes effect tomorrow.
+Long days leave little time for tea, naps and play: at 16 hours most daily rituals lapse.",Tooltip of the line under the working-hours panel
+Pandaborn.Bell.ColonistLine,"Rested ({0} h day): working +{1}, walking +{2}",Line on an Inkpaw's panel
+Pandaborn.Bell.Suggestion,"Inkpaws work a short day and work it well. Afternoons are for hammocks, tea and company.",One-time suggestion once the village is settled

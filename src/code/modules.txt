@@ -1,0 +1,5 @@
+# Feature modules the bootstrap may load, in load order: Id  File  Description
+# Pandaborn.Specs and Pandaborn.Core (Scripts\*.bin) are always loaded first and are not listed here.
+# A module is loaded only if every line of its Modules\<File minus .bin>.api.txt resolves against the running game.
+Bell   Pandaborn.Bell.bin    The afternoon bell: rested Inkpaws work and walk faster on a short working day
+Names  Pandaborn.Names.bin   Per-faction colonist names from the template's PandabornNamePoolSpec

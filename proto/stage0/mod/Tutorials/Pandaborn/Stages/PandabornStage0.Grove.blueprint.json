@@ -1,0 +1,15 @@
+{
+  "TutorialStageSpec": {
+    "Id": "PandabornStage0.Grove",
+    "IntroLocKey": "Pandaborn.Stage0.Tutorial.Grove"
+  },
+  "Children": {
+    "Step1": {
+      "BuildingTutorialStepSpec": {
+        "TemplateNames": [ "LumberjackFlag.Folktails" ],
+        "OnlyFinishedBuildings": false,
+        "RequiredAmount": 1
+      }
+    }
+  }
+}

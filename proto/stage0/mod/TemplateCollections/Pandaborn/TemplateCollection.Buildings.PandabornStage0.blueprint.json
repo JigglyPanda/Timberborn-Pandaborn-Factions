@@ -1,0 +1,8 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.PandabornStage0",
+    "Blueprints": [
+      "Buildings/Pandaborn/Stage0/PandabornStage0Teahouse.Inkpaws.blueprint"
+    ]
+  }
+}

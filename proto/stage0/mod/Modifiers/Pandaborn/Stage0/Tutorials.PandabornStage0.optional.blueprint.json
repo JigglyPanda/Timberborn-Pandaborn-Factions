@@ -1,0 +1,9 @@
+{
+  "TutorialSpec": {
+    "RequiredTutorialIds": [],
+    "Stages": [
+      "PandabornStage0.Grove",
+      "PandabornStage0.Afternoon"
+    ]
+  }
+}

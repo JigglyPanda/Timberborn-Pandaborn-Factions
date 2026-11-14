@@ -1,0 +1,8 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "NaturalResources.PandabornStage0",
+    "Blueprints": [
+      "NaturalResources/Pandaborn/Stage0/PandabornStage0Bamboo.Inkpaws.blueprint"
+    ]
+  }
+}

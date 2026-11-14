@@ -1,0 +1,48 @@
+﻿{
+  "buildings": [
+    "LumberjackFlag.Folktails",
+    "SmallPile.Folktails",
+    "BuildersHut.Folktails",
+    "PandabornStage0Teahouse.Inkpaws",
+    { "template": "LumberMill.Folktails", "finished": false }
+  ],
+  "stage0": {
+    "devSwitchNext": "force-off: Bell, Names",
+    "bamboo": 8,
+    "pileGood": "Plank",
+    "bell": [
+      { "atRunHour": 0.1, "hours": 16, "relock": true },
+      { "atRunHour": 2.5, "hours": 14, "relock": true },
+      { "atRunHour": 5.0, "hours": 12, "relock": true },
+      { "atRunHour": 8.0, "hours": 16, "relock": false },
+      { "atRunHour": 21.0, "hours": 12, "relock": false }
+    ],
+    "wellbeingTable": 7.5,
+    "tutorialNextAtRunHour": 1.0,
+    "dataAtRunHour": 3.0,
+    "shots": [
+      { "name": "tutorial_stage1", "atRunHour": 0.4, "select": "none" },
+      { "name": "bamboo_yield", "atRunHour": 0.7, "select": "bamboo" },
+      { "name": "tutorial_stage2", "atRunHour": 1.5, "select": "none" },
+      { "name": "hint_12h_colonist", "atRunHour": 6.0, "select": "inkpaw" },
+      { "name": "teahouse", "atRunHour": 6.6, "select": "teahouse" },
+      { "name": "slider16_before_dawn", "atRunHour": 9.0, "select": "none" },
+      { "name": "lumberjack", "atRunHour": 12.0, "select": "lumberjack" },
+      { "name": "lumbermill_site", "atRunHour": 18.0, "select": "lumbermill" },
+      { "name": "hint_tomorrow", "atRunHour": 21.5, "select": "inkpaw" }
+    ],
+    "reload": {
+      "devSwitchNext": "",
+      "bamboo": 0,
+      "bell": [],
+      "shots": [
+        { "name": "reload_inkpaw", "atRunHour": 0.3, "select": "inkpaw" },
+        { "name": "reload_teahouse", "atRunHour": 0.6, "select": "teahouse" }
+      ],
+      "wellbeingTable": null,
+      "tutorialNextAtRunHour": null,
+      "dataAtRunHour": 0.8,
+      "resaveAtRunHour": 1.2
+    }
+  }
+}

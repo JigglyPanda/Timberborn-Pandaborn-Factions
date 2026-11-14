@@ -1,0 +1,8 @@
+{
+  "GoodSpec": {
+    "DisplayNameLocKey": "Pandaborn.Stage0.Good.Poles.DisplayName",
+    "PluralDisplayNameLocKey": "Pandaborn.Stage0.Good.Poles.PluralDisplayName",
+    "Icon": "Sprites/Pandaborn/Stage0/PolesIcon",
+    "Weight": 2
+  }
+}

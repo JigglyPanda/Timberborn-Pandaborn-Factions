@@ -1,0 +1,32 @@
+﻿<Project>
+  <!-- Packaging for runtime-code projects. Each project sets PandabornKind:
+         Bootstrap  -> $(ModOut)\Scripts\<name>.dll   (the only file the game loads by itself)
+         Core       -> $(ModOut)\Scripts\<name>.bin + <name>.api.txt   (always loaded by the bootstrap: Specs, Core)
+         Feature    -> $(ModOut)\Modules\<name>.bin + <name>.api.txt   (loaded only if its required-API check passes)
+       After every build the required-API list is extracted from the compiled assembly (tools/Pandaborn.ApiScan) and the
+       generated section of the project's FEATURE.md is refreshed. A project's mod\ folder (loc, blueprint fragments) is
+       mirrored into $(ModOut). -->
+  <PropertyGroup Condition="'$(PandabornKind)' != ''">
+    <ApiScanDll>E:\PandabornDev\build\obj\code\Pandaborn.ApiScan\bin\Pandaborn.ApiScan.dll</ApiScanDll>
+    <PandabornDestDir Condition="'$(PandabornKind)' == 'Feature'">$(ModOut)\Modules\</PandabornDestDir>
+    <PandabornDestDir Condition="'$(PandabornKind)' != 'Feature'">$(ModOut)\Scripts\</PandabornDestDir>
+    <PandabornApiOut Condition="'$(PandabornKind)' == 'Bootstrap'">$(OutputPath)$(AssemblyName).api.txt</PandabornApiOut>
+    <PandabornApiOut Condition="'$(PandabornKind)' != 'Bootstrap'">$(PandabornDestDir)$(AssemblyName).api.txt</PandabornApiOut>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(PandabornKind)' != ''">
+    <ProjectReference Include="$(CodeRoot)tools\Pandaborn.ApiScan\Pandaborn.ApiScan.csproj" ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" Private="false" />
+  </ItemGroup>
+
+  <Target Name="PandabornPackage" AfterTargets="Build" Condition="'$(PandabornKind)' != ''">
+    <Exec Command="dotnet &quot;$(ApiScanDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PandabornApiOut)&quot; --feature &quot;$(MSBuildProjectDirectory)\FEATURE.md&quot; --title &quot;$(AssemblyName)&quot;" />
+    <Copy Condition="'$(PandabornKind)' == 'Bootstrap'" SourceFiles="$(TargetPath)" DestinationFiles="$(PandabornDestDir)$(AssemblyName).dll" />
+    <Copy Condition="'$(PandabornKind)' != 'Bootstrap'" SourceFiles="$(TargetPath)" DestinationFiles="$(PandabornDestDir)$(AssemblyName).bin" />
+    <ItemGroup>
+      <PandabornModData Include="$(MSBuildProjectDirectory)\mod\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PandabornModData)" DestinationFiles="@(PandabornModData->'$(ModOut)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Message Importance="high" Text="$(AssemblyName) -> $(PandabornDestDir)" />
+  </Target>
+</Project>

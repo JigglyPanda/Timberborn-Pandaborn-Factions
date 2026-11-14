@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stage-0 probe (dev only, never shipped): a plain mod DLL that measures the stage-0 checks in a harness run.
+       It references no Pandaborn assembly (it reads them by reflection), so it loads whatever features are on.
+       Build: proto/stage0/build.ps1 -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>PandabornProtoStage0</AssemblyName>
+    <RootNamespace>Pandaborn.Stage0</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\proto\stage0</ModOut>
+    <OutputPath>$(ModOut)\Scripts\</OutputPath>
+    <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\proto-stage0\</BaseIntermediateOutputPath>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
+    <NoWarn>CS1701;CS1702;MSB3277;NU1701;CS0105</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameManaged)\Timberborn.*.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\UnityEngine.ScreenCaptureModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Bindito.Core.dll" Private="false" />
+    <Reference Include="$(GameManaged)\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="$(GameManaged)\System.Collections.Immutable.dll" Private="false" />
+  </ItemGroup>
+</Project>

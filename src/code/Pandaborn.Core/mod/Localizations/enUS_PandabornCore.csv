@@ -1,0 +1,8 @@
+ID,Text,Comment
+Pandaborn.Core.FeatureOff,"Pandaborn - Factions: {0} is switched off because this game version changed something it relies on ({1}). Everything else works; a mod update will bring it back.",Notice when a code feature fails its pre-load check
+Pandaborn.Core.FeatureForcedOff,"Pandaborn - Factions: {0} is switched off by a developer setting.",Notice when a code feature is forced off for testing
+Pandaborn.Core.Duplicate,"Pandaborn - Factions is enabled twice (for example a local copy and the Workshop copy). Only the copy in {0} runs its code. Disable one of them in the mod manager.",Notice when two copies of the mod are enabled
+Pandaborn.Feature.Specs,"its data definitions",Feature name used in notices
+Pandaborn.Feature.Core,"its core services",Feature name used in notices
+Pandaborn.Feature.Bell,"The afternoon bell (rested Inkpaws)",Feature name used in notices
+Pandaborn.Feature.Names,"Inkpaw names",Feature name used in notices

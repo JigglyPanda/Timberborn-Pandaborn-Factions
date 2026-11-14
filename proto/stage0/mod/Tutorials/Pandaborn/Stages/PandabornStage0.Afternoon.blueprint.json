@@ -1,0 +1,13 @@
+{
+  "TutorialStageSpec": {
+    "Id": "PandabornStage0.Afternoon",
+    "IntroLocKey": "Pandaborn.Stage0.Tutorial.Afternoon"
+  },
+  "Children": {
+    "Step1": {
+      "SetWorkingHoursStepSpec": {
+        "TargetWorkingHours": 12
+      }
+    }
+  }
+}

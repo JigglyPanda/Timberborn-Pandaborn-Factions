@@ -1,0 +1,10 @@
+﻿{
+  "buildings": [ "LumberjackFlag.Folktails" ],
+  "stage0": {
+    "dataAtRunHour": 0.5,
+    "shots": [
+      { "name": "folktails_colonist", "atRunHour": 0.8, "select": "inkpaw" },
+      { "name": "folktails_screen", "atRunHour": 1.2, "select": "none" }
+    ]
+  }
+}

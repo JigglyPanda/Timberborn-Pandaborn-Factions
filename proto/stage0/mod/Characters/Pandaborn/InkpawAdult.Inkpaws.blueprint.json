@@ -1,0 +1,17 @@
+{
+  "PandabornBellSpec": {
+    "WorkingSpeedCurve": [
+      { "Hours": 12, "Bonus": 0.33 },
+      { "Hours": 16, "Bonus": 0.0 }
+    ],
+    "MovementSpeedCurve": [
+      { "Hours": 12, "Bonus": 0.33 },
+      { "Hours": 16, "Bonus": 0.0 }
+    ],
+    "SuggestionDay": 4,
+    "SuggestionLocKey": "Pandaborn.Bell.Suggestion"
+  },
+  "PandabornNamePoolSpec": {
+    "NamePoolLocKey": "Pandaborn.Stage0.NamePool"
+  }
+}
