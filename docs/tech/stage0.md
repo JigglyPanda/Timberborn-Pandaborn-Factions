@@ -31,8 +31,8 @@ dev-only probe (`proto/stage0/src`) that writes `stage0.json` next to the harnes
 
 Runs (all in `E:\PandabornDev\build\test\`): `s0-inkpaws-1` (Inkpaws, everything on; reload with Bell and Names
 forced off), `s0-inkpaws-2` (same, plus a plank-cost building site and the tutorial panel shown), `s0-folktails-1`
-(Folktails with the prototype installed), `s0-inkpaws-3` (Inkpaws with Bell failing its API check and Names forced off;
-reload with everything on). Evidence: each run's `stage0.json`, `s0_*.png`, `Player.log`.
+(Folktails with the prototype installed), `s0-inkpaws-5` (Inkpaws with Bell failing its API check and Names forced off;
+reload with everything on; by then the main mod had its own catalogue, `-3` and `-4` crashed on tutorial pitfalls). Evidence: each run's `stage0.json`, `s0_*.png`, `Player.log`.
 
 ### 1. `FactionSpec.BlueprintModifiers`: works, early enough for everything but the faction file itself
 
@@ -96,7 +96,14 @@ Bag only). **Builders** (`s0-inkpaws-2`): the vanilla Campfire, costed at Plank 
   `Core.Notices` recorded it so it is not repeated in that save. The `Pandaborn.Store` singleton loaded from the save
   with the Bell (`locked=16;suggested=1`) and Names entries and kept them while off. A save made in that state
   (`s0-inkpaws-2/reload/resave.timber`, `world.json`) still holds `"Pandaborn.Store":{"Entries":["Bell|1|locked=16;suggested=1", "Core.Notices|1|...", "Names|1|..."]}`, so turning the module back on finds its state. Turning features on for a save
-  that never had them: `s0-inkpaws-3`.
+  that never had them, and the "game changed" path: `s0-inkpaws-5` (`s0-inkpaws-3`/`-4` crashed on the two tutorial
+  pitfalls in check 4, not on the code). First launch with `simulate-missing-api: Bell` and `force-off: Names`: the
+  bootstrap kept Bell off ("game API changed: 1 missing, e.g. type Timberborn.PandabornSimulated.MissingType") without
+  loading it, the game started normally, colonists had vanilla speeds and vanilla names, and the player got one notice
+  per feature ("...is switched off because this game version changed something it relies on..."). Reload of that save
+  with everything on: no loading issue; the Bell locked the current 16 h, every Inkpaw got its rested component, the
+  teahouse its marker (the suggestion is posted once, also when a marker building is already standing on load); colonists
+  kept their saved vanilla names (new ones would get Inkpaw names); the off-state notices were not repeated.
 
 ### 4. Faction tutorial route: works with data alone
 

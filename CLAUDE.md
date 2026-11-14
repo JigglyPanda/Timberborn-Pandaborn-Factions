@@ -117,8 +117,9 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   sound controller reads it with no null check). `StartingFactionSpec` (empty) switches the tutorial system on for
   a faction (read only by `TutorialService`, `TutorialTriggers`, `TutorialToggleController`); with it, every vanilla
   `TutorialSpec` is built for that faction, so switch them off with faction modifiers and add your own (verified in
-  game, see docs/tech/stage0.md; `StairsUnlockedTrigger` then needs a template answering to `Stairs.Folktails`).
-  Omit `UnlockableFactionSpec` to be unlocked from the start.
+  game, see docs/tech/stage0.md). Two load crashes verified in a tutorial faction: `StairsUnlockedTrigger` throws
+  unless a template answers to `Stairs.Folktails` (alias it on `Stairs.Inkpaws`), and every tutorial step that names a
+  template the faction lacks throws in `TutorialService.Load` (stages are built eagerly). Omit `UnlockableFactionSpec` to be unlocked from the start.
 * `FactionSpec` fields: `Id`, `Order`, `Avatar`, `ChildAvatar`, `BotAvatar`, `ContaminatedAdultAvatar`,
   `ContaminatedChildAvatar`, `Logo`, `NewGameFullAvatar`, `Textures`, `ChildTextures`, `MaterialCollectionIds`,
   `TemplateCollectionIds`, `NeedCollectionIds`, `GoodCollectionIds`, `PathMaterial`, `BaseWoodMaterial`,
