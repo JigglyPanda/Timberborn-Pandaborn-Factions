@@ -216,12 +216,17 @@ Judged harshly against the hand-painted vanilla look:
 ## Pandaborn.Look module
 
 The swap variant is now the faction's base layer: `src/code/Pandaborn.Look` (see its `FEATURE.md` and
-`src/code/README.md`). Activation is data-driven: `PandabornLookSpec { MaterialCollectionIds }` (in `Pandaborn.Specs`)
-sits on the faction blueprint through `src/code/Pandaborn.Look/mod/Factions/Pandaborn/Faction.Inkpaws.optional.blueprint.json`,
-and the collection `PandabornLook.Inkpaws` (19 bundle materials) ships in the module's `mod/` folder. The bundle is
-`pandabornlook_win`, built by `tools/build_look.ps1 -BundleName pandabornlook` into `E:\PandabornDevuild\look\AssetBundles`;
-the code build copies it into the mod. `tools/build_code_devmod.ps1` builds all of `src/code` as a dev-only mod
-(`JigglyPanda.PandabornCodeDev`) so tests can load the code without switching it on for everyone.
+`src/code/README.md`). It carries **no blueprint data** (the faction file is read in every game and must stay plain,
+data rule 1): it activates when the loaded faction's Id is `Inkpaws`, and its replacements are simply every material
+the asset bundle holds under `Materials/Pandaborn/Look/` (found with `IAssetLoader.LoadAll`, mod assets only), each
+copied into the same-named material of the faction's own collections. There is no material collection and no id to
+lock. (An earlier version put a `PandabornLookSpec` on the faction blueprint and listed a `PandabornLook.Inkpaws`
+collection; both were removed on 2026-11-14.) The bundle is `pandabornlook_win`, built by
+`tools/build_look.ps1 -BundleName pandabornlook` into `E:\PandabornDevuild\look\AssetBundles`; the code build copies
+it into the mod. `tools/build_code_devmod.ps1` builds all of `src/code` as a dev-only mod
+(`JigglyPanda.PandabornCodeDev`, `E:\PandabornDevuild\PandabornCodeDev`) so tests can load the code without
+switching it on for everyone. **Do not enable it together with the old prototype `E:\PandabornDevuild\proto\look-swap`**
+(both would swap the same materials).
 
 Tests (`tests/scenarios/look/`, driver `tests/scenarios/look/run_look_tests.ps1`; all with the owner's mods). The harness
 records, at load and at the end of each game, the `_MainTex` currently on three vanilla materials (`materialProbe`;
