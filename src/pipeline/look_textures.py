@@ -182,7 +182,7 @@ BAKE = "E:/PandabornDev/build/look/bake"
 LIGHT = np.array([-0.45, 0.55, 0.70]) / np.linalg.norm([-0.45, 0.55, 0.70])   # painted light: upper left
 
 
-def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5):
+def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5, crisp=0.8):
     """A set baked by src/pipeline/bake_sheets.py (Cycles passes of modelled geometry). The albedo gets a painted
     light (soft top-left key + AO), the way the vanilla sheets are hand-painted, so models do not look flatter than
     Folktails ones under the game's own lighting."""
@@ -197,7 +197,10 @@ def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5):
     shade = (1 - paint + paint * lam / flat) * (1 - ao_paint + ao_paint * ao ** 1.3)
     lin = np.clip(diff * shade[..., None], 0, 1)
     st = Set(name)
-    st.d = np.where(lin <= 0.0031308, lin * 12.92, 1.055 * np.power(lin, 1 / 2.4) - 0.055).astype(np.float32)
+    d8 = np.where(lin <= 0.0031308, lin * 12.92, 1.055 * np.power(lin, 1 / 2.4) - 0.055).astype(np.float32)
+    # painterly crispness: local contrast boost (unsharp mask), as the hand-painted vanilla sheets have
+    soft = ndi.gaussian_filter(d8, (3, 3, 0), mode="wrap")
+    st.d = np.clip(d8 + crisp * (d8 - soft), 0, 1).astype(np.float32)
     n8 = np.zeros((S, S, 4), np.uint8)
     n8[..., 0] = 255
     n8[..., 1] = np.clip((nrm[..., 1] * 0.5 + 0.5) * 255, 0, 255)
@@ -210,11 +213,14 @@ def from_bake(name, smooth, metal=0.02, paint=0.55, ao_paint=0.5):
     return st
 
 
-def baked_or(name, fallback, smooth):
+def baked_or(name, fallback, smooth, keep_emission=False, crisp=None):
     def make():
         if os.path.exists(os.path.join(BAKE, name, "diffcol.npy")):
             print("  (from Blender bake)", flush=True)
-            return from_bake(name, smooth)
+            st = from_bake(name, smooth, crisp=crisp if crisp is not None else (1.0 if name == "Timber" else 0.8))
+            if keep_emission:
+                st.e = fallback().e
+            return st
         return fallback()
     return make
 
@@ -646,8 +652,8 @@ def make_windows():
     e = np.zeros((S, S, 3), np.float32)
     # warm lamplight through paper: flat and strong across the panes (the vanilla map falls off toward the frame),
     # cut by the lattice; the doorway keeps the vanilla soft gradient
-    e[:] = (np.array([255, 212, 150]) / 255.0)[None, None, :]
-    pane = np.where(glass, np.clip(0.75 + 0.35 * glow_soft, 0, 1), glow_soft)
+    e[:] = (np.array([255, 234, 188]) / 255.0)[None, None, :]
+    pane = np.where(glass, np.clip(0.92 + 0.1 * glow_soft, 0, 1), glow_soft)
     e *= (pane * (~(lattice & glass)))[..., None]
     st.e = e
     return st
@@ -755,10 +761,18 @@ SETS = {
     "WeaveCoarse": baked_or("WeaveCoarse", lambda: make_weave("WeaveCoarse", 48, 121), 0.22),
     "WeaveMossy": baked_or("WeaveMossy", lambda: make_weave("WeaveMossy", 32, 221, True), 0.20),
     "RoofTiles": baked_or("RoofTiles", make_tiles, 0.30),
-    "Plaster": make_plaster, "PlasterLath": make_plastered_wood, "LatticePaper": make_lattice_paper,
-    "Iron": make_iron, "Banded": make_painted, "Windows": make_windows, "Details": make_details,
+    "Plaster": make_plaster,
+    "PlasterLath": baked_or("PlasterLath", make_plastered_wood, 0.18, crisp=0.4),
+    "LatticePaper": baked_or("LatticePaper", make_lattice_paper, 0.3, crisp=0.5),
+    "Iron": baked_or("Iron", make_iron, 0.35, crisp=0.6), "Banded": baked_or("Banded", make_painted, 0.4, crisp=0.6),
+    "Windows": baked_or("Windows", make_windows, 0.3, keep_emission=True, crisp=0.5),
+    "Details": baked_or("Details", make_details, 0.25, crisp=0.6),
     "RammedEarth": make_earth, "Moss": make_moss,
 }
+
+# painter sets that can go through the Blender heightfield bake (--export-hf), and their plain painters
+HF_PAINTERS = {"PlasterLath": make_plastered_wood, "LatticePaper": make_lattice_paper, "Iron": make_iron,
+               "Banded": make_painted, "Windows": make_windows, "Details": make_details}
 
 # vanilla material -> (texture set, tint key or None)
 MATERIALS = {
@@ -789,6 +803,7 @@ def main():
     ap.add_argument("--unity", default=r"E:\PandabornDev\unity\PandabornLook")
     ap.add_argument("--only", default="")
     ap.add_argument("--preview", default=r"E:\PandabornDev\build\look\preview")
+    ap.add_argument("--export-hf", default="", help="painter sets whose height + albedo go to the Blender heightfield bake")
     a = ap.parse_args()
     texdir = os.path.join(a.unity, "Assets", "PandabornLook", "Textures")
     os.makedirs(texdir, exist_ok=True)
@@ -806,6 +821,13 @@ def main():
                 maps[name]["_LightingMap"] = p + "_E.png"
             continue
         print("painting", name, flush=True)
+        if name in set(filter(None, a.export_hf.split(","))):
+            st = HF_PAINTERS[name]()
+            os.makedirs(BAKE, exist_ok=True)
+            np.savez_compressed(os.path.join(BAKE, name + "_hf.npz"), h=st.h.astype(np.float32), d=st.d.astype(np.float32))
+            print("  exported heightfield for the Blender bake", flush=True)
+            maps[name] = st.write(texdir)
+            continue
         maps[name] = fn().write(texdir)
     project = a.unity.replace("\\", "/").rstrip("/") + "/"
     spec = {"materials": [], "textures": []}

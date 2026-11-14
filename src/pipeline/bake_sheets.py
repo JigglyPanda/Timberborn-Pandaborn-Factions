@@ -12,7 +12,8 @@ each float32 HxWx3 with row 0 at the TOP of the image. look_textures.py turns th
 
 Run (bash; see CLAUDE.md for the env vars that keep Blender off C:):
   $BL -b --factory-startup --python src/pipeline/bake_sheets.py -- src/pipeline/sheet_regions.json E:/PandabornDev/build/look/bake [Set,Set]
-Sets: Timber Bamboo Weave WeaveCoarse WeaveMossy RoofTiles
+Sets: Timber Bamboo Weave WeaveCoarse WeaveMossy RoofTiles (modelled), and the heightfield sets Windows LatticePaper
+Details Iron Banded PlasterLath (relief from look_textures.py --export-hf, baked only when that export exists)
 """
 import json
 import math
@@ -192,8 +193,8 @@ def material(name, fine="streak", scale=(1, 1, 1), bump=0.3, rough=0.6, grain=No
         tex.wave_type = "BANDS"
         tex.bands_direction = "X"
         tex.inputs["Scale"].default_value = grain or 6.0
-        tex.inputs["Distortion"].default_value = 6.0
-        tex.inputs["Detail"].default_value = 3.0
+        tex.inputs["Distortion"].default_value = 12.0
+        tex.inputs["Detail"].default_value = 1.5
         fac = tex.outputs["Fac"]
     else:
         tex = nt.nodes.new("ShaderNodeTexNoise")
@@ -325,9 +326,9 @@ def regions(sheet):
 def set_wood(name, kind):
     rnd = random.Random(7 if kind == "timber" else 11)
     if kind == "timber":
-        base, gap = srgb((78, 58, 42)), srgb((34, 26, 20))
-        wood = material("wood", "grain", scale=(70, 3, 70), bump=0.45, grain=2.2)
-        wood_h = material("wood_h", "grain", scale=(3, 70, 70), bump=0.45, grain=2.2)
+        base, gap = srgb((96, 70, 50)), srgb((36, 28, 22))
+        wood = material("wood", "grain", scale=(30, 2, 30), bump=0.45, grain=2.0)
+        wood_h = material("wood_h", "grain", scale=(2, 30, 30), bump=0.45, grain=2.0)
         endm = material("end", "grain", scale=(1, 1, 1), bump=0.2, grain=1.0)
         # end grain rings: replace the band wave with rings
         endm.node_tree.nodes["Wave Texture"].wave_type = "RINGS"
@@ -499,7 +500,49 @@ def set_tiles():
                         (rise + 9) / S + 0 * u, mc[0], mc[1], mc[2]), moss_m)
 
 
+def set_heightfield(name, depth=18.0, grid=1024):
+    """A painter set (look_textures.py --export-hf) turned into real relief: its height map displaces a full-resolution
+    grid and its albedo becomes the vertex colours; Cycles then gives proper AO and normals for window frames,
+    lattice bars, crate seams, plate edges and plaster spalls."""
+    data = np.load(os.path.join(OUT, name + "_hf.npz"))
+    h = data["h"].astype(np.float32)
+    h = (h - h.min()) / max(float(h.max() - h.min()), 1e-6)
+    d = np.clip(data["d"].astype(np.float32), 0, 1)
+    lin = np.where(d <= 0.04045, d / 12.92, ((d + 0.055) / 1.055) ** 2.4).astype(np.float32)
+    n = grid
+    gy, gx = np.meshgrid(np.arange(n), np.arange(n), indexing="ij")
+    # pixel centres; extend one pixel beyond each edge with wrapped data so border normals and AO stay seamless
+    verts = np.stack([(gx + 0.5) / n, 1 - (gy + 0.5) / n, h[gy, gx] * depth / S], -1).reshape(-1, 3).astype(np.float32)
+    cols = np.ones((n * n, 4), np.float32)
+    cols[:, :3] = lin[gy, gx].reshape(-1, 3)
+    me = bpy.data.meshes.new(name)
+    me.vertices.add(n * n)
+    me.vertices.foreach_set("co", verts.ravel())
+    i = np.arange((n - 1) * (n - 1))
+    r, c = i // (n - 1), i % (n - 1)
+    a0 = r * n + c
+    quads = np.stack([a0, a0 + n, a0 + n + 1, a0 + 1], -1).astype(np.int32)
+    me.loops.add(quads.size)
+    me.loops.foreach_set("vertex_index", quads.ravel())
+    me.polygons.add(len(quads))
+    me.polygons.foreach_set("loop_start", (np.arange(len(quads)) * 4).astype(np.int32))
+    me.polygons.foreach_set("loop_total", np.full(len(quads), 4, np.int32))
+    me.update(calc_edges=True)
+    attr = me.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
+    attr.data.foreach_set("color", cols.ravel())
+    me.polygons.foreach_set("use_smooth", [True] * len(me.polygons))
+    me.materials.append(material("hf", "none"))
+    ob = bpy.data.objects.new(name, me)
+    bpy.context.collection.objects.link(ob)
+
+
 SETS = {
+    "Windows": lambda: set_heightfield("Windows", 16.0),
+    "LatticePaper": lambda: set_heightfield("LatticePaper", 10.0),
+    "Details": lambda: set_heightfield("Details", 18.0),
+    "Iron": lambda: set_heightfield("Iron", 10.0),
+    "Banded": lambda: set_heightfield("Banded", 8.0),
+    "PlasterLath": lambda: set_heightfield("PlasterLath", 10.0),
     "Timber": lambda: set_wood("Timber", "timber"),
     "Bamboo": lambda: set_wood("Bamboo", "bamboo"),
     "Weave": lambda: set_weave("Weave", 16, seed=3),
@@ -510,12 +553,16 @@ SETS = {
 }
 
 
+HF_SETS = ("Windows", "LatticePaper", "Details", "Iron", "Banded", "PlasterLath")
+
+
 def main():
-    global REG
+    global REG, OUT
     argv = sys.argv[sys.argv.index("--") + 1:]
     REG = json.load(open(argv[0], encoding="utf-8"))
-    out = argv[1]
-    names = argv[2].split(",") if len(argv) > 2 and argv[2] else list(SETS)
+    out = OUT = argv[1]
+    names = argv[2].split(",") if len(argv) > 2 and argv[2] else [
+        n for n in SETS if n not in HF_SETS or os.path.exists(os.path.join(out, n + "_hf.npz"))]
     for name in names:
         reset()
         setup_render(S)
