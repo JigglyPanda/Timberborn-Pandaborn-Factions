@@ -32,7 +32,7 @@ Pandaborn.Flowering.Setting.off,Off,Setting value: never
 Pandaborn.Flowering.Setting.Button,Flowering: {0},Button on a bamboo's panel
 Pandaborn.Flowering.Plant.Idle,"Bamboo flowers once in a long while: about every {0} to {1} cycles, never before cycle {2}.",Bamboo panel
 Pandaborn.Flowering.Plant.IdleOff,The Great Flowering is switched off in this game.,Bamboo panel
-Pandaborn.Flowering.Plant.Announced,"Budding: it will flower at the start of cycle {0}, bear seed for {1} days, then die.",Bamboo panel
+Pandaborn.Flowering.Plant.Announced,"It will flower at the start of cycle {0}, bear seed for {1} days, then die.",Bamboo panel
 Pandaborn.Flowering.Plant.InFlower,In flower: harvest it for bamboo seed. It dies in {0} days.,Panel of a flowering bamboo
 Pandaborn.Flowering.Plant.Dormant,Resting after the Flowering: it grows again in {0} days.,Bamboo panel of a young plant
 Pandaborn.Flowering.Indicator.Announced,{0} flowers at the start of cycle {1},Line under the top bar
@@ -40,7 +40,7 @@ Pandaborn.Flowering.Indicator.InFlower,"{0} in flower: harvest the seed, {1} day
 Pandaborn.Flowering.Indicator.Dormant,{0} grows again in {1} days,Line under the top bar
 Pandaborn.Flowering.Tooltip.Shoot,"The Great Flowering: every Shoot Bamboo bears seed for {0} days and then dies. Its new plants do not grow for {1} days. Store about 11 food for each panda, or grow other food. Set the farmhouses to harvest first and keep storage free for bamboo seed. Click to change how often bamboo flowers.",Tooltip of the line under the top bar
 Pandaborn.Flowering.Tooltip.Timber,"The Great Flowering: every Timber Bamboo bears seed for {0} days and then dies. Its new plants do not grow for {1} days. Store about 5 poles for each panda. Mark the groves for cutting to take the seed, and keep storage free for bamboo seed. Click to change how often bamboo flowers.",Tooltip of the line under the top bar
-Pandaborn.Flowering.Message.Announced,"The {0} is budding. It will flower at the start of cycle {1}, bear seed for a few days and die.",Notification
+Pandaborn.Flowering.Message.Announced,"The {0} will flower at the start of cycle {1}. It bears seed for a few days and then dies.",Notification
 Pandaborn.Flowering.Message.Flowered,"The {0} is in flower. {1} plants bear {2} bamboo seed: harvest it within {3} days.",Notification
 Pandaborn.Flowering.Message.SeedOver,"The flowered {0} has died. Bamboo seed harvested: {1}. Its young plants grow again in {2} days.",Notification
 Pandaborn.Flowering.Message.Regrows,The {0} grows again.,Notification

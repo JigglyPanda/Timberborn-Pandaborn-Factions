@@ -304,6 +304,13 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `PlaySound3D(UnityEngine.GameObject, System.String, System.Int32)`
   * method `StopSound(UnityEngine.GameObject, System.String)`
 
+**Timberborn.TemplateAttachmentSystem**
+
+* type `Timberborn.TemplateAttachmentSystem.TemplateAttachment`
+  * method `get_GameObject()`
+* type `Timberborn.TemplateAttachmentSystem.TemplateAttachments`
+  * method `GetOrCreateAttachment(System.String)`
+
 **Timberborn.TemplateInstantiation**
 
 * type `Timberborn.TemplateInstantiation.TemplateModule`
@@ -374,8 +381,10 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `LogWarning(System.Object)`
 * type `UnityEngine.GameObject`
   * method `.ctor(System.String)`
+  * method `GetComponentInChildren<1>(System.Boolean)`
   * method `GetComponentsInChildren<1>(System.Boolean)`
   * method `SetActive(System.Boolean)`
+  * method `get_transform()`
 * type `UnityEngine.Mathf`
   * method `CeilToInt(System.Single)`
   * method `Clamp(System.Single, System.Single, System.Single)`
@@ -388,7 +397,9 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `UnityEngine.Time`
   * method `get_unscaledTime()`
 * type `UnityEngine.Transform`
+  * method `SetParent(UnityEngine.Transform, System.Boolean)`
   * method `get_position()`
+  * method `set_position(UnityEngine.Vector3)`
 * type `UnityEngine.Vector3`
   * method `.ctor(System.Single, System.Single, System.Single)`
   * method `get_up()`

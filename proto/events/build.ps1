@@ -26,6 +26,8 @@ param(
     [switch]$NoVariant,
     # keep the existing probe mod (when another copy is built while a run may be using the probe)
     [switch]$NoProbe,
+    # replace the copy's pandabornplants bundle with a newer plant-lane build (e.g. E:\PandabornDevuild\plants\AssetBundles)
+    [string]$PlantBundles = '',
     [string]$Python = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     # the generator needs Python 3.11+ (tomllib), as tools\pandaborn.ps1 finds it
     [string]$GenPython = 'python'
@@ -80,6 +82,15 @@ foreach ($frag in $Variant) {
             if ($LASTEXITCODE -ne 0) { throw "merging $rel failed" }
         } else { Copy-Item -LiteralPath $f.FullName -Destination $to -Force }
     }
+}
+if ($PlantBundles) {
+    foreach ($b in 'pandabornplants_win', 'pandabornplants_mac') {
+        $from = Join-Path $PlantBundles $b; $to = Join-Path $out "AssetBundles\$b"
+        if (-not (Test-Path $from)) { continue }
+        if (Test-Path $to) { Remove-Item -LiteralPath $to -Force }   # never write through a hard link into the install
+        Copy-Item -LiteralPath $from -Destination $to
+    }
+    Write-Host "plant bundle from $PlantBundles" -ForegroundColor Yellow
 }
 Write-Host "events data: $n generated files, $meshes model meshes, variants: $($Variant -join ', ')" -ForegroundColor Green
 

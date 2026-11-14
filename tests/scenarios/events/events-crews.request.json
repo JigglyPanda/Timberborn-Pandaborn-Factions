@@ -1,27 +1,132 @@
 {
   "speed": 7,
-  "run": { "inGameHours": 70 },
-  "buildings": [ "PandabornFestivalSquare.Inkpaws", "EfficientFarmHouse.Inkpaws", "PandabornKitchen.Inkpaws" ],
-  "screenshots": [ { "name": "overview_end", "kind": "overview", "at": "end" } ],
-  "ownPatterns": [ "PandabornFactions", "PandabornDevHarness", "Inkpaws", "PandabornProtoEvents", "Pandaborn.Festival", "Pandaborn.Flowering", "Pandaborn.Events", "pbevents" ],
-  "checks": { "noOwnErrors": true },
+  "run": {
+    "inGameHours": 70
+  },
+  "buildings": [
+    "PandabornFestivalSquare.Inkpaws",
+    "EfficientFarmHouse.Inkpaws",
+    "PandabornKitchen.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
   "events": {
-    "stock": { "Water": 300, "Log": 60, "PandabornPaperLantern": 40, "PandabornSteamedShoots": 25, "PandabornPickles": 22, "PandabornSteamedRice": 30, "PandabornRiceFlour": 30 },
-    "fields": [ { "template": "PandabornShootBamboo.Inkpaws", "count": 16, "near": "EfficientFarmHouse.Inkpaws", "grown": true, "mark": true, "radius": 5 } ],
+    "stock": {
+      "Water": 300,
+      "Log": 60,
+      "PandabornPaperLantern": 40,
+      "PandabornSteamedShoots": 25,
+      "PandabornPickles": 22,
+      "PandabornSteamedRice": 30,
+      "PandabornRiceFlour": 30
+    },
+    "fields": [
+      {
+        "template": "PandabornShootBamboo.Inkpaws",
+        "count": 16,
+        "near": "EfficientFarmHouse.Inkpaws",
+        "grown": true,
+        "mark": true,
+        "radius": 5
+      }
+    ],
     "actions": [
-      { "atRunHour": 0.1, "do": "setRecipe", "building": "PandabornKitchen.Inkpaws", "recipe": "PandabornBambooSeedCakes" },
-      { "atRunHour": 0.4, "do": "flowerNow" },
-      { "atRunHour": 2.0, "do": "callFestival" }
+      {
+        "atRunHour": 0.1,
+        "do": "setRecipe",
+        "building": "PandabornKitchen.Inkpaws",
+        "recipe": "PandabornBambooSeedCakes"
+      },
+      {
+        "atRunHour": 0.2,
+        "do": "announce"
+      },
+      {
+        "atRunHour": 1.2,
+        "do": "flowerNow"
+      },
+      {
+        "atRunHour": 2.0,
+        "do": "callFestival"
+      }
     ],
     "shots": [
-      { "name": "c_d0_h10_twins", "day": 0, "hour": 10, "select": "inflower" },
-      { "name": "c_d1_h10_farm", "day": 1, "hour": 10, "select": "building:EfficientFarmHouse.Inkpaws" },
-      { "name": "c_d1_h15_square", "day": 1, "hour": 15.6, "select": "square" },
-      { "name": "c_d1_h16_dusk_a", "day": 1, "hour": 15.9, "select": "none" },
-      { "name": "c_d1_h16_dusk_b", "day": 1, "hour": 16.3, "select": "none" },
-      { "name": "c_d1_h17_dusk_c", "day": 1, "hour": 16.9, "select": "none" },
-      { "name": "c_d2_h12_replant", "day": 2, "hour": 12, "select": "plant:PandabornShootBamboo.Inkpaws" },
-      { "name": "c_d2_h20_field", "day": 2, "hour": 20, "select": "building:EfficientFarmHouse.Inkpaws" }
+      {
+        "name": "c_d0_buds_plant",
+        "atRunHour": 0.4,
+        "select": "plant:PandabornShootBamboo.Inkpaws"
+      },
+      {
+        "name": "c_d0_buds_field",
+        "atRunHour": 0.7,
+        "select": "none"
+      },
+      {
+        "name": "c_d0_h10_twins",
+        "day": 0,
+        "hour": 10,
+        "select": "inflower"
+      },
+      {
+        "name": "c_d1_h10_farm",
+        "day": 1,
+        "hour": 10,
+        "select": "building:EfficientFarmHouse.Inkpaws"
+      },
+      {
+        "name": "c_d1_h15_square",
+        "day": 1,
+        "hour": 15.6,
+        "select": "square"
+      },
+      {
+        "name": "c_d1_h16_dusk_a",
+        "day": 1,
+        "hour": 15.9,
+        "select": "none"
+      },
+      {
+        "name": "c_d1_h16_dusk_b",
+        "day": 1,
+        "hour": 16.3,
+        "select": "none"
+      },
+      {
+        "name": "c_d1_h17_dusk_c",
+        "day": 1,
+        "hour": 16.9,
+        "select": "none"
+      },
+      {
+        "name": "c_d2_h12_replant",
+        "day": 2,
+        "hour": 12,
+        "select": "plant:PandabornShootBamboo.Inkpaws"
+      },
+      {
+        "name": "c_d2_h20_field",
+        "day": 2,
+        "hour": 20,
+        "select": "building:EfficientFarmHouse.Inkpaws"
+      }
     ]
   }
 }

@@ -3,6 +3,7 @@ using Timberborn.BaseComponentSystem;
 using Timberborn.BlockSystem;
 using Timberborn.EntitySystem;
 using Timberborn.GameDistricts;
+using Timberborn.TemplateAttachmentSystem;
 using UnityEngine;
 
 namespace Pandaborn.Festival
@@ -11,8 +12,11 @@ namespace Pandaborn.Festival
     /// The Festival Square (decorates PandabornFestivalSquareSpec). Registers the finished square with the festival, launches
     /// its lanterns and fireworks, and drives the art lane's named hooks on its model when they exist:
     ///   #FestivalLights  shown from the call until the festival ends, hidden otherwise (lantern strings, lit stalls);
-    ///   #LanternRise     a particle system played at each lantern launch (replaces the comet firework when present);
+    ///   LanternRise      a template attachment (TemplateAttachmentsSpec, parent #LanternRise) whose ParticleSystem is
+    ///                    played at each lantern launch instead of a comet firework; a particle system placed directly
+    ///                    under a #LanternRise node works too;
     ///   #FireworkMount   the launch point (default: the square's centre, 1.5 above the ground).
+    /// Every hook is optional: a missing node or attachment, or one without a particle system, degrades to nothing.
     /// Without the module the building is its vanilla basis and the nodes keep their authored state.
     /// </summary>
     public class FestivalSquare : BaseComponent, IAwakableComponent, IFinishedStateListener, IDeletableEntity
@@ -20,6 +24,7 @@ namespace Pandaborn.Festival
         private const string LightsNode = "#FestivalLights";
         private const string LanternRiseNode = "#LanternRise";
         private const string MountNode = "#FireworkMount";
+        private const string LanternRiseAttachment = "LanternRise";
 
         private readonly FestivalService _festivalService;
         private DistrictBuilding _districtBuilding;
@@ -123,6 +128,20 @@ namespace Pandaborn.Festival
                 else if (t.name == LanternRiseNode) _lanternRise = t.GetComponentInChildren<ParticleSystem>(true);
                 else if (t.name == MountNode) _mount = t;
             }
+            try
+            {
+                // TemplateAttachmentsSpec is internal: ask for the attachment and treat "not found" as "no lantern art"
+                var attachments = GetComponent<TemplateAttachments>();
+                if (attachments != null)
+                {
+                    var attachment = attachments.GetOrCreateAttachment(LanternRiseAttachment);
+                    attachment.GameObject.SetActive(true);
+                    var particles = attachment.GameObject.GetComponentInChildren<ParticleSystem>(true);
+                    if (particles) _lanternRise = particles;
+                }
+            }
+            catch (System.Collections.Generic.KeyNotFoundException) { }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Festival] LanternRise attachment unusable, comets instead: " + e.Message); }
         }
     }
 }
