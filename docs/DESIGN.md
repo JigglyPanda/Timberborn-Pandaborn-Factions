@@ -195,6 +195,22 @@ and leaving other factions untouched, and then pass a multi-day soak. If it fail
 faction ships with one people and Ringtail coats as variety. If a game update ever breaks the Ringtail code,
 existing Ringtails load as Inkpaws rather than vanishing.
 
+**Passed, 2026-11-14** (`docs/tech/two-peoples.md` section 17): three days and a reload with no Ringtail in an
+Inkpaw job or the reverse, no critical need, every colonist back from the save with its kind, job and home, no
+Harmony, and a Folktails game unchanged. The faction ships with two peoples. What the prototype settled:
+
+* **Hours.** A Ringtail coming off the night sleeps about three hours after dawn, then has the rest of the
+  morning for food and leisure until its shift starts. The start of that shift is the bell (the working-hours
+  slider), never earlier than four hours after dawn so there is time to sleep, and never later than nightfall,
+  so Ringtails always hold the night even if the Inkpaws are worked around the clock.
+* **Homes.** Moon Lofts belong to Ringtails: an Inkpaw who lands in one is swapped out within the hour. A
+  Ringtail without a loft may sleep in any home.
+* **Appetite.** The prototype also proved a lighter Ringtail appetite. It is not used: one set of food numbers
+  is easier to learn, the balance was set with equal appetites, and the trick leans on an unwritten detail of
+  how the game applies need effects.
+* **Numbers.** The vanilla population panel does not count Ringtail crews, so the two-row panel is required,
+  not optional.
+
 ## Pillar 5 — A third rhythm
 
 ### Lantern Festival
@@ -321,4 +337,6 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | Dry-day tolerance set: shoot bamboo 5, cabbage 7, timber bamboo 7 | The model: shoots survive every first drought on Normal; on Hard cabbage is the staple |
 | 2026-11-14 | Rule: if a mechanic cannot be explained in one sentence, simplify the mechanic. Festival cut to two tiers; the rested bonus is stated as one rule and its walking-speed limit is handled in code, not explained to the player | The writer could not fit the rested bonus, the festival tiers, kit-raising or the Flowering into a tooltip |
 | 2026-11-14 | Needs renamed "Watching the young", "Ink painting", "Opera"; "Kindergarten" without "Panda"; "Night Gatherers' Post"; the farmhouse keeps its vanilla name | The writer's review: one word per job, and both peoples share the kindergarten |
+| 2026-11-14 | The Ringtail gate passed: two peoples ship. Ringtail shift starts at the bell, clamped between four hours after dawn and nightfall; lofts are Ringtail homes by a swap rule; the lighter Ringtail appetite the prototype tried is left out | The prototype ran three days and a reload with no failures. The game's own sleep logic gives a three-hour sleep and a free morning, which is the teahouse beat the design wanted |
+| 2026-11-14 | The faction's look is a re-theme of the vanilla materials done in code, plus its own models for identity buildings | A data-only re-theme crashed with two popular mods; the code form passed with thirty-five mods and falls back to the Folktails look if anything is missing |
 | 2026-11-14 | Tea quenches a fifth of a thirst per cup; dew collectors crowd each other out | The model: at a third, tea becomes mandatory; any useful dew yield repays a pump worker within three weeks unless collectors share a catchment |
