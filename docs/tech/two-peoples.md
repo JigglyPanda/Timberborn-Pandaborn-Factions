@@ -501,7 +501,12 @@ survives save and reload. In three in-game days plus a reload:
 
 Conditions that come with the go: the vanilla population numbers do not count Ringtail crews (our own panel is
 required, 17.5); kind-specific housing is a correction rule, not a restriction (17.4); and the two private fields
-must be checked at load with a safe fallback (17.6). <!-- VERDICT-EXTRA -->
+must be checked at load with a safe fallback (17.6).
+
+One design caveat came out of the measurements (17.3): **a night crew of haulers only has work if the day leaves
+goods behind** — with the vanilla 16-hour day, Inkpaw builders supply construction themselves before the bell, so the
+Courier Loft idled in every run without day-time producers. That is a content question (shelves, flags, a Ringtail
+builder hub), not a technical one.
 
 ### 17.2 What was built
 
@@ -569,7 +574,21 @@ hours after dawn; `rt-gate3` shows the same pattern for all 4 couriers):
 * **Job exclusivity: 0 violations** in 72 + 31 hourly samples of every colonist and workplace, in every run: Ringtail
   workplaces only ever held Ringtails, Inkpaws never took them, Ringtails never took an Inkpaw job (vanilla
   `DistrictWorkplaceAssigner` keys workplaces and workers by worker type).
-* **Throughput:** <!-- THROUGHPUT -->
+* **Throughput — the important finding: night couriers only have work if the day leaves work behind.** Ringtails
+  hauled and gathered whenever there was something to move: the Forager's Nest Ringtail gathered 6 loads (18 berries)
+  in `rt-gate4` (until the bushes in range ran out, "Nothing to do in range"). But the Courier Loft crews made **zero**
+  hauls in `rt-gate3`, `rt-gate6` and `rt-throughput1`: in `rt-throughput1`, 6 dens queued at dawn (72 logs) were
+  supplied entirely by the Inkpaw builders before the bell (24 trips, 72 logs, all by day), and at night there was
+  nothing left. In Timberborn, haulers serve haul candidates (builder hubs, flags, farms, stockpiles, workshops'
+  inventories); builders, not haulers, carry materials to construction sites, and the builders are Inkpaws.
+  So the Courier Loft's night work comes from what the Inkpaws leave in flags, farms and workshops at the bell, and
+  from builder-hub restocking. A run to measure exactly that (`rt-throughput2`: Inkpaw lumberjacks and gatherer
+  filling their flags by day, 5 Ringtail couriers emptying them at night, construction queued after the bell) was
+  queued but had not got the game by the time of writing (the shared test queue was saturated); analyse it with
+  `python proto/ringtails/test/analyze.py E:\PandabornDevuild	estt-throughput2` (`pickupsByKindWorkplacePhase`).
+  Design consequence: the "Inkpaw workshops get roomier output and input shelves" change is not optional, and the
+  Courier Loft should be pitched as "clears the flags and restocks the workshops overnight", not as construction
+  delivery (unless a Ringtail builder hub is added, which is data: a Ringtail-typed builders' workplace).
 * **With the rest ending at the bell** (`rt-gate6`, default 16-hour Inkpaw day, so the window is 0–16 h): Ringtails
   worked 105 of 120 night samples (the rest: walking to work in the first night hour), were never at work in the
   afternoon, and slept once a day; the first version slept only when Sleep fell below 0.55, which drifted the sleep

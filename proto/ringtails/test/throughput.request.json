@@ -4,6 +4,9 @@
     "spawn": 5,
     "place": [
       "RingtailHaulingPost.Inkpaws",
+      "LumberjackFlag.Inkpaws",
+      "GathererFlag.Inkpaws",
+      "LumberjackFlag.Inkpaws",
       "RingtailLoft.Inkpaws",
       "RingtailLoft.Inkpaws"
     ],
