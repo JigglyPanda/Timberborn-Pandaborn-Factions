@@ -336,6 +336,9 @@
     },
     "#Unfinished": {
       "Children": {
+        "ConstructionBase2x3#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase2x3/ConstructionBase2x3.blueprint"
+        },
         "ConstructionStage0": {
           "TimbermeshSpec": {
             "Model": "Buildings/Pandaborn/ProtoModels/PickleYard/PickleYard.ConstructionStage0.Model"
@@ -358,9 +361,6 @@
             "SphereColliders": [],
             "CapsuleColliders": []
           }
-        },
-        "ConstructionBase2x3#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase2x3/ConstructionBase2x3.blueprint"
         }
       }
     }

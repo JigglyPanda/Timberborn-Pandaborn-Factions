@@ -172,6 +172,9 @@
     },
     "#Unfinished": {
       "Children": {
+        "ConstructionBase1x1#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase1x1/ConstructionBase1x1.blueprint"
+        },
         "ConstructionStage0": {
           "TimbermeshSpec": {
             "Model": "Buildings/Pandaborn/ProtoModels/Hammock/Hammock.ConstructionStage0.Model"
@@ -194,9 +197,6 @@
             "SphereColliders": [],
             "CapsuleColliders": []
           }
-        },
-        "ConstructionBase1x1#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase1x1/ConstructionBase1x1.blueprint"
         }
       }
     }

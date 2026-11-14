@@ -250,7 +250,7 @@ def frame_ring(geo, c, n, s, w, h, f, depth=0.04, material=TIMBER, tags=()):
             geo.add(quad_part(material, q, uvs=uv, normal=nn), tags)
 
 
-def window(geo, center, normal, w=0.42, h=0.42, frame=0.05, region=WIN_LATTICE, sill=True, shutters=False, tags=()):
+def window(geo, center, normal, w=0.42, h=0.42, frame=0.06, region=WIN_LATTICE, sill=True, shutters=False, tags=()):
     """A lattice window: glowing lattice paper set into a dark timber surround, a sill below."""
     c, n = V(center, float), V(normal, float)
     n /= np.linalg.norm(n)
@@ -279,7 +279,7 @@ def window(geo, center, normal, w=0.42, h=0.42, frame=0.05, region=WIN_LATTICE, 
             boards(geo, o, al, ac / np.linalg.norm(ac), h, w * 0.5, 2, TIMBER, thick=0.025, tags=tags)
 
 
-def door(geo, center_bottom, normal, w=0.42, h=0.62, frame=0.06, leaf="ajar", tags=()):
+def door(geo, center_bottom, normal, w=0.42, h=0.62, frame=0.075, leaf="ajar", tags=()):
     """A doorway: dark opening, timber posts and lintel, a stone step; leaf 'ajar' adds a plank door swung in."""
     c, n = V(center_bottom, float), V(normal, float)
     n /= np.linalg.norm(n)
@@ -305,7 +305,7 @@ def door(geo, center_bottom, normal, w=0.42, h=0.62, frame=0.06, leaf="ajar", ta
         boards(geo, hinge, up, ac, h * 0.98, w * 0.92, 2, TIMBER, thick=0.03, tags=tags)
 
 
-def wall(geo, p0, p1, y0, y1, openings=(), post=0.085, rail=True, infill=PLASTER_LATH, frame_mat=TIMBER,
+def wall(geo, p0, p1, y0, y1, openings=(), post=0.1, rail=True, infill=PLASTER_LATH, frame_mat=TIMBER,
          inset=0.025, braces=False, tags=()):
     """A timber-frame wall from p0 to p1 (xz at y0..y1), facing outwards to the left of p0->p1 seen from above
     (i.e. normal = up x direction). Posts at both ends, sill and top plate, a mid rail, lime-plaster infill set

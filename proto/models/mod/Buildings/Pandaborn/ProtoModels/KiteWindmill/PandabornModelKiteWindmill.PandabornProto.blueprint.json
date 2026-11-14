@@ -410,6 +410,9 @@
     },
     "#Unfinished": {
       "Children": {
+        "ConstructionBase3x3#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase3x3/ConstructionBase3x3.blueprint"
+        },
         "ConstructionStage0": {
           "TimbermeshSpec": {
             "Model": "Buildings/Pandaborn/ProtoModels/KiteWindmill/KiteWindmill.ConstructionStage0.Model"
@@ -432,9 +435,6 @@
             "SphereColliders": [],
             "CapsuleColliders": []
           }
-        },
-        "ConstructionBase3x3#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase3x3/ConstructionBase3x3.blueprint"
         }
       }
     }

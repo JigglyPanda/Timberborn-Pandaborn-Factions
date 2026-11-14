@@ -144,6 +144,9 @@
     },
     "#Unfinished": {
       "Children": {
+        "ConstructionBase2x2#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase2x2/ConstructionBase2x2.blueprint"
+        },
         "ConstructionStage0": {
           "TimbermeshSpec": {
             "Model": "Buildings/Pandaborn/ProtoModels/FlumeCorner/FlumeCorner.ConstructionStage0.Model"
@@ -166,9 +169,6 @@
             "SphereColliders": [],
             "CapsuleColliders": []
           }
-        },
-        "ConstructionBase2x2#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase2x2/ConstructionBase2x2.blueprint"
         }
       }
     }

@@ -97,10 +97,19 @@ def apply_model(bp, mj):
     unf[base + "#nested"] = {"BlueprintPath": f"ConstructionBases/{base}/{base}.blueprint"}
     if mj.get("connectionAnchor") and "ConnectionAnchorPointSpec" in bp:
         bp["ConnectionAnchorPointSpec"]["Position"] = mj["connectionAnchor"]
-    unf["ConstructionStage0"] = {
+    stage_entry = {
         "TimbermeshSpec": {"Model": model_path(mid, mj["models"]["constructionStage0"])},
         "CollidersSpec": {"BoxColliders": [{"Center": v3(s["X"] / 2, 0.05, s["Y"] / 2), "Size": v3(s["X"], 0.1, s["Y"])}],
                           "SphereColliders": [], "CapsuleColliders": []}}
+    # child order matters: the progress visualizer shows child 0 (the base) until construction starts, then the
+    # stages in order, so the base must come first
+    unf.pop("ConstructionStage0", None)
+    bases = {k: v for k, v in unf.items() if "ConstructionBase" in k}
+    others = {k: v for k, v in unf.items() if "ConstructionBase" not in k}
+    unf.clear()
+    unf.update(bases)
+    unf["ConstructionStage0"] = stage_entry
+    unf.update(others)
     if "ConstructionSiteProgressVisualizerSpec" in bp:
         bp["ConstructionSiteProgressVisualizerSpec"]["ProgressThresholds"] = [0.0]
     for a in mj.get("attachments", []):
@@ -193,17 +202,23 @@ def main():
         loc.append((f"Building.PandabornModel{mid}.Description",
                     f"Model prototype of the {mj.get('displayName', mid)}, on the {mj['standIn']} blueprint."))
         print(f"{template:45s} <- {mj['standIn']}  ({mj['triangles']['finished']} tris)")
-    coll = os.path.join(MOD, "TemplateCollections", "Pandaborn", "TemplateCollection.Buildings.ProtoModels.blueprint.json")
-    os.makedirs(os.path.dirname(coll), exist_ok=True)
-    json.dump({"TemplateCollectionSpec": {"CollectionId": "Buildings.Folktails", "Blueprints": entries}},
-              open(coll, "w", newline="\n"), indent=2)
+    # Folktails, and the Inkpaws (whose faction lists Buildings.Inkpaws since the catalogue generator landed)
+    for cid in ("Buildings.Folktails", "Buildings.Inkpaws"):
+        coll = os.path.join(MOD, "TemplateCollections", "Pandaborn",
+                            f"TemplateCollection.{cid}.ProtoModels.blueprint.json")
+        os.makedirs(os.path.dirname(coll), exist_ok=True)
+        json.dump({"TemplateCollectionSpec": {"CollectionId": cid, "Blueprints": entries}},
+                  open(coll, "w", newline="\n"), indent=2)
     lp = os.path.join(MOD, "Localizations", "enUS_PandabornProtoModels.csv")
     os.makedirs(os.path.dirname(lp), exist_ok=True)
     with open(lp, "w", encoding="utf-8", newline="\n") as f:
         f.write("ID,Text,Comment\n")
         for k, t in loc:
             f.write(f'{k},"{t}",\n')
-    # mirror into the build folder with the model files
+    # mirror into the build folder with the model files (never while a game test has it junctioned into Mods)
+    live = os.path.join(os.path.expanduser("~"), "Documents", "Timberborn", "Mods", os.path.basename(a.out))
+    if os.path.exists(live):
+        raise SystemExit(f"{live} exists: a game test is using the build folder; blueprints written to {MOD} only")
     if os.path.isdir(a.out):
         shutil.rmtree(a.out)
     shutil.copytree(MOD, a.out)
