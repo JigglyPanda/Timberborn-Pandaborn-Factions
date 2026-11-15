@@ -313,6 +313,39 @@ foreach ($s in $stages) {
                     if ($failed -contains $s) { break }
                 }
             }
+            # PAIRED CHANGE: plant meshes and the pandabornplants bundle (material regions such as bamboo_buds_c/_d/_e).
+            # Every adopted plant's meshes must be built after the last commit of art/plants/<Id>, and the bundle after
+            # the last commit under art/plants: an old mesh with a new bundle (or the reverse) paints the wrong masks.
+            $plantsBundle = Join-Path $bundleOut 'AssetBundles\pandabornplants_win'
+            $plantsAt = & git -C $repo log -1 --format=%ct -- 'art/plants' 2>$null
+            if ($plantsAt -and (Test-Path -LiteralPath $plantsBundle)) {
+                # an hour of slack: a lane builds, looks, then commits (the build is a little older than its commit)
+                $plantsTime = [DateTimeOffset]::FromUnixTimeSeconds([long]$plantsAt).LocalDateTime.AddHours(-1)
+                foreach ($b in 'pandabornplants_win', 'pandabornplants_mac') {
+                    $f = Join-Path $bundleOut "AssetBundles\$b"
+                    if ((Test-Path -LiteralPath $f) -and (Get-Item -LiteralPath $f).LastWriteTime -lt $plantsTime) {
+                        Say "assemble: $b is older than the last plant change in git ($plantsTime): rebuild it (tools/build_plants.ps1)" 'Red'
+                        $failed += $s
+                    }
+                }
+            }
+            $manifestPlants = "$GenDir.models.json"
+            if (Test-Path -LiteralPath $manifestPlants) {
+                $adoptedPlants = @(((Get-Content -LiteralPath $manifestPlants -Raw | ConvertFrom-Json).adopted.PSObject.Properties |
+                    Where-Object { $_.Name -like 'plant:*' }).Name | ForEach-Object { $_.Substring(6) })
+                foreach ($plantId in $adoptedPlants) {
+                    $at = & git -C $repo log -1 --format=%ct -- "art/plants/$plantId" 2>$null
+                    if (-not $at) { continue }
+                    $t = [DateTimeOffset]::FromUnixTimeSeconds([long]$at).LocalDateTime.AddHours(-1)
+                    $old = @(Get-ChildItem -LiteralPath (Join-Path 'E:\PandabornDev\build\plants' $plantId) -Filter '*.timbermesh' -File -ErrorAction SilentlyContinue |
+                             Where-Object { $_.LastWriteTime -lt $t })
+                    if ($old.Count -gt 0) {
+                        Say "assemble: plant $plantId has $($old.Count) mesh(es) older than its last change in git ($t): run the models stage with -Plants" 'Red'
+                        $failed += $s
+                    }
+                }
+            }
+            if ($failed -contains $s) { break }
             $allMeshes = [ordered]@{}; foreach ($k in $meshes.Keys) { $allMeshes[$k] = $meshes[$k] }
             if (Test-Path -LiteralPath (Join-Path $GenDir 'Characters\Pandaborn\RingtailAdult.Inkpaws.blueprint.json')) {
                 foreach ($k in $ringtailMeshes.Keys) { $allMeshes[$k] = $ringtailMeshes[$k] }
