@@ -14,6 +14,8 @@ namespace Pandaborn.Festival
     {
         public const string Drum = "Environment.Pandaborn.FestivalDrum";
         public const string Firecrackers = "Environment.Pandaborn.Firecrackers";
+        /// <summary>Paper lanterns lifting: played during the release at the start of the show only.</summary>
+        public const string LanternRise = "Environment.Pandaborn.LanternRise";
 
         private readonly ISoundSystem _soundSystem;
         private readonly AudioClipService _audioClipService;

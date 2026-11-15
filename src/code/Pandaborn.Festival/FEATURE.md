@@ -358,6 +358,8 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `get_DayNumber()`
   * method `get_HoursPassedToday()`
   * method `get_PartialDayNumber()`
+* type `Timberborn.TimeSystem.NonlinearAnimationManager`
+  * method `get_SpeedMultiplier()`
 
 **Timberborn.ToolSystem**
 
@@ -383,6 +385,12 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `Timberborn.WeatherSystem.WeatherService`
   * method `NextDayIsHazardousWeather()`
   * method `get_IsHazardousWeather()`
+
+**Timberborn.WindSystem**
+
+* type `Timberborn.WindSystem.WindService`
+  * method `get_WindDirection()`
+  * method `get_WindStrength()`
 
 **Timberborn.WorkSystem**
 
@@ -410,6 +418,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `UnityEngine.Mathf`
   * method `CeilToInt(System.Single)`
   * method `Clamp(System.Single, System.Single, System.Single)`
+  * method `Clamp01(System.Single)`
   * method `Cos(System.Single)`
   * method `Max(System.Single, System.Single)`
   * method `Sin(System.Single)`
@@ -424,10 +433,16 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `SetParent(UnityEngine.Transform, System.Boolean)`
   * method `get_position()`
   * method `set_position(UnityEngine.Vector3)`
+* type `UnityEngine.Vector2`
+  * field `x`
+  * field `y`
 * type `UnityEngine.Vector3`
+  * field `x`
+  * field `z`
   * method `.ctor(System.Single, System.Single, System.Single)`
   * method `get_sqrMagnitude()`
   * method `get_up()`
+  * method `get_zero()`
   * method `op_Addition(UnityEngine.Vector3, UnityEngine.Vector3)`
   * method `op_Multiply(UnityEngine.Vector3, System.Single)`
   * method `op_Subtraction(UnityEngine.Vector3, UnityEngine.Vector3)`
@@ -435,7 +450,29 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 **UnityEngine.ParticleSystemModule**
 
 * type `UnityEngine.ParticleSystem`
-  * method `Play()`
+  * method `Emit(System.Int32)`
+  * method `Play(System.Boolean)`
+  * method `Stop(System.Boolean, UnityEngine.ParticleSystemStopBehavior)`
+  * method `get_emission()`
+  * method `get_isEmitting()`
+  * method `get_isPlaying()`
+  * method `get_main()`
+  * method `get_particleCount()`
+  * method `get_velocityOverLifetime()`
+* type `UnityEngine.ParticleSystem+EmissionModule`
+  * method `set_enabled(System.Boolean)`
+  * method `set_rateOverTime(UnityEngine.ParticleSystem+MinMaxCurve)`
+* type `UnityEngine.ParticleSystem+MainModule`
+  * method `set_loop(System.Boolean)`
+  * method `set_simulationSpeed(System.Single)`
+* type `UnityEngine.ParticleSystem+MinMaxCurve`
+  * method `.ctor(System.Single, System.Single)`
+  * method `op_Implicit(System.Single)`
+* type `UnityEngine.ParticleSystem+VelocityOverLifetimeModule`
+  * method `get_enabled()`
+  * method `set_x(UnityEngine.ParticleSystem+MinMaxCurve)`
+  * method `set_z(UnityEngine.ParticleSystem+MinMaxCurve)`
+* type `UnityEngine.ParticleSystemStopBehavior`
 
 **UnityEngine.UIElementsModule**
 

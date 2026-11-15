@@ -73,6 +73,7 @@ namespace Pandaborn.Events.Dev
         private readonly EntityService _entityService;
         private readonly Timberborn.Beavers.BeaverFactory _beaverFactory;
         private readonly Timberborn.Navigation.IDistrictService _districtService;
+        private readonly Timberborn.CameraSystem.CameraService _cameraService;
 
         private readonly JObject _config;
         private readonly JObject _out = new JObject();
@@ -98,8 +99,10 @@ namespace Pandaborn.Events.Dev
                            EntitySelectionService entitySelectionService, NaturalResourceFactory naturalResourceFactory, PlantingService plantingService,
                            TreeCuttingArea treeCuttingArea, ISoilMoistureService soilMoistureService, ITerrainService terrainService, PandabornStore store,
                            WeatherService weatherService, WeatherFastForwarder weatherFastForwarder, EntityService entityService,
-                           Timberborn.Beavers.BeaverFactory beaverFactory, Timberborn.Navigation.IDistrictService districtService)
+                           Timberborn.Beavers.BeaverFactory beaverFactory, Timberborn.Navigation.IDistrictService districtService,
+                           Timberborn.CameraSystem.CameraService cameraService)
         {
+            _cameraService = cameraService;
             _beaverFactory = beaverFactory;
             _districtService = districtService;
             _eventBus = eventBus;
@@ -502,6 +505,19 @@ namespace Pandaborn.Events.Dev
                                                   ["hour"] = Math.Round(_dayNightCycle.HoursPassedToday, 2), ["target"] = target ? Template(target) : null });
                     if (target) _entitySelectionService.SelectAndFocusOn(target);
                     else _entitySelectionService.Unselect();
+                    // optional camera: "focus" (a target to centre on without selecting it), "zoom" (ZoomLevel),
+                    // "vAngle" / "hAngle" (degrees); the camera stays there for later shots
+                    var entryCam = (JObject)_shotsTaken.Last;
+                    if (_activeShot["focus"] != null)
+                    {
+                        var f = FindTarget((string)_activeShot["focus"]);
+                        if (f) _cameraService.MoveTargetTo(f.Transform.position);
+                    }
+                    if (_activeShot["zoom"] != null) _cameraService.ZoomLevel = _activeShot["zoom"].Value<float>();
+                    if (_activeShot["vAngle"] != null) _cameraService.VerticalAngle = _activeShot["vAngle"].Value<float>();
+                    if (_activeShot["hAngle"] != null) _cameraService.HorizontalAngle = _activeShot["hAngle"].Value<float>();
+                    entryCam["camera"] = "zoom " + _cameraService.ZoomLevel.ToString("0.00") + ", v " + _cameraService.VerticalAngle.ToString("0.0")
+                                         + ", h " + _cameraService.HorizontalAngle.ToString("0.0") + ", speed " + Time.timeScale.ToString("0.00");
                     _shotWait = Time.unscaledTime + 1.5f;
                     return;
                 case 1:

@@ -57,6 +57,17 @@ namespace Pandaborn.Festival
         private readonly FestivalSounds _sounds;
         private readonly FactionService _factionService;
         private bool _showSoundOn;
+        private readonly Timberborn.WindSystem.WindService _windService;
+        private readonly NonlinearAnimationManager _nonlinearAnimationManager;
+        private bool _skyOn;
+
+        /// <summary>Lanterns leaving the square all evening, per second of the particles' own time (0.85 with a 25 to
+        /// 40 s life: about 25 in the sky at once).</summary>
+        private const float SkyLanternsPerSecond = 0.85f;
+
+        /// <summary>The release at the start of the show: Spec.LanternRises lanterns over this many game hours (about 6 s
+        /// at game speed 1).</summary>
+        private const float ReleaseSpanHours = 0.3f;
 
         private readonly List<FestivalSquare> _squares = new List<FestivalSquare>();
         private readonly List<FestivalGoer> _goers = new List<FestivalGoer>();
@@ -67,8 +78,11 @@ namespace Pandaborn.Festival
 
         public FestivalService(TemplateService templateService, PandabornStore store, Messenger messenger, ILoc loc, IDayNightCycle dayNightCycle,
                                GameCycleService gameCycleService, WeatherService weatherService, EventBus eventBus, FestivalFireworks fireworks,
-                               FestivalSounds sounds, FactionService factionService)
+                               FestivalSounds sounds, FactionService factionService, Timberborn.WindSystem.WindService windService,
+                               NonlinearAnimationManager nonlinearAnimationManager)
         {
+            _windService = windService;
+            _nonlinearAnimationManager = nonlinearAnimationManager;
             _templateService = templateService;
             _store = store;
             _messenger = messenger;
@@ -373,9 +387,38 @@ namespace Pandaborn.Festival
             }
         }
 
+        /// <summary>The lantern sky over every square with lantern art: on through the show, off (fading) after it.</summary>
+        private void UpdateSky()
+        {
+            bool on = IsShowTime;
+            if (!on && !_skyOn) return;
+            _skyOn = on;
+            float speed = 1f;
+            try { speed = _nonlinearAnimationManager.SpeedMultiplier; } catch (Exception) { }
+            if (speed <= 0f) speed = 1f;   // paused: the scaled clock stands still anyway
+            var drift = Vector3.zero;
+            try
+            {
+                var w = _windService.WindDirection;
+                float strength = 0.12f + 0.25f * Mathf.Clamp01(_windService.WindStrength);
+                drift = new Vector3(w.x, 0f, w.y) * strength;
+            }
+            catch (Exception) { }
+            foreach (var square in _squares)
+                if (square && square.IsFinished) square.UpdateSky(on, SkyLanternsPerSecond, drift, speed);
+        }
+
+        private bool AnyLanternSky()
+        {
+            foreach (var square in _squares)
+                if (square && square.IsFinished && square.HasLanternSky) return true;
+            return false;
+        }
+
         private void RunShow()
         {
             UpdateShowSounds();
+            UpdateSky();
             if (!IsHoliday) { _showClock = -1f; return; }
             float now = HoursToday;
             if (_showClock < 0f) _showClock = now;
@@ -383,11 +426,18 @@ namespace Pandaborn.Festival
             _showClock = now;
             if (now <= from || _squares.Count == 0) return;
             int lanterns = Math.Max(0, Spec.LanternRises);
-            const float lanternSpan = 1.75f;
+            // with the art lane's lantern particles: a dense release over a few seconds at the start of the show (the sky
+            // then fills all evening, UpdateSky); without: one comet rocket per lantern over 1.75 h
+            bool sky = AnyLanternSky();
+            float lanternSpan = sky ? ReleaseSpanHours : 1.75f;
             for (int i = 0; i < lanterns; i++)
             {
                 float t = Spec.ShowStartHours + 0.25f + i * lanternSpan / lanterns;
-                if (t > from && t <= now) LaunchEverywhere(Spec.LanternFireworkIds, i, lantern: true);
+                if (t > from && t <= now)
+                {
+                    LaunchEverywhere(Spec.LanternFireworkIds, i, lantern: true);
+                    if (sky && i % 8 == 0) PlayLanternRise();
+                }
             }
             if (!Grand) return;
             int bursts = Math.Max(0, Spec.Bursts);
@@ -397,6 +447,12 @@ namespace Pandaborn.Festival
                 float t = Spec.FireworksStartHours + i * burstSpan / bursts;
                 if (t > from && t <= now) LaunchEverywhere(Spec.BurstFireworkIds, i, lantern: false);
             }
+        }
+
+        private void PlayLanternRise()
+        {
+            foreach (var square in _squares)
+                if (square && square.IsFinished && square.HasLanternSky) _sounds.Play3D(square.SoundEmitter, FestivalSounds.LanternRise);
         }
 
         private void LaunchEverywhere(System.Collections.Immutable.ImmutableArray<string> ids, int index, bool lantern)

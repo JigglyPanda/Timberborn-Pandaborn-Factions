@@ -112,14 +112,68 @@ namespace Pandaborn.Festival
             }
         }
 
+        /// <summary>The square has the art lane's lantern particles (the LanternRise attachment or a particle system under
+        /// #LanternRise).</summary>
+        public bool HasLanternSky
+        {
+            get { FindNodes(); return _lanternRise; }
+        }
+
+        /// <summary>
+        /// The sky over the square during the show: lanterns leave it all evening at <paramref name="perSecond"/> (in the
+        /// particles' own seconds), drifting with the wind; off, it stops emitting and the last lanterns fade out. Particle
+        /// time follows the game's nonlinear animation speed (as the game's own swaying plants), so the sky holds the same
+        /// number of lanterns at every game speed and stands still when the game is paused. No-op without the art.
+        /// </summary>
+        internal void UpdateSky(bool on, float perSecond, Vector3 drift, float simulationSpeed)
+        {
+            FindNodes();
+            if (!_lanternRise) return;
+            try
+            {
+                var main = _lanternRise.main;
+                main.simulationSpeed = Mathf.Clamp(simulationSpeed, 0.05f, 4f);
+                var vel = _lanternRise.velocityOverLifetime;
+                if (vel.enabled)
+                {
+                    vel.x = new ParticleSystem.MinMaxCurve(drift.x - 0.08f, drift.x + 0.08f);
+                    vel.z = new ParticleSystem.MinMaxCurve(drift.z - 0.08f, drift.z + 0.08f);
+                }
+                var emission = _lanternRise.emission;
+                emission.enabled = true;
+                emission.rateOverTime = on ? perSecond : 0f;
+                if (on && !_lanternRise.isPlaying)
+                {
+                    main.loop = true;
+                    _lanternRise.Play(true);
+                }
+                else if (!on && _lanternRise.isEmitting)
+                    _lanternRise.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Festival] lantern sky failed: " + e.Message); _lanternRise = null; }
+        }
+
+        /// <summary>Lanterns in the sky now (tests), or -1 without the art.</summary>
+        public int SkyLanterns => _lanternRise ? _lanternRise.particleCount : -1;
+
+        /// <summary>Sends up <paramref name="count"/> lanterns at once (the release at the start of the show).</summary>
+        internal bool Release(int count)
+        {
+            FindNodes();
+            if (!_lanternRise || count <= 0) return false;
+            try
+            {
+                if (!_lanternRise.isPlaying) { var main = _lanternRise.main; main.loop = true; _lanternRise.Play(true); }
+                _lanternRise.Emit(count);
+                return true;
+            }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Festival] lantern release failed: " + e.Message); _lanternRise = null; return false; }
+        }
+
         internal bool Launch(FestivalFireworks fireworks, string fireworkId, bool lantern)
         {
             FindNodes();
-            if (lantern && _lanternRise)
-            {
-                _lanternRise.Play();
-                return true;
-            }
+            if (lantern && _lanternRise) return Release(1);
             var origin = _mount ? _mount.position : Center + Vector3.up * 1.5f;
             var offset = new Vector3((float)(_random.NextDouble() - 0.5) * 2.5f, 0f, (float)(_random.NextDouble() - 0.5) * 2.5f);
             float pitch = (float)(_random.NextDouble() - 0.5) * (lantern ? 16f : 30f);

@@ -69,8 +69,11 @@ public static class PandabornAttachmentsBuilder
     // node (FestivalSquare.Launch -> ParticleSystem.Play per lantern). Material: "Universal Render Pipeline/Particles/Unlit",
     // the shader the game's own firework trails and sparks use (CometRed_Trail, Sparks: transparent, alpha blend, _EMISSION),
     // so it compiles into the bundle exactly like theirs.
-    // Emission rate 0. Play() starts a non-looping 9 s schedule of 9 single-lantern bursts (Play on a system that still
-    // has lanterns in the air does nothing, so each call that finds it idle sends up a small flight); Emit(n) works too.
+    // Emission rate 0 and no bursts: the Festival module drives it (FestivalSquare.UpdateSky / Release): it sets the
+    // looping system's rate from code for the whole show (the village releasing lanterns all evening), Emit(n)s the
+    // 24-lantern release at its start, sets the drift from the game's wind and the simulation speed from the game's
+    // nonlinear animation speed, and stops emitting at the end so the last lanterns fade out. Sizes, speeds and lifetimes
+    // are at simulation speed 1 (game speed 1).
     private const string EffectDir = Root + "/Resources/Effects/Pandaborn";
 
     private static string MakeLanternRise()
@@ -111,18 +114,19 @@ public static class PandabornAttachmentsBuilder
         var ps = go.AddComponent<ParticleSystem>();
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = ps.main;
-        main.duration = 9f;
-        main.loop = false;
+        main.duration = 10f;
+        main.loop = true;                                       // runs through the show; the rate is set from code
         main.playOnAwake = false;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(10f, 16f);
+        main.startLifetime = new ParticleSystem.MinMaxCurve(25f, 40f);
         main.startSpeed = 0f;                                   // the rise comes from velocity over lifetime (world up)
-        main.startSize = new ParticleSystem.MinMaxCurve(0.44f, 0.58f);   // quad incl. halo; the paper is ~0.3 m tall
-        main.startRotation = new ParticleSystem.MinMaxCurve(-0.10f, 0.10f);
-        main.startColor = Color.white;
+        main.startSize = new ParticleSystem.MinMaxCurve(0.70f, 0.90f);   // quad incl. halo; the paper is ~60 % of it
+        main.startRotation = new ParticleSystem.MinMaxCurve(-0.07f, 0.07f);
+        // a little brightness and warmth variation between lanterns
+        main.startColor = new ParticleSystem.MinMaxGradient(Color.white, new Color(0.86f, 0.80f, 0.74f, 1f));
         main.gravityModifier = 0f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.scalingMode = ParticleSystemScalingMode.Local;
-        main.maxParticles = 64;
+        main.maxParticles = 160;
         main.cullingMode = ParticleSystemCullingMode.AlwaysSimulate;
         main.stopAction = ParticleSystemStopAction.None;
 
@@ -130,25 +134,25 @@ public static class PandabornAttachmentsBuilder
         em.enabled = true;
         em.rateOverTime = 0f;
         em.rateOverDistance = 0f;
-        float[] times = { 0f, 0.9f, 2.0f, 2.8f, 3.9f, 5.0f, 5.7f, 6.9f, 8.1f };
-        em.SetBursts(times.Select(t => new ParticleSystem.Burst(t, 1)).ToArray());
 
         var sh = ps.shape;
         sh.enabled = true;
         sh.shapeType = ParticleSystemShapeType.Box;
-        sh.scale = new Vector3(2.6f, 0.3f, 2.6f);              // released from all over the square, at hand height
-        sh.position = new Vector3(0f, 1.0f, 0f);
+        sh.scale = new Vector3(3.8f, 0.4f, 3.8f);              // released from all over the square, among the dancers
+        sh.position = new Vector3(0f, 1.1f, 0f);                // at hand height above #LanternRise (near the centre)
         sh.randomDirectionAmount = 0f;
 
         var vel = ps.velocityOverLifetime;
         vel.enabled = true;
         vel.space = ParticleSystemSimulationSpace.World;
-        vel.x = new ParticleSystem.MinMaxCurve(-0.16f, 0.16f);  // a slow sideways drift, its own per lantern
-        vel.y = new ParticleSystem.MinMaxCurve(1.0f, 1.5f);
-        vel.z = new ParticleSystem.MinMaxCurve(-0.16f, 0.16f);
-        // they leave the hands slowly and settle into a steady climb
+        vel.x = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);  // each its own slight drift; the wind is added from code
+        vel.y = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
+        vel.z = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);
+        // they leave the hands slowly, climb, then slow as they cool and drift: the sky holds them at every height
+        // (about 14 m up on average after 30 s at game speed 1) instead of losing them all off the top of the screen
         vel.speedModifier = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(
-            new Keyframe(0f, 0.35f), new Keyframe(0.12f, 0.85f), new Keyframe(0.3f, 1f), new Keyframe(1f, 1.05f)));
+            new Keyframe(0f, 0.35f), new Keyframe(0.12f, 0.85f), new Keyframe(0.3f, 1f), new Keyframe(0.6f, 0.7f),
+            new Keyframe(1f, 0.45f)));
 
         var noise = ps.noise;                                  // a gentle sway in the night air
         noise.enabled = true;
@@ -159,9 +163,9 @@ public static class PandabornAttachmentsBuilder
         noise.octaveCount = 1;
         noise.quality = ParticleSystemNoiseQuality.Medium;
 
-        var rot = ps.rotationOverLifetime;                     // a slight rock of the paper
-        rot.enabled = true;
-        rot.z = new ParticleSystem.MinMaxCurve(-0.06f, 0.06f);
+        // no spin: a lantern stays upright (a rotation rate adds up over a 30 s life and tips them over)
+        var rot = ps.rotationOverLifetime;
+        rot.enabled = false;
 
         var col = ps.colorOverLifetime;                        // in over 0.5 s, out over the last ~3 s
         col.enabled = true;

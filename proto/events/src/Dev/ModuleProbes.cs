@@ -98,6 +98,7 @@ namespace Pandaborn.Events.Dev
                 ["grandAvg"] = grandN > 0 ? Math.Round(grandSum / grandN, 3) : -1,
                 ["doing"] = doing,
                 ["onSquareSlots"] = OnSlots(f),
+                ["skyLanterns"] = Sky(f),
                 ["keepWorking"] = keep,
                 ["lockedByTradition"] = TraditionToolLocker.LockedCount,
                 ["panel"] = FestivalSquareFragment.ShownText
@@ -116,7 +117,21 @@ namespace Pandaborn.Events.Dev
             return text;
         }
 
-        public static void Panels(JObject entry) => entry["festivalPanel"] = FestivalSquareFragment.ShownText;
+        public static void Panels(JObject entry)
+        {
+            entry["festivalPanel"] = FestivalSquareFragment.ShownText;
+            var f = F;
+            if (f != null) entry["sky"] = Sky(f);
+        }
+
+        /// <summary>Lanterns in the sky over each square / colonists on its slots.</summary>
+        private static string Sky(FestivalService f)
+        {
+            string text = "";
+            for (int i = 0; i < f.Squares.Count; i++)
+                if (f.Squares[i]) text += (text.Length > 0 ? ", " : "") + f.Squares[i].SkyLanterns;
+            return text;
+        }
 
         public static BaseComponent FindTarget(string what)
         {
