@@ -186,7 +186,8 @@
         "maxDistance": 25,
         "when": {
           "day": 6
-        }
+        },
+        "pathThroughTrees": true
       },
       {
         "id": "cut3",

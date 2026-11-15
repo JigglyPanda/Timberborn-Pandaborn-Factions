@@ -713,10 +713,14 @@ namespace PandabornDevHarness
         /// <summary>Trees in the cutting area that a lumberjack can still cut (grown and standing, or dead with logs).</summary>
         private int MarkedTrees(HashSet<string> except)
         {
+            // only trees a lumberjack can reach count: within 16 tiles of a finished flag (their range is 20 walking tiles)
+            var flags = _placed.Values.Where(p => p.Bo && p.Bo.IsFinished && p.Template != null && p.Template.StartsWith("LumberjackFlag", StringComparison.Ordinal))
+                                      .Select(p => p.Bo.Coordinates).ToList();
             int n = 0;
             foreach (var c in _treeCuttingArea.CuttingArea)
             {
                 if (!TreeAt(c).HasValue) continue;
+                if (!flags.Any(f => (f.x - c.x) * (f.x - c.x) + (f.y - c.y) * (f.y - c.y) <= 256)) continue;
                 if (except != null && except.Count > 0)
                 {
                     var tree = _blockService.GetBottomObjectAt(c);

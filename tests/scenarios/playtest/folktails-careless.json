@@ -182,7 +182,8 @@
         "maxDistance": 25,
         "when": {
           "day": 6
-        }
+        },
+        "pathThroughTrees": true
       },
       {
         "id": "cut3",
@@ -303,7 +304,8 @@
         "maxDistance": 15,
         "when": {
           "day": 2
-        }
+        },
+        "priority": "VeryHigh"
       },
       {
         "id": "pilePlank",
