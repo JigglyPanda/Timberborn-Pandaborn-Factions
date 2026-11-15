@@ -250,7 +250,9 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     (`src/pipeline/sheet_regions.json`): meshes rebuilt on new regions ship only with a `pandabornlook` bundle built
     after that file's last change (old bundle + new meshes = lanterns that never glow; new bundle + old meshes = pale
     lanterns). `assemble` refuses a `pandabornlook_win|_mac` older than the last commit of `sheet_regions.json`; take
-    the newest bundle from `E:\PandabornDev\build\look\AssetBundles` (win and mac) when you build.
+    the newest bundle from `E:\PandabornDev\build\look\AssetBundles` (win and mac) when you build. The same holds for
+    plants: `pandabornplants_win|_mac` and every adopted plant's meshes (`E:\PandabornDev\build\plants\<Id>`) must be
+    built after the last git change of `art/plants` / `art/plants/<Id>` (an hour of slack); `assemble` refuses otherwise.
   * **Install discipline:** run `install` only when no Timberborn process runs (other lanes queue game tests all
     day); take the test mutex `Global\PandabornGameTest` for it, and never leave the tree in a state where `all`
     fails.
