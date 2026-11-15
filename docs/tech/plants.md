@@ -363,3 +363,18 @@ buds were also too small and too green to read from the game camera. Now:
 * Checked: in the detail sheet the persimmons, tea flush and bamboo fungus are pixel-identical where visible (only the
   invisible colour bleed around them changed); the main atlas is byte-identical; the UV2_NONE texel stays transparent.
 * `pandabornplants_win` and `_mac` rebuilt (the Mac one with its own texture paint; its project's textures checked equal).
+
+#### Pass 4 in game: `plants-buds-2` (PASS, 0 errors, hidden desktop)
+
+Three 6x6 fields side by side, one game-camera shot (`E:\PandabornDev\build\test\plants-buds-2\bud_game.png`, closer:
+`bud_close.png`, farther: `bud_game_far.png`): normal shoot bamboo (green), **budding** (paler, cream-speckled, still
+green and leafy, shoots showing), in flower (straw-gold plumes). The budding field is the same model on a dev copy of
+the material with `_EnableDetail` baked on (`PandabornShootBambooBudsDev`, test template
+`PandabornShootBambooBudsTest.Inkpaws` from `gen_mod.py --buds-test`), because the plant lab's own runtime switch did
+not take (`plants-buds-1`: the shot showed no change; result.json reports the detail flag 0 after the lab's pass; cause
+not found, the events lane's module does the real switch and is proven in `events-buds-1`). Pixels and model are the
+ones in the shipped bundle.
+
+**Bundle ready:** `E:\PandabornDev\build\plants\AssetBundles\pandabornplants_win` and `_mac` (built 2026-11-14 17:16 /
+17:22, Mac textures checked equal) go with the shoot bamboo model built from `art/plants/PandabornShootBamboo` at
+75a60b0 or later; install both together.
