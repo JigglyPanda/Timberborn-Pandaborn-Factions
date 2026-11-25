@@ -182,52 +182,58 @@ def paint_strap(S=512):
 
 
 def paint_sky_lantern(S=256):
-    """The rising paper sky lantern (kongming lantern) for the Festival's LanternRise particle: a soft-edged red-orange
-    paper bag, wider at the top, lit from the flame in its open mouth (brightest yellow-orange low in the middle, the
-    look sheet's LanternPaperRed glow (240,70,22) at the shoulders, deeper red at the rim), four faint bamboo struts, a
-    dark hoop at the mouth, and a soft halo around it. No writing. Returns (rgb, alpha, emission rgb), y up."""
+    """The rising paper sky lantern (kongming lantern) for the Festival's LanternRise particle: a red-orange paper bag,
+    wider at the top and tapering to its open mouth, lit from the flame in the mouth (brightest yellow-orange low in the
+    middle, the look sheet's LanternPaperRed glow (240,70,22) at the shoulders, deep red at the silhouette), four faint
+    bamboo struts, a dark hoop at the mouth, and a thin warm halo. No writing. Returns (rgb, alpha, emission rgb), y up.
+
+    Drawn to read as a lantern from the normal game camera on a 0.7 to 0.9 m quad (MakeLanternRise): the paper fills
+    74 % of the quad's height and up to 54 % of its width (it was 60 % and 43 %, mostly halo), the silhouette is crisp
+    and darker than the lit middle, and the halo is thin so that a far lantern is a small lantern, not a soft dot."""
     H = W = S
     y = 1 - (np.arange(H) + 0.5) / H
     x = (np.arange(W) + 0.5) / W
     X, Y = np.meshgrid(x, y)
     cx = 0.5
-    yb, yt = 0.20, 0.80                                   # mouth, crown
+    yb, yt = 0.13, 0.87                                   # mouth, crown
     t = np.clip((Y - yb) / (yt - yb), 0, 1)
-    half = 0.150 + 0.065 * np.sin(np.pi * 0.5 * t) ** 0.8  # wider towards the top
-    # rounded crown: the half-width closes over the top 18 %
-    crown = np.clip((t - 0.82) / 0.18, 0, 1)
+    half = 0.185 + 0.085 * np.sin(np.pi * 0.5 * t) ** 0.8  # tapers to the mouth, widest below the crown
+    # rounded crown: the half-width closes over the top 22 %
+    crown = np.clip((t - 0.78) / 0.22, 0, 1)
     half = half * np.sqrt(np.clip(1 - crown ** 2, 0, 1))
     u = (X - cx) / np.maximum(half, 1e-4)                  # -1..1 across the body
     inside = (np.abs(u) <= 1) & (Y >= yb) & (Y <= yt)
-    edge_d = np.minimum(1 - np.abs(u), np.minimum((Y - yb) / 0.02, 1.0))
-    body_a = np.clip(edge_d / 0.08, 0, 1) * inside
-    body_a = ndimage.gaussian_filter(body_a, 0.8)
+    edge_d = np.minimum((1 - np.abs(u)) * half / 0.20, np.minimum((Y - yb) / 0.02, 1.0))
+    body_a = np.clip(edge_d / 0.05, 0, 1) * inside         # a crisp edge (about 2.5 px at 256)
+    body_a = ndimage.gaussian_filter(body_a, 0.7)
     # glow: from the flame at the mouth up through the paper
-    fx, fy = cx, yb + 0.07
-    d_flame = np.sqrt(((X - fx) / 0.17) ** 2 + ((Y - fy) / 0.27) ** 2)
-    glow = 0.8 * np.exp(-d_flame ** 2 * 1.8)
+    fx, fy = cx, yb + 0.09
+    d_flame = np.sqrt(((X - fx) / 0.21) ** 2 + ((Y - fy) / 0.34) ** 2)
+    glow = 0.85 * np.exp(-d_flame ** 2 * 1.7)
     across = np.sqrt(np.clip(1 - u ** 2, 0, 1))            # rounder in the middle, darker at the silhouette
     red = np.array([240, 70, 22]) / 255
-    deep = np.array([150, 28, 10]) / 255
-    core = np.array([255, 196, 104]) / 255
+    deep = np.array([128, 22, 8]) / 255
+    core = np.array([255, 200, 108]) / 255
     col = deep[None, None] * (1 - across[..., None]) + red[None, None] * across[..., None]
     col = col * (1 - glow[..., None]) + core[None, None] * glow[..., None]
+    # the crown is the farthest from the flame: a shade darker, so the bag reads as a volume
+    col = col * (1 - 0.22 * np.clip((t - 0.62) / 0.38, 0, 1) ** 1.5)[..., None]
     # paper texture and four bamboo struts (cylinder projection), the hoop at the mouth
     fib = tile_fbm((H, W), (6, 6), 71, 3)
     col = col * (0.92 + 0.12 * fib[..., None])
     for deg in (-60.0, -20.0, 20.0, 60.0):              # four struts on the visible half of the round bag
         pos = np.sin(np.radians(deg))
-        strut = np.exp(-((u - pos) / 0.035) ** 2)
-        col = col * (1 - 0.18 * strut[..., None])
-    hoop = np.exp(-((Y - yb - 0.012) / 0.010) ** 2) * (np.abs(u) <= 1.05)
-    col = col * (1 - 0.55 * hoop[..., None])
+        strut = np.exp(-((u - pos) / 0.04) ** 2)
+        col = col * (1 - 0.20 * strut[..., None])
+    hoop = np.exp(-((Y - yb - 0.014) / 0.012) ** 2) * (np.abs(u) <= 1.05)
+    col = col * (1 - 0.60 * hoop[..., None])
     # the flame itself, seen through the mouth: a small bright yellow-white bead just inside
-    flame = np.exp(-(((X - cx) / 0.035) ** 2 + ((Y - yb - 0.04) / 0.05) ** 2))
+    flame = np.exp(-(((X - cx) / 0.042) ** 2 + ((Y - yb - 0.05) / 0.06) ** 2))
     col = col * (1 - flame[..., None]) + np.array([1.0, 0.92, 0.70]) * flame[..., None]
-    # halo: a soft warm glow around the paper, low alpha
+    # halo: a thin warm glow around the paper, low alpha
     dist_body = ndimage.distance_transform_edt(body_a < 0.5) / S
-    halo = np.exp(-(dist_body / 0.06) ** 2) * (body_a < 0.5)
-    alpha = np.clip(np.maximum(body_a * 0.96, halo * 0.30), 0, 1)
+    halo = np.exp(-(dist_body / 0.045) ** 2) * (body_a < 0.5)
+    alpha = np.clip(np.maximum(body_a * 0.97, halo * 0.24), 0, 1)
     hal_col = np.array([255, 120, 40]) / 255
     rgb = col * body_a[..., None] + hal_col[None, None] * (1 - body_a[..., None])
     emis = rgb * np.maximum(body_a, halo * 0.8)[..., None] * (0.75 + 0.45 * glow[..., None])
