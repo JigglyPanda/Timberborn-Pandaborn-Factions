@@ -135,6 +135,9 @@ src = "V (Treated Plank: 3 h) · M q8 (log smoke instead of resin and 250 hp) (b
 
 [recipes.PandabornWoodenOx]
 basis = "Bot.Folktails"
+# the vanilla bot recipe has no icon (it makes no good); the game only draws a recipe's icon in the recipe picker, so
+# setting ours is harmless (ManufactoryDropdownProvider, ManufactoryRecipeSliderToggleFactory)
+icon = "Sprites/Pandaborn/Goods/PandabornWoodenOxIcon"
 cycle_hours = 96.0
 ingredients = { TreatedPlank = 20, Gear = 20, MetalBlock = 4 }
 products = {  }

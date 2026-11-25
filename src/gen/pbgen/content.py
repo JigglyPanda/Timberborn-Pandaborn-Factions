@@ -270,6 +270,8 @@ def gen_recipes(gen):
                 rs["Icon"] = gen.good_icon[products[0]]
             elif gen.v.ids["GoodSpec"].get(products[0]):
                 rs["Icon"] = gen.v.get(gen.v.ids["GoodSpec"][products[0]])["GoodSpec"]["Icon"]
+        if r.get("icon"):
+            rs["Icon"] = r["icon"]   # a recipe with no product (the Wooden Ox) has no good to take its icon from
         gen.add_id("recipe", rid, item)
         gen.emit("Recipes/Pandaborn/Recipe.%s" % rid, data, item, "recipe", key)
 

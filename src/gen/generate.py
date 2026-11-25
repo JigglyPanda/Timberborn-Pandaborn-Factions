@@ -122,6 +122,7 @@ def generate(a, v):
                           "on": sorted(m for m in g.shipped_modules if g.module_switch.get(m))},
               "leftOut": {k: dict(sorted(v.items())) for k, v in sorted(g.gated.items())},
               "notes": [{"item": i, "note": n} for i, n in g.notes],
+              "translations": g.translations()[1],
               "counts": {k: len(x) for k, x in sorted(g.ids.items())}}
     placeable = []
     for p, o in g.outputs.items():
@@ -149,6 +150,14 @@ def generate(a, v):
     changed = sorted(p for p in set(files) & set(existing) if read_bytes(existing[p]) != files[p])
     print("generate: %d files (%d blueprints, %d loc fragments); %d new, %d changed, %d removed vs %s"
           % (len(files), len(g.outputs), len(g.loc), len(added), len(changed), len(removed), a.out))
+    for lang, rep in sorted(g.translations()[1].items()):
+        print("generate: %s: %d key(s) translated, %d still English, %d stale (their English changed: left out), "
+              "%d rejected (placeholders or tags differ: left out), %d not in this build"
+              % (lang, rep["translated"], len(rep["untranslated"]), len(rep["stale"]), len(rep["rejected"]),
+                 len(rep["unused"])))
+        for kind in ("stale", "rejected"):
+            for key in rep[kind][:20]:
+                print("  %s %s: %s" % (lang, kind, key))
     if a.dry_run:
         for p in added:
             print("  + " + p)

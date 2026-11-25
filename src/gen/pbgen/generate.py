@@ -15,6 +15,25 @@ from .util import REPO, GenError, dumps, sha256_bytes
 
 LOC_COMMENT_MAX = 400
 MARKER_RE = re.compile(r"\[(sun|moon)\]")
+PLACEHOLDER_RE = re.compile(r"\{(\d+)\}")
+TAG_RE = re.compile(r"<(/?)([A-Za-z][A-Za-z0-9]*)[^<>]*>")
+# name pools a language builds from another column of text/names.json (the game shows the names as written)
+NAME_COLUMNS = {"zhCN": "characters"}
+
+
+def text_shape(text):
+    """(placeholders, opening tags) of a text, or None if its tags do not balance: what a translation must keep."""
+    stack, opened = [], []
+    for close, name in TAG_RE.findall(text or ""):
+        if close:
+            if not stack or stack.pop() != name:
+                return None
+        else:
+            stack.append(name)
+            opened.append(name)
+    if stack:
+        return None
+    return sorted(PLACEHOLDER_RE.findall(text or "")), sorted(opened)
 
 
 class Output:
@@ -221,6 +240,10 @@ class Generator:
         if key not in self.loc.get("Faction", {}):
             self.add_loc("Faction", key, text, "Colonist names, one per line: pinyin and an English gloss, shown as "
                          "written. Keep each line; translate only the gloss in brackets.", item)
+        # a language may build this pool from another column of names.json (zhCN: the characters): translations()
+        if not hasattr(self, "name_pools"):
+            self.name_pools = {}
+        self.name_pools[key] = ("Faction", pool)
         data["PandabornNamePoolSpec"] = {"NamePoolLocKey": key}
 
     def apply_module_specs(self, data, module_specs, item):
@@ -1074,11 +1097,72 @@ class Generator:
                 return o.data
         return {}
 
+    def translations(self):
+        """{lang: {fragment: {key: (text, "", item)}}} from the language overlays (catalogue/text/<lang>.json), and the
+        report {lang: {translated, untranslated, stale, rejected, unused}}. A fragment holds only translated keys: the
+        game falls back to English for the rest. A translation whose recorded English ("en") is not today's English
+        is stale and left out; so is one that loses a {0} placeholder or a tag of the English."""
+        if hasattr(self, "_translations"):
+            return self._translations
+        out, report = {}, {}
+        english = {key: (frag, e) for frag, entries in self.loc.items() for key, e in entries.items()}
+        pools = getattr(self, "name_pools", {})
+        for lang, data in sorted(self.cat.overlays.items()):
+            item = "catalogue/text/%s.json" % lang
+            entries = data.get("keys") if isinstance(data.get("keys"), dict) else data
+            frags, rep = {}, {"translated": 0, "untranslated": [], "stale": [], "rejected": [], "unused": []}
+            for key, tr in sorted(entries.items()):
+                if key.startswith("_"):
+                    continue
+                if not isinstance(tr, dict) or not isinstance(tr.get("text"), str) or not isinstance(tr.get("en"), str):
+                    raise GenError('%s: %s must be { "text": "<translation>", "en": "<the English it was made from>" }'
+                                   % (item, key))
+                if key in pools:
+                    raise GenError("%s: %s is a name pool; it is built from text/names.json (column %s), not translated "
+                                   "here" % (item, key, NAME_COLUMNS.get(lang, "display")))
+                if key not in english:
+                    rep["unused"].append(key)   # not in this build (an item left out, or a key that is gone)
+                    continue
+                frag, (en_text, _, _) = english[key]
+                text = tr["text"]
+                if tr["en"] != en_text:
+                    rep["stale"].append(key)
+                    continue
+                if not text or text != text.strip() or text_shape(text) is None or text_shape(text) != text_shape(en_text):
+                    rep["rejected"].append(key)
+                    continue
+                frags.setdefault(frag, {})[key] = (text, "", item)
+            column = NAME_COLUMNS.get(lang)
+            for key, (frag, pool) in sorted(pools.items()):
+                names = (self.cat.text.get("names") or {}).get(pool) or []
+                if column and names:
+                    lines = [(n.get(column) or n["display"]).strip() for n in names]
+                    frags.setdefault(frag, {})[key] = ("\n".join(lines), "", "catalogue/text/names.json (%s)" % column)
+            done = {k for f in frags.values() for k in f}
+            rep["translated"] = len(done)
+            rep["untranslated"] = sorted(set(english) - done - set(rep["stale"]) - set(rep["rejected"]))
+            for frag in frags.values():
+                loc_csv(frag)   # the same CSV rules as the English fragments
+            out[lang] = frags
+            report[lang] = rep
+        self._translations = (out, report)
+        return self._translations
+
+    def loc_files(self):
+        """rel path -> (entries, items) for every loc fragment, English and translated."""
+        out = {}
+        for frag, entries in self.loc.items():
+            out["Localizations/enUS_Pandaborn%s.csv" % frag] = entries
+        for lang, frags in self.translations()[0].items():
+            for frag, entries in frags.items():
+                out["Localizations/%s_Pandaborn%s.csv" % (lang, frag)] = entries
+        return out
+
     def files(self):
         """rel path -> bytes, for every generated file (blueprints and loc fragments)."""
         out = {p: dumps(o.data).encode("utf-8") for p, o in self.outputs.items()}
-        for frag, entries in self.loc.items():
-            out["Localizations/enUS_Pandaborn%s.csv" % frag] = loc_csv(entries).encode("utf-8")
+        for path, entries in self.loc_files().items():
+            out[path] = loc_csv(entries).encode("utf-8")
         return out
 
     def provenance(self, files):
@@ -1086,8 +1170,7 @@ class Generator:
         for p, o in sorted(self.outputs.items()):
             prov[p] = {"kind": o.kind, "item": o.item, "source": o.source, "sourceSha256": o.source_sha,
                        "sha256": sha256_bytes(files[p])}
-        for frag, entries in sorted(self.loc.items()):
-            p = "Localizations/enUS_Pandaborn%s.csv" % frag
+        for p, entries in sorted(self.loc_files().items()):
             prov[p] = {"kind": "loc", "item": sorted({e[2] for e in entries.values()}), "source": None,
                        "sourceSha256": None, "sha256": sha256_bytes(files[p])}
         return prov

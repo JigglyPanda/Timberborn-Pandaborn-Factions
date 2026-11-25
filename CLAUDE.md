@@ -280,6 +280,12 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   shipped modules without their data and data without its module. The only switch off today is `RingtailVenues`, which
   is no module: it keeps the Star Tower hidden until `PandabornNightPostSpec` lets a night post keep its science cost
   (the first Moon Loft unlocks every night post for free).
+* **Translations:** `catalogue/text/<lang>.json` (zhCN) is a flat overlay keyed by generated loc key, each entry
+  `{ "text", "en" }`; the generator writes `Localizations/<lang>_Pandaborn<Fragment>.csv` with translated keys only and
+  leaves out (and reports) a translation whose `en` is no longer the English, or that loses a `{0}` or a tag. zhCN name
+  pools come from the `characters` column of `text/names.json`. Module texts are translated beside their enUS file in
+  `src/code/<Module>/mod/Localizations`. The validator holds non-enUS files to our own rules (the game never validates
+  them and falls back to English): keys a subset of enUS, no vanilla key, same placeholders and tags.
 * **Catalogue extras:** `catalogue/modifiers.toml` (Inkpaws-only blueprint modifiers, e.g. the bell's walking cap),
   `catalogue/tutorial.toml` + `text/tutorial.json` (StartingFactionSpec, every vanilla tutorial off, our dormant
   tutorials switched on by modifier, `Stairs.Folktails` alias on `Stairs.Inkpaws`), `rules.toml [shelves]` (workshop

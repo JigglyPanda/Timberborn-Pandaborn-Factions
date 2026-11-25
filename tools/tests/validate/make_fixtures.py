@@ -158,6 +158,13 @@ def main(argv=None):
          {"Localizations/enUS_PandabornFixture.csv": 'ID,Text,Comment\n"Good.Plank.DisplayName","Pole",""\n'})
     case("loc_comma_quote", ["space between comma and quote"],
          {"Localizations/enUS_PandabornFixture.csv": 'ID,Text,Comment\n"PandabornFixture.Key", "Text",""\n'})
+    en_csv = 'ID,Text,Comment\n"PandabornFixture.Count","Have {0} of <b>{1}</b>",""\n'
+    case("translation_loses_placeholder", ["does not keep the placeholders and tags of the English text",
+                                           "is not one of the mod's enUS keys"],
+         {"Localizations/enUS_PandabornFixture.csv": en_csv,
+          "Localizations/zhCN_PandabornFixture.csv":
+              'ID,Text,Comment\n"PandabornFixture.Count","{0} <b>x</b>",""\n"PandabornFixture.Gone","y",""\n'},
+         args=["--release"])
     case("vanilla_path_override", ["file sits on a vanilla asset path"],
          {"Buildings/Decoration/Bench/Bench.Folktails.blueprint.json": bench})
     case("vanilla_collection_join", ["adds to vanilla template collection Buildings.Folktails"],

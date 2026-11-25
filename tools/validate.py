@@ -415,6 +415,16 @@ def check_json_and_manifest(a, c):
         R.error("manifest.json: Id must be " + MOD_ID)
     if m.get("RequiredMods"):
         R.warn("manifest.json: RequiredMods is not empty")
+    if (a.profile == "pandaborn" or m.get("Id") == MOD_ID) and a.release:
+        # the mod browser and the Workshop upload show thumbnail.png from the mod's root; Steam refuses a preview
+        # image over 1 MB
+        thumb = c.files.get("thumbnail.png")
+        if thumb is None:
+            R.error("thumbnail.png is missing from the mod's root (a release needs its preview image)")
+        elif os.path.getsize(thumb) > 1024 * 1024:
+            R.error("thumbnail.png is %d bytes; a preview image must stay under 1 MB" % os.path.getsize(thumb))
+        elif png_size(thumb) is None:
+            R.error("thumbnail.png is not a valid PNG")
     vfile = os.path.join(a.game_data, "StreamingAssets", "VersionNumbers.json")
     if os.path.isfile(vfile):
         cur = load_json(vfile).get("CurrentVersion", "0")
@@ -1034,14 +1044,66 @@ def check_character_mesh(c, where, key, bp, material_names):
            % (where, model, len(nodes), len(anims), len(wanted), sorted(mats), body["vertexCount"] if body else 0))
 
 
+PLACEHOLDER_RE = re.compile(r"\{(\d+)\}")
+TAG_RE = re.compile(r"<(/?)([A-Za-z][A-Za-z0-9]*)[^<>]*>")
+
+
+def text_shape(text):
+    """(placeholders, opening tags) of a loc text, or None when its tags do not balance."""
+    stack, opened = [], []
+    for close, name in TAG_RE.findall(text or ""):
+        if close:
+            if not stack or stack.pop() != name:
+                return None
+        else:
+            stack.append(name)
+            opened.append(name)
+    if stack:
+        return None
+    return sorted(PLACEHOLDER_RE.findall(text or "")), sorted(opened)
+
+
+def check_translations(c, mod_locs, per_file, vanilla):
+    """Files of any language but enUS never pass the game's strict CSV validator, and a broken one silently falls back
+    to English. So these are our own rules (warnings in a dev build, errors for a release): every key is one of the
+    mod's enUS keys, never a vanilla key, with the English text's {0} placeholders and tags, and not empty."""
+    en = mod_locs.get("enUS", {})
+    for (lang, name), recs in sorted(per_file.items()):
+        if lang == "enUS":
+            continue
+        bad = 0
+        for key, text in sorted(recs.items()):
+            if key in vanilla:
+                R.error("%s: key %s is a vanilla key: it would replace the game's own %s text for every faction"
+                        % (name, key, lang))
+                continue
+            if key not in en:
+                gate(c, "%s: key %s is not one of the mod's enUS keys (a translation of nothing)" % (name, key))
+                bad += 1
+                continue
+            if not text or text != text.strip():
+                gate(c, "%s: %s is empty or has leading or trailing space" % (name, key))
+                bad += 1
+            elif text_shape(text) is None:
+                gate(c, "%s: %s has tags that do not close in order" % (name, key))
+                bad += 1
+            elif text_shape(en[key]) is not None and text_shape(text) != text_shape(en[key]):
+                gate(c, "%s: %s does not keep the placeholders and tags of the English text (%s)"
+                        % (name, key, en[key][:60]))
+                bad += 1
+        R.info("%s: %d %s key(s) of %d enUS keys, %d with problems" % (name, len(recs), lang, len(en), bad))
+
+
 def check_localization(a, c):
     mod_locs = {}
+    per_file = {}
     for rel, ab in c.files.items():
         low = rel.lower()
         if low.startswith("localizations/") and low.endswith(".csv"):
             lang = os.path.basename(rel).split("_", 1)[0].split(".", 1)[0]
             recs = read_loc_csv(ab, game_rules=(lang == "enUS"))
             mod_locs.setdefault(lang, {}).update(recs)
+            per_file[(lang, os.path.basename(rel))] = recs
     vanilla = {}
     vpath = os.path.join(a.localizations, "enUS.csv")
     if os.path.isfile(vpath):
@@ -1067,6 +1129,7 @@ def check_localization(a, c):
     if unused:
         R.info("mod loc keys not referenced by mod blueprints (may be used elsewhere): " + ", ".join(sorted(unused)))
     R.info("loc: %d mod enUS keys, %d referenced keys" % (len(en), len(referenced)))
+    check_translations(c, mod_locs, per_file, vanilla)
 
 
 # ------------------------------------------------------------------------------------------- v2: schema checks

@@ -1,6 +1,7 @@
 """Loads catalogue/*.toml and catalogue/text/*.json and checks their shape. Unknown fields are errors: a typo must not
 silently become "use the vanilla value"."""
 import os
+import re
 import tomllib
 
 from .util import GenError, load_json
@@ -27,6 +28,9 @@ FILES = ("rules", "faction", "buildings", "building_stats", "goods", "needs", "r
 TEXT_FILES = ("buildings", "goods", "needs", "plants", "faction", "messages", "names", "tutorial")
 
 
+LANG_FILE_RE = re.compile(r"^([a-z]{2}[A-Z]{2})\.json$")
+
+
 def _load_toml(path):
     try:
         with open(path, "rb") as f:
@@ -47,6 +51,14 @@ class Catalogue:
         for name in TEXT_FILES:
             p = os.path.join(tdir, name + ".json")
             self.text[name] = load_json(p) if os.path.isfile(p) else {}
+        # language overlays: text/<lang>.json (zhCN.json ...), one flat file keyed by generated loc key; each entry
+        # { "text": the translation, "en": the English it was made from }. Keys starting with "_" are notes.
+        self.overlays = {}
+        if os.path.isdir(tdir):
+            for fn in sorted(os.listdir(tdir)):
+                m = LANG_FILE_RE.match(fn)
+                if m and m.group(1) != "enUS":
+                    self.overlays[m.group(1)] = load_json(os.path.join(tdir, fn))
         self._check()
 
     def __getitem__(self, name):

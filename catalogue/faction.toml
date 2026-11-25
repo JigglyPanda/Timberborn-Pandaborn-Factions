@@ -136,7 +136,7 @@ own = { Tails = "Materials/Pandaborn/Decals/Tails", Banners = "Materials/Pandabo
 [tool_groups.PandabornNightWatch]
 order = 105                                   # after Wellbeing (100), before Monuments (120)
 name_key = "Pandaborn.ToolGroups.NightWatch"
-icon = "Sprites/Pandaborn/Buildings/PandabornMoonLoftIcon"   # until the icons lane draws a bottom-bar moon
+icon = "Sprites/Pandaborn/BottomBar/PandabornNightWatchIcon"   # a crescent with a lantern (icons pass 4)
 waits_for = "Ringtails"
 note = "every Ringtail building, marked with the moon"
 

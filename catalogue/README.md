@@ -211,6 +211,28 @@ and every build with a module or family switched off, in a scratch folder, with 
   by id. A stage that names a template the build does not ship is left out, a tutorial with no stage left is left
   out, and `after` skips over tutorials that are left out. Tutorials whose `after` are all finished run side by side.
 
+## Translations
+
+A language is one overlay file, `text/<lang>.json` (`text/zhCN.json`), flat, keyed by the generated loc key:
+
+```json
+{
+  "_meta": { "language": "zhCN" },
+  "Pandaborn.Building.Den.DisplayName": { "text": "<the translation>", "en": "Den" }
+}
+```
+
+`en` is the English the translation was made from. The generator writes `Localizations/<lang>_Pandaborn<Fragment>.csv`
+beside each English fragment, holding only translated keys (the game falls back to English for the rest), with the
+same determinism and provenance. A translation is **left out and reported** (console and `<gen>.report.json`
+`translations`) when its `en` is no longer today's English (stale), or when it does not keep the English text's `{0}`
+placeholders and tags; keys the build does not have are listed as unused. Name pools are not translated here: a
+language may take another column of `text/names.json` (zhCN: `characters`), and the pool is an ordinary loc key
+(`Pandaborn.NamePool.<Pool>`), so the Names module needs nothing more. Texts that ship with a code module are
+translated beside their English file (`src/code/<Module>/mod/Localizations/<lang>_*.csv`; the code build copies the
+whole `mod` folder). `tools/validate.py` checks every non-English file: keys a subset of the mod's enUS keys, never a
+vanilla key, the same placeholders and tags (warnings in a dev build, errors for `package`).
+
 ## Poles: one line
 
 `rules.toml [poles] mode`:
