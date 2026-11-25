@@ -19,9 +19,18 @@ DESIGN.md Pillar 5; full design, player timeline, the fairness arithmetic and te
   across the map): replacing a plant deletes an entity and creates one, and thousands in one tick would stall the game (an estimate from the game's code, never measured). A
   farm of a few dozen flowers within a few ticks; the notice with the number of plants and seed comes when the last
   one has turned. No entity is touched in Load, PostLoad or an event handler (by the game's code a twin placed before its
-  event bus is ready has its planting mark cleared again later; not seen in game). The twins die over the last day of `SeedDays` (3). Farmers and lumberjacks
-  take the seed with their ordinary harvest, because the seed is a yield of their resource group; crops that die
-  unharvested lose it (the game's rule), dead twin trees keep it until cut.
+  event bus is ready has its planting mark cleared again later; not seen in game). Farmers and lumberjacks
+  take the seed with their ordinary harvest, because the seed is a yield of their resource group.
+* **The twins' end**, over the last day of `SeedDays` (3), each at an hour fixed for its tile (`FloweringSchedule.EndOf`):
+  * on a tile **with a planting mark** the twin dies where it stands, as before: a dead crop loses its seed (the game's
+    rule) and the farm plants over it; a dead twin tree keeps its seed until cut and the forester replants the stump;
+  * a **wild** twin (no planting mark) that is **still standing** reseeds its own tile: it is replaced by a seedling of
+    its species, which rests like every young plant until the rest ends (ruling of 2026-11-25; before, a wild grove
+    flowered once and was gone for good). Its uncut seed is lost with it, trees included;
+  * a twin that was **cut for its seed** is dead from the cut and is not touched: gone, like any wild tree that is cut.
+  The twins that are alive and due queue up every in-game hour and meet their end in the following ticks, on the same
+  budget as the change into flower; nothing pending is saved, because a due twin is either still alive (and found
+  again next hour, also after a load) or already dead or replaced. The seed time closes when none is left alive.
 * **The rest**: until `DormantDays` (9) after the Flowering, young plants of the species do not grow. The planting marks
   stay, so farms and foresters replant on their own; the seedlings start growing when the rest ends.
 * **Setting** per save: normal, rare or off, in a game dialog opened from the top-bar line or any bamboo's panel. No other
@@ -34,7 +43,8 @@ two bamboos; the two twins (`PandabornShootBambooInFlower.Inkpaws`, `PandabornTi
 **Saved**: `PandabornStore` entry `Flowering` v1: `setting`, `phase` (Idle/Announced/Flowering/Resting), `next` (cycle),
 `nextSpecies`, `species`, `day` (when it flowered), `last` (cycle), `borne`, `lost` (seed), and since 2026-11-25 `twins`,
 `killed` and `converting` (0 done, 1 grown plants still turning, 2 not begun; an older module ignores them, a save
-without them is read as done). The twins are ordinary saved plants. A save made while the bamboo is still coming into
+without them is read as done) and `reseeded` (wild twins that reseeded, for the log). The twins are ordinary saved
+plants. A save made while the bamboo is still coming into
 flower goes on after the load with the grown plants that are left. The growth holds are not saved: the game saves
 growth progress as always, and the service holds the plants again after a load.
 
@@ -53,10 +63,12 @@ never a harsher one. The first time an hourly check finds resting plants growing
   store entry is carried unchanged; when the module is back it picks up where the save left off (an announced
   Flowering whose date passed moves to the next cycle start).
 * `Growable._timeTrigger` (private) gone, or `simulate-missing-member: Flowering.GrowthHold`, or the timer throwing:
-  young bamboo regrows at once after a Flowering (milder, never harsher); reported through
-  `FeatureRegistry.ReportDegraded("Flowering", ...)`.
+  young bamboo regrows at once after a Flowering (milder, never harsher).
 * A plant that cannot be replaced is skipped; after five failures the rest of the bamboo is left as it is (ordinary
-  plants) and the feature reports degraded.
+  plants). A wild twin that cannot be replaced is tried again next hour; after five failures wild twins die where
+  they stand for the rest of that game (the behaviour before the reseeding rule).
+* Every fault is reported with `FeatureRegistry.ReportDegradedInGame("Flowering", ...)`: all of the running game's
+  faults in one line, forgotten when the next game starts (where Load checks again).
 * A game of our faction without the data gets `FeatureRegistry.ReportNoData`.
 * Nothing thrown by the module reaches the game (ticks, event handlers, entity callbacks, the cut event).
   Interface pieces sit behind `SafeUi`.

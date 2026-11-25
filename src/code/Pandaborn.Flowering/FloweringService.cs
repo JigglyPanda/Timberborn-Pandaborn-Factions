@@ -26,19 +26,24 @@ namespace Pandaborn.Flowering
     /// The Great Flowering (DESIGN.md, Pillar 5; docs/tech/events.md). Never before FirstCycle; announced at the start of
     /// the cycle before (a full cycle ahead); happens on day 1 of a cycle, which is always temperate weather, so never in a
     /// drought or badtide. One bamboo per Flowering, alternating in the spec's order: every grown plant of that species,
-    /// planted or wild, turns into its "in flower" twin, whose harvest is bamboo seed; young plants die. The twins die
-    /// SeedDays later. Young plants of the species do not grow until DormantDays after the Flowering (the planting marks
-    /// stay, so farms and foresters replant on their own). Setting per save: normal, rare, off. The calendar itself is
-    /// FloweringSchedule (pure, unit-tested).
+    /// planted or wild, turns into its "in flower" twin, whose harvest is bamboo seed; young plants die. The twins' time
+    /// ends over the last day of SeedDays: on a tile with a planting mark the twin dies where it stands (the farm or
+    /// forester replants it from the mark); a wild one, on a tile without a mark, that is still standing reseeds its own
+    /// tile (a seedling of its species takes its place); one that was cut for its seed is gone, like any wild tree that
+    /// is cut. Young plants of the species, the wild seedlings too, do not grow until DormantDays after the Flowering.
+    /// Setting per save: normal, rare, off. The calendar and the twins' end are FloweringSchedule (pure, unit-tested).
     ///
-    /// The map-wide change is spread over game ticks (a few milliseconds of work in each): replacing a plant deletes one
+    /// Every map-wide change is spread over game ticks (a few milliseconds of work in each): replacing a plant deletes one
     /// entity and creates another, and thousands in one tick would freeze the game for seconds. A small farm flowers
-    /// within a tick or two; a map of thousands of bamboo comes into flower as a wave over the first hours of the day.
-    /// No entity is touched outside a tick (never in Load, PostLoad or an event handler).
+    /// within a tick or two; a map of thousands of bamboo comes into flower as a wave over the first hours of the day,
+    /// and the twins' end shares the same budget. No entity is touched outside a tick (never in Load, PostLoad or an
+    /// event handler). Nothing pending is saved for the twins' end: a twin whose time has come is either still alive
+    /// (and is found again at the next hourly pass, also after a load) or already dead or replaced.
     ///
     /// The game is a Flowering game when the faction's adult template carries PandabornFloweringSpec (Inkpaws only).
     /// Saved state (store "Flowering", version 1): setting, phase, next cycle, next species, current species, flowering day,
-    /// last cycle, seed borne and lost, and (added 2026-11-25, optional) how far the change into flower has got. The twins
+    /// last cycle, seed borne and lost, and (added 2026-11-25, optional) how far the change into flower has got and how
+    /// many wild plants reseeded. The twins
     /// are ordinary saved plants; holds on growth are re-applied after a load, every in-game hour and to every new plant.
     /// </summary>
     public class FloweringService : ILoadableSingleton, IPostLoadableSingleton, ITickableSingleton
@@ -47,8 +52,8 @@ namespace Pandaborn.Flowering
         private const int StoreVersion = 1;
         private const string Log = "[Pandaborn.Flowering] ";
 
-        /// <summary>Work on the change into flower per game tick: until this much time has gone, but never fewer than
-        /// ConvertMinPerTick plants (so it always ends: 768 ticks a day).</summary>
+        /// <summary>Work on plants per game tick (the change into flower, then the twins' end): until this much time has
+        /// gone, but never fewer than ConvertMinPerTick plants (so it always ends: 768 ticks a day).</summary>
         private const double ConvertBudgetMs = 5.0;
         private const int ConvertMinPerTick = 8;
         private const int ConvertMaxErrors = 5;
@@ -74,7 +79,13 @@ namespace Pandaborn.Flowering
         private readonly HashSet<FloweringPlant> _plants = new HashSet<FloweringPlant>();
         private readonly HashSet<InFlowerPlant> _inFlower = new HashSet<InFlowerPlant>();
         private readonly Queue<FloweringPlant> _toConvert = new Queue<FloweringPlant>();
+        private readonly Queue<InFlowerPlant> _toEnd = new Queue<InFlowerPlant>();
+        private readonly List<string> _faults = new List<string>();
         private readonly Stopwatch _stopwatch = new Stopwatch();
+        private int _workDone;
+        private int _reseeded;
+        private int _endErrors;
+        private bool _reseedingWorks = true;
         private readonly System.Random _random = new System.Random();
         private int _lastHour = -1;
         private int _seedBorne;
@@ -148,6 +159,12 @@ namespace Pandaborn.Flowering
         /// <summary>Grown plants still waiting for their turn (tests).</summary>
         public int ConvertQueue => _toConvert.Count;
 
+        /// <summary>Wild flowered plants that reseeded their tile in this Flowering (saved; the log and tests).</summary>
+        public int Reseeded => _reseeded;
+
+        /// <summary>Flowered plants whose time has come and that wait for their turn in a tick (tests).</summary>
+        public int EndQueue => _toEnd.Count;
+
         public IReadOnlyCollection<FloweringPlant> Plants => _plants;
 
         public IReadOnlyCollection<InFlowerPlant> InFlower => _inFlower;
@@ -183,7 +200,10 @@ namespace Pandaborn.Flowering
                     FeatureRegistry.ReportNoData("Flowering", "the faction's adult template has no PandabornFloweringSpec");
                 return;
             }
-            if (!GrowthHold.Available) FeatureRegistry.ReportDegraded("Flowering", "young bamboo regrows at once after a Flowering (" + GrowthHold.Unavailable + ")");
+            _faults.Clear();
+            _reseedingWorks = true;
+            _endErrors = 0;
+            if (!GrowthHold.Available) Fault("young bamboo regrows at once after a Flowering (" + GrowthHold.Unavailable + ")");
             ReadState();
             _eventBus.Register(this);
         }
@@ -214,10 +234,21 @@ namespace Pandaborn.Flowering
         public void Tick()
         {
             if (!Active) return;
-            if (_convertStage != ConvertDone)
+            if (_convertStage != ConvertDone || _toEnd.Count > 0)
             {
-                try { ConvertSome(); }
-                catch (Exception ex) { ConvertFailed(ex); }
+                // one budget a tick for all work on plants
+                _stopwatch.Restart();
+                _workDone = 0;
+                if (_convertStage != ConvertDone)
+                {
+                    try { ConvertSome(); }
+                    catch (Exception ex) { ConvertFailed(ex); }
+                }
+                if (_toEnd.Count > 0)
+                {
+                    try { EndSome(); }
+                    catch (Exception ex) { EndFailed(ex); }
+                }
             }
             int hour = (int)_dayNightCycle.HoursPassedToday;
             if (hour == _lastHour) return;
@@ -252,6 +283,17 @@ namespace Pandaborn.Flowering
             try { Changed?.Invoke(); }
             catch (Exception e) { Debug.LogError(Log + "a Flowering listener failed: " + e); }
         }
+
+        /// <summary>Something of the Flowering does not work in this game: said in the feature report (every fault of the
+        /// game in one line; forgotten when the next game starts, where Load checks again).</summary>
+        internal void Fault(string what)
+        {
+            if (!_faults.Contains(what)) _faults.Add(what);
+            FeatureRegistry.ReportDegradedInGame("Flowering", string.Join("; ", _faults));
+        }
+
+        /// <summary>More work may be done in this tick.</summary>
+        private bool WorkLeft => _workDone < ConvertMinPerTick || _stopwatch.Elapsed.TotalMilliseconds < ConvertBudgetMs;
 
         // ------------------------------------------------------------------ schedule
 
@@ -337,7 +379,9 @@ namespace Pandaborn.Flowering
             _seedLost = 0;
             _twins = 0;
             _killed = 0;
+            _reseeded = 0;
             SeedCut = 0;
+            _toEnd.Clear();
             _toConvert.Clear();
             _convertQueued = false;
             _convertErrors = 0;
@@ -373,12 +417,10 @@ namespace Pandaborn.Flowering
                 Persist();
                 ApplyHolds(false);
             }
-            _stopwatch.Restart();
-            int done = 0;
-            while (_toConvert.Count > 0 && (done < ConvertMinPerTick || _stopwatch.Elapsed.TotalMilliseconds < ConvertBudgetMs))
+            while (_toConvert.Count > 0 && WorkLeft)
             {
                 var plant = _toConvert.Dequeue();
-                done++;
+                _workDone++;
                 if (!plant || plant.IsDead || plant.IsHarvestedPile || !plant.IsGrown) continue;
                 if (TryTurnIntoTwin(plant, out int seed))
                 {
@@ -413,8 +455,61 @@ namespace Pandaborn.Flowering
             _toConvert.Clear();
             _convertStage = ConvertDone;
             try { Persist(); } catch (Exception) { }
-            FeatureRegistry.ReportDegraded("Flowering", "some bamboo could not come into flower (" + e.GetType().Name + ")");
+            Fault("some bamboo could not come into flower (" + e.GetType().Name + ")");
         }
+
+        /// <summary>
+        /// One tick's share of the twins' end. A twin on a marked tile dies where it stands; a wild one that is still
+        /// standing is replaced by a seedling of its species (which registers as any plant and is held until the rest
+        /// ends). The queue is refilled every in-game hour from the twins that are alive and due (Advance), so nothing
+        /// of it needs saving.
+        /// </summary>
+        private void EndSome()
+        {
+            if (Phase != FloweringPhase.Flowering || Species == null) { _toEnd.Clear(); return; }
+            bool any = false;
+            while (_toEnd.Count > 0 && WorkLeft)
+            {
+                var twin = _toEnd.Dequeue();
+                _workDone++;
+                if (!twin || twin.IsDead || twin.Species != Species || !twin.BlockObject) continue;
+                var c = twin.BlockObject.Coordinates;
+                var end = FloweringSchedule.EndOf(true, _plantingService.GetResourceAt(c) != null, Now, DieAt(c), _reseedingWorks);
+                if (end == TwinEnd.None) continue;
+                _seedLost += twin.SeedLeft;
+                any = true;
+                if (end == TwinEnd.Reseeds && Reseed(twin, c)) continue;
+                if (twin && !twin.IsDead) twin.Living?.Die();
+            }
+            if (any) Persist();
+        }
+
+        /// <summary>The wild twin makes way for a seedling of its species on the same tile. False when the species is not
+        /// a plant of this game (the caller lets the twin die where it stands); true once the twin is gone.</summary>
+        private bool Reseed(InFlowerPlant twin, Vector3Int coordinates)
+        {
+            string species = twin.Species;
+            if (string.IsNullOrEmpty(species) || !_templateNameMapper.TryGetTemplate(species, out _)) return false;
+            _entityService.Delete(twin);
+            // a new plant starts as a seedling; it registers with us as it is created and is held at once (Resting)
+            if (_naturalResourceFactory.SpawnIgnoringConstraints(species, coordinates) != null) _reseeded++;
+            return true;
+        }
+
+        /// <summary>A twin that cannot be replaced is skipped (it was taken off the queue and is found again next hour);
+        /// if replacing keeps failing, wild twins die where they stand for the rest of this game, as before the
+        /// reseeding rule.</summary>
+        private void EndFailed(Exception e)
+        {
+            _endErrors++;
+            Debug.LogError(Log + "a flowered plant's end failed (" + _endErrors + "): " + e);
+            if (_endErrors < ConvertMaxErrors) return;
+            _reseedingWorks = false;
+            try { Persist(); } catch (Exception) { }
+            Fault("wild bamboo does not reseed after a Flowering (" + e.GetType().Name + ")");
+        }
+
+        private float DieAt(Vector3Int c) => FloweringSchedule.DieAt(FloweringDay, Spec.SeedDays, FloweringSchedule.Hash01(c.x, c.y, c.z));
 
         private static int WaveOrder(FloweringPlant plant)
         {
@@ -448,27 +543,23 @@ namespace Pandaborn.Flowering
         {
             if (Phase == FloweringPhase.Flowering)
             {
-                // the flowered plants die over the last day of the seed time, a few each hour
+                // the flowered plants' time ends over the last day of the seed time, a few each hour: those that are
+                // alive and due queue up here and meet their end in the ticks that follow (EndSome)
                 float end = FloweringDay + Spec.SeedDays;
-                bool any = false;
-                foreach (var twin in _inFlower.Where(t => t && t.Species == Species && !t.IsDead).ToList())
+                _toEnd.Clear();
+                foreach (var twin in _inFlower)
                 {
-                    var c = twin.BlockObject ? twin.BlockObject.Coordinates : Vector3Int.zero;
-                    float dieAt = FloweringSchedule.DieAt(FloweringDay, Spec.SeedDays, FloweringSchedule.Hash01(c.x, c.y, c.z));
-                    if (Now >= dieAt || Now >= end)
-                    {
-                        _seedLost += twin.SeedLeft;
-                        twin.Living?.Die();
-                        any = true;
-                    }
+                    // (a twin that cannot die, having no life of its own in its data, must not keep the seed time open)
+                    if (!twin || twin.Species != Species || twin.IsDead || twin.Living == null || !twin.BlockObject) continue;
+                    if (Now >= end || Now >= DieAt(twin.BlockObject.Coordinates)) _toEnd.Enqueue(twin);
                 }
-                if (any) Persist();
-                if (Now >= end && !Converting)
+                if (Now >= end && !Converting && _toEnd.Count == 0)
                 {
                     Phase = FloweringPhase.Resting;
                     Persist();
                     int harvested = FloweringSchedule.Harvested(_seedBorne, _seedLost);
-                    Debug.Log(Log + "seed time over: " + harvested + " of " + _seedBorne + " seed harvested, " + _seedLost + " lost");
+                    Debug.Log(Log + "seed time over: " + harvested + " of " + _seedBorne + " seed harvested, " + _seedLost + " lost; "
+                              + _reseeded + " wild plants reseeded their tiles");
                     _messenger.Post(_loc.T("Pandaborn.Flowering.Message.SeedOver", PlantName(Species), harvested.ToString(CultureInfo.InvariantCulture),
                                            Days(RestDaysLeft)));
                     RaiseChanged();
@@ -570,6 +661,7 @@ namespace Pandaborn.Flowering
             _seedLost = Math.Max(0, Int(v, "lost", 0));
             _twins = Math.Max(0, Int(v, "twins", 0));
             _killed = Math.Max(0, Int(v, "killed", 0));
+            _reseeded = Math.Max(0, Int(v, "reseeded", 0));
             int stage = Int(v, "converting", ConvertDone);
             if (Phase != FloweringPhase.Idle && (Species == null || !Spec.Species.Contains(Species))) { Phase = FloweringPhase.Idle; Species = null; }
             if ((Phase == FloweringPhase.Flowering || Phase == FloweringPhase.Resting) && FloweringDay < 0f) { Phase = FloweringPhase.Idle; Species = null; }
@@ -591,6 +683,7 @@ namespace Pandaborn.Flowering
                 new KeyValuePair<string, string>("lost", _seedLost.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("twins", _twins.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("killed", _killed.ToString(CultureInfo.InvariantCulture)),
+                new KeyValuePair<string, string>("reseeded", _reseeded.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("converting", _convertStage.ToString(CultureInfo.InvariantCulture))
             }));
         }

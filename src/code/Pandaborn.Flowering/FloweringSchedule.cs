@@ -28,6 +28,19 @@ namespace Pandaborn.Flowering
         Announce
     }
 
+    /// <summary>How a flowered plant's seed time ends.</summary>
+    public enum TwinEnd
+    {
+        /// <summary>Not yet, or nothing to do: it was cut for its seed (a cut plant is dead already) or died before.</summary>
+        None,
+        /// <summary>On a tile with a planting mark: it dies where it stands and the farm or forester replants the tile
+        /// from the mark, as any dead crop or cut tree.</summary>
+        Dies,
+        /// <summary>Wild (no planting mark) and still standing: it reseeds its own tile. A seedling of its species takes its
+        /// place and rests like every other young plant until the rest days end.</summary>
+        Reseeds
+    }
+
     /// <summary>
     /// The Great Flowering's calendar, free of game types so it is tested without the game (src/code/tests/Events). The
     /// promises it keeps (DESIGN.md Pillar 5): never before FirstCycle; always on the first day of a cycle; announced at
@@ -76,6 +89,18 @@ namespace Pandaborn.Flowering
         {
             float window = Math.Min(1f, Math.Max(0f, seedDays));
             return floweringDay + Math.Max(0f, seedDays) - window + hash01 * window;
+        }
+
+        /// <summary>
+        /// What happens to a flowered plant now (ruling of 2026-11-25 on wild bamboo). Only a plant that is still alive
+        /// when its time comes has an end to meet: one that was cut for its seed died at the cut and is gone, like any
+        /// wild tree that is cut, whatever its tile. <paramref name="reseedingWorks"/>: false once replacing plants has
+        /// failed in this game; wild plants then die where they stand, as marked ones do.
+        /// </summary>
+        public static TwinEnd EndOf(bool alive, bool markedTile, float now, float dieAt, bool reseedingWorks = true)
+        {
+            if (!alive || now < dieAt) return TwinEnd.None;
+            return markedTile || !reseedingWorks ? TwinEnd.Dies : TwinEnd.Reseeds;
         }
 
         /// <summary>A number in [0, 1) fixed for a tile.</summary>

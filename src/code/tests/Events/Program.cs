@@ -25,6 +25,7 @@ namespace Pandaborn.Events.Tests
             FloweringOffCancels();
             FloweringLongRun();
             FloweringDeaths();
+            FloweringWildGrove();
             FestivalOncePerCycle();
             FestivalDishes();
             FestivalShowTimes();
@@ -172,6 +173,47 @@ namespace Pandaborn.Events.Tests
             Check(seen.Count == 24, "deaths fall in every hour of the last day (" + seen.Count + " of 24)");
             Check(FloweringSchedule.DieAt(100f, 0.5f, 0.5f) >= 100f && FloweringSchedule.DieAt(100f, 0.5f, 0.999f) < 100.5f, "a seed time under a day: spread over all of it");
             Check(FloweringSchedule.Harvested(168, 17) == 151 && FloweringSchedule.Harvested(3, 9) == 0, "seed harvested = borne - lost, never negative");
+        }
+
+        /// <summary>The ruling of 2026-11-25 on wild bamboo, on a grove played hour by hour: 3 seed days from day 100;
+        /// 40 flowered plants on marked tiles (a farm), 60 wild ones, of which every third is cut for its seed on day 101.</summary>
+        private static void FloweringWildGrove()
+        {
+            // the rule itself
+            Check(FloweringSchedule.EndOf(true, false, 102.5f, 102.4f) == TwinEnd.Reseeds, "wild, standing, due: reseeds its tile");
+            Check(FloweringSchedule.EndOf(true, true, 102.5f, 102.4f) == TwinEnd.Dies, "marked tile, due: dies where it stands (the farm replants)");
+            Check(FloweringSchedule.EndOf(true, false, 102.3f, 102.4f) == TwinEnd.None, "not due yet: nothing");
+            Check(FloweringSchedule.EndOf(false, false, 102.5f, 102.4f) == TwinEnd.None, "cut for its seed (dead at the cut): gone, no seedling");
+            Check(FloweringSchedule.EndOf(false, true, 102.5f, 102.4f) == TwinEnd.None, "cut on a marked tile: nothing more to do");
+            Check(FloweringSchedule.EndOf(true, false, 102.5f, 102.4f, false) == TwinEnd.Dies, "reseeding broken in this game: wild ones die as before");
+
+            const float day = 100f, seedDays = 3f;
+            int reseeded = 0, diedStanding = 0, cutGone = 0, early = 0;
+            var alive = new bool[100];
+            var marked = new bool[100];
+            for (int i = 0; i < 100; i++) { alive[i] = true; marked[i] = i < 40; }
+            for (int hour = 0; hour <= 3 * 24 + 1; hour++)
+            {
+                float now = day + hour / 24f;
+                if (hour == 30)
+                    for (int i = 40; i < 100; i += 3) { alive[i] = false; cutGone++; }   // lumberjacks and farmers: a cut plant dies at the cut
+                for (int i = 0; i < 100; i++)
+                {
+                    float dieAt = FloweringSchedule.DieAt(day, seedDays, FloweringSchedule.Hash01(i % 10, i / 10, 2));
+                    switch (FloweringSchedule.EndOf(alive[i], marked[i], now, dieAt))
+                    {
+                        case TwinEnd.Reseeds: alive[i] = false; reseeded++; if (now < day + 2f) early++; Check(!marked[i], "only wild tiles reseed"); break;
+                        case TwinEnd.Dies: alive[i] = false; diedStanding++; if (now < day + 2f) early++; Check(marked[i], "marked tiles die standing"); break;
+                    }
+                }
+            }
+            Check(cutGone == 20, "20 wild plants cut for their seed");
+            Check(reseeded == 40, "the 40 wild plants still standing reseed their tiles (" + reseeded + ")");
+            Check(diedStanding == 40, "the 40 on marked tiles die where they stand (" + diedStanding + ")");
+            Check(early == 0, "none before the last seed day");
+            bool anyAlive = false;
+            foreach (bool a in alive) anyAlive |= a;
+            Check(!anyAlive, "no flowered plant outlives the seed time");
         }
 
         // ------------------------------------------------------------------ the festival

@@ -91,7 +91,9 @@ namespace Pandaborn.Flowering
             {
                 _failure = e.GetType().Name + ": " + e.Message;
                 Debug.LogError("[Pandaborn.Flowering] growth hold switched off: " + _failure);
-                FeatureRegistry.ReportDegraded("Flowering", "young bamboo regrows at once after a Flowering (" + _failure + ")");
+                // per game: FloweringService.Load reports it again in every later game of the session
+                var service = FloweringService.Current;
+                if (service != null && service.Active) service.Fault("young bamboo regrows at once after a Flowering (" + _failure + ")");
             }
             return false;
         }
