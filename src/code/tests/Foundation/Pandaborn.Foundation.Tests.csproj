@@ -24,5 +24,6 @@
     <Compile Include="..\..\Pandaborn.Core\NoticePlan.cs" Link="linked\NoticePlan.cs" />
     <Compile Include="..\..\Pandaborn.Bell\BellMath.cs" Link="linked\BellMath.cs" />
     <Compile Include="..\..\Pandaborn.Words\WordsTable.cs" Link="linked\WordsTable.cs" />
+    <Compile Include="..\..\Pandaborn.Names\DeadBushLedger.cs" Link="linked\DeadBushLedger.cs" />
   </ItemGroup>
 </Project>

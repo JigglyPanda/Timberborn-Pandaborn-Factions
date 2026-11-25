@@ -19,6 +19,8 @@ namespace Pandaborn.Customs
         protected override void Configure()
         {
             Bind<ForesterReplantDefault>().AsTransient();
+            Bind<DeadBushClearing>().AsSingleton();
+            Bind<ForesterWatch>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
 
@@ -26,6 +28,7 @@ namespace Pandaborn.Customs
         {
             var builder = new TemplateModule.Builder();
             builder.AddDecorator<Forester, ForesterReplantDefault>();
+            builder.AddDecorator<Forester, ForesterWatch>();
             return builder.Build();
         }
     }
@@ -42,8 +45,9 @@ namespace Pandaborn.Customs
     /// * the player's checkbox (building panel or batch control) is the game's own Forester.SetReplantDeadTrees and is
     ///   saved by the game. Nothing of ours is saved.
     /// With the module off, new foresters start with the option off as in the plain game; existing ones keep theirs.
-    /// The option replaces dead TREES only (Forester.Validate asks the blocker for a TreeComponent): timber bamboo and
-    /// persimmon. Tea and Sichuan pepper are bushes and are not replaced by it (see FEATURE.md).
+    /// The game's option replaces dead TREES only (Forester.Validate asks the blocker for a TreeComponent): timber bamboo
+    /// and persimmon. Dead bushes (tea, Sichuan pepper) are cleared for the forester by DeadBushClearing, under the same
+    /// checkbox.
     /// </summary>
     public class ForesterReplantDefault : BaseComponent, IAwakableComponent
     {

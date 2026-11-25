@@ -35,6 +35,7 @@ namespace Pandaborn.Foundation.Tests
                 Section("bell curve", CurveTests);
                 Section("rested share against a BonusManager model", ShareTests);
                 Section("words table", () => WordsTests(tmp));
+                Section("dead bush ledger", LedgerTests);
                 if (mod != null) Section("required-API lists of " + mod + " against the game in " + managed, () => RealGame(mod, managed));
                 else Console.WriteLine("(no --mod <built mod folder>: the real-game check of the API lists was skipped)");
             }
@@ -497,6 +498,51 @@ namespace Pandaborn.Foundation.Tests
             var withRingtails = table.Effective(f => f == "Ringtails").ToDictionary(e => e.Key, e => e.Text);
             Check("feature lines apply while the feature is on, and win over the plain line",
                   withRingtails.Count == 3 && withRingtails["A.Key"] == "panda or ringtail" && withRingtails["C.Key"] == "old double at" && !withRingtails.ContainsKey("D.Key"));
+        }
+
+        // ------------------------------------------------------------------ dead bushes
+
+        private static void LedgerTests()
+        {
+            var ledger = new Pandaborn.Customs.DeadBushLedger();
+            Guid tea = Guid.NewGuid(), pepper = Guid.NewGuid();
+            const float hour = 1f / 24f;
+            bool due = false;
+            for (int h = 0; h < 24; h++)
+            {
+                ledger.Begin();
+                due |= ledger.Observe(tea, 10f + h * hour, 1f);
+                ledger.End();
+            }
+            Check("a dead bush is not due within its day", !due && ledger.Waiting == 1);
+            ledger.Begin();
+            Check("and is due after a full day", ledger.Observe(tea, 11f + hour / 2, 1f));
+            ledger.End();
+
+            // the option was switched off for a look (the bush did not qualify): the day starts over
+            ledger.Begin();
+            ledger.Observe(pepper, 11.1f, 1f);
+            ledger.End();
+            Check("a bush that stops qualifying is forgotten", ledger.Waiting == 1);
+            ledger.Begin();
+            Check("and starts its day again", !ledger.Observe(tea, 11.2f, 1f) && !ledger.Observe(pepper, 11.2f, 1f));
+            ledger.End();
+            ledger.Begin();
+            Check("each waits from its own start", !ledger.Observe(tea, 12.15f, 1f) && ledger.Observe(pepper, 12.15f, 1f));
+            ledger.End();
+            Same("both are still in the ledger", 2, ledger.Waiting);
+            ledger.Forget(pepper);
+            Same("a removed bush leaves the ledger", 1, ledger.Waiting);
+
+            ledger.Begin();
+            ledger.Observe(tea, 20f, 1f);
+            ledger.End();
+            ledger.Begin();
+            Check("a clock that went back starts the wait again", !ledger.Observe(tea, 5f, 1f));
+            Check("no delay means due at once", ledger.Observe(pepper, 5f, 0f));
+            ledger.End();
+            ledger.Clear();
+            Same("cleared", 0, ledger.Waiting);
         }
 
         // ------------------------------------------------------------------ the real game
