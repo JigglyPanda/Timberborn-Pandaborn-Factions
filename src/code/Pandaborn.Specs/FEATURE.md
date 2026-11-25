@@ -17,9 +17,9 @@ Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `Pa
 * type `Timberborn.BlueprintSystem.ComponentSpec`
   * method `.ctor()`
   * method `.ctor(Timberborn.BlueprintSystem.ComponentSpec)`
-  * method `Equals(Timberborn.BlueprintSystem.ComponentSpec)`
-  * method `GetHashCode()`
-  * method `PrintMembers(System.Text.StringBuilder)`
+  * method `Equals(Timberborn.BlueprintSystem.ComponentSpec)`: `System.Boolean`
+  * method `GetHashCode()`: `System.Int32`
+  * method `PrintMembers(System.Text.StringBuilder)`: `System.Boolean`
 * type `Timberborn.BlueprintSystem.SerializeAttribute`
   * method `.ctor()`
 
@@ -28,5 +28,9 @@ Spec classes defined: `PandabornBellSettledMarkerSpec`, `PandabornBellSpec`, `Pa
 * type `UnityEngine.Sprite`
 * type `UnityEngine.Texture2D`
 * type `UnityEngine.Vector3Int`
+
+**Game classes derived from and interfaces implemented** (with the abstract members each had at build time; a new one keeps the module from loading)
+
+* class `Timberborn.BlueprintSystem.ComponentSpec`: `<Clone>$`
 
 <!-- api:end -->

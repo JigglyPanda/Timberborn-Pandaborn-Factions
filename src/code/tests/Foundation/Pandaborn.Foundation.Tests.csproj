@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tests of the foundation's pure logic, without the game (never shipped, not in the solution). Run:
+         dotnet run (project src/code/tests/Foundation, configuration Release), optionally followed by the arguments
+         "mod" (a built mod folder) and "managed" (the game's Managed folder), each written with two leading dashes.
+       It compiles the production source files themselves (linked below) against small stand-ins for the two game
+       types the bootstrap names (Stubs.cs), so what is tested is the code that ships. With the mod argument it also
+       resolves every module's required-API list of that build against the real game assemblies: no line may be missing.
+       The assembly is named Timberborn.* on purpose: the API check follows inherited interfaces only inside game
+       assemblies (names starting Timberborn., Bindito. or Unity), and the fake types here play the game. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Timberborn.PandabornFoundationTests</AssemblyName>
+    <RootNamespace>Pandaborn.Foundation.Tests</RootNamespace>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CS0649;CS0067</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Pandaborn.Bootstrap\ApiCheck.cs" Link="linked\ApiCheck.cs" />
+    <Compile Include="..\..\Pandaborn.Bootstrap\Bootstrap.cs" Link="linked\Bootstrap.cs" />
+    <Compile Include="..\..\Pandaborn.Core\StoreEntry.cs" Link="linked\StoreEntry.cs" />
+    <Compile Include="..\..\Pandaborn.Core\FeatureRegistry.cs" Link="linked\FeatureRegistry.cs" />
+    <Compile Include="..\..\Pandaborn.Core\NoticePlan.cs" Link="linked\NoticePlan.cs" />
+    <Compile Include="..\..\Pandaborn.Bell\BellMath.cs" Link="linked\BellMath.cs" />
+    <Compile Include="..\..\Pandaborn.Words\WordsTable.cs" Link="linked\WordsTable.cs" />
+  </ItemGroup>
+</Project>

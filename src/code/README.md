@@ -19,14 +19,26 @@ build), and `Modules/modules.txt` lists the feature modules in load order.
 ## Build
 
 ```powershell
-dotnet build src\code\Pandaborn.Code.sln -c Release                          # into E:\PandabornDev\build\PandabornFactions
+powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 code            # the shipping build (below)
+dotnet build src\code\Pandaborn.Code.sln -c Release                          # a scratch build, into E:\PandabornDev\build\code\dev
 dotnet build src\code\Pandaborn.Code.sln -c Release -p:ModOut=<mod folder>   # into any mod folder (e.g. a prototype)
+dotnet run --project src\code\tests\Foundation -c Release -- --mod <built mod folder>   # the foundation's tests, no game
 ```
 
+**The code ships in the mod** (since 2026-11-14): the `code` stage of `tools/pandaborn.ps1` builds this solution into
+`E:\PandabornDev\build\code\PandabornFactions`, `assemble` puts it into the staging folder with the data, and it reaches
+the installed mod only through `gate` and `install`. A module ships only while its switch in `catalogue/rules.toml
+[modules]` is on. A bare `dotnet build` never writes into the installed mod (the default output is a scratch folder).
+
+`src/code/tests/Foundation` (a console program, not in the solution, never shipped) compiles the production source
+files of the bootstrap and the pure parts of Core, Bell and Words against stand-ins and checks them without the game:
+the API check against fake types, bundle parking on real folders, the switches, store entries, the notice rule, the
+bell's curve and multiplying share against a model of `BonusManager`, the words table. With `--mod` it also resolves
+every module's required-API list of that build against the real game assemblies. Run it after any change to these parts.
+
 Intermediates go to `E:\PandabornDev\build\obj\code\<project>`. Each build also rewrites the generated half of every
-project's `FEATURE.md`, so a game update that changes what a module touches shows up as a diff in git. Note: `tools/build.ps1`
-mirrors `mod/PandabornFactions` and deletes anything else in the build folder, so run the code build after it (or wire it in
-there; it is not yet wired, to keep other agents' test runs unaffected until the owner switches the code on).
+project's `FEATURE.md`, so a game update that changes what a module touches shows up as a diff in git, and stamps the
+game version it was built against (`Scripts/Pandaborn.built-for.txt`, from `catalogue/vanilla.pin.json`).
 
 `Pandaborn.Look` also copies its asset bundle (`pandabornlook_win`/`_mac`, made by `tools/build_look.ps1 -BundleName
 pandabornlook` into `E:\PandabornDev\build\look\AssetBundles`, never in git) into `<ModOut>\AssetBundles` when it is there.
@@ -45,22 +57,45 @@ mod), passed to `tools/run_game_test.ps1 -ExtraMods`. Never enable it together w
 3. `Pandaborn.Specs.bin` and `Pandaborn.Core.bin` are checked and loaded with `Assembly.Load(bytes)`. Before loading
    Specs, every spec class name it defines is looked up in the AppDomain; if another assembly already defines one, Specs
    (and so every feature) stays off instead of crashing every game.
-4. For each module in `Modules/modules.txt`: unless the dev switch forces it off, every line of its `.api.txt` is resolved
-   by reflection against the running game (type by name in its assembly; method by name, generic arity and parameter
-   types, searched through base types and interfaces; field by name). If anything is missing the module is not loaded and
-   the reason is recorded. Otherwise it is loaded once per AppDomain.
-5. The outcome goes into AppDomain data (`Pandaborn.Boot.Report`, `.Owner`, `.Duplicates`) and the log. `Pandaborn.Core`
-   reads it (`FeatureRegistry`) and, when a game's interface first appears, `FeatureNotices` tells the player once per save
-   about every feature that is off, as a toast and an entry in the notification log. In Inkpaws games it also adds one\n   notification-log entry per save, the **feature report** (`Pandaborn - Factions features: The afternoon bell: on; ...`),\n   posted again only when the states change.
+4. For each module in `Modules/modules.txt`: unless a switch turns it off (the player's `PandabornFactions.txt`, or the
+   dev switch), every line of its `.api.txt` is resolved by reflection against the running game: types by name; methods
+   by name, generic arity, parameter types and return type, searched through base types and interfaces; fields by name
+   and type; all of them still public; game base classes still open and game interfaces without a member the module
+   does not know; other Pandaborn assemblies it names loaded (`Pandaborn.Bootstrap/FEATURE.md`). If anything is missing
+   the module is not loaded and the reason is recorded. Otherwise it is loaded once per AppDomain.
+5. The outcome goes into AppDomain data (`Pandaborn.Boot.Report`, `.Owner`, `.Duplicates`) and the log, with the game
+   version the mod was built for and the one running. `Pandaborn.Core` reads it (`FeatureRegistry`). While everything
+   works the player is told nothing. Otherwise, when the interface of an Inkpaws game appears, `FeatureNotices` posts
+   one message that names each feature in player words and says what will not work: at every load for a feature that
+   is switched off, once per save for the rest (`Pandaborn.Core/FEATURE.md`). The state of every unit with its
+   technical reason (the **feature report**) goes to the log at every load.
 
 Verified in game (stage 0, see `docs/tech/stage0.md`): Bindito finds configurators in assemblies loaded this way, and the
 game's `SpecTypeCache` registers their spec records, because both scan `AppDomain.GetAssemblies()` after the mod starters
 have run (the configurator scan happens whenever a context is built, `SpecTypeCache` is created with each context's
 `BlueprintDeserializer`).
 
+## The player's switch
+
+`PandabornFactions.txt` in the game's user data folder (the folder that holds `Saves` and `Mods`; `Documents\Timberborn`
+on Windows), for a player whose other mods clash with one feature:
+
+```
+# lines starting with # are notes
+off: Flowering
+off: Water, Festival
+```
+
+Names are the ids in `modules.txt`, in any letter case. The feature is not loaded (the same forced-off state as the dev
+switch, read once at start), the log says what the file switched off, and the in-game notice names the file. A name
+that is not a feature is logged and ignored. No file is the normal case.
+
 ## Dev switch (tests only)
 
-`pandaborn.dev.txt` in the mod folder, or the environment variable `PANDABORN_DEV` (lines separated by `;`):
+The environment variable `PANDABORN_DEV` (lines separated by `;`) works in every copy. The file `pandaborn.dev.txt` in
+the mod folder works only in a dev copy: a copy whose manifest Id is the released `JigglyPanda.PandabornFactions`
+ignores it and says so in the log (probes write that file, and one left in a packaged build must not switch features
+off for players). Test the installed or packaged mod with the variable.
 
 ```
 force-off: Bell, Names          # the module is not loaded, as for a player whose game changed under it
@@ -83,8 +118,11 @@ simulate-missing-member: Words  # a module's private-member reflection takes its
    `MultiBind<TemplateModule>()` and `AddDecorator<Pandaborn<Thing>Spec, <Component>>()`, so it exists only where the
    data names the spec. Singletons that should do nothing outside Inkpaws games should check for their spec (see
    `BellService.Active`: the faction's adult template carries `PandabornBellSpec`) rather than a faction id.
-4. **List it** in `src/code/modules.txt` (`Id  File  Description`) and give it a display name in
-   `Pandaborn.Core/mod/Localizations/enUS_PandabornCore.csv` (`Pandaborn.Feature.<Id>`).
+4. **List it** in `src/code/modules.txt` (`Id  File  Description`), give it a display name (`Pandaborn.Feature.<Id>`, in
+   the module's own loc file) and a line that says in player words what does not work while it is off
+   (`Pandaborn.Feature.<Id>.Off` in `Pandaborn.Core/mod/Localizations/enUS_PandabornCoreNotices.csv`), and add its id to
+   `FeatureNotices.Modules`. A module never references another feature module (the bootstrap would keep it off whenever
+   that one is off): shared seams are interfaces in Core.
 5. **Data that ships with the module** (localisation, blueprint fragments) goes in the project's `mod/` folder; it is copied
    into the mod. Use loc keys `Pandaborn.<Feature>.*` and a file `Localizations/enUS_Pandaborn<Feature>.csv`.
 6. **Saved state** never goes in your own `IPersistentEntity`/`ISaveableSingleton` (a component of a module that is
@@ -116,14 +154,18 @@ simulate-missing-member: Words  # a module's private-member reflection takes its
 7a. **Say when there is no data.** A module that ships but finds none of its data in a game of our faction (its spec is not
    on any template, its table file is missing) calls `FeatureRegistry.ReportNoData("<Id>", "<what is missing>")` in its
    Load; the feature report then lists it as "off (no data in this game: ...)" instead of the module silently doing
-   nothing. A module that runs but with part of its data missing calls `FeatureRegistry.ReportDegraded` ("on, reduced
-   (...)", plus one notice). Bell, Names and Words do this; `FeatureNotices.FactionId` is the faction to check.
+   nothing. A module that runs but with part of its data missing calls `FeatureRegistry.ReportDegradedInGame` ("on,
+   reduced (...)", plus one notice; forgotten when the next game starts), or `ReportDegraded` for something that holds
+   for the whole session and is reported once. Bell, Names and Words do this; `FeatureNotices.FactionId` is the faction to check.
 7b. **Sounds** go through `Pandaborn.Core.PandabornSounds` (inject it): `Has(id)`, `Play2D(id)`,
    `Play3D(gameObject, id)`. It never throws and returns false when the clip is not loaded (no bundle, old copy). Ids
    and where each belongs: docs/tech/sound.md section 8 (the night clapper is the Ringtails module's: `Play2D` when the
    Ringtail shift starts, about 2.5 s after the shift bell when they coincide).
-8. **Interface code** runs inside `SafeUi.Run/Get("<Feature>.<Piece>", ...)`: an exception switches that piece off for
-   the session and is logged once.
+8. **Interface code** runs inside `SafeUi.Run/Get("<Feature>.<Piece>", ...)`: an exception switches that piece off until
+   the game is left and is logged once. **Callbacks the game calls** (event handlers, finished-state listeners,
+   `PostInitializeEntity`, ticks, tutorial step constructors) catch their own exceptions: the game treats one as a
+   failed load or a crash, and it calls every singleton's `Unload` in a row with no guard, so state swapped into
+   session-wide objects (texts, shared materials) needs a second restore point (the next game, the main menu).
 9. **Reflection on private members** only with a written fallback, and a test that simulates the member being gone.
 10. **Write `FEATURE.md`'s first half** (what it does, its data, how it fails). The second half is generated. The game-update
     alarm `tools/check_api_lists.py` fails when a generated half differs from the committed one: review the diff and
