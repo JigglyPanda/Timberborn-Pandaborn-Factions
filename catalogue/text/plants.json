@@ -1,9 +1,9 @@
 {
   "_meta": {
     "kind": "plants",
-    "source": "docs/CONTENT.md draft 2 (Plants), docs/DESIGN.md pillar 2, docs/tech/balance.md stat sheet",
+    "source": "docs/DESIGN.md pillar 2, catalogue/plants.toml. Words: GLOSSARY.md beside this file.",
     "language": "enUS",
-    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "status": "read by the generator (name, description, flavor); written by an AI; text pass of 2026-11-25",
     "keyed_by": "The plant's English name exactly as CONTENT.md lists it.",
     "vanilla_loc_pattern": {
       "name": "NaturalResource.<Id>.DisplayName",
@@ -20,12 +20,12 @@
     },
     "field_rules": {
       "name": "Title Case, as vanilla writes plants ('Chestnut Tree', 'Coffee Bush').",
-      "description": "What it is, who plants it and what it gives, then the soil rule as the last sentence.",
-      "soil_rule": "The soil rule on its own, for a planting-tool line or overlay. It repeats the last sentence of the description word for word.",
+      "description": "What it is and what it gives, then the one soil fact a player must know. Under 100 characters: vanilla plants have no description at all, and the game prints growth time and drought resistance itself.",
+      "soil_rule": "Not shipped. The soil rule on its own, for a planting-tool line or overlay if one is ever added.",
       "soil_keyword": "The id of the keyword line in 'keywords' below that belongs on this plant.",
       "flavor": "At most one short line."
     },
-    "death_and_status_lines": "In messages.json under 'plants'. Vanilla lines for drying out, flooding and contamination are reused as they are."
+    "death_and_status_lines": "Vanilla lines for drying out, overwatering, flooding and contamination are reused as they are. The Great Flowering's lines are in enUS_PandabornEvents.csv."
   },
   "keywords": {
     "_note": "Written in the form of the vanilla lines NaturalResources.Aquatic and NaturalResources.Arid. 'dry_ground' may replace the vanilla Arid line on Inkpaw plants only if it is shown through its own key; the vanilla Arid key is shared by every faction.",
@@ -35,7 +35,7 @@
     },
     "dry_ground": {
       "suggested_key": "Pandaborn.NaturalResources.DryGround",
-      "text": "<YellowHighlight>Dry ground only:</YellowHighlight> Roots rot if they get wet."
+      "text": "<YellowHighlight>Dry ground only:</YellowHighlight> Wet roots kill it."
     },
     "flooded": {
       "suggested_key": "Pandaborn.NaturalResources.Flooded",
@@ -47,68 +47,72 @@
     "Shoot bamboo": {
       "id": "PandabornShootBamboo",
       "name": "Shoot Bamboo",
-      "description": "A fast field crop, planted and harvested by the Farmhouse. Its shoots can be eaten raw. Moist ground: it survives a short drought and dies in a long one.",
-      "soil_rule": "Moist ground: it survives a short drought and dies in a long one.",
+      "description": "A fast field crop for the Farmhouse. Its shoots can be eaten raw. Survives a short drought.",
+      "soil_rule": "Moist ground. Survives a short drought.",
       "soil_keyword": "moist_ground",
-      "flavor": "It grows fast enough to watch, and several villagers do."
+      "flavor": "It grows fast enough to watch, and several pandas do."
     },
     "Timber bamboo": {
       "id": "PandabornTimberBamboo",
       "name": "Timber Bamboo",
-      "description": "A fast tree, planted by the Forester and cut for poles. Bamboo mushrooms grow in standing groves. Moist ground: it survives a short drought and dies in a long one.",
-      "soil_rule": "Moist ground: it survives a short drought and dies in a long one.",
+      "description": "A fast tree, cut for poles. Bamboo mushrooms grow in standing groves. Survives a short drought.",
+      "soil_rule": "Moist ground. Survives a short drought.",
       "soil_keyword": "moist_ground",
       "flavor": "Tall, straight and hollow. The village is built from it, and so is most of the furniture."
     },
     "Cabbage": {
       "id": "PandabornCabbage",
       "name": "Cabbage",
-      "description": "A sturdy field crop that can be eaten raw or pickled. Moist ground: it lasts longer without water than shoot bamboo.",
-      "soil_rule": "Moist ground: it lasts longer without water than shoot bamboo.",
+      "description": "A sturdy field crop, eaten raw or pickled. Lasts longer without water than shoot bamboo.",
+      "soil_rule": "Moist ground. Lasts longer without water than shoot bamboo.",
       "soil_keyword": "moist_ground",
       "flavor": "Round, patient and difficult to upset. The Inkpaws feel a certain kinship."
     },
     "Rice": {
       "id": "PandabornRice",
       "name": "Rice",
-      "description": "The staple grain, planted and harvested by the Paddy House. Flooded fields only: it must stand in shallow water, and it dies quickly if the field dries out.",
-      "soil_rule": "Flooded fields only: it must stand in shallow water, and it dies quickly if the field dries out.",
+      "description": "A grain for the Paddy House. Must stand in water no deeper than one block, and dies quickly if the field dries. Steamed, or pounded into rice flour.",
+      "soil_rule": "Flooded field only: water no deeper than one block. Dies quickly if the field dries.",
       "soil_keyword": "flooded",
       "flavor": "From the hillside, the paddies look like mirrors. From inside the paddies, it is mostly mud."
     },
     "Tea bush": {
       "id": "PandabornTeaBush",
       "name": "Tea Bush",
-      "description": "A lasting bush, planted by the Forester. Gatherers pick its leaves again and again. Dry ground only: roots rot if they get wet.",
-      "soil_rule": "Dry ground only: roots rot if they get wet.",
+      "description": "A bush planted by the Forester and picked by gatherers. Dry ground only: wet roots kill it.",
+      "soil_rule": "Dry ground only: wet roots kill it.",
       "soil_keyword": "dry_ground",
       "flavor": "The best leaves grow on the driest slope. The tea pickers mention this on every climb."
     },
     "Sichuan pepper": {
       "id": "PandabornSichuanPepper",
       "name": "Sichuan Pepper",
-      "description": "A spice bush for hot pot, planted by the Forester and picked by gatherers. Dry ground only: roots rot if they get wet.",
-      "soil_rule": "Dry ground only: roots rot if they get wet.",
+      "description": "A spice bush for hot pot, planted by the Forester and picked by gatherers. Dry ground only.",
+      "soil_rule": "Dry ground only: wet roots kill it.",
       "soil_keyword": "dry_ground",
       "flavor": "It does not burn the tongue. It makes the tongue forget where it is."
     },
     "Persimmon tree": {
       "id": "PandabornPersimmonTree",
       "name": "Persimmon Tree",
-      "description": "An orchard tree, planted by the Forester. Its fruit is gathered again and again, and the tree gives logs when it is cut. Moist ground: it tolerates a long dry spell.",
-      "soil_rule": "Moist ground: it tolerates a long dry spell.",
+      "description": "A fruit tree. Gatherers pick its persimmons again and again, and it gives logs when cut.",
+      "soil_rule": "Moist ground. Tolerates a long dry spell.",
       "soil_keyword": "moist_ground",
       "flavor": "The fruit ripens after the leaves have fallen, so the bare tree seems hung with small lanterns."
     },
     "Flowering shoot bamboo": {
       "id": "PandabornShootBambooInFlower",
       "name": "Flowering Shoot Bamboo",
-      "description": "Shoot bamboo in a Great Flowering. Cut it for bamboo seed; it does not grow back."
+      "description": "Bears bamboo seed for a few days and then dies.",
+      "flavor": "It flowers once in many years. Every plant in the land flowers with it.",
+      "note": "The one source of these three texts since 2026-11-25 (the copies in enUS_PandabornEvents.csv were removed)."
     },
     "Flowering timber bamboo": {
       "id": "PandabornTimberBambooInFlower",
       "name": "Flowering Timber Bamboo",
-      "description": "Timber bamboo in a Great Flowering. Cut it for bamboo seed; it does not grow back."
+      "description": "Bears bamboo seed for a few days and then dies.",
+      "flavor": "The grove flowers all at once, as it has for longer than anyone remembers.",
+      "note": "The one source of these three texts since 2026-11-25."
     }
   },
   "vanilla_plants_kept": {

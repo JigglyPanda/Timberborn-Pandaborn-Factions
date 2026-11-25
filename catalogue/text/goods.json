@@ -1,9 +1,9 @@
 {
   "_meta": {
     "kind": "goods",
-    "source": "docs/CONTENT.md draft 2 (Goods, New), docs/tech/balance.md stat sheet",
+    "source": "docs/DESIGN.md, catalogue/goods.toml and recipes.toml. Words: GLOSSARY.md beside this file.",
     "language": "enUS",
-    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "status": "read by the generator (names and translator comments); written by an AI; text pass of 2026-11-25",
     "keyed_by": "The good's English name exactly as CONTENT.md lists it.",
     "vanilla_loc_pattern": {
       "singular": "Good.<Id>.DisplayName",
@@ -19,7 +19,7 @@
     "field_rules": {
       "singular / plural": "Sentence case, as vanilla writes goods ('Maple pastry', 'Treated planks'). Mass nouns use the same word for both ('Bread', 'Wheat flour'). Goods that only make sense in the plural use the plural for both ('Berries', 'Coffee beans').",
       "eaten_raw": "true means the game shows the vanilla line Goods.EatableRaw ('Can be eaten raw.') by itself. Nothing to write.",
-      "tooltip": "One optional line saying where the good comes from and what it is for. Vanilla goods carry no description, so this has no vanilla key. Use it only if the mod adds its own good tooltip or a crop or recipe hint (suggested key Pandaborn.Good.<Id>.Tooltip)."
+      "tooltip": "Not shipped: vanilla goods carry no description and the mod adds none. One line saying where the good comes from and what it is for, kept true to recipes.toml in case a tooltip is ever added. No amounts: the recipe panel shows them."
     },
     "vanilla_goods_reused": "Logs, gears, paper, scrap metal, metal blocks, water, berries, badwater, explosives, fireworks, dirt and antidote keep their vanilla keys and text.",
     "pole_rename_warning": "If a pole is the vanilla Plank shown under a faction-only name, the strings below must be shown through a faction-scoped key. Writing them to Good.Plank.DisplayName would rename planks for Folktails and Iron Teeth as well."
@@ -29,35 +29,35 @@
       "id": "PandabornBambooShoots",
       "singular": "Bamboo shoot", "plural": "Bamboo shoots",
       "eaten_raw": true,
-      "tooltip": "The village's first crop. Eat them raw, or steam them to feed twice as many.",
+      "tooltip": "The village's first crop. Eaten raw, or steamed to go further.",
       "translator_comment": "The young edible shoot of a bamboo plant. The Inkpaws' starter food, like the carrot."
     },
     "Poles": {
       "id": "PandabornPole",
       "singular": "Pole", "plural": "Poles",
       "eaten_raw": false,
-      "tooltip": "Cut from timber bamboo. No mill needed. The Inkpaws build with poles where others use planks.",
+      "tooltip": "Cut from timber bamboo, or split from logs in the Pole Mill. The Inkpaws build with poles.",
       "translator_comment": "A cut length of bamboo used as building material. It plays the part of the Plank."
     },
     "Cured poles": {
       "id": "PandabornCuredPole",
       "singular": "Cured pole", "plural": "Cured poles",
       "eaten_raw": false,
-      "tooltip": "Poles hardened over smoke in the Smoke Kiln. Used for late construction.",
+      "tooltip": "Poles cured over smoke in the Smoke Kiln. Used for late construction.",
       "translator_comment": "A bamboo pole hardened by smoke. It plays the part of the Treated plank. Use the same word for pole as in Pole."
     },
     "Cabbage": {
       "id": "PandabornCabbage",
       "singular": "Cabbage", "plural": "Cabbages",
       "eaten_raw": true,
-      "tooltip": "A sturdy second crop. Eat it raw, pickle it, or put it in hot pot.",
+      "tooltip": "A sturdy second crop. Eaten raw, pickled, or cooked into hot pot.",
       "translator_comment": "Chinese cabbage (napa cabbage), a leafy vegetable. Also the name of the need satisfied by eating it."
     },
     "Rice": {
       "id": "PandabornRice",
       "singular": "Rice", "plural": "Rice",
       "eaten_raw": false,
-      "tooltip": "Grown in flooded paddies. Steam it, or pound it into rice flour.",
+      "tooltip": "Grown in flooded fields. Steamed, or pounded into rice flour.",
       "translator_comment": "Harvested rice grain, not yet cooked."
     },
     "Rice flour": {
@@ -78,7 +78,7 @@
       "id": "PandabornSteamedRice",
       "singular": "Steamed rice", "plural": "Steamed rice",
       "eaten_raw": false,
-      "tooltip": "Rice from the Steamer. A staple meal.",
+      "tooltip": "Rice from the Steamer.",
       "translator_comment": "Plain cooked rice. Also the name of the need satisfied by eating it."
     },
     "Pickles": {
@@ -92,7 +92,7 @@
       "id": "PandabornSweetRiceBalls",
       "singular": "Sweet rice ball", "plural": "Sweet rice balls",
       "eaten_raw": false,
-      "tooltip": "Soft rice-flour balls with a persimmon filling. The festival sweet.",
+      "tooltip": "Soft rice-flour balls with a persimmon filling, made in the Kitchen.",
       "translator_comment": "Tangyuan: soft round balls of rice-flour dough with a sweet filling, eaten at the Lantern Festival. Also the name of the need satisfied by eating them."
     },
     "Sichuan pepper": {
@@ -106,56 +106,56 @@
       "id": "PandabornHotPot",
       "singular": "Hot pot", "plural": "Hot pot",
       "eaten_raw": false,
-      "tooltip": "Cabbage, Sichuan pepper and bamboo mushrooms in one pot. The best everyday meal.",
+      "tooltip": "Cabbage, Sichuan pepper and bamboo mushrooms in one pot, from the Hot Pot Hall.",
       "translator_comment": "Sichuan hot pot: a shared pot of spiced broth in which food is cooked at the table. Also the name of the need satisfied by eating it."
     },
     "Tea leaves": {
       "id": "PandabornTeaLeaves",
       "singular": "Tea leaves", "plural": "Tea leaves",
       "eaten_raw": false,
-      "tooltip": "Picked from tea bushes on dry ground. Roasted and brewed into tea.",
+      "tooltip": "Picked from tea bushes on dry ground. Roasted into tea at the Tea Roastery.",
       "translator_comment": "Fresh leaves picked from a tea bush, before roasting."
     },
     "Tea": {
       "id": "PandabornTea",
       "singular": "Tea", "plural": "Tea",
       "eaten_raw": false,
-      "tooltip": "Roasted tea leaves. Served with water at the Teahouse.",
+      "tooltip": "Roasted tea leaves. Served at the Teahouse and nowhere else.",
       "translator_comment": "Roasted (dry) tea leaves, ready to brew. Also the name of the need met at the Teahouse."
     },
     "Persimmons": {
       "id": "PandabornPersimmons",
       "singular": "Persimmon", "plural": "Persimmons",
       "eaten_raw": true,
-      "tooltip": "Picked from persimmon trees. A snack, and the filling of sweet rice balls.",
+      "tooltip": "Picked from persimmon trees. Eaten raw, and the filling of sweet rice balls.",
       "translator_comment": "The orange fruit of the persimmon tree (Diospyros kaki). Also the name of the need satisfied by eating it."
     },
     "Bamboo mushrooms": {
       "id": "PandabornBambooMushrooms",
       "singular": "Bamboo mushroom", "plural": "Bamboo mushrooms",
       "eaten_raw": true,
-      "tooltip": "A delicacy gathered in standing groves of timber bamboo. Used for hot pot.",
+      "tooltip": "Gathered in standing groves of timber bamboo. Eaten raw, or cooked into hot pot.",
       "translator_comment": "Bamboo fungus ('zhusun' in Chinese), a lacy white delicacy that grows in bamboo groves. Also the name of the need satisfied by eating it."
     },
     "Bamboo seed": {
       "id": "PandabornBambooSeed",
       "singular": "Bamboo seed", "plural": "Bamboo seed",
       "eaten_raw": false,
-      "tooltip": "Dropped once by bamboo that has flowered. Used for bamboo seed cakes.",
-      "translator_comment": "The grain-like seed that bamboo drops after its rare mass flowering. A mass noun, like 'grain'."
+      "tooltip": "Harvested from bamboo in flower, during a Great Flowering. Steamed into bamboo seed cakes; the Kitchen makes more of them with rice flour.",
+      "translator_comment": "The grain-like seed that bamboo bears in its rare mass flowering. A mass noun, like 'grain'."
     },
     "Bamboo seed cakes": {
       "id": "PandabornBambooSeedCakes",
       "singular": "Bamboo seed cake", "plural": "Bamboo seed cakes",
       "eaten_raw": false,
-      "tooltip": "Made from bamboo seed and rice flour. The best food the village knows, and only possible after a Great Flowering.",
+      "tooltip": "Made from bamboo seed at the Steamer, or with rice flour in the Kitchen. Only possible after a Great Flowering.",
       "translator_comment": "Cakes made from bamboo seed. Use the same words as in Bamboo seed. Also the name of the need satisfied by eating them."
     },
     "Paper lanterns": {
       "id": "PandabornPaperLantern",
       "singular": "Paper lantern", "plural": "Paper lanterns",
       "eaten_raw": false,
-      "tooltip": "Made in the Lantern Workshop for the Lantern Festival and for decoration.",
+      "tooltip": "Made in the Lantern Workshop. Used for the Lantern Festival, lantern decorations and the Sky Lantern.",
       "translator_comment": "A lantern of paper on a bamboo frame, the festival good."
     }
   },

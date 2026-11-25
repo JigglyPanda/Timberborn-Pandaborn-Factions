@@ -1,9 +1,9 @@
 {
   "_meta": {
     "kind": "faction",
-    "source": "docs/DESIGN.md revision 4; mod/PandabornFactions/Localizations/enUS_PandabornFactions.csv (the current placeholder texts, replaced here)",
+    "source": "docs/DESIGN.md (with its change log to 2026-11-25). Words: GLOSSARY.md beside this file.",
     "language": "enUS",
-    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "status": "read by the generator (core, toolbar, worker_types); written by an AI; text pass of 2026-11-25",
     "keyed_by": "A short id per text. Each entry names the loc key it belongs to.",
     "vanilla_loc_pattern": {
       "faction": "Faction.<FactionId>.DisplayName / .Description / .GameOver.Message / .GameOver.Flavor / .WonderCompletionMessage / .WonderCompletionFlavor (FactionSpec and FactionWonderSpec)",
@@ -25,11 +25,11 @@
     },
     "description": {
       "key": "Faction.Inkpaws.Description",
-      "text": "The Inkpaws grow bamboo, rice and tea on terraced hillsides. They work a short day and work it well, and spend the afternoon over tea, naps and company.\nTheir motto: <i>Work well, rest well.</i>",
+      "text": "The Inkpaws grow bamboo, rice and tea on terraced hillsides. They work a short day and work it well, and keep the afternoon for naps and company.\nTheir motto: <i>Work well, rest well.</i>",
       "when_modules": [
-        { "modules": ["Water", "Ringtails"], "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well. When the afternoon bell rings, the Ringtails of the Night Watch take over the village until dawn.\nTheir motto: <i>Work well, rest well.</i>" },
-        { "modules": ["Water"], "text": "The Inkpaws would rather lead water than hold it back: their bamboo flumes carry it downhill to groves and rice terraces. They work a short day and work it well, and spend the afternoon over tea.\nTheir motto: <i>Work well, rest well.</i>" },
-        { "modules": ["Ringtails"], "text": "The Inkpaws grow bamboo, rice and tea on terraced hillsides. They work a short day and work it well. When the afternoon bell rings, the Ringtails of the Night Watch take over the village until dawn.\nTheir motto: <i>Work well, rest well.</i>" }
+        { "modules": ["Water", "Ringtails"], "text": "The Inkpaws lead water rather than hold it back, down bamboo flumes to groves and rice terraces. They work a short day and work it well. At the afternoon bell, the Ringtails take over until dawn.\nTheir motto: <i>Work well, rest well.</i>" },
+        { "modules": ["Water"], "text": "The Inkpaws lead water rather than hold it back, down bamboo flumes to groves and rice terraces. They work a short day and work it well, and keep the afternoon for naps and company.\nTheir motto: <i>Work well, rest well.</i>" },
+        { "modules": ["Ringtails"], "text": "The Inkpaws grow bamboo, rice and tea on terraced hillsides. They work a short day and work it well. At the afternoon bell, the Ringtails take over until dawn.\nTheir motto: <i>Work well, rest well.</i>" }
       ],
       "translator_comment": "Faction description on the new game screen. Inkpaws are giant pandas; Ringtails are red pandas who live in the same village and work at night. A flume is an open bamboo aqueduct."
     },
@@ -56,7 +56,7 @@
     "bot_name": {
       "key": "Bot.DisplayName.Inkpaws",
       "text": "Wooden Ox {0}",
-      "translator_comment": "{0} is a serial number. The Inkpaws' bots are wooden oxen. Replaces the placeholder 'Bamboobot {0}'."
+      "translator_comment": "{0} is a serial number. The Inkpaws' bots are wooden oxen."
     }
   },
   "motto": {
@@ -68,7 +68,7 @@
     "_note": "The words for the two peoples and their young. Use these forms everywhere.",
     "inkpaw": { "singular": "Inkpaw", "plural": "Inkpaws", "young_singular": "cub", "young_plural": "cubs", "what": "giant pandas; they work from dawn to the afternoon bell" },
     "ringtail": { "singular": "Ringtail", "plural": "Ringtails", "young_singular": "kit", "young_plural": "kits", "what": "red pandas, the village's Night Watch; they work from the afternoon bell to dawn" },
-    "together": { "singular": "villager", "plural": "villagers", "what": "any colonist of either people, where vanilla text says 'beaver'" },
+    "together": { "singular": "panda", "plural": "pandas", "what": "any colonist of either people, where vanilla text says 'beaver'. Never 'villager' (GLOSSARY.md)." },
     "settlement": "village",
     "entity_labels": {
       "_note": "docs/tech/two-peoples.md: the batch-control window throws for any entity name key other than Beaver.Adult.TemplateName, Beaver.Child.TemplateName and Bot.TemplateName, so templates keep the vanilla keys. These texts are for the mod's own badge or panel header.",
@@ -106,7 +106,8 @@
       "replaces": "Wellbeing.HighscoreReached ('Your beavers are happier than ever!')",
       "suggested_key": "Pandaborn.Wellbeing.HighscoreReached",
       "text": "Your village is happier than ever!",
-      "needs_code": true
+      "needs_code": false,
+      "shipped_as": "Words table (src/code/Pandaborn.Words/words.review.enUS.txt)"
     },
     "wonder_keyword": {
       "replaces": "Buildings.Wonder ('Wonder: The pinnacle of beaver engineering.')",
@@ -117,7 +118,7 @@
     "wonder_statistics": {
       "_note": "Vanilla ends a mastered map with a few statistics, some of them jokes (WonderCompletion.Statistic.TailsPainted, .ChippedTeeth, .BeaversExploded). These are Inkpaw counterparts in the same form: a label ending in a colon, followed by a number.",
       "vanilla_pattern": "WonderCompletion.Statistic.<Id>",
-      "villagers_born": { "replaces": "WonderCompletion.Statistic.BeaversBorn", "suggested_key": "Pandaborn.WonderCompletion.Statistic.VillagersBorn", "text": "Cubs and kits born:", "needs_code": true },
+      "villagers_born": { "replaces": "WonderCompletion.Statistic.BeaversBorn", "suggested_key": "Pandaborn.WonderCompletion.Statistic.PandasBorn", "text": "Pandas born:", "needs_code": false, "shipped_as": "Words table" },
       "naps_taken": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.NapsTaken", "text": "Naps taken:", "needs_code": true },
       "tea_drunk": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.TeaDrunk", "text": "Cups of tea drunk:", "needs_code": true },
       "festivals_held": { "suggested_key": "Pandaborn.WonderCompletion.Statistic.FestivalsHeld", "text": "Lantern Festivals held:", "needs_code": true },
