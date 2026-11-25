@@ -239,7 +239,8 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   * `code`: **the code ships in the mod since 2026-11-14.** `src/code` builds into
     `E:\PandabornDev\build\stage\code\PandabornFactions` (next to the staging folder; `code-schema.json` beside it); the Look module brings the `pandabornlook` bundle; the stage also
     dumps the mod's own spec classes (`code-schema.json`) for the validator and runs `tools/check_api_lists.py`
-    (game-API lists, a warning here, a failure for `package`). **A module ships only when its data is switched on**
+    (game-API lists, a warning here, a failure for `package`) and the game-free tests
+    (`src\code\tests\Foundation --mod <codeOut>`, `src\code\tests\Events`; a failure fails the stage). **A module ships only when its data is switched on**
     in `catalogue/rules.toml [modules]` (that file is the truth; on 2026-11-25 all ten modules are on and no switch is off.
     The build installed on 2026-11-14 still lacks Water,
     Festival and Flowering until a gate passes). `-NoCode` builds the data-only fallback (no custom specs,
@@ -259,16 +260,28 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     the newest bundle from `E:\PandabornDev\build\look\AssetBundles` (win and mac) when you build. The same holds for
     plants: `pandabornplants_win|_mac` and every adopted plant's meshes (`E:\PandabornDev\build\plants\<Id>`) must be
     built after the last git change of `art/plants` / `art/plants/<Id>` (an hour of slack); `assemble` refuses otherwise.
-  * **Install discipline:** run `install` only when no Timberborn process runs (other lanes queue game tests all
-    day); take the test mutex `Global\PandabornGameTest` for it, and never leave the tree in a state where `all`
-    fails.
+    The lantern sky is the third pair: `assemble` refuses data that names `Effects/Pandaborn/LanternRise` when
+    `pandabornattachments_win|_mac` is absent or older than the last git change of `PandabornAttachmentsBuilder.cs`
+    (the catalogue does not name the prefab until the bundle is rebuilt). `package` refuses a `pandaborn.dev.txt`.
+  * **Install discipline:** `install` takes the test mutex `Global\PandabornGameTest` itself for validation, mirror
+    and link (no waiting: it refuses and names the holder when a test or a hold has it) and refuses while any
+    Timberborn process runs. When the caller holds the queue (`tools\game_test_hold.ps1` still running), pass
+    `-CallerHoldsLock`: install then checks that a live hold owns the lock. Never leave the tree in a state where
+    `all` fails.
   * **THE INSTALL GATE** (2026-11-14, after two adopted-model crashes that only showed once a building existed or was
     finished): the shared install only receives a staging folder whose dev copy has passed the GRID run. `gate`
-    builds the copy (`proto/foundation/build.ps1 -Name pbgate -Source <StageDir>`), runs `<gen>.grid.json` on it with
-    the installed faction switched off (every placeable template placed AND finished, then recipes on, a speed
-    ladder 1-3-0-2-3 and three in-game hours, zero errors from our mods), and writes `<StageDir>.gate.json` with
-    the folder's content hash. `install` refuses a folder without a matching gate; `-GateOverride "<reason>"` (only
-    on the coordinator's word) is logged in `<StageDir>.gate-overrides.log`. Loading a new game is not enough.
+    builds the copy (`proto/foundation/build.ps1 -Name pbgate-<hash8> -Source <StageDir> -Staged`: the staged files
+    as they are, code and filtered `modules.txt` included; only `manifest.json` is replaced), runs `<gen>.grid.json`
+    on it with the installed faction switched off (every placeable template placed AND finished, then recipes on, a
+    speed ladder 1-3-0-2-3 and three in-game hours, zero errors from our mods), and writes `<StageDir>.gate.json`
+    with the content hash, the code hash, the substituted files, the game version, the grid request's hash, the
+    mods loaded and the modules on. The gate fails when a shipped module is not `on` in the boot report
+    (`result.json` `pandabornBoot`). `install` refuses a folder without a matching gate or with a gate from another
+    game version (so every gate file from before 2026-11-25 is refused); `-GateOverride "<reason>"` (only on the
+    coordinator's word) is logged in `<StageDir>.gate-overrides.log` after validation passes and never applies in a
+    run that has the gate stage. `gate -Prune [-DryRun]` removes old `pbgate-<hash>` copies. Loading a new game is
+    not enough. The 2026-11-25 tooling changes are proven by parser and game-free trials only
+    (`tools\tests\game_lock.trial.ps1 -Scratch <folder>`); `docs/tech/tooling-review.md` lists the game runs owed.
 * **Hidden until wired** (DESIGN.md 2026-11-14): a catalogue item with `waits_for = "<Module>"` (or a list: all must
   be on) is left out of the build (templates, goods, needs, recipes, plants, tutorials, tutorial stages and single
   tutorial steps, tool groups, modifiers) unless that module ships and its switch in `rules.toml [modules]` is on; its
@@ -326,20 +339,28 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
 * One test at a time per machine: the script holds the named mutex `Global\PandabornGameTest` for the whole run
   (holder in `E:\PandabornDev\build\test\gametest.lock.json`) and waits while another run holds it or any Timberborn
   process is open, printing who it waits on. Exit code 2 only after `-WaitForGameSeconds` (default 1800). The mutex is
-  released on every exit path; a holder that died is taken over.
+  released on every exit path; a holder that died is taken over. A run records what it changes in
+  `E:\PandabornDev\build\test\run.pending.json` before the first change (its pid and start time, the game's, its
+  junctions, save, requests, window prefs). If the runner is killed, the next lock holder,
+  `tools\play_timberborn.ps1` or `run_game_test.ps1 -Recover` cleans from it (helpers: `tools/game_lock.ps1`).
 * **The game runs on a hidden Windows desktop by default** (since bee3cb4): no window on the owner's screen, no focus,
   no real keyboard or mouse; rendering, UI and screenshots work (run `quiet-trial-1`). `-Visible` shows the game on
   the real desktop: never pass it, and never start Timberborn any other way, while the owner is at the PC.
 * **Holding the queue:** `tools\game_test_hold.ps1` takes the test mutex after the run in progress and holds it (file
-  `E:\PandabornDev\build\test\HOLD`); delete that file to release. Queued runs keep waiting and nothing is cancelled;
+  `E:\PandabornDev\build\test\HOLD.<pid>.json`, one per holder, with pid and start time);
+  `tools\game_test_hold.ps1 -Release` (or deleting that file) releases. A hold file whose process is gone is stale
+  and is removed by whoever sees it; while a hold is in force queued runs do not try for the lock. Queued runs keep
+  waiting and nothing is cancelled;
   held time does not count against `-WaitForGameSeconds`. A waiter started before a change to `run_game_test.ps1`
   keeps the old script in memory: stop and requeue it.
 * A run tracks its own game pid and never counts or kills any other Timberborn process. If the owner starts Timberborn
   during a run, the run stops its own game, restores mod flags, exits "could not test" (2) and the queue waits for the
   owner's game to close; `tools\play_timberborn.ps1` is the owner's way to pause the queue and play.
 * Builds `src/devharness` (dev-only mod) to `E:\PandabornDev\build\PandabornDevHarness`, junctions it into `Mods`,
-  writes `E:\PandabornDev\build\test\request.json`, launches the game, waits, kills it on timeout, then removes the
-  junction (`-KeepInstalled` keeps it; it is inert without a request), deletes the `PB_AutoTest_<run>` save and
+  writes `<run>\request.in.json` (only `-Visible` uses `E:\PandabornDev\build\test\request.json`, the harness's
+  default path), launches the game, waits, kills it on timeout, then removes the
+  junction (`-KeepInstalled` keeps the harness junction only, inert without a request; `-ExtraMods` junctions are
+  always removed), deletes the `PB_AutoTest_<run>` save and
   restores the `Screenmanager*` window prefs Unity saves on exit. List parameters accept `a,b` (also through `-File`).
 * Output in `E:\PandabornDev\build\test\<run id>\`: `result.json` (faction, mods loaded, population, per-colonist
   template / model asset path / mesh + vertices / coat texture and its asset path, active adult/child/bot templates
