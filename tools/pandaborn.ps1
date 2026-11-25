@@ -55,6 +55,8 @@ param(
     [switch]$WithBundles,   # kept for old callers: bundles are always copied
     [switch]$NoLink,
     [switch]$Plants,
+    [switch]$Release,       # validate with the release rules (the package stage always does)
+    [string[]]$Combo = @(), # combos: only these combinations (default: all)
     [string]$ArtPython = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     [string]$Catalogue = '',
     [string]$GenDir = 'E:\PandabornDev\build\gen\PandabornFactions',
@@ -80,7 +82,7 @@ $source = Join-Path $repo 'mod\PandabornFactions'
 $env:PYTHONDONTWRITEBYTECODE = '1'
 $stages = @($Stage | ForEach-Object { $_ -split ',' } | Where-Object { $_ } | ForEach-Object { $_.Trim().ToLowerInvariant() })
 if ($stages -contains 'all') { $stages = @('pin', 'models', 'generate', 'code', 'bundles', 'assemble', 'validate', 'gate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
-$known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'gate', 'install', 'test', 'package'
+$known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'gate', 'install', 'test', 'package', 'combos'
 foreach ($s in $stages) { if ($known -notcontains $s) { throw "unknown stage '$s' (stages: $($known -join ', '), all)" } }
 
 # large binaries that live outside git: staging-relative path -> source file
@@ -159,6 +161,28 @@ function Add-Tree($map, [string]$root, [string]$origin, $origins) {
     }
 }
 
+# Keeps in a code build only the modules the generator's report lists as on (Modules\modules.txt and the files it
+# names). Returns the ids it dropped.
+function Limit-Modules([string]$codeDir, [string]$reportFile) {
+    $dropped = @()
+    if (-not (Test-Path -LiteralPath $reportFile)) { return $dropped }
+    $on = @((Get-Content -LiteralPath $reportFile -Raw | ConvertFrom-Json).modules.on)
+    $mt = Join-Path $codeDir 'Modules\modules.txt'
+    if (-not (Test-Path -LiteralPath $mt)) { return $dropped }
+    $kept = @()
+    foreach ($line in Get-Content -LiteralPath $mt) {
+        $id = ($line -split '\s+')[0]
+        if ($line.Trim() -eq '' -or $line.TrimStart().StartsWith('#') -or $on -contains $id) { $kept += $line; continue }
+        $dropped += $id
+        $file = ($line -split '\s+')[1]
+        foreach ($f in @($file, ($file -replace '\.bin$', '.api.txt'))) {
+            $pth = Join-Path $codeDir ('Modules\' + $f); if (Test-Path -LiteralPath $pth) { Remove-Item -LiteralPath $pth -Force }
+        }
+    }
+    [IO.File]::WriteAllLines($mt, [string[]]$kept)
+    return $dropped
+}
+
 function Get-StageHash([string]$dir) {
     # content hash of a staging folder: every file's relative path and SHA-256 (the parked-bundle folder is not content)
     $root = (Resolve-Path -LiteralPath $dir).Path
@@ -220,25 +244,8 @@ foreach ($s in $stages) {
             Say "code: built into $codeOut"
             # ship only the modules whose data the catalogue has switched on (rules.toml [modules]); a module without
             # its data would do nothing, and validate --release refuses it
-            $reportFile = "$GenDir.report.json"
-            if (Test-Path -LiteralPath $reportFile) {
-                $on = @((Get-Content -LiteralPath $reportFile -Raw | ConvertFrom-Json).modules.on)
-                $mt = Join-Path $codeOut 'Modules\modules.txt'
-                if (Test-Path -LiteralPath $mt) {
-                    $kept = @(); $dropped = @()
-                    foreach ($line in Get-Content -LiteralPath $mt) {
-                        $id = ($line -split '\s+')[0]
-                        if ($line.Trim() -eq '' -or $line.TrimStart().StartsWith('#') -or $on -contains $id) { $kept += $line; continue }
-                        $dropped += $id
-                        $file = ($line -split '\s+')[1]
-                        foreach ($f in @($file, ($file -replace '\.bin$', '.api.txt'))) {
-                            $pth = Join-Path $codeOut ('Modules\' + $f); if (Test-Path -LiteralPath $pth) { Remove-Item -LiteralPath $pth -Force }
-                        }
-                    }
-                    [IO.File]::WriteAllLines($mt, [string[]]$kept)
-                    if ($dropped) { Say "code: modules left out until their data is switched on: $($dropped -join ', ')" 'DarkYellow' }
-                }
-            }
+            $dropped = Limit-Modules $codeOut "$GenDir.report.json"
+            if ($dropped) { Say "code: modules left out until their data is switched on: $($dropped -join ', ')" 'DarkYellow' }
             # the mod's own spec classes, for the validator (.bin files are assemblies loaded from bytes)
             $dlls = Join-Path (Split-Path $codeOut -Parent) 'code-dlls'
             if (Test-Path $dlls) { Remove-Item -Recurse -Force $dlls }
@@ -363,12 +370,65 @@ foreach ($s in $stages) {
         'validate' {
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
             if ($Catalogue) { $a += @('--lock', (Join-Path $Catalogue 'ids.lock.json')) }
+            # what this build leaves out on purpose (items waiting for a module it does not ship; everything code-bound
+            # in a -NoCode build): the lock check accepts those ids as absent
+            if (Test-Path -LiteralPath "$GenDir.report.json") { $a += @('--left-out', "$GenDir.report.json") }
             $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
             if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
+            if ($Release) { $a += '--release' }
             if ((Invoke-Py $a) -ne 0) { $failed += $s; break }
             $validated = $true
             # report only: numbers in the balance model's stat sheet the catalogue has not carried over
-            $null = Invoke-Py @((Join-Path $repo 'src\gen\import_statsheet.py'), '--check')
+            if (-not $Release) { $null = Invoke-Py @((Join-Path $repo 'src\gen\import_statsheet.py'), '--check') }
+        }
+        'combos' {
+            # Every build a player can end up with must generate, assemble and pass the release rules: all modules on,
+            # the data-only build, and each module (or family) switched off in rules.toml. A tutorial stage that names
+            # a template one of these builds lacks would throw at the start of every game (TutorialService.Load), a
+            # good left without a source or a use would lie. Run it before committing a catalogue or generator change.
+            # One scratch folder is reused (only changed files are copied); nothing installed or staged is touched.
+            if (-not (Test-Path (Join-Path $codeOut 'Scripts'))) { Say "combos: no code build in $codeOut (run the code stage first)" 'Red'; $failed += $s; break }
+            $combos = [ordered]@{
+                'all-on'            = ''
+                'no-code'           = 'NOCODE'
+                'water-off'         = 'Water=off'
+                'festival-off'      = 'Festival=off'
+                'flowering-off'     = 'Flowering=off'
+                'water-events-off'  = 'Water=off,Festival=off,Flowering=off'
+                'ringtails-off'     = 'Ringtails=off,RingtailsFallback=off'
+                'tutorial-off'      = 'Tutorial=off'
+                'bell-off'          = 'Bell=off'
+            }
+            if ($Combo) { $only = [ordered]@{}; foreach ($k in $Combo) { if (-not $combos.Contains($k)) { throw "combos: no combination named $k ($($combos.Keys -join ', '))" }; $only[$k] = $combos[$k] }; $combos = $only }
+            $root = Join-Path (Split-Path (Split-Path $StageDir -Parent) -Parent) 'combos'
+            $cGen = Join-Path $root 'gen\PandabornFactions'; $cStage = Join-Path $root 'stage\PandabornFactions'
+            $cCode = Join-Path $root 'stage\code\PandabornFactions'; $cBundles = Join-Path $root 'stage\bundles\PandabornFactions'
+            $bad = @()
+            foreach ($name in $combos.Keys) {
+                $mods = $combos[$name]; $noCode = ($mods -eq 'NOCODE')
+                Say "-- combination $name$(if ($mods -and -not $noCode) { ' (' + $mods + ')' })" 'Cyan'
+                $a = @((Join-Path $repo 'src\gen\generate.py'), '--out', $cGen, '--quiet')
+                if ($Catalogue) { $a += @('--catalogue', $Catalogue) }
+                if ($noCode) { $a += '--no-code' } elseif ($mods) { $a += @('--modules', $mods) }
+                if ((Invoke-Py $a) -ne 0) { $bad += "$name (generate)"; continue }
+                # the code and bundles of the real build, trimmed to this combination's modules as the code stage would
+                $map = [ordered]@{}; $origins = @{}; Add-Tree $map $codeOut 'code' $origins
+                $null = Sync-Tree $cCode $map
+                $null = Limit-Modules $cCode "$cGen.report.json"
+                $schema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
+                if (Test-Path -LiteralPath $schema) { Copy-Item -LiteralPath $schema (Join-Path (Split-Path $cCode -Parent) 'code-schema.json') -Force }
+                if (Test-Path $bundleOut) { $map = [ordered]@{}; $origins = @{}; Add-Tree $map $bundleOut 'bundles' $origins; $null = Sync-Tree $cBundles $map }
+                $sub = @('-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath, 'assemble,validate', '-GenDir', $cGen, '-StageDir', $cStage, '-Release')
+                if ($noCode) { $sub += '-NoCode' }
+                if ($Catalogue) { $sub += @('-Catalogue', $Catalogue) }
+                $out = & powershell @sub 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    $bad += $name
+                    $out | Where-Object { $_ -match '^(ERROR|assemble:|FAILED|validate:)' } | Select-Object -First 25 | ForEach-Object { Say "  $_" 'Red' }
+                } else { Say ("  ok: " + (($out | Where-Object { $_ -match '^validate:' }) -join ' ')) }
+            }
+            if ($bad) { Say "combos: FAILED: $($bad -join ', ')" 'Red'; $failed += $s; break }
+            Say "combos: $($combos.Count) combination(s) generate, assemble and pass the release rules"
         }
         'gate' {
             if ($failed.Count -gt 0) { Say "gate: not run, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
@@ -447,6 +507,7 @@ foreach ($s in $stages) {
             }
             if (-not $validated) {
                 $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
+                if (Test-Path -LiteralPath "$GenDir.report.json") { $a += @('--left-out', "$GenDir.report.json") }
                 $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
                 if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
                 if ((Invoke-Py $a) -ne 0) { Say 'install: refused, the staging folder does not validate' 'Red'; $failed += $s; break }
@@ -487,6 +548,7 @@ foreach ($s in $stages) {
         'package' {
             # release rules: a missing _mac bundle twin is an error here (dev stages only warn)
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet', '--release')
+            if (Test-Path -LiteralPath "$GenDir.report.json") { $a += @('--left-out', "$GenDir.report.json") }
             $modSchema = Join-Path (Split-Path $codeOut -Parent) 'code-schema.json'
             if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
             if ((Invoke-Py $a) -ne 0) { Say 'package: refused, the staging folder fails the release rules' 'Red'; $failed += $s; break }

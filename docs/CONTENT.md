@@ -307,14 +307,14 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 |---|---|---|---|---|
 | Bell | yes | on | visible | nothing |
 | Festival | yes | on | visible | 1 building; 2 needs |
-| Flowering | yes | on | visible | 2 goods; 1 need; 1 recipe; 2 plants |
+| Flowering | yes | on | visible | 2 goods; 1 need; 2 recipes; 2 plants |
 | Look | yes | on | visible | nothing |
 | Names | yes | on | visible | nothing |
 | RingtailVenues | **no** | **off** | **hidden** | 1 building |
 | Ringtails | yes | on | visible | 5 buildings; 2 characters |
 | RingtailsFallback | yes | on | visible | nothing |
 | Tutorial | yes | on | visible | nothing |
-| Water | yes | on | visible | 13 buildings; 3 goods; 2 needs; 3 recipes |
+| Water | yes | on | visible | 13 buildings; 2 goods; 1 need; 3 recipes |
 | Words | yes | on | visible | nothing |
 
 ### Buildings
@@ -348,7 +348,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 |---|---|---|---|---|---|---|---|---|---|
 | Gatherer Flag | `GathererFlag` | re-theme | Food | vanilla, re-themed |  | vanilla | free | 0 |  |
 | Efficient Farmhouse | `EfficientFarmHouse` | re-theme | Food | vanilla, re-themed |  | vanilla | 25 Log | 0 |  |
-| Steamer | `PandabornSteamer` | `Grill.Folktails` | Food | own: `art/models/Steamer` |  | own | 20 Log, 5 Poles | 40 | `PandabornSteamedShoots`, `PandabornSteamedRice` |
+| Steamer | `PandabornSteamer` | `Grill.Folktails` | Food | own: `art/models/Steamer` |  | own | 20 Log, 5 Poles | 40 | `PandabornSteamedShoots`, `PandabornSteamedRice`, `PandabornBambooSeedCakesSteamed` |
 | Pickle Yard | `PandabornPickleYard` | `Grill.Folktails` | Food | own: `art/models/PickleYard` |  | own | 20 Log, 15 Poles | 120 | `PandabornPickles` |
 | Paddy House | `PandabornPaddyHouse` | `AquaticFarmhouse.Folktails` | Food | own: `art/models/PaddyHouse` |  | own | 30 Log, 10 Poles | 150 |  |
 | Tea Roastery | `PandabornTeaRoastery` | `Bakery.Folktails` | Food | own: `art/models/TeaRoastery` |  | own | 15 Log, 20 Poles | 250 | `PandabornTea` |
@@ -527,15 +527,15 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Bamboo Fence | `PandabornBambooFence` | `WoodFence.Folktails` | Decoration | own: `art/models/BambooFence` |  | own | 3 Poles | 150 |  |
 | Hedge | `Hedge` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 3 Log | 150 |  |
 | Shrub | `Shrub` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 12 Log | 0 |  |
-| Potted Pine | `PandabornPottedPine` | `Shrub.Folktails` | Decoration | own: `art/models/PottedPine` |  | own | 12 Log | 0 |  |
+| Potted Pine | `PandabornPottedPine` | `Shrub.Folktails` | Decoration | own: `art/models/PottedPine` |  | own | 6 Poles | 0 |  |
 | Panda Statue | `PandabornPandaStatue` | `BeaverStatue.Folktails` | Decoration | own: `art/models/PandaStatue` |  | own | 50 Log, 10 Poles | 500 |  |
 | Bamboo Pinwheel | `PandabornBambooPinwheel` | `Weathervane.Folktails` | Decoration | own: `art/models/BambooPinwheel` |  | own | 5 Log, 1 Poles | 250 |  |
 | Scarecrow | `Scarecrow` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 5 Log, 10 Paper | 200 |  |
 | Bench | `Bench` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 6 Log, 2 Poles | 80 |  |
 | Pole Banner | `PoleBanner` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 4 Log, 4 Poles, 1 Extract | 700 |  |
 | Square Banner | `SquareBanner` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 2 Log, 4 Poles, 1 Extract | 700 |  |
-| Goldfish Bowl | `PandabornGoldfishBowl` | `Shrub.Folktails` | Decoration | own: `art/models/GoldfishBowl` |  | own | 12 Log | 0 |  |
-| Garden Moon Gate | `PandabornGardenMoonGate` | `Shrub.Folktails` | Decoration | own: `art/models/GardenMoonGate` |  | own | 12 Log | 0 |  |
+| Goldfish Bowl | `PandabornGoldfishBowl` | `Shrub.Folktails` | Decoration | own: `art/models/GoldfishBowl` |  | own | 50 Log, 10 Poles | 0 |  |
+| Garden Moon Gate | `PandabornGardenMoonGate` | `Shrub.Folktails` | Decoration | own: `art/models/GardenMoonGate` |  | own | 50 Log, 10 Poles | 0 |  |
 | Roof 1x1 | `Roof1x1` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 2 Log, 1 Poles | 60 |  |
 | Roof 1x2 | `Roof1x2` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 4 Log, 2 Poles | 80 |  |
 | Roof 2x2 | `Roof2x2` | re-theme | Decoration | vanilla, re-themed |  | vanilla | 4 Log, 2 Poles | 120 |  |
@@ -589,13 +589,13 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Steamed rice | `PandabornSteamedRice` | `Bread` | Hunger 0.3, PandabornSteamedRice 0.2 | recipe `PandabornSteamedRice` | Lantern Festival |  | own |
 | Sweet rice balls | `PandabornSweetRiceBalls` | `CattailCracker` | Hunger 0.3, PandabornSweetRiceBalls 0.2 | recipe `PandabornSweetRiceBalls` | Lantern Festival | Water | own |
 | Hot pot | `PandabornHotPot` | `MaplePastry` | Hunger 0.3, PandabornHotPot 0.2 | recipe `PandabornHotPot` | Lantern Festival |  | own |
-| Bamboo seed cakes | `PandabornBambooSeedCakes` | `MaplePastry` | Hunger 0.3, PandabornBambooSeedCakes 0.2 | recipe `PandabornBambooSeedCakes` | Lantern Festival | Flowering, Water | own |
+| Bamboo seed cakes | `PandabornBambooSeedCakes` | `MaplePastry` | Hunger 0.3, PandabornBambooSeedCakes 0.2 | recipe `PandabornBambooSeedCakes`; recipe `PandabornBambooSeedCakesSteamed` | Lantern Festival | Flowering | own |
 | Tea | `PandabornTea` | `WheatFlour` | not eaten | recipe `PandabornTea` | `PandabornTeahouse` |  | own |
 | Rice | `PandabornRice` | `Wheat` | not eaten | plant `PandabornRice` | recipe `PandabornSteamedRice`; recipe `PandabornRiceFlour` |  | own |
 | Rice flour | `PandabornRiceFlour` | `WheatFlour` | not eaten | recipe `PandabornRiceFlour` | recipe `PandabornSweetRiceBalls`; recipe `PandabornBambooSeedCakes` | Water | own |
 | Sichuan pepper | `PandabornSichuanPepper` | `Wheat` | not eaten | plant `PandabornSichuanPepper` | recipe `PandabornHotPot` |  | own |
 | Tea leaves | `PandabornTeaLeaves` | `Wheat` | not eaten | plant `PandabornTeaBush` | recipe `PandabornTea` |  | own |
-| Bamboo seed | `PandabornBambooSeed` | `SunflowerSeeds` | not eaten | plant `PandabornShootBambooInFlower`; plant `PandabornTimberBambooInFlower` | recipe `PandabornBambooSeedCakes` | Flowering | own |
+| Bamboo seed | `PandabornBambooSeed` | `SunflowerSeeds` | not eaten | plant `PandabornShootBambooInFlower`; plant `PandabornTimberBambooInFlower` | recipe `PandabornBambooSeedCakes`; recipe `PandabornBambooSeedCakesSteamed` | Flowering | own |
 | Poles | `PandabornPole` | `Plank` | not eaten | — | — | not generated (poles mode is `rename`) | own |
 | Cured poles | `PandabornCuredPole` | `TreatedPlank` | not eaten | — | — | not generated (poles mode is `rename`) | own |
 | Paper lanterns | `PandabornPaperLantern` | `Book` | not eaten | recipe `PandabornPaperLantern` | building costs; `PandabornSkyLantern`; Lantern Festival |  | own |
@@ -621,7 +621,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Steamed rice | `PandabornSteamedRice` | Nutrition | -0.05 | 2 | eating steamed rice |  |
 | Sweet rice balls | `PandabornSweetRiceBalls` | Nutrition | -0.05 | 3 | eating sweet rice balls | Water |
 | Hot pot | `PandabornHotPot` | Nutrition | -0.05 | 4 | eating hot pot |  |
-| Bamboo seed cakes | `PandabornBambooSeedCakes` | Nutrition | -0.05 | 3 | eating bamboo seed cakes | Flowering, Water |
+| Bamboo seed cakes | `PandabornBambooSeedCakes` | Nutrition | -0.05 | 3 | eating bamboo seed cakes | Flowering |
 | Festive spirit | `PandabornFestive` | Boosts | -0.04 | 4 | a Lantern Festival | Festival |
 | Memorial Arch | `PandabornMemorialArch` | Awe | -0.3 | 6 | Memorial Arch |  |
 | Great Sitting Panda | `PandabornGreatSittingPanda` | Awe | -0.3 | 14 | Great Sitting Panda |  |
@@ -631,11 +631,11 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Goldfish Bowl | `PandabornGoldfishBowl` | as `BeaverStatue` | as basis | as basis | Goldfish Bowl |  |
 | Garden Moon Gate | `PandabornGardenMoonGate` | as `BeaverStatue` | as basis | as basis | Garden Moon Gate |  |
 | String Lanterns | `PandabornStringLanterns` | as `Lantern` | as basis | as basis | String Lanterns |  |
-| Grand Festival | `PandabornFestiveGrand` | Boosts | -0.04 | 1 | a Grand Festival | Festival |
+| Grand festive spirit | `PandabornFestiveGrand` | Boosts | -0.04 | 1 | a Grand Festival | Festival |
 
 ### Recipes
 
-13 recipes in `catalogue/recipes.toml`. Workshop stores are sized by `rules.toml [shelves]` (`workshop_hours = 48`), not by the recipe's own capacity.
+14 recipes in `catalogue/recipes.toml`. Workshop stores are sized by `rules.toml [shelves]` (`workshop_hours = 48`), not by the recipe's own capacity.
 
 | Recipe | Ingredients | Products | Hours | Fuel | Made at | Waits for |
 |---|---|---|---|---|---|---|
@@ -645,13 +645,14 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | `PandabornRiceFlour` | 1 Rice | 1 Rice flour | 0.5 |  | Trip-Hammer Mill | Water |
 | `PandabornSweetRiceBalls` | 1 Rice flour, 1 Persimmons | 5 Sweet rice balls | 1.0 | Log | Kitchen | Water |
 | `PandabornBambooSeedCakes` | 1 Bamboo seed, 1 Rice flour | 6 Bamboo seed cakes | 1.5 | Log | Kitchen | Flowering, Water |
+| `PandabornBambooSeedCakesSteamed` | 1 Bamboo seed | 2 Bamboo seed cakes | 1.0 | Log | Steamer | Flowering |
 | `PandabornHotPot` | 1 Cabbages, 1 Sichuan pepper, 1 Bamboo mushrooms | 8 Hot pot | 1.5 | Log | Hot Pot Hall |  |
 | `PandabornTea` | 1 Tea leaves | 2 Tea | 0.75 |  | Tea Roastery |  |
 | `PandabornPaper` | 1 Poles | 2 Paper | 1.56 |  | Paper Mill |  |
 | `PandabornPaperLantern` | 2 Paper, 1 Poles | 2 Paper lanterns | 1.5 |  | Lantern Workshop |  |
 | `PandabornCuredPole` | 1 Poles | 1 Cured poles | 3.0 | Log | Smoke Kiln |  |
 | `PandabornWoodenOx` | 20 Cured poles, 20 Gear, 4 Metal Block | nothing | 96.0 |  | Ox Workshop |  |
-| `PandabornDewWater` | nothing | 1 Water | 12.0 |  | Dew Collector |  |
+| `PandabornDewWater` | nothing | 1 Water | 7.5 |  | Dew Collector |  |
 
 ### Plants
 

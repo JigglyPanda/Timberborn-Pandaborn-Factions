@@ -221,8 +221,14 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   `E:\PandabornDev\unity`.
 * Dev mode in game is Shift+Alt+Z; `-skipModManager` skips the launch dialog.
 * **One command:** `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage>`; `all` = `pin`, `models`,
-  `generate` (`-DryRun`, `-Lock`), `code`, `bundles`, `assemble`, `validate`, `gate`, `install`; also `test` (grid scenario)
-  and `package` (release rules). `tools/build.ps1` runs models, generate, code, bundles, assemble, validate, install.
+  `generate` (`-DryRun`, `-Lock`), `code`, `bundles`, `assemble`, `validate`, `gate`, `install`; also `test` (grid scenario),
+  `package` (release rules) and `combos`. `tools/build.ps1` runs models, generate, code, bundles, assemble, validate, install.
+  * `combos` (no game; run it before committing a catalogue or generator change): generates, assembles into the scratch
+    folder `E:\PandabornDev\build\combos` and validates with the release rules every build a player can end up with: all
+    modules on, the data-only build, and Water, Festival, Flowering, all three, Ringtails (with its fallback), Tutorial
+    and Bell each switched off (`generate.py --modules Water=off,...` flips switches for one run and never writes the
+    lock). A tutorial stage naming a template one of them lacks, or a good left without a source or use, fails here.
+    `-Combo water-off,no-code` runs only those. `validate -Release` applies the release rules to the staging folder.
   The build refuses to run if the vanilla dump differs from `catalogue/vanilla.pin.json` until you review
   `tools/game_diff.py` and `pin -Accept`; `pin` also runs the Words table check
   (`src/code/Pandaborn.Words/tools/candidates.py --check`, a warning there, a failure for `package`).
@@ -231,7 +237,7 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     enter git; `assemble` copies the ones the catalogue adopts (`model = "<Id>"`) from `<gen>.models.json`, and the
     Ringtail bodies from `E:\PandabornDev\build\characters\out` when the data has the Ringtail templates.
   * `code`: **the code ships in the mod since 2026-11-14.** `src/code` builds into
-    `E:\PandabornDev\build\code\PandabornFactions`; the Look module brings the `pandabornlook` bundle; the stage also
+    `E:\PandabornDev\build\stage\code\PandabornFactions` (next to the staging folder; `code-schema.json` beside it); the Look module brings the `pandabornlook` bundle; the stage also
     dumps the mod's own spec classes (`code-schema.json`) for the validator and runs `tools/check_api_lists.py`
     (game-API lists, a warning here, a failure for `package`). **A module ships only when its data is switched on**
     in `catalogue/rules.toml [modules]` (that file is the truth; on 2026-11-25 all ten modules are on and only the
@@ -242,7 +248,8 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   * `bundles`: copies built `pandaborn*_win|_mac` bundles, never renamed, from `-BundleDirs` (defaults in
     `tools/pandaborn.ps1`: the plants, sound and `E:\PandabornDev\build\characters\attachments` folders) into `AssetBundles/`; fails if
     an adopted model needs a bundle that is not built. A missing `_mac` twin is a warning in dev stages and an error
-    for `package` (`validate.py --release`); Mac builds: docs/tech/mac.md. Never enable `proto/sound` with the
+    for `package` (`validate.py --release`, which also compares the contents of each `_win`/`_mac` pair and refuses a
+    Mac bundle that lacks an asset its twin has); Mac builds: docs/tech/mac.md. Never enable `proto/sound` with the
     faction (the same bundle twice crashes). A folder `AssetBundles.parked` (left by a second enabled copy) is never
     content: assemble skips it, install's mirror removes it, `package` refuses it.
   * **Paired change: models and the look bundle.** Lantern paper and windows sit on regions of the look sheet
@@ -262,16 +269,23 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     ladder 1-3-0-2-3 and three in-game hours, zero errors from our mods), and writes `<StageDir>.gate.json` with
     the folder's content hash. `install` refuses a folder without a matching gate; `-GateOverride "<reason>"` (only
     on the coordinator's word) is logged in `<StageDir>.gate-overrides.log`. Loading a new game is not enough.
-* **Hidden until wired** (DESIGN.md 2026-11-14): a catalogue item with `waits_for = "<Module>"` is left out of the
-  build (templates, goods, needs, recipes, plants, tutorial stages, tool groups) unless that module ships and its
-  switch in `rules.toml [modules]` is on; its ids stay in the lock marked `gatedBy`. `module_specs = { <Module> = {
-  <Spec> = {...} } }` adds our own spec classes only when the module is on. `<gen>.report.json` `leftOut` lists what
-  is hidden. The validator's economy block (`--release`: errors) refuses needs nothing meets, goods nothing makes or
-  uses, two buildings on one toolbar slot, shipped modules without their data and data without its module.
+* **Hidden until wired** (DESIGN.md 2026-11-14): a catalogue item with `waits_for = "<Module>"` (or a list: all must
+  be on) is left out of the build (templates, goods, needs, recipes, plants, tutorials, tutorial stages and single
+  tutorial steps, tool groups, modifiers) unless that module ships and its switch in `rules.toml [modules]` is on; its
+  ids stay in the lock marked `gatedBy`. `module_specs = { <Module> = { <Spec> = {...} } }` adds our own spec classes
+  only when the module is on, and a list in such a spec never names a good, need or template the build leaves out.
+  `<gen>.report.json` `leftOut` lists what is hidden; the validate stage passes it on (`validate.py --left-out`), so a
+  build with modules off, or `-NoCode`, passes the lock check for exactly those ids. The validator's economy block
+  (`--release`: errors) refuses needs nothing meets, goods nothing makes or uses, two buildings on one toolbar slot,
+  shipped modules without their data and data without its module. The only switch off today is `RingtailVenues`, which
+  is no module: it keeps the Star Tower hidden until `PandabornNightPostSpec` lets a night post keep its science cost
+  (the first Moon Loft unlocks every night post for free).
 * **Catalogue extras:** `catalogue/modifiers.toml` (Inkpaws-only blueprint modifiers, e.g. the bell's walking cap),
   `catalogue/tutorial.toml` + `text/tutorial.json` (StartingFactionSpec, every vanilla tutorial off, our dormant
   tutorials switched on by modifier, `Stairs.Folktails` alias on `Stairs.Inkpaws`), `rules.toml [shelves]` (workshop
-  recipes hold `workshop_hours` of work at full staffing, flags and farms `harvest_hours` of harvest), `faction.toml`
+  recipes hold `workshop_hours` (48) of work at full staffing, flags and farms `harvest_hours` of harvest; recipes with
+  no ingredients, i.e. pumps, hold `no_ingredient_hours` (16); `recipe_hours` names single recipes, 0 = the vanilla
+  shelf: taps, and the Pole Mill at 24), `faction.toml`
   `[tool_groups]` (the Night Watch group), `[worker_types]` (PandabornRingtail: ships forever), own decals and
   `[outfits] extra` (Ringtail outfits), characters with `in_collection = false` (the Ringtails).
 * **Validator:** `python tools/validate.py --mod <any mod folder>` checks every blueprint key and field against
@@ -281,8 +295,11 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   E:\PandabornDev\build\stage\PandabornFactions`; their own spec classes: `--mod-schema` (from `tools/schema
   --include <dll>`). `--self-test` writes the broken fixtures from the vanilla dump
   (`tools/tests/validate/make_fixtures.py`, into `E:\PandabornDev\build\validate-fixtures`: they copy game files, so
-  they stay out of git) and runs them. Our own sound names are checked against the mod's bundles (UnityPy from the
-  art venv).
+  they stay out of git) and runs them (41 cases). Our own sound names (building loops, the wonder, any `...SoundId` in
+  our own specs) and every prefab or material only a bundle can hold are checked against the staged bundles (UnityPy
+  from the art venv; a release fails if they cannot be read). Also checked: a recipe of a good the faction renames
+  (Plank is Poles) shows the new icon and name; tutorial steps name only templates and goods the build has; an
+  attachment's parent is a node of the adopted model.
 * See `tools/` for the build, validate and automated in-game test scripts.
 
 ### Automated in-game test

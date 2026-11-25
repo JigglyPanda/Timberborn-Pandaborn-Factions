@@ -67,6 +67,19 @@ fuel = "Log"
 cycles_fuel_lasts = 10
 src = "M q7 (building: Kitchen) · balance 2026-11-25 (W12: the seed is a windfall)"
 
+[recipes.PandabornBambooSeedCakesSteamed]
+# bamboo seed always has a use when the Flowering ships (coordinator, 2026-11-25): the Steamer makes two plain cakes
+# from a seed; the Kitchen's recipe with rice flour (six) stays the better one
+waits_for = "Flowering"
+basis = "GrilledPotato"
+cycle_hours = 1.0
+ingredients = { PandabornBambooSeed = 1 }
+products = { PandabornBambooSeedCakes = 2 }
+capacity = 30
+fuel = "Log"
+cycles_fuel_lasts = 10
+src = "ruling 2026-11-25 (1 seed, 2 cakes); cycle and fuel as the Steamer's rice (for the balance lane to confirm) (building: Steamer)"
+
 [recipes.PandabornHotPot]
 basis = "MaplePastry"
 cycle_hours = 1.5
@@ -132,12 +145,15 @@ fuel_capacity = 0
 src = "M q8 (vanilla bot parts, one building) (building: Ox Workshop) · balance 2026-11-25 (W6: an ox out-hauled a fully boosted bot with no upkeep)"
 
 [recipes.PandabornDewWater]
+# four collectors keep a landlocked outpost of about six in water outside droughts (ruling 2026-11-25): six drink
+# 12.7 a day (2.11 each, tools/balance), a collector works round the clock, 24 / 7.5 = 3.2 a day each, 12.8 from four;
+# 1.1 a day each in a drought (DewLimiter 0.35). It holds two days of its own dew.
 basis = "Paper"
-cycle_hours = 12.0
+cycle_hours = 7.5
 ingredients = {  }
 products = { Water = 1 }
-capacity = 4
+capacity = 6
 fuel = ""
 cycles_fuel_lasts = 0
 fuel_capacity = 0
-src = "M q4: 2 a day; DewLimiter DroughtEfficiency 0.33, and efficiency / (collectors within 6 tiles) (building: Dew Collector)"
+src = "ruling 2026-11-25: 3.2 a day, 1.1 in a drought (was 2 and 0.7); the code has no crowding rule (building: Dew Collector)"

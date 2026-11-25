@@ -28,7 +28,7 @@ PandabornMoonLoft = { model = "MoonLoft", waits_for = "Ringtails", needs_code = 
 # ------------------------------------------------------------------ food
 GathererFlag = {}
 EfficientFarmHouse = { text = "PandabornFarmstead", note = "CONTENT's Farmstead; keeps the vanilla name Farmhouse (coordinator, 2026-11-14)" }
-PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Steamer" } }
+PandabornSteamer = { model = "Steamer", recipes = ["PandabornSteamedShoots", "PandabornSteamedRice", "PandabornBambooSeedCakesSteamed"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.Steamer" } }
 PandabornPickleYard = { archetype = "workshop", model = "PickleYard", recipes = ["PandabornPickles"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.PickleYard" } }
 PandabornPaddyHouse = { model = "PaddyHouse" }
 PandabornTeaRoastery = { archetype = "workshop", basis = "Bakery.Folktails", model = "TeaRoastery", recipes = ["PandabornTea"], tool_order = 31, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.TeaRoastery" } }
@@ -68,7 +68,7 @@ PandabornCisternSmall = { model = "Cistern" }
 PandabornCisternMedium = { model = "CisternMedium" }
 PandabornCisternLarge = { model = "CisternLarge" }
 StreamGauge = { note = "not named in CONTENT; kept as a water instrument next to the automation set" }
-# the water toolkit needs the water code module (src/scripts/Water -> src/code/Pandaborn.Water): until then each piece
+# the water toolkit needs the water code module (src/code/Pandaborn.Water): until then each piece
 # is an inert or vanilla-behaving stand-in, so data alone never breaks a colony
 PandabornFlume = { basis = "ThrottlingValve.Folktails", delete = ["ThrottlingValveSpec"], model = "Flume", waits_for = "Water", set = { "BlockObjectSpec.Blocks.0.Occupations" = "Bottom, Middle, Path", "FinishableHorizontalWaterObstacleSpec.Obstacles" = [{ X = 0, Y = 0, Z = 0 }] }, add = { WaterObstacleSpec = { Coordinates = [{ X = 0, Y = 0 }] }, FinishableWaterObstacleSpec = { Height = 1.0 } }, module_specs = { Water = { PandabornEntityStateSpec = { Features = ["Water"] }, PandabornFlumeSegmentSpec = { FlowCells = [{ X = 0, Y = 0, Z = 0 }] } } }, needs_code = "one-way water (Water module)", tool_group = "Water", tool_order = 110 }
 PandabornFlumeCorner = { basis = "ThrottlingValve.Folktails", delete = ["ThrottlingValveSpec"], model = "FlumeCorner", waits_for = "Water", set = { "FinishableHorizontalWaterObstacleSpec.Obstacles" = [{ X = 0, Y = 0, Z = 0 }, { X = 0, Y = 0, Z = 1 }], "PlaceableBlockObjectSpec.CustomPivot.HasCustomPivot" = false }, add = { WaterObstacleSpec = { Coordinates = [{ X = 1, Y = 0 }, { X = 0, Y = 1 }, { X = 1, Y = 1 }] }, FinishableWaterObstacleSpec = { Height = 2.0 } }, module_specs = { Water = { PandabornSolidCellsSpec = { Cells = [{ X = 0, Y = 0, Z = 1 }] } } }, needs_code = "turns a flume (Water module)", tool_group = "Water", tool_order = 111 }
@@ -181,7 +181,9 @@ PandabornNightForagersPost = { model = "NightForagersPost", waits_for = "Ringtai
 
 # ------------------------------------------------------------------ decoration
 PandabornStandingLantern = { model = "StandingLantern", tool_order = 20 }
-PandabornHangingLantern = { model = "HangingLantern", tool_order = 21, module_specs = { Festival = { PandabornTraditionSpec = { Level = 2 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
+# Tradition 2 gives a lantern that is not the Standing Lantern again (coordinator, 2026-11-25): hung high, it reaches two
+# tiles instead of one (the same Lantern need and price)
+PandabornHangingLantern = { model = "HangingLantern", tool_order = 21, set = { "RangedEffectBuildingSpec.EffectRadius" = 2 }, module_specs = { Festival = { PandabornTraditionSpec = { Level = 2 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
 PandabornStringLanterns = { model = "StringLanterns", needs_map = { Lantern = "PandabornStringLanterns" }, tool_order = 22, module_specs = { Festival = { PandabornTraditionSpec = { Level = 1 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
 PandabornBambooFence = { basis = "WoodFence.Folktails", model = "BambooFence" }
 Hedge = {}
@@ -193,8 +195,10 @@ Scarecrow = {}
 Bench = {}
 PoleBanner = {}
 SquareBanner = {}
-PandabornGoldfishBowl = { basis = "Shrub.Folktails", model = "GoldfishBowl", needs_map = { Shrub = "PandabornGoldfishBowl" }, tool_order = 12, module_specs = { Festival = { PandabornTraditionSpec = { Level = 1 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
-PandabornGardenMoonGate = { basis = "Shrub.Folktails", model = "GardenMoonGate", needs_map = { Shrub = "PandabornGardenMoonGate" }, tool_order = 13, module_specs = { Festival = { PandabornTraditionSpec = { Level = 3 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
+# +2 wellbeing each, so priced and reaching as the other +2 decorations (the Panda Statue: 50 logs, 10 poles, three tiles);
+# a Shrub price of 12 logs was an exploit (coordinator, 2026-11-25). Tradition unlocks them (science 0 while the Festival ships).
+PandabornGoldfishBowl = { basis = "Shrub.Folktails", model = "GoldfishBowl", needs_map = { Shrub = "PandabornGoldfishBowl" }, set = { "RangedEffectBuildingSpec.EffectRadius" = 3 }, tool_order = 12, module_specs = { Festival = { PandabornTraditionSpec = { Level = 1 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
+PandabornGardenMoonGate = { basis = "Shrub.Folktails", model = "GardenMoonGate", needs_map = { Shrub = "PandabornGardenMoonGate" }, set = { "RangedEffectBuildingSpec.EffectRadius" = 3 }, tool_order = 13, module_specs = { Festival = { PandabornTraditionSpec = { Level = 3 } } }, module_set = { Festival = { "BuildingSpec.ScienceCost" = 0 } } }
 Roof1x1 = { text = "Roof" }
 Roof1x2 = { text = "Roof" }
 Roof2x2 = { text = "Roof" }

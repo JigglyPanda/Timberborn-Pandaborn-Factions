@@ -216,6 +216,22 @@ cost = { Plank = 4, Log = 1 }
 science = 120
 src = "G"
 
+[stats.PandabornGoldfishBowl]
+cost = { Log = 50, Plank = 10 }
+science = 500
+src = "V (Beaver Statue: the +2 decoration tier) · ruling 2026-11-25; science 0 while Tradition gates it (buildings.toml module_set)"
+
+[stats.PandabornGardenMoonGate]
+cost = { Log = 50, Plank = 10 }
+science = 500
+src = "V (Beaver Statue: the +2 decoration tier) · ruling 2026-11-25; science 0 while Tradition gates it"
+
+[stats.PandabornPottedPine]
+# the same Shrub need as the Shrub, so it must not be the Shrub again (ruling 2026-11-25): it is paid in poles, the
+# bamboo village's own material, where the Shrub takes 12 logs
+cost = { Plank = 6 }
+src = "ruling 2026-11-25 (differs from the Shrub by cost); for the balance lane to confirm"
+
 [stats.PandabornFlumeBridgeSpan]
 # had no entry and so cost what its shell does (a Throttling Valve: 5 cured poles, 5 metal blocks, 500 science), which
 # put the only way to cross two flume lines behind metal. The Flume Bridge's numbers until the balance lane sets its own.

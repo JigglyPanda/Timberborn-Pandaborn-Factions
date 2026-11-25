@@ -295,6 +295,9 @@ def main(argv=None):
                     help="extra schema JSON holding the mod's own spec classes (tools/schema --include)")
     ap.add_argument("--lock", default=None, help="ids.lock.json (default: catalogue/ids.lock.json for this mod)")
     ap.add_argument("--no-lock", action="store_true", help="skip the id lock checks")
+    ap.add_argument("--left-out", default=None,
+                    help="the generator's <gen>.report.json: ids its leftOut lists (items waiting for a module this "
+                         "build does not ship, e.g. everything code-bound in a -NoCode build) may be absent")
     ap.add_argument("--profile", choices=("auto", "pandaborn", "generic"), default="auto",
                     help="pandaborn: this mod's rules (manifest id, lock); generic: any mod; auto: by manifest Id")
     ap.add_argument("--template-suffix", action="append", default=[],
@@ -1653,6 +1656,12 @@ def check_lock(c):
     lock = load_json(path)
     ids = lock.get("ids", {})
     prod = produced_ids(c)
+    left_out = {}
+    if c.args.left_out and os.path.isfile(c.args.left_out):
+        left_out = load_json(c.args.left_out).get("leftOut") or {}
+        n = sum(len(v) for v in left_out.values())
+        if n:
+            R.info("id lock: %d id(s) left out of this build by the generator (waiting for a module): accepted absent" % n)
     for kind, values in prod.items():
         for v in sorted(x for x in values if x):
             if v not in ids.get(kind, {}):
@@ -1661,7 +1670,7 @@ def check_lock(c):
     aliases = prod["template_alias"]
     for kind, entries in ids.items():
         for v, meta in entries.items():
-            if meta.get("retired") or meta.get("external") or meta.get("gatedBy"):
+            if meta.get("retired") or meta.get("external") or meta.get("gatedBy") or v in left_out.get(kind, {}):
                 continue
             if v not in prod.get(kind, set()) and not (kind == "template" and v in aliases):
                 R.error("locked %s id %s is no longer produced: saves that contain it lose it. Keep it, or give its "

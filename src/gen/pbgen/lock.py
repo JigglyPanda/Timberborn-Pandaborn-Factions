@@ -38,6 +38,8 @@ def check_and_extend(lock, produced, allow_new, today=None, gated=None):
     new, missing = [], []
     changed = False
     for kind, ids in (gated or {}).items():
+        if kind not in LOCK_KINDS:
+            continue   # a left-out modifier is a file, not an id: nothing to lock (the data-only build leaves out Bell's)
         for i, module in ids.items():
             meta = lock["ids"].get(kind, {}).get(i)
             if meta is None:

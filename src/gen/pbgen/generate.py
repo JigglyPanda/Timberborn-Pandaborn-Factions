@@ -26,6 +26,7 @@ class Output:
 
 class Generator:
     def __init__(self, catalogue, vanilla, mod_src=None):
+        self.module_override = {}   # --modules: switches flipped for one run (module combination checks)
         self.cat = catalogue
         self.v = vanilla
         self.mod_src = mod_src or os.path.join(REPO, "mod", "PandabornFactions")
@@ -84,6 +85,10 @@ class Generator:
                 if line and not line.startswith("#"):
                     self.shipped_modules.add(line.split()[0])
         self.module_switch = dict(self.rules.get("modules") or {})
+        for name, value in getattr(self, "module_override", {}).items():
+            if name not in self.module_switch:
+                raise GenError("--modules: catalogue/rules.toml [modules] has no switch named %s" % name)
+            self.module_switch[name] = value
         self.gated = {}   # kind -> {id: module}
         # known up front, so buildings can drop recipes and need effects that are left out
         for kind, file, table in (("good", "goods", "goods"), ("need", "needs", "needs"), ("recipe", "recipes", "recipes")):
@@ -889,6 +894,18 @@ class Generator:
             if self.waits_off(st.get("waits_for")):
                 self.gated.setdefault("tutorial", {})[sid] = self.waits_off(st["waits_for"])
                 continue
+            # a step may wait for a module of its own ({ waits_for = "Tutorial", PandabornGoodAmountStepSpec = {...} }):
+            # with that module off the stage keeps its other steps
+            steps = []
+            for step in st.get("steps") or []:
+                step = dict(step)
+                if self.waits_off(step.pop("waits_for", None)):
+                    self.note(item, "step %s left out: its module is off" % ", ".join(sorted(step)))
+                    continue
+                if len(step) != 1:
+                    raise GenError("%s: a step is one step spec (and an optional waits_for), got %s" % (item, sorted(step)))
+                steps.append(step)
+            st = dict(st, steps=steps)
             missing = sorted(n for n in names_in(st.get("steps") or [], set()) if n not in shipped)
             if missing:
                 self.note(item, "stage left out: the build does not ship %s" % ", ".join(missing))

@@ -673,6 +673,18 @@ What the model says after them:
 * **Whole tree** 123,220 science (was 122,910: the Opera Stage's 1,200 is in, the water set's 890 is out).
 * **Ringtail parity** is unchanged by data and is the code lane's (M2).
 
+### Rulings after the second audit, 2026-11-25 (catalogue lane)
+
+| Ruling | State | In the build now |
+|---|---|---|
+| Bamboo seed always has a use | applied | New Steamer recipe `PandabornBambooSeedCakesSteamed`: 1 seed to 2 cakes, 1.0 h, log fuel (cycle and fuel are the Steamer's rice numbers; no one has tuned them). The Kitchen's recipe with rice flour stays at 6. The seed-cake good and need wait for Flowering only; with the Water module off the Flowering still ends in food |
+| Dew Collector | applied | `PandabornDewWater` one Water every 7.5 h (was 12), store 6 (was 4): **3.2 a day, 1.1 in a drought**. A colonist drinks 2.11 a day, so four collectors (12.8 a day) keep an outpost of six in water outside droughts: 0.7 collectors a colonist in fair weather, 1.9 in a drought (model). Cost unchanged (15 poles, 4 paper, 300 science). Against a pump worker's 48 a day, fifteen collectors (225 poles, 60 paper, sixty tiles) replace one worker: not a spam worth doing early, and the code still has no crowding rule |
+| Goldfish Bowl, Garden Moon Gate | applied | +2 each, so the Panda Statue's price and reach: 50 logs, 10 poles, three tiles (were a Shrub's 12 logs and one tile). 500 science without the Festival module; with it Tradition gates them and science is 0 |
+| Hanging Lantern at Tradition 2 | applied | The same Lantern need and price as the Standing Lantern, but it reaches two tiles instead of one (`RangedEffectBuildingSpec.EffectRadius` 2): one hung lantern lights a 5 x 5 patch where a standing one lights 3 x 3 |
+| Potted Pine | applied | Paid in poles (6) where the Shrub takes 12 logs; same Shrub need and reach |
+| Pine resin | **not removed** | The Inkpaws do not gather it: a pine's resin is in the `Tappable` group and the faction has no Tapper's Shack, and no Inkpaws building costs it (the Indicator was recosted). It remains only as a row in storage pickers and as the pine's own yield line. Taking it out of the faction's goods would make every other mod's building that costs resin throw when placed in an Inkpaws game (`GoodService.GetGood`), and the pine template would need its `GatherableSpec` cut by a modifier nobody has run. No recipe can want it honestly while nothing taps it |
+| Timber bamboo growth 5 to 7 days | **held: first bamboo poles land on day 10 or after** | Poles per tile-day: bamboo 2 / 5 = 0.40 against birch and mill 1 / 7 = 0.143 (2.8 times) and pine 2 / 12 = 0.167. At 7 days 0.286: 2.0 times birch, the intent. At 6 days 0.333: 2.3 times. First bamboo poles: the model staffs the Forester on day 2.5, planting is half an hour a tile, cutting 1.5 h: day 7.6 to 8 at 5 days (the first pass's "after day 8"), **day 9.6 to 10.1 at 7**, 8.6 to 9.1 at 6. A newcomer following the tutorial builds the Forester after the Pole Mill and twenty poles (about day 3 to 3.5), so day 10.6 to 11.1 at 7 days. DESIGN.md's first-hours row says "days 6 to 10: the first bamboo is cut". Nothing is blocked by it (the Pole Mill makes 27 poles a worker-day from logs, the Scoop Wheel and flumes are affordable from milled poles), but the row would have to read "about day 10". `tools/balance` has no first-poles figure of its own; these are its day constants worked by hand |
+
 ### Must change, or must be decided
 
 | # | File | Key | Now | Proposed | Why | Confidence | Run to confirm |

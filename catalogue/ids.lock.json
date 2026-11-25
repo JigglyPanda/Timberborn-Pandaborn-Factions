@@ -739,6 +739,9 @@
       "PandabornBambooSeedCakes": {
         "since": "2026-11-14"
       },
+      "PandabornBambooSeedCakesSteamed": {
+        "since": "2026-11-25"
+      },
       "PandabornCuredPole": {
         "since": "2026-11-14"
       },
@@ -805,11 +808,23 @@
       "PandabornHomes": {
         "since": "2026-11-14"
       },
+      "PandabornLanternFestival": {
+        "since": "2026-11-25"
+      },
       "PandabornPoles": {
         "since": "2026-11-14"
       },
+      "PandabornRicePaddy": {
+        "since": "2026-11-25"
+      },
       "PandabornRingtails": {
         "since": "2026-11-14"
+      },
+      "PandabornScience": {
+        "since": "2026-11-25"
+      },
+      "PandabornStorage": {
+        "since": "2026-11-25"
       },
       "PandabornTea": {
         "since": "2026-11-14"
@@ -817,14 +832,21 @@
       "PandabornTutorial.Bell": {
         "since": "2026-11-14"
       },
+      "PandabornTutorial.Cistern": {
+        "since": "2026-11-25"
+      },
       "PandabornTutorial.Dens": {
         "since": "2026-11-14"
+      },
+      "PandabornTutorial.FestivalSquare": {
+        "since": "2026-11-25"
       },
       "PandabornTutorial.FirstPoles": {
         "since": "2026-11-14"
       },
       "PandabornTutorial.FirstShoots": {
-        "since": "2026-11-14"
+        "since": "2026-11-14",
+        "retired": "2026-11-25: have 20 shoots held the tutorial chain (colonists eat them); never released"
       },
       "PandabornTutorial.Flume": {
         "since": "2026-11-14"
@@ -835,11 +857,17 @@
       "PandabornTutorial.Hammock": {
         "since": "2026-11-14"
       },
+      "PandabornTutorial.Inventor": {
+        "since": "2026-11-25"
+      },
       "PandabornTutorial.Lumberjack": {
         "since": "2026-11-14"
       },
       "PandabornTutorial.MoonLoft": {
         "since": "2026-11-14"
+      },
+      "PandabornTutorial.Paddy": {
+        "since": "2026-11-25"
       },
       "PandabornTutorial.PoleMill": {
         "since": "2026-11-14"

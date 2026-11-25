@@ -6,7 +6,7 @@
     "keys": "tutorials: Pandaborn.Tutorial.<tutorial id> (the tutorial's name); stages: Pandaborn.Tutorial.<stage id> (the stage's intro). Step texts are the game's own. The generator looks entries up by id, so an entry no stage uses is ignored.",
     "style": "Vanilla tutorial intros are one or two short sentences that say why, not how (the step line says how, with its own numbers). One idea per stage. Building, plant and good names are capitalized, as in the vanilla tutorial. No days or amounts beyond what a recipe panel shows.",
     "order": "Stages are listed in the order of play decided on 2026-11-25 (DESIGN.md): logs first, then water and food, poles, dens, a cistern, the inventor, the Steamer, the hammock and the bell, flumes, the Moon Loft, and tea last. No intro names something a later stage teaches. If catalogue/tutorial.toml changes the order, reread the chain.",
-    "pending_ids": "PandabornStorage, PandabornScience, PandabornTutorial.Cistern and PandabornTutorial.Inventor are written ahead of catalogue/tutorial.toml, which did not have those stages yet on 2026-11-25. If the catalogue names them differently, rename the keys here."
+    "pending_ids": "None. PandabornStorage, PandabornScience, PandabornTutorial.Cistern and PandabornTutorial.Inventor are in catalogue/tutorial.toml since 2026-11-25. PandabornRicePaddy, PandabornLanternFestival (names written by the catalogue lane: review them) and the stages PandabornTutorial.Paddy and PandabornTutorial.FestivalSquare (the former drafts stage_paddy and stage_festival) were added the same day."
   },
   "tutorials": {
     "PandabornBasics": "Basics",
@@ -19,7 +19,9 @@
     "PandabornAfternoon": "The afternoon",
     "PandabornFlumes": "Flumes",
     "PandabornRingtails": "The Ringtails",
-    "PandabornTea": "Tea"
+    "PandabornTea": "Tea",
+    "PandabornRicePaddy": "Rice paddies",
+    "PandabornLanternFestival": "The Lantern Festival"
   },
   "stages": {
     "PandabornTutorial.Lumberjack": "Every village is built from Logs. Lumberjacks cut the trees you mark.",
@@ -42,13 +44,13 @@
     "PandabornTutorial.TeaGarden": "Tea Bushes grow only on dry, brown ground, well away from water. The Forester plants them and a Gatherer picks the leaves.",
     "PandabornTutorial.Roastery": "A Tea Roastery roasts the Tea Leaves into Tea.",
     "PandabornTutorial.Tea": "Tea keeps in any warehouse. Build up a small stock before you open a Teahouse.",
-    "PandabornTutorial.Teahouse": "Tea is drunk at the Teahouse and nowhere else. It needs a stock of Tea and Water, and serves pandas off duty."
+    "PandabornTutorial.Teahouse": "Tea is drunk at the Teahouse and nowhere else. It needs a stock of Tea and Water, and serves pandas off duty.",
+    "PandabornTutorial.Paddy": "Rice grows only in a flooded field. Close a field in with Levees, place a Paddy Spout on its edge with water behind it, then build a Paddy House and plant Rice.",
+    "PandabornTutorial.FestivalSquare": "A village needs something to look forward to. Build a Festival Square: its panel shows what the district must have in store before the Lantern Festival can be called."
   },
   "drafts": {
     "_note": "Not shipped: no stage or key uses these yet. They are the wording worth keeping from the retired messages.json (deleted 2026-11-25), corrected against the build, for stages and loading tips the catalogue or code lanes may add. Each is one idea in the voice of the stages above.",
     "stage_first_drought": "Your village has come through its first drought. Bamboo and cabbage stop growing when the ground dries and start again when the water returns. Droughts grow longer: build more cisterns.",
-    "stage_paddy": "Rice grows only in a flooded field. Close a field in with Levees, place a Paddy Spout on its edge with water behind it, then build a Paddy House and plant Rice.",
-    "stage_festival": "A village needs something to look forward to. Build a Festival Square: its panel shows what the district must have in store before the Lantern Festival can be called.",
     "stage_cistern_tap": "In a drought, a Cistern Tap pours stored water into a flume and keeps the ground beside it moist.",
     "stage_dry_stone_wall": "Moisture spreads through the ground. A Dry-Stone Wall stops it, so tea can grow near wet fields.",
     "tip_flume_strip": "Tip: The ground beside a <YellowHighlight>Flume</YellowHighlight> stays moist. A flume and a row of bamboo is the simplest farm there is.",

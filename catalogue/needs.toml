@@ -162,7 +162,7 @@ wastable = true
 src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
 
 [needs.PandabornBambooSeedCakes]
-waits_for = ["Flowering", "Water"]   # seed cakes need bamboo seed (a Great Flowering) and rice flour (the water mill)
+waits_for = "Flowering"   # seed cakes need bamboo seed, left by a Great Flowering
 basis = "Bread"
 name_from = "good:PandabornBambooSeedCakes"
 group = "Nutrition"

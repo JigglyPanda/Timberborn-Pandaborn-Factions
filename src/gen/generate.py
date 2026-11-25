@@ -56,6 +56,9 @@ def main(argv=None):
     ap.add_argument("--quiet", action="store_true")
     ap.add_argument("--no-code", action="store_true",
                     help="data-only fallback build: leave out everything that needs the mod's code (e.g. name pools)")
+    ap.add_argument("--modules", default="",
+                    help="override rules.toml [modules] for this run, e.g. Water=off,Festival=off (the module "
+                         "combinations check, tools/pandaborn.ps1 combos); the lock is never written")
     ap.add_argument("--plants", default=os.path.join(DEFAULT_BUILD, "plants"), help="built plant meshes and bundle")
     ap.add_argument("--models", default=os.path.join(DEFAULT_BUILD, "models"), help="built model meshes (models stage)")
     a = ap.parse_args(argv)
@@ -90,11 +93,23 @@ def generate(a, v):
     g = Generator(cat, v)
     g.mesh_dir = a.models
     g.code_enabled = not a.no_code
+    for pair in [x for x in a.modules.split(",") if x.strip()]:
+        name, _, value = pair.partition("=")
+        if value.strip().lower() not in ("on", "off"):
+            raise GenError("--modules: write %s=on or %s=off" % (name.strip(), name.strip()))
+        g.module_override[name.strip()] = value.strip().lower() == "on"
     g.plant_dir = a.plants
     g.run()
     files = g.files()
     lock = lockmod.read_lock(a.catalogue)
+    if (a.no_code or a.modules) and a.lock:
+        raise GenError("--lock with --no-code or --modules: lock new ids with the full build (a build with modules "
+                       "switched off leaves out what waits for them, and the lock's gatedBy marks describe the full build)")
     new, missing, lock_changed = lockmod.check_and_extend(lock, g.ids, allow_new=a.lock or a.dry_run, gated=g.gated)
+    if a.no_code or a.modules:
+        # what the data-only build leaves out is not what the catalogue's switches leave out: never written back
+        lock_changed = False
+        missing = [m for m in missing if m[1] not in g.gated.get(m[0], {})]
     if missing:
         print("generate: WARNING ids in the lock that the catalogue no longer produces (retire them with an alias):")
         for kind, i in missing:

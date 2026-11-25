@@ -346,6 +346,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sheet", default=SHEET)
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--verbose", action="store_true", help="--check: list every difference, not only the count")
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
@@ -353,9 +354,14 @@ def main():
     if a.write:
         write(sheet, a.force)
     drift = check(sheet)
-    print("statsheet drift: %d difference(s) between %s and the catalogue" % (len(drift), os.path.relpath(a.sheet, REPO)))
-    for d in drift:
-        print("  " + d)
+    # The sheet is the first balance pass (2026-11-14) and is history: the catalogue has moved on by design decisions
+    # and the second pass (tools/balance reads the generated build). The differences are listed only when asked for.
+    print("statsheet: %d number(s) differ between the first-pass sheet (%s, history) and the catalogue, which is the "
+          "source of truth%s" % (len(drift), os.path.relpath(a.sheet, REPO),
+                                 ":" if a.verbose else " (import_statsheet.py --check --verbose lists them)"))
+    if a.verbose or a.write:
+        for d in drift:
+            print("  " + d)
     return 0
 
 

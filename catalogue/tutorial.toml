@@ -7,7 +7,7 @@
 #     and Iron Teeth games build every TutorialSpec) plus the Inkpaws modifier that gives it its real chain and stages;
 #   * writes each stage of ours as a stage blueprint; a stage may also be a vanilla stage id that names no template;
 #   * leaves out a stage whose steps name a template the build does not ship (and a tutorial left with no stage), and a
-#     tutorial or stage that waits_for a module that is off. Chains skip over left-out tutorials.
+#     tutorial, stage or single step that waits_for a module that is off. Chains skip over left-out tutorials.
 # Stage intros come from text/tutorial.json (key Pandaborn.Tutorial.<stage>); step texts are the game's own.
 # Step fields per step type: schema/<game>.json (BuildingTutorialStepSpec TemplateNames/OnlyFinishedBuildings/
 # RequiredAmount, MarkPlantablesTutorialStepSpec TemplateName/RequiredAmount, SetWorkingHoursStepSpec TargetWorkingHours).
@@ -17,39 +17,50 @@ enabled = true
 # the tutorial a stage-less faction would show first; must be one of ours
 first = "PandabornBasics"
 
+# The order of play (coordinator, 2026-11-25): a colony starts with no logs, so logs come before anything that costs
+# them. Basics and the first lumberjack -> water, gatherer, shoots -> poles -> dens -> a cistern -> the inventor ->
+# the Steamer -> the hammock and the bell -> flumes, then rice paddies (when the Water module ships) -> tea -> the
+# Lantern Festival (when the Festival module ships). The Moon Loft is a side branch nothing waits for (a village without
+# Ringtails is complete). Tutorials whose `after` are all finished run side by side (TutorialService), so only what
+# must come first is chained; a tutorial the build leaves out is skipped over (tea follows the bell when Water is off).
 [tutorials.PandabornBasics]
 order = 0
-stages = ["Basics.MoveCamera", "Basics.RotateCamera", "Basics.ZoomCamera", "Basics.ManagePause", "Basics.ManageSpeed"]
+stages = ["Basics.MoveCamera", "Basics.RotateCamera", "Basics.ZoomCamera", "Basics.ManagePause", "Basics.ManageSpeed", "PandabornTutorial.Lumberjack"]
 
 [tutorials.PandabornWaterAndFood]
 order = 10
 after = ["PandabornBasics"]
-stages = ["PandabornTutorial.Water", "PandabornTutorial.Gatherer", "PandabornTutorial.ShootBamboo", "PandabornTutorial.FirstShoots"]
+stages = ["PandabornTutorial.Water", "PandabornTutorial.Gatherer", "PandabornTutorial.ShootBamboo"]
 
 [tutorials.PandabornPoles]
 order = 20
 after = ["PandabornWaterAndFood"]
-stages = ["PandabornTutorial.Lumberjack", "PandabornTutorial.PoleMill", "PandabornTutorial.FirstPoles", "PandabornTutorial.TimberBamboo"]
+stages = ["PandabornTutorial.PoleMill", "PandabornTutorial.FirstPoles", "PandabornTutorial.TimberBamboo"]
 
 [tutorials.PandabornHomes]
 order = 30
 after = ["PandabornPoles"]
 stages = ["PandabornTutorial.Dens"]
 
+[tutorials.PandabornStorage]
+order = 34
+after = ["PandabornHomes"]
+stages = ["PandabornTutorial.Cistern"]
+
+[tutorials.PandabornScience]
+order = 37
+after = ["PandabornStorage"]
+stages = ["PandabornTutorial.Inventor"]
+
 [tutorials.PandabornCooking]
 order = 40
-after = ["PandabornHomes"]
+after = ["PandabornScience"]
 stages = ["PandabornTutorial.Steamer"]
 
 [tutorials.PandabornAfternoon]
 order = 50
 after = ["PandabornCooking"]
 stages = ["PandabornTutorial.Hammock", "PandabornTutorial.Bell"]
-
-[tutorials.PandabornTea]
-order = 55
-after = ["PandabornAfternoon"]
-stages = ["PandabornTutorial.TeaGarden", "PandabornTutorial.Roastery", "PandabornTutorial.Tea", "PandabornTutorial.Teahouse"]
 
 [tutorials.PandabornFlumes]
 order = 60
@@ -58,10 +69,29 @@ waits_for = "Water"
 stages = ["PandabornTutorial.ScoopWheel", "PandabornTutorial.Flume"]
 
 [tutorials.PandabornRingtails]
+# a side branch: nothing is `after` it
 order = 70
-after = ["PandabornAfternoon"]
+after = ["PandabornFlumes"]
 waits_for = "Ringtails"
 stages = ["PandabornTutorial.MoonLoft"]
+
+[tutorials.PandabornRicePaddy]
+# the Paddy Spout waits for the Water module, so the stage (and with it this tutorial) is left out without it
+order = 65
+after = ["PandabornFlumes"]
+stages = ["PandabornTutorial.Paddy"]
+
+[tutorials.PandabornTea]
+# never in front of the flumes or the paddies: with the Water module off the generator chains it to the afternoon instead
+order = 80
+after = ["PandabornRicePaddy"]
+stages = ["PandabornTutorial.TeaGarden", "PandabornTutorial.Roastery", "PandabornTutorial.Tea", "PandabornTutorial.Teahouse"]
+
+[tutorials.PandabornLanternFestival]
+order = 90
+after = ["PandabornTea"]
+waits_for = "Festival"
+stages = ["PandabornTutorial.FestivalSquare"]
 
 # ------------------------------------------------------------------------------------------------- stages
 [stages."PandabornTutorial.Water"]
@@ -74,10 +104,8 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["GathererFlag.Inkpaws"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["EfficientFarmHouse.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
          { MarkPlantablesTutorialStepSpec = { TemplateName = "PandabornShootBamboo.Inkpaws", RequiredAmount = 6 } }]
 
-[stages."PandabornTutorial.FirstShoots"]
-# "have N of a good" (module Pandaborn.Tutorial, docs/tech/tutorial.md); left out of a build without that module
-waits_for = "Tutorial"
-steps = [{ PandabornGoodAmountStepSpec = { GoodId = "PandabornBambooShoots", Amount = 20 } }]
+# PandabornTutorial.FirstShoots ("have 20 shoots") was taken out on 2026-11-25: colonists eat the shoots, so the step
+# could hold the whole chain; its id is retired in ids.lock.json.
 
 [stages."PandabornTutorial.Lumberjack"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["LumberjackFlag.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
@@ -88,6 +116,7 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["LumberMill.Inkpaws"], 
          { BuildingTutorialStepSpec = { TemplateNames = ["PowerWheel.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]
 
 [stages."PandabornTutorial.FirstPoles"]
+# "have N of a good" (module Pandaborn.Tutorial, docs/tech/tutorial.md); left out of a build without that module
 waits_for = "Tutorial"
 steps = [{ PandabornGoodAmountStepSpec = { GoodId = "Plank", Amount = 20 } }]
 
@@ -97,6 +126,19 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["Forester.Inkpaws"], On
 
 [stages."PandabornTutorial.Dens"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornDen.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 2 } }]
+
+[stages."PandabornTutorial.Cistern"]
+# water for the first drought: 13 pandas drink 2.1 a day and the first Normal drought lasts 2 to 3 days (tools/balance):
+# about 80. One pump (49) and one Small Cistern (40) hold it. The amount step waits for the Tutorial module by itself;
+# without it the stage is "build a cistern".
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornCisternSmall.Inkpaws", "PandabornCisternMedium.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 1 } },
+         { waits_for = "Tutorial", PandabornGoodAmountStepSpec = { GoodId = "Water", Amount = 80 } }]
+
+[stages."PandabornTutorial.Inventor"]
+# as the vanilla Forester stage: build, gather the science, unlock (here: the Steamer's 40)
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["Inventor.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 1 } },
+         { AccumulateScienceForBuildingStepSpec = { TemplateName = "PandabornSteamer.Inkpaws" } },
+         { UnlockBuildingTutorialStepSpec = { TemplateName = "PandabornSteamer.Inkpaws" } }]
 
 [stages."PandabornTutorial.Steamer"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornSteamer.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } }]
@@ -126,6 +168,14 @@ steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornScoopWheel.In
 
 [stages."PandabornTutorial.Flume"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornFlume.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 3 } }]
+
+[stages."PandabornTutorial.Paddy"]
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornPaddySpout.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 1 } },
+         { BuildingTutorialStepSpec = { TemplateNames = ["PandabornPaddyHouse.Inkpaws"], OnlyFinishedBuildings = false, RequiredAmount = 1 } },
+         { MarkPlantablesTutorialStepSpec = { TemplateName = "PandabornRice.Inkpaws", RequiredAmount = 6 } }]
+
+[stages."PandabornTutorial.FestivalSquare"]
+steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornFestivalSquare.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 1 } }]
 
 [stages."PandabornTutorial.MoonLoft"]
 steps = [{ BuildingTutorialStepSpec = { TemplateNames = ["PandabornMoonLoft.Inkpaws"], OnlyFinishedBuildings = true, RequiredAmount = 1 } }]
