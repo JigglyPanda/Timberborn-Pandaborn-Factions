@@ -1,0 +1,88 @@
+{
+  "speed": 7,
+  "run": {
+    "inGameHours": 84
+  },
+  "buildings": [
+    "EfficientFarmHouse.Inkpaws",
+    "SmallWarehouse.Inkpaws"
+  ],
+  "screenshots": [
+    {
+      "name": "overview_end",
+      "kind": "overview",
+      "at": "end"
+    }
+  ],
+  "ownPatterns": [
+    "PandabornFactions",
+    "PandabornDevHarness",
+    "Inkpaws",
+    "PandabornProtoEvents",
+    "Pandaborn.Festival",
+    "Pandaborn.Flowering",
+    "Pandaborn.Events",
+    "pbevents"
+  ],
+  "checks": {
+    "noOwnErrors": true
+  },
+  "events": {
+    "stock": {
+      "Water": 400,
+      "PandabornSteamedRice": 200
+    },
+    "fields": [
+      {
+        "template": "PandabornShootBamboo.Inkpaws",
+        "count": 8,
+        "near": "EfficientFarmHouse.Inkpaws",
+        "grown": true,
+        "mark": true,
+        "radius": 3
+      },
+      {
+        "template": "PandabornShootBamboo.Inkpaws",
+        "count": 24,
+        "near": "EfficientFarmHouse.Inkpaws",
+        "grown": true,
+        "mark": false,
+        "radius": 8
+      }
+    ],
+    "actions": [
+      {
+        "atRunHour": 0.2,
+        "do": "announce"
+      },
+      {
+        "atRunHour": 1.2,
+        "do": "flowerNow"
+      }
+    ],
+    "shots": [
+      {
+        "name": "wf_before",
+        "atRunHour": 0.6,
+        "select": "none",
+        "focus": "building:EfficientFarmHouse.Inkpaws",
+        "zoom": 0
+      },
+      {
+        "name": "wf_in_flower",
+        "atRunHour": 6,
+        "select": "none"
+      },
+      {
+        "name": "wf_reseeded",
+        "atRunHour": 52,
+        "select": "none"
+      },
+      {
+        "name": "wf_growing_again",
+        "atRunHour": 80,
+        "select": "none"
+      }
+    ]
+  }
+}

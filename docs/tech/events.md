@@ -9,8 +9,8 @@ read from the decompiled game first; the [Results](#results) section says what w
 (DESIGN.md, 2decaec).
 
 **What is proven and what is not, in one place.** Everything in [Results](#results) ran in game on or before 2026-11-14.
-The code changed on 2026-11-25 (the lantern sky finished, the one-district rule, the Flowering spread over ticks, failure
-containment: [section 13](#13-review-of-2026-11-25)) **compiles and passes its tests without the game, and has not been
+The code changed on 2026-11-25 (the lantern sky finished, the one-district rule, the Flowering spread over ticks, wild
+bamboo that reseeds, failure containment: [section 13](#13-review-of-2026-11-25)) **compiles and passes its tests without the game, and has not been
 run in game**; the lantern prefab's new numbers and sprite are in the builder script and **the bundle has not been
 rebuilt**. [Section 14](#14-needs-a-game-run) is the ordered list of builds and runs that this owes.
 
@@ -122,6 +122,13 @@ the festival can claim it. On the festival day:
    0.3–0.8 h. Overflow colonists try the slots again each time they choose. Both peoples' bodies carry the `Dancing`
    animation;
 4. with no square in the district: needs, then the game's wander behaviour.
+
+In the hours of the show the festival also goes before routines that sit above it: `FestivalGatheringClock` is the
+module's Core `IGatheringClock`, and the Ringtails' day rest steps aside while it says a colonist gathers now (a
+colonist of the festival's district that has the festival behaviour and is not on a crew in its hours). So a Ringtail
+whose rest would run past 15.5 h (a long working day) is at the square for the lanterns; in the morning the clock
+claims nobody and Ringtails sleep as on any day. Notices of a festival are posted with the square (else the district
+centre) as their subject, so the notification log leads to the festival's own district (2026-11-25, round two).
 
 **What keeps running** (so a festival never strands a colony): critical needs (above us), all eating and drinking from
 stock (off-duty colonists do nothing else), the crews of the `KeepWorkingTemplates` workplaces, every bot and Wooden Ox
@@ -271,7 +278,7 @@ second one could be called in the same cycle.
 | Start of cycle 5 (a full cycle ahead) | "The Shoot Bamboo is budding. It will flower at the start of cycle 6, bear seed for a few days and die." A line under the top bar: "Shoot Bamboo flowers at the start of cycle 6", whose tooltip gives one instruction: "Store about 11 food for each panda before it starts" (timber bamboo: about 5 poles for each panda; a Pole Mill can split logs into poles meanwhile). Every shoot bamboo's panel: "Budding: it will flower at the start of cycle 6, bear seed for 3 days, then die." Buds on the plants once the plant lane paints them |
 | Start of cycle 6 | "The Shoot Bamboo is in flower. 56 plants bear 168 bamboo seed: harvest it within 3 days." Every grown shoot bamboo on the map, planted or wild, becomes Flowering Shoot Bamboo, whose harvest is bamboo seed; young plants die. Top-bar line: "Shoot Bamboo in flower: harvest the seed, 3 days left" |
 | Days 1–3 | Farmers harvest the flowering plants for seed exactly as they harvest shoots (it is their crop's harvest), carry it to the farmhouse and on to storage. Freed tiles are replanted at once from the planting marks |
-| Day 3 | Unharvested flowering plants die over the last day ("The flowered Shoot Bamboo has died. Bamboo seed harvested: 151. Its young plants grow again in 6 days.") |
+| Day 3 | Over the last day the flowering plants' time ends ("The flowered Shoot Bamboo has died. Bamboo seed harvested: 151. Its young plants grow again in 6 days."). On a farm's or forester's marked tiles the unharvested ones die where they stand and are planted over. **A wild one, on a tile nobody marked, that is still standing reseeds its own tile**: a seedling takes its place. One that was cut for its seed is gone, like any wild tree that is cut |
 | Days 1–9 | Young shoot bamboo sits as seedlings: "Resting after the Flowering: it grows again in 6 days." Top-bar line: "Shoot Bamboo grows again in 6 days" |
 | Day 9 | "The Shoot Bamboo grows again." Seedlings grow (3 days); the first shoots come in on day 12 |
 | Afterwards | Bamboo seed is cooked with rice flour into seed cakes (4 per seed), the best dish in the mod. Next Flowering (timber bamboo) 5–7 cycles later |
@@ -310,9 +317,25 @@ and room for seed. The forecast says exactly that, a full cycle ahead.
   cleared again afterwards, when the queued `BlockObjectSetEvent` reached `PlantingCoordinatesUnsetter`. The twin's harvest is its cut yield, `PandabornBambooSeed` × 3, in the same resource group as the bamboo
   (Farmhouse / Cuttable), so the farmhouse's and lumberjack's inventories accept seed (`YieldRemovingBuilding` allows the
   yields of every template of its group) and their workers harvest and carry it with the vanilla behaviours.
-* **Dying**: twins die over the last day of `SeedDays` (each at a time hashed from its tile). Dead crops lose their seed (the
-  game's rule) and become overridable, so farmers plant over them; dead twin trees keep their seed until a lumberjack cuts
-  them, then leave a stump to replant.
+* **The twins' end**, over the last day of `SeedDays`, each at a time hashed from its tile (`FloweringSchedule.EndOf`,
+  tested without the game):
+  * **on a tile with a planting mark** the twin dies where it stands, as before. Dead crops lose their seed (the game's
+    rule) and become overridable, so farmers plant over them; dead twin trees keep their seed until a lumberjack cuts
+    them, then leave a stump to replant.
+  * **wild, on a tile without a planting mark, and still standing: it reseeds its own tile** (the coordinator's ruling
+    of 2026-11-25; before it, twins did not reproduce and only marked tiles were replanted, so every wild grove
+    flowered once and was gone). The twin is deleted and a new plant of its species is placed on the tile
+    (`NaturalResourceFactory.SpawnIgnoringConstraints`: a new plant is a seedling), which registers like any bamboo and
+    is held until the rest ends. Its uncut seed goes with it (trees too: the three seed days are the time to cut a
+    wild grove).
+  * **cut for its seed**: a cut plant is dead from the cut (`Cuttable.Cut` calls `Die`), so it has no end left to
+    meet: a crop is carried off and removed, a tree leaves its stump. Gone, like any wild tree that is cut.
+  Every in-game hour the twins that are alive and due queue up; they meet their end in the following ticks on the same
+  budget as the change into flower (a wild grove of thousands is 1/24 of it an hour, a few plants a tick). Nothing
+  pending is saved: a due twin is either still alive, and queues again at the next hourly pass, also after a load,
+  or it is dead or replaced. The seed time closes when no twin is left alive. The count of reseeded plants is saved
+  (`reseeded`, additive) for the log line at the end of the seed time. If replacing fails five times in a game, wild
+  twins die where they stand for the rest of it (the old behaviour) and the feature reports it.
 * **Replanting and the rest**: planting marks are a separate map (`PlantingService`) and are never touched, so farms and
   foresters replant on their own. Until `DormantDays` (9) after the Flowering, young plants of the species do not grow:
   the module pauses each one's growth timer every in-game hour and whenever one is planted. The game has no public pause
@@ -380,6 +403,8 @@ the Flowering. A future Hard tuning could shorten `DormantDays` per game mode; n
 | The district centre is demolished while called | Nobody is on holiday and no square hosts; the festival ends at its dawn and Tradition rises | — |
 | A colonist moves to another district on the day | It follows its new district at its next decision | — |
 | Another mod swaps a plant's growth timer | — | Held again within an in-game hour |
+| A wild grove (no planting marks) | — | The plants still standing at the end of the seed days reseed their tiles and rest with the others; those cut for seed are gone |
+| A wild tile the player marks during the seed days | — | It is a marked tile when its twin's time comes: the twin dies standing and the farm or forester replants |
 | A colonist is starving on festival day | Critical needs come before the festival | — |
 | Setting changed to off while announced | — | Cancelled with a notice |
 
@@ -400,6 +425,7 @@ the Flowering. A future Hard tuning could shorten `DormantDays` per game mode; n
 | 2026-11-25: a festival is the calling square's district's, not the whole village's (it was: everyone off and festive, each district at its own square) | The coordinator's ruling. One festival a cycle and one Tradition stay village-wide, so districts take turns |
 | 2026-11-25: pump crews join the festival after their working hours | They were released to the game's worker behaviour all day and night, so they hauled in the evening while everyone else danced |
 | 2026-11-25: the bamboo comes into flower over the first hours of the cycle's first day on a large map, not in one instant | Spread over ticks so that thousands of plants do not stall the game. Still always day 1 of a cycle; the seed days count from the start |
+| 2026-11-25: wild bamboo reseeds after a Flowering (a standing flowered plant on an unmarked tile leaves a seedling; cut ones are gone; marked tiles unchanged) | The coordinator's ruling on the review's finding: without it every wild grove flowered once and was gone for good |
 | 2026-11-25: comet rockets only in a Grand Festival (or without the lantern art) | With real lanterns the rockets are a firework, and fireworks are what makes a festival Grand |
 
 ## 8. Requests to the catalogue lane
@@ -427,10 +453,12 @@ the square needs: `Prefab` is an asset reference, and a blueprint that names a p
 game at load (`events-final-1` was exactly that crash, with a character attachment). The adopted model already has
 the `#LanternRise` node (`art/models/FestivalSquare/build.py`).
 
-**B. `KeepWorkingTemplates`** (`faction.toml`, `PandabornFestivalSpec`): add `PandabornCisternTap.Inkpaws`, which is
-staffed and closes without its worker; the unstaffed entries can go. Proposed list: `["WaterPump.Inkpaws",
-"LargeWaterPump.Inkpaws", "PandabornTreadwheelLift.Inkpaws", "PandabornCisternTap.Inkpaws"]` (section 2, "Which
-workplaces are in the list"; add `BadwaterPump.Inkpaws` only if a badwater process must not pause for a day).
+**B. `KeepWorkingTemplates`: adopted** (2026-11-25, in the coordinator's form: the existing list kept,
+`PandabornCisternTap.Inkpaws` added; `catalogue/faction.toml` carries it). Every entry is harmless: a name is only
+compared with the template of a colonist's own workplace, so an unstaffed building (`MechanicalPump`,
+`CompactMechanicalPump`, `AquiferDrill`, `PandabornScoopWheel`, `PandabornDewCollector`: no `WorkplaceSpec` in the
+generated build) or a name no template has simply never matches. `BadwaterPump.Inkpaws` is staffed and not in the
+list: its crew takes the day off.
 
 Done by other lanes meanwhile, nothing to do: the festive needs' `daily_delta` is -0.04 (no code reads it); the
 Lantern Workshop costs 100 science and the Festival Square 200 (only Tradition decorations must cost 0); the six plant
@@ -609,6 +637,11 @@ districts, the behaviour system) with no game available. Findings by severity; "
 | Minor | The dishes taken were chosen after an unstable sort (ties could differ from the panel) | `FestivalStock.Take` | `FestivalRules.PickDishes`, stable and tested (a602675) |
 | Minor | An unknown enum number in a hand-edited save became a phase | both `ReadState` | `Enum.IsDefined` (8038a53, b628c63) |
 | Minor | The square's panel kept reading a square demolished while it was open | `FestivalSquareFragment.Refresh` | checked (8038a53) |
+| Minor, round two | **Wild bamboo never came back after a Flowering** (twins do not reproduce; only marked tiles were replanted) | `FloweringService.Advance` | the reseeding rule, ruled by the coordinator (37e7a70) |
+| Minor, round two | A Ringtail whose rest ran past 15.5 h missed the release (the rest sits above the festival) | `RingtailRestRootBehavior`, Core `IGatheringClock` | the Core and Ringtails lanes added the contract; the festival registers `FestivalGatheringClock` (ae3111f) |
+| Minor, round two | Faults were reported for the session (`ReportDegraded`) though every check is made per game, and a second fault replaced the first in the report | both modules | `ReportDegradedInGame` through one `Fault` method per module that keeps the game's list (ae3111f, 37e7a70) |
+| Minor, round two | A festival's notices were filed under the first district centre | `FestivalService.Call/Start/End` | posted with the square, else the district centre, as subject (`Messenger.Post(text, subject)`, Core 1b3eb58) (ae3111f) |
+| Minor, round two | Fireworks that failed in the middle of a game were logged but never reported | `FestivalFireworks.Fail` | reported (ae3111f) |
 
 ### Left, and why
 
@@ -616,8 +649,6 @@ districts, the behaviour system) with no game available. Findings by severity; "
 |---|---|---|
 | Major (data) | `KeepWorkingTemplates` lacks the staffed `PandabornCisternTap.Inkpaws` | catalogue lane's file: request B in section 8 |
 | Major (art) | The lantern prefab and sprite are changed in source only | no Unity today: section 14 |
-| Minor | **Wild bamboo never comes back after a Flowering.** Twins do not reproduce and only marked tiles are replanted, so each wild grove flowers once and is gone; after two Flowerings the map has only planted bamboo | a design question (should a dying wild twin leave a seedling?), not a bug in what was specified. For the coordinator |
-| Minor | A Ringtail whose rest window reaches past 15.5 h (a 16-hour working day) misses the first half hour of the show, the release included: the rest behaviour sits above the festival | Ringtails lane owns the rest; the festival could only override it by going above it, which would wake Ringtails at dawn on festival day |
 | Minor | The festive need is filled again for a colonist that re-enters the square after a load (the attended set is not saved) | harmless: it is already at its maximum |
 | Minor | Buds use `renderer.material` (one material instance per renderer of every announced plant for a cycle) | it is exactly what the game's `GatherableModel` does for every berry bush; revisit only if a large map shows it |
 | Minor | During the show nobody runs the need loop (critical needs only), 6.5 h | by design: Hunger and Thirst take far longer to matter and the square pays Campfire points; the critical behaviour is above us |
@@ -630,10 +661,11 @@ districts, the behaviour system) with no game available. Findings by severity; "
 * **Catalogue**: requests A (after the bundle) and B in section 8.
 * **Text**: the seven district keys (table in section 2), first drafts in `enUS_PandabornFestivalDistricts.csv`.
   `Message.Started*` says "Only the pump crews work today": with the tap in the list it is pumps, lifts and taps.
-* **Core**: `Messenger.Post` files every notification under the first district centre; a `Post(text, districtCenter)`
-  would let a district's festival show under its own district. Once the per-game `ReportDegradedInGame` (in the
-  Core lane's working tree on 2026-11-25) is committed, the two modules should use it for what is true of one game
-  only (a plant that could not be replaced; the day-off check, which is now made again in every game).
+* **Core**: nothing open. `ReportDegradedInGame` and `Messenger.Post(text, subject)` (1b3eb58) and `IGatheringClock`
+  are used by both modules since round two.
+* **Scenarios** (`src/devharness`, `tests/scenarios`): the two-district scenario needs the harness to place a second
+  district (section 14, "What a two-district scenario needs"); the probe's half is written. The two wild-grove
+  requests are in `proto/events/requests/` (runnable today; move them to `tests/scenarios/events/` if you keep them).
 * **Ringtails**: the static `RingtailRestRootBehavior.InsertionError` is set for the session by one failing entity,
   as ours was (the lane's working tree already guards `Decide`).
 * **Docs**: `docs/tech/ringtail-body.md` 8.7 describes the first lantern prefab (nine bursts, 10–16 s, `Play()` per
@@ -697,9 +729,55 @@ Nothing of 2026-11-25 has run. In order; each step needs the one before. Runs go
 | 7 | fallbacks | `events-fallback` (`pbevents-fb`, its dev switch) and `events-backon` (`pbevents-on`) | as before; with `Festival.Fireworks` simulated missing the lantern sky still runs |
 | 8 | crews | `events-crews` (`pbevents2 -Variant proto\events\variants\crews`) | the crew works its hours and **is at the square in the evening** (new); replanting after the rest |
 | 9 | a real water crew | a new request: a Water Pump, a Treadwheel Lift and a Cistern Tap staffed in the district (after request B) | all three crews at work on the festival day in their hours |
-| 10 | two districts | **no scenario yet** (the probe cannot build a second district centre): by hand or a new probe action. District A with a square calls; B has colonists and a square | A: day off, show, festive; B: everyone works, square dark and silent, its panel says "A festival begins at dawn in A ..."; the notices name A; next cycle the auto-call picks B when both are stocked; nobody in B is festive at the end |
+| 10 | two districts | **blocked on the harness** (see "What a two-district scenario needs" below); the probe's side is ready: `"district": n` on `stock`, `spawnAdults`, `callFestival`, shot target `square:n`, and the sample block `festivalDistricts` | per district in `festivalDistricts`: A (the caller): `dayOff` = its colonists minus the crew, `working` only the crew, its square `hosts` true with lanterns aloft, `festiveAvg` 1 at the end; B: `dayOff` 0, colonists `working`, its square `hosts` false, 0 lanterns, `status` "A festival begins at dawn in A ..." then "The Lantern Festival is today in A ...", `festiveAvg` unchanged. The notices name A, and clicking them in the notification log goes to A's square. Next cycle, both stocked and auto-call on: B is called |
 | 11 | a large colony | a late save or a probe run with 300+ colonists and a festival; 2,000+ shoot bamboo and `flowerNow` | no frame stall at dawn, at 15.5 h or at the Flowering; how many ticks the change into flower takes (`convertQueue` per sample), FPS during it; the overflow crowd's cost |
 | 12 | TimberCommons (audit m6, run 6 of the compatibility list) | ours + TimberCommons, a building with its growth range effect beside resting shoot bamboo (no Inkpaws building has one today, so this needs a TimberCommons-using mod or a test fragment), a Flowering, a few days | `held` stays the number of young plants, `heldAgain` rises when the modifier registers, young bamboo's growth stays within about 1.4 % per swap; the log line "were growing again and are held again" appears; no error |
-| 13 | Ringtails through the festival | `events-ringtails-off` first launch, sampled hourly | a Ringtail asleep in its rest window on the festival morning, at the square after it, no night post staffed that night |
+| 13 | Ringtails through the festival | `events-ringtails-off` first launch, sampled hourly; and once with the working hours set to 16 or more, so the rest window reaches past 15.5 h | a Ringtail asleep in its rest window on the festival morning, at the square after it, no night post staffed that night; **with the long day: Ringtails at the square from 15.5 h** (the gathering clock), not in bed until 16 h |
+| 14 | a wild grove, nobody harvesting | `-RequestJson proto\events\requests\events-wild.request.json` on a `pbevents2`-style copy (`-Variant proto\events\variants\crews`: seed 2 days, rest 1.5 days). 8 shoot bamboo on marked tiles, 16 wild, no farm | `raw.plants`, hour by hour. Before: `PandabornShootBamboo.Inkpaws` grown 8, `... (wild)` grown 16. In flower (from the first sample after 1.2 h): `PandabornShootBambooInFlower.Inkpaws` grown 8, `... (wild)` grown 16. Over the last seed day (25 h to 49 h after the Flowering): the wild twins go one by one and `PandabornShootBamboo.Inkpaws (wild)` young rises to 16, `reseeded` 16, no dead wild twin left; the 8 marked twins end as `dead` 8 (no farm to plant over them). `held` 16 until the rest ends, then the seedlings' growth moves (`young` list). Log: "16 wild plants reseeded their tiles". 0 own errors. Shots `ev_w_*`: the grove before, in flower, as seedlings, growing |
+| 15 | a wild grove in reach of a farm | `proto\events\requests\events-wild-farm.request.json`, same copy. 8 marked and 24 wild shoot bamboo round a staffed Efficient Farmhouse | seed in store rises; at the end `reseeded` + (wild twins cut by the farmers) = 24, `PandabornShootBamboo.Inkpaws (wild)` young = `reseeded`, no seedling where a twin was cut; the marked field is replanted from its marks as in `events-crews-3` |
+| 16 | a fault is this game's | `events-fallback` (`simulate-missing-member`), then in the same launch a second game (the harness's `then`) | the feature report of the first game lists all three reasons in one line ("no day off ...; no fireworks ..." for Festival); the reload with the modules forced off, and a later clean launch, do not carry them |
 
 After 3 and 4, write the counts and the shots into Results and close "The look of the festival".
+
+### What a two-district scenario needs
+
+Two halves, by owner.
+
+**The harness** (`src/devharness`, the scenarios lane): today `GameDriver.PlaceBuildings` takes
+`AllDistrictCenters.FirstOrDefault()` as the anchor of every building and `ConnectWithPaths` lays paths from that one
+centre's doorstep. It needs:
+
+1. **A second district centre.** A `buildings` entry such as `{ "template": "PandabornVillageHall.Inkpaws", "district": 1,
+   "offset": [40, 0, 0], "connect": false }`: placed finished, far enough from the first that no path of one reaches the
+   other (the Village Hall is the Inkpaws' only template with `DistrictCenterSpec`; whether a second one can be placed
+   from data alone is the first thing to find out), and **not** joined to the first centre by `connectPaths`.
+2. **Buildings that belong to it.** `"district": 1` on later entries: their offsets are taken from that centre's
+   entrance (`relativeTo: districtEntrance` of district 1) and their paths are laid to that centre's doorstep only.
+3. **The report**: `placedBuildings[].district`, `paths` per district, and "could not test" when the second centre
+   found no level ground or its buildings are not in its district (`DistrictBuilding.District` of each).
+
+**The probe** (`proto/events`, this lane; written on 2026-11-25, compiled, not run): `"district": n` (the n-th finished
+district centre, 0 the first) on `stock` (into that centre's store), `spawnAdults` (on that district's roads; the game
+assigns them by where they stand) and `callFestival` (at that district's first finished square); `square:n` as a shot
+target; and in every sample `festivalDistricts`: per district name its colonists, how many have the day off, how many
+are working, who attended, the festive average, and for each of its squares whether it hosts, its slots, its lanterns
+aloft and the status line its panel would show.
+
+The request the run needs once the harness can do 1 to 3 (the `events` part works today):
+
+```json
+"buildings": [ "PandabornFestivalSquare.Inkpaws", "SmallWarehouse.Inkpaws",
+               { "template": "PandabornVillageHall.Inkpaws", "district": 1, "offset": [40, 0, 0], "connect": false },
+               { "template": "PandabornFestivalSquare.Inkpaws", "district": 1 },
+               { "template": "SmallWarehouse.Inkpaws", "district": 1 } ],
+"events": {
+  "stock": { "Water": 400, "PandabornPaperLantern": 40, "PandabornSteamedShoots": 70, "PandabornPickles": 70, "PandabornSteamedRice": 70 },
+  "actions": [
+    { "atRunHour": 0.1, "do": "spawnAdults", "count": 8, "district": 1 },
+    { "atRunHour": 0.2, "do": "stock", "district": 1, "goods": { "Water": 300, "PandabornSteamedRice": 60 } },
+    { "atRunHour": 0.3, "do": "callFestival", "district": 0 },
+    { "id": "j1", "atRunHour": 0.6, "do": "jumpToHour", "hour": 23.4 },
+    { "after": "j1", "delayHours": 1.6, "do": "jumpToHour", "hour": 15.0 } ],
+  "shots": [ { "name": "d_a_dusk", "day": 1, "hour": 16.5, "select": "none", "focus": "square:0", "zoom": 0 },
+             { "name": "d_b_dusk", "day": 1, "hour": 16.7, "select": "square:1" } ] }
+```

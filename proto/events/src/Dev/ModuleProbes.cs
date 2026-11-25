@@ -34,7 +34,17 @@ namespace Pandaborn.Events.Dev
             return null;
         }
 
-        public static string Do(string what, JObject a, IDayNightCycle clock)
+        /// <summary>The first finished square of a district (null district: none).</summary>
+        public static FestivalSquare SquareOf(Timberborn.GameDistricts.DistrictCenter district)
+        {
+            var f = F;
+            if (f == null || !district) return null;
+            foreach (var s in f.Squares)
+                if (s && s.IsFinished && s.District == district) return s;
+            return null;
+        }
+
+        public static string Do(string what, JObject a, IDayNightCycle clock, Timberborn.GameDistricts.DistrictCenter district, bool districtGiven)
         {
             var f = F;
             switch (what)
@@ -45,14 +55,16 @@ namespace Pandaborn.Events.Dev
                 case "callFestival":
                 {
                     if (f == null) return "festival off";
-                    var square = FirstSquare(f, true);
-                    if (square == null) return "no finished square";
+                    // "district": n calls at that district's square; without it, at the first finished square
+                    var square = districtGiven ? SquareOf(district) : FirstSquare(f, true);
+                    if (square == null) return districtGiven ? "no finished square in that district" : "no finished square";
                     var stock = FestivalStock.Count(square.District, f.Spec);
                     string why = f.WhyNot(square, stock);
                     bool ok = f.Call(square, auto: false);
                     var dishes = new List<string>();
                     foreach (var d in stock.Dishes) dishes.Add(d.Key + "=" + d.Value);
                     return (ok ? "called at hour " + clock.HoursPassedToday.ToString("0.0") + " for day " + f.FestivalDay + (f.Grand ? " (grand)" : "") : "refused: " + why)
+                           + "; district " + (square.District ? square.District.DistrictName : "-")
                            + "; stock lanterns " + stock.Lanterns + ", dishes " + string.Join(" ", dishes) + ", fireworks " + stock.Fireworks;
                 }
                 default: return null;
@@ -79,6 +91,7 @@ namespace Pandaborn.Events.Dev
                 float q = g.NeedPoints(f.Spec.GrandNeedId);
                 if (q >= 0f) { grandN++; grandSum += q; }
             }
+            s["festivalDistricts"] = Districts(f);
             s["festival"] = new JObject
             {
                 ["phase"] = f.Phase.ToString(),
@@ -106,6 +119,70 @@ namespace Pandaborn.Events.Dev
                 ["lockedByTradition"] = TraditionToolLocker.LockedCount,
                 ["panel"] = FestivalSquareFragment.ShownText
             };
+        }
+
+        /// <summary>
+        /// The one-district rule, district by district (keyed by the district's name; "-" for colonists without one):
+        /// colonists, how many have the day off, how many are working, their festive need, and each square of the district:
+        /// whether it hosts, its slots, its lanterns aloft and the status line its panel would show.
+        /// </summary>
+        private static JObject Districts(FestivalService f)
+        {
+            var result = new JObject();
+            foreach (var g in f.Goers)
+            {
+                if (!g) continue;
+                var d = g.District;
+                string name = d ? d.DistrictName : "-";
+                var o = result[name] as JObject;
+                if (o == null)
+                {
+                    o = new JObject { ["colonists"] = 0, ["dayOff"] = 0, ["working"] = 0, ["attended"] = 0, ["festiveSum"] = 0.0, ["festive"] = 0, ["squares"] = new JArray() };
+                    result[name] = o;
+                }
+                o["colonists"] = o["colonists"].Value<int>() + 1;
+                if (f.IsHolidayFor(d) && !g.KeepsWorking) o["dayOff"] = o["dayOff"].Value<int>() + 1;
+                if (EventsProbe.IsWorkingBehavior(EventsProbe.Behavior(g))) o["working"] = o["working"].Value<int>() + 1;
+                if (f.HasAttended(g)) o["attended"] = o["attended"].Value<int>() + 1;
+                float p = g.NeedPoints(f.Spec.FestiveNeedId);
+                if (p >= 0f)
+                {
+                    o["festiveSum"] = o["festiveSum"].Value<double>() + p;
+                    o["festive"] = o["festive"].Value<int>() + 1;
+                }
+            }
+            for (int i = 0; i < f.Squares.Count; i++)
+            {
+                var square = f.Squares[i];
+                if (!square) continue;
+                string name = square.District ? square.District.DistrictName : "-";
+                var o = result[name] as JObject;
+                if (o == null)
+                {
+                    o = new JObject { ["colonists"] = 0, ["dayOff"] = 0, ["working"] = 0, ["attended"] = 0, ["festiveSum"] = 0.0, ["festive"] = 0, ["squares"] = new JArray() };
+                    result[name] = o;
+                }
+                var e = square.Enterable;
+                string status;
+                try { status = f.WhyNot(square, FestivalStock.Count(square.District, f.Spec)) ?? "ready"; }
+                catch (Exception ex) { status = "error: " + ex.Message; }
+                ((JArray)o["squares"]).Add(new JObject
+                {
+                    ["hosts"] = f.Hosts(square),
+                    ["slots"] = e ? e.NumberOfEnterersInside + "/" + e.Capacity : "no slots",
+                    ["skyLanterns"] = square.SkyLanterns,
+                    ["status"] = status
+                });
+            }
+            foreach (var property in result.Properties())
+            {
+                var o = (JObject)property.Value;
+                int n = o["festive"].Value<int>();
+                o["festiveAvg"] = n > 0 ? Math.Round(o["festiveSum"].Value<double>() / n, 3) : -1;
+                o.Remove("festiveSum");
+                o.Remove("festive");
+            }
+            return result;
         }
 
         /// <summary>Colonists inside each square (on its dance slots) / its capacity.</summary>
@@ -209,6 +286,8 @@ namespace Pandaborn.Events.Dev
                 ["converting"] = f.Converting,
                 ["convertQueue"] = f.ConvertQueue,
                 ["twinsMade"] = f.TwinsMade,
+                ["reseeded"] = f.Reseeded,
+                ["endQueue"] = f.EndQueue,
                 ["youngKilled"] = f.YoungKilled,
                 ["held"] = f.HeldNow,
                 ["heldAgain"] = f.HeldAgain,

@@ -50,6 +50,16 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaw
 The flowering twins' plant names come from the generated build (`catalogue/text/plants.json`); the module's own
 `enUS_PandabornEvents.csv` no longer carries them (the text lane removed the six keys on 2026-11-25).
 
+`requests/` holds requests that need nothing new from the harness and wait for the scenarios lane to adopt them:
+`events-wild` (a wild grove nobody harvests: every standing flowered plant reseeds its tile) and `events-wild-farm` (the
+same in reach of a farm: the ones cut for seed are gone), both for a copy built with `-Variant proto\events\variants\crews`.
+The raw block counts plants on tiles without a planting mark apart, under `<template> (wild)`.
+
+Several districts (the harness must place the second district centre and its buildings: `docs/tech/events.md` 14):
+`"district": n` on the actions `stock`, `spawnAdults` and `callFestival` picks the n-th finished district centre (0 the
+first), `square:n` is a shot target, and every sample has `festivalDistricts` (per district: colonists, day off,
+working, attended, festive average, and each square's host state, slots, lanterns aloft and panel status).
+
 Shots may set the camera: `focus` (a target to centre on without selecting it), `zoom`, `vAngle`, `hAngle`; it stays there
 for later shots, and each shot records the camera and the game speed. `flowerNow` starts the Flowering as a cycle start
 does: the plants turn over the following ticks (the Flowering block's `converting`, `convertQueue`, `twinsMade`), so

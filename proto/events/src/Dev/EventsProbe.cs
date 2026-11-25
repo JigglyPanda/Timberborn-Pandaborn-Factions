@@ -51,6 +51,9 @@ namespace Pandaborn.Events.Dev
     /// </code>
     /// Actions: announce, flowerNow, setSetting, callFestival, autoCall, resetCycleRule, setTradition, stock, seedlings,
     /// jumpToHour, startDrought, writeDevSwitch (pandaborn.dev.txt of the running copy, for the next launch), fakeMidEvent.
+    /// Several districts: "district": n on stock, spawnAdults and callFestival (and "square:n" as a shot target) picks the
+    /// n-th finished district centre, 0 the first. The probe does not build a district: the harness places the second
+    /// district centre and its buildings (docs/tech/events.md 14, "What a two-district scenario needs").
     /// Everything that touches the Festival or Flowering module lives in FestivalProbe / FloweringProbe and is only called
     /// when that module's assembly was loaded by the bootstrap, so the probe also runs with a module forced off.
     /// Output: events.json (events_reload.json after a reload) in the run folder, every in-game hour.
@@ -204,11 +207,20 @@ namespace Pandaborn.Events.Dev
 
         // ------------------------------------------------------------------ setup
 
-        private void Stock(JObject stock)
+        /// <summary>The n-th finished district centre (0 the first), or null.</summary>
+        public Timberborn.GameDistricts.DistrictCenter DistrictAt(int index)
+        {
+            var centers = _districtCenterRegistry.FinishedDistrictCenters;
+            return index >= 0 && index < centers.Count ? centers[index] : null;
+        }
+
+        private static int DistrictIndex(JObject a) => a?["district"]?.Value<int>() ?? 0;
+
+        private void Stock(JObject stock, int district = 0)
         {
             if (stock == null) return;
-            var center = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
-            if (center == null) { Event("stock", "no district center"); return; }
+            var center = DistrictAt(district);
+            if (center == null) { Event("stock", "no district center " + district); return; }
             var given = new List<string>();
             foreach (var p in stock.Properties())
             {
@@ -311,7 +323,7 @@ namespace Pandaborn.Events.Dev
                     File.WriteAllText(file, ((string)a["value"] ?? "").Replace(';', '\n'));
                     return "written for the next launch: " + file + ": " + a["value"];
                 }
-                case "stock": Stock(a["goods"] as JObject); return "ok";
+                case "stock": Stock(a["goods"] as JObject, DistrictIndex(a)); return "ok";
                 case "setRecipe":
                 {
                     var m = FindBuilding((string)a["building"])?.GetComponent<Timberborn.Workshops.Manufactory>();
@@ -337,12 +349,14 @@ namespace Pandaborn.Events.Dev
                 case "spawnAdults":
                 {
                     // grown colonists at the district centre (a crowd for the square; never on a loaded save's run)
-                    if (_districtCenterRegistry.FinishedDistrictCenters.Count == 0) return "no district centre";
-                    var dc = _districtCenterRegistry.FinishedDistrictCenters[0];
+                    var dc = DistrictAt(DistrictIndex(a));
+                    if (dc == null) return "no district centre " + DistrictIndex(a);
                     int n = a["count"]?.Value<int>() ?? 10;
                     var at = dc.GetComponent<BlockObjectCenter>().WorldCenterGrounded;
+                    // on the district's own roads: the game assigns an unassigned colonist to the district it stands in (the
+                    // festival block's per-district counts show where they ended up)
                     for (int i = 0; i < n; i++) _beaverFactory.CreateAdult(_districtService.GetRandomDestinationInDistrict(dc.District, at), 0.3f);
-                    return n + " adults near the district centre";
+                    return n + " adults in district " + DistrictIndex(a) + " (" + dc.DistrictName + ")";
                 }
                 case "seedlings":
                 {
@@ -352,7 +366,7 @@ namespace Pandaborn.Events.Dev
                 }
             }
             string result = null;
-            if (FestivalLoaded) result = FestivalProbe.Do(what, a, _dayNightCycle);
+            if (FestivalLoaded) result = FestivalProbe.Do(what, a, _dayNightCycle, DistrictAt(DistrictIndex(a)), a?["district"] != null);
             if (result == null && FloweringLoaded) result = FloweringProbe.Do(what, a, this);
             if (result == null && what == "fakeMidEvent") result = FakeMidEvent(a);
             return result ?? (FestivalLoaded || FloweringLoaded ? "unknown action" : "modules off");
@@ -433,6 +447,9 @@ namespace Pandaborn.Events.Dev
                 if (living == null) continue;
                 var g = e.GetComponent<Growable>();
                 string key = living.IsDead ? "dead" : g != null && !g.IsGrown ? "young" : "grown";
+                // plants on tiles without a planting mark are counted apart ("... (wild)"): the reseeding rule is about them
+                var block = e.GetComponent<BlockObject>();
+                if (block != null && !_plantingService.IsResourceAt(block.Coordinates)) tp += " (wild)";
                 var o = plants[tp] as JObject ?? new JObject { ["grown"] = 0, ["young"] = 0, ["dead"] = 0 };
                 o[key] = o[key].Value<int>() + 1;
                 plants[tp] = o;
@@ -547,6 +564,8 @@ namespace Pandaborn.Events.Dev
             if (what.StartsWith("building:", StringComparison.Ordinal)) return FindBuilding(what.Substring(9));
             if (what == "ringtail") return _entityRegistry.Entities.FirstOrDefault(e => Template(e).StartsWith("RingtailAdult", StringComparison.Ordinal));
             BaseComponent target = null;
+            if (FestivalLoaded && what.StartsWith("square:", StringComparison.Ordinal) && int.TryParse(what.Substring(7), out int di))
+                return FestivalProbe.SquareOf(DistrictAt(di));
             if (FestivalLoaded) target = FestivalProbe.FindTarget(what);
             if (!target && FloweringLoaded) target = FloweringProbe.FindTarget(what);
             if (!target && what == "square") target = FindBuilding("PandabornFestivalSquare.Inkpaws");
