@@ -33,13 +33,17 @@ namespace Pandaborn.Core
 
     /// <summary>
     /// Guard for interface code (ENGINEERING.md, code rule 7): an exception in one of our panels must never break the
-    /// game. The first failure of a named piece is logged once and the piece is switched off for the session.
+    /// game. The first failure of a named piece is logged once and the piece is switched off until the game is left: the
+    /// next game (a new one, or a save loaded) builds its interface afresh and gets a fresh try.
     /// </summary>
     public static class SafeUi
     {
         private static readonly HashSet<string> Broken = new HashSet<string>(StringComparer.Ordinal);
 
         public static bool IsBroken(string piece) => Broken.Contains(piece);
+
+        /// <summary>Called by Core when a game starts loading.</summary>
+        internal static void StartGame() => Broken.Clear();
 
         public static void Run(string piece, Action action)
         {
@@ -48,7 +52,7 @@ namespace Pandaborn.Core
             catch (Exception e)
             {
                 Broken.Add(piece);
-                Debug.LogError("[Pandaborn] interface piece '" + piece + "' failed and is off for this session: " + e);
+                Debug.LogError("[Pandaborn] interface piece '" + piece + "' failed and is off until this game is left: " + e);
             }
         }
 
@@ -59,7 +63,7 @@ namespace Pandaborn.Core
             catch (Exception e)
             {
                 Broken.Add(piece);
-                Debug.LogError("[Pandaborn] interface piece '" + piece + "' failed and is off for this session: " + e);
+                Debug.LogError("[Pandaborn] interface piece '" + piece + "' failed and is off until this game is left: " + e);
                 return fallback;
             }
         }

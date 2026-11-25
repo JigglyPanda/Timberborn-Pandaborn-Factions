@@ -20,49 +20,37 @@ namespace Pandaborn.Core
     ///       if (state.TryGet("Feature", out int v, out string payload) &amp;&amp; v == 1) ... read tolerantly ...
     ///   to save, either state.Set("Feature", 1, payload) whenever it changes, or once:
     ///       state.SetWriter("Feature", 1, () =&gt; payload)               // called on every save
-    /// Entries are never removed by the carrier; a feature removes its own with Remove("Feature").
+    /// Entries are never removed by the carrier; a feature removes its own with Remove("Feature"). Entries of features
+    /// that are off or unknown to this version of the mod, and lines it cannot read, are written back unchanged.
     /// </summary>
     public class PandabornEntityState : BaseComponent, IPersistentEntity
     {
         private static readonly ComponentKey Key = new ComponentKey("Pandaborn.EntityState");
         private static readonly ListKey<string> EntriesKey = new ListKey<string>("Entries");
 
-        private readonly Dictionary<string, (int Version, string Payload)> _entries = new Dictionary<string, (int, string)>(StringComparer.Ordinal);
+        private readonly StoreEntries _entries = new StoreEntries();
         private readonly Dictionary<string, (int Version, Func<string> Writer)> _writers = new Dictionary<string, (int, Func<string>)>(StringComparer.Ordinal);
 
         /// <summary>True when this entity was loaded from a save that had a carrier entry list.</summary>
         public bool LoadedFromSave { get; private set; }
 
-        public IEnumerable<string> Features => _entries.Keys.Concat(_writers.Keys).Distinct();
+        public IEnumerable<string> Features => _entries.Features.Concat(_writers.Keys).Distinct();
 
-        public bool TryGet(string feature, out int version, out string payload)
-        {
-            if (_entries.TryGetValue(feature, out var e))
-            {
-                version = e.Version;
-                payload = e.Payload;
-                return true;
-            }
-            version = 0;
-            payload = null;
-            return false;
-        }
+        public bool TryGet(string feature, out int version, out string payload) => _entries.TryGet(feature, out version, out payload);
 
-        public void Set(string feature, int version, string payload)
-        {
-            Check(feature);
-            _entries[feature] = (version, payload ?? "");
-        }
+        public void Set(string feature, int version, string payload) => _entries.Set(feature, version, payload);
 
         /// <summary>Registers a function that produces the feature's payload at save time (replaces Set for that feature).</summary>
         public void SetWriter(string feature, int version, Func<string> writer)
         {
-            Check(feature);
+            StoreEntry.CheckFeature(feature);
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
             _writers[feature] = (version, writer);
         }
 
         public void Remove(string feature)
         {
+            if (feature == null) return;
             _entries.Remove(feature);
             _writers.Remove(feature);
         }
@@ -73,12 +61,15 @@ namespace Pandaborn.Core
             {
                 foreach (var w in _writers)
                 {
-                    try { _entries[w.Key] = (w.Value.Version, w.Value.Writer() ?? ""); }
-                    catch (Exception e) { Debug.LogError("[Pandaborn] entity state writer of " + w.Key + " failed; its last entry is kept: " + e); }
+                    try { _entries.Set(w.Key, w.Value.Version, w.Value.Writer() ?? ""); }
+                    catch (Exception e)
+                    {
+                        // one line per feature and session: a writer that fails does so on every entity at every save
+                        if (FailedWriters.Add(w.Key)) Debug.LogError("[Pandaborn] entity state writer of " + w.Key + " failed; the last entry is kept: " + e);
+                    }
                 }
-                if (_entries.Count == 0) return;
-                var lines = _entries.OrderBy(e => e.Key, StringComparer.Ordinal).Select(e => e.Key + "|" + e.Value.Version + "|" + e.Value.Payload).ToList();
-                entitySaver.GetComponent(Key).Set(EntriesKey, lines);
+                if (_entries.IsEmpty) return;
+                entitySaver.GetComponent(Key).Set(EntriesKey, _entries.Write());
             }
             catch (Exception e)
             {
@@ -94,16 +85,12 @@ namespace Pandaborn.Core
                 var loader = entityLoader.GetComponent(Key);
                 if (!loader.Has(EntriesKey)) return;
                 LoadedFromSave = true;
-                foreach (var raw in loader.Get(EntriesKey))
+                var bad = _entries.Read(loader.Get(EntriesKey));
+                if (bad.Count > 0 && !_warnedUnreadable)
                 {
-                    int a = raw?.IndexOf('|') ?? -1;
-                    int b = a > 0 ? raw.IndexOf('|', a + 1) : -1;
-                    if (b < 0 || !int.TryParse(raw.Substring(a + 1, b - a - 1), out int version))
-                    {
-                        Debug.LogWarning("[Pandaborn] ignored a malformed entity state entry: " + raw);
-                        continue;
-                    }
-                    _entries[raw.Substring(0, a)] = (version, raw.Substring(b + 1));
+                    _warnedUnreadable = true;
+                    Debug.LogWarning("[Pandaborn] an entity state entry is not readable by this version of the mod; such entries are kept as they are: "
+                                     + PandabornStore.Short(bad[0]));
                 }
             }
             catch (Exception e)
@@ -112,9 +99,7 @@ namespace Pandaborn.Core
             }
         }
 
-        private static void Check(string feature)
-        {
-            if (string.IsNullOrEmpty(feature) || feature.Contains("|")) throw new ArgumentException("bad feature id " + feature);
-        }
+        private static readonly HashSet<string> FailedWriters = new HashSet<string>(StringComparer.Ordinal);
+        private static bool _warnedUnreadable;
     }
 }

@@ -66,10 +66,25 @@ namespace Pandaborn.Core
         }
 
         private static readonly Dictionary<string, string> DegradedStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> DegradedInGame = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>Features that loaded but run in a fallback mode (for example a private game member is gone), with why.
-        /// Listed in the feature report and announced once per save.</summary>
-        public static IReadOnlyDictionary<string, string> Degraded => DegradedStates;
+        /// Listed in the feature report and announced once per save. Holds what was reported for the session
+        /// (ReportDegraded) and for the running game (ReportDegradedInGame).</summary>
+        public static IReadOnlyDictionary<string, string> Degraded
+        {
+            get
+            {
+                if (DegradedInGame.Count == 0) return DegradedStates;
+                var all = new Dictionary<string, string>(DegradedStates, StringComparer.OrdinalIgnoreCase);
+                foreach (var kv in DegradedInGame) all[kv.Key] = kv.Value;
+                return all;
+            }
+        }
+
+        /// <summary>Set by Core's FeatureNotices of the running game: called when a feature reports a new state after
+        /// load, so the player is told then and not at the next load. One slot, replaced by each game.</summary>
+        internal static Action Reported;
 
         private static readonly Dictionary<string, string> NoDataStates = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -81,17 +96,48 @@ namespace Pandaborn.Core
         /// once per game, in Load; it is cleared for the next game by FeatureNotices.</summary>
         public static void ReportNoData(string id, string what)
         {
+            if (string.IsNullOrEmpty(id)) return;
+            bool isNew = !NoDataStates.ContainsKey(id);
             NoDataStates[id] = what ?? "";
             UnityEngine.Debug.LogWarning("[Pandaborn] " + id + " has no data in this game: " + what);
+            if (isNew) Tell();
         }
 
-        internal static void ClearNoData() => NoDataStates.Clear();
+        /// <summary>A new game starts: what features said about the last game (no data, reduced in that game) is gone.
+        /// What they reported for the session stays.</summary>
+        internal static void StartGame()
+        {
+            NoDataStates.Clear();
+            DegradedInGame.Clear();
+        }
 
-        /// <summary>A loaded feature reports that it runs in its written fallback mode (vanilla behaviour) and why.</summary>
+        /// <summary>A loaded feature reports that it runs in its written fallback mode (vanilla behaviour) and why. The
+        /// state holds until the game is closed: for something that stays true in every game of the session (a game member
+        /// that is gone, a failure the feature reports only once).</summary>
         public static void ReportDegraded(string id, string reason)
         {
+            if (string.IsNullOrEmpty(id)) return;
+            bool isNew = !DegradedStates.ContainsKey(id);
             DegradedStates[id] = reason ?? "";
             UnityEngine.Debug.LogWarning("[Pandaborn] " + id + " runs in its fallback mode: " + reason);
+            if (isNew) Tell();
+        }
+
+        /// <summary>As ReportDegraded, for something that is true of the running game only (its data, its faction, a
+        /// failure while it loaded): forgotten when the next game starts. Call it in Load or later, in every game.</summary>
+        public static void ReportDegradedInGame(string id, string reason)
+        {
+            if (string.IsNullOrEmpty(id)) return;
+            bool isNew = !DegradedInGame.ContainsKey(id);
+            DegradedInGame[id] = reason ?? "";
+            UnityEngine.Debug.LogWarning("[Pandaborn] " + id + " runs in a reduced mode in this game: " + reason);
+            if (isNew) Tell();
+        }
+
+        private static void Tell()
+        {
+            try { Reported?.Invoke(); }
+            catch (Exception e) { UnityEngine.Debug.LogWarning("[Pandaborn] telling the player about a feature state failed: " + e.Message); }
         }
 
         public static FeatureState Get(string id) => States.FirstOrDefault(s => string.Equals(s.Id, id, StringComparison.OrdinalIgnoreCase));

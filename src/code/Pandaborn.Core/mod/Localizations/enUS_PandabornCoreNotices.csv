@@ -1,0 +1,19 @@
+ID,Text,Comment
+Pandaborn.Core.Notice,Pandaborn - Factions: {0} Everything else works as usual.,The one message a player gets when parts of the mod do not run; {0} = one or more of the Pandaborn.Core.Notice sentences below (each ends with a full stop)
+Pandaborn.Core.Notice.Off,{0} is switched off until the mod is updated for this game version: {1}.,Sentence in the notice; {0} = one of the Pandaborn.Feature names and {1} = its Pandaborn.Feature .Off line (what will not work). Shown at every load while it lasts
+Pandaborn.Core.Notice.OffPlain,{0} is switched off until the mod is updated for this game version.,Sentence in the notice for a part without an .Off line; {0} = one of the Pandaborn.Feature names
+Pandaborn.Core.Notice.ForcedOff,{0} is switched off by a developer setting.,Sentence in the notice; {0} = one of the Pandaborn.Feature names
+Pandaborn.Core.Notice.Degraded,{0} runs in a reduced form ({1}).,Sentence in the notice; {0} = one of the Pandaborn.Feature names and {1} = the technical reason
+Pandaborn.Core.Notice.NoData,{0} has nothing to work with in this game ({1}).,Sentence in the notice when a part of the mod finds none of its game data; {0} = one of the Pandaborn.Feature names and {1} = what is missing
+Pandaborn.Core.Notice.Duplicate,The mod is enabled twice (for example a local copy and the Workshop copy): disable one of them in the mod manager.,Sentence in the notice when two copies of the mod are enabled
+Pandaborn.Feature.Bell.Off,pandas get no Rested bonus for a short working day and no bell rings,What does not work while the afternoon bell is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Names.Off,new pandas get the game's own names and new foresters do not replant dead trees until told to,What does not work while the names are switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Look.Off,buildings shared with the Folktails keep their Folktails look,What does not work while the building look is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Words.Off,the interface says beaver in places where it should say panda,What does not work while the words are switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Water.Off,"flumes and Flume Gates are solid blocks that carry no water. Spouts, wheels and Dew Collectors work as plain buildings",What does not work while the water toolkit is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Ringtails.Off,no Ringtails arrive and those you have work as Inkpaws. Night posts employ Inkpaws by day and Moon Lofts are plain homes,What does not work while the Ringtails are switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.RingtailsFallback.Off,night posts stay closed whenever the Ringtails are switched off,What does not work while the fallback for night posts is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Tutorial.Off,tutorial steps that ask for an amount of a good are left out,What does not work while the tutorial steps are switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Festival.Off,no festival can be called. The Festival Square is a plain gathering place and the decorations of Tradition can be built without it,What does not work while the Lantern Festival is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Feature.Flowering.Off,bamboo never flowers and never bears seed,What does not work while the Great Flowering is switched off; completes the Pandaborn.Core.Notice.Off sentence
+Pandaborn.Core.Notice.PlayerOff,{0} is switched off in the file {1}.,Sentence in the notice when the player switched a part of the mod off in the text file; {0} = one of the Pandaborn.Feature names and {1} = the file name
