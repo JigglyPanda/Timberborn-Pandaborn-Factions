@@ -581,7 +581,20 @@ from `resources.assets`); keywords checked in both bundles with UnityPy.
 For the events lane: `FestivalSquare.Launch` calls `Play()`, which does nothing while lanterns are still aloft, so
 today each idle call sends a flight of 9; for exactly one lantern per call use `_lanternRise.Emit(1)`.
 
-**In game: not yet proven.** Run `lanterns-1` is queued (hidden desktop): dev copy `E:\PandabornDev\build\proto\pblanterns`
+**In game** (written 2026-11-25 by the docs lane: this lane stopped at the pause with the run still queued, and
+the line here read "not yet proven"). Run `lanterns-1` ran and passed on 2026-11-14 at 18:20 (hidden desktop, 0
+errors): dev copy `E:\PandabornDev\build\proto\pblanterns`
 (`proto/events/build.ps1 -Name pblanterns -Variant proto\ringtail-body\variants\lanterns -NoProbe`, with the new bundles),
 request `proto/ringtail-body/test/lanterns.request.json` (festival called at once, dusk shots every 0.2 h from 15.9 h,
 one at 19 h), output `E:\PandabornDev\build\test\lanterns-1\ev_l_*.png`.
+
+* The prefab loads from the bundle and plays from the square without error.
+* It does not read as a sky of lanterns: in the dusk shots (for example `ev_l_d1_h1650.png`) the only lanterns to
+  be seen from the game camera are small red points at the square itself, hard to tell from its string lanterns.
+* The events lane then changed how the lanterns are released. Its run `events-sky-1` (19:09, PASS, never written
+  up) shows about seventeen lanterns climbing away over the square at 18:00 (`ev_s_h1800_wide.png`).
+* On 2026-11-25 that rework was finished without a game: a continuous release for the whole show (8038a53) and a
+  bigger, slower prefab and sprite (c3b6a33: 0.7 to 0.9 m quads, 0.5 to 0.9 m/s). **`pandabornattachments` has not
+  been rebuilt with it** (Unity was not available that day), so the numbers in the paragraph above describe the
+  bundle as built on 2026-11-14, not the prefab in git.
+* Owed: rebuild both twins of the bundle, then run N10 of `docs/tech/needs-game-run.md` (speed 1 and speed 3).

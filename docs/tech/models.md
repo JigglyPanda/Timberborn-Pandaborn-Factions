@@ -416,7 +416,7 @@ Garden Moon Gate, Bamboo Pinwheel (Weathervane; wind-turned rotor), Hot Pot Hall
   that also has the vanilla or re-themed Aquatic Farmhouse (fields tool `.Single` crash, `models-pass3-2`); the
   prototype strips every Planter spec.
 
-### Pass 3 verdicts (from previews; the in-game proof run did not happen)
+### Pass 3 verdicts (from previews; the in-game runs came in pass 4, `models-pass3-6`, and pass 5, `models-proof2-1`)
 
 | Verdict | Models |
 |---|---|
@@ -425,8 +425,9 @@ Garden Moon Gate, Bamboo Pinwheel (Weathervane; wind-turned rotor), Hot Pot Hall
 | Fair | Paddy House, Hot Spring Bath, Ink Studio, Slide and Swing, Bamboo Fence, the five decorations, Lantern Workshop, Smoke Kiln (the vault reads; the firing shed is plain), Memorial Arch (no longer torii-like, but a little boxy) |
 | Weak / fair | Tea Roastery (the drying trays read as drums from the game camera), Hot Pot Hall (the roof hides the pot and most chillies) |
 
-**Not proven in game, still:** lit windows with occupants at close range, the hammock swinging with a sleeper,
-colonists walking under the Moon Loft. The proof request is ready (`proto/models/tests/pass3.request.json`; run with
+**Not proven in game when pass 3 ended** (all three settled since, in `models-proof2-1`: see "Pass 5 in game";
+only the hammock's swing as motion is still owed): lit windows with occupants at close range, the hammock swinging
+with a sleeper, colonists walking under the Moon Loft. The proof request is ready (`proto/models/tests/pass3.request.json`; run with
 `tools/run_game_test.ps1 -NoBuild -Faction Inkpaws -ExtraMods E:\PandabornDev\build\proto\models -RequestJson
 proto/models/tests/pass3.request.json -WaitForGameSeconds 10800 -TimeoutSeconds 1500`) but the run (`models-pass3-3`) was cancelled unstarted: the
 shared game queue was twelve runs deep. Pass-3 game runs that did happen: `models-pass3-1` (bundle loaded twice,
@@ -588,9 +589,9 @@ calls `GetComponent<TemplateAttachments>().GetOrCreateAttachment("LanternRise")`
 | Large Kite Windmill turning | likely (all-indigo sails make the two frames hard to compare) | `LargeKiteWindmill_turn_0/1.png` |
 | Bamboo Pinwheel turning | not shown: the camera sat inside the Large Kite Windmill's sails | `BambooPinwheel_turn_0/1.png` |
 | Lit windows and lanterns (`lit`) | **proven**: Courtyard House windows and the Moon Loft's moon window glow; every lantern of the Festival Square and Lantern Workshop glows, **yellow-white rather than red** (the glow ignores the vertex tint: look lane) | `*_night_lit.png` |
-| Lit windows with occupants, unforced | **not proven**: the "night" shots were taken at dawn (see below), unlit | `*_night.png` |
-| Colonists walking under the Moon Loft | **partly**: the loft stands over the district centre's door cell and the first path tile was laid under it (`paths.anchor` = the loft's origin, 31 tiles), and colonists stand at its foot by the ladder; no frame caught one mid-walk under it (the walk frames were blocked by the Large Kite Windmill) | `MoonLoft_night.png`, `result.json` |
-| Hammock with a sleeper | **not proven**: the frames show the Paddy House roof beside it, and most were after dark | `Hammock_evening_*.png` |
+| Lit windows with occupants, unforced | **not proven** in this run: the "night" shots were taken at dawn (see below), unlit. **Proven in pass 5** (`models-proof2-1`: `Hammock_night.png`, `FestivalSquare_night.png`) | `*_night.png` |
+| Colonists walking under the Moon Loft | **partly**: the loft stands over the district centre's door cell and the first path tile was laid under it (`paths.anchor` = the loft's origin, 31 tiles), and colonists stand at its foot by the ladder; no frame caught one mid-walk under it (the walk frames were blocked by the Large Kite Windmill). **Proven in pass 5** (`models-proof2-1`: `MoonLoft_walk_6.png`) | `MoonLoft_night.png`, `result.json` |
+| Hammock with a sleeper | **not proven** in this run: the frames show the Paddy House roof beside it, and most were after dark. **Proven in pass 5** (`models-proof2-1`: `Hammock_leisure_02/06/08/09.png`) | `Hammock_evening_*.png` |
 
 What went wrong in the request: `PartialDayNumber`'s fraction 0 is morning, not midnight. The run starts at 1.176 in
 the late morning, dusk is about 1.66, it is dark from about 1.70, light again by 2.0; the 20-hour run ended at dawn.
@@ -674,9 +675,15 @@ Hidden desktop, Diorama, the proof subjects only; 12 of 13 placed (the Moon Loft
 | Trip-Hammer Mill animating | wheel **proven** turning (played by the harness, as WorkshopAnimationController would while working); the hammer beams are too small to compare at this zoom | `TripHammerMill_work_0..3.png` |
 | Trip-Hammer and Treadwheel staffed | **not testable in the prototype**: the mill needs power and the faction's own recipes, the lift needs water under its intake; it needs the catalogue lane's real buildings in a water/power test | |
 
-**Still unproven:** hammock swing visible as motion (stills only show it in use), the trip hammers' fall, the
-Treadwheel Lift's axle, the Festival Square's `#FestivalLights` switching (needs the events module), the
-`#LanternRise` attachment with a real prefab, warm lantern glow in game (needs the look lane's two patches).
+**Still unproven** (list corrected 2026-11-25; the ids are runs of `docs/tech/needs-game-run.md`): hammock swing
+visible as motion (stills only show it in use; K1), the trip hammers' fall and the Treadwheel Lift's axle (N6, K1),
+the Festival Square's `#FestivalLights` switching off before a festival and on at the call (N11).
+
+Settled since this list was written:
+
+* Warm lantern glow in game: `models-lanterns-1` (pass 6, below).
+* The `#LanternRise` attachment with a real prefab: it plays in `lanterns-1` and reads as lanterns climbing over
+  the square in `events-sky-1` (`ev_s_h1800_wide.png`); the events lane's reworked version is run N10.
 
 ### Adoption list for pass 5
 
@@ -724,3 +731,8 @@ sheet `E:\PandabornDev\build\models\preview\lanterns_ingame_sheet.png`.
   the wonder is only illuminated while lit like any building. For the launch to glow, the wonder needs to be lit while
   it is active (an illuminator on the Sky Lantern's blueprint or the wonder code switching its lighting on at
   activation): catalogue / code lane.
+  **Settled the same day** (note added 2026-11-25): the catalogue lights the Sky Lantern every night once it is
+  finished (14de786), and the install gate now takes that shot unforced:
+  `E:\PandabornDev\build\test\gate-20261114-171322\night_PandabornSkyLantern.png` shows the great lantern glowing
+  amber on its tower at night. The glow while it flies after a real launch is run N19 of
+  `docs/tech/needs-game-run.md`.

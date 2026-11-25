@@ -1,6 +1,19 @@
 # The Inkpaws tutorial: a proposal the content lane can generate
 
-Status: proposal (not built); revised for DESIGN.md 4bf5c97 (Pole Mill first, forester-planted tea and pepper, tea at the
+**Status, corrected 2026-11-25: built.** This page was written as a proposal and its first line still said
+"not built". Since then: `catalogue/tutorial.toml` and `catalogue/text/tutorial.json` generate the Inkpaws'
+tutorials (`StartingFactionSpec`, every vanilla tutorial switched off by a faction modifier, the `Stairs.Folktails`
+alias on `Stairs.Inkpaws`); the module `Pandaborn.Tutorial` ships the "have N of a good" step and is switched on in
+`catalogue/rules.toml`. Proven in game: the step type, a stage achieved, the tutorial resumed after a save and a
+reload (`p3-bell-tutorial-2`); every Pandaborn tutorial dormant with no stages in a Folktails game, and the vanilla
+chain intact there (`p3-nodata-2`); the generated stages build in an Inkpaws game (every gate run since, last
+`gate-20261114-171322`). The order of the stages was changed on 2026-11-25 (DESIGN.md change log: the woodcutter
+first, then water and food, poles, dens, a cistern, the inventor, the Steamer, the bell, flumes, tea last), so where
+"Shape" below and `catalogue/tutorial.toml` differ, the catalogue is right. Not yet done: the chain played from a
+new game to its end, on the full build and on the data-only build (runs N15a and N15b of
+`docs/tech/needs-game-run.md`).
+
+Original status line: proposal; revised for DESIGN.md 4bf5c97 (Pole Mill first, forester-planted tea and pepper, tea at the
 Teahouse, buildings hidden until their code's data ships). The content lane generates the tutorial from `catalogue/tutorial.toml`. Mechanism verified in game in stage 0 (`docs/tech/stage0.md`, check 4): a faction gets the
 tutorial system with `StartingFactionSpec`, every vanilla `TutorialSpec` is switched off for it by faction blueprint
 modifiers, and its own tutorial (a dormant `TutorialSpec` switched on by a modifier) runs with vanilla step types.

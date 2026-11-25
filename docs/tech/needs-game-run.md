@@ -9,8 +9,8 @@ It also holds the game-run lists of the three reviews finished that day: the too
 (`docs/tech/tooling-review.md`), the second independent audit (`docs/tech/audit-2.md`) and the mod-compatibility
 audit (`docs/reviews/2026-11-25-mod-compatibility.md`).
 
-**Size:** 85 game runs in 71 items, about 10 hours 40 minutes of game time (about 13 hours of wall clock with
-loading and builds). The first three blocks, which decide whether the test tooling can be trusted, whether the
+**Size:** 87 game runs and one screenshot session in 74 items, about 10 hours 45 minutes of game time (about 13
+hours of wall clock with loading and builds). The first three blocks, which decide whether the test tooling can be trusted, whether the
 build may be installed and whether it can crash, are 21 runs and about 1 hour 15 minutes of game time. Totals per
 tier are at the end.
 
@@ -69,8 +69,9 @@ run N6 instead. T3 and T6 need a person at the console and T4 and T5 need the ow
 | Id | What | Command | Lane |
 |---|---|---|---|
 | P1 | Rebuild the attachments bundle with the reworked rising-lantern prefab, Windows and Mac. Needs Unity, so it could not be done on 2026-11-25 | `powershell -ExecutionPolicy Bypass -File src\unity\PandabornAttachments\build.ps1`, then the same with `-Mac` | Characters (bundle), events (prefab settings) |
-| P2 | Commit the rising-lantern rework (it sits uncommitted in the working tree and on the branch `wip/pause-2026-11-14`) and add the `LanternRise` attachment to `PandabornFestivalSquare` in the catalogue (text of the entry: `docs/tech/ringtail-body.md` 8.7) | (edits) | Events, then catalogue |
+| P2 | Add the `LanternRise` attachment to `PandabornFestivalSquare` in the catalogue (text of the entry: `docs/tech/ringtail-body.md` 8.7; the dev variant `proto\events\variants\sky` carries it meanwhile). The rework itself was committed on 2026-11-25 (code 8038a53, prefab and sprite c3b6a33, dev tools ef00de2); only the bundle (P1) and this catalogue line are missing | (one catalogue edit, after P1) | Catalogue |
 | P3 | Build and validate the staged build | `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 pin,generate,code,bundles,assemble,validate` (add `models` in front of `generate` only if anything under `art/models` or `src/pipeline/kit` changed) | Catalogue |
+| P5 | Every build a player can end up with generates, assembles and passes the release rules: all modules on, the data-only build, and each module or family switched off (nine combinations; a tutorial stage that names a template one of them lacks would throw at the start of every game). Added to the build on 2026-11-25 (7822e6b) | `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 code,combos` (one of them: `-Combo no-code`); the last combination built stays in `E:\PandabornDev\build\combos\stage\PandabornFactions` | Catalogue |
 | P4 | Check nobody is playing and nothing holds the queue | `Get-Process Timberborn -ErrorAction SilentlyContinue` prints nothing; the files `E:\PandabornDev\build\test\HOLD` and `E:\PandabornDev\build\test\modstate.pending.json` do not exist | Whoever runs |
 
 `assemble` (inside P3) refuses a `pandabornlook` bundle older than the last change of
@@ -243,6 +244,21 @@ These run on the installed build. A failure here is a bug every player would hit
     "Beavers"; with Names off colonists have vanilla names; with Tutorial off the game still loads (the tutorial
     stages that use our step type must be left out, not thrown on).
 * **Time:** C5a 8 minutes, C5b 8 minutes for the four. **If it fails:** Bootstrap/Core lane first.
+* **A3, the switch as a player would set it** (release documents lane; `README.md` tells players to use `setx` and
+  says it "has not been tried here"). C5b sets the variable for the test's own process only. This one writes the
+  owner's user environment (`HKCU\Environment`), so **it needs the owner's go-ahead**, and the Steam half needs the
+  owner at the PC.
+  * In a console: `setx PANDABORN_DEV "force-off: Water"`. Open a **new** PowerShell window (an open one does not
+    see the change) and run
+    `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -RunSeconds 60 -OnlyMods JigglyPanda.PandabornFactions -WaitForGameSeconds 10800 -RunId a3-setx`.
+  * Must see: `foundation.json` shows Water `forced-off` and the other nine on; the feature notice names the Water
+    toolkit; no flume piece carries water.
+  * Undo at once: `reg delete HKCU\Environment /v PANDABORN_DEV /f` (the README's `setx PANDABORN_DEV ""` leaves an
+    empty variable behind; check that an empty value really switches nothing off, and correct the README if the
+    variable must be deleted instead). Then confirm with a new window: `$env:PANDABORN_DEV` prints nothing.
+  * The owner's half, once: with the variable set, close Steam completely, start it, start the game from Steam,
+    load an Inkpaws game, read the notice. This is the only way to prove the README's "restart Steam" sentence.
+  * Time: 1 minute of game. If it fails: Bootstrap/Core lane; release documents for the README.
 * **Proven before, one at a time, on dev copies:** Look (`look-module-forceoff-2`), Water (`water-w2-0809`),
   Ringtails (`rt2-forcedoff`), Festival and Flowering (`events-fallback-4`, `events-backon-2`).
 
@@ -462,13 +478,17 @@ or data. Ringtail runs need the probe: build it once with
   `MAP=Meander tests/scenarios/playtest/run_playtest.sh inkpaws-standard Inkpaws Normal 41 n15a-tutorial`.
 * **N15b, every build that changes the chain.** The chain is generated, so it changes with the catalogue's
   switches, not with a run-time switch: Water off leaves the Flumes tutorial out, Ringtails off the Ringtails one,
-  Tutorial off the three "have N" stages, Bell off the bell stage. The one such build that ships is the data-only
-  fallback: `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 generate,assemble,validate -NoCode -NoLink -GenDir E:\PandabornDev\build\nocode\gen\PandabornFactions -StageDir E:\PandabornDev\build\nocode\stage\PandabornFactions`,
-  then `powershell -ExecutionPolicy Bypass -File proto\foundation\build.ps1 -Name pbnocode -Source E:\PandabornDev\build\nocode\stage\PandabornFactions`
-  (check first that this copy really carries no code: the foundation build adds a fresh code build by default;
-  Bootstrap/Core lane), then the same playtest command with `-DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\pbnocode`
-  in place of `-OnlyMods ...` and `-RunId n15b-tutorial-nocode`. A new game that loads proves every stage of that
-  chain builds; the played run proves it can be finished.
+  Tutorial off the "have N" stages, Bell off the bell stage. Without a game, P5 (`pandaborn.ps1 code,combos`)
+  already proves that all nine combinations generate and that no stage names a template its build lacks. With a
+  game, the one combination that must be played is the data-only build, because it is what a player gets when the
+  code cannot load: `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 code,combos -Combo no-code`
+  leaves it in `E:\PandabornDev\build\combos\stage\PandabornFactions`.
+  **Blocked on tooling:** there is no way yet to run that folder in the game without installing it. The dev-copy
+  builder (`proto\foundation\build.ps1`) always adds a fresh code build, and the folder cannot be passed to
+  `-ExtraMods` as it is (same folder name and manifest id as the installed faction). The option the tooling
+  review proposes for the gate (a copy that changes only the manifest id) unblocks this run too. Then: the same
+  playtest command with `-DisableMods JigglyPanda.PandabornFactions -ExtraMods <that copy>` in place of
+  `-OnlyMods ...` and `-RunId n15b-tutorial-nocode`.
 * **Must see:** each tutorial's stages achieved in order, with the day of each; none stuck on a step the scripted
   player demonstrably did (a broken trigger); no stage naming a building the build leaves out; the tutorial-panel
   setting restored afterwards. In N15b the chain skips Flumes, Ringtails and the "have N" stages and still ends.
@@ -552,8 +572,8 @@ or data. Ringtail runs need the probe: build it once with
 * **Command:** `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -OnlyMods JigglyPanda.PandabornFactions -RequestJson <the new file> -TimeoutSeconds 1800 -WaitForGameSeconds 10800 -RunId n21-replant`
 * **Must see:** the Forester's toggle reads on at placement; dead bamboo cleared and young bamboo on the same tiles
   after the water returns; the Folktails Forester's toggle off.
-* **Time:** 6 minutes. **If it fails:** that code lane. (On 2026-11-25 at 05:00 no such code or data was in the
-  repository yet.)
+* **Time:** 6 minutes. **If it fails:** the Core code lane (the code is `src/code/Pandaborn.Names/ForesterCustom.cs`,
+  in the working tree on 2026-11-25).
 
 ---
 
@@ -583,6 +603,7 @@ harness and creates and removes junctions in `Mods`.
 | X7 | Ferris Wheel, Food Stall, MoreZiplineConnections, 4-way District Center | `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -RunSeconds 90 -Screenshots 'overview@start,adult@start,screen@end' -OnlyMods JigglyPanda.PandabornFactions,Tobbert.FerrisWheel,Timberborn.ARandomDiamond.FoodStall,"MoreZiplineConnections",Lapantouflemagic.4Wdistrictcenter -WaitForGameSeconds 10800 -RunId x7-buildings` | no crash; the Village Hall is the starting building; an Inkpaw's wellbeing panel shows the two foreign needs as the audit describes (m1) | 3 | Catalogue; a store-page note |
 | X8 | One other faction mod (Emberpelts, or the most subscribed one then) | Needs the owner to subscribe to it first. Main menu, then a game of each faction in one launch: `-FactionPanelShots`, a request with `then` | both factions listed and playable; the tutorial question of the audit's section 4 answered first | 6 | Compatibility lane, Tutorial lane |
 | X9 | Two copies of ours, with and without TimberUi | `powershell -ExecutionPolicy Bypass -File proto\foundation\build.ps1 -Name pbdupA`, then `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -RunSeconds 40 -ExtraMods E:\PandabornDev\build\proto\pbdupA -OnlyMods JigglyPanda.PandabornFactions -RequestJson proto\foundation\tests\duplicate.request.json -WaitForGameSeconds 10800 -RunId x9-dup`; again with `,TimberUi` added to `-OnlyMods`, `-RunId x9-dup-timberui` | without TimberUi: our duplicate notice, one copy's bundles parked, a game that loads (as `fd-dup-3`); with it: TimberUi's own crash text, copied word for word for the store page | 4 | Bootstrap/Core lane; release documents |
+| A2 | A real building pack offered to the Inkpaws the way `README.md` tells mod authors to ("For mod authors": one `TemplateCollection` file with `CollectionId` `Buildings.Inkpaws` that appends the pack's `.Folktails` templates). `docs/RELEASE.md` 4.5 lists it as open; the README says it has not been run | **SCENARIO TO WRITE** (compatibility lane): a dev mod of one file, `E:\PandabornDev\build\proto\packtest\TemplateCollections\TemplateCollection.PackTest.Buildings.Inkpaws.blueprint.json` plus a manifest that requires the pack, appending the blueprint paths of one installed pack (the Staircase mod is the hard case: it needs materials from the `Folktails` collection). Nothing is copied from the pack and the pack is not edited. Then `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -RunSeconds 120 -OnlyMods JigglyPanda.PandabornFactions,KnatteAnka.Staircase -ExtraMods E:\PandabornDev\build\proto\packtest -Buildings '<one of the pack's template names>' -WaitForGameSeconds 10800 -RunId a2-building-pack` | the pack's buildings are in the Inkpaws' toolbar, one is placed and finished with no "material not found", it wears the Inkpaws' look; a Folktails game with the same mods is unchanged. If it fails, the README's promise to mod authors must change before release | 4 | Compatibility lane; release documents for the text |
 | X10 | Ours alone on the next game patch, before regenerating | Cannot be run until a patch exists. Then: load a saved Inkpaws game (R3's save) | which fallback fires first and the text a player would see (the audit's section 6) | 0 today | Every code lane |
 
 ---
@@ -631,6 +652,34 @@ before a release" is the source; C1 to C5, G1 and N6 to N9 are part of it and mu
 | R4 | Grid extras the gate does not do: every panel opened, every plant grown and killed in each soil state | **SCENARIO TO WRITE** (harness: a `select` pass over every placed building with its panel open); and `powershell -ExecutionPolicy Bypass -File proto\plants\build.ps1`, then `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -OnlyMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\plants -RequestJson proto\plants\tests\states.request.json -WaitForGameSeconds 10800 -RunId r4-plant-states` (the plants prototype must ship no bundle while the faction does) | no panel throws; each of the nine plants shows its alive, dying and dead model | 10 | The lane of the panel; plants lane |
 | R5 | A soak with all of the owner's mods | `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -InGameDays 3 -Speed 3 -SaveAndReload -ReloadSeconds 120 -TimeoutSeconds 1800 -WaitForGameSeconds 10800 -RunId r5-fullmods-days` | PASS for both launches, `logErrorsOurs` empty | 13 | Compatibility audit lane |
 | R6 | Release rules, no game | `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 package` | exit 0: every bundle has its `_mac` twin, the API lists match the game, the economy block has no errors, no `AssetBundles.parked` folder | 0 | Catalogue lane |
+
+### A1. The screenshot session for the store pages (release documents lane)
+
+Not a test: pictures for the Workshop and mod.io pages. The list is `catalogue/text/store/screenshots.md`: of ten
+shortlisted, three can be used as they are, seven must be retaken, and seven that the page needs were never taken.
+It needs the installed build (after G2 and after N10, so the lanterns are the reworked ones), a real village and
+someone to frame each picture: plan an hour with a person, not a scripted run.
+
+* **Missing (seven):** a flume line in a real village (Scoop Wheel in the river, gate, flumes, a green grove beside
+  it, brown ground beyond: the first line of the pitch has no picture); a rice terrace stepping down a hillside with
+  Paddy Spouts and the Paddy House; the working-hours panel showing the rested line in today's build; the new-game
+  screen with the Inkpaws selected (current logo and text); night work, Ringtails raising a building under lantern
+  light while the Inkpaws' windows glow; the festival without developer controls and with the rising lanterns; a
+  wide village by day with no warning icons (the picture that goes first).
+* **Retakes (seven, numbers 4 to 10 of the shortlist):** both peoples at night with the ox, hat and basket (taken
+  with the Reskin on); the village street by the Village Hall (status icons in frame); the small village from above
+  (test layout, warning icons); the Festival Square at night with twenty dancers (developer controls and frame
+  counter on screen); the Sky Lantern glowing on its tower (edge of the test map in frame); a Night Courier Post
+  selected at night (developer controls on screen); the three bamboo fields, green, budding and in flower (bare
+  test ground).
+* **Rules** (from the same file): the Reskin off unless the caption says otherwise; developer mode off
+  (`-NoDevMode`); no status icon in the middle of the frame; one idea per picture.
+* **How:** the village comes from B5's or R2's colony kept with `-KeepSave`, or from a village built by hand. The
+  new-game screen is free in any run with `-FactionPanelShots -OnlyMods JigglyPanda.PandabornFactions`
+  (`factionPanel_Inkpaws.png`). The others need a camera placed by a person: either the owner, or a harness
+  request with camera positions (the `modelShots` of `proto\models\tools\gen_proof2_request.py` show the form).
+  Never with `-Visible` while the owner is at the PC.
+* **Owner:** release documents lane picks and captions; the owner approves (O2, O6).
 
 ## Cosmetic proofs (last, or inside a launch that is already running)
 
@@ -690,16 +739,71 @@ Each of these is still called unproven, untested or pending somewhere. A later r
 |---|---|---|---|---|
 | 0. Test tooling | T1 to T8 (T7 and T8 ride on G1 and G2) | 6 | 12 min | none; T3 and T6 need a person at the console, T4 and T5 the owner |
 | 1. Install gate | G1, G2 | 3 | 16 min | none |
-| 2. Crashes if wrong | C1 to C5 | 12 | 47 min | C5a |
-| 3. New behaviour | N1 to N21 (N4, N5 and N13 share launches) | 21 | 2 h 25 min | N1, N2, N3, N6, N7, N8, N14, N15a, N17, N19, N20, N21; N9, N11, N12 and N16 need an edit to an existing request |
-| 3b. Other mods | X1 to X10 (X1 rides on G1, C2, R5; X10 waits for a game patch) | 12 | 1 h 5 min | X5; X4 needs the harness option of K2; X8 needs the owner to subscribe to a mod |
+| 2. Crashes if wrong | C1 to C5, A3 | 13 | 48 min | C5a; A3 needs the owner's go-ahead |
+| 3. New behaviour | N1 to N21 (N4, N5 and N13 share launches) | 21 | 2 h 25 min | N1, N2, N3, N6, N7, N8, N14, N15a, N17, N19, N20, N21; N9, N11, N12 and N16 need an edit to an existing request; N15b waits for a tooling option |
+| 3b. Other mods | X1 to X10, A2 (X1 rides on G1, C2, R5; X10 waits for a game patch) | 13 | 1 h 9 min | X5, A2; X4 needs the harness option of K2; X8 needs the owner to subscribe to a mod |
 | 4. Balance | B1 to B13 (B11 shares N12) | 21 | 4 h 40 min | B5 (driver), B6, B7, B8, B10, B12, B13; B3 and B9 need an edit |
-| 5. Release soak | R1 to R6 (R6 has no game) | 10 | 1 h 16 min | half of R4 |
+| 5. Release soak | R1 to R6 (R6 has no game), A1 | 10, and one screenshot session | 1 h 16 min, and about an hour with a person | half of R4 |
 | Cosmetic | K1 to K6 | 0 of their own | inside other runs | K2 |
-| **All** | **71 items** | **85** | **about 10 h 40 min** | **22 scenarios or harness options, 6 edits** |
+| **All** | **74 items** | **87, and one session** | **about 10 h 45 min** | **23 scenarios or harness options, 6 edits** |
 
 Wall clock is about a fifth more (loading, dev-copy builds, the report tool): plan thirteen hours, or three to
 four evenings if each window is the two-hour list at the top followed by one tier.
+
+## Test scenarios and probes that still live in `proto/` (work list for the scenarios lane)
+
+`docs/ENGINEERING.md` calls `proto/` throwaway, yet the runs above depend on the files below, which exist nowhere
+else. Nothing has been moved: this is the list to move from. "Used by" names the backlog ids. After each move, fix
+every path in the right-hand column and in this document's commands (they are written against today's paths).
+
+**Request files** (suggested home: `tests/scenarios/<feature>/`, keeping the file name, with `.request.json` where
+it lacks it)
+
+| File today | Used by | Should live in | Paths to fix when it moves |
+|---|---|---|---|
+| `proto/water/tests/w4.json`, `scoop.json` | G1 (through their `.Inkpaws` conversions `tests/scenarios/catalogue/water_w4_inkpaws.json`, `water_scoop_inkpaws.json`), N6, X2, X6 | `tests/scenarios/water/` | `tests/scenarios/catalogue/make_water.py` (`SRC`); the converted files should move to `tests/scenarios/water/` too, and then the two paths in the `gate` stage of `tools/pandaborn.ps1` |
+| `proto/water/tests/parts.json`, `dew.json` | N7 | `tests/scenarios/water/` | `make_water.py` (add both) |
+| `proto/water/tests/w3.json` | N9 | `tests/scenarios/water/` | `docs/tech/water.md` |
+| `proto/water/tests/w1.json`, `w2.json`, `w5.json`, `flume.json`, `longrun.json`, `combo.json`, `crops.json`, `district.json`, `district2.json` | Not in the backlog (their proofs stand); the source for N8 and for B's drought scenario | `tests/scenarios/water/` | `proto/water/tools/gen_tests.py`, which writes `w1` to `w4` |
+| `proto/ringtails/test/throughput.request.json` | N1 | `tests/scenarios/ringtails/` | `proto/ringtails/README.md` |
+| `proto/ringtails/test/module.request.json` | N3, N4, N13 | `tests/scenarios/ringtails/` | same |
+| `proto/ringtails/test/forcedoff.request.json` | C5a, N20 | `tests/scenarios/ringtails/` (the all-off variant in `tests/scenarios/code/`) | same |
+| `proto/ringtails/test/workshops-noringtails.request.json`, `workshops.request.json` | B9 | `tests/scenarios/ringtails/` | `proto/ringtails/test/shelves.py` |
+| `proto/ringtails/test/soak.request.json`, `breeding.request.json`, `ui.request.json`, `folktails.request.json`, `fallback.request.json`, `gate.request.json`, `smoke.request.json` | Not in the backlog (their proofs stand); R2 may reuse `soak` | `tests/scenarios/ringtails/` | `docs/tech/two-peoples.md` |
+| `proto/foundation/tests/phase3_tutorial_bell.request.json` | N14, N15a | `tests/scenarios/code/` | `docs/tech/stage0.md` |
+| `proto/foundation/tests/duplicate.request.json` | X9 | `tests/scenarios/code/` | same |
+| `proto/foundation/tests/carrier_off_then_on.request.json`, `phase3_nodata_then_folktails.request.json`, `words_inkpaws_then_folktails.request.json` | Not in the backlog (proofs stand); C5 and N15b may reuse them | `tests/scenarios/code/` | same |
+| `proto/sound/tests/sound.request.json` | N16 | `tests/scenarios/sound/` | `docs/tech/sound.md` section 6 |
+| `proto/ringtail-body/test/pass3_reskin.request.json`, `pass3_compat.request.json` | N17, X3 | `tests/scenarios/characters/` | `proto/ringtail-body/README.md` |
+| `proto/ringtail-body/test/lanterns.request.json`, `body.request.json`, `combined.request.json`, `night.request.json` | Not in the backlog (superseded by `tests/scenarios/events/events-sky*.request.json`, or proofs stand) | `tests/scenarios/characters/` | same |
+| `proto/plants/tests/states.request.json` | R4 | `tests/scenarios/plants/` | `proto/plants/tools/gen_requests.py`, which writes it |
+| `proto/plants/tests/buds.request.json`, `flowering.request.json`, `pass2.request.json`, `terrace.request.json` | Not in the backlog (proofs stand; `terrace` is the source of a store screenshot) | `tests/scenarios/plants/` | same |
+| `proto/models/tests/proof2.request.json`, `lanterns.request.json` | K1; the pattern for A1 and N19 | `tests/scenarios/models/` | `proto/models/tools/gen_proof2_request.py`, `gen_look_request.py` |
+| `proto/models/tests/all.request.json`, `night.request.json`, `pass2.request.json`, `pass3.request.json`, `stages.request.json`, `water.request.json` | Not in the backlog: superseded by the generated `E:\PandabornDev\build\gen\PandabornFactions.models.request.json` (N18) | Can stay or go | |
+| `proto/look/tests/*.json`, `proto/stage0/tests/*.json` | Not in the backlog (proofs stand; the look module's own scenarios are already in `tests/scenarios/look/`) | Can stay | |
+
+**Probes and builders** (dev-only mods and scripts; suggested home: `tests/probes/<feature>/` for a probe mod, `tools/`
+for a builder that several lanes use)
+
+| Thing today | What it is | Used by | Should live in |
+|---|---|---|---|
+| `proto/foundation/build.ps1` (with `proto/foundation/mod`, `devmodule`, `src`, `tools/merge.py`, `variants/nodata`) | **The dev-copy builder.** Makes `E:\PandabornDev\build\proto\<name>`, a full copy of the installed or staged mod under the id `JigglyPanda.PandabornFactionsDev`. The install gate calls it (the `gate` stage of `tools/pandaborn.ps1`), and so do `proto/events/build.ps1` and every "dev copy" in this document | G1, T2, T6, C5a, N14, N15b, X9, and through the events builder N10 to N12 | `tools/dev_copy.ps1` (the builder) and `tests/probes/foundation/` (the DevCarrier test module, the probe, the fragments). It is the least throwaway thing in `proto/` |
+| `proto/ringtails/build.ps1`, `src/`, `test/analyze.py`, `births.py`, `shelves.py` | The Ringtails test probe (`JigglyPanda.PandabornProtoRingtails`, request key `ringtails`) and its analysis scripts | C5a, N1, N3, N4, N13, N17, N20, B9, X3 | `tests/probes/ringtails/` |
+| `proto/events/build.ps1`, `src/`, `variants/` (`test`, `crews`, `final`, `sky`), `tools/flowering_fair.py` | The events dev copies and probe (`JigglyPanda.PandabornProtoEvents`, request key `events`). Its request files are already in `tests/scenarios/events/` | N10, N11, N12, X2 | `tests/probes/events/` |
+| `proto/ringtail-body/build.ps1`, `src/RingtailBodyProbe.cs`, `mod/` | The character picture probe (request key `ringtailBody`) | N17, X3 | `tests/probes/characters/` |
+| `proto/sound/build.ps1`, `mod/` | Blueprint fragments for the sound test (the probe itself is `src/devharness/SoundProbe.cs`) | N16 | `tests/probes/sound/` |
+| `proto/plants/build.ps1`, `src/PlantLab.cs`, `tools/gen_mod.py`, `gen_requests.py`, `build_dev_bundle.py` | The plant lab (grows and kills each plant in each soil state) | R4 | `tests/probes/plants/` |
+| `proto/water/build.ps1`, `tools/gen_blueprints.py`, `gen_tests.py`, `analyze.py`, `mod/` | The water prototype mod (`.PandabornProto` copies of the pieces) and the generator of its scenarios. The lab itself is `src/devharness/WaterLab.cs` | N9 as written; the source of every water scenario | `tests/probes/water/` for the generators. The `.PandabornProto` templates can be dropped once N6 to N9 run on the catalogue's templates |
+| `proto/models/tools/gen_proof2_request.py`, `gen_look_request.py`, `gen_mod.py` | Writers of model close-up requests | K1, the pattern for N19 and A1 | `tests/scenarios/models/` |
+| `proto/stage0/`, `proto/look/`, `proto/ringtails-shelves/` | Finished prototypes; nothing in the backlog uses them | | Can stay as history |
+
+Already in the right place: `tests/scenarios/catalogue/`, `events/`, `grid/`, `look/`, `playtest/`, and the labs
+inside the harness (`src/devharness`: `WaterLab`, `GridLab`, `SoundProbe`, `GoodsProbe`, `ModelShots`, `Playtest`).
+
+New request files this backlog asks for should be written straight into `tests/scenarios/<feature>/`, not into
+`proto/`: C5a (`code/`), N1, N3 and N20 (`ringtails/`), N2 (`catalogue/` beside `make_phase5.py`), N6 to N8
+(`water/`), N14 (`code/`), N17 (`characters/`), N19 (`models/`), N21 (`code/`), B6 to B8, B10, B12 and B13
+(`playtest/` or `balance/`), X5 and A2 (`compat/`).
 
 ---
 
@@ -770,9 +874,13 @@ Every item of its list is placed above; nothing here is a new run.
 Open, not needing a run: the audit first reached the coordinator as a message only. It is now in the repository
 as `docs/tech/audit-2.md` (commit eef6abe), so this is closed.
 
-### Release documents
+### Release documents (received 2026-11-25)
 
-(empty)
+| The lane asks for | Id | Where it is placed |
+|---|---|---|
+| A screenshot session: seven retakes and seven missing pictures (a flume line in a real village, a spout terrace, the rested line, the new-game faction panel, night work, the festival, a clean wide village) | A1 | After tier 5, before the cosmetic proofs |
+| A real building pack with a `Buildings.Inkpaws` file | A2 | Tier 3b, after X9 |
+| One launch with `PANDABORN_DEV` set through `setx` | A3 | Tier 2, under C5 |
 
 ### Tooling review (received 2026-11-25)
 

@@ -277,23 +277,19 @@ Lotus and lotus root, tofu, a second kitchen tier, more monuments, rope-way vari
 
 ## Where DESIGN.md and the data still disagree
 
-Checked on 2026-11-25 at 05:00, after the balance decisions and the rulings on the second audit of that day. Those
-settled the tea-and-thirst clause, the Star Tower, the Opera Stage, the tutorial order, timber bamboo, steamed seed
-cakes and the Dew Collector; the catalogue, text and code lanes are still applying them, and part 2 shows how far
-the catalogue has got. DESIGN.md wins on intent, the catalogue is what ships. Each row needs a ruling or a lane,
-not an edit here.
+On 2026-11-25 the docs review listed nine places where DESIGN.md promised what the build did not do. The
+coordinator ruled on all nine the same day (DESIGN.md 382e91d: "the design is brought to what the build does"):
+the farm is the Farmhouse, every farmer wears the conical hat, the Dew Collector has no dawn, the ox is not slow,
+scaffolding and rope bridges cost as vanilla, there is no sun or moon in the toolbar and no lantern wave at the
+bell, the Opera Stage is out of the Ringtails' table, and the panda calls are "built, off until the owner has
+listened". What is left, checked against the catalogue at 05:10 that day:
 
 | # | DESIGN.md says | The catalogue and code have | Who |
 |---|---|---|---|
-| 1 | Pillar 2 (line 120) and change log: "Foresters replant dead trees by default" | Nothing found in the catalogue or in `src/code` at the time of checking. The coordinator lists it as new code of 2026-11-25; its proof is run N21 of `docs/tech/needs-game-run.md` | Whichever lane was given it |
-| 2 | Art direction: "conical hats on paddy farmers only" | Every farmer wears it (the Farmhouse and the Paddy House share the `Farmer` outfit) | Characters / catalogue |
-| 3 | The text calls the farm "Farmstead" (pillar 2 twice, first two hours); the change log says it keeps its vanilla name | The vanilla name is kept, and for this building (`EfficientFarmHouse`) it reads "Efficient Farmhouse", while our own texts say "the Farmhouse" | Text |
-| 4 | Pillar 1: the Dew Collector gives "a little drinking water each dawn" | A recipe that runs round the clock | Text (DESIGN wording) |
-| 5 | Pillar 6: Wooden Oxen are "tireless, strong and slow" | Lift 30 and ninety days are set; the ox walks at the vanilla bot's speed (balance.md: 2.7 tiles a second) | Balance |
-| 6 | Pillar 6: bamboo scaffolding and rope bridges "make tall building cheap and light" | Platforms, stairs and bridges are re-themes at vanilla cost | Balance |
-| 7 | Interface: a sun or a moon on every workplace "in the toolbar"; art direction: "lanterns light in a wave at the bell" | Panel marks exist; no toolbar mark; no lantern wave | Coordinator (no lane owns either) |
-| 8 | Sound: "panda bleats" | `sound_id = "Common"` (beaver calls) until the owner has listened to the panda calls | Owner |
-| 9 | Pillar 4's table of "what the Ringtails are" still lists the Opera Stage, and calls them the village's artists | The Opera Stage is an ordinary attraction in the Wellbeing group, as the change log of 2026-11-25 decided | Coordinator (DESIGN's own text) |
+| 1 | The Star Tower ships as a Ringtail night post that keeps its own science cost | Still hidden: it waits for `Ringtails` and for `RingtailVenues`, and that second switch is off and has no module (part 2, *Waits for*) | Catalogue, Ringtails code lane |
+| 2 | "Farmhouse (the vanilla name, already translated)" | The vanilla name of the building the Inkpaws' farm is copied from (`EfficientFarmHouse.Folktails`) is "Efficient Farmhouse"; that is what the game shows, while DESIGN.md, the tutorial and the plant texts say "Farmhouse" | Text |
+| 3 | Foresters replant dead trees by default | Code written on 2026-11-25 and not yet committed or run (`src/code/Pandaborn.Names/ForesterCustom.cs`); its proof is run N21 of `docs/tech/needs-game-run.md` | Core code lane |
+| 4 | Timber bamboo grows in seven days; bamboo seed can be steamed into seed cakes | Check the Plants and Recipes tables in part 2: they show whatever the catalogue holds when they were last generated | Catalogue |
 
 # Part 2: catalogue tables
 

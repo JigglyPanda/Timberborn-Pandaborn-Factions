@@ -459,8 +459,21 @@ Where each one goes:
 * **Many buildings at once.** 3D loops are only audible within 10 units of the listener, so a town of Steamers does not
   stack; the priority (128) and Unity's voice limit decide what drops first, as for vanilla. Not measured with a large
   town.
-* **Area sound for flumes** and the code-played sounds are only proven as clips that load and play; the modules that
-  will call them are not written yet.
+* **Area sound for flumes** and the code-played sounds: when this section was written they were only proven as
+  clips that load and play, and the modules that call them did not exist. They exist now and each has run in a game
+  (corrected 2026-11-25):
+
+  | Sound | Module | Run |
+  |---|---|---|
+  | Shift bell, end of day and dawn | `Pandaborn.Bell` | `p3-bell-tutorial-2`: rang "day 1 End; day 2 Dawn; day 2 End; day 3 Dawn", at most twice a day |
+  | Night clapper | `Pandaborn.Ringtails` | `rt3_ui3` (both shift starts), `rt3_breed3` (all 12 shift starts, 6 per launch) |
+  | Festival drum and firecrackers | `Pandaborn.Festival` | `events-main-3`: 3 plays counted (drum loop start, firecrackers 2D and 3D) |
+  | Flume area sound | `Pandaborn.Water` (`WaterSounds`) | `water-w5b-1556`: its state read while the line ran and again in the drought (probes `sound_running`, `sound_drought`) |
+
+  Not recorded by any run: the red panda twitter at the arrival of a Ringtail family (the call is made; no test
+  logs it) and the bamboo tok. Those two, and a workshop or an attraction starting its loop by itself, are runs
+  N13 and N16 of `docs/tech/needs-game-run.md`. All of the runs above were muted like the ones in section 6, so
+  "played" still means the probe saw the call or the clip's position advance.
 
 ## 10. Notes for the design, from the sound side
 

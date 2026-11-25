@@ -118,7 +118,11 @@ regular build carries the `_mac` files itself (`Pandaborn.Look.csproj`, `tools/p
 ## What only a real Mac can verify
 
 Ask a community tester with a Mac (ideally one Apple Silicon and one Intel) to check, with the mod's `AssetBundles`
-holding `pandabornlook_mac` and `pandabornplants_mac`:
+holding all four `_mac` bundles: `pandabornlook_mac`, `pandabornplants_mac`, `pandabornsounds_mac` and
+`pandabornattachments_mac`. (Corrected 2026-11-25: this list named only the first two, the ones that existed when it
+was written. The sound and attachment twins are built the same way, sit in the staged build beside their `_win`
+twins, and `tools/validate.py --release` compares each pair; neither has been loaded on a Mac. Checks 8 and 9 are
+theirs.)
 
 1. **The game starts and the Inkpaws load** (new game, any map): no error dialog, `Player.log`
    (`~/Library/Logs/Mechanistry/Timberborn/Player.log`) has no `AssetBundle`, `Material ... not found` or shader
@@ -134,6 +138,13 @@ holding `pandabornlook_mac` and `pandabornplants_mac`:
 6. Folktails and Iron Teeth games still look vanilla with the mod enabled.
 7. Memory/performance: no obvious drop compared with a Folktails game (BC7 textures need a GPU that supports BC
    formats; all Apple Silicon and Intel Macs that run the game do, but this is unconfirmed).
+8. **Sounds play** (`pandabornsounds_mac`): a bell is heard when the working day ends, a Steamer at work sizzles,
+   clicking the Village Hall gives its own sound. A missing clip is silent for the sounds our code plays, but a
+   building that names one of our loops throws when it starts, so a Steamer that works without an error is the
+   real check.
+9. **Hats, baskets, the Wooden Ox and the festival's lanterns** (`pandabornattachments_mac`): a farmer wears the
+   conical hat, a gatherer the back-basket; an Inkpaws game loads at all (a character template that names a prefab
+   no bundle holds fails at load: seen on Windows in `events-final-1`).
 
 ## Notes
 

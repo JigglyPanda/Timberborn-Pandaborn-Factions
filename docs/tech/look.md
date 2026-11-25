@@ -175,9 +175,12 @@ What the screenshots show (`look-swap-inkpaws-2/day_overview_crop.png`, same as 
 * Night (`night_overview_crop.png`): the district center's lantern and the campfire glow; lodge and workshop
   windows give a faint warm glow; at this zoom the lattice pattern in the glow cannot be judged. A close-up camera
   in the harness would be needed to review windows properly.
-* Not yet tested: an Inkpaws game followed by a Folktails game *in the same session* (main menu in between). The
-  restore ran on unload (`restored 19 materials on game unload`) and the main menu has a second safety restore,
-  but a two-game session needs a harness option to prove it.
+* An Inkpaws game followed by a Folktails game *in the same session* (main menu in between): **proven** (line
+  corrected 2026-11-25; it read "not yet tested" when this section was written, before the harness could run two
+  games in one launch). The module form was run that way in `look-module-then-2` and `look-module-then-4` (the
+  restore ran on unload and the Folktails game that followed showed the vanilla materials), again with all 35 of
+  the owner's mods in `p4-fullmods-then-ft-1`, and once more in `sound-4`. To be repeated on the build that ships:
+  runs C1 and C2 of `docs/tech/needs-game-run.md`.
 * Honest assessment: convincing as a first pass and far better than expected for zero modelling. Weak spots: the
   woven panels are too yellow and too uniform on big walls; roof tiles read as grey stripes from above (the arched
   lips only show close up); the beaver-dome lodges and round domes stay beaver-shaped; the Beaver Statue is still
