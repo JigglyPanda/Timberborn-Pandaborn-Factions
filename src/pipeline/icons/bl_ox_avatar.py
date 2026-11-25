@@ -1,4 +1,6 @@
-"""Blender side of the Wooden Ox bot avatar (see ox_avatar.py): builds a generic wooden ox from planks in code and
+"""SUPERSEDED (icons pass 4, 2026-11-25): see ox_avatar.py. The shipped bot avatar is a render of the real Wooden Ox.
+
+Blender side of the Wooden Ox bot avatar (see ox_avatar.py): builds a generic wooden ox from planks in code and
 renders a three-quarter bust on a transparent film. Generic on purpose: the ox's game body is not built yet, so this
 shows only what any Wooden Ox will have (plank body and head, horns, a rope harness, a lantern hung at a horn, a
 wheel under the chest).

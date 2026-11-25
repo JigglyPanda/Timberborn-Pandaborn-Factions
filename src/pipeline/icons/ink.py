@@ -259,6 +259,8 @@ class Icon:
     extent: float | None = None    # override the style's ink extent (px)
     nudge: tuple = (0.0, 0.0)      # optical-centre correction, px
     marks: tuple = ()              # corner marks drawn at a fixed pixel size and place (see MARKS)
+    bounds: tuple | None = None    # ((x0, y0), (x1, y1)) in drawing units: frame on this box instead of the ink's own
+                                   # (layers of one picture rendered separately must share it; see toolgroup.py)
     _m: np.ndarray = field(default_factory=lambda: np.eye(3))
 
     # -- transforms ------------------------------------------------------------------------------------------
@@ -390,7 +392,8 @@ def _ink_bounds(icon: Icon):
 
 def render(icon: Icon, style: Style, seed_name: str | None = None) -> Image.Image:
     """Render to an RGBA image of style.canvas x style.canvas."""
-    lo, hi = _ink_bounds(icon)
+    lo, hi = _ink_bounds(icon) if icon.bounds is None else (np.asarray(icon.bounds[0], float),
+                                                            np.asarray(icon.bounds[1], float))
     size = hi - lo
     long_side, short_side = max(size), max(1e-6, min(size))
     aspect = short_side / long_side

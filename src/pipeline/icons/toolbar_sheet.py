@@ -44,7 +44,7 @@ def collect(gen, icons_dir, vanilla_dir):
         icon = d.get("LabeledEntitySpec", {}).get("Icon", "")
         base = name.split(".")[0]
         own = os.path.join(icons_dir, base + "Icon.png")
-        if base.startswith("Pandaborn") and icon.startswith("Sprites/Pandaborn/"):
+        if icon.startswith("Sprites/Pandaborn/"):       # ours by path, whatever the template is called (Pole Mill)
             own = os.path.join(icons_dir, icon.rsplit("/", 1)[1] + ".png")
         if os.path.isfile(own):
             src, kind = own, "ours"

@@ -93,6 +93,45 @@ def shoot_bamboo(c):
             c.stroke(spline((-8, -30), (2, -30), (8, -40)), 0.7)
 
 
+def plume(c, x, y, side, L=30, n=5):
+    """A bamboo seed plume (the Great Flowering): a wiry branchlet arching out from (x, y) to `side` (+1 right,
+    -1 left) and hanging, solid spikelets dangling along it."""
+    st = spline((x, y), (x + side * L * 0.45, y - L * 0.3), (x + side * L * 0.85, y - L * 0.14),
+                (x + side * L, y + L * 0.3))
+    c.stroke(st, 0.7)
+    for k in range(n):
+        px, py = st.pts[min(len(st.pts) - 1, int(len(st.pts) * (0.3 + 0.7 * k / (n - 1))))]
+        c.shape(ellipse(px + side * 0.6, py + 4.6, 2.1, 4.2, rot=-side * 12), 0.45, filled=True)
+
+
+@icon("PandabornTimberBambooInFlower", group=G, style=PLANT,
+      note="Timber bamboo in flower: the same jointed culm, its leaves gone thin, seed plumes hanging from every joint")
+def timber_bamboo_in_flower(c):
+    for x0 in (44, 54):
+        c.stroke(line((x0, 100), (x0 + 6, 6)), 1.0, taper=0)
+    for y in (78, 54, 30):
+        c.stroke(arc(49 + (100 - y) * 0.064 + 0.5, y, 5.5, 200, 340, ry=2), 0.8)
+    plume(c, 57, 52, 1, 36)
+    plume(c, 51, 74, -1, 36)
+    plume(c, 59, 28, 1, 30)
+    plume(c, 55, 32, -1, 32)
+    plume(c, 58, 8, -1, 22, n=4)
+    blade(c, 60, 8, 22, 55, 5)                                        # one last thin leaf
+    for x, y in ((20, 92), (84, 84), (30, 60)):                       # seed falling
+        c.dot(x, y, 0.55)
+
+
+@icon("PandabornShootBambooInFlower", group=G, style=PLANT,
+      note="Shoot bamboo in flower: no shoots, thin culms with seed plumes arching out and hanging over the field")
+def shoot_bamboo_in_flower(c):
+    ground(c, gaps=((24, 32), (46, 54), (68, 76)))
+    for x, top, lean in ((28, 44, -3), (50, 28, 1), (72, 40, 4)):
+        c.stroke(line((x, 88), (x + lean, top)), 0.9, taper=0)
+        c.stroke(line((x + lean * 0.5 - 2.5, (88 + top) / 2), (x + lean * 0.5 + 2.5, (88 + top) / 2)), 0.6, taper=0)
+        plume(c, x + lean, top, 1, 22 if x != 50 else 26, n=4)
+        plume(c, x + lean, top + 2, -1, 22 if x != 50 else 26, n=4)
+
+
 @icon("PandabornPersimmonTree", group=G, style=PLANT,
       note="Persimmon tree: a broad persimmon leaf with a fruit hanging below it")
 def persimmon_tree(c):

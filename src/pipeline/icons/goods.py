@@ -329,16 +329,23 @@ def hot_pot(c):
     steam(c, 68, rim_y - 22, 20)
 
 
-@icon("PandabornTea", note="Tea in a gaiwan: saucer, lidded bowl, steam from the gap")
+@icon("PandabornTea", note="Tea (roasted, a dry good): a lidded tea caddy marked with a tea leaf, a heap of rolled "
+                           "dry leaves beside it")
 def tea(c):
-    c.shape(ellipse(50, 84, 46, 11))
-    c.shape(spline((16, 46), (20, 66), (34, 80), (50, 82), (66, 80), (80, 66), (84, 46), (50, 52), closed=True))
-    c.shape(ellipse(50, 46, 34, 8))
-    with c.at(46, 39, 1, -9):
-        c.shape(spline((-32, 4), (-24, -6), (-10, -12), (10, -12), (24, -6), (32, 4), (0, 8), closed=True))
-        c.shape(rrect(-6, -20, 12, 9, 3))
-    steam(c, 80, 36, 18, 0.9)
-    steam(c, 90, 30, 14, 0.9)
+    # pass 4: tea is a dry good now (served with water at the Teahouse), so no cup and no steam: pass 2's gaiwan
+    # said "a drink you can take from storage"
+    cx, rx, ry = 36, 25, 7
+    c.shape((line((cx - rx, 40), (cx - rx, 88)) + arc(cx, 88, rx, 180, 360, ry=ry)
+             + line((cx + rx, 88), (cx + rx, 40))).close())                                   # the caddy
+    leaf(c, cx - 13, 76, 28, 13, 35, w=0.7)                                                   # its mark: a tea leaf
+    c.shape((line((cx - rx - 2, 24), (cx - rx - 2, 38)) + arc(cx, 38, rx + 2, 180, 360, ry=ry)
+             + line((cx + rx + 2, 38), (cx + rx + 2, 24))).close())                           # the lid
+    c.shape(ellipse(cx, 24, rx + 2, ry))
+    c.shape(rrect(cx - 6, 10, 12, 11, 4), 0.85)                                               # knob
+    c.shape(spline((56, 98), (60, 84), (72, 74), (84, 76), (94, 86), (98, 98), closed=True))  # the heap of leaves
+    for x, y, a in ((68, 88, 20), (82, 90, -30), (76, 81, 60)):
+        with c.at(x, y, 1, a):
+            c.stroke(arc(0, 0, 4.2, 20, 250, ry=3.2), 0.6)
 
 
 @icon("PandabornBambooSeedCakes", note="Bamboo seed cakes: a stack of round pressed cakes with ribbed sides")
@@ -434,6 +441,21 @@ def rice_flour(c):
                    closed=True))
     c.stroke(spline((22, 36), (41, 40), (60, 36)), 1.0)
     c.stroke(spline((60, 62), (64, 76), (62, 90)), 0.7)
+
+
+@icon("PandabornWoodenOx", note="Wooden Ox (the Ox Workshop's recipe; vanilla bot recipes have no icon): the "
+                                 "automaton's block head, horns, bolt eyes and nose ring")
+def wooden_ox(c):
+    for k in (-1, 1):                                                 # horns
+        c.shape(spline((50 + k * 24, 34), (50 + k * 40, 30), (50 + k * 46, 6), (50 + k * 36, 16), (50 + k * 30, 24),
+                       (50 + k * 16, 28), closed=True))
+    c.shape(rrect(18, 26, 64, 46, 9))                                 # the block head
+    c.shape(rrect(30, 52, 40, 40, 7))                                 # snout
+    c.shape(circle(50, 84, 6.5), 0.8)                                 # nose ring
+    for x in (41, 59):
+        c.dot(x, 64, 0.5)
+    for x in (31, 69):                                                # bolt eyes
+        c.shape(circle(x, 40, 5.2), 0.7, filled=True)
 
 
 # ------------------------------------------- cut from the catalogue (draft 2); kept in case they return, not shipped

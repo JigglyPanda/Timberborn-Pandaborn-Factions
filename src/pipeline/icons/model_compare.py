@@ -1,7 +1,8 @@
 """Building models beside their icons: does the icon show the building the player will place?
 
-For each pair, the left part of the model preview (E:\\PandabornDev\\build\\models\\preview\\<Model>_day.png, the
-model is on the left, its vanilla counterpart on the right) and the icon at 224, 56 and 39 px. Writes
+For each pair, the model at the game's zoom (preview/gamezoom/<Model>_day.png, the newest previews) or else the left
+part of the model preview (E:\\PandabornDev\\build\\models\\preview\\<Model>_day.png, the model is on the left, its
+vanilla counterpart on the right) and the icon at 224, 56 and 39 px. Writes
 <out>/models_<n>.png, six pairs per sheet. Pairs default to every building icon whose model preview exists (the
 model id is the icon id without "Pandaborn"; the table below maps the exceptions).
 
@@ -14,8 +15,8 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 # icon name (without Pandaborn/Icon) -> model id, where they differ
-MODEL_OF = {"CisternSmall": "Cistern", "KiteWindmillSmall": "KiteWindmill", "KiteWindmillLarge": "KiteWindmill",
-            "PandaKindergarten": "Kindergarten"}
+MODEL_OF = {"CisternSmall": "Cistern", "KiteWindmillSmall": "KiteWindmill", "KiteWindmillLarge": "LargeKiteWindmill",
+            "PandaKindergarten": "Kindergarten", "PoleMill": None}
 
 
 def _font(size):
@@ -28,10 +29,14 @@ def _font(size):
 
 
 def cell(preview, icon_png, label, font):
-    im = Image.open(preview).convert("RGB") if preview else Image.new("RGB", (1200, 800), (90, 90, 90))
-    im = im.crop((0, 60, 720, 780)).resize((360, 360))
     c = Image.new("RGB", (610, 380), (34, 53, 42))
-    c.paste(im, (0, 10))
+    if preview and os.path.basename(os.path.dirname(preview)) == "gamezoom":
+        im = Image.open(preview).convert("RGB")                      # one model, at the game's zoom, any size
+        im.thumbnail((360, 360), Image.LANCZOS)
+        c.paste(im, ((360 - im.width) // 2, 10 + (360 - im.height) // 2))
+    else:
+        im = Image.open(preview).convert("RGB") if preview else Image.new("RGB", (1200, 800), (90, 90, 90))
+        c.paste(im.crop((0, 60, 720, 780)).resize((360, 360)), (0, 10))
     ic = Image.open(icon_png).convert("RGBA")
     for size, pos in ((224, (372, 10)), (56, (372, 250)), (39, (450, 258))):
         t = ic.resize((size, size), Image.LANCZOS)
@@ -52,9 +57,14 @@ def main():
     cells = []
     for png in sorted(glob.glob(os.path.join(a.icons, "Pandaborn*Icon.png"))):
         name = os.path.basename(png)[len("Pandaborn"):-len("Icon.png")]
-        prev = os.path.join(a.previews, MODEL_OF.get(name, name) + "_day.png")
-        cells.append(cell(prev if os.path.isfile(prev) else None, png,
-                          "%s / %s" % (MODEL_OF.get(name, name) if os.path.isfile(prev) else "no model", name), f))
+        model = MODEL_OF.get(name, name)
+        prev = None
+        for folder in (os.path.join(a.previews, "gamezoom"), a.previews):
+            cand = os.path.join(folder, "%s_day.png" % model)
+            if model and os.path.isfile(cand):
+                prev = cand
+                break
+        cells.append(cell(prev, png, "%s / %s" % (model if prev else "no model", name), f))
     os.makedirs(a.out, exist_ok=True)
     for k in range(0, len(cells), 6):
         part = cells[k:k + 6]

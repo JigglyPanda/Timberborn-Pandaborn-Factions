@@ -177,25 +177,37 @@ def panda(c):
     c.erase(spline((42, 80), (50, 84), (58, 80)), 0.2)
 
 
-@banner("PandabornBannerRingTail")
+@banner("PandabornBannerRingTail", extent=404)
 def ring_tail(c):
-    """The red panda's tail: long and bushy, rising on a gentle curve, ringed along its length."""
-    tail = spline((14, 90), (26, 70), (36, 54), (50, 40), (66, 28), (86, 18))
+    """The red panda's tail (pass 4: pass 2's thin sharply ringed bar could be a raccoon's): an S-curve, slim where it joins the
+    body and thick and bushy from there to a blunt end, a long pale tip, and soft rings: narrow gaps with a tufted fur edge that bow towards
+    the tip and thin out along the tail, not hard black-and-white bars."""
+    tail = spline((38, 100), (24, 84), (24, 64), (40, 50), (60, 42), (72, 26), (66, 8))
     pts = tail.pts
     n = len(pts)
-    for i in range(0, n, 2):                               # bushy: overlapping discs, thinning to the tip
+
+    def radius(t):
+        return 7.0 + 9.5 * math.sin(min(1.0, t * 1.5) * math.pi / 2) - 2.5 * max(0.0, t - 0.82) / 0.18
+
+    for i in range(n):                                     # bushy: overlapping discs, the edge scalloped like fur
         t = i / (n - 1)
-        r = 13 + 3 * math.sin(t * math.pi) - 2 * t
-        c.fill(circle(pts[i][0], pts[i][1], r))
-    for t in (0.16, 0.32, 0.48, 0.64, 0.80):
+        c.fill(circle(pts[i][0], pts[i][1], radius(t) * (1 + 0.05 * math.sin(i * 0.5))))
+    for k, t in enumerate((0.13, 0.27, 0.41, 0.54, 0.66)):
         i = int(t * (n - 1))
-        p = pts[i]
-        d = pts[min(i + 2, n - 1)] - pts[max(i - 2, 0)]
+        q = pts[i]
+        d = pts[min(i + 3, n - 1)] - pts[max(i - 3, 0)]
         d = d / (np.linalg.norm(d) + 1e-9)
         nrm = np.array([-d[1], d[0]])
-        w = 20
-        c.erase(Path(np.array([p - nrm * w - d * 3, p + nrm * w - d * 3, p + nrm * w + d * 3, p - nrm * w + d * 3]),
-                     True))
+        w = radius(t) + 4
+        half = 2.5 - 0.3 * k                               # the rings thin out towards the pale tip
+        front, back = [], []
+        for m in range(25):
+            u = -w + 2 * w * m / 24
+            bow = 4.5 * (1 - (u / w) ** 2)                 # each ring bows towards the tip, like a real band
+            tuft = 0.9 * math.sin(m * 1.9)                 # a soft tufted edge
+            front.append(q + nrm * u + d * (bow + tuft + half))
+            back.append(q + nrm * u + d * (bow - tuft * 0.6 - half))
+        c.erase(Path(np.array(front + back[::-1]), True))
 
 
 # ------------------------------------------------------------------------------------------------ painting

@@ -1,9 +1,14 @@
-"""The Wooden Ox bot avatar (FactionSpec.BotAvatar): a three-quarter studio render of a generic wooden ox, built from
+"""SUPERSEDED (icons pass 4, 2026-11-25): the shipped bot avatar
+`mod/PandabornFactions/Sprites/Pandaborn/Avatars/InkpawsBot.png` is now a render of the real Wooden Ox body, made by
+the characters lane. This script draws the older generic plank ox; it is kept for reference, is not part of any build
+(build_icons.py never called it) and refuses to write into the mod. Its output goes to the build folder.
+
+The Wooden Ox bot avatar (FactionSpec.BotAvatar): a three-quarter studio render of a generic wooden ox, built from
 planks in code (bl_ox_avatar.py), on the same painted teal plate as the Inkpaw and Ringtail avatars
 (characters/make_portraits.plate). Replaces the Folktails robot (`Sprites/Avatars/FolktailsBot`).
 
 usage (venv python): python -I src/pipeline/icons/ox_avatar.py [--samples 96] [--out FILE]
-default --out mod/PandabornFactions/Sprites/Pandaborn/Avatars/InkpawsBot.png (+ .meta.json {"isSprite": true})
+default --out E:\PandabornDev\build\icons\ox\InkpawsBot_generic.png (never the mod: see above)
 """
 import argparse
 import json
@@ -24,9 +29,11 @@ WORK = r"E:\PandabornDev\build\icons\ox"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--samples", type=int, default=96)
-    ap.add_argument("--out", default=os.path.join(REPO, "mod", "PandabornFactions", "Sprites", "Pandaborn", "Avatars",
-                                                  "InkpawsBot.png"))
+    ap.add_argument("--out", default=os.path.join(WORK, "InkpawsBot_generic.png"))
     a = ap.parse_args()
+    if os.path.abspath(a.out).lower().startswith(os.path.join(REPO, "mod").lower() + os.sep):
+        raise SystemExit("ox_avatar.py is superseded: the mod's InkpawsBot.png is the characters lane's render of the "
+                         "real Wooden Ox. Write somewhere outside mod/.")
     os.makedirs(WORK, exist_ok=True)
     raw = os.path.join(WORK, "ox_raw.png")
     r = subprocess.run([BLENDER, "-b", "--factory-startup", "--python", os.path.join(HERE, "bl_ox_avatar.py"), "--",

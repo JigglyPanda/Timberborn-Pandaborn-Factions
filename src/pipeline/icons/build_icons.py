@@ -14,6 +14,11 @@ Output:
   <out>/rendered/<Group>/[unshipped/]<Id>Icon.png                    every icon; unshipped ones in a sub-folder
   <out>/preview/<Id>Icon.png                                          4x on the panel colour
   <out>/<group>_sheet.png, _large.png, _blind.png                     review sheets beside vanilla
+  <mod>/Sprites/Pandaborn/BottomBar/Pandaborn<Group>Icon.png          the tool group icon (toolgroup.py)
+
+Not part of this run: banners.py (decals), store.py (Workshop art), and the superseded ox_avatar.py (the bot avatar
+in the mod is the characters lane's render of the real Wooden Ox; nothing here writes Sprites/Pandaborn/Avatars
+except the faction logo).
 """
 import argparse
 import json
@@ -29,6 +34,7 @@ import plants  # noqa: E402,F401  (registers the plant icons)
 import buildings  # noqa: E402,F401  (registers the building icons)
 import logo  # noqa: E402,F401  (registers the faction logo, proposal)
 import contact_sheet  # noqa: E402
+import toolgroup  # noqa: E402  (the bottom-bar group icon: painted, not line art)
 
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 
@@ -80,6 +86,8 @@ def main():
                 fh.write("\n")
             where = "mod"
         print(f"{d.group}/{name} ({where})")
+    if not a.ids or any("toolgroup" in s.lower() or "nightwatch" in s.lower() for s in a.ids):
+        toolgroup.build(None if a.no_mod else a.mod, a.out)
     for group in sorted({d.group for d in ink.REGISTRY.values()}):
         sub, sample = REVIEW.get(group, (None, None))
         vdir = os.path.join(a.vanilla, *sub.split("/")) if sub else None

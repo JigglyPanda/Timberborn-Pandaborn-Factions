@@ -2,7 +2,9 @@
 
 How the game draws its UI icons, the rules we copy, how our icons are made, and what is still weak.
 Pipeline code: [src/pipeline/icons/](../../src/pipeline/icons/README.md). Measured 2026-11-14 on game 1.1.2.8;
-pass 3 (icons matched to the models, the two families, banners, the Wooden Ox avatar) 2026-11-14.
+pass 3 (icons matched to the models, the two families, banners, the Wooden Ox avatar) 2026-11-14; pass 4 (the weak
+icons redrawn, the workplaces' marks, the tool group icon, store art; the coordinator's task sheet calls it "pass 3")
+2026-11-25.
 
 ## Finding: vanilla icons are drawings, not renders
 
@@ -20,10 +22,13 @@ that looks different. Blender stays useful as a reference (see "Buildings" below
 | Recipe | `RecipeSpec.Icon` | usually the product's good icon | | |
 | Building | `LabeledEntitySpec.Icon` | `Buildings/<Group>/<Name>/<Name>Icon` (next to the blueprint) | 112 x 112 | no mipmaps, clamp |
 | Plant (planting tool, plant panel) | `LabeledEntitySpec.Icon` on the plant | `NaturalResources/<Crops,Trees,Bushes>/<Name>/<Name>Icon` | 112 x 112 | no mipmaps, clamp |
-| Tool group, building group | `ToolGroupSpec.Icon` | `Sprites/BottomBar/...` | ~80-128 | coloured painted icons, a different style |
+| Tool group, building group | `ToolGroupSpec.Icon`, `BlockObjectToolGroupSpec.Icon` | `Sprites/BottomBar/BuildingGroups/<Group>` | 112 x 112 | small painted signs: a gold outline round flat colour, each area hatched in a second tone, no shadow. Ours: `Sprites/Pandaborn/BottomBar/PandabornNightWatchIcon` (below) |
 | Faction logo | `FactionSpec.Logo` | `Sprites/Avatars/<Faction>Logo` | 98 x 98 | flat colour emblem |
 | New-game art, avatars | `FactionSpec.NewGameFullAvatar`, `Avatar`... | `Sprites/Avatars/...` | 420 x 560, 512 x 512 | painted character art |
-| Needs | none | `NeedSpec` has no icon. Only `CriticalNeedSpec.SpriteName` (Hunger, Thirst, Injury...) picks a status badge from `Sprites/StatusIcons` | 512 | |
+| Needs, need groups | none | `NeedSpec` and `NeedGroupSpec` have no sprite field. Only `CriticalNeedSpec.SpriteName` (Hunger, Thirst, Injury...) picks a status badge from `Sprites/StatusIcons` (see "Need and wellbeing icons") | 512 | |
+| Bonuses (wellbeing panel) | `BonusTypeSpec.Icon` | `Sprites/Bonuses/<Id>` | | global vanilla specs; the faction adds none |
+| Good groups (top bar) | `GoodGroupSpec.Icon` | `Sprites/TopBar/<Group>` | | global; our goods sit in the vanilla Food, Ingredients and Materials groups |
+| Workshop preview | file `thumbnail.png` in the mod's root | | 960 x 540 (official examples), ours 1280 x 720 | read only by the Steam Workshop uploader (see "Store art") |
 
 Mod sprites: any `.png` in the mod loads as a `Sprite` covering the whole texture, pivot centre
 (`ModSpriteConverter`). `<file>.png.meta.json` sets texture options (`ModTextureSettingLoader`): `isSprite`
@@ -130,39 +135,95 @@ tofu, lacquer, lacquered poles, persimmon cakes, lotus root, ox parts, bamboo ch
 | PandabornBambooSeedCakes | two scalloped pressed cakes, one standing, one lying, dotted flower pattern | fair |
 | PandabornPaperLanterns | round ribbed lantern, caps, tassel | good |
 
+**Pass 4 (2026-11-25):** 20 icons. `PandabornTea` redrawn: tea is a dry good now (roasted leaves, served with water
+at the Teahouse; nobody takes it from storage), so the gaiwan with steam became a **lidded tea caddy marked with a
+tea leaf and a heap of rolled dry leaves**; no cup, no steam. Verdict: good (at 28 px a jar and a heap; the Pickles
+jar keeps its round belly, collar and bubbles). New: `PandabornWoodenOx`, the automaton's block head with horns, bolt
+eyes and nose ring, for the Ox Workshop's recipe (vanilla bot recipes carry no icon; ours need not either, see "For
+the catalogue lane"). Bamboo seed and seed cakes are unchanged.
+
 **Pass 3 (2026-11-14):** `PandabornPoles` redrawn: two long slim jointed poles laid on the vanilla plank's diagonal,
 hollow ends towards you (pass 2's three short fat poles read as sausages or logs at the 28 px inventory size).
 `PandabornCuredPoles` follows it: the same two poles with solid ends, a lashing and the vanilla sparkles. At 28 px
 Poles reads as a jointed slanted bar beside the vanilla plank's plain board; the sparkles separate the cured ones.
 
-## Coverage (pass 3, 2026-11-14)
+## Coverage (pass 4, 2026-11-25)
 
-Every sprite reference on what this mod adds, from the generated mod (`E:\PandabornDev\build\gen\PandabornFactions`)
-and `mod/PandabornFactions`. "Own" = drawn by this pipeline (or the characters lane for portraits).
+Every sprite reference on what this mod adds, read from a fresh generation of the catalogue (`src/gen/generate.py
+--out E:\PandabornDev\build\icons\gen-scratch\PandabornFactions`, so the shared build folder is not touched) and
+`mod/PandabornFactions`. "Own" = drawn by this pipeline (or the characters lane for portraits).
 
 | What | Count | Own | Still vanilla | Missing | Notes |
 |---|---|---|---|---|---|
-| New buildings `Pandaborn*.Inkpaws` | 57 | 57 | 0 | 0 | 46 before this pass + 11 new (Cistern Tap, Ox Workshop, Standing/Hanging/String lanterns, Bamboo Fence, Potted Pine, Panda Statue, Bamboo Pinwheel, Goldfish Bowl, Garden Moon Gate). The generated data still names the stand-in's icon for the 11 until `generate` runs again; the file names match `find_icon`'s convention |
-| Pole Mill (`LumberMill.Inkpaws`, coming) | 1 | 1 | | | `PandabornPoleMillIcon`: the vanilla lumber mill shows a plank; ours is the vanilla Wood-workshop house outline with a lashed pole bundle. Needs the catalogue's `icon` field (below) |
-| Re-themed vanilla buildings `<Name>.Inkpaws` | 110 | | 110 | | All fine as they are: same name, same model under the material swap. None shows a beaver except the Beaver Statue, which the faction replaces with the Panda Statue |
-| Goods `Pandaborn*` | 17 + 2 renamed | 19 | | | Poles and Cured poles are the vanilla Plank and TreatedPlank renamed and re-iconed by faction modifiers |
+| New buildings `Pandaborn*.Inkpaws` | 58 | 58 | 0 | 0 | 57 in today's generated data + the Star Tower (hidden until a night post can keep its science cost; its icon is ready). New this pass: `PandabornFlumeBridgeSpan` (it showed the vanilla Throttling Valve) |
+| Pole Mill (`LumberMill.Inkpaws`) | 1 | 1 | | | `PandabornPoleMillIcon`, set in the catalogue |
+| Re-themed vanilla buildings `<Name>.Inkpaws` | 110 | | 110 | | Same name, same model under the material swap: the vanilla icon is the right one |
+| Goods `Pandaborn*` | 17 + 2 renamed | 19 | | | Poles and Cured poles are the vanilla Plank and TreatedPlank renamed and re-iconed by faction modifiers. Tea redrawn as a dry good |
 | Vanilla goods kept | 4 | | Paper, Antidote, Dandelion, Water | | Same goods, right icons |
-| Recipes | 13 | 11 | 2 | | Recipe icons come from the product. `PandabornCuredPole` still shows `Sprites/Goods/TreatedPlankIcon` (generator: the renamed good's icon is not used for recipes); Paper and Dew water show the vanilla good, which is right |
-| Plants | 7 | 7 | | | |
-| Faction logo, new-game art, adult/child/contaminated avatars | 6 | 6 | | | |
-| Bot avatar | 1 | 1 | | | New `Sprites/Pandaborn/Avatars/InkpawsBot.png` (Wooden Ox); the faction still names `Sprites/Avatars/FolktailsBot` until the catalogue changes |
-| Banner decals | 4 | 10 drawn | 4 in use | | New set under `Materials/Pandaborn/Decals/Banners/`; the generated faction still uses the four Folktails banners |
-| Tail decals | 4 | 4 exist (characters lane) | 4 in use | | `Materials/Pandaborn/Decals/Tails/PandabornTail*.png` exist; the generated DecalSpecs still point at the Folktails tails |
-| Needs, need groups | | | | | No icon field (`NeedSpec` has none) |
-| Tool groups, bottom bar, bonuses, wellbeing | | | | | The faction adds none |
+| Recipes | 13 | 10 + 2 by modifier | 2 | 0 | A recipe takes its first product's icon; the generator now gives Poles and Cured poles theirs (Plank and TreatedPlank recipes by modifier, `PandabornCuredPole`). Paper and Dew water show the vanilla good, which is right. `PandabornWoodenOx` has an empty icon exactly like the vanilla `Bot.Folktails` recipe (no product); an icon is drawn if wanted |
+| Plants | 9 | 9 | 0 | | New this pass: the flowering twins (they showed the Carrot and the Chestnut tree) |
+| Tool group | 1 | 1 | | | `PandabornNightWatch`: its own bottom-bar sign is drawn; the catalogue still names the Moon Loft icon |
+| Faction logo, new-game art, adult/child/contaminated avatars, Ringtail avatars | 10 | 10 | | | |
+| Bot avatar | 1 | 1 | | | `InkpawsBot.png`: the characters lane's render of the real Wooden Ox (not this pipeline's any more) |
+| Wonder picture | 1 | 1 | | | models lane |
+| Banner decals | 10 | 10 | | | In use since the catalogue lane wired them; the ringed tail redrawn this pass |
+| Tail decals | 4 | 4 (characters lane) | | | In use |
+| Needs, need groups | 26 | | | | No icon field anywhere (below) |
+| Bonuses, good groups, status badges | | | all | | Global vanilla specs; the faction adds none |
+| Workshop preview | 1 | 1 | | | `mod/PandabornFactions/thumbnail.png` (below) |
+
+Every PNG under `Sprites/Pandaborn/{Buildings,Goods,Plants,BottomBar,Avatars}` has its `.png.meta.json` (checked by
+script: 59 + 20 + 9 + 1 + 11 files). Sprites nothing refers to yet: `PandabornStarTowerIcon` (hidden building),
+`PandabornWoodenOxIcon` (optional recipe icon), `BottomBar/PandabornNightWatchIcon` (until the catalogue names it).
 
 Review sheets: `E:\PandabornDev\build\icons\buildings_sheet.png` (beside vanilla, three sizes),
-`toolbar_sheet.png` (the whole Inkpaws toolbar, below), `goods_sheet.png`, `banners_sheet.png`,
-`E:\PandabornDev\build\icons\ox\` (avatar work files), model-against-icon sheets in
-`E:\PandabornDev\build\icons\models_*.png` (`model_compare.py`: each model preview, then its icon at 224, 56 and
-39 px).
+`toolbar_sheet.png` (the whole Inkpaws toolbar, below), `goods_sheet.png`, `plants_sheet.png`, `banners_sheet.png`,
+`toolgroups_sheet.png` (our group sign in the row of vanilla ones), model-against-icon sheets in
+`E:\PandabornDev\build\icons\models_*.png` (`model_compare.py`: each model at the game's zoom, then its icon at 224,
+56 and 39 px), `store_try\review.png` (the store pictures at listing sizes).
 
-## Building icons (58, `buildings_sheet.png`)
+## Building icons (59, `buildings_sheet.png`)
+
+### Pass 4 (2026-11-25): the weak ones redrawn, each workplace's mark
+
+The models lane's game-zoom previews (`E:\PandabornDev\build\models\preview\sheet_gamezoom.png`, `gamezoom\<Id>_day.png`)
+show each workplace's one mark from above; the icon now shows the same mark. Measured against 213 vanilla building
+icons: median ink extent 80 px (vanilla 79), pen 3.3 px (vanilla 3.2), coverage 12.3 % (vanilla ~8-11 %).
+
+| Icon | Was (pass 3) | Now |
+|---|---|---|
+| Kite Windmill | two bellied sails between top and bottom arms: a barrel or a cage at 39 px | the rotor in **three-quarter view** (`sail_rotor`): the spoke tips lie on an ellipse, each sail is a parallelogram as wide as it is turned to you, so the three differ (one face-on behind the mast, two swung round in front), the spokes meet in a raised hub like an umbrella frame, a clear mast with a pennant, a deck |
+| Large Kite Windmill | the same with four sails | the same rotor, taller, on a wider deck, **five sails** |
+| Hammock | a sling from one mast down to a front bar: a deck chair | the vanilla hammock form: a **striped sling between a tall bamboo mast and a short post, a panda's round back and head above the cloth** |
+| Terrace House | a flat front with three bars | the block **seen from the corner**: the tiled skirt roof and railed gallery between the floors, and the flat roof deck with its **two drying trays** large on top |
+| Flume Drop | a nine-stone step | four big stones for the pier, the upper half-pipe, the fall, the lower one |
+| Flume Gate | lever over a bare frame, the pipe sideways | as the model: the half-pipe **runs towards you** through a small **roofed sluice frame**, the slatted board in it, a **tall lever with its hanging stone counterweight** |
+| Paddy Spout | a half-pipe pouring off a stone lip | the model's small roofed stone basin and its **low wide fan of three culms** pouring into the paddy |
+| Treadwheel Lift | a big pedal wheel in the open | the pedal wheel on its axle with the hand rail **under the tiled shed roof** of the model, the chain of pallets coming up the sloping half-pipe |
+| Ox Workshop | a four-legged plank ox on a wheel | the Wooden Ox as it is now: an **upright horned automaton** (block head, bolt eyes, nose ring, plank limbs) and a cog |
+| Pickle Yard | lidded jars in front of the shed | five big jars **under their tied cloth tops** (solid: the red cloth is the mark from above), no shed (with it the yard and the Tea Roastery were both "a house with round things in front") |
+| Tea Roastery | a wok on a brick stove | the roasting shed with its chimney and the **round trays of tea** on the rack, the tea sprig on the two nearest |
+| Lantern Workshop | a bench with a frame and a lantern | the tiled workshop with its **cord of finished lanterns** between bamboo poles |
+| Paddy House | a tiled farmhouse | the farmhouse under its **thatch** (`roof_thatch`: rounded ridge, shaggy eave, a batten, straw), posts, the paddy |
+| Night Builders' Post | a lantern post, a mallet and a pole | the model's **shear legs** (two lashed spars and a guy rope) with the lantern hung from the top, and the mallet |
+| Star Tower | telescope on the tower | the same with the **vanilla Observatory's four-point stars** round the telescope: night science at a glance, beside the moon mark |
+| Opera Stage | with the moon mark | the same drawing **without the moon**: it ships as an ordinary attraction since 2026-11-25 (DESIGN.md), in Wellbeing |
+
+**New:** Flume Bridge Span (`PandabornFlumeBridgeSpanIcon`): the bridge's half-pipe on its two X-trestles crossing
+over another flume that runs towards you underneath (the flume family's motif twice).
+
+Kept after checking against the game-zoom previews: Steamer (the basket tower), Hot Pot Hall (the pot under its
+raised roof), Smoke Kiln, Kitchen (its table of dishes; the model's mark is a millstone under an awning, which would
+read as the Trip-Hammer Mill), Trip-Hammer Mill, Nap Platform (ground deck, canopy, sleepers), the cisterns, Dew
+Collector, Village Hall, homes, monuments, decorations, the night couriers' and gatherers' posts.
+
+Verdicts (pass 4): good: Hammock, Terrace House, Flume Gate, Ox Workshop, Pickle Yard, Lantern Workshop, Star Tower,
+Opera Stage. Fair: Kite Windmill and Large Kite Windmill (sails round a mast with a pennant at 56 px; at 39 px a
+cluster of upright panels, no longer a barrel), Flume Drop, Flume Bridge Span (close to the Flume Bridge on purpose),
+Paddy Spout, Treadwheel Lift, Tea Roastery (trays read as baskets), Paddy House (the thatch reads as a patterned roof
+at 39 px), Night Builders' Post (shear legs can read as a tent). Weak: none left on the sheet.
+
+### Pass 3 (2026-11-14)
 
 Pass 3 matched the icons to the models (`E:\PandabornDev\build\models\preview\<Id>_day.png`; pass-2 and pass-3
 model work). Measured against 213 vanilla building icons: median ink extent 79 px (vanilla 79), pen 3.3 px
@@ -215,10 +276,11 @@ Workshop, Smoke Kiln, Dry-Stone Wall, Bamboo Water Wheel, Slide and Swing, Kinde
 ### The two families
 
 **Night folk: the moon mark.** Every Ringtail building (Moon Loft, Night Builders' Post, Night Couriers' Post, Night
-Gatherers' Post, Star Tower, Opera Stage: the catalogue's `waits_for = "Ringtails"`) carries one solid crescent,
+Gatherers' Post, Star Tower: the catalogue's Night Watch group; the Opera Stage left the family on 2026-11-25, when it
+became an ordinary attraction) carries one solid crescent,
 **drawn by the renderer at a fixed pixel size and place**, not by the drawing: `ink.MARKS["moon"]`, centre 17 px from
 the top-right corner of the 112 px icon, radius 11 px, a 3 px clear ring erased round it (`@b(..., moon=True)`). It is
-therefore identical on all six whatever each drawing's scale (pass 2 drew it in drawing units, so it changed size
+therefore identical on all five whatever each drawing's scale (pass 2 drew it in drawing units, so it changed size
 with the drawing). Vanilla puts its corner signs in the same place (Discharge's arrow, the Observatory's own moon). At
 56 px it is a 5.5 px crescent; at 39 px a 4 px crescent that still shows its notch. Each night post is also its day
 counterpart's job (builders: mallet and pole; couriers: back-basket; gatherers: mushroom basket) plus a lantern.
@@ -258,7 +320,18 @@ Cistern Tap (Water) share the vat but sit in different groups; the flume pieces 
   Gate, Paddy Spout, Nap Platform, Ox Workshop (an ox, but toy-like), Treadwheel Lift, Trip-Hammer Mill, Night
   Gatherers' Post.
 * weak: **Kite Windmill small/large** (an upright-axis sail windmill is hard to draw flat: at 39 px it reads as a
-  barrel or a cage; the wind lines help a little), **Hammock** (the sling-on-a-mast reads as a deck chair).
+  barrel or a cage; the wind lines help a little), **Hammock** (the sling-on-a-mast reads as a deck chair). Both
+  redrawn in pass 4 (above).
+
+### Tool group icon (pass 4)
+
+`src/pipeline/icons/toolgroup.py` paints `Sprites/Pandaborn/BottomBar/PandabornNightWatchIcon.png` (112 x 112,
+`{"isSprite": true}`) in the bottom bar's own style, which is not the building icons' line art: a gold outline
+(190, 160, 108) about 3.5 px wide round flat colour, each colour area hatched in a second tone, no shadow. The sign is
+the night folk's two things: the **crescent moon** of the moon mark in the pale yellow of the vanilla Housing door,
+and a **red paper lantern** hung from its upper horn. On `toolgroups_sheet.png` it sits between the vanilla Wellbeing
+masks and the Wood log at 112, 56 and 40 px and reads as one of the set. Layers of one sign are separate drawings
+on a shared frame (`ink.Icon.bounds`).
 
 ## Banner decals (10, `banners_sheet.png`)
 
@@ -273,16 +346,28 @@ half-pipe end-on with water, on X stakes), Bell, Panda (face; patches cut so the
 red panda's ringed tail). No script, no religious signs. Verdicts: good except RingTail (fair: reads as a ringed tail,
 could be a raccoon's) and Rice (fair at 32 px).
 
-## Wooden Ox avatar (`InkpawsBot.png`)
+**Pass 4:** RingTail redrawn (the other nine files are byte-identical after a re-run): an S-curved tail, slim where
+it joins the body and thick and bushy from there to a blunt end, a long pale tip, and soft rings (narrow gaps with a
+tufted edge that bow towards the tip and thin out along the tail) where pass 2 had a thin bar cut by hard stripes.
+Two earlier tries are worth knowing: a fat curled tail with zigzag gaps read as a shrimp, a straight thick one as a
+loaf. Verdict: fair to good; a tail at 64 px, a ringed comma at 32 px.
 
-`src/pipeline/icons/ox_avatar.py` (driver) and `bl_ox_avatar.py` (Blender): a generic wooden ox built from planks in
-code (plank body with pegs, block head and snout, horns, ears, a rope collar, halter and rein, plank legs, one iron-shod
-wheel under the chest, a red paper lantern glowing on a string from the right horn), Cycles, three-quarter bust, on
-the same painted teal plate with the torn edge as the Inkpaw and Ringtail avatars (`characters/make_portraits.plate`).
-512 x 512, `{"isSprite": true}`. Generic on purpose: the ox's game body is not built; when it is, render that instead.
-Verdict: fair (clearly a wooden ox with a lantern, toy-like; the halter reads a little like a smile).
+## Wooden Ox avatar (`InkpawsBot.png`): superseded
 
-## Plant icons (7, `plants_sheet.png`)
+`mod/PandabornFactions/Sprites/Pandaborn/Avatars/InkpawsBot.png` is now the characters lane's render of the real
+Wooden Ox body. This pipeline's generic plank ox (`ox_avatar.py`, `bl_ox_avatar.py`, pass 3) is **superseded**: the
+two files stay for reference, are marked so at the top, were never part of `build_icons.py`'s run, write to
+`E:\PandabornDev\build\icons\ox\` by default and refuse any path inside `mod/`. Nothing in this folder writes
+`Sprites/Pandaborn/Avatars` except the faction logo.
+
+## Plant icons (9, `plants_sheet.png`)
+
+**Pass 4:** the flowering twins, which showed their basis' vanilla icon (a carrot, a chestnut leaf):
+`PandabornTimberBambooInFlowerIcon` (the timber bamboo's jointed culm with seed plumes hanging from every joint where
+the leaf sprays were, one last thin leaf, seed falling) and `PandabornShootBambooInFlowerIcon` (no shoots: three thin
+culms on the field with plumes arching out and hanging). A plume (`plume()`) is a wiry branchlet with solid spikelets
+dangling along it. Nobody plants them, so the icon shows only on the plant's own panel. Verdicts: timber good, shoot
+fair (three drooping tufts; the ground rows say "field").
 
 Shoot bamboo (shoots breaking the field, a leaf spray), timber bamboo (jointed culm with leaf sprays), cabbage,
 rice (tufts and bowing ears over paddy water), tea bush (clipped mound with a bud and two leaves on top), Sichuan
@@ -303,45 +388,98 @@ Three candidates in the vanilla form (rounded diamond, one flat colour, solid em
 **Picked: B, the paw print.** It replaces `Sprites/Pandaborn/Avatars/InkpawsLogo.png` (was a 256 px cartoon panda
 face in a green disc); the meta stays `{"isSprite": true}`.
 
+## Need and wellbeing icons: none to draw (checked 2026-11-25)
+
+From the decompiled game (1.1.2.8) and the vanilla blueprints:
+* `NeedSpec` (Id, Order, NeedGroupId, CharacterType, DisplayName, values...) and `NeedGroupSpec` have **no sprite
+  field**. The need rows of the entity panel and the wellbeing window (`Timberborn.WellbeingUI.NeedView`,
+  `NeedViewFactory`, `PopulationWellbeingCounter*`) are text and bars; building effect lists
+  (`NeedApplicationUI.NeedEffectsSpecDescriber`, attractions, ranged effects) are text.
+* The wellbeing window shows three pictures: the **faction logo** (`BasicStatisticsPanelFactory`: ours), the
+  **bonus icons** (`WellbeingSummaryBonusFactory`: `BonusTypeSpec.Icon`, the four global vanilla bonus types; the
+  faction only raises the MovementSpeed cap by modifier) and, in the goal rows, the avatar of an unlockable faction.
+* `CriticalNeedSpec.SpriteName` names a status badge under `Sprites/StatusIcons`. Only the vanilla critical needs
+  have one (Hunger, Thirst, Exhaustion, Injury, ChippedTeeth, BadwaterContamination and the bots' two), all in the
+  `Common` need collection every faction shares; none of our 26 needs is critical. Those badges are the game's own
+  and right for pandas too. (A faction could re-point one with a blueprint modifier on `SpriteName`; not needed.)
+* `GoodGroupSpec.Icon` (top bar) is global; our goods use the vanilla Food, Ingredients and Materials groups.
+So no need of ours shows a vanilla or blank icon anywhere, and there is nothing to draw. If a critical need is ever
+added, its badge goes to `Sprites/StatusIcons/<name>` (a new name, never a vanilla one) in the status badges' style.
+
+## Store art (pass 4)
+
+`src/pipeline/icons/store.py`, Pillow only, from pictures already in the repository; writes `art/store/` and the
+mod's `thumbnail.png`.
+
+* **What the game uses.** The Steam Workshop uploader (`SteamWorkshopModUploadingUI.SteamWorkshopModThumbnail`)
+  takes `thumbnail.png` (or `.jpg`/`.jpeg`) from the mod's root as the Workshop item's preview picture, else its
+  own default. Nothing else reads it (the in-game mod list has no pictures). The official examples (Empty,
+  TailsAndBanners) ship 960 x 540; the Reskin ships 1280 x 720. Steam refuses preview files of 1 MB or more and
+  crops the preview to a square in listings; mod.io wants a 16:9 logo of at least 512 x 288.
+* `art/store/workshop_preview_1280x720.png` = `mod/PandabornFactions/thumbnail.png` (1280 x 720, 656 KB; the script
+  fails above 950 KB): the dusk village under the rising Sky Lantern (the wonder picture, a render of the mod's own
+  models; its sky continued upwards with painted stars and lanterns), the logo and the title, the avatar plates of
+  the Inkpaw, the Ringtail and the Wooden Ox, four banner decals in the margins. Title and plates sit inside the
+  middle 720 px, so Steam's square crop keeps them.
+* `art/store/thumbnail_square_1024.png` (1024 x 1024, 650 KB): the same pieces stacked for square slots.
+* The only writing is the title "Pandaborn - Factions" in Segoe UI Bold; no script on any texture.
+* The family resemblance to the Reskin's thumbnail (dark ground, a row of avatar plates) is on purpose.
+* **Wants a picture from the game later:** the Workshop gallery needs real screenshots (the store lane's list,
+  `catalogue/text/store/screenshots.md`: a wide village by day, a flume line, the festival without developer
+  controls). When a clean wide village shot exists it would make a stronger backdrop than the wonder strip; the
+  script takes any picture as `village()`. The preview has not been seen in the uploader's own window.
+
 ## For the catalogue lane
 
-1. **Banners:** replace the four Folktails banner DecalSpecs (`Decals/Pandaborn/Decal.Banner1..4.Inkpaws`, texture
-   `Materials/Banners/Folktails/BannerN.Folktails`) with ten, category `Banners`, `FactionId` Inkpaws, textures
-   `Materials/Pandaborn/Decals/Banners/PandabornBanner{Paw,Bamboo,Moon,Lantern,TeaLeaf,Rice,Flume,Bell,Panda,RingTail}`.
-2. **Tails** (characters lane's files, noticed here): the four tail DecalSpecs still use the Folktails tails although
-   `Materials/Pandaborn/Decals/Tails/PandabornTail{BeadCord,Ribbon,TipCream,TwinBands}.png` exist.
-3. **Bot avatar:** `catalogue/faction.toml` `bot_avatar = "Sprites/Pandaborn/Avatars/InkpawsBot"` (now
-   `Sprites/Avatars/FolktailsBot`).
-4. **Pole Mill:** when `LumberMill` joins `buildings.toml`, give it
-   `icon = "Sprites/Pandaborn/Buildings/PandabornPoleMillIcon"` (a re-themed building does not take the naming rule).
-5. **Recipe icon of a renamed good:** `Recipe.PandabornCuredPole` shows `Sprites/Goods/TreatedPlankIcon`. In poles mode
-   "rename" the generator should give recipes producing Plank / TreatedPlank the renamed icon
-   (`Sprites/Pandaborn/Goods/PandabornPolesIcon`, `PandabornCuredPolesIcon`).
-6. **Tool groups:** the flume set (Flume, Corner, Drop, Bridge) sits in **Decoration** (its PoleBanner basis) between
-   the stream gauge and the banners, while the Flume Gate and Paddy Spout are in Landscaping and the Scoop Wheel,
-   Cistern Tap and Treadwheel Lift in Water. Suggest `tool_group = "Water"` (or Landscaping, beside the gate) for the
-   four flume pieces so the water family sits together. The **Lantern Workshop** is in **Food** (archetype workshop);
-   it makes paper lanterns from paper, so Wood (beside the Smoke Kiln and Paper Mill) fits better.
-7. Run `generate` again: the 11 new building icons follow the naming rule (`Pandaborn<Name>Icon`, checked against
-   the report's "no icon" notes and `find_icon`) and are picked up without a catalogue change.
+**All seven requests of pass 3 were adopted** (seen in a fresh generation): the ten banners and the four tails are
+wired, `FactionSpec.BotAvatar` names `Sprites/Pandaborn/Avatars/InkpawsBot` (the characters lane's ox portrait), the
+Pole Mill has its icon, recipes of the renamed poles show the pole icons, the flume set and the Lantern Workshop
+moved to Water and Wood, and the eleven icons of that pass were picked up by the naming rule. New requests:
+
+1. **Night Watch tool group:** `catalogue/faction.toml` `[tool_groups.PandabornNightWatch]`
+   `icon = "Sprites/Pandaborn/BottomBar/PandabornNightWatchIcon"` (now the Moon Loft's building icon, "until the
+   icons lane draws a bottom-bar moon": it is drawn).
+2. **Flume Bridge Span:** the sprite is `Sprites/Pandaborn/Buildings/PandabornFlumeBridgeSpanIcon` (with its
+   `.png.meta.json`). It follows the naming rule, so `generate` picks it up with no catalogue change (checked: the
+   fresh generation no longer names the Throttling Valve); set `icon` explicitly only if you prefer.
+3. **Flowering twins:** `Sprites/Pandaborn/Plants/PandabornShootBambooInFlowerIcon` and
+   `PandabornTimberBambooInFlowerIcon`, by the naming rule as well (checked the same way).
+4. **Wooden Ox recipe (optional):** `Recipe.PandabornWoodenOx` has `Icon: ""`, as the vanilla bot recipes do. If the
+   Ox Workshop's panel shows an empty square, give the recipe
+   `icon = "Sprites/Pandaborn/Goods/PandabornWoodenOxIcon"`; if not, say so and the sprite is removed.
+5. **Opera Stage:** its icon lost the moon mark (an ordinary attraction). If it ever returns to the Night Watch
+   group, tell the icons lane: one argument (`moon=True`) puts it back.
+6. **Star Tower:** hidden today; its icon (`PandabornStarTowerIcon`, moon mark and stars) is in the mod, unused.
+7. **thumbnail.png** is a new hand-written file in the mod's root (`tools/validate.py` already allows it); `package`
+   could check it stays under 1 MB.
 
 ## Open quality issues
 
-* **Kite Windmill** and **Hammock** icons (see verdicts). A Kite Windmill with its model in game may make a
-  different drawing obvious; the Hammock may be better as the sleeper alone.
+* **Kite Windmills** are fair, not good: at 39 px three or five upright panels with a pennant. Seeing the mill turn
+  in game may suggest a better drawing.
+* **Tea Roastery** (trays read as baskets), **Paddy House** (thatch), **Night Builders' Post** (shear legs or a
+  tent), **Flume Drop**, **Flume Bridge Span**, **Paddy Spout**, **Treadwheel Lift** (its catalogue model is still a
+  stand-in on the vanilla power wheel): fair.
 * **Goods are still denser than vanilla**: median coverage 19 % against 15 %. The gap is the subjects: bowls, jars
   and steamers are closed shapes with rims.
 * **Sichuan pepper** reads as "seed pods on a sprig"; colour would settle it and the style has none.
 * **Persimmons** at 28 px: the cap shrinks to a lid line.
-* **Bowl family**: steamed rice, sweet rice balls, hot pot, tea and the steamer are all round vessels; fine at 40 px,
-  close at 28 px.
-* Not checked in game: no game run in pass 3 (the queue was deep). The loader path is verified in the decompiled code.
+* **Bowl family**: steamed rice, sweet rice balls, hot pot and the steamer are all round vessels; fine at 40 px,
+  close at 28 px. Tea left the family in pass 4.
+* **Not checked in game** (no game run in pass 3 or pass 4): every icon at the toolbar's real size, the tool group
+  sign in the bottom bar (and whether the bar tints or scales a 112 px sign like the vanilla ones), the new plant
+  icons on the flowering twins' panel, the thumbnail in the Workshop uploader. The loader paths are verified in the
+  decompiled code and by a fresh generation.
 
 ## Still to do
 
-**Need icons: none needed.** `NeedSpec` has no icon field; only critical needs show a status badge, and the
-Inkpaws reuse the vanilla ones.
+**Need icons: none needed** (see "Need and wellbeing icons").
 
-**When new models land:** Trip-Hammer Mill, Kitchen, Ox Workshop, Treadwheel Lift, Cistern Tap, Dry-Stone Wall and
-the Large Kite Windmill have no model yet; their icons are drawn from the design and should be checked against the
-model when it exists (`model_compare.py` puts each model preview beside its icon).
+**Wants a game screenshot or render later:** a look at the toolbar and bottom bar in a running Inkpaws game
+(`-Screenshots screen@start` with the Night Watch group open), and clean village screenshots for the Workshop
+gallery and, if wanted, a new backdrop for the preview.
+
+**Models:** the seven buildings pass 3 listed as having no model (Trip-Hammer Mill, Kitchen, Ox Workshop, Treadwheel
+Lift, Cistern Tap, Dry-Stone Wall, Large Kite Windmill) all have kit models now, and pass 4 checked each icon against
+its game-zoom preview. One is not adopted yet: the catalogue still builds the Treadwheel Lift on the vanilla power
+wheel as a stand-in (its kit model is for a water-pump basis); the icon shows the kit model.
