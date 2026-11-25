@@ -356,6 +356,7 @@ Timberborn is © Mechanistry. This is an unofficial fan mod.
 
 ## Licence
 
-No licence file yet. The Reskin repository has none either, so there was nothing to match, and one will not be
-invented here. Until the author chooses, the usual default applies: you may read the code and play the mod; ask
-before you reuse the code or the art elsewhere.
+None yet. The Reskin repository has none either, so there was nothing to match. A draft is waiting for the
+author's decision: MIT for the code, and the art, sounds and text free to reuse with credit. Until it is
+accepted the usual default applies: you may read the code and play the mod; ask before you reuse the code or the
+art elsewhere.

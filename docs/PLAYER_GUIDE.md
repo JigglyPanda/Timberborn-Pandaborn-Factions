@@ -247,7 +247,7 @@ does not run back up it. It never climbs.
 * **Flume Gate:** lets through 0.3 m³/s to start, adjustable up to 1. It shuts itself when the water behind it is 5% badwater or more, and reopens when it is clean.
 * **Paddy Spout:** holds its field 0.3 deep unless you change it.
 * **Scoop Wheel:** starts turning in a current of 0.15. Its panel shows the current it has and the current it wants.
-* **Dew Collector:** 2 water a day in fair weather, 0.7 in a drought.
+* **Dew Collector:** 3.2 water a day in fair weather, 1.1 in a drought.
 * **Cisterns:** Small Cistern holds 40 water (15 logs; no science); Medium Cistern holds 300 water (20 logs, 30 poles; 100 science); Large Cistern holds 1,200 water (80 poles, 40 gears, 20 metal blocks; 500 science).
 <!-- /gen:water -->
 
@@ -616,6 +616,7 @@ What cooks it in this build:
 
 <!-- gen:seed -->
 * 1 bamboo seed, 1 rice flour → 6 bamboo seed cakes, 1.5 h, log fuel, at the Kitchen.
+* 1 bamboo seed → 2 bamboo seed cakes, 1 h, log fuel, at the Steamer.
 <!-- /gen:seed -->
 
 The Kitchen's recipe with rice flour gets the most out of each seed, and it needs the rice chain: a paddy, a
