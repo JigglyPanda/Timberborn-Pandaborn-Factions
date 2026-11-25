@@ -841,8 +841,9 @@ no watered spec, growth 3 d). Each planted in paddy 1, on the ground 1, 3, 5 and
 (As of phase 1. Phase 2 closed the dead-crop replanting, the dry crop on dry soil, the worked Cistern Tap, the crossing,
 save and reload and the TimberCommons question; what is left is under "Still not proven" at the end.)
 
-* Treadwheel with a Ringtail (or any faster/slower) worker: no Ringtail exists yet; the lift scales with the worker's
-  `MovementSpeed` bonus multiplier (code).
+* Treadwheel with a faster or slower worker: the lift scales with the worker's `MovementSpeed` bonus multiplier (code).
+  (A Ringtail on the treadwheel is no longer a design case: Ringtails work only in their own night posts, and the
+  Treadwheel Lift allows no other worker type.)
 * Farmers clearing and replanting *dead* crops (in `district2` the shoot field never dried out: a full 12-tile basin
   9 tiles away kept it moist). The code says dead crops become overridable and are replanted over.
 * A dry-ground crop thriving on truly dry soil next to a wet zone.
@@ -903,9 +904,9 @@ that carrier and puts it back (without it a loaded line refills from its intake 
 | Paddy Spout | `FillValve.Folktails` (not a flume piece), model `PaddySpout` | `FillValveSpec.DefaultTargetHeightOffset 0.3`, `DefaultTargetHeightEnabled true`; `PandabornPaddySpoutSpec {}`; `PandabornSolidCellsSpec { Cells [(0,0,1)] }` | a vanilla fill valve (no cap) |
 | Scoop Wheel | `WaterWheel.Folktails` (not `CompactMechanicalPump`), model `ScoopWheel` (1x3x3) | delete `FloodableBuildingSpec`, `BlockableFloodableObjectSpec`, `WaterObjectSpec`, `WaterWheelSpec`, `PowerGeneratorSoundsSpec`, `MechanicalNodeDescriptionSpec` and the `#Unfinished` child `ConstructionBase3x2WaterWheel#nested`; `MechanicalNodeSpec { PowerOutput 100, PowerInput 30, IsShaft false }`; `WaterPoweredGeneratorSpec { Blocks [(0,0)], ExpectedWaterDirection (1,0), MinRequiredOutflow 0.15 }`; `MechanicalBuildingSpec {}`; `TransputProviderSpec { Transputs [] }`; `WaterMoverSpec { WaterPerSecond 0.1 }`; `WaterInputSpec { WaterInputCoordinates (0,0,0) }`; `WaterInputFixedSpec {}`; `WaterOutputSpec { WaterCoordinates (0,2,2), DistanceToGroundOffset 0, OverflowAllowed false }`; `PandabornCurrentDrivenSpec {}` | lifts exactly the same (pure data); vanilla power numbers on the panel, vanilla "needs power" status |
 | Trip-Hammer Mill | `Gristmill.Folktails` as now (worker and recipe kept) | `MechanicalNodeSpec { PowerOutput 100, PowerInput 30, IsShaft false }`; add `WaterPoweredGeneratorSpec { Blocks [<the cell standing in the current>], ExpectedWaterDirection (1,0), MinRequiredOutflow 0.15 }`, `MechanicalBuildingSpec {}`, `TransputProviderSpec { Transputs [] }` (it joins no shafts), `PandabornCurrentDrivenSpec {}`. Workerless also works (`ProductionIncreaserSpec {}`, as the prototype) | runs on its own wheel exactly the same; vanilla power numbers |
-| Treadwheel Lift | `PowerWheel.Folktails` (not `WaterPump`) until it has a model | `MechanicalNodeSpec { PowerOutput 100, PowerInput 100, IsShaft false }`, `MechanicalBuildingSpec {}`, `TransputProviderSpec { Transputs [] }`, `WaterMoverSpec { 0.1 }`, `WaterInputSpec (0,1,-1)`, `WaterInputFixedSpec {}`, `WaterOutputSpec { (2,2,1), offset 0, overflow false }`, `PandabornTreadwheelSpec {}` | lifts the same while staffed |
+| Treadwheel Lift | `PowerWheel.Folktails` (not `WaterPump`). A kit model exists (`art/models/TreadwheelLift`, made for a Water Pump basis) and is not adopted | `MechanicalNodeSpec { PowerOutput 100, PowerInput 100, IsShaft false }`, `MechanicalBuildingSpec {}`, `TransputProviderSpec { Transputs [] }`, `WaterMoverSpec { 0.1 }`, `WaterInputSpec (0,1,-1)`, `WaterInputFixedSpec {}`, `WaterOutputSpec { (2,2,1), offset 0, overflow false }`, `PandabornTreadwheelSpec {}` | lifts the same while staffed |
 | Cistern Tap | `Discharge.Folktails` as now | delete `ManufactoryWaterContaminationProducerSpec`, `ManufactoryTogglableRecipesSpec`; `ManufactorySpec { ProductionRecipeIds ["FlowingWater"] }`; `PandabornCisternTapSpec {}`. **Keep the worker**: vanilla `WaterOutputManufactoryLimiter` reads `Workshop` without a null check (a workerless tap crashed the game) | the same tap, without our info line |
-| Dew Collector | model `DewCollector`; workerless | `ManufactorySpec { ["PandabornDewWater"] }`, `ProductionIncreaserSpec {}` (no workers needed, vanilla spec), `PandabornDewLimiterSpec { TemperateEfficiency 1.0, DroughtEfficiency 0.35 }`; remove `WorkplaceSpec`, `WorkshopSpec`, `EnterableSpec` and the slot/animation specs. Recipe `PandabornDewWater`: no ingredients, 1 Water per 4 h | makes water at full rate in all weather (the limiter is the only code) |
+| Dew Collector | model `DewCollector`; workerless | `ManufactorySpec { ["PandabornDewWater"] }`, `ProductionIncreaserSpec {}` (no workers needed, vanilla spec), `PandabornDewLimiterSpec { TemperateEfficiency 1.0, DroughtEfficiency 0.35 }`; remove `WorkplaceSpec`, `WorkshopSpec`, `EnterableSpec` and the slot/animation specs. Recipe `PandabornDewWater`: no ingredients; its amount and hours are the catalogue's to tune (`catalogue/recipes.toml`), not quoted here | makes water at full rate in all weather (the limiter is the only code) |
 
 Text: the module ships its own loc fragment (`src/code/Pandaborn.Water/mod/Localizations/enUS_PandabornWater.csv`,
 copied with the code): `Pandaborn.Water.Status.*`, `Pandaborn.Water.Gate.*`, `Pandaborn.Water.Info.*`. Building names
@@ -913,7 +914,7 @@ and descriptions stay with the catalogue.
 
 **Tea and pepper: "about three wet days, growth paused, then death" is two fields.**
 
-* `AridNaturalResourceSpec.DaysToDieWet = 3.0` (the catalogue's `wet_days`, now 2.0). While the soil under the plant is
+* `AridNaturalResourceSpec.DaysToDieWet = 3.0` (the catalogue's `wet_days`; 2.0 when this was written, 3.0 since). While the soil under the plant is
   moist it is "dying": growth stops where it is, and it dies after `DaysToDieWet` x a per-plant random factor of 0.9 to
   1.1 (2.7 to 3.3 days). When the soil is dry again the countdown resets fully and growth resumes (the same
   `LivingWaterNaturalResource` reset measured on the bamboo).
@@ -1062,20 +1063,182 @@ The content lane's 834cf4a follows the hand-over as it stood before these runs. 
 3. **One run of the real generated build with the switch on**: the grid scenario places every water template
    (`PandabornFlume.Inkpaws` …); then a short line (pond → gate → flumes → spout → paddy, and a scoop wheel in a
    current) on the `.Inkpaws` templates, saved and reloaded — `proto/water/tests/w4.json` with the template names
-   changed is that test. The `PandabornTripHammerMill`'s wheel cell (`WaterPoweredGeneratorSpec.Blocks` (0,1)) and the
-   `CisternTap` / `TripHammerMill` kit models have not been in a game yet.
-4. Not blocking, but worth knowing on the day: the gate, corner and spout caps sit in a cell that is not part of the
-   building (model request 1 in `docs/tech/models.md`); a module-off load pushes water standing above a flume's first
-   block off the block into the nearest open cell once (W2); the Treadwheel's kit model was made for a Water Pump basis.
+   changed is that test. **Done since** (2026-11-14): `gate-20261114-155403` and `-171322` placed and finished all 13
+   catalogue water templates, the `CisternTap` and `TripHammerMill` kit models included; `-162438-water_w4_inkpaws` and
+   `-173036` ran the line, the crossing, the spout and the reload on the `.Inkpaws` templates. Still owed: the scoop
+   run on the catalogue's Scoop Wheel, and the Trip-Hammer Mill at work (its wheel cell, `WaterPoweredGeneratorSpec.Blocks`
+   (0,1), has never stood in a current: scenario in "Review 2026-11-25").
+4. Not blocking, but worth knowing on the day: a module-off load pushes water standing above a flume's first block off
+   the block into the nearest open cell once (W2); the Treadwheel's kit model was made for a Water Pump basis. (The
+   gate, corner and spout are two blocks high in the generated build, so their caps now sit inside the building.)
 
 ### Still not proven
 
-* The catalogue's own `.Inkpaws` water templates in a game (only the dev mod's `.PandabornProto` copies of the same
-  data have run; see the checklist).
+* The catalogue's Scoop Wheel lifting in a current, and the Trip-Hammer Mill at work (the other `.Inkpaws` water
+  templates have been placed, finished, run and reloaded: checklist item 3).
 * A raised Bridge stepping straight down onto ground (only the Drop from ground level and the span crossing were run),
   splitters, and a Corner after a Bridge.
-* Treadwheel with a Ringtail worker; Trip-Hammer Mill as the catalogue builds it (Gristmill shell, worker kept).
+* Trip-Hammer Mill as the catalogue builds it (Gristmill shell, worker kept): scenario in "Review 2026-11-25".
+
 * Badwater shut-off and dew limiter under the module architecture (both were proven in phase 1 with the same logic;
   phase 2 ran their panels and statuses but no badwater or drought-dew case).
 * The status icons' texts on screen (the panel lines were read back from the fragments; the entity panel itself did not
   show in the screenshots, which were taken without the camera on the building).
+
+## Review 2026-11-25
+
+A read of every file of `src/code/Pandaborn.Water` against the decompiled game (1.1.2.8), with no game run: the
+machine could not start one that day. Everything under "Fixed" is committed and compiles; none of it has been in a
+game. What each change owes is under "Needs a game run". The rules that are pure arithmetic are tested without the
+game (`dotnet run -c Release --project src/code/tests/WaterRingtails`, 106 checks).
+
+### Fixed
+
+| Rank | What was wrong | Where | Fix (commit) |
+|---|---|---|---|
+| Major | An exception in any finished-state listener fails the whole load (the game wraps it in "Exception while initializing"), and one in a tick is a crash. No callback of the module was contained | `Flumes.cs`, `FlumeGate.cs`, `FlumeMonitor.cs`, `WaterBuildings.cs` | Every callback catches and reports through `WaterGuard` (first failure: "on, reduced" in the feature report; eight stack traces at most). The piece keeps the state it had (427b289, 80cd178, bf301e0, dbffff1) |
+| Major | One cause, many statuses: with a dry gate the far end said "No water reaches the end", every piece before a Flume Corner was an "end" and every piece after one an "intake", so one dry source lit a status at each corner | `FlumeMonitor.Evaluate` | One status per piece and per cause (`FlumeRules`): a run goes on through a corner's open cell, the end is silent while a piece upstream shows the cause, and its delay starts again when the cause clears (427b289) |
+| Major | A line that ends in a Paddy Spout had no "end": a valve counted as the next flume, so a starved run said nothing on any piece (DESIGN: "a starved run says so on the piece") | same | The last flume before a valve is the end of its run (427b289) |
+| Major | A becalmed wheel showed two statuses, ours and vanilla's "Building needs power" (with its alert) | `CurrentDriven` | Ours is a priority status; see "The vanilla power line" below (bf301e0) |
+| Minor | A gate shut by badwater opened for a tick on every load (the state was not saved) | `FlumeGate` | `bad=1` in the gate's entry, optional, ignored by older builds (80cd178) |
+| Minor | "Six clean checks" were counted in total, not in a row: readings between half the threshold and the threshold did not restart the count | `FlumeGate.Tick` | `BadwaterLatch` (80cd178) |
+| Minor | A gate whose data has no inert obstacle closed with a zero inflow limit that was never removed on demolition (the cell then let nothing in until the next load) | `FlumeGate.Apply` | the limit is recorded and removed (80cd178) |
+| Minor | A gate without a `PandabornFlumeSegmentSpec` in its data threw in its listener and its tick; `MaxFlow` 0 made a gate that never opens; a NaN in a saved flow reached the water service | `FlumeGate` | guarded (80cd178) |
+| Minor | `Mathf.Abs(hash)` throws on `int.MinValue` (one coordinate hash in four billion, inside a finished-state listener) | `FlumeMonitor.OnEnterFinishedState` | bit mask (427b289) |
+| Minor | The flume sound kept its flowing tiles in a set: a Bridge span and the flume under it share a tile, so one going quiet silenced the other | `WaterSounds` | counted (dbffff1) |
+| Minor | The module said nothing when an Inkpaws game had none of its data | `FlumeService` | `ReportNoData` (dbffff1) |
+| Minor | Two closures a frame while any entity was selected; a panel piece that failed while on screen stayed there with stale text (`SafeUi` skips every later call, the hide included) | `WaterPanels.cs` | cached delegates, early return, a direct hide (dbffff1) |
+| Minor | `SolidCells` removed its obstacles inside the loop that could throw: a second pass would have removed a cell twice (below) | `SolidCells.OnExitFinishedState` | list emptied first (dbffff1) |
+
+### The three questions of the brief
+
+**One cause, one status.** Done as above. A gate the player set to zero is deliberately not a "cause": the end of
+its run then says "let more through at the Flume Gate", which is the right advice, and the gate itself has no status
+of its own to point at.
+
+**The vanilla "Building needs power" line.** It is data-caused and cannot be removed from the data. The Scoop Wheel
+and the Trip-Hammer Mill are one mechanical node that is generator and consumer (`MechanicalNodeSpec { PowerOutput
+100, PowerInput 30 }`, in the generated blueprint as in the catalogue): the consumer half is what makes the lift and
+the mill depend on the current. The game decorates every `MechanicalNode` with `NoPowerStatus`, which raises its
+status, floating icon and alert whenever a consumer is consuming and its graph is not powered: exactly when the
+wheel is becalmed. Vanilla has a spec that turns the alert and the icon off (`NoPowerStatusAlertDisablerSpec`, on the
+Aquifer Drill), but the panel line would stay. The fix is in code and needs no patch: `StatusSubject` shows only
+*priority* statuses while one is active (how "Paused" hides everything else), so our "needs a current" status is now
+a priority status. While the wheel is becalmed the building shows that one line, one icon and no alert; every other
+ordinary status of the building (a mill's "no workers") is hidden with it, which is right while nothing can work.
+No request to the catalogue.
+
+**A Bridge Span deleted on load as "not supported by terrain physics" (W1).** The cause is the game's post-load
+check, `TerrainPhysicsPostLoader`. It does not look at each building; it floods upward from the map floor. A cell is
+visited when it is directly above solid terrain or directly above a *stackable* block of a building already found
+valid; at each visited cell it asks `IBlockService.GetObjectsAt`, and `BlockService.SetObject` registers a building
+only in the cells of its blocks that occupy something (`IsOccupied`) or are underground. Every building the flood
+never meets is deleted, with a loading issue (the dialog that pauses the game). The first span's leg block had
+`Occupations: None`, so the span was registered only at its upper block, one level up, above a Flume, which is not
+stackable: the flood never got there. Today's leg (`Corners`) is registered in the ground cell and is found.
+What prevents it for good:
+
+* Data (rule for every building of the mod): at least one block of its lowest layer must occupy something, or its
+  lowest occupied block must stand directly on a stackable block. A request to the validator lane: refuse a
+  `BlockObjectSpec` whose `Z = 0` layer has only `Occupations: None` blocks.
+* Data (the span): the leg's `MatterBelow` was `Any` in the generated build read on 2026-11-25, so the span could be
+  left standing over nothing (the terrain under it dug away) and would then be deleted at the next load. The Bridge's
+  `GroundOrStackable` is the safe value; the catalogue lane adopted it the same day (0fd83fe).
+* Code cannot help: the deletion happens in the game's batch loader before any of our code sees the entity.
+
+### Not fixed, and why
+
+| Rank | What | Why it stays |
+|---|---|---|
+| Major (read from code, not seen in a run) | **Water comes back from a save by column index.** `WaterSimulator.PostLoad` first applies the obstacle changes queued while the entities loaded, then copies the saved columns into the columns that exist at that moment, first to first, second to second. On a load vanilla's inert obstacle is in place then and our lift is not (our listener runs before vanilla's, and `PostLoadEntity` comes after `PostLoad`). For a ground Flume the column count is the same and the water lands right (w4d). For a piece whose flow cell stands on its own inert leg (Flume Bridge, Bridge span) the saved *leg cell* is the first column and lands in the flow cell; the saved flow water is dropped. For a capped piece (Gate) the gate cell's water lands in the cap cell and is deleted when the cap is added a tick later. The per-cell safety net puts back what is missing, which is why `water-w4e` passed (the 1.3 m3 it put back is about what a line of Bridges running 0.09 deep holds). It does not take away a surplus: a Bridge standing in a pond should come back with up to one block of pond water in its trough at every load | The clean fix changes the load path that `water-w4e` proved, and could not be run. It is small: lift the obstacle and add the solid cells in an `[OnEvent] EnteredFinishedStateEvent` handler of `FlumeService` (the game posts it right after an entity's finished-state listeners, vanilla's included, still inside the entity loading and so before `WaterSimulator.PostLoad`): the columns then exist as they were saved for every piece, and the safety net has nothing to do. The lifts that exist today stay as they are idempotent. Scenario below |
+| Minor | The end-of-run alarm waits a fixed four checks (about four game hours) whatever the length of the run; a sixty-tile line that is filling for the first time may show it before the water arrives | No measured fill speed to scale it with; the status clears itself when the water comes |
+| Minor | `DirectionAt` treats a flume one level *below* the cell behind as the piece that feeds this one (water does not climb) | Kept as it was; it only matters for a line built wrong, which is then shown as misaligned or dry |
+| Minor | `WaterInfoFragment` builds its line every frame while a water building is selected (a few strings a frame) | What vanilla fragments do; only while selected |
+| Minor | `FeatureRegistry.ReportDegraded` is for the session: a failure contained in one game is still "reduced" in the next game of the same session | Core's; the Core lane has a per-game report in its working tree |
+| Not built | A Cistern Tap switch "pour only in a drought" | Not small: it needs a saved switch (a `PandabornEntityStateSpec` on the tap: catalogue), a panel control, and a way to stop pouring without pausing the building (pausing is saved vanilla state). The cheap form is an `IManufactoryLimiter` like the Dew Collector's that returns 0 outside a drought; the worker would still stand there and haulers would still fill the tap. A design decision first |
+
+### Differences from DESIGN.md Pillar 1
+
+* "A raised piece stands on solid legs": true of the Flume Drop (its leg is re-solidified). A Flume Bridge's leg cell
+  is open water space once the module lifts the inert obstacle, so ground water passes under a bridge (it is a trestle;
+  a solid leg would dam the stream it crosses). Nothing leaks from the trough: the flow cell has its own floor.
+* "Dew Collector: a little drinking water each dawn": it is a continuous recipe slowed in a drought, not a dawn
+  event. Badtide counts as fair weather.
+* "Wheels and mills show the current they have, not horsepower": our line does. The vanilla mechanical fragment of
+  the entity panel (power in and out) was not looked at in a game for these buildings; if it shows, it shows
+  horsepower beside our line (check in the scoop run).
+* "Flume Gate ... shuts itself when the water turns bad": it reads the cell behind the gate every five ticks; before
+  this review it opened for one tick on each load.
+* "A flume never fails silently": before this review a starved run ending in a spout said nothing; a run through
+  corners said too much.
+* The Cistern Tap pours whenever it is staffed and stocked, drought or not.
+
+### Performance (estimated from the code; nothing measured)
+
+Per tick, with N finished flume pieces, G gates and W wheels: N + G + W countdown decrements (the game ticks every
+enabled `TickableComponent`); N/30 status checks, each two block lookups ahead and behind (at most four
+`GetObjectsAt`, a struct copy with no allocation), six to eight reads of the water snapshot, and for the first and
+last piece of a run four to eight more block lookups; G/5 gate checks of two snapshot reads; W/20 wheel checks.
+Nothing allocates in these paths (no LINQ, no closures; the walk upstream from a dry end follows cached references,
+at most 512 steps, only on the one end piece of a run and only while it is dry). With 300 pieces that is ten checks
+a tick, in the order of 20 to 40 microseconds a tick, the same at every game speed (speed 3 runs more ticks a second,
+not heavier ticks). `FlumeService.Tick` is three empty-list tests. Saving writes one short string per flow cell.
+Per frame: nothing unless a water building is selected.
+
+### Requests to other lanes
+
+* **Validator / tools:** the lowest-layer occupation rule above. `PandabornNightPostSpec.UnlockOnArrival` and
+  `PandabornRingtailsSpec.ReturnAfterDays` reach `code-schema.json` at the next `code` stage.
+* **Core:** `WaterGuard` should use the per-game degraded report once it is committed.
+* **Scenarios:** the Trip-Hammer Mill scenario below; the checks under "Needs a game run".
+* **Owner:** the folder `E:\PandabornDevbuildreviewmod` is a mistake of this review (a `-p:ModOut=E:\...` whose
+  backslashes the shell ate; `E:\PandabornDevbuildprotoplants` beside it is an older one of the same kind). Both can
+  be deleted; the review could not delete it itself. Use forward slashes in `-p:ModOut=`.
+
+### The Trip-Hammer Mill scenario (nobody has written it)
+
+`PandabornTripHammerMill.Inkpaws` as generated: the Gristmill shell, 3 x 2 x 3, entrance at local (2, -1, 0), one
+Inkpaw worker, recipe `PandabornRiceFlour`, `MechanicalNodeSpec { PowerOutput 100, PowerInput 30 }`,
+`WaterPoweredGeneratorSpec { Blocks [(0, 1)], ExpectedWaterDirection (1, 0), MinRequiredOutflow 0.15 }`, no floodable
+spec, no water obstacle. The generator reads the flow in its *own* cell (0, 1) at the mill's base level, and
+`CellIsUnderwater` there means water standing on the ground the mill stands on. So the mill stands *in* the stream:
+its whole footprint is stream bed, the water runs along its local X through its back row, and nothing keeps it out
+of the front row and off the doorstep. Whether a worker can reach a door that stands in shallow running water is the
+open question of this building, and the first thing the scenario must answer.
+
+Place (Plains, Inkpaws, the generated build with Water on): a district centre; a straight channel two tiles wide and
+at least nine long, one block deep, with the scoop scenario's source at one end and its drain at the other, tuned to a
+current of 0.30 or more and a depth of about 0.3 at the middle; the mill in the middle of the channel with its local
+X along the flow and its back row (local Y = 1) on the deeper side; the two tiles beside the door walled with levees;
+a path from the door's tile up a stair to the bank and on to the district; a warehouse stocked with the recipe's
+input (rice) and one for the flour; one Inkpaw assigned.
+
+Check, in this order: (1) the placement is valid and the mill is finished; (2) `CurrentDriven.Current` is at least
+0.15 and `Speed` is about current / 0.30, capped at 1; (3) the worker reaches the mill and is seen working
+(`activity`), and flour appears in the store within a few hours: if not, record whether the path, the door tile's
+depth or a status stops it; (4) the panel line reads "Current at the wheel: X (full speed at 0.30). Working at P of
+full speed."; (5) no status while it runs; (6) stop the source: within a minute the mill shows exactly one status,
+"The current here is too weak to turn the wheel...", `StatusSubject.ActiveStatuses.Count == 1`, and no "Building
+needs power" alert at the screen edge; (7) pause it while becalmed: "Paused" only; (8) restart the source: the status
+clears and work resumes; (9) save, reload, same readings; (10) the same mill turned half round (flow against its
+local X): works the same (the game takes the absolute rotation); turned a quarter: current 0 and the status.
+
+If (3) fails, the data alternative to try in the same scenario: the wheel cell outside the footprint, behind the
+mill (`Blocks [(1, 2)]`), and a vanilla `WaterObstacleSpec` + `FinishableWaterObstacleSpec` over the six footprint
+cells, so the mill is a dry block on the bank and reads the stream that runs along its back. That is a request to
+the catalogue and model lanes (where the model's wheel is), not something to decide here.
+
+### Needs a game run
+
+Each on a dev copy with the committed code (`proto/water/build.ps1`), the installed faction off.
+
+| # | What | Scenario | Pass when |
+|---|---|---|---|
+| W-R1 | One cause, one status | `proto/water/tests/w3.json` with a Flume Corner added in the line and the source stopped | only the gate's piece shows "No water can enter"; no piece before or after the corner and not the last piece shows anything; when the source returns the end stays silent while the water travels |
+| W-R2 | The end of a run before a spout | a line gate, six flumes, Paddy Spout, the gate set to a flow the spout outruns (0.05) or the line cut by demolishing one flume | the last flume before the spout (or before the gap) shows "No water reaches the end" after about four game hours; the piece after the gap shows "No water can enter" |
+| W-R3 | The becalmed wheel | the scoop scenario (`proto/water/tests/scoop.json` on the catalogue templates, owed anyway), source stopped | one status, one floating icon, no alert, `ActiveStatuses.Count == 1`; paused: "Paused" only; source back: none |
+| W-R4 | A gate shut by badwater across a load | `proto/water/tests/w4.json` with badwater put behind the gate, save while shut, reload | shut at the first tick after the load (the cell beyond the gate stays clean), reopens six checks after the water is clean |
+| W-R5 | The load path as it is (regression) | `w4.json` unchanged | as `water-w4e`: line whole at tick 1, sides dry |
+| W-R6 | A Bridge standing in water, saved and reloaded (the column-index finding) | `w4.json` with two of line B's Bridges standing in a pond 0.8 deep | record each bridge's trough depth before the save and at ticks 1, 3 and 30 after the load; the finding predicts about 0.8 in the trough at tick 1 where 0.09 was saved. If so, make the `EnteredFinishedStateEvent` change and rerun W-R5 and W-R6 |
+| W-R7 | The Trip-Hammer Mill | above | above |
+| W-R8 | Module failures are contained | dev switch cannot fake this; read `Player.log` of every run above for "[Pandaborn.Water] ... failed" | none |
