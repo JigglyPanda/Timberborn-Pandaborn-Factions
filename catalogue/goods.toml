@@ -75,7 +75,7 @@ consumption = { Hunger = 0.3, PandabornHotPot = 0.2 }
 src = "V (Maple Pastry)"
 
 [goods.PandabornBambooSeedCakes]
-waits_for = "Flowering"
+waits_for = ["Flowering", "Water"]   # bamboo seed from a Great Flowering, rice flour from the Trip-Hammer Mill
 basis = "MaplePastry"
 good_type = "Box"
 weight = 1

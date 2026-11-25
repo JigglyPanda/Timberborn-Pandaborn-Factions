@@ -35,8 +35,8 @@ Words = true
 Water = true         # switched on 2026-11-14 (docs/tech/water.md: what must be true before)
 Ringtails = true     # docs/tech/two-peoples.md 18.1: adopted 2026-11-14
 RingtailsFallback = true
-RingtailVenues = false
-Tutorial = true      # "have N of a good" tutorial steps (docs/tech/tutorial.md)   # Opera Stage and Star Tower: no module runs them yet (two-peoples.md has no venue behaviour)
+RingtailVenues = false   # Opera Stage and Star Tower: no module runs them yet (two-peoples.md has no venue behaviour)
+Tutorial = true      # "have N of a good" tutorial steps (docs/tech/tutorial.md)
 Festival = true      # switched on 2026-11-14: proven through the module path (docs/tech/events.md Results)
 Flowering = true     # switched on 2026-11-14 (docs/tech/events.md Results)
 

@@ -57,7 +57,7 @@ cycles_fuel_lasts = 10
 src = "V (Maple Pastry shape) · M q3 (building: Kitchen)"
 
 [recipes.PandabornBambooSeedCakes]
-waits_for = "Flowering"
+waits_for = ["Flowering", "Water"]
 basis = "MaplePastry"
 cycle_hours = 1.5
 ingredients = { PandabornBambooSeed = 1, PandabornRiceFlour = 1 }

@@ -216,6 +216,13 @@ cost = { Plank = 4, Log = 1 }
 science = 120
 src = "G"
 
+[stats.PandabornFlumeBridgeSpan]
+# had no entry and so cost what its shell does (a Throttling Valve: 5 cured poles, 5 metal blocks, 500 science), which
+# put the only way to cross two flume lines behind metal. The Flume Bridge's numbers until the balance lane sets its own.
+cost = { Plank = 4, Log = 1 }
+science = 120
+src = "as the Flume Bridge (same trestle, one leg); for the balance lane to confirm"
+
 [stats.PandabornFlumeGate]
 cost = { Log = 6, Plank = 6 }
 science = 80

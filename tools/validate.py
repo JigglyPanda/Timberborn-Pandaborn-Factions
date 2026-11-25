@@ -2023,11 +2023,12 @@ def check_modules(c):
         buildings = tomllib.load(f).get("buildings", {})
     present_templates = {(b.get("TemplateSpec") or {}).get("TemplateName") for b in c.mod_bp.values()}
     for bid, b in buildings.items():
-        mod = b.get("waits_for")
+        waits = b.get("waits_for") or []
         tname = (b.get("template") or bid + ".Inkpaws")
-        if mod and tname in present_templates and not (mod in shipped and mod in data_on):
-            gate(c, "%s ships but waits for module %s, whose code or data is absent: its text promises what its "
-                    "stand-in does not do" % (tname, mod))
+        for mod in ([waits] if isinstance(waits, str) else waits):   # one module id, or a list: all must be on
+            if tname in present_templates and not (mod in shipped and mod in data_on):
+                gate(c, "%s ships but waits for module %s, whose code or data is absent: its text promises what its "
+                        "stand-in does not do" % (tname, mod))
 
 # ------------------------------------------------------------------------------------------------ self test
 

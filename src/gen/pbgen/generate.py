@@ -95,10 +95,18 @@ class Generator:
             raise GenError("waits_for = %r: catalogue/rules.toml [modules] has no switch for that module" % module)
         return module in self.shipped_modules and bool(self.module_switch[module])
 
+    def waits_off(self, waits):
+        """The first module an item waits for that is off, or None. waits_for is one module id, or a list when the
+        item needs several (seed cakes: the Flowering's seed and the water mill's rice flour): all must be on."""
+        for mod in ([waits] if isinstance(waits, str) else list(waits or [])):
+            if not self.module_on(mod):
+                return mod
+        return None
+
     def skip_for_module(self, kind, ident, entry):
         """True (and recorded) if this item waits for a module that is off."""
-        mod = entry.get("waits_for") if isinstance(entry, dict) else None
-        if mod and not self.module_on(mod):
+        mod = self.waits_off(entry.get("waits_for")) if isinstance(entry, dict) else None
+        if mod:
             self.gated.setdefault(kind, {})[ident] = mod
             return True
         return False
@@ -220,7 +228,18 @@ class Generator:
             for spec, body in specs.items():
                 if spec in data:
                     raise GenError("%s: module_specs %s: the basis already has %s" % (item, module, spec))
-                data[spec] = copy.deepcopy(body)
+                body = copy.deepcopy(body)
+                # a list of ids never names a good, need or template this build leaves out (the festival's dishes
+                # when the water mill is off): our code must not be handed an id the game does not know
+                hidden = set()
+                for kind in ("good", "need", "template"):
+                    hidden.update(self.gated.get(kind, {}))
+                for field, value in list(body.items()):
+                    if isinstance(value, list) and any(isinstance(x, str) and x in hidden for x in value):
+                        body[field] = [x for x in value if not (isinstance(x, str) and x in hidden)]
+                        self.note(item, "%s.%s: left out %s (waiting for a module that is off)"
+                                  % (spec, field, ", ".join(x for x in value if x in hidden)))
+                data[spec] = body
 
     def gen_modifiers(self):
         """catalogue/modifiers.toml: faction-scoped blueprint modifiers (FactionSpec.BlueprintModifiers), each written as
@@ -230,8 +249,8 @@ class Generator:
             unknown = set(m) - {"original", "set", "data", "waits_for", "note"}
             if unknown:
                 raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
-            if m.get("waits_for") and not self.module_on(m["waits_for"]):
-                self.gated.setdefault("modifier", {})[mid] = m["waits_for"]
+            if self.waits_off(m.get("waits_for")):
+                self.gated.setdefault("modifier", {})[mid] = self.waits_off(m["waits_for"])
                 continue
             key = self.vanilla_template_key(m["original"], item)
             data = copy.deepcopy(m.get("data") or {})
@@ -282,8 +301,8 @@ class Generator:
                 raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
             if not gid.startswith("Pandaborn"):
                 raise GenError("%s: a tool group id is global; start it with Pandaborn" % item)
-            if g.get("waits_for") and not self.module_on(g["waits_for"]):
-                self.gated.setdefault("tool_group", {})[gid] = g["waits_for"]
+            if self.waits_off(g.get("waits_for")):
+                self.gated.setdefault("tool_group", {})[gid] = self.waits_off(g["waits_for"])
                 continue
             text = ((self.cat.text.get("faction") or {}).get("toolbar") or {})
             entry = next((e for e in text.values() if isinstance(e, dict) and e.get("suggested_key") == g["name_key"]),
@@ -561,8 +580,8 @@ class Generator:
                 if not (b.get("needs_code") and b.get("waits_for")):
                     raise GenError("%s: needs_code and waits_for (the code module) go together" % item)
                 self.note(item, "needs code: " + b["needs_code"])
-                self.code_waits.setdefault(b["waits_for"], []).append(
-                    {"building": p["template"], "until_then": b["needs_code"]})
+                for mod in ([b["waits_for"]] if isinstance(b["waits_for"], str) else b["waits_for"]):
+                    self.code_waits.setdefault(mod, []).append({"building": p["template"], "until_then": b["needs_code"]})
             if b.get("retire_when"):
                 self.note(item, "temporary; retire when " + b["retire_when"])
         if coll:
@@ -848,8 +867,8 @@ class Generator:
                 raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
             if not sid.startswith("PandabornTutorial."):
                 raise GenError("%s: our stage ids start with PandabornTutorial." % item)
-            if st.get("waits_for") and not self.module_on(st["waits_for"]):
-                self.gated.setdefault("tutorial", {})[sid] = st["waits_for"]
+            if self.waits_off(st.get("waits_for")):
+                self.gated.setdefault("tutorial", {})[sid] = self.waits_off(st["waits_for"])
                 continue
             missing = sorted(n for n in names_in(st.get("steps") or [], set()) if n not in shipped)
             if missing:
@@ -878,8 +897,8 @@ class Generator:
                 raise GenError("%s: unknown field(s) %s" % (item, ", ".join(sorted(unknown))))
             if not tid.startswith("Pandaborn"):
                 raise GenError("%s: a tutorial id is global; start it with Pandaborn" % item)
-            if t.get("waits_for") and not self.module_on(t["waits_for"]):
-                self.gated.setdefault("tutorial", {})[tid] = t["waits_for"]
+            if self.waits_off(t.get("waits_for")):
+                self.gated.setdefault("tutorial", {})[tid] = self.waits_off(t["waits_for"])
                 continue
             st_ids = []
             for sid in t.get("stages") or []:
