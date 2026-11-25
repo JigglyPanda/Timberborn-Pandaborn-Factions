@@ -25,13 +25,24 @@ slider during the day changes nothing until the next morning).
 
 * **The bonus multiplies.** `BellRestedBonus` adds `d = m x b` (`m` = the colonist's multiplier without the bell) and
   recomputes it whenever another bonus of that id changes, so the result is `m x (1 + b)` (verified: wellbeing 80 work
-  3.8 -> 5.054, walk 1.7 -> 2.261 with the cap raised).
+  3.8 -> 5.054, walk 1.7 -> 2.261 with the cap raised). The arithmetic is `RestedShare` (`BellMath.cs`, no game types):
+  the order in which other bonuses arrive does not matter, over the bonus type's cap or under its floor the clamp
+  decides, and the share is booked before each call into `BonusManager`, so another mod's listener that throws there
+  cannot make the share be taken out or put in twice (tests: `src/code/tests/Foundation`, 200,000 random changes).
+* **The curve** (`BellCurve.At`): points in any order, a point at the asked hour gives its own bonus, linear between
+  points, flat beyond the ends. A curve with a point for every whole hour (the flat-output taper of 2026-11-25) is a
+  plain table. Today's bonuses are worked out once when the day is locked.
 * **"Settled", in numbers:** the village is settled from the moment the first building with
   `PandabornBellSettledMarkerSpec` is finished (or found finished on load), or at the dawn of `SuggestionDay` (day 4),
   whichever comes first. **The suggestion** ("Inkpaws work a short day and work it well. Afternoons are for hammocks, tea
   and company.") is then posted once per settlement (toast + notification log; saved, never repeated) at the first
   moment that is also at or after the dawn of `SuggestionMinimumDay` (day 3) and outside hazardous weather (drought or
-  badtide: `WeatherService.IsHazardousWeather`); otherwise it waits and is tried again at every dawn.
+  badtide: `WeatherService.IsHazardousWeather`); otherwise it waits and is tried again at every dawn. It is never posted while a save is still loading (a
+  leisure building found finished on load settles the village; the message goes out when the interface appears). The
+  text is `Pandaborn.Bell.Suggestion.WithHour` with `{0}` = `BellService.CeilingHours`, the longest working day in whole
+  hours at which the working bonus is still at its largest (from the curve; 12 today). The data's old key
+  `Pandaborn.Bell.Suggestion` is read as the new one. The tooltip is `Pandaborn.Bell.Tooltip.WithHour` (`{3}` = the
+  same hour).
 * **Shown** as a line under the working-hours panel ("Rested +33%", or "Rested +33%; tomorrow +0%" after the slider
   moved) with a tooltip; as a line on an Inkpaw's panel; and inside the vanilla wellbeing bonus totals.
 * **The shift bell**: when the Inkpaw working day ends and when it starts (`WorkingHoursTransitionedEvent`), the bell
@@ -68,32 +79,33 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 
 * type `Bindito.Core.Configurator`
   * method `.ctor()`
-  * method `Bind<1>()`
-  * method `MultiBind<1>()`
+  * method `Bind<1>()`: `Bindito.Core.ISingleBindingBuilder`1<!!0>`
+  * method `MultiBind<1>()`: `Bindito.Core.IMultiBindingBuilder`1<!!0>`
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
-  * method `ToExisting<1>()`
-  * method `ToProvider(System.Func`1<!0>)`
-  * method `ToProvider<1>()`
+  * method `ToExisting<1>()`: `Bindito.Core.IExportAssignee`
+  * method `ToProvider(System.Func`1<!0>)`: `Bindito.Core.IScopeAssignee`
+  * method `ToProvider<1>()`: `Bindito.Core.IScopeAssignee`
 * type `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.IMultiBindingBuilder`1`
 * type `Bindito.Core.IProvider`1`
 * type `Bindito.Core.IScopeAssignee`
-  * method `AsSingleton()`
-  * method `AsTransient()`
+  * method `AsSingleton()`: `Bindito.Core.IExportAssignee`
+  * method `AsTransient()`: `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.ISingleBindingBuilder`1`
 
 **Timberborn.BaseComponentSystem**
 
 * type `Timberborn.BaseComponentSystem.BaseComponent`
   * method `.ctor()`
-  * method `GetComponent<1>()`
+  * method `GetComponent<1>()`: `!!0`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
 **Timberborn.Beavers**
 
 * type `Timberborn.Beavers.AdultSpec`
+* type `Timberborn.Beavers.Child`
 
 **Timberborn.BlockSystem**
 
@@ -102,24 +114,24 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 **Timberborn.BlueprintSystem**
 
 * type `Timberborn.BlueprintSystem.Blueprint`
-  * method `GetSpec<1>()`
+  * method `GetSpec<1>()`: `!!0`
 * type `Timberborn.BlueprintSystem.ComponentSpec`
-  * method `get_Blueprint()`
+  * method `get_Blueprint()`: `Timberborn.BlueprintSystem.Blueprint`
 
 **Timberborn.BonusSystem**
 
 * type `Timberborn.BonusSystem.BonusManager`
   * method `AddBonus(System.String, System.Single)`
-  * method `Multiplier(System.String)`
+  * method `Multiplier(System.String)`: `System.Single`
   * method `RemoveBonus(System.String, System.Single)`
   * method `add_BonusValueChanged(System.EventHandler`1<Timberborn.BonusSystem.BonusValueChangedEventArgs>)`
   * method `remove_BonusValueChanged(System.EventHandler`1<Timberborn.BonusSystem.BonusValueChangedEventArgs>)`
 * type `Timberborn.BonusSystem.BonusTypeSpec`
-  * method `get_MaximumValue()`
+  * method `get_MaximumValue()`: `System.Single`
 * type `Timberborn.BonusSystem.BonusTypeSpecService`
-  * method `GetSpec(System.String)`
+  * method `GetSpec(System.String)`: `Timberborn.BonusSystem.BonusTypeSpec`
 * type `Timberborn.BonusSystem.BonusValueChangedEventArgs`
-  * method `get_BonusId()`
+  * method `get_BonusId()`: `System.String`
 
 **Timberborn.Common**
 
@@ -130,7 +142,7 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 * type `Timberborn.CoreUI.VisualElementExtensions`
   * method `ToggleDisplayStyle(UnityEngine.UIElements.VisualElement, System.Boolean)`
 * type `Timberborn.CoreUI.VisualElementLoader`
-  * method `LoadVisualElement(System.String)`
+  * method `LoadVisualElement(System.String)`: `UnityEngine.UIElements.VisualElement`
 
 **Timberborn.EntityPanelSystem**
 
@@ -138,7 +150,7 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 * type `Timberborn.EntityPanelSystem.EntityPanelModule+Builder`
   * method `.ctor()`
   * method `AddMiddleFragment(Timberborn.EntityPanelSystem.IEntityPanelFragment, System.Int32)`
-  * method `Build()`
+  * method `Build()`: `Timberborn.EntityPanelSystem.EntityPanelModule`
 * type `Timberborn.EntityPanelSystem.IEntityPanelFragment`
 
 **Timberborn.EntitySystem**
@@ -146,31 +158,31 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 * type `Timberborn.EntitySystem.IDeletableEntity`
 * type `Timberborn.EntitySystem.IPostInitializableEntity`
 * type `Timberborn.EntitySystem.LabeledEntity`
-  * method `get_DisplayName()`
+  * method `get_DisplayName()`: `System.String`
 
 **Timberborn.FactionSystem**
 
 * type `Timberborn.FactionSystem.FactionSpec`
-  * method `get_Id()`
+  * method `get_Id()`: `System.String`
 
 **Timberborn.GameDistricts**
 
 * type `Timberborn.GameDistricts.DistrictCenter`
 * type `Timberborn.GameDistricts.DistrictCenterRegistry`
-  * method `get_FinishedDistrictCenters()`
+  * method `get_FinishedDistrictCenters()`: `Timberborn.Common.ReadOnlyList`1<Timberborn.GameDistricts.DistrictCenter>`
 
 **Timberborn.GameFactionSystem**
 
 * type `Timberborn.GameFactionSystem.FactionService`
-  * method `get_Current()`
+  * method `get_Current()`: `Timberborn.FactionSystem.FactionSpec`
 
 **Timberborn.Localization**
 
 * type `Timberborn.Localization.ILoc`
-  * method `T(System.String)`
-  * method `T<1>(System.String, !!0)`
-  * method `T<2>(System.String, !!0, !!1)`
-  * method `T<3>(System.String, !!0, !!1, !!2)`
+  * method `T(System.String)`: `System.String`
+  * method `T<1>(System.String, !!0)`: `System.String`
+  * method `T<2>(System.String, !!0, !!1)`: `System.String`
+  * method `T<3>(System.String, !!0, !!1, !!2)`: `System.String`
 
 **Timberborn.SingletonSystem**
 
@@ -188,18 +200,18 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 * type `Timberborn.TemplateInstantiation.TemplateModule+Builder`
   * method `.ctor()`
   * method `AddDecorator<2>()`
-  * method `Build()`
+  * method `Build()`: `Timberborn.TemplateInstantiation.TemplateModule`
 
 **Timberborn.TemplateSystem**
 
 * type `Timberborn.TemplateSystem.TemplateService`
-  * method `GetAll<1>()`
+  * method `GetAll<1>()`: `System.Collections.Generic.IEnumerable`1<!!0>`
 
 **Timberborn.TimeSystem**
 
 * type `Timberborn.TimeSystem.DaytimeStartEvent`
 * type `Timberborn.TimeSystem.IDayNightCycle`
-  * method `get_DayNumber()`
+  * method `get_DayNumber()`: `System.Int32`
 
 **Timberborn.TooltipSystem**
 
@@ -215,14 +227,14 @@ markers are inert. Interface pieces sit behind `SafeUi`.
 **Timberborn.WeatherSystem**
 
 * type `Timberborn.WeatherSystem.WeatherService`
-  * method `get_IsHazardousWeather()`
+  * method `get_IsHazardousWeather()`: `System.Boolean`
 
 **Timberborn.WorkSystem**
 
 * type `Timberborn.WorkSystem.WorkingHoursChangedEvent`
 * type `Timberborn.WorkSystem.WorkingHoursManager`
-  * method `get_AreWorkingHours()`
-  * method `get_WorkedPartOfDay()`
+  * method `get_AreWorkingHours()`: `System.Boolean`
+  * method `get_WorkedPartOfDay()`: `System.Single`
 * type `Timberborn.WorkSystem.WorkingHoursTransitionedEvent`
 
 **UnityEngine.CoreModule**
@@ -232,10 +244,10 @@ markers are inert. Interface pieces sit behind `SafeUi`.
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
 * type `UnityEngine.Mathf`
-  * method `Abs(System.Single)`
-  * method `CeilToInt(System.Single)`
-  * method `Clamp(System.Int32, System.Int32, System.Int32)`
-  * method `RoundToInt(System.Single)`
+  * method `Abs(System.Single)`: `System.Single`
+  * method `CeilToInt(System.Single)`: `System.Int32`
+  * method `Clamp(System.Int32, System.Int32, System.Int32)`: `System.Int32`
+  * method `RoundToInt(System.Single)`: `System.Int32`
 
 **UnityEngine.UIElementsModule**
 
@@ -245,14 +257,28 @@ markers are inert. Interface pieces sit behind `SafeUi`.
   * method `set_display(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.DisplayStyle>)`
 * type `UnityEngine.UIElements.Label`
 * type `UnityEngine.UIElements.StyleEnum`1`
-  * method `op_Implicit(!0)`
+  * method `op_Implicit(!0)`: `UnityEngine.UIElements.StyleEnum`1<!0>`
 * type `UnityEngine.UIElements.TextElement`
   * method `set_text(System.String)`
 * type `UnityEngine.UIElements.UQueryExtensions`
-  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`
+  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`: `!!0`
 * type `UnityEngine.UIElements.VisualElement`
   * method `.ctor()`
-  * method `get_style()`
+  * method `get_style()`: `UnityEngine.UIElements.IStyle`
   * method `set_name(System.String)`
+
+**Game classes derived from and interfaces implemented** (with the abstract members each had at build time; a new one keeps the module from loading)
+
+* class `Bindito.Core.Configurator`: `Configure`
+* interface `Bindito.Core.IProvider`1`: `Get`
+* class `Timberborn.BaseComponentSystem.BaseComponent`
+* interface `Timberborn.BaseComponentSystem.IAwakableComponent`: `Awake`
+* interface `Timberborn.BlockSystem.IFinishedStateListener`: `OnEnterFinishedState`, `OnExitFinishedState`
+* interface `Timberborn.EntityPanelSystem.IEntityPanelFragment`: `ClearFragment`, `InitializeFragment`, `ShowFragment`, `UpdateFragment`
+* interface `Timberborn.EntitySystem.IDeletableEntity`: `DeleteEntity`
+* interface `Timberborn.EntitySystem.IPostInitializableEntity`: `PostInitializeEntity`
+* interface `Timberborn.SingletonSystem.ILoadableSingleton`: `Load`
+* interface `Timberborn.SingletonSystem.IPostLoadableSingleton`: `PostLoad`
+* interface `Timberborn.SingletonSystem.IUpdatableSingleton`: `UpdateSingleton`
 
 <!-- api:end -->

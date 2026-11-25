@@ -19,8 +19,15 @@ namespace Pandaborn.Bell
 
         public void OnEnterFinishedState()
         {
-            var label = GetComponent<LabeledEntity>();
-            _bellService.OnSettledBuildingFinished(label != null ? "finished " + label.DisplayName : "a leisure building was finished");
+            // the game treats an exception in a finished-state listener as a failed load: never let one out
+            string what = "a leisure building was finished";
+            try
+            {
+                var label = GetComponent<LabeledEntity>();
+                if (label != null) what = "finished " + label.DisplayName;
+            }
+            catch (System.Exception) { }
+            _bellService.OnSettledBuildingFinished(what);
         }
 
         public void OnExitFinishedState()

@@ -14,6 +14,7 @@ using Timberborn.Localization;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.TimeSystem;
+using Timberborn.UILayoutSystem;
 using Timberborn.WeatherSystem;
 using Timberborn.WorkSystem;
 using UnityEngine;
@@ -46,13 +47,19 @@ namespace Pandaborn.Bell
         private readonly DistrictCenterRegistry _districtCenterRegistry;
         private readonly BonusTypeSpecService _bonusTypeSpecService;
 
+        private const int KeptRings = 64;
         private int _lockedHours = -1;
+        private float _workingBonus;
+        private float _movementBonus;
+        private float[] _workingHours, _workingBonuses, _movementHours, _movementBonuses;
+        private int _ceilingHours = -1;
         private bool _suggested;
         private bool _settled;
+        private bool _interfaceShown;
         private int _ringDay = -1;
         private int _ringsToday;
 
-        /// <summary>Every bell ring attempt this session (day, sound id, played), for tests.</summary>
+        /// <summary>The last bell ring attempts of this session (day, sound id, played), for tests.</summary>
         public static readonly List<string> Rings = new List<string>();
 
         public BellService(TemplateService templateService, WorkingHoursManager workingHoursManager, EventBus eventBus,
@@ -95,13 +102,26 @@ namespace Pandaborn.Bell
         /// <summary>The slider right now (whole hours, as the vanilla panel shows it).</summary>
         public int SliderHours => Mathf.CeilToInt(_workingHoursManager.WorkedPartOfDay * 24f - 0.001f);
 
-        public float WorkingBonus => Active && _lockedHours >= 0 ? Curve(Spec.WorkingSpeedCurve, _lockedHours) : 0f;
+        /// <summary>Today's bonuses, worked out once when the day is locked (every colonist reads them at each change of
+        /// its own bonuses).</summary>
+        public float WorkingBonus => Active && _lockedHours >= 0 ? _workingBonus : 0f;
 
-        public float MovementBonus => Active && _lockedHours >= 0 ? Curve(Spec.MovementSpeedCurve, _lockedHours) : 0f;
+        public float MovementBonus => Active && _lockedHours >= 0 ? _movementBonus : 0f;
 
-        public float WorkingBonusAt(int hours) => Active ? Curve(Spec.WorkingSpeedCurve, hours) : 0f;
+        public float WorkingBonusAt(int hours) => Active ? BellCurve.At(_workingHours, _workingBonuses, hours) : 0f;
 
-        public float MovementBonusAt(int hours) => Active ? Curve(Spec.MovementSpeedCurve, hours) : 0f;
+        public float MovementBonusAt(int hours) => Active ? BellCurve.At(_movementHours, _movementBonuses, hours) : 0f;
+
+        /// <summary>The longest working day (whole hours) that still gives the largest working bonus: shortening the day
+        /// further gains nothing. From the curve, never a constant; -1 when the curve gives no bonus at all.</summary>
+        public int CeilingHours => Active ? _ceilingHours : -1;
+
+        /// <summary>CeilingHours for a text; the slider's hours when the curve gives no bonus (the text then names the day
+        /// the village already works).</summary>
+        public string CeilingHoursText => (CeilingHours >= 0 ? CeilingHours : SliderHours).ToString(CultureInfo.InvariantCulture);
+
+        private const string SuggestionKey = "Pandaborn.Bell.Suggestion.WithHour";
+        private const string OldSuggestionKey = "Pandaborn.Bell.Suggestion";
 
         public bool Suggested => _suggested;
 
@@ -127,15 +147,23 @@ namespace Pandaborn.Bell
                     FeatureRegistry.ReportNoData("Bell", "the faction's adult template has no PandabornBellSpec");
                 return;
             }
+            Points(Spec.WorkingSpeedCurve, out _workingHours, out _workingBonuses);
+            Points(Spec.MovementSpeedCurve, out _movementHours, out _movementBonuses);
+            _ceilingHours = BellCurve.CeilingHours(_workingHours, _workingBonuses);
             CheckWalkingCap();
-            if (_store.TryGet(StoreFeature, out int version, out string payload) && version == StoreVersion)
+            try
             {
-                var values = Payload.Parse(payload);
-                if (values.TryGetValue("locked", out var locked) && int.TryParse(locked, NumberStyles.Integer, CultureInfo.InvariantCulture, out int h)
-                    && h >= 0 && h <= 24) _lockedHours = h;
-                _suggested = values.TryGetValue("suggested", out var s) && s == "1";
-                _settled = values.TryGetValue("settled", out var st) && st == "1";
+                if (_store.TryGet(StoreFeature, out int version, out string payload) && version == StoreVersion)
+                {
+                    var values = Payload.Parse(payload);
+                    if (values.TryGetValue("locked", out var locked) && int.TryParse(locked, NumberStyles.Integer, CultureInfo.InvariantCulture, out int h)
+                        && h >= 0 && h <= 24) _lockedHours = h;
+                    _suggested = values.TryGetValue("suggested", out var s) && s == "1";
+                    _settled = values.TryGetValue("settled", out var st) && st == "1";
+                }
             }
+            catch (Exception e) { Debug.LogWarning("[Pandaborn.Bell] saved bell state unreadable; starting fresh: " + e.Message); }
+            Recompute();
             // WorkingHoursManager (a dependency) has loaded, so the slider is known: lock now, before any colonist
             // applies its bonus (a new game, or a save made before the bell existed or with the module off).
             if (_lockedHours < 0) Lock(SliderHours, "start");
@@ -146,6 +174,16 @@ namespace Pandaborn.Bell
         {
             if (!Active) return;
             Debug.Log("[Pandaborn.Bell] active; working day locked at " + _lockedHours + " h: working +" + Pct(WorkingBonus) + ", walking +" + Pct(MovementBonus));
+        }
+
+        /// <summary>A leisure building found finished while a save loads settles the village before there is an interface
+        /// to show a message in; the suggestion is posted once the interface is there.</summary>
+        [OnEvent]
+        public void OnShowPrimaryUI(ShowPrimaryUIEvent e)
+        {
+            _interfaceShown = true;
+            try { TrySuggest("the interface is shown"); }
+            catch (Exception ex) { Debug.LogError("[Pandaborn.Bell] suggestion failed: " + ex); }
         }
 
         [OnEvent]
@@ -170,10 +208,14 @@ namespace Pandaborn.Bell
         public void OnSettledBuildingFinished(string what)
         {
             if (!Active || _settled) return;
-            _settled = true;
-            Persist();
-            Debug.Log("[Pandaborn.Bell] village settled (" + what + ")");
-            TrySuggest(what);
+            try
+            {
+                _settled = true;
+                Persist();
+                Debug.Log("[Pandaborn.Bell] village settled (" + what + ")");
+                TrySuggest(what);
+            }
+            catch (Exception ex) { Debug.LogError("[Pandaborn.Bell] settling the village failed: " + ex); }
         }
 
         /// <summary>The one-time suggestion, once per settlement: only when the village is settled (a Hammock or Teahouse
@@ -182,6 +224,7 @@ namespace Pandaborn.Bell
         private void TrySuggest(string why)
         {
             if (!Active || _suggested || !_settled) return;
+            if (!_interfaceShown) return;       // still loading: tried again when the interface appears
             int day = _dayNightCycle.DayNumber;
             if (day < Math.Max(1, Spec.SuggestionMinimumDay)) { Debug.Log("[Pandaborn.Bell] suggestion waits: day " + day + " < " + Spec.SuggestionMinimumDay); return; }
             bool hazard;
@@ -208,6 +251,7 @@ namespace Pandaborn.Bell
                 var hall = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault();
                 bool played = hall != null && _sounds.Play2D(id);
                 Rings.Add("day " + day + " " + id + (played ? " played" : hall == null ? " silent (no village hall)" : " silent (no clip)"));
+                if (Rings.Count > KeptRings) Rings.RemoveAt(0);
             }
             catch (Exception ex) { Debug.LogWarning("[Pandaborn.Bell] bell sound failed: " + ex.Message); }
         }
@@ -218,9 +262,9 @@ namespace Pandaborn.Bell
             try
             {
                 float max = _bonusTypeSpecService.GetSpec("MovementSpeed").MaximumValue;
-                float best = Spec.MovementSpeedCurve.IsDefaultOrEmpty ? 0f : Spec.MovementSpeedCurve.Max(p => p.Bonus);
+                float best = _movementBonuses.Length == 0 ? 0f : _movementBonuses.Max();
                 if (best > 0f && max < 2f * (1f + best) - 0.01f)
-                    FeatureRegistry.ReportDegraded("Bell", "walking-speed cap " + max.ToString("0.##", CultureInfo.InvariantCulture)
+                    FeatureRegistry.ReportDegradedInGame("Bell", "walking-speed cap " + max.ToString("0.##", CultureInfo.InvariantCulture)
                         + ": the faction's BonusType.MovementSpeed modifier is missing, so happy Inkpaws lose part of the walking bonus");
             }
             catch (Exception e) { Debug.LogWarning("[Pandaborn.Bell] walking-cap check failed: " + e.Message); }
@@ -232,6 +276,7 @@ namespace Pandaborn.Bell
             hours = Mathf.Clamp(hours, 0, 24);
             bool changed = hours != _lockedHours;
             _lockedHours = hours;
+            Recompute();
             Persist();
             if (!changed) return;
             Debug.Log("[Pandaborn.Bell] working day locked at " + hours + " h (" + why + "): working +" + Pct(WorkingBonus) + ", walking +" + Pct(MovementBonus));
@@ -243,9 +288,12 @@ namespace Pandaborn.Bell
         {
             _suggested = true;
             Persist();
-            string key = string.IsNullOrEmpty(Spec.SuggestionLocKey) ? "Pandaborn.Bell.Suggestion" : Spec.SuggestionLocKey;
+            // The text names the hour at which the bonus is full, so the key is the one that takes it. The data's key from
+            // before the hour was a parameter ("Pandaborn.Bell.Suggestion") means the same text.
+            string key = string.IsNullOrEmpty(Spec.SuggestionLocKey) || Spec.SuggestionLocKey == OldSuggestionKey ? SuggestionKey : Spec.SuggestionLocKey;
             Debug.Log("[Pandaborn.Bell] suggestion posted (" + why + ")");
-            _messenger.Post(_loc.T(key));
+            // {0} = the longest working day, in whole hours, at which the bonus is full (from the curve)
+            _messenger.Post(_loc.T(key, CeilingHoursText));
         }
 
         private void Persist()
@@ -258,21 +306,25 @@ namespace Pandaborn.Bell
             }));
         }
 
-        /// <summary>Piecewise-linear curve over hours, flat beyond its ends; an empty curve is 0.</summary>
+        private void Recompute()
+        {
+            _workingBonus = _lockedHours >= 0 ? BellCurve.At(_workingHours, _workingBonuses, _lockedHours) : 0f;
+            _movementBonus = _lockedHours >= 0 ? BellCurve.At(_movementHours, _movementBonuses, _lockedHours) : 0f;
+        }
+
+        /// <summary>Piecewise-linear curve over hours, flat beyond its ends; an empty curve is 0 (BellCurve.At).</summary>
         public static float Curve(ImmutableArray<PandabornBellPointSpec> points, float hours)
         {
-            if (points.IsDefaultOrEmpty) return 0f;
-            var sorted = points.OrderBy(p => p.Hours).ToList();
-            if (hours <= sorted[0].Hours) return sorted[0].Bonus;
-            for (int i = 1; i < sorted.Count; i++)
-            {
-                if (hours > sorted[i].Hours) continue;
-                var a = sorted[i - 1];
-                var b = sorted[i];
-                float t = b.Hours > a.Hours ? (hours - a.Hours) / (b.Hours - a.Hours) : 1f;
-                return a.Bonus + (b.Bonus - a.Bonus) * t;
-            }
-            return sorted[sorted.Count - 1].Bonus;
+            Points(points, out var h, out var b);
+            return BellCurve.At(h, b, hours);
+        }
+
+        /// <summary>The curve's points as two arrays; a missing curve or a null point gives none.</summary>
+        private static void Points(ImmutableArray<PandabornBellPointSpec> points, out float[] hours, out float[] bonuses)
+        {
+            var valid = points.IsDefaultOrEmpty ? new List<PandabornBellPointSpec>() : points.Where(p => p != null).ToList();
+            hours = valid.Select(p => p.Hours).ToArray();
+            bonuses = valid.Select(p => p.Bonus).ToArray();
         }
 
         public static string Pct(float bonus) => Mathf.RoundToInt(bonus * 100f).ToString(CultureInfo.InvariantCulture) + "%";

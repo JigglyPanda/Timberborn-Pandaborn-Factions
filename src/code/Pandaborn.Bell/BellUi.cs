@@ -91,9 +91,13 @@ namespace Pandaborn.Bell
             });
         }
 
-        private string Tooltip() => SafeUi.Get(Piece + ".Tooltip", () => _loc.T("Pandaborn.Bell.Tooltip",
-            _bellService.LockedHours.ToString(CultureInfo.InvariantCulture), BellService.Pct(_bellService.WorkingBonus),
-            BellService.Pct(_bellService.MovementBonus)), "");
+        /// <summary>{0} today's working day in hours, {1} working bonus, {2} walking bonus, {3} the longest day at which
+        /// the bonus is full. ILoc.T takes three values, so the four are put into the text here.</summary>
+        private string Tooltip() => SafeUi.Get(Piece + ".Tooltip", () => _loc.T("Pandaborn.Bell.Tooltip.WithHour")
+            .Replace("{0}", _bellService.LockedHours.ToString(CultureInfo.InvariantCulture))
+            .Replace("{1}", BellService.Pct(_bellService.WorkingBonus))
+            .Replace("{2}", BellService.Pct(_bellService.MovementBonus))
+            .Replace("{3}", _bellService.CeilingHoursText), "");
     }
 
     /// <summary>
