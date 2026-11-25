@@ -18,6 +18,8 @@ namespace Pandaborn.Core
             Bind<FeatureNotices>().AsSingleton();
             Bind<PandabornEntityState>().AsTransient();
             MultiBind<IWorkdayClock>().To<NoWorkdayClock>().AsSingleton();
+            MultiBind<INightShiftClock>().To<NoNightShiftClock>().AsSingleton();
+
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
 

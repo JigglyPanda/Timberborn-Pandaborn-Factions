@@ -156,7 +156,11 @@ namespace Pandaborn.Core
             _districtCenterRegistry = districtCenterRegistry;
         }
 
-        public void Post(string text, bool warning = false, bool toast = true)
+        public void Post(string text, bool warning = false, bool toast = true) => Post(text, null, warning, toast);
+
+        /// <summary>The same with a subject: clicking the entry in the notification log takes the camera to it (a new
+        /// colonist, the building it happened at). Without one, or when it is gone, the first district center.</summary>
+        public void Post(string text, Timberborn.BaseComponentSystem.BaseComponent subject, bool warning = false, bool toast = true)
         {
             Log.Add(text);
             Debug.Log("[Pandaborn] message: " + text);
@@ -168,8 +172,9 @@ namespace Pandaborn.Core
             catch (Exception e) { Debug.LogWarning("[Pandaborn] toast failed: " + e.Message); }
             try
             {
-                var center = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault() ?? _districtCenterRegistry.AllDistrictCenters.FirstOrDefault();
-                if (center != null) _notificationBus.Post(text, center);
+                if (!subject) subject = _districtCenterRegistry.FinishedDistrictCenters.FirstOrDefault() ?? _districtCenterRegistry.AllDistrictCenters.FirstOrDefault();
+                if (subject) _notificationBus.Post(text, subject);
+
             }
             catch (Exception e) { Debug.LogWarning("[Pandaborn] notification failed: " + e.Message); }
         }
