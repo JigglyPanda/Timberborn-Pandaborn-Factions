@@ -60,7 +60,11 @@ try {
     if (Test-Path $pendingPath) {
         Say 'A test did not confirm that it put the mod settings back. Restoring them now...' 'Yellow'
         & powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run_game_test.ps1') -RestoreModState $pendingPath -DuringHold
-        if (Test-Path $pendingPath) { Say "Could not confirm the restore. Do not change mods yet; ask Claude. ($pendingPath)" 'Red' }
+        if (Test-Path $pendingPath) {
+            # not "your mod settings are as you left them", and no game: it would start with the test's mod settings
+            Say "Could not confirm the restore. Timberborn was not started. Do not change mods yet; ask Claude. ($pendingPath)" 'Red'
+            return
+        }
     }
     $harness = Join-Path $modsDir 'PandabornDevHarness'
     if (Test-Path $harness) {

@@ -35,7 +35,7 @@
   test      tools/run_game_test.ps1 -Faction Inkpaws with the generated grid request (every placeable template),
             on Plains with -OnlyMods JigglyPanda.PandabornFactions. -TestArgs passes more arguments.
   package   Copies the staging folder to E:\PandabornDev\build\package\PandabornFactions and zips it (mod.io).
-  all       pin, models, generate, code, bundles, assemble, validate, install. (test and package only when named.)
+  all       pin, models, generate, code, bundles, assemble, validate, gate, install. (test and package only when named.)
 
   Exit code 0 when every requested stage passed.
 .EXAMPLE
@@ -422,11 +422,19 @@ foreach ($s in $stages) {
         }
         'install' {
             if ($failed.Count -gt 0) { Say "install: refused, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
+            # CLAUDE.md, install discipline: never while a Timberborn process runs (a game holds the mod's bundles open, so
+            # the mirror would stop half way; a test game loading the folder would read a mix of old and new files)
+            $open = @(Get-Process Timberborn -ErrorAction SilentlyContinue)
+            if ($open.Count -gt 0) {
+                Say "install: refused, Timberborn is running (pid $($open.Id -join ', ')). Run the install stage again when no game is open (hold the test queue for it: tools\game_test_hold.ps1)." 'Red'
+                $failed += $s; break
+            }
             $gateFile = "$StageDir.gate.json"
             $gateOk = $false
+            $stageHash = Get-StageHash $StageDir
             if (Test-Path -LiteralPath $gateFile) {
                 $g = Get-Content -LiteralPath $gateFile -Raw | ConvertFrom-Json
-                $gateOk = ($g.hash -eq (Get-StageHash $StageDir))
+                $gateOk = ($g.hash -eq $stageHash)
             }
             if (-not $gateOk) {
                 if (-not $GateOverride) {
@@ -434,7 +442,7 @@ foreach ($s in $stages) {
                     $failed += $s; break
                 }
                 $log = "$StageDir.gate-overrides.log"
-                Add-Content -LiteralPath $log -Value ("{0} override: {1}" -f (Get-Date).ToString('o'), $GateOverride)
+                Add-Content -LiteralPath $log -Value ("{0} override: {1} [stage hash {2}; by {3}]" -f (Get-Date).ToString('o'), $GateOverride, $stageHash, $env:USERNAME)
                 Say "install: GATE OVERRIDDEN ($GateOverride), logged in $log" 'Yellow'
             }
             if (-not $validated) {

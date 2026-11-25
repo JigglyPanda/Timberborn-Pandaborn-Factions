@@ -160,15 +160,17 @@ namespace PandabornTest {
 # never counted, waited for or killed. (-Visible launches may bounce through Steam, so they go by start time.)
 $script:testPids = @()
 function Get-TestProcesses([datetime]$since) {
-    if ($script:testPids.Count -gt 0) {
+    # hidden desktop: only the pids this run started. Before the first launch (or when the launch failed) that is
+    # nothing; going by start time there would count, and kill, a game the owner started in those seconds.
+    if (-not $Visible) {
         return @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object { $script:testPids -contains $_.Id })
     }
     @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object {
         try { $_.StartTime -ge $since.AddSeconds(-3) } catch { $false } })
 }
-# Timberborn processes that are not this run's: the owner playing.
+# Timberborn processes that are not this run's: the owner playing. (-Visible cannot tell them apart.)
 function Get-OwnerGames {
-    if ($script:testPids.Count -eq 0) { return @() }
+    if ($Visible) { return @() }
     @(Get-Process Timberborn -ErrorAction SilentlyContinue | Where-Object { $script:testPids -notcontains $_.Id })
 }
 
@@ -332,7 +334,7 @@ function New-Request([string]$outDir, [hashtable]$extra) {
     }
     if ($SaveAndReload) { $request.save = $saveName }
     if ($RequestJson) {
-        $override = Get-Content $RequestJson -Raw | ConvertFrom-Json
+        $override = Get-Content $RequestJson -Raw -Encoding UTF8 | ConvertFrom-Json
         foreach ($p in $override.PSObject.Properties) { $request[$p.Name] = $p.Value }
     }
     foreach ($k in $extra.Keys) { $request[$k] = $extra[$k] }
@@ -343,6 +345,8 @@ function New-Request([string]$outDir, [hashtable]$extra) {
 # Launches the game with a request, waits for it to finish (or kills it), restores the window prefs. Never returns
 # with a test process still alive unless it could not be killed (reported in .stillRunning).
 function Invoke-GameRun([string]$outDir, $request, [string[]]$extraArgs) {
+    # never start a second game next to the owner's (they may have started theirs between two launches of this run)
+    if (@(Get-OwnerGames).Count -gt 0) { throw 'aborted: a Timberborn that is not this run''s is open; the test game was not started' }
     New-Item -ItemType Directory -Force $outDir | Out-Null
     [IO.File]::WriteAllText($requestPath, ($request | ConvertTo-Json -Depth 10), $utf8)
     $prefsBefore = Get-PrefsSnapshot
@@ -591,7 +595,9 @@ function Get-QueueAhead([string]$queueDir, [string]$myTicket) {
             # same pid and same start time = the same process (pids are reused)
             if ($p -and ($p.StartTime.ToUniversalTime().ToString('o') -eq $t.processStartedUtc)) { $alive = $true }
         } catch { }
-        if ($alive) { $ahead += $t } else { try { Remove-Item -LiteralPath $f.FullName -Force } catch { } }
+        if ($alive) { $ahead += $t }
+        # a ticket that cannot be read yet may be one another waiter is writing right now: leave young ones alone
+        elseif ($null -ne $t -or ((Get-Date) - $f.LastWriteTime).TotalSeconds -gt 30) { try { Remove-Item -LiteralPath $f.FullName -Force } catch { } }
     }
     return $ahead
 }
@@ -691,6 +697,21 @@ try {
         # the queue is held by tools\game_test_hold.ps1, which owns the lock for us: nobody else can start a game
         if (-not (Test-Path (Join-Path $TestRoot 'HOLD'))) { Say '-DuringHold needs the queue to be held (tools\game_test_hold.ps1).' 'Red'; exit 2 }
         if (@(Get-Process Timberborn -ErrorAction SilentlyContinue).Count -gt 0) { Say 'A Timberborn process is open; not starting.' 'Red'; exit 2 }
+        # The HOLD file alone proves nothing: it stays behind when a hold script's window is closed, and it is written
+        # before the hold has the lock (a test may still be between two launches). The hold is real only while the
+        # lock is taken and its holder file names a live HOLD process.
+        $probe = New-Object System.Threading.Mutex($false, $mutexName)
+        $free = $false
+        try { $free = $probe.WaitOne(0) } catch { $free = $true }   # abandoned: nobody holds it
+        if ($free) { try { $probe.ReleaseMutex() } catch { } }
+        $probe.Dispose()
+        $holder = $null
+        try { $holder = Get-Content $lockInfoPath -Raw | ConvertFrom-Json } catch { }
+        $holderAlive = $holder -and ([string]$holder.what -like 'HOLD*') -and (Get-Process -Id ([int]$holder.pid) -ErrorAction SilentlyContinue)
+        if ($free -or -not $holderAlive) {
+            Say '-DuringHold: there is a HOLD file but no hold script owns the test lock (stale file, or the hold still waits for a run). Not starting.' 'Red'
+            exit 2
+        }
     } else {
         $lock = Enter-GameLock $WaitForGameSeconds $what
         if ($null -eq $lock) { exit 2 }
@@ -698,12 +719,14 @@ try {
 
     # -------------------------------------------------------------- -RestoreModState mode
     if ($RestoreModState) {
-        $state = Get-Content -LiteralPath $RestoreModState -Raw | ConvertFrom-Json
+        # written as UTF-8 without a BOM; Windows PowerShell would read that as ANSI and mangle a non-ASCII mod folder
+        # or Id inside a value name (the wrong value restored, and "verified" against itself)
+        $state = Get-Content -LiteralPath $RestoreModState -Raw -Encoding UTF8 | ConvertFrom-Json
         $res = Restore-ModState $state
         foreach ($r in $res.entries) { Say ("  {0,-5} {1}: before {2}, now {3}" -f $(if ($r.match) { 'ok' } else { 'DIFF' }), $r.name, $r.before, $r.afterRestore) $(if ($r.match) { 'Gray' } else { 'Red' }) }
         if ($res.ok) {
             if (Test-Path $pendingStatePath) {
-                $pending = Get-Content $pendingStatePath -Raw | ConvertFrom-Json
+                $pending = Get-Content $pendingStatePath -Raw -Encoding UTF8 | ConvertFrom-Json
                 if ($pending.runId -eq $state.runId) { Remove-Item $pendingStatePath -Force; Say "removed $pendingStatePath" }
             }
             Say "Mod state restored and verified ($(@($res.entries).Count) value(s))." 'Green'; exit 0
@@ -852,6 +875,11 @@ try {
         exit 0
     }
 
+    # The lock was taken with no Timberborn open, but the harness build above takes a while and the owner may have
+    # started the game since (Steam also restarts it once at launch). Nothing is changed yet: stop here.
+    $open = @(Get-Process Timberborn -ErrorAction SilentlyContinue)
+    if ($open.Count -gt 0) { Say "Timberborn was started (pid $($open.Id -join ', ')) while this run prepared; not changing mod flags, not starting a test game." 'Red'; exit 2 }
+
     # -------------------------------------------------------------- run (flags changed only inside try/finally)
     $runs = @()
     $modRestore = $null
@@ -898,8 +926,11 @@ try {
         # never leave the game running, and never restore flags while it runs (it rewrites them on exit)
         $alive = Stop-TestGame $script:launchTime
         if ($alive) { Say 'A test game process is still alive and could not be killed.' 'Red' }
+        # first of all: an unconsumed request sits at the harness's default path, and the harness junction is still in
+        # Mods, so a game the owner starts now (the wait below can last as long as they play) would run the test itself
+        try { if (Test-Path $requestPath) { Remove-Item $requestPath -Force } } catch { }
         if ($null -ne $modPlan) {
-            $state = Get-Content -LiteralPath (Join-Path $runDir 'modstate.json') -Raw | ConvertFrom-Json
+            $state = Get-Content -LiteralPath (Join-Path $runDir 'modstate.json') -Raw -Encoding UTF8 | ConvertFrom-Json
             $modRestore = Restore-ModState $state
             [IO.File]::WriteAllText((Join-Path $runDir 'modstate.restore.json'), ($modRestore | ConvertTo-Json -Depth 6), $utf8)
             $ownerGames = @(Get-OwnerGames)
@@ -964,6 +995,8 @@ try {
             }
         }
     }
+    # our handle on the hidden desktop (it would stay open in a session that called this script with &)
+    if ('PandabornTest.HiddenDesktop' -as [type]) { try { [PandabornTest.HiddenDesktop]::Close() } catch { } }
     Exit-GameLock $lock
     if ($script:queueTicketPath) { try { Remove-Item -LiteralPath $script:queueTicketPath -Force -ErrorAction SilentlyContinue } catch { } }
 }
