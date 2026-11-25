@@ -116,15 +116,26 @@ def build(review, out, vanilla, lang="enUS"):
 
 
 def main():
+    # problem lines quote game texts (Chinese for zhCN): a console in another code page must not turn a finding
+    # into a crash
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="backslashreplace")
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser()
     ap.add_argument("--loc", default=r"E:\PandabornDev\reference\Localizations")
     ap.add_argument("--out")
     ap.add_argument("--check")
-    ap.add_argument("--lang", default="enUS", choices=sorted(WORDS), help="the language of the table (default enUS)")
+    ap.add_argument("--lang", choices=sorted(WORDS),
+                    help="the language of the table (default enUS; --check without it also checks every other "
+                         "language that has a review file)")
     ap.add_argument("--review", help="default: words.review.<lang>.txt beside the module")
     ap.add_argument("--build", nargs=2, metavar=("REVIEW", "OUT"),
                     help="write the runtime table from the hand-reviewed file, adding each key's vanilla text")
     a = ap.parse_args()
+    all_languages = a.lang is None and a.check and not a.review
+    a.lang = a.lang or "enUS"
     if not a.review:
         a.review = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "words.review.%s.txt" % a.lang)
     vanilla = load_vanilla(a.loc, a.lang)
@@ -141,9 +152,31 @@ def main():
             for k in sorted(cands):
                 print(f"{k}\t{esc(cands[k])}")
         return 0
+    problems = check(a.check, a.review, vanilla, cands, a.lang)
+    if all_languages:
+        # The build calls "--check <the enUS table>" (tools/pandaborn.ps1, stages pin and package): that one call covers
+        # every language with a review file, so a translated table cannot go stale unseen. Same exit code: 1 on any problem.
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for lang in sorted(WORDS):
+            review = os.path.join(here, "words.review.%s.txt" % lang)
+            if lang == a.lang or not os.path.exists(review):
+                continue
+            table = os.path.join(os.path.dirname(os.path.abspath(a.check)), "words.%s.txt" % lang)
+            if not os.path.exists(table):
+                print(f"{lang}: {review} has no built table {table}")
+                problems += 1
+                continue
+            other = load_vanilla(a.loc, lang)
+            other_cands = {k: v for k, v in other.items() if k not in SKIP_KEYS and WORDS[lang].search(v)}
+            problems += check(table, review, other, other_cands, lang)
+    return 1 if problems else 0
+
+
+def check(table, review, vanilla, cands, lang):
+    """Compares a built table and its review file with the game's texts of that language; returns the problem count."""
     problems = 0
     reviewed = set()
-    for feature, key, _, was, n in load_table(a.check):
+    for feature, key, _, was, n in load_table(table):
         reviewed.add(key)
         if key not in vanilla:
             print(f"line {n}: {key} no longer exists in the game")
@@ -152,7 +185,7 @@ def main():
             print(f"line {n}: {key} changed in the game; was {esc(was)!r}, now {esc(vanilla[key])!r}")
             problems += 1
     # keys reviewed and deliberately kept vanilla are listed as comments "# keep KEY ..."
-    with open(a.review, encoding="utf-8") as fh:
+    with open(review, encoding="utf-8") as fh:
         for line in fh:
             m = re.match(r"#\s*keep\s+(\S+)", line)
             if m:
@@ -160,8 +193,8 @@ def main():
     for k in sorted(set(cands) - reviewed):
         print(f"new candidate, not reviewed: {k}\t{esc(cands[k])}")
         problems += 1
-    print(f"{len(cands)} candidates, {len(reviewed)} reviewed, {problems} problem(s)")
-    return 1 if problems else 0
+    print(f"{lang}: {len(cands)} candidates, {len(reviewed)} reviewed, {problems} problem(s)")
+    return problems
 
 
 if __name__ == "__main__":
