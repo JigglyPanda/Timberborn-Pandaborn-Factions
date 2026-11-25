@@ -19,10 +19,10 @@ Ringtails work the night in their **own** night posts, from the afternoon bell t
 | Topic | As built | Where proven |
 |---|---|---|
 | Two kinds | Ringtail adult and kit are hidden templates (in no template collection), so the vanilla factory still finds one adult; our factory creates them; one reflection write registers them in `TemplateNameMapper` for saves | §17.3, §18.6 |
-| Work | Worker type `PandabornRingtail` (`IgnoresWorkingHours`). Three night posts (Builders', Courier, Foragers') keep `Beaver` in data; the module switches them to Ringtails. **No shift flipping, no shared workplaces, no crews.** Inkpaw workplaces stay Inkpaw | §17.1, §18 |
+| Work | Worker type `PandabornRingtail` (`IgnoresWorkingHours`). Four night posts (Builders', Courier, Foragers', and since 2026-11-25 the Star Tower, which keeps its science cost: `UnlockOnArrival = false`) keep `Beaver` in data; the module switches them to Ringtails. **No shift flipping, no shared workplaces, no crews.** Inkpaw workplaces stay Inkpaw | §17.1, §18 |
 | Hours | Shift start = the bell (the first Core `IWorkdayClock` with a locked day, i.e. Bell's; else the working-hours slider), clamped to 4 h .. nightfall. Rest from dawn to the shift start: a root behaviour inserted by reflection above the worker behaviour | §17.3, §18.6 |
 | Stats | Data only: Inkpaw walking speed, never slowed by a load, lifting 14. Same needs, appetite and wellbeing tables as Inkpaws (the per-kind appetite was dropped) | §17.8 |
-| Arrival | Once per save, when the first Moon Loft is finished: 2 adults and 1 kit at its door, the night posts unlock for free, one message, the red panda twitter | §18.6, §19 |
+| Arrival | When the first Moon Loft of a save is finished: 2 adults and 1 kit at its door, the night posts unlock for free (the Star Tower aside), one message, the red panda twitter. Since 2026-11-25 not once for ever: a district that has a finished loft and no living Ringtail gets a new family after three dawns (§20) | §18.6, §19; the return unproven |
 | Births | `LoftNursery`, each dawn, per loft: one kit while the district has a Ringtail adult (any loft), open night jobs (Ringtail-typed posts' desired workers minus Ringtail adults and kits), nobody critically hungry or thirsty, and a free kit slot. Kits grow into Ringtail adults. Population follows **night jobs**, not beds | §19 |
 | Housing | Lofts are Ringtail homes (`LoftHousingRule` swaps an Inkpaw out for a Ringtail); Inkpaws may use spare loft beds; an Inkpaw lodger moves out when the nursery has a kit to raise there (cub first) | §17.4, §18, §19 |
 | Interface | Ringtail badge; a second population row; sun mark on every Inkpaw workplace, moon mark on night posts, nursery line on lofts; "Closed for the day" status on posts; moon arc on the day clock. All behind `SafeUi` | §18.5, §19 |
@@ -787,7 +787,7 @@ Everything the main mod's data needs. Ids follow the lock rules; the four spec c
 
 | What | Path / id | Content |
 |---|---|---|
-| Ringtail adult template | `Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json`, template `RingtailAdult.Inkpaws` | The vanilla beaver adult (as the Inkpaw adult is made), **in no template collection**. `Children.Model_Preserved.TimbermeshSpec.Model = Characters/Pandaborn/RingtailAdult.Model` (ringtail-body lane; add the mesh to the build's `$meshes` table), **no `TransformSpec`** (size is baked in). `WorkerSpec.WorkerType = PandabornRingtail`. `GoodCarrierSpec.BaseLiftingCapacity = 14`. `WalkerSpeedManagerSpec.BaseSlowedSpeed = BaseWalkingSpeed` (no slowing when loaded). `MovementAnimatorSpec.AnimationSpeedScale = 1.25`. Keep `SimpleLabeledEntitySpec.EntityNameLocKey = Beaver.Adult.TemplateName`. No `PandabornBellSpec` (the rested bonus is an Inkpaw thing). `PandabornNamePoolSpec { NamePoolLocKey: Pandaborn.Ringtail.NamePool }` (names.json). `PandabornRingtailSpec { Textures: Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1..5, Avatar: Sprites/Pandaborn/Avatars/RingtailAdult, ContaminatedAvatar: Sprites/Pandaborn/Avatars/RingtailContaminatedAdult, RestStartHours: 0, RestEndsAtBell: true, RestMinEndHours: 4, RestMaxEndHours: 16, SleepBelow: 0.55 }` |
+| Ringtail adult template | `Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint.json`, template `RingtailAdult.Inkpaws` | The vanilla beaver adult (as the Inkpaw adult is made), **in no template collection**. `Children.Model_Preserved.TimbermeshSpec.Model = Characters/Pandaborn/RingtailAdult.Model` (ringtail-body lane; add the mesh to the build's `$meshes` table), **no `TransformSpec`** (size is baked in). `WorkerSpec.WorkerType = PandabornRingtail`. `GoodCarrierSpec.BaseLiftingCapacity = 14`. `WalkerSpeedManagerSpec.BaseSlowedSpeed = BaseWalkingSpeed` (no slowing when loaded). `MovementAnimatorSpec.AnimationSpeedScale = 1.25`. Keep `SimpleLabeledEntitySpec.EntityNameLocKey = Beaver.Adult.TemplateName`. No `PandabornBellSpec` (that spec is what makes a game a bell game and stays on the Inkpaw adult only; since 2026-11-25 Ringtails do get the rested bonus, by the length of their night shift, which the Bell applies through `PandabornRingtailSpec`: §20). `PandabornNamePoolSpec { NamePoolLocKey: Pandaborn.Ringtail.NamePool }` (names.json). `PandabornRingtailSpec { Textures: Materials/Pandaborn/Ringtails/Adult/RingtailAdultCoat1..5, Avatar: Sprites/Pandaborn/Avatars/RingtailAdult, ContaminatedAvatar: Sprites/Pandaborn/Avatars/RingtailContaminatedAdult, RestStartHours: 0, RestEndsAtBell: true, RestMinEndHours: 4, RestMaxEndHours: 16, SleepBelow: 0.55 }` |
 | Ringtail kit template | `Characters/Pandaborn/RingtailChild.Inkpaws.blueprint.json`, template `RingtailChild.Inkpaws` | The vanilla beaver child, same rules: model `Characters/Pandaborn/RingtailChild.Model`, no `TransformSpec`, `BaseSlowedSpeed = BaseWalkingSpeed`, label `Beaver.Child.TemplateName`, name pool, `PandabornRingtailSpec` with the `RingtailChildCoat1..3` coats and the `RingtailChild` / `RingtailContaminatedChild` avatars |
 | Inkpaw adult (merge) | `InkpawAdult.Inkpaws` | `PandabornRingtailsSpec { AdultBlueprint: Characters/Pandaborn/RingtailAdult.Inkpaws.blueprint, ChildBlueprint: Characters/Pandaborn/RingtailChild.Inkpaws.blueprint, WorkerType: PandabornRingtail, ArrivalAdults: 2, ArrivalKits: 1 }`; `TemplateSpec.BackwardCompatibleTemplateNames += RingtailAdult.Inkpaws` — **permanent**: it is what lets a save keep its Ringtails (as Inkpaws) whenever the module is off |
 | Inkpaw child (merge) | `InkpawChild.Inkpaws` | `BackwardCompatibleTemplateNames += RingtailChild.Inkpaws` — permanent |
@@ -867,7 +867,7 @@ their output store should hold a day's harvest, so the night couriers clear it.
 7. **A demolished post:** its Ringtails become idle (the row shows them), keep their homes, rest and take leisure;
    no kits are raised until there are open night jobs again; a new post takes them at once.
 8. **A mature village:** two rows in the population panel, night posts busy from the bell to dawn, Inkpaw workshops
-   stocked and cleared overnight (with day-sized shelves, §18.3).
+   stocked and cleared overnight (with three-day shelves, §18.3).
 
 ### 18.5 Interface: done and not done
 
@@ -988,5 +988,147 @@ The probe's loft shots in `rt3_breed3` picked the first loft, which was one of t
 
 Ten connected lofts on one map (seven were); the NoParents line in game; the twitter at the arrival (the call is
 made, but no test records it);
-walking in from the map edge; the Night Builders' Post raising sites at night (unconnected in `rt3_breed3`); the
-module-off case where the API check fails for real.
+walking in from the map edge; a den finished overnight by the Night Builders' Post (night carrying is proven: in
+`rt2-soak` its Ringtails carried 36 goods in 18 trips to dens queued after the bell, all at night; the post was
+unconnected in `rt3_breed3`); the module-off case where the API check fails for real. More, from the review of
+2026-11-25, in §20.
+
+---
+
+## 20. Review 2026-11-25, the rested bonus, the return
+
+A read of every file of `src/code/Pandaborn.Ringtails` and `Pandaborn.RingtailsFallback` against the decompiled game
+(1.1.2.8), three additions asked for the same day, and no game run: the machine could not start one. Everything here
+is committed and compiles; none of it has been in a game (§20.7). The rules that are pure arithmetic are tested
+without the game (`dotnet run -c Release --project src/code/tests/WaterRingtails`).
+
+### 20.1 Found and fixed
+
+| Rank | What was wrong | Where | Fix (commit) |
+|---|---|---|---|
+| **Blocker** | **One click crashed the game.** A night post keeps itself on the Ringtail worker type; it did so by calling `SetWorkerType` again from inside the game's `WorkerTypeChanged` event. The game's `DistrictWorkplaceAssigner` files every workplace under its worker type and moves it by the event's (previous, current) pair. It subscribes after the post does, so it received the inner event (Beaver to Ringtail) before the outer one (Ringtail to Beaver): it removed the post from a list it was not in and added it to the Ringtail list a second time, `SortedList.Add` threw `ArgumentException`, out through the click. Reachable by clicking the beaver button of the vanilla beaver/bot toggle on a night post (the toggle shows on every workplace panel once the first bot exists; Inkpaws build Wooden Oxen) and by copying a workplace's settings onto a post. No test had a bot and a click | `NightPost.OnWorkerTypeChanged` | The post only notes the change and takes itself back on its next tick, outside the event, where the assigner handles it as any other change (899e112) |
+| Major | **Colonists were created inside a building's load step.** The arrival ran in the Moon Loft's finished-state listener. On a load that listener runs while the world is still being assembled, and an exception there fails the whole load. It happens whenever the first loft was finished in a session where the module was off or degraded and the save is then loaded with it on | `MoonLoft.OnEnterFinishedState`, `RingtailService` | The loft queues the arrival; `RingtailService.Tick` carries it out on the next tick. The flag is saved only after somebody was created; three failures in a row report the feature as reduced (3aff2c9) |
+| Major | **The people could die out for good**: one arrival per save, and kits need a living adult in the district. A second district could never have Ringtails at all (migration cannot pick them). A session with the module off turns Ringtails into Inkpaws for good while the arrival flag stays set | `RingtailService`, `LoftNursery` | The return, §20.3 (3aff2c9) |
+| Major | No callback was contained: the dawn handler runs inside the game's day-night tick, the housing rule is a tick, the rest is a behaviour decision, the post and the fallback act in load steps | all | Each catches, logs, and switches its own piece off: no kit that dawn; vanilla housing; the plain worker behaviour for that Ringtail; an Inkpaw workplace (899e112, 3aff2c9, 335029c) |
+| Minor | A homeless Ringtail could be given a *den* bed taken from an Inkpaw: the list of "Inkpaws in lofts" was walked from its start after the swaps had already moved its first entries into dens | `LoftHousingRule.Pass` | only an Inkpaw still in a loft gives way (335029c) |
+| Minor | `Dwelling.AssignDweller` throws on a full home; two call sites relied on arithmetic instead of asking | `LoftHousingRule` | asked first (335029c) |
+| Minor | A kit whose adult could not be created stayed hidden for ever (the kit is deactivated before the adult is made, as vanilla does) | `RingtailGrowth` | shown again; it grows up as an Inkpaw (335029c) |
+| Minor | The rest ended at the data's 16 h while the post's status, the clock arc and the clapper used the game's nightfall: with a mod that changes the length of the day the Ringtails and their own signs disagreed | `RingtailRestRootBehavior`, `RingtailWorkday` | one function, `ShiftMath.ShiftStart` (3aff2c9) |
+| Minor | The housing rule walked every colonist every ten ticks in every Inkpaws game, family or not; it listed every home on every pass | `LoftHousingRule` | idle until the arrival; homes listed only when something needs sorting (335029c) |
+| Minor | The loft's nursery line was set at dawn only: empty after a load and for a loft built since dawn, stale by afternoon | `RingtailsBuildingFragment`, `LoftNursery.Refresh` | recounted once a second while a loft is selected (454ef7c) |
+| Minor | The module used the game's sound system directly, with its own copy of Core's "is the clip there" check | `RingtailSounds` | Core's `PandabornSounds` (454ef7c) |
+| Minor | The module said nothing when an Inkpaws game had no `PandabornRingtailsSpec` | `RingtailService.Load` | `ReportNoData` (3aff2c9) |
+
+Checked and found right: the load order the service relies on (the game loads singletons in the order it built
+them and builds constructor arguments first, so `PandabornStore` and `TemplateNameMapper` load before
+`RingtailService` and world entities load after every singleton); growth at 0.995 always beats vanilla's 1.0 (a tick
+adds far less than 0.005); a non-Inkpaws game leaves every piece inert; the fallback's switch back to `Beaver` is a
+top-level `SetWorkerType` and safe.
+
+### 20.2 The rested bonus (M2, DESIGN.md 2026-11-25)
+
+Ringtails get the Bell's bonus by the length of their own night shift: the same two curves of `PandabornBellSpec`,
+read from the data, looked up at the night's length instead of the day's, and multiplied in the same way. A
+twelve-hour night gives a Ringtail what a twelve-hour day gives an Inkpaw; with the catalogue's curve a 16-hour day
+leaves an 8-hour night (the full bonus for Ringtails, none for Inkpaws) and an 8-hour day a 16-hour night (none).
+
+**It lives in the Bell** (`src/code/Pandaborn.Bell/BellNightShift.cs`, `BellNightRestedBonus`, a second component on
+`PandabornRingtailSpec`). The Bell owns the curve, the multiplying share, the walking-speed cap and the colonist
+line; all it lacked was one number, the length of the other people's shift. That number crosses through Core:
+`INightShiftClock { HasNightShift, NightShiftHours }`, which `RingtailWorkday` implements as 24 h minus the shift
+start (the bell as locked at dawn, clamped to four hours after dawn and to nightfall). Neither module names the
+other: with the Bell off the component does not exist and Ringtails work at plain speed, as Inkpaws do; with the
+Ringtails off no Ringtail exists and Core's `NoNightShiftClock` answers. The clock is taken in the per-colonist
+component, not in `BellService`, because the Ringtails' clock reads the Bell's locked day: two singletons taking
+each other in their constructors would close a circle. The factors change only when the Bell locks a new day.
+Kits get nothing (cubs get nothing). Nothing is saved; the share is taken out when the colonist is deleted.
+
+### 20.3 The return
+
+A district with a finished Moon Loft and no living Ringtail counts its empty dawns; after
+`PandabornRingtailsSpec.ReturnAfterDays` of them in a row (default 3), and at a dawn when nobody in the district is
+critically hungry or thirsty, a new family (the arrival's numbers) moves into a loft of that district with the
+message `Pandaborn.Ringtails.Returned`. One living Ringtail, adult or kit, ends the count. The counts are saved per
+district (`PandabornStore` "Ringtails": `waits=<district id>:<n>,...`), so a player who reloads often still gets the
+family. While a district waits, its lofts say `Pandaborn.Ringtails.Loft.Inviting`; kits without an adult say
+`Loft.NoParents` and wait to grow up. This repairs three cases: old age took the last Ringtails; a new district with
+a loft (three days after the loft is finished it has its own family); and a save whose Ringtails became Inkpaws
+because one session ran without the module (the Inkpaws stay Inkpaws, the night posts go back to the Ringtail type
+on load, and a family returns after three dawns).
+
+### 20.4 Other additions of the day
+
+* `PandabornNightPostSpec.UnlockOnArrival` (default true): false keeps a post's science cost. The Star Tower uses it
+  (catalogue 0fd83fe).
+* The population row ends with "Free night jobs: N" (worker slots of finished, unpaused Ringtail posts not filled).
+  The audit was right that the vanilla top bar leaves Ringtails out: `PopulationDataCollector` asks for employed,
+  vacancies and unemployed of the `Beaver` and `Bot` worker types only. Its head count and beds do include
+  Ringtails. Changing vanilla's row would need a patch; the second row is where the night jobs are.
+* The red panda twitter plays when a living Ringtail is selected, over the faction's colonist call (which is
+  vanilla's and chosen by faction). It plays from the module's own object moved to the Ringtail, not from a child of
+  the colonist, so nothing is added to a character's object tree.
+* The arrival, return and birth messages carry a subject: clicking the entry in the notification log takes the
+  camera to the loft or the kit. That is the "small touch" for the arrival; the camera is never moved on its own, and
+  walking in from the map edge stays unbuilt.
+* The rest steps aside while a Core `IGatheringClock` says the Ringtail gathers now. It is for the Lantern Festival:
+  with a 16-hour day the rest runs to 16 h and Ringtails missed the lantern release at 15.75 h. **The Festival does not
+  register a clock yet**, so this changes nothing until it does (two lines in the events lane: bind `FestivalService`
+  as `IGatheringClock`; `GathersNow(colonist)` = show time and the colonist's district holds the festival).
+
+### 20.5 Known, not fixed
+
+* A night post still shows the beaver/bot toggle once a bot exists. Clicking it does nothing (the post is back on
+  Ringtails within a tick). Hiding the toggle needs interface code; the catalogue dropped the posts' bot unlock cost
+  (0fd83fe), so no science can be wasted on it.
+* Until the Festival registers its clock, Ringtails on a 16-hour day miss the first half hour of the show.
+* `BellNightRestedBonus` repeats the share arithmetic of the Bell's own component (the Bell lane was rewriting that
+  into `RestedShare` in its working tree the same day; the two should become one when it is committed).
+* A returned family is free. A player could empty a district of Ringtails only by letting them die, so there is
+  nothing to farm, but a second district gets three colonists for the price of a loft.
+* The static counters the probe reads (`KitsRaised`, `ClappersPlayed`) are per session, not per game.
+
+### 20.6 Differences from DESIGN.md Pillar 4
+
+* "An Inkpaw who lands in [a Moon Loft] is swapped out within the hour": only when a Ringtail needs the bed (one lives
+  outside a loft, or is homeless) or the nursery needs the kit slot. Inkpaws keep spare loft beds otherwise.
+* "Kits, raised in the Moon Loft while there is work for them": also only while nobody in the district is critically
+  hungry or thirsty and a Ringtail adult lives there, one kit a loft a dawn.
+* "Building the first one brings a Ringtail family": on the tick after it is finished, not in the same instant.
+* "A sun or a moon on every workplace, in the toolbar and on the panel": on the panel, once the family has arrived,
+  for workplaces on the `Beaver` type (sun) and Ringtail-typed posts (moon). The toolbar marks are art.
+* "'Closed for the day' in place of the vanilla no-workers alert": the status shows by day on a Ringtail-typed post;
+  the vanilla alert still appears when the post has no Ringtail at all, day or night.
+* "If a game update ever breaks the Ringtail code, existing Ringtails load as Inkpaws rather than vanishing": yes, and
+  they stay Inkpaws when the code works again; a new family comes after three dawns.
+* The shift start is the bell clamped to four hours after dawn and to nightfall, as designed; the post's status text
+  says "at the afternoon bell" in every case.
+
+### 20.7 Performance (estimated from the code; nothing measured)
+
+Per tick: one countdown for the housing rule and, every tenth tick after the arrival, one walk over the district's
+adults and children (two or three component lookups each: with 300 colonists some tens of microseconds, so a few
+microseconds a tick on average, no allocation unless somebody has to move); one status test per night post; one
+comparison per kit; `RingtailService.Tick` is one empty-list test. A Ringtail's rest costs one decision when the game
+asks for one, not a tick. The rested bonus costs a Ringtail what it costs an Inkpaw: one remove, read and add when
+another of its speed bonuses changes. Per frame: the clapper's two clock reads; the population row once a second
+(a walk over the colonists and the posts); the clock arc twice a second; the building line only while a workplace
+or loft is selected. At dawn: one count per district.
+
+### 20.8 Needs a game run
+
+On a dev copy with the committed code (`proto/foundation/build.ps1 -Name rtdev`), the installed faction off, the
+probe `proto/ringtails`.
+
+| # | What | Scenario | Pass when |
+|---|---|---|---|
+| R-1 | The toggle click (the blocker) | `module.request.json` plus one Wooden Ox (any bot) created, then `WorkplaceWorkerType.SetWorkerType("Beaver")` on a finished, staffed night post (what the button does), and the same through `DuplicateFrom` from an Inkpaw workplace | no exception; the post is Ringtail-typed again within two ticks (`NightPost.Reclaims == 1`); its Ringtails are assigned again within the hour; no Inkpaw is ever assigned to it |
+| R-2 | The arrival one tick late, and on a load | `ui.request.json`; then a save with a finished loft made with `force-off: Ringtails`, loaded with the module on | first run: family at the loft's door on the tick after it is finished, all three housed in it, posts unlocked, message subject is the loft; second: the load succeeds, the family arrives on the first tick |
+| R-3 | The return | `breeding.request.json`, then every Ringtail removed (the probe's kill), three dawns | lofts say the inviting line; at the third dawn a family of three with the `Returned` message; the count survives a save and reload made after the second dawn; no family while the district is starving |
+| R-4 | Module off for one load, then on again | `forcedoff.request.json`, then a third launch with the module on | posts back on the Ringtail type at load (Inkpaws unassigned), no Ringtail, a family after three dawns, the old ones still Inkpaws |
+| R-5 | A second district | two districts, a loft in each, family in the first | the second gets its family at its third dawn; the first district's count stays 0 |
+| R-6 | The Star Tower keeps its cost | catalogue build with the tower on: first loft finished | three posts unlocked, the tower still 1,000 science; same after a reload; bought and built, it is Ringtail-typed |
+| R-7 | The rested bonus | the docs lane's N1 (day builders against night builders), and by reading: a Ringtail adult's `BellNightRestedBonus` at bells of 8, 12, 14 and 16 h | `ShiftHours` 16, 12, 10, 8; `WorkingFactor` and `MovementFactor` equal the curve at those hours (0, 0.33, 0.33, 0.33 with the catalogue's curve; at a 10-hour bell, 14 h: 0.14); `WorkingDelta = WorkingBase x WorkingFactor`; a kit has none; the line on a Ringtail's panel shows it; with `force-off: Bell` no component and plain speed; with `force-off: Ringtails` nothing throws |
+| R-8 | Free night jobs in the row, the loft line after a load | `breeding.request.json`, reload | row "... Free night jobs: N" equals the open slots; a selected loft shows its line right after the load, before any dawn |
+| R-9 | The twitter on selection | select a Ringtail (`RingtailSounds.TwittersPlayed`), a dead one, an Inkpaw | 1, then unchanged, unchanged; no error without the sound bundle |
+| R-10 | Ringtails through a festival morning and evening | `events-main` variant with a family and a 16-hour day, once the Festival registers its `IGatheringClock` | Ringtails asleep or at leisure in the morning, at the square from 15.5 h, back at their posts the next night; before the Festival's half exists: at the square from 16 h (record it) |
+| R-11 | Soak (regression of everything above) | `soak.request.json` | as `rt2-soak`: no job violation, no critical need, everyone back from the save |
