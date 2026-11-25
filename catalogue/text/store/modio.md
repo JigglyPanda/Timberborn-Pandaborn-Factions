@@ -19,7 +19,7 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 ## How they play
 * **The first hour is the game you know.** Water pump, gatherer, lumberjack, farmhouse. The first crop is shoot bamboo, eaten raw. Levees, dams and floodgates keep their names.
 * **Poles, not planks.** Timber bamboo is a fast tree, and cut bamboo is already a pole. A Pole Mill splits logs for the first days and for long droughts.
-* **The afternoon bell.** It is the working-hours slider you already have. The shorter the day, the faster rested pandas work and walk, and from twelve hours to sixteen the work done comes out the same. So you choose: more hours, or an afternoon of hammocks and tea.
+* **The afternoon bell.** It is the working-hours control you already have. The shorter the day, the faster rested pandas work and walk, and from twelve hours to sixteen the work done comes out the same. So you choose: more hours, or an afternoon of hammocks and tea.
 * **Every kind of land has a use.** Rice in flooded fields. Bamboo, cabbage and persimmons on green ground. Tea and Sichuan pepper on brown ground, where a drought cannot reach them.
 * **Lead the water.** A flume carries water one way, level or downhill, and keeps the ground beside it moist. A Scoop Wheel lifts water out of a current with no workers. A Paddy Spout holds a rice field at a shallow depth. The Flume Gate shuts itself when badwater comes.
 * **Two peoples, one village.** Build a Moon Loft, a snug home on stilts with a lantern in its window, and a Ringtail family moves in. Ringtails work from the bell to dawn: they build, carry and gather through the night, and run with a full basket. A village that never builds a Moon Loft is still complete.
@@ -31,7 +31,7 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 * Panda bodies for adults and cubs, and a red panda body for the Ringtails, each with several coats.
 * Seven new plants and a Sichuan kitchen: steamed shoots, pickles, steamed rice, hot pot, sweet rice balls.
 * Afternoon places: Hammock, Nap Platform, Teahouse, Slide and Swing, Kindergarten, Ink Studio, Hot Spring Bath.
-* Colonists with real names and their meaning: Le Le (Joy), Xing He (River of stars).
+* Pandas with real names and their meaning: Le Le (Joy), Xing He (River of stars).
 * The interface says Inkpaw, cub and panda where the game says beaver and kit. Only in Inkpaws games.
 * Wooden Oxen for bots, kite windmills and bamboo water wheels for power, a cliff carving of a seated panda, and a Sky Lantern for a wonder.
 * Its own sounds: the bell, the night watchman's clapper, water in a flume.
@@ -48,7 +48,7 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 ## Saves
 * Adds one faction. Folktails and Iron Teeth keep their buildings, coats and text. No file of the game is replaced. Safe to add to any game.
 * **Removing the mod breaks Inkpaws saves.** Other saves are not affected. After a Timberborn update, wait for this mod's update before loading an Inkpaws save.
-* If a game update breaks one feature, that feature switches off, the game says so once, and the save still loads.
+* If a game update breaks one part of the mod, that part switches off, the game says so, and the save still loads.
 * English text, written plainly so machine translation reads well.
 
 ## Works with, and known issues
@@ -62,6 +62,6 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 * Performance mods (T3MP, Performance Plus) and other faction mods: not tested yet. If something looks wrong in an Inkpaws game, try without them first and tell us.
 
 ## Credits and AI disclosure
-Made by JigglyPanda. This mod is AI-generated. Claude, by Anthropic, wrote the code and the art pipeline. The models, textures, icons and sounds are made by that code: meshes built by scripts, textures painted procedurally, sounds synthesized. Nothing is taken from the game or from another mod. The in-game text and the colonist names were written by Claude too. Timberborn is © Mechanistry. This is an unofficial fan mod.
+Made by JigglyPanda. This mod is AI-generated. Claude, by Anthropic, wrote the code and the art pipeline. The models, textures, icons and sounds are made by that code: meshes built by scripts, textures painted procedurally, sounds synthesized. Nothing is taken from the game or from another mod. The in-game text and the pandas' names were written by Claude too. Timberborn is © Mechanistry. This is an unofficial fan mod.
 
 Source and a player's guide: [https://github.com/JigglyPanda/Timberborn-Pandaborn-Factions](https://github.com/JigglyPanda/Timberborn-Pandaborn-Factions)

@@ -75,7 +75,7 @@ FOODS = [
 AFTERNOON = [
     ("PandabornHammock", "PandabornNap", "One napper"),
     ("PandabornNapPlatform", "PandabornNap", "Several nappers; on the ground or on a roof"),
-    ("PandabornTeahouse", "PandabornTea", "Needs roasted tea and water in stock"),
+    ("PandabornTeahouse", "PandabornTea", "Needs tea and water in stock"),
     ("PandabornSlideAndSwing", "PandabornPlay", ""),
     ("PandabornKindergarten", "PandabornCubWatching", ""),
     ("PandabornInkStudio", "PandabornContemplation", ""),
@@ -85,7 +85,7 @@ AFTERNOON = [
 NIGHT_POSTS = [
     ("PandabornNightBuildersPost", "Ringtail builders stock and raise construction sites through the night"),
     ("PandabornNightCourierPost", "Ringtail couriers refill workshops and clear their outputs and the flags overnight"),
-    ("PandabornNightForagersPost", "Ringtail gatherers forage at night: whatever a Gatherer Flag would pick in its range"),
+    ("PandabornNightForagersPost", "Ringtail gatherers gather at night: whatever a Gatherer Flag would pick in its range"),
     ("PandabornStarTower", "Ringtail stargazers make science from the night sky"),
 ]
 MONUMENTS = [("PandabornMemorialArch", "PandabornMemorialArch"), ("PandabornGreatSittingPanda", "PandabornGreatSittingPanda"),
@@ -282,7 +282,7 @@ def build():
              ("Flowering", "The Great Flowering")]
     rows = [("**[%s]**" % m, what, "on" if c.module_on(m) else "**off**: its buildings and goods are left out of the build")
             for m, what in marks]
-    B["switches"] = table(["Mark", "Feature", "In the catalogue as this page was generated"], rows)
+    B["switches"] = table(["Mark", "Part of the mod", "In the catalogue as this page was generated"], rows)
 
     # ------------------------------------------------------------------ peoples
     lift_i = adult.get("set", {}).get("GoodCarrierSpec.BaseLiftingCapacity", VANILLA_LIFT)
@@ -511,7 +511,7 @@ def build():
             if c.has_recipe("PandabornPaper"):
                 out += ["", "Paper: %s, at the Paper Mill." % c.recipe_line("PandabornPaper")]
         show = [("0", "It begins. Nobody works except the crews of pumps and lifts, so the village keeps its water"),
-                ("Through the day", "Villagers eat, drink, nap and drift to the square to dance. Ringtails sleep through the morning as usual, then come"),
+                ("Through the day", "Pandas eat, drink, nap and drift to the square to dance. Ringtails sleep through the morning as usual, then come"),
                 (num(fs["ShowStartHours"]), "Everyone gathers at the square. Lanterns rise, %s of them" % num(fs["LanternRises"])),
                 (num(fs["FireworksStartHours"]), "Fireworks, at a Grand Festival"),
                 (num(fs["ShowEndHours"]), "The gathering ends"),
@@ -593,7 +593,7 @@ def build():
     out += table(["Monument", "Cost", "Science to unlock", "Well-being"], rows)
     sky = c.buildings.get("PandabornSkyLantern", {}).get("set", {}).get("WonderInventorySpec.RequiredGoods")
     if sky and c.has_building("PandabornSkyLantern"):
-        out += ["", "The Sky Lantern is released with %s." % " and ".join("%s %s" % (num(g["Amount"]), c.gname(g["Id"], g["Amount"])) for g in sky)]
+        out += ["", "The Sky Lantern is launched with %s." % " and ".join("%s %s" % (num(g["Amount"]), c.gname(g["Id"], g["Amount"])) for g in sky)]
     lant = [(b, c.stats.get(b, {}).get("cost", {}).get("PandabornPaperLantern")) for b in
             ("PandabornStandingLantern", "PandabornHangingLantern", "PandabornStringLanterns")]
     lant = [(b, n) for b, n in lant if n and c.has_building(b)]

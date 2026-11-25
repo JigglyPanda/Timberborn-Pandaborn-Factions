@@ -61,9 +61,9 @@ in `catalogue/`; the full lists are in [docs/CONTENT.md](docs/CONTENT.md).
 | The afternoon bell | Rested Inkpaws work and walk faster on a shorter day. The bonus multiplies with well-being, is fixed each dawn, and shows on the working-hours panel. A bell rings at the end of the day and at dawn |
 | Bamboo twice, and poles | Shoot bamboo as a crop, timber bamboo as a tree that yields poles, the Pole Mill |
 | Seven plants on three kinds of land | Shoot bamboo, timber bamboo, cabbage, rice, tea, Sichuan pepper, persimmon. A test terrace of 346 plants stayed healthy with each on its own kind of ground |
-| The kitchen | Steamed shoots, pickles, steamed rice, hot pot. Roasted tea, served at the Teahouse |
+| The kitchen | Steamed shoots, pickles, steamed rice, hot pot. Tea, roasted and served at the Teahouse |
 | Afternoon places | Hammock, Nap Platform, Teahouse, Slide and Swing, Kindergarten, Ink Studio, Hot Spring Bath |
-| The Ringtails | The first Moon Loft brings a family. Night Builders' Post, Night Courier Post, Night Gatherers' Post. Kits are raised while night jobs are open. A red panda body, five coats, their own names. Survived a 13-day run with a save and reload |
+| The Ringtails | The first Moon Loft brings a family. Night Builders' Post, Night Courier Post, Night Gatherers' Post. Kits are raised while a night post has a vacancy. A red panda body, five coats, their own names. Survived a 13-day run with a save and reload |
 | Names | "Le Le (Joy)", "Xing He (River of stars)". Ringtails get star, fruit and spice names |
 | Panda words | In an Inkpaws game the interface says Inkpaw, cub and panda where the game says beaver and kit. Other factions keep the game's text |
 | Hats and baskets | Paddy farmers wear a conical hat, gatherers a back-basket |
@@ -101,7 +101,7 @@ Built, placed and finished in test runs, but not yet shown working the way a pla
 
 * The Star Tower. It is decided and modelled: a Ringtail night post that makes science from the night sky. It stays
   out of the toolbar until its data is ready.
-* Panda voices when you select a colonist. They are made, and stay off until the owner has heard them.
+* Panda voices when you select a panda. They are made, and stay off until the owner has heard them.
 * Translations. The faction's own text is English only.
 
 ## Install
@@ -156,7 +156,7 @@ and the flowering existed, so it is not counted here. The long form, with source
 
 ## Settings
 
-* **The afternoon bell** is the game's working-hours slider.
+* **The afternoon bell** is the game's working-hours control.
 * **The Great Flowering** can be set to normal, rare or off, per save, from the line under the top bar or from any
   bamboo's panel.
 * **The festival** can call itself when the village is stocked. The switch is on the Festival Square's panel.
@@ -192,13 +192,13 @@ Then close Steam completely and start it again, so the game sees the variable. T
 | `Festival` | The Lantern Festival | No festival. The square is a plain gathering place. Tradition decorations are simply buildable |
 | `Flowering` | The Great Flowering | Bamboo never flowers |
 | `Look` | The Inkpaws' building look | Buildings look like Folktails ones |
-| `Names` | Panda names | New colonists get the game's names. Existing names stay |
+| `Names` | Panda names | New pandas get the game's own names. Existing names stay |
 | `Words` | Panda words in the interface | The interface says beaver and kit |
 | `Tutorial` | The "have this many goods" tutorial steps | Those steps are skipped |
 
 What to know:
 
-* The game tells you once per save which features are off, and the notification log lists them.
+* The game tells you which parts are switched off, and one notification-log entry, "Pandaborn - Factions:", lists every part and its state.
 * Saves keep loading. What a feature had saved waits in the save and comes back with the feature.
 * The buildings stay in the toolbar. A switched-off flume is a solid block with a flume's name.
 * A file named `pandaborn.dev.txt` next to the manifest does the same thing in development copies. **The released
@@ -345,7 +345,7 @@ This mod is AI-generated. Generative AI (Claude, by Anthropic) wrote the code, t
 pipeline. The models, textures, icons and sounds are produced by that code: meshes are built by scripts, textures
 are painted procedurally, sounds are synthesized. None of them is an AI image or audio model's output, and none is
 taken from the game or from another mod. Portraits are 3D renders of the mod's own models. The in-game text and
-the colonist names were also written by Claude. The names have not yet been checked by a native speaker of
+the pandas' names were also written by Claude. The names have not yet been checked by a native speaker of
 Mandarin.
 
 The panda bodies come from the author's earlier mod,

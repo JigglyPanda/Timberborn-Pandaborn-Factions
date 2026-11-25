@@ -19,7 +19,7 @@ framing. The pictures the page needs most do not exist yet: see "Missing".
 | 5 | `E:\PandabornDev\build\test\look-close-inkpaws-10\day_teahouse.png` | Pandas in a village street: the Village Hall with banners, a kite windmill, homes going up in bamboo scaffolding | Dark timber, pale plaster, grey tile and a great deal of bamboo. | **Retake.** Two status icons fill the foreground |
 | 6 | `E:\PandabornDev\build\test\look-close-inkpaws-10\day_overview.png` | A small village from above by day: Village Hall, water wheel, pickle jars, windmill, cistern | A village in its first cycle. | **Retake.** Test layout, warning icons on half the buildings |
 | 7 | `E:\PandabornDev\build\test\events-crowd-1\ev_cr_d1_h20_night.png` | The Festival Square at night, ringed with red lanterns, twenty pandas dancing | The Lantern Festival: a day and a night off for the whole village. | **Retake.** The developer controls and the frame counter are on screen. `E:\PandabornDev\build\test\events-sky-1\ev_s_h1850_night.png` is the same scene with paper lanterns rising, from work in progress that has not been reviewed: use that framing once the lantern art is in |
-| 8 | `E:\PandabornDev\build\test\models-lanterns-1\SkyLantern_night_lit.png` | The Sky Lantern glowing amber on its tower above the village at night | The Sky Lantern, before it is let go. | **Retake.** The edge of the test map and an empty grey sky are in frame |
+| 8 | `E:\PandabornDev\build\test\models-lanterns-1\SkyLantern_night_lit.png` | The Sky Lantern glowing amber on its tower above the village at night | The Sky Lantern, before it is launched. | **Retake.** The edge of the test map and an empty grey sky are in frame |
 | 9 | `E:\PandabornDev\build\test\rt3_breed3\reload\rt_br_r5_h21_night_post.png` | A Night Courier Post selected at night: three named Ringtail couriers, the moon mark, the second population row | From the bell to dawn, the night posts are open. | **Retake.** Developer controls on screen, most buildings unconnected |
 | 10 | `E:\PandabornDev\build\test\plants-buds-2\bud_game.png` | Three fields of shoot bamboo side by side: green, budding, in flower | Before the Great Flowering, the bamboo buds. You get a full cycle of warning. | Usable as an explainer, on bare test ground. Better retaken in a farm |
 
@@ -45,7 +45,7 @@ For the page header or the Workshop thumbnail, not a screenshot:
 
 ## Missing: pictures the page needs and nobody has taken
 
-1. **A flume line in a real village**: Scoop Wheel in the river, gate, a run of flume, a grove green beside it,
+1. **A flume line in a real village**: Scoop Wheel in the river, gate, a line of flumes, a grove green beside it,
    brown ground beyond. This is the first line of the pitch and it has no picture.
 2. **A rice terrace with Paddy Spouts** stepping down a hillside, with the Paddy House.
 3. **The bell on screen**: the working-hours panel showing the rested line, in today's build.

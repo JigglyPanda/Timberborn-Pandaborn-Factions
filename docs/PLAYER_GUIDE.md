@@ -4,16 +4,16 @@ For after the first hour. It assumes you know Timberborn: levees, districts, wel
 
 **How this page is kept true.** The prose states rules. Every cost, rate and count sits in a table that
 `tools/docs/guide_tables.py` writes from the mod's own data (`catalogue/`), so the numbers are the build's. A
-building whose feature is switched off is left out of the tables, as it is left out of the toolbar. Distances and
+building whose part of the mod is switched off is left out of the tables, as it is left out of the toolbar. Distances and
 flows quoted in the prose were measured in runs of the game (`docs/tech/`). Balance is still being tuned: trust the
 game's own panels over any number here.
 
-**Which parts depend on a switch.** Each feature with code can be off, in a build or after a game update. A section
-that needs one is marked like this: **[Water]**. In an Inkpaws game, open the notification log: one entry starts
-"Pandaborn - Factions features:" and lists what is on in your game.
+**Which parts depend on a switch.** Each part of the mod that has code can be off, in a build or after a game
+update. A section that needs one is marked like this: **[Water]**. In an Inkpaws game, open the notification log:
+one entry starts "Pandaborn - Factions:" and lists every part of the mod and whether it is on.
 
 <!-- gen:switches -->
-| Mark | Feature | In the catalogue as this page was generated |
+| Mark | Part of the mod | In the catalogue as this page was generated |
 |---|---|---|
 | **[Bell]** | The afternoon bell and the rested bonus | on |
 | **[Ringtails]** | The Moon Loft, the Ringtails and the night posts | on |
@@ -65,7 +65,7 @@ platforms, stairs and all the automation buildings are there under their usual n
 
 **[Bell]**
 
-The bell is the working-hours slider. It starts where any new game starts.
+The afternoon bell is the game's working-hours control. It starts where any new game starts.
 
 **The rule: rested pandas are quick pandas.** The shorter the working day, the faster Inkpaws work and walk. From
 twelve to sixteen hours the bonus exactly makes up for the hours, so the village gets the same work done at any
@@ -86,7 +86,7 @@ length in that range. What you choose is how much afternoon the Inkpaws have, an
 
 Things worth knowing:
 
-* **The day's length is fixed at dawn.** Move the slider at noon and the panel shows today's bonus and
+* **The day's length is fixed at dawn.** Change the hours at noon and the panel shows today's bonus and
   tomorrow's. The change takes effect the next morning. You cannot work a long day and slide the bell back at dusk.
 * **It covers walking.** Builders, haulers and gatherers mostly walk. A bonus on working speed alone would cost
   them a quarter of their day. This one does not.
@@ -98,8 +98,9 @@ Things worth knowing:
 * **Where it shows:** a line under the working-hours panel, a line on each Inkpaw's panel, and inside the
   well-being bonus totals.
 
-**The suggestion.** Once the village is settled the game says, once: "Inkpaws work a short day and work it well.
-Afternoons are for hammocks, tea and company." Settled means your first Hammock or Teahouse is finished, or a few
+**The suggestion.** Once the village is settled the game says, once: "Your village is settled. Inkpaws work a short
+day and work it well: shorten the working hours until the Rested bonus stops rising, and the afternoon is theirs."
+Settled means your first Hammock or Teahouse is finished, or a few
 days have passed, whichever comes first. It waits out a drought or a badtide.
 
 **The sound.** One bell at the end of the working day and a lighter one at dawn, heard everywhere, once a Village
@@ -291,10 +292,10 @@ for bamboo. Bad for tea: see the next section.
   fill of the line every few days keeps a grove alive.
 * In a badtide the gate shuts itself. Leave its switch on.
 
-### If the water feature is off
+### If the water toolkit is switched off
 
 Every flume piece becomes a solid block that holds no water and floods nothing. The spout is a plain fill valve.
-Gate settings wait in the save and come back with the feature.
+Gate settings wait in the save and come back with it.
 
 ### Still being tested
 
@@ -324,7 +325,7 @@ Tea is a second-cycle goal. The bushes need time, and the Teahouse needs poles.
 | Serve | Teahouse (25 logs, 25 poles; 150 science) | Uses 1 tea and 0.5 water for each hour it is serving. Closed when it has none |
 <!-- /gen:tea -->
 
-Roasted tea is a dry good and keeps in any warehouse. Nobody drinks it from storage: the Tea need is met at the
+Tea is a dry good and keeps in any warehouse. Nobody drinks it from storage: the Tea need is met at the
 Teahouse and nowhere else. Haulers, or night couriers, keep the Teahouse stocked.
 
 Pepper has one use: hot pot.
@@ -395,7 +396,7 @@ Rice dies fast out of water. In a drought the paddy is the field to keep wet.
 |---|---|---|---|---|---|
 | Hammock | Nap | +3 | in about 2 days | 4 logs; no science | One napper |
 | Nap Platform | Nap | +3 | in about 2 days | 10 logs, 15 poles; 100 science | Several nappers; on the ground or on a roof |
-| Teahouse | Tea | +4 | in about 3 days | 25 logs, 25 poles; 150 science | Needs roasted tea and water in stock |
+| Teahouse | Tea | +4 | in about 3 days | 25 logs, 25 poles; 150 science | Needs tea and water in stock |
 | Slide and Swing | Play | +2 | in about 5 days | 25 logs, 20 poles; 250 science |  |
 | Kindergarten | Watching the young | +3 | in about 5 days | 60 logs, 40 poles; 400 science |  |
 | Ink Studio | Ink painting | +2 | in about 8 days | 10 logs, 10 paper; 200 science |  |
@@ -436,7 +437,7 @@ Moon Loft: 10 logs, 10 poles; 200 science.
 |---|---|---|---|
 | Night Builders' Post | Ringtail builders stock and raise construction sites through the night | 15 logs, 10 poles | up to 4 |
 | Night Courier Post | Ringtail couriers refill workshops and clear their outputs and the flags overnight | 20 logs, 10 poles | up to 6 |
-| Night Gatherers' Post | Ringtail gatherers forage at night: whatever a Gatherer Flag would pick in its range | 10 poles | up to 2 |
+| Night Gatherers' Post | Ringtail gatherers gather at night: whatever a Gatherer Flag would pick in its range | 10 poles | up to 2 |
 
 *The Star Tower, a night post where Ringtail stargazers make science, is decided and modelled. It keeps a science cost of its own. It was not in the build when this page was generated.*
 <!-- /gen:night_posts -->
@@ -474,14 +475,15 @@ the night shift.
 
 ### Kits and numbers
 
-Ringtail numbers follow **night jobs, not beds.**
+Ringtail numbers follow **vacancies at night posts, not beds.**
 
 * Each dawn, each Moon Loft may raise one kit, if the district has more night-post places than it has Ringtails
   and kits, nobody in the district is critically hungry or thirsty, and the loft has room.
-* The loft's panel says where it stands: raising a kit, waiting for open night jobs, no room, or none while
-  anyone is hungry or thirsty.
+* The loft's panel says where it stands: one kit each dawn while a night post has a vacancy; none for now,
+  because no night post has a vacancy; no room for a kit; or none while anyone in the district is hungry or
+  thirsty.
 * Kits grow up into Ringtail adults and take the open places.
-* **To get more Ringtails, build or enlarge a night post.** Ten lofts with no open jobs raise nobody.
+* **To get more Ringtails, build or enlarge a night post.** Ten lofts with no vacancy raise nobody.
 
 ### Homes
 
@@ -493,7 +495,7 @@ needs it. A Ringtail without a loft sleeps in any home.
 Nothing a village needs is missing. Only the Star Tower depends on Ringtails, and the science it makes is science
 your inventors would also make, more slowly.
 
-### If the feature is off
+### If the Ringtails are switched off
 
 Ringtails in a save load as Inkpaws with the same names, homes and needs. Night posts become ordinary Inkpaw
 workplaces. Lofts are plain homes.
@@ -528,7 +530,7 @@ The day:
 | Hours after dawn | What happens |
 |---|---|
 | 0 | It begins. Nobody works except the crews of pumps and lifts, so the village keeps its water |
-| Through the day | Villagers eat, drink, nap and drift to the square to dance. Ringtails sleep through the morning as usual, then come |
+| Through the day | Pandas eat, drink, nap and drift to the square to dance. Ringtails sleep through the morning as usual, then come |
 | 15.5 | Everyone gathers at the square. Lanterns rise, 24 of them |
 | 19 | Fireworks, at a Grand Festival |
 | 22 | The gathering ends |
@@ -547,13 +549,15 @@ What Tradition unlocks, at no science cost:
 
 ### Calling it
 
-Press **Call the festival**, or switch on **Call it by itself when ready**. Called at any hour, it begins at the
+Press **Call the festival**, or switch on **Call it automatically when ready**. Called at any hour, it begins at the
 next dawn and runs to the dawn after.
 
-* By itself, it is only called in fair weather, and never on the day before a drought or a badtide.
+* Automatically, it is only called in fair weather, and never on the day before a drought or a badtide.
 * By hand you may call it in any weather.
 * At most one festival in each cycle.
 * Everyone ends festive, whether or not they reached the square.
+* With several districts, the texts now being prepared give the festival to the district whose square calls it,
+  with one festival a cycle for the whole village. *Not in a build yet when this was written.*
 * The cost is one day's work. A fed village can afford that. Critical needs still come first on the day.
 
 Lanterns take a while to make. Start a cycle ahead.
@@ -644,7 +648,7 @@ No test has reached it by playing a village that far.*
 | Great Sitting Panda | 1,400 poles, 700 cured poles, 650 metal blocks | 15,000 | +14 |
 | Sky Lantern | 2,400 gears, 2,400 cured poles, 1,800 metal blocks, 500 paper | 20,000 | +10 |
 
-The Sky Lantern is released with 400 paper lanterns and 300 extract.
+The Sky Lantern is launched with 400 paper lanterns and 300 extract.
 
 Lantern decorations are built from paper lanterns: Standing Lantern 1, Hanging Lantern 1, String Lanterns 3.
 <!-- /gen:late -->
@@ -667,7 +671,7 @@ Power is bamboo water wheels, kite windmills and power wheels. There are no fuel
 
 ### After the wonder
 
-Releasing the Sky Lantern is the last goal the faction sets. There is nothing after it: no further tier, no
+Launching the Sky Lantern is the last goal the faction sets. There is nothing after it: no further tier, no
 second wonder. From there the game is a sandbox, as it is for Folktails and Iron Teeth. Build the valley you want.
 
 Paper lanterns never stop being useful: decorations are built from them, each festival uses them, and the wonder
@@ -677,14 +681,14 @@ takes hundreds.
 
 | You see | It means |
 |---|---|
-| "Pandaborn - Factions features: ... off" in the notification log | A feature did not load, usually after a game update. The game still plays; that feature's buildings behave like plain ones until the mod is updated |
+| "... is switched off until the mod is updated for this game version" | A part of the mod did not load after a game update. The game still plays; its buildings behave like plain ones until the mod is updated. The notification log entry "Pandaborn - Factions:" lists every part |
 | A notice that the mod is enabled twice | A local copy and a Workshop copy are both on. Switch one off |
 | A flume that stays dry | Select it. The piece names the problem |
-| "Needs a current" on a Scoop Wheel | Still water. Move it into a channel where the river runs |
+| "No current at the wheel" on a Scoop Wheel | Still water. Move it into a channel where the river runs |
 | A night post "Closed for the day" | It is day. Ringtails start at the bell |
-| A Moon Loft with "Kits: waiting for open night jobs" | Build or enlarge a night post |
+| A Moon Loft with "Kits: none for now. No night post has a vacancy: build another." | Build or enlarge a night post |
 | A tea bush with the dying status | Its roots are wet. Look for a flume or paddy within range |
-| A Teahouse that is closed | It has no roasted tea or no water |
+| A Teahouse that is closed | It has no tea or no water |
 | Coats change after loading a save | The game picks a coat again on every load, for every faction |
 
 Removing the mod breaks Inkpaws saves. Folktails and Iron Teeth saves are not affected.

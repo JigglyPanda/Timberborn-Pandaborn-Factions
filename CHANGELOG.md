@@ -31,7 +31,7 @@ showed it; the runs are named in `docs/tech/`. The path from here to a release i
 - Poles in place of planks: timber bamboo yields poles when cut, and a Pole Mill splits logs.
 - Seven plants on three kinds of land: shoot bamboo, timber bamboo, cabbage, rice, tea, Sichuan pepper,
   persimmon.
-- Dishes: steamed shoots, pickles, steamed rice, hot pot. Roasted tea, served at the Teahouse.
+- Dishes: steamed shoots, pickles, steamed rice, hot pot. Tea, roasted and served at the Teahouse.
 - Afternoon places: Hammock, Nap Platform, Teahouse, Slide and Swing, Kindergarten, Ink Studio, Hot Spring Bath.
 - The Ringtails: a red panda family moves in when the first Moon Loft is finished. Night Builders' Post, Night
   Courier Post, Night Gatherers' Post. Kits are raised while night jobs are open. Their own body, coats, names,
