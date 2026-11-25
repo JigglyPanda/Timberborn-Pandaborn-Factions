@@ -15,7 +15,11 @@ results in `docs/tech/events.md`) **through the real module path**, without depe
    `JigglyPanda.PandabornFactionsDev`. `-DevSwitch` writes its `pandaborn.dev.txt`.
 3. The generated data is laid over the copy, the meshes of every adopted model are copied in, and the `-Variant` fragments
    (`*.fragment.json` merged, other files copied) are applied: `variants/test` (Flowering seed 2 days, rest 1.5 days; the
-   lumberjack as a stand-in pump crew) by default, `variants/crews` (the same timings; the farmhouse as the crew).
+   lumberjack as a stand-in pump crew) by default, `variants/crews` (the same timings; the farmhouse as the crew),
+   `variants/sky` (the Festival Square's `LanternRise` attachment, until the catalogue carries it). Several variants:
+   `-Variant a,b`. `-AttachmentBundles <folder>` replaces the copy's `pandabornattachments_win|_mac` with another build
+   (the lantern prefab lives there: `E:\PandabornDev\build\characters\attachments` after
+   `src\unity\PandabornAttachments\build.ps1` and again with `-Mac`).
 4. **The probe** (`src/`) is its own mod, `E:\PandabornDev\build\proto\events-probe` (`JigglyPanda.PandabornProtoEvents`,
    requires the copy), compiled against the copy's own Core, Specs, Festival and Flowering. Everything that touches a
    module sits in `FestivalProbe`/`FloweringProbe` and runs only when that module's assembly is loaded, so the probe also
@@ -40,6 +44,16 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaw
 | `events-fallback` | `pbevents-fb -DevSwitch 'simulate-missing-member: Festival.RootBehaviors, Festival.Fireworks, Flowering.GrowthHold'` | the three fallbacks; the probe then writes `force-off: Festival, Flowering` so the reload loads the mid-event save with both modules off |
 | `events-backon` | `pbevents-on -DevSwitch 'force-off: Festival, Flowering'` | a save carrying mid-festival and mid-flowering state written while both were off, loaded with both on |
 | `events-ringtails-off` | `pbevents-rt` | a Ringtail family; the reload has `force-off: Ringtails` on festival day |
+| `events-sky` | `pbsky -Variant proto\events\variants\crews,proto\events\variants\sky -AttachmentBundles E:\PandabornDev\build\characters\attachments` | the lantern sky at game speed 1: 27 colonists, dusk-to-night shots at three zooms, `skyLanterns` (the count aloft) in every sample and shot |
+| `events-sky-speed3` | the same copy | the same at game speed 3 |
+
+The flowering twins' plant names come from the generated build (`catalogue/text/plants.json`); the module's own
+`enUS_PandabornEvents.csv` no longer carries them (the text lane removed the six keys on 2026-11-25).
+
+Shots may set the camera: `focus` (a target to centre on without selecting it), `zoom`, `vAngle`, `hAngle`; it stays there
+for later shots, and each shot records the camera and the game speed. `flowerNow` starts the Flowering as a cycle start
+does: the plants turn over the following ticks (the Flowering block's `converting`, `convertQueue`, `twinsMade`), so
+sample an hour later for the counts.
 
 The probe writes `events.json` (`events_reload.json` after a reload) every in-game hour: events, actions and their results,
 hourly samples (a module-free `raw` block: every character's running behaviour, who is working where, bamboo by template,

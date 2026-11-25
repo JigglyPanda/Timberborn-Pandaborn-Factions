@@ -152,9 +152,9 @@ public static class PandabornAttachmentsBuilder
         var vel = ps.velocityOverLifetime;
         vel.enabled = true;
         vel.space = ParticleSystemSimulationSpace.World;
-        vel.x = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);  // each its own slight drift; the wind is added from code
+        vel.x = new ParticleSystem.MinMaxCurve(-0.16f, 0.16f);  // each its own drift; the module adds the wind (and resets both ranges)
         vel.y = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
-        vel.z = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);
+        vel.z = new ParticleSystem.MinMaxCurve(-0.16f, 0.16f);
         // they leave the hands slowly, climb, then slow as they cool and drift: the sky holds them at every height
         // (the mean of this curve is 0.72, so a lantern ends 9 to 26 m up, 16 m on average, after 25 to 40 s at game
         // speed 1) instead of losing them all off the top of the screen

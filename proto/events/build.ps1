@@ -28,6 +28,8 @@ param(
     [switch]$NoProbe,
     # replace the copy's pandabornplants bundle with a newer plant-lane build (e.g. E:\PandabornDev\build\plants\AssetBundles)
     [string]$PlantBundles = '',
+    # replace the copy's pandabornattachments bundle with another build (e.g. E:\PandabornDev\build\characters\attachments)
+    [string]$AttachmentBundles = '',
     [string]$Python = 'E:\PandabornDev\tools\venv\Scripts\python.exe',
     # the generator needs Python 3.11+ (tomllib), as tools\pandaborn.ps1 finds it
     [string]$GenPython = 'python'
@@ -38,6 +40,7 @@ $repo = (Resolve-Path (Join-Path $here '..\..')).Path
 $out = Join-Path 'E:\PandabornDev\build\proto' $Name
 $catDir = 'E:\PandabornDev\build\proto\events-catalogue'
 $genDir = 'E:\PandabornDev\build\proto\events-gen\PandabornFactions'
+$Variant = @($Variant | ForEach-Object { $_ -split ',' } | Where-Object { $_ })   # 'a,b' through -File
 if (-not $Variant -and -not $NoVariant) { $Variant = @(Join-Path $here 'variants\test') }
 
 # 1. the catalogue with the events switched on
@@ -107,6 +110,15 @@ if ($PlantBundles) {
         Copy-Item -LiteralPath $from -Destination $to
     }
     Write-Host "plant bundle from $PlantBundles" -ForegroundColor Yellow
+}
+if ($AttachmentBundles) {
+    foreach ($b in 'pandabornattachments_win', 'pandabornattachments_mac') {
+        $from = Join-Path $AttachmentBundles $b; $to = Join-Path $out "AssetBundles\$b"
+        if (-not (Test-Path $from)) { continue }
+        if (Test-Path $to) { Remove-Item -LiteralPath $to -Force }
+        Copy-Item -LiteralPath $from -Destination $to
+    }
+    Write-Host "attachments bundle from $AttachmentBundles" -ForegroundColor Yellow
 }
 Write-Host "events data: $n generated files, $meshes model meshes, variants: $($Variant -join ', ')" -ForegroundColor Green
 

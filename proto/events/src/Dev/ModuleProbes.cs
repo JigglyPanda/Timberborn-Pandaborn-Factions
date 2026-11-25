@@ -88,7 +88,10 @@ namespace Pandaborn.Events.Dev
                 ["grand"] = f.Grand,
                 ["auto"] = f.AutoCall,
                 ["tradition"] = f.Tradition,
+                ["district"] = f.VillageWide ? "(village-wide)" : f.FestivalDistrictName,
+                ["manyDistricts"] = f.ManyDistricts,
                 ["lanterns"] = f.LanternsLaunched,
+                ["comets"] = f.CometsLaunched,
                 ["bursts"] = f.BurstsLaunched,
                 ["sounds"] = FestivalSounds.Played,
                 ["goers"] = goers,
@@ -98,6 +101,7 @@ namespace Pandaborn.Events.Dev
                 ["grandAvg"] = grandN > 0 ? Math.Round(grandSum / grandN, 3) : -1,
                 ["doing"] = doing,
                 ["onSquareSlots"] = OnSlots(f),
+                ["skyLanterns"] = Sky(f),
                 ["keepWorking"] = keep,
                 ["lockedByTradition"] = TraditionToolLocker.LockedCount,
                 ["panel"] = FestivalSquareFragment.ShownText
@@ -116,7 +120,21 @@ namespace Pandaborn.Events.Dev
             return text;
         }
 
-        public static void Panels(JObject entry) => entry["festivalPanel"] = FestivalSquareFragment.ShownText;
+        public static void Panels(JObject entry)
+        {
+            entry["festivalPanel"] = FestivalSquareFragment.ShownText;
+            var f = F;
+            if (f != null) entry["sky"] = Sky(f);
+        }
+
+        /// <summary>Lanterns in the sky over each square / colonists on its slots.</summary>
+        private static string Sky(FestivalService f)
+        {
+            string text = "";
+            for (int i = 0; i < f.Squares.Count; i++)
+                if (f.Squares[i]) text += (text.Length > 0 ? ", " : "") + f.Squares[i].SkyLanterns;
+            return text;
+        }
 
         public static BaseComponent FindTarget(string what)
         {
@@ -155,7 +173,7 @@ namespace Pandaborn.Events.Dev
             switch (what)
             {
                 case "announce": if (f == null) return "flowering off"; f.DevAnnounce(); return f.Phase + " " + f.Species;
-                case "flowerNow": if (f == null) return "flowering off"; f.DevFlowerNow(); return f.Phase + " " + f.Species + "; twins " + f.TwinsMade + ", young died " + f.YoungKilled;
+                case "flowerNow": if (f == null) return "flowering off"; f.DevFlowerNow(); return f.Phase + " " + f.Species + (f.Converting ? "; coming into flower over the next ticks" : "; twins " + f.TwinsMade + ", young died " + f.YoungKilled);
                 case "setSetting": if (f == null) return "flowering off"; f.SetSetting((string)a["value"]); return f.Setting + ", next " + f.NextCycle;
                 default: return null;
             }
@@ -188,7 +206,12 @@ namespace Pandaborn.Events.Dev
                 ["twinsDead"] = dead,
                 ["seedOnPlants"] = seed,
                 ["seedCut"] = f.SeedCut,
+                ["converting"] = f.Converting,
+                ["convertQueue"] = f.ConvertQueue,
+                ["twinsMade"] = f.TwinsMade,
+                ["youngKilled"] = f.YoungKilled,
                 ["held"] = f.HeldNow,
+                ["heldAgain"] = f.HeldAgain,
                 ["young"] = young,
                 ["buds"] = Buds(f),
                 ["indicator"] = FloweringIndicator.ShownText,

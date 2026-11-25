@@ -589,7 +589,8 @@ namespace Pandaborn.Festival
             try
             {
                 var w = _windService.WindDirection;
-                float strength = 0.12f + 0.25f * Mathf.Clamp01(_windService.WindStrength);
+                // 0.10 to 0.30 m/s: 3 to 10 m downwind over a lantern's life, less than its climb (9 to 26 m)
+                float strength = 0.10f + 0.20f * Mathf.Clamp01(_windService.WindStrength);
                 drift = new Vector3(w.x, 0f, w.y) * strength;
             }
             catch (Exception) { }

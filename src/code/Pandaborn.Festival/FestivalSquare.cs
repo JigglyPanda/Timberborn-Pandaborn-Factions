@@ -31,6 +31,9 @@ namespace Pandaborn.Festival
         private const string LanternRiseAttachment = "LanternRise";
         private const string Log = "[Pandaborn.Festival] ";
 
+        /// <summary>Each lantern's own sideways drift, m/s either way round the wind's (about 5 m over a 32 s life).</summary>
+        private const float SkySpread = 0.16f;
+
         private readonly FestivalService _festivalService;
         private DistrictBuilding _districtBuilding;
         private BlockObjectCenter _center;
@@ -174,9 +177,10 @@ namespace Pandaborn.Festival
                         var vel = _lanternRise.velocityOverLifetime;
                         if (vel.enabled)
                         {
-                            // each lantern keeps its own slight drift round the wind's
-                            vel.x = new ParticleSystem.MinMaxCurve(drift.x - 0.08f, drift.x + 0.08f);
-                            vel.z = new ParticleSystem.MinMaxCurve(drift.z - 0.08f, drift.z + 0.08f);
+                            // each lantern keeps its own drift round the wind's, wide enough that the sky fills above
+                            // and around the square instead of one thin stream downwind (run events-sky-1, +-0.08)
+                            vel.x = new ParticleSystem.MinMaxCurve(drift.x - SkySpread, drift.x + SkySpread);
+                            vel.z = new ParticleSystem.MinMaxCurve(drift.z - SkySpread, drift.z + SkySpread);
                         }
                         _skyDrift = drift;
                     }
