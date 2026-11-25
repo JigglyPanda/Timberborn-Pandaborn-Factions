@@ -1807,10 +1807,11 @@ def check_models(c):
                 R.error("%s: BlockObjectSpec.Size %s differs from model.json size %s" % (where, bos.get("Size"), size))
             if mj.get("blocks") and bos.get("Blocks") != mj["blocks"]:
                 def _no_occ(bl):
-                    return [{k: v for k, v in x.items() if k != "Occupations"} for x in bl or []]
+                    return [{k: v for k, v in x.items() if k not in ("Occupations", "MatterBelow")} for x in bl or []]
                 if _no_occ(bos.get("Blocks")) == _no_occ(mj["blocks"]):
-                    # the catalogue sets occupations on purpose (a flume leaves its corners free for a bridge span)
-                    R.info("%s: block occupations set by the catalogue, differ from model.json" % where)
+                    # the catalogue sets occupations and what a block stands on, on purpose (a flume leaves its corners
+                    # free for a bridge span; a span's leg stands on ground or a stackable block)
+                    R.info("%s: block occupations or support set by the catalogue, differ from model.json" % where)
                 else:
                     R.error("%s: BlockObjectSpec.Blocks differ from model.json blocks" % where)
             if mj.get("entrance"):

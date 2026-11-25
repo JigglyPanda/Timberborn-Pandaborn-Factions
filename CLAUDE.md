@@ -240,8 +240,8 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     `E:\PandabornDev\build\stage\code\PandabornFactions` (next to the staging folder; `code-schema.json` beside it); the Look module brings the `pandabornlook` bundle; the stage also
     dumps the mod's own spec classes (`code-schema.json`) for the validator and runs `tools/check_api_lists.py`
     (game-API lists, a warning here, a failure for `package`). **A module ships only when its data is switched on**
-    in `catalogue/rules.toml [modules]` (that file is the truth; on 2026-11-25 all ten modules are on and only the
-    `RingtailVenues` switch, which has no module, is off. The build installed on 2026-11-14 still lacks Water,
+    in `catalogue/rules.toml [modules]` (that file is the truth; on 2026-11-25 all ten modules are on and no switch is off.
+    The build installed on 2026-11-14 still lacks Water,
     Festival and Flowering until a gate passes). `-NoCode` builds the data-only fallback (no custom specs,
     vanilla names, Folktails look). Do not also load `E:\PandabornDev\build\PandabornCodeDev` (`-ExtraMods`) with the
     installed faction: the code would be there twice.
@@ -277,9 +277,9 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
   `<gen>.report.json` `leftOut` lists what is hidden; the validate stage passes it on (`validate.py --left-out`), so a
   build with modules off, or `-NoCode`, passes the lock check for exactly those ids. The validator's economy block
   (`--release`: errors) refuses needs nothing meets, goods nothing makes or uses, two buildings on one toolbar slot,
-  shipped modules without their data and data without its module. The only switch off today is `RingtailVenues`, which
-  is no module: it keeps the Star Tower hidden until `PandabornNightPostSpec` lets a night post keep its science cost
-  (the first Moon Loft unlocks every night post for free).
+  shipped modules without their data and data without its module. Nothing is hidden today: the Star Tower
+  ships since `PandabornNightPostSpec.UnlockOnArrival = false` lets it keep its science cost (the first Moon Loft
+  unlocks the other night posts for free).
 * **Translations:** `catalogue/text/<lang>.json` (zhCN) is a flat overlay keyed by generated loc key, each entry
   `{ "text", "en" }`; the generator writes `Localizations/<lang>_Pandaborn<Fragment>.csv` with translated keys only and
   leaves out (and reports) a translation whose `en` is no longer the English, or that loses a `{0}` or a tag. zhCN name

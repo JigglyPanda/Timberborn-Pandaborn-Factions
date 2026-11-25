@@ -438,8 +438,7 @@ Moon Loft: 10 logs, 10 poles; 200 science.
 | Night Builders' Post | Ringtail builders stock and raise construction sites through the night | 15 logs, 10 poles | up to 4 |
 | Night Courier Post | Ringtail couriers refill workshops and clear their outputs and the flags overnight | 20 logs, 10 poles | up to 6 |
 | Night Gatherers' Post | Ringtail gatherers gather at night: whatever a Gatherer Flag would pick in its range | 10 poles | up to 2 |
-
-*The Star Tower, a night post where Ringtail stargazers make science, is decided and modelled. It keeps a science cost of its own. It was not in the build when this page was generated.*
+| Star Tower | Ringtail stargazers make science from the night sky | 60 poles, 30 gears, 10 paper | up to 4 |
 <!-- /gen:night_posts -->
 
 A post shows "Closed for the day. Ringtails start at the afternoon bell." by day. That is normal.

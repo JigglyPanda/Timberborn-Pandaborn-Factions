@@ -286,10 +286,12 @@ listened". What is left, checked against the catalogue at 05:10 that day:
 
 | # | DESIGN.md says | The catalogue and code have | Who |
 |---|---|---|---|
-| 1 | The Star Tower ships as a Ringtail night post that keeps its own science cost | Still hidden: it waits for `Ringtails` and for `RingtailVenues`, and that second switch is off and has no module (part 2, *Waits for*) | Catalogue, Ringtails code lane |
-| 2 | "Farmhouse (the vanilla name, already translated)" | The vanilla name of the building the Inkpaws' farm is copied from (`EfficientFarmHouse.Folktails`) is "Efficient Farmhouse"; that is what the game shows, while DESIGN.md, the tutorial and the plant texts say "Farmhouse" | Text |
+| 1 | The Star Tower ships as a Ringtail night post that keeps its own science cost | Done in data on 2026-11-25 (`UnlockOnArrival = false`; it waits for `Ringtails` only). Not yet in a game: Ringtails staffing a workshop, and the tower still locked after the first Moon Loft | Game run |
+| 2 | "Farmhouse (the vanilla name, already translated)" | Done on 2026-11-25: the farm reuses the vanilla keys `Building.Farmhouse.DisplayName` and `.Description` (it is still a copy of `EfficientFarmHouse.Folktails`, with three farmers); no Inkpaws text overrides them | - |
 | 3 | Foresters replant dead trees by default | Code written on 2026-11-25 and not yet committed or run (`src/code/Pandaborn.Names/ForesterCustom.cs`); its proof is run N21 of `docs/tech/needs-game-run.md` | Core code lane |
-| 4 | Timber bamboo grows in seven days; bamboo seed can be steamed into seed cakes | Check the Plants and Recipes tables in part 2: they show whatever the catalogue holds when they were last generated | Catalogue |
+| 4 | Timber bamboo grows in seven days; bamboo seed can be steamed into seed cakes | The Steamer recipe is in (1 seed, 2 cakes). Timber bamboo is still five days: at seven the first bamboo poles land on day 10 or after (`docs/tech/balance.md`, rulings after the second audit), which the coordinator asked to hear before it is committed | Coordinator |
+| 5 | The Festival's rising lanterns leave from the square (`docs/tech/events.md` section 8, request A) | The square has no `LanternRise` attachment yet: naming the prefab makes the `pandabornattachments` bundle required at load, and the bundle with the reworked prefab cannot be built until Unity can run. Until then the festival uses the game's comets | Events lane (bundle), then catalogue |
+| 6 | Four seats in the Ink Studio (balance W11) | One: the model is one cell with one `#Slot#Spot` | Models lane |
 
 # Part 2: catalogue tables
 
@@ -306,7 +308,6 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Flowering | yes | on | visible | 2 goods; 1 need; 2 recipes; 2 plants |
 | Look | yes | on | visible | nothing |
 | Names | yes | on | visible | nothing |
-| RingtailVenues | **no** | **off** | **hidden** | 1 building |
 | Ringtails | yes | on | visible | 5 buildings; 2 characters |
 | RingtailsFallback | yes | on | visible | nothing |
 | Tutorial | yes | on | visible | nothing |
@@ -315,7 +316,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 
 ### Buildings
 
-171 entries in `catalogue/buildings.toml`: 111 re-themed vanilla buildings, 58 of our own (`Pandaborn…`: 57 on their own model, 1 on a vanilla stand-in model) and 2 vanilla dev buildings. 1 are hidden today (their module is off or not shipped); 170 are generated.
+171 entries in `catalogue/buildings.toml`: 111 re-themed vanilla buildings, 58 of our own (`Pandaborn…`: 57 on their own model, 1 on a vanilla stand-in model) and 2 vanilla dev buildings. 0 are hidden today (their module is off or not shipped); 171 are generated.
 
 *Basis* is the vanilla blueprint the generator copies (template name; `—` for our own id on the same vanilla name). *Toolbar* is the bottom-bar group. *Model*: `own` = adopted from the building kit; `vanilla, re-themed` = the vanilla model in the Inkpaws' materials; **stand-in** = one of our own buildings still on a vanilla model. *Waits for* names the code module; bold = hidden today. *Icon*: `own` = a sprite under `mod/PandabornFactions/Sprites/Pandaborn/Buildings`.
 
@@ -445,7 +446,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 |---|---|---|---|---|---|---|---|---|---|
 | Inventor | `Inventor` | re-theme | Science | vanilla, re-themed |  | vanilla | 12 Log | 0 |  |
 | Ox Workshop | `PandabornOxWorkshop` | `BotAssembler.Folktails` | Science | own: `art/models/OxWorkshop` |  | own | 100 Poles, 50 Gear, 40 Metal Block | 1000 | `PandabornWoodenOx` |
-| Star Tower | `PandabornStarTower` | `Observatory.Folktails` | PandabornNightWatch | own: `art/models/StarTower` | **Ringtails, RingtailVenues off (hidden)** | own | 60 Poles, 30 Gear, 10 Paper | 1000 |  |
+| Star Tower | `PandabornStarTower` | `Observatory.Folktails` | PandabornNightWatch | own: `art/models/StarTower` | Ringtails | own | 60 Poles, 30 Gear, 10 Paper | 1000 |  |
 
 #### Storage
 
