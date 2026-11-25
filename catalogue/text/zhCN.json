@@ -770,6 +770,18 @@
     "text": "黄昏时一盏接一盏地亮起来，说不清是谁点的。",
     "en": "Lit at dusk, one after another, by nobody in particular."
   },
+  "Pandaborn.Building.StarTower.Description": {
+    "text": "雇佣环尾观星者，从午后钟声到黎明把夜空化为科学点数。",
+    "en": "Employs Ringtail stargazers who turn the night sky into Science Points, from the afternoon bell to dawn."
+  },
+  "Pandaborn.Building.StarTower.DisplayName": {
+    "text": "观星楼",
+    "en": "Star Tower"
+  },
+  "Pandaborn.Building.StarTower.FlavorDescription": {
+    "text": "每颗星星都有名字。其中几颗该叫什么，环尾们还在商量。",
+    "en": "Every star has a name. The Ringtails are still deciding on some of them."
+  },
   "Pandaborn.Building.Steamer.Description": {
     "text": "蒸制竹笋和米饭。",
     "en": "Steams bamboo shoots and rice."
