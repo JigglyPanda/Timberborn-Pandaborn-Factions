@@ -98,7 +98,9 @@ def build(review, out, vanilla):
                 print(f"{review}:{n}: {key} is read through a Phrase (cached for the session); it cannot be swapped")
                 problems += 1
                 continue
-            lines.append(("@" + feature + "\t" if feature else "") + key + "\t" + text + "\t" + esc(vanilla[key]))
+            # the review column already starts with "@": written once (two made Words.cs read the feature "@Ringtails",
+            # which is never on, so feature lines never applied)
+            lines.append(("@" + feature.lstrip("@") + "\t" if feature else "") + key + "\t" + text + "\t" + esc(vanilla[key]))
             n_keys += 1
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w", encoding="utf-8", newline="\n") as fh:

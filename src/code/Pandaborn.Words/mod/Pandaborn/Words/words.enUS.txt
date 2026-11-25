@@ -107,4 +107,4 @@ Wellbeing.HighscoreReached	Your village is happier than ever!	Your beavers are h
 WonderCompletion.Statistic.BeaversBorn	Pandas born:	Beavers born:
 WonderCompletion.Statistic.BeaversExploded	Pandas exploded:	Beavers exploded:
 Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace.	<YellowHighlight>Beaver-only:</YellowHighlight> Only beavers are allowed to work in this workplace.
-@@Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace, not Ringtails or Wooden Oxen.	<YellowHighlight>Beaver-only:</YellowHighlight> Only beavers are allowed to work in this workplace.
+@Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace, not Ringtails or Wooden Oxen.	<YellowHighlight>Beaver-only:</YellowHighlight> Only beavers are allowed to work in this workplace.

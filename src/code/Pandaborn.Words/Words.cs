@@ -27,6 +27,33 @@ namespace Pandaborn.Words
         }
     }
 
+    [Context("MainMenu")]
+    public class WordsMainMenuConfigurator : Configurator
+    {
+        protected override void Configure()
+        {
+            Bind<WordsMainMenuRestore>().AsSingleton();
+        }
+    }
+
+    /// <summary>Safety net: if a game ended without WordsService.Unload (the game calls every singleton's Unload in a row
+    /// with no guard, so another mod's exception skips ours), the vanilla texts go back when the main menu loads.</summary>
+    public class WordsMainMenuRestore : ILoadableSingleton
+    {
+        private readonly ILoc _loc;
+
+        public WordsMainMenuRestore(ILoc loc)
+        {
+            _loc = loc;
+        }
+
+        public void Load()
+        {
+            try { WordsService.RestoreLeftover(_loc, "on the main menu"); }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Words] restore on the main menu failed: " + e); }
+        }
+    }
+
     /// <summary>
     /// The earliest moment our code can act in a game scene: SpecService asks every blueprint-modifier provider for
     /// modifiers when it reads its first blueprint (the faction files, inside FactionSpecService.Load), before almost any
@@ -85,6 +112,14 @@ namespace Pandaborn.Words
         private Dictionary<string, string> _original;
         private Dictionary<string, string> _applied;
         private FieldInfo _field;
+        private bool _decided;
+
+        // What is swapped in right now, whichever game did it. That game's Unload puts the vanilla texts back; if it never
+        // ran, or another mod swapped its own table in and out around ours, the next game and the main menu do
+        // (RestoreLeftover). ILoc lives for the whole session, so a swap left behind would show in every later game.
+        private static Dictionary<string, string> _liveOriginal;
+        private static Dictionary<string, string> _liveApplied;
+        private static FieldInfo _liveField;
 
         // No FactionService here: SpecService depends on WordsEarlyHook, which depends on this class, and FactionService
         // depends on SpecService. The faction is read the way FactionService.Load reads it.
@@ -109,11 +144,10 @@ namespace Pandaborn.Words
 
         public void Load()
         {
-            if (_applied == null && State != "not our faction" && !State.StartsWith("degraded"))
-            {
-                try { Apply(FactionId(), "load"); }
-                catch (Exception e) { Degrade("swap failed: " + e.Message, e); }
-            }
+            // the early hook normally decided already (swapped, or not our faction, or no table); this is its second try
+            if (_decided) return;
+            try { Apply(FactionId(), "load"); }
+            catch (Exception e) { Degrade("swap failed: " + e.Message, e); }
         }
 
         public void Unload()
@@ -124,19 +158,24 @@ namespace Pandaborn.Words
 
         public void Apply(string factionId, string when)
         {
-            if (_applied != null) return;
+            if (_applied != null || _decided) return;
+            RestoreLeftover(_loc, "before a new game");
             Skipped.Clear();
             AppliedCount = 0;
+            // The table is per language and only enUS ships: in any other language nothing is swapped and the player
+            // reads the game's own translation (which says beaver), never an English line in the middle of it. A
+            // translated table is words.<language>.txt, reviewed against that language's vanilla texts.
             string language = SafeLanguage();
             var table = WordsTable.Load(FeatureRegistry.Owner, language);
             if (table == null)
             {
                 State = "no table for " + language;
+                _decided = true;
                 // other languages have no table by design; a missing enUS table is a build without the module's data
-                if (language == "enUS" && FactionId() == "Inkpaws") FeatureRegistry.ReportNoData("Words", "no Pandaborn/Words/words.enUS.txt in the mod");
+                if (language == "enUS" && factionId == "Inkpaws") FeatureRegistry.ReportNoData("Words", "no Pandaborn/Words/words.enUS.txt in the mod");
                 return;
             }
-            if (factionId == null || !string.Equals(factionId, table.Faction, StringComparison.Ordinal)) { State = "not our faction"; return; }
+            if (factionId == null || !string.Equals(factionId, table.Faction, StringComparison.Ordinal)) { State = "not our faction"; _decided = true; return; }
             if (FeatureRegistry.DevFlag("simulate-missing-member", "Words")) { Degrade("simulated: Loc._localization missing", null); return; }
             _field = FindField(_loc);
             if (_field == null) { Degrade("Loc._localization missing", null); return; }
@@ -155,7 +194,11 @@ namespace Pandaborn.Words
             }
             _original = original;
             _applied = copy;
+            _liveOriginal = original;
+            _liveApplied = copy;
+            _liveField = _field;
             _loc.Initialize(copy);
+            _decided = true;
             State = when;
             Debug.Log("[Pandaborn.Words] " + AppliedCount + " texts in Inkpaw words (" + when + ", " + language + ")"
                       + (Skipped.Count > 0 ? "; kept vanilla because the game's text differs from the reviewed one: " + string.Join(", ", Skipped) : ""));
@@ -167,17 +210,45 @@ namespace Pandaborn.Words
         {
             if (_applied == null) return;
             var current = _field?.GetValue(_loc);
-            if (ReferenceEquals(current, _applied)) _loc.Initialize(_original);
-            else Debug.Log("[Pandaborn.Words] the texts were reloaded meanwhile (language change); nothing to restore");
+            if (ReferenceEquals(current, _applied))
+            {
+                _loc.Initialize(_original);
+                if (ReferenceEquals(_liveApplied, _applied)) ForgetLive();
+            }
+            // not ours any more: the language was changed (the game loaded fresh texts), a later game already took over,
+            // or another mod swapped its own table in on top of ours. In the last case our table comes back when that
+            // mod restores what it found, and RestoreLeftover takes it out at the next game or on the main menu.
+            else Debug.Log("[Pandaborn.Words] the game's texts are not the ones this game swapped in; nothing to restore now");
             _applied = null;
             _original = null;
             State = "restored";
         }
 
+        /// <summary>Puts the vanilla texts back if a swap of an earlier game is still in place. Safe at any time.</summary>
+        public static void RestoreLeftover(ILoc loc, string when)
+        {
+            if (_liveApplied == null) return;
+            var current = _liveField?.GetValue(loc);
+            if (ReferenceEquals(current, _liveApplied))
+            {
+                loc.Initialize(_liveOriginal);
+                Debug.LogWarning("[Pandaborn.Words] vanilla texts restored " + when + " (the last game ended without putting them back)");
+            }
+            ForgetLive();
+        }
+
+        private static void ForgetLive()
+        {
+            _liveApplied = null;
+            _liveOriginal = null;
+            _liveField = null;
+        }
+
         private void Degrade(string why, Exception e)
         {
             State = "degraded: " + why;
-            FeatureRegistry.ReportDegraded("Words", "vanilla words shown: " + why);
+            _decided = true;
+            FeatureRegistry.ReportDegradedInGame("Words", "vanilla words shown: " + why);
             if (e != null) Debug.LogError("[Pandaborn.Words] " + e);
         }
 
@@ -195,71 +266,6 @@ namespace Pandaborn.Words
             if (named != null && named.FieldType == typeof(Dictionary<string, string>)) return named;
             var candidates = type.GetFields(flags).Where(f => f.FieldType == typeof(Dictionary<string, string>)).ToList();
             return candidates.Count == 1 ? candidates[0] : null;
-        }
-    }
-
-    /// <summary>
-    /// words.&lt;language&gt;.txt in the mod's Pandaborn/Words folder. Lines: "faction: Id"; "KEY TAB replacement TAB vanilla";
-    /// "@Feature TAB KEY TAB replacement TAB vanilla" (only while that Pandaborn feature is on; wins over the plain line);
-    /// '#' comments; \n \t \\ escapes.
-    /// </summary>
-    public class WordsTable
-    {
-        public string Faction = "Inkpaws";
-        public readonly List<Entry> Entries = new List<Entry>();
-
-        public class Entry
-        {
-            public string Feature;
-            public string Key;
-            public string Text;
-            public string Vanilla;
-        }
-
-        public static WordsTable Load(string modPath, string language)
-        {
-            if (string.IsNullOrEmpty(modPath)) return null;
-            string file = Path.Combine(modPath, "Pandaborn", "Words", "words." + language + ".txt");
-            if (!File.Exists(file)) return null;
-            var table = new WordsTable();
-            foreach (var raw in File.ReadAllLines(file))
-            {
-                string line = raw.TrimEnd('\r');
-                if (line.Length == 0 || line[0] == '#') continue;
-                if (line.StartsWith("faction:", StringComparison.Ordinal)) { table.Faction = line.Substring(8).Trim(); continue; }
-                var p = line.Split('\t');
-                string feature = null;
-                if (p[0].StartsWith("@", StringComparison.Ordinal)) { feature = p[0].Substring(1); p = p.Skip(1).ToArray(); }
-                if (p.Length < 3) continue;
-                table.Entries.Add(new Entry { Feature = feature, Key = p[0], Text = Unescape(p[1]), Vanilla = Unescape(p[2]) });
-            }
-            return table;
-        }
-
-        /// <summary>One entry per key: the feature-specific line when its feature is on, else the plain line.</summary>
-        public IEnumerable<Entry> Effective(Func<string, bool> featureOn)
-        {
-            var byKey = new Dictionary<string, Entry>(StringComparer.Ordinal);
-            foreach (var e in Entries.Where(e => e.Feature == null)) byKey[e.Key] = e;
-            foreach (var e in Entries.Where(e => e.Feature != null && featureOn(e.Feature))) byKey[e.Key] = e;
-            return byKey.Values;
-        }
-
-        public static string Unescape(string s)
-        {
-            if (s.IndexOf('\\') < 0) return s;
-            var sb = new System.Text.StringBuilder(s.Length);
-            for (int i = 0; i < s.Length; i++)
-            {
-                char c = s[i];
-                if (c == '\\' && i + 1 < s.Length)
-                {
-                    char n = s[++i];
-                    sb.Append(n == 'n' ? '\n' : n == 'r' ? '\r' : n == 't' ? '\t' : n);
-                }
-                else sb.Append(c);
-            }
-            return sb.ToString();
         }
     }
 }
