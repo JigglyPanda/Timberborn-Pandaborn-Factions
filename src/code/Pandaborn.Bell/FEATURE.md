@@ -39,6 +39,23 @@ slider during the day changes nothing until the next morning).
   twice per game day, and silently does nothing when the clip is not loaded (`Pandaborn.Core.PandabornSounds`).
 * **Saved**: `PandabornStore` entry `Bell` v1, `locked=<hours>;suggested=<0|1>;settled=<0|1>`. Bonuses are not saved.
 * `IWorkdayClock` (Core): the locked day for other modules (the Ringtails' shift).
+* **Ringtails are rested by their own shift** (DESIGN.md 2026-11-25; `BellNightShift.cs`, `BellNightRestedBonus`). The
+  same two curves of `PandabornBellSpec` are looked up at the length of the night shift instead of the length of the
+  working day, and multiply the same way: a twelve-hour night gives a Ringtail what a twelve-hour day gives an Inkpaw.
+  With the catalogue's curve a 16-hour day leaves an 8-hour night (the full bonus for Ringtails, none for Inkpaws), 12
+  and 12 gives both the full bonus, and an 8-hour day leaves a 16-hour night (none for Ringtails). The shift length
+  comes from Core's `INightShiftClock`, which Pandaborn.Ringtails registers (24 h minus its shift start, which is the
+  locked bell clamped to four hours after dawn and to nightfall); it changes only when the Bell locks a new day, so the
+  factors are worked out then. Kits get nothing, as cubs get nothing. The colonist line shows it on a Ringtail's panel.
+  **Where it lives and why:** in the Bell, as a second component on `PandabornRingtailSpec` (a record of the
+  always-loaded Pandaborn.Specs, carried only by the Inkpaws faction's Ringtail templates). The Bell owns the curve, the
+  multiplying share, the walking-speed cap and the panel line; the one thing it lacked was the other people's shift
+  length, one number, which goes through Core. Neither module names the other: Bell off means the component does not
+  exist and Ringtails work at plain speed; Ringtails off means no Ringtail exists and Core's `NoNightShiftClock` says
+  "no night shift". The clock is taken in the per-colonist component, not in `BellService`: the Ringtails' clock reads
+  the Bell's locked day, so a singleton taking it in its constructor would close a circle. Nothing is saved, and the
+  share is taken out when the colonist is deleted (bonuses are rebuilt by the game on every load).
+
 
 **Fails safely**: module off means vanilla speeds, no panel line, no bell, and `Pandaborn.Core` posts a notice. The
 markers are inert. Interface pieces sit behind `SafeUi`.

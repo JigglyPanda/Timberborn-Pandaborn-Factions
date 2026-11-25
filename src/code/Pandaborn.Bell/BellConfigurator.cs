@@ -15,6 +15,7 @@ namespace Pandaborn.Bell
             Bind<BellHoursHint>().AsSingleton();
             Bind<BellColonistFragment>().AsSingleton();
             Bind<BellRestedBonus>().AsTransient();
+            Bind<BellNightRestedBonus>().AsTransient();
             Bind<BellSettledMarker>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
             MultiBind<EntityPanelModule>().ToProvider<PanelModuleProvider>().AsSingleton();
@@ -24,6 +25,9 @@ namespace Pandaborn.Bell
         {
             var builder = new TemplateModule.Builder();
             builder.AddDecorator<PandabornBellSpec, BellRestedBonus>();
+            // the night people (a spec of Pandaborn.Specs on the Inkpaws faction's Ringtail templates; see BellNightShift.cs)
+            builder.AddDecorator<PandabornRingtailSpec, BellNightRestedBonus>();
+
             builder.AddDecorator<PandabornBellSettledMarkerSpec, BellSettledMarker>();
             return builder.Build();
         }

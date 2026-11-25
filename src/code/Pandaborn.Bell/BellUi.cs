@@ -109,6 +109,7 @@ namespace Pandaborn.Bell
         private VisualElement _root;
         private Label _label;
         private BellRestedBonus _bonus;
+        private BellNightRestedBonus _nightBonus;   // a Ringtail: the same line, by its night shift
 
         public BellColonistFragment(VisualElementLoader visualElementLoader, BellService bellService, ILoc loc)
         {
@@ -134,11 +135,13 @@ namespace Pandaborn.Bell
         public void ShowFragment(BaseComponent entity)
         {
             _bonus = SafeUi.Get(Piece, () => entity.GetComponent<BellRestedBonus>(), null);
+            _nightBonus = _bonus == null ? SafeUi.Get(Piece, () => entity.GetComponent<BellNightRestedBonus>(), null) : null;
         }
 
         public void ClearFragment()
         {
             _bonus = null;
+            _nightBonus = null;
             SafeUi.Run(Piece, () => _root.ToggleDisplayStyle(false));
         }
 
@@ -146,11 +149,17 @@ namespace Pandaborn.Bell
         {
             SafeUi.Run(Piece, () =>
             {
-                bool show = _bonus != null && _bonus.IsActive && _label != null;
+                bool night = _nightBonus != null && _nightBonus.IsActive;
+                bool show = ((_bonus != null && _bonus.IsActive) || night) && _label != null;
                 _root.ToggleDisplayStyle(show);
                 if (!show) return;
-                string text = _loc.T("Pandaborn.Bell.ColonistLine", _bellService.LockedHours.ToString(CultureInfo.InvariantCulture),
-                                     BellService.Pct(_bellService.WorkingBonus), BellService.Pct(_bellService.MovementBonus));
+                // {0} = the length of the shift the bonus comes from: the working day for an Inkpaw, the night for a Ringtail
+                string text = night
+                    ? _loc.T("Pandaborn.Bell.ColonistLine", ((int)System.Math.Round(_nightBonus.ShiftHours)).ToString(CultureInfo.InvariantCulture),
+                             BellService.Pct(_nightBonus.WorkingFactor), BellService.Pct(_nightBonus.MovementFactor))
+                    : _loc.T("Pandaborn.Bell.ColonistLine", _bellService.LockedHours.ToString(CultureInfo.InvariantCulture),
+                             BellService.Pct(_bellService.WorkingBonus), BellService.Pct(_bellService.MovementBonus));
+
                 _label.text = text;
                 ShownText = text;
             });
