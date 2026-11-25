@@ -362,12 +362,21 @@ class Generator:
         work at full staffing, CyclesCapacity = ceil(hours x MaxWorkers / CycleDurationInHours), FuelCapacity scaled
         by the same factor; every Inkpaw flag and farm holds `harvest_hours` of harvest, SimpleOutputInventorySpec
         .Capacity = ceil(hours x MaxWorkers x harvest_per_worker_hour). Never below the vanilla number. Our recipes are
-        changed in place; vanilla recipes our buildings use get an Inkpaws-only modifier."""
+        changed in place; vanilla recipes our buildings use get an Inkpaws-only modifier.
+        Two exceptions (DESIGN.md 2026-11-25): a recipe with no ingredients (a pump, a dirt excavator) holds only
+        `no_ingredient_hours` of output, or its building is a better cistern than the cisterns; `recipe_hours` names
+        single recipes (0 = the vanilla shelf)."""
         conf = self.rules.get("shelves") or {}
         if not conf:
             return
         item = "catalogue/rules.toml [shelves]"
         wh, hh, rate = float(conf["workshop_hours"]), float(conf["harvest_hours"]), float(conf["harvest_per_worker_hour"])
+        unknown = set(conf) - {"workshop_hours", "harvest_hours", "harvest_per_worker_hour", "no_ingredient_hours",
+                               "recipe_hours"}
+        if unknown:
+            raise GenError("%s: unknown key(s) %s" % (item, ", ".join(sorted(unknown))))
+        no_ing = conf.get("no_ingredient_hours")
+        per_recipe = dict(conf.get("recipe_hours") or {})
         workers = {}
         for o in list(self.outputs.values()):
             d = o.data
@@ -391,8 +400,15 @@ class Generator:
                 if key is None:
                     raise GenError("%s: recipe %s is neither ours nor vanilla" % (item, rid))
                 rs = copy.deepcopy(self.v.get(key)["RecipeSpec"])
+            if not (rs.get("Ingredients") or rs.get("Products") or rs.get("Fuel")):
+                continue   # nothing is stored (science points): no shelf to size
             old = int(rs.get("CyclesCapacity") or 0)
-            new = max(old, int(math.ceil(wh * mw / float(rs["CycleDurationInHours"]))))
+            hours = wh
+            if rid in per_recipe:
+                hours = float(per_recipe.pop(rid))
+            elif no_ing is not None and not (rs.get("Ingredients") or []):
+                hours = float(no_ing)
+            new = max(old, int(math.ceil(hours * mw / float(rs["CycleDurationInHours"]))))
             fuel_old = int(rs.get("FuelCapacity") or 0)
             fuel_new = int(math.ceil(fuel_old * new / float(old))) if old and fuel_old else fuel_old
             if rid in ours:
@@ -402,6 +418,9 @@ class Generator:
                 if fuel_new != fuel_old:
                     body["FuelCapacity"] = fuel_new
                 self.add_modifier(key, "Shelf.Recipe." + rid, {"RecipeSpec": body}, item)
+        if per_recipe:
+            raise GenError("%s recipe_hours: %s is not a recipe of any staffed Inkpaw workplace in this build"
+                           % (item, ", ".join(sorted(per_recipe))))
 
     def gen_faction_keyed(self, folder, spec, conf):
         src = conf.get("copy_faction")

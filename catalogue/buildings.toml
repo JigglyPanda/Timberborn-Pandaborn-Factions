@@ -43,7 +43,9 @@ GearWorkshop = {}
 PaperMill = { recipes = ["PandabornPaper"] }
 PandabornLanternWorkshop = { archetype = "workshop", basis = "Bakery.Folktails", model = "LanternWorkshop", recipes = ["PandabornPaperLantern"], tool_group = "Wood", tool_order = 60, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.LanternWorkshop" } }
 LumberMill = { text = "PandabornPoleMill", icon = "Sprites/Pandaborn/Buildings/PandabornPoleMillIcon", note = "the Pole Mill: vanilla lumber mill, logs to poles (Plank renamed); DESIGN.md 2026-11-14" }
-PandabornSmokeKiln = { basis = "WoodWorkshop.Folktails", model = "SmokeKiln", recipes = ["PandabornCuredPole"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.SmokeKiln" } }
+# no power (the stat sheet: "log smoke instead of resin and 250 hp"): without the two mechanical specs it has the shape of
+# the vanilla unpowered workshops (Bakery, Grill, Inventor)
+PandabornSmokeKiln = { basis = "WoodWorkshop.Folktails", model = "SmokeKiln", recipes = ["PandabornCuredPole"], delete = ["MechanicalNodeSpec", "MechanicalBuildingSpec"], set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.SmokeKiln" } }
 ExplosivesFactory = {}
 
 # ------------------------------------------------------------------ metal
@@ -113,7 +115,13 @@ DevPowerGenerator = { vanilla = "Buildings/Power/DevPowerGenerator/DevPowerGener
 # ------------------------------------------------------------------ science and Wooden Oxen
 Inventor = {}
 PandabornOxWorkshop = { basis = "BotAssembler.Folktails", model = "OxWorkshop", note = "re-adopted after the kit added the BotAssembler progress and ring nodes (aad784b); the validator checks every looked-up node", recipes = ["PandabornWoodenOx"] }
-PandabornStarTower = { model = "StarTower", waits_for = "RingtailVenues", needs_code = "a Ringtail workplace (night shift); until then a vanilla observatory", tool_group = "PandabornNightWatch", tool_order = 50 }
+# The Star Tower (DESIGN.md 2026-11-25): a Ringtail night post that makes science, the vanilla Observatory without its
+# power need (stars, not machines; Ringtails turn no wheels). The entry generates (tried with waits_for = "Ringtails"). STILL
+# HIDDEN for one reason: RingtailService.UnlockNightPosts unlocks EVERY template that carries PandabornNightPostSpec for
+# free when the first Moon Loft is finished, so the tower's 1,000 science would be waived by a 200-science loft and four
+# Ringtails would out-research every inventor from cycle 2. It needs a field on PandabornNightPostSpec (say
+# UnlockOnArrival, default true) that the unlock respects; then: waits_for = "Ringtails" and that field set false here.
+PandabornStarTower = { model = "StarTower", waits_for = ["Ringtails", "RingtailVenues"], needs_code = "a Ringtail night post that makes science; hidden until a night post can keep its science cost (PandabornNightPostSpec, Ringtails module)", tool_group = "PandabornNightWatch", tool_order = 50, delete = ["MechanicalNodeSpec", "MechanicalBuildingSpec"], module_specs = { Ringtails = { PandabornNightPostSpec = {} } } }
 
 # ------------------------------------------------------------------ storage
 SmallWarehouse = {}
@@ -159,7 +167,8 @@ PandabornSlideAndSwing = { basis = "Lido.Folktails", model = "SlideAndSwing", ne
 PandabornKindergarten = { model = "Kindergarten", needs_map = { Campfire = "PandabornCubWatching" }, tool_order = 12, icon = "Sprites/Pandaborn/Buildings/PandabornPandaKindergartenIcon" }
 PandabornInkStudio = { basis = "ContemplationSpot.Folktails", model = "InkStudio", needs_map = { ContemplationSpot = "PandabornContemplation" } }
 PandabornHotSpringBath = { basis = "MudPit.Folktails", model = "HotSpringBath", effects = { PandabornSoak = 0.6, WetFur = 0.4 }, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.HotSpring", "GoodConsumingBuildingSpec.ConsumedGoods" = [{ GoodId = "Water", GoodPerHour = 0.5 }] }, note = "uses water, not dirt (DESIGN.md 2026-11-14); wets the fur as the domed garden does" }
-PandabornOperaStage = { basis = "DanceHall.Folktails", standin = "new model", needs_map = { DanceHall = "PandabornPerformance" }, waits_for = "RingtailVenues", needs_code = "run by Ringtails", tool_group = "PandabornNightWatch", tool_order = 60, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.OperaStage" } }
+# an ordinary attraction (DESIGN.md 2026-11-25): open to whoever is off duty, no claim about who performs
+PandabornOperaStage = { basis = "DanceHall.Folktails", model = "OperaStage", needs_map = { DanceHall = "PandabornPerformance" }, tool_order = 90, set = { "BuildingSpec.LoopingSoundName" = "Pandaborn.OperaStage" } }
 TeethGrindstone = {}
 MedicalBed = {}
 Herbalist = {}

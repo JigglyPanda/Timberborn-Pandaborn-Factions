@@ -25,29 +25,29 @@ basis = "DomedGarden"
 name_from = "good:PandabornTea"
 group = "SocialLife"
 daily_delta = -0.4
-favorable_wellbeing = 5
+favorable_wellbeing = 4
 importance = 1.0
 wastable = false
-src = "design 2026-11-14 (one Tea need at the Teahouse) · wellbeing 5 = old Tea 2 + Teahouse 2 + 1 for the goods it uses"
+src = "design 2026-11-14 (one Tea need at the Teahouse) · wellbeing 5 = old Tea 2 + Teahouse 2 + 1 for the goods it uses · balance 2026-11-25 (W4)"
 [needs.PandabornPlay]
 basis = "Lido"
 name_from = "own"
 group = "Fun"
 daily_delta = -0.2
-favorable_wellbeing = 3
+favorable_wellbeing = 2
 importance = 1.0
 wastable = false
-src = "V (Lido) · M"
+src = "V (Lido) · M · balance 2026-11-25 (W4)"
 
 [needs.PandabornCubWatching]
 basis = "Agora"
 name_from = "own"
 group = "SocialLife"
 daily_delta = -0.2
-favorable_wellbeing = 4
+favorable_wellbeing = 3
 importance = 1.0
 wastable = false
-src = "V (Agora) · M"
+src = "V (Agora) · M · balance 2026-11-25 (W4)"
 
 [needs.PandabornSoak]
 basis = "MudPit"
@@ -64,13 +64,13 @@ basis = "ContemplationSpot"
 name_from = "own"
 group = "Fun"
 daily_delta = -0.12
-favorable_wellbeing = 3
+favorable_wellbeing = 2
 importance = 1.0
 wastable = false
-src = "V (Contemplation Spot)"
+src = "V (Contemplation Spot) · balance 2026-11-25 (W4)"
 
 [needs.PandabornPerformance]
-waits_for = "RingtailVenues"   # only the Opera Stage raises it, and no module runs the stage yet
+# raised only by the Opera Stage, an ordinary attraction since 2026-11-25
 basis = "DanceHall"
 name_from = "own"
 group = "Fun"
@@ -135,10 +135,10 @@ basis = "Bread"
 name_from = "good:PandabornSteamedRice"
 group = "Nutrition"
 daily_delta = -0.05
-favorable_wellbeing = 3
+favorable_wellbeing = 2
 importance = 1.0
 wastable = true
-src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier · balance 2026-11-25 (W3: the harder dish gives more)"
 
 [needs.PandabornSweetRiceBalls]
 waits_for = "Water"   # rice flour comes from the Trip-Hammer Mill, which waits for the water module
@@ -146,10 +146,10 @@ basis = "Bread"
 name_from = "good:PandabornSweetRiceBalls"
 group = "Nutrition"
 daily_delta = -0.05
-favorable_wellbeing = 2
+favorable_wellbeing = 3
 importance = 1.0
 wastable = true
-src = "V (Need.Beaver.Bread); wellbeing from the dish tier"
+src = "V (Need.Beaver.Bread); wellbeing from the dish tier · balance 2026-11-25 (W3)"
 
 [needs.PandabornHotPot]
 basis = "Bread"
@@ -177,31 +177,31 @@ waits_for = "Festival"   # only a Lantern Festival raises it
 basis = "Bread"
 name_from = "own"
 group = "Boosts"
-daily_delta = -0.05
+daily_delta = -0.04
 favorable_wellbeing = 4
 importance = 1.0
 wastable = true
-src = "M q7"
+src = "M q7 · balance 2026-11-25 (W7: 25 days, a cycle lasts up to 26)"
 
 [needs.PandabornMemorialArch]
 basis = "BrazierOfBonding"
 name_from = "building:PandabornMemorialArch"
 group = "Awe"
 daily_delta = -0.3
-favorable_wellbeing = 8
+favorable_wellbeing = 6
 importance = 1.0
 wastable = true
-src = "V (Awe) · M q8"
+src = "V (Awe) · M q8 · balance 2026-11-25 (W5)"
 
 [needs.PandabornGreatSittingPanda]
 basis = "HallOfAbundance"
 name_from = "building:PandabornGreatSittingPanda"
 group = "Awe"
 daily_delta = -0.3
-favorable_wellbeing = 12
+favorable_wellbeing = 14
 importance = 1.0
 wastable = true
-src = "V (Awe) · M q8"
+src = "V (Awe) · M q8 · balance 2026-11-25 (W5)"
 
 [needs.PandabornSkyLantern]
 basis = "EarthRecultivator"
@@ -249,8 +249,8 @@ waits_for = "Festival"   # docs/tech/events.md 8: a grand festival adds one well
 basis = "Bread"
 name_from = "own"
 group = "Boosts"
-daily_delta = -0.05
+daily_delta = -0.04
 favorable_wellbeing = 1
 importance = 1.0
 wastable = true
-src = "M q7 (Grand adds 1 well-being while festive)"
+src = "M q7 (Grand adds 1 well-being while festive) · balance 2026-11-25 (W7)"

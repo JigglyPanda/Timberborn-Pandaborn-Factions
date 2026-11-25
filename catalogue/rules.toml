@@ -35,7 +35,8 @@ Words = true
 Water = true         # switched on 2026-11-14 (docs/tech/water.md: what must be true before)
 Ringtails = true     # docs/tech/two-peoples.md 18.1: adopted 2026-11-14
 RingtailsFallback = true
-RingtailVenues = false   # Opera Stage and Star Tower: no module runs them yet (two-peoples.md has no venue behaviour)
+RingtailVenues = false   # no such module: the switch that keeps the Star Tower hidden until a night post can keep its
+                         # science cost (buildings.toml, PandabornStarTower). The Opera Stage no longer waits (2026-11-25)
 Tutorial = true      # "have N of a good" tutorial steps (docs/tech/tutorial.md)
 Festival = true      # switched on 2026-11-14: proven through the module path (docs/tech/events.md Results)
 Flowering = true     # switched on 2026-11-14 (docs/tech/events.md Results)
@@ -47,3 +48,11 @@ Flowering = true     # switched on 2026-11-14 (docs/tech/events.md Results)
 workshop_hours = 48            # recipe CyclesCapacity = ceil(hours x MaxWorkers / cycle hours); FuelCapacity scaled alike
 harvest_hours = 16             # flags and farms: output store = ceil(hours x MaxWorkers x harvest_per_worker_hour)
 harvest_per_worker_hour = 2.0
+# Exceptions (DESIGN.md, balance decisions of 2026-11-25; docs/tech/balance.md M1, W1, W10):
+# a recipe with no ingredients (Water, Water.Efficient, Badwater, BadwaterExtracted, Dirt) holds this many hours of its
+# output and never less than vanilla: with 48 the first Water Pump was a 146-water tank, a better cistern than the cisterns
+no_ingredient_hours = 16
+# single recipes: hours of work held; 0 = the vanilla shelf. The Cistern Tap and Discharge must not pull 144 water out of
+# the cisterns into a store nobody drinks from; the Pole Mill holds a day of logs, not three (the one early input
+# everything waits for)
+recipe_hours = { FlowingWater = 0, FlowingBadwater = 0, Plank = 24 }

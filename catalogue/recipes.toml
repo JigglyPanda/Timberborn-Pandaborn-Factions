@@ -24,14 +24,14 @@ src = "M q3 · V (Bread) (building: Steamer)"
 
 [recipes.PandabornPickles]
 basis = "Paper"
-cycle_hours = 1.0
-ingredients = { PandabornCabbage = 1 }
-products = { PandabornPickles = 3 }
+cycle_hours = 1.7
+ingredients = { PandabornCabbage = 2 }
+products = { PandabornPickles = 5 }
 capacity = 20
 fuel = ""
 cycles_fuel_lasts = 0
 fuel_capacity = 0
-src = "M q3 (one cabbage makes several) (building: Pickle Yard)"
+src = "M q3 (one cabbage makes several) (building: Pickle Yard) · balance 2026-11-25 (W9: pickles match bread, 1.5 a tile-day)"
 
 [recipes.PandabornRiceFlour]
 waits_for = "Water"
@@ -61,11 +61,11 @@ waits_for = ["Flowering", "Water"]
 basis = "MaplePastry"
 cycle_hours = 1.5
 ingredients = { PandabornBambooSeed = 1, PandabornRiceFlour = 1 }
-products = { PandabornBambooSeedCakes = 4 }
+products = { PandabornBambooSeedCakes = 6 }
 capacity = 20
 fuel = "Log"
 cycles_fuel_lasts = 10
-src = "M q7 (building: Kitchen)"
+src = "M q7 (building: Kitchen) · balance 2026-11-25 (W12: the seed is a windfall)"
 
 [recipes.PandabornHotPot]
 basis = "MaplePastry"
@@ -122,14 +122,14 @@ src = "V (Treated Plank: 3 h) · M q8 (log smoke instead of resin and 250 hp) (b
 
 [recipes.PandabornWoodenOx]
 basis = "Bot.Folktails"
-cycle_hours = 72.0
-ingredients = { TreatedPlank = 10, Gear = 15, MetalBlock = 2 }
+cycle_hours = 96.0
+ingredients = { TreatedPlank = 20, Gear = 20, MetalBlock = 4 }
 products = {  }
 capacity = 1
 fuel = ""
 cycles_fuel_lasts = 0
 fuel_capacity = 0
-src = "M q8 (vanilla bot parts, one building) (building: Ox Workshop)"
+src = "M q8 (vanilla bot parts, one building) (building: Ox Workshop) · balance 2026-11-25 (W6: an ox out-hauled a fully boosted bot with no upkeep)"
 
 [recipes.PandabornDewWater]
 basis = "Paper"

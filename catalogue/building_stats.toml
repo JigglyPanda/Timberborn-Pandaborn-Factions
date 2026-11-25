@@ -35,8 +35,8 @@ src = "V"
 
 [stats.PandabornFestivalSquare]
 cost = { Log = 30, Plank = 30, Paper = 10 }
-science = 300
-src = "M q7 (reachable in cycle 2)"
+science = 200
+src = "M q7 (reachable in cycle 2) · balance 2026-11-25 (W8)"
 
 [stats.PandabornDen]
 cost = { Log = 12 }
@@ -138,9 +138,9 @@ src = "V"
 
 [stats.PandabornLanternWorkshop]
 cost = { Log = 10, Plank = 20 }
-science = 200
+science = 100
 workers = 1
-src = "M q7"
+src = "M q7 · balance 2026-11-25 (W8: first festival in cycle 2)"
 
 [stats.PandabornSmokeKiln]
 cost = { Log = 20, Plank = 40, Gear = 20 }
@@ -198,18 +198,18 @@ src = "V · M"
 
 [stats.PandabornFlume]
 cost = { Plank = 2 }
-science = 60
-src = "G"
+science = 0
+src = "G · balance 2026-11-25 (M3: the water beat must not wait for science)"
 
 [stats.PandabornFlumeCorner]
 cost = { Plank = 3 }
-science = 60
-src = "G"
+science = 0
+src = "G · balance 2026-11-25 (M3)"
 
 [stats.PandabornFlumeDrop]
 cost = { Plank = 3 }
-science = 60
-src = "G"
+science = 0
+src = "G · balance 2026-11-25 (M3)"
 
 [stats.PandabornFlumeBridge]
 cost = { Plank = 4, Log = 1 }
@@ -225,13 +225,13 @@ src = "as the Flume Bridge (same trestle, one leg); for the balance lane to conf
 
 [stats.PandabornFlumeGate]
 cost = { Log = 6, Plank = 6 }
-science = 80
-src = "G · design"
+science = 40
+src = "G · design · balance 2026-11-25 (M4)"
 
 [stats.PandabornScoopWheel]
 cost = { Log = 20, Plank = 30 }
-science = 150
-src = "G · design 2026-11-14 (logs and poles, no gears: reachable in the first days)"
+science = 60
+src = "G · design 2026-11-14 (logs and poles, no gears: reachable in the first days) · balance 2026-11-25 (M5)"
 
 [stats.PandabornPaddySpout]
 cost = { Plank = 6 }
@@ -322,7 +322,7 @@ src = "M q5"
 [stats.PandabornOperaStage]
 cost = { Log = 100, TreatedPlank = 40, MetalBlock = 20 }
 science = 1200
-# workers 2 (2) in the sheet: the Ringtail performers need the Ringtails module; data alone has no workplace here
+# an ordinary attraction, no workers (DESIGN.md 2026-11-25: no claim about who performs)
 src = "V · M q5"
 
 [stats.Campfire]
