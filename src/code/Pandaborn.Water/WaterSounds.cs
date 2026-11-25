@@ -24,7 +24,8 @@ namespace Pandaborn.Water
         private readonly PandabornSounds _sounds;
         private readonly ISoundSystem _soundSystem;
         private readonly RootObjectProvider _rootObjectProvider;
-        private readonly HashSet<Vector2Int> _flowing = new HashSet<Vector2Int>();
+        // counted: a Bridge span and the flume under it share a tile, and one going quiet must not silence the other
+        private readonly Dictionary<Vector2Int, int> _flowing = new Dictionary<Vector2Int, int>();
         private float _lastTok = -1000f;
 
         public WaterSounds(PandabornSounds sounds, ISoundSystem soundSystem, RootObjectProvider rootObjectProvider)
@@ -60,11 +61,13 @@ namespace Pandaborn.Water
             }
         }
 
-        public bool IsEmitterAt(Vector2Int coordinates) => _flowing.Contains(coordinates);
+        public bool IsEmitterAt(Vector2Int coordinates) => _flowing.ContainsKey(coordinates);
 
         internal void SetFlowing(Vector2Int tile, bool flowing)
         {
-            if (flowing) _flowing.Add(tile);
+            _flowing.TryGetValue(tile, out int pieces);
+            pieces += flowing ? 1 : -1;
+            if (pieces > 0) _flowing[tile] = pieces;
             else _flowing.Remove(tile);
         }
 

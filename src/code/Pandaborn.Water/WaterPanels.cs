@@ -31,11 +31,13 @@ namespace Pandaborn.Water
         private Toggle _guard;
         private FlumeGate _gate;
         private bool _updating;
+        private readonly System.Action _update;   // one delegate for the per-frame call, not a new closure every frame
 
         public FlumeGateFragment(VisualElementLoader visualElementLoader, ILoc loc)
         {
             _visualElementLoader = visualElementLoader;
             _loc = loc;
+            _update = UpdateCore;
         }
 
         /// <summary>The flow line currently shown (for tests).</summary>
@@ -63,37 +65,60 @@ namespace Pandaborn.Water
         public void ShowFragment(BaseComponent entity)
         {
             _gate = SafeUi.Get(Piece, () => entity.GetComponent<FlumeGate>(), null);
+            if (_gate == null)
+            {
+                PanelGuard.Hide(_root);
+                return;
+            }
             SafeUi.Run(Piece, () =>
             {
-                if (_gate == null || _slider == null) return;
+                if (_slider == null) return;
                 _updating = true;
-                _slider.lowValue = 0f;
-                _slider.highValue = _gate.MaxFlow;
-                _slider.SetValueWithoutNotify(_gate.Flow);
-                _guard.SetValueWithoutNotify(_gate.GuardEnabled);
-                _updating = false;
+                try
+                {
+                    _slider.lowValue = 0f;
+                    _slider.highValue = _gate.MaxFlow;
+                    _slider.SetValueWithoutNotify(_gate.Flow);
+                    _guard.SetValueWithoutNotify(_gate.GuardEnabled);
+                }
+                finally { _updating = false; }
             });
         }
 
         public void ClearFragment()
         {
             _gate = null;
-            SafeUi.Run(Piece, () => _root.ToggleDisplayStyle(false));
+            PanelGuard.Hide(_root);
         }
 
         public void UpdateFragment()
         {
-            SafeUi.Run(Piece, () =>
-            {
-                bool show = _gate != null && _flowLabel != null;
-                _root.ToggleDisplayStyle(show);
-                if (!show) return;
-                string flow = _loc.T("Unit.CubicMeterPerSecond.NumberAndUnit", _gate.Flow.ToString("0.00", CultureInfo.InvariantCulture));
-                _flowLabel.text = _gate.Flow > 0f ? _loc.T("Pandaborn.Water.Gate.Flow", flow) : _loc.T("Pandaborn.Water.Gate.FlowZero");
-                _stateLabel.text = _gate.ClosedByBadwater ? _loc.T("Pandaborn.Water.Gate.StateBadwater")
-                    : _gate.IsOpen ? _loc.T("Pandaborn.Water.Gate.StateOpen") : _loc.T("Pandaborn.Water.Gate.StateClosed");
-                ShownText = _flowLabel.text;
-            });
+            if (_gate == null) return;   // hidden when it was cleared; nothing to do for other buildings
+            SafeUi.Run(Piece, _update);
+            if (SafeUi.IsBroken(Piece)) PanelGuard.Hide(_root);
+        }
+
+        private void UpdateCore()
+        {
+            bool show = _gate && _flowLabel != null;   // the gate may have been demolished while selected
+            _root.ToggleDisplayStyle(show);
+            if (!show) return;
+            string flow = _loc.T("Unit.CubicMeterPerSecond.NumberAndUnit", _gate.Flow.ToString("0.00", CultureInfo.InvariantCulture));
+            _flowLabel.text = _gate.Flow > 0f ? _loc.T("Pandaborn.Water.Gate.Flow", flow) : _loc.T("Pandaborn.Water.Gate.FlowZero");
+            _stateLabel.text = _gate.ClosedByBadwater ? _loc.T("Pandaborn.Water.Gate.StateBadwater")
+                : _gate.IsOpen ? _loc.T("Pandaborn.Water.Gate.StateOpen") : _loc.T("Pandaborn.Water.Gate.StateClosed");
+            ShownText = _flowLabel.text;
+        }
+    }
+
+    /// <summary>Hides a panel piece without going through SafeUi, so a piece that failed while it was on screen (SafeUi
+    /// then skips every later call, its own hide included) does not stay there with stale text.</summary>
+    internal static class PanelGuard
+    {
+        public static void Hide(VisualElement root)
+        {
+            try { if (root != null) root.style.display = DisplayStyle.None; }
+            catch (System.Exception) { }
         }
     }
 
@@ -110,11 +135,13 @@ namespace Pandaborn.Water
         private VisualElement _root;
         private Label _label;
         private BaseComponent _entity;
+        private readonly System.Action _update;
 
         public WaterInfoFragment(VisualElementLoader visualElementLoader, ILoc loc)
         {
             _visualElementLoader = visualElementLoader;
             _loc = loc;
+            _update = UpdateCore;
         }
 
         public static string ShownText { get; private set; }
@@ -138,25 +165,30 @@ namespace Pandaborn.Water
                 entity.GetComponent<PandabornCurrentDrivenSpec>() != null || entity.GetComponent<PandabornPaddySpoutSpec>() != null
                 || entity.GetComponent<PandabornTreadwheelSpec>() != null || entity.GetComponent<PandabornCisternTapSpec>() != null
                     ? entity : null, null);
+            if (_entity == null) PanelGuard.Hide(_root);
         }
 
         public void ClearFragment()
         {
             _entity = null;
-            SafeUi.Run(Piece, () => _root.ToggleDisplayStyle(false));
+            PanelGuard.Hide(_root);
         }
 
         public void UpdateFragment()
         {
-            SafeUi.Run(Piece, () =>
-            {
-                string text = _entity != null ? Text(_entity) : null;
-                bool show = !string.IsNullOrEmpty(text) && _label != null;
-                _root.ToggleDisplayStyle(show);
-                if (!show) return;
-                _label.text = text;
-                ShownText = text;
-            });
+            if (_entity == null) return;   // hidden when it was cleared; nothing to do for other buildings
+            SafeUi.Run(Piece, _update);
+            if (SafeUi.IsBroken(Piece)) PanelGuard.Hide(_root);
+        }
+
+        private void UpdateCore()
+        {
+            string text = _entity ? Text(_entity) : null;   // the building may have been demolished while selected
+            bool show = !string.IsNullOrEmpty(text) && _label != null;
+            _root.ToggleDisplayStyle(show);
+            if (!show) return;
+            if (_label.text != text) _label.text = text;
+            ShownText = text;
         }
 
         /// <summary>The line for an entity, or null (public for tests).</summary>

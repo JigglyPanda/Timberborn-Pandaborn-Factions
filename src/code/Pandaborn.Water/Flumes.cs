@@ -6,7 +6,9 @@ using Pandaborn.Specs;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BlockSystem;
 using Timberborn.EntitySystem;
+using Timberborn.GameFactionSystem;
 using Timberborn.SingletonSystem;
+using Timberborn.TemplateSystem;
 using Timberborn.TickSystem;
 using Timberborn.TimeSystem;
 using Timberborn.WaterObjects;
@@ -25,11 +27,38 @@ namespace Pandaborn.Water
     /// load goes in one tick after that check. Openings run first, solid cells second, so a Drop's leg is re-solidified
     /// after the vanilla obstacle over it is lifted.
     /// </summary>
-    public class FlumeService : ITickableSingleton
+    public class FlumeService : ITickableSingleton, ILoadableSingleton
     {
+        private readonly TemplateService _templateService;
+        private readonly FactionService _factionService;
         private readonly List<FlumeSegment> _segments = new List<FlumeSegment>();
         private readonly List<SolidCells> _solids = new List<SolidCells>();
         private readonly List<FlumeSegment> _restores = new List<FlumeSegment>();
+
+        public FlumeService(TemplateService templateService, FactionService factionService)
+        {
+            _templateService = templateService;
+            _factionService = factionService;
+        }
+
+        /// <summary>Says so in the feature report when a game of our faction carries none of the module's data (a build
+        /// whose catalogue leaves the water pieces out). In another faction's game the module has nothing to do and says
+        /// nothing.</summary>
+        public void Load()
+        {
+            try
+            {
+                if (_factionService.Current?.Id != FeatureNotices.FactionId) return;
+                bool any = _templateService.GetAll<PandabornFlumeSegmentSpec>().Any() || _templateService.GetAll<PandabornCurrentDrivenSpec>().Any()
+                           || _templateService.GetAll<PandabornDewLimiterSpec>().Any() || _templateService.GetAll<PandabornPaddySpoutSpec>().Any()
+                           || _templateService.GetAll<PandabornTreadwheelSpec>().Any() || _templateService.GetAll<PandabornCisternTapSpec>().Any();
+                if (!any) FeatureRegistry.ReportNoData("Water", "no building of the faction carries a water spec");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning("[Pandaborn.Water] data check failed: " + e.Message);
+            }
+        }
 
         public void Enqueue(FlumeSegment segment)
         {
@@ -59,8 +88,14 @@ namespace Pandaborn.Water
             // water restores first: they were queued by last tick's activations, whose obstacle removals are applied by now
             if (_restores.Count > 0)
             {
-                foreach (var s in _restores.ToList())
-                    if (!s || s.RestoreWater()) _restores.Remove(s);
+                for (int i = _restores.Count - 1; i >= 0; i--)
+                {
+                    var s = _restores[i];
+                    bool done = true;
+                    try { done = !s || s.RestoreWater(); }
+                    catch (System.Exception e) { WaterGuard.Report("putting water back after a load", e); }
+                    if (done) _restores.RemoveAt(i);
+                }
             }
             if (_segments.Count > 0)
             {
@@ -69,15 +104,24 @@ namespace Pandaborn.Water
                 foreach (var s in segments)
                 {
                     if (!s) continue;
-                    s.Activate();
-                    if (s.HasWaterToRestore) EnqueueRestore(s);
+                    try
+                    {
+                        s.Activate();
+                        if (s.HasWaterToRestore) EnqueueRestore(s);
+                    }
+                    catch (System.Exception e) { WaterGuard.Report("opening a flume", e); }
                 }
             }
             if (_solids.Count > 0)
             {
                 var solids = _solids.ToList();
                 _solids.Clear();
-                foreach (var s in solids) if (s) s.Activate();
+                foreach (var s in solids)
+                {
+                    if (!s) continue;
+                    try { s.Activate(); }
+                    catch (System.Exception e) { WaterGuard.Report("sealing a flume piece", e); }
+                }
             }
         }
     }
@@ -155,10 +199,16 @@ namespace Pandaborn.Water
 
         public void OnEnterFinishedState()
         {
-            _worldCells.Clear();
-            foreach (var c in _spec.FlowCells) _worldCells.Add(_blockObject.TransformCoordinates(c));
-            Activate();                     // at once: see FlumeService
-            _flumeService.Enqueue(this);    // and again next tick, in case the vanilla obstacle was added after us
+            // an exception here would fail the whole load ("Exception while initializing"): contain it; the piece then
+            // stays the solid block its data makes it
+            try
+            {
+                _worldCells.Clear();
+                foreach (var c in _spec.FlowCells) _worldCells.Add(_blockObject.TransformCoordinates(c));
+                Activate();                     // at once: see FlumeService
+                _flumeService.Enqueue(this);    // and again next tick, in case the vanilla obstacle was added after us
+            }
+            catch (System.Exception e) { WaterGuard.Report("opening a flume", e); }
         }
 
         /// <summary>After a load every entity has run its finished-state listeners, vanilla's obstacle add included (on a
@@ -167,20 +217,28 @@ namespace Pandaborn.Water
         public void PostLoadEntity()
         {
             if (!Active) return;
-            if (!_closed) _inertObstacle?.RemoveFromWaterService();
-            if (_restoreChecked) return;
-            _restoreChecked = true;
-            ReadSavedWater();
-            if (_toRestore != null) _flumeService.EnqueueRestore(this);
+            try
+            {
+                if (!_closed) _inertObstacle?.RemoveFromWaterService();
+                if (_restoreChecked) return;
+                _restoreChecked = true;
+                ReadSavedWater();
+                if (_toRestore != null) _flumeService.EnqueueRestore(this);
+            }
+            catch (System.Exception e) { WaterGuard.Report("opening a flume after a load", e); }
         }
 
         public void OnExitFinishedState()
         {
-            _flumeService.Dequeue(this);
-            if (!Active) return;
-            foreach (var cell in _worldCells) _waterService.RemoveDirectionLimiter(cell);
-            Active = false;
-            Deactivated?.Invoke();
+            try
+            {
+                _flumeService.Dequeue(this);
+                if (!Active) return;
+                foreach (var cell in _worldCells) _waterService.RemoveDirectionLimiter(cell);
+                Active = false;
+                Deactivated?.Invoke();
+            }
+            catch (System.Exception e) { WaterGuard.Report("closing a flume", e); }
         }
 
         public event System.Action Activated;
@@ -261,8 +319,8 @@ namespace Pandaborn.Water
             for (int i = 0; i < list.Count && i < _worldCells.Count; i++)
             {
                 var (saved, c) = list[i];
-                float missing = Mathf.Clamp(saved - _waterMap.WaterDepth(_worldCells[i]), 0f, 1f);   // an obstacle cuts at most one block
-                if (missing <= 0.01f) continue;
+                float missing = FlumeRules.MissingWater(saved, _waterMap.WaterDepth(_worldCells[i]));   // an obstacle cuts at most one block
+                if (missing <= 0f) continue;
                 if (c < 1f) _waterService.AddCleanWater(_worldCells[i], missing * (1f - c));
                 if (c > 0f) _waterService.AddContaminatedWater(_worldCells[i], missing * c);
                 total += missing;
@@ -315,9 +373,17 @@ namespace Pandaborn.Water
 
         public void OnExitFinishedState()
         {
-            _flumeService.Dequeue(this);
-            foreach (var cell in _added) _waterService.RemoveFullObstacle(cell);
-            _added.Clear();
+            try
+            {
+                _flumeService.Dequeue(this);
+                // full obstacles are not counted by the game: each cell is removed exactly once, and the list is emptied
+                // first so a failure half way can never remove a cell twice (a second removal would merge or delete the
+                // water column there)
+                var cells = _added.ToArray();
+                _added.Clear();
+                foreach (var cell in cells) _waterService.RemoveFullObstacle(cell);
+            }
+            catch (System.Exception e) { WaterGuard.Report("unsealing a flume piece", e); }
         }
 
         internal void Activate()
