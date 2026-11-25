@@ -1,12 +1,18 @@
 # The two signature events: Lantern Festival and Great Flowering
 
-Status: 2026-11-14, game 1.1.2.8. Design of record for DESIGN.md Pillar 5, built as two code modules
+Status: 2026-11-25, game 1.1.2.8. Design of record for DESIGN.md Pillar 5, built as two code modules
 (`src/code/Pandaborn.Festival`, `src/code/Pandaborn.Flowering`, spec records in `src/code/Pandaborn.Specs/EventSpecs.cs`)
 and tested in game on dev copies of the faction built by `proto/events/build.ps1` (README there). Every mechanism below was
 read from the decompiled game first; the [Results](#results) section says what was then seen in game. Both modules are in
-`Pandaborn.Code.sln` and `modules.txt` and load through the bootstrap's API check; they ship when the content lane switches
-`catalogue/rules.toml [modules] Festival` / `Flowering` on (the catalogue already carries the data of section 8 behind
-those switches). The design changes of section 7 were accepted (DESIGN.md, 2decaec).
+`Pandaborn.Code.sln` and `modules.txt`, load through the bootstrap's API check, and **ship**: the catalogue switched
+`rules.toml [modules] Festival` and `Flowering` on on 2026-11-14. The design changes of section 7 were accepted
+(DESIGN.md, 2decaec).
+
+**What is proven and what is not, in one place.** Everything in [Results](#results) ran in game on or before 2026-11-14.
+The code changed on 2026-11-25 (the lantern sky finished, the one-district rule, the Flowering spread over ticks, failure
+containment: [section 13](#13-review-of-2026-11-25)) **compiles and passes its tests without the game, and has not been
+run in game**; the lantern prefab's new numbers and sprite are in the builder script and **the bundle has not been
+rebuilt**. [Section 14](#14-needs-a-game-run) is the ordered list of builds and runs that this owes.
 
 ## Contents
 
@@ -22,6 +28,8 @@ those switches). The design changes of section 7 were accepted (DESIGN.md, 2deca
 10. [Requests to the plant lane](#10-requests-to-the-plant-lane)
 11. [Results](#results)
 12. [Unproven](#unproven)
+13. [Review of 2026-11-25](#13-review-of-2026-11-25)
+14. [Needs a game run](#14-needs-a-game-run)
 
 ---
 
@@ -38,11 +46,11 @@ Afterwards everyone is festive for about 20 days and Tradition rises by one."*
 | Dawn | "The Lantern Festival has begun. Only the pump crews work today." Workers leave their jobs at their next decision (a delivery in hands is finished first). Pump and lift crews keep working |
 | The day | Off-duty life all day: colonists eat, drink, nap, take tea, visit attractions, and in between drift to the square and mill about there. Each one gets festive spirit (+4) the first time it reaches the square |
 | Ringtails | They sleep through the morning as on any day, then come to the square at the bell instead of going to their night posts |
-| Dusk (15.5 h) | Everyone gathers at the square. From 15.75 h, 24 lanterns rise from it over 1.75 h (drawn as the game's red and white trail rockets until the art lane's lantern particles exist) |
-| Evening, Grand only (19 h) | Twenty fireworks burst over the square over 2.5 h, with the game's own firework sounds |
-| 22 h | The gathering ends; colonists go about their night and sleep |
+| Dusk (15.5 h) | Everyone gathers at the square, and paper lanterns begin to rise from among the dancers: one every second or two all evening, about twenty aloft at a time at every height, drifting with the wind. At 15.75 h a dense release of 24 goes up within a few seconds, with the sound of lanterns lifting. (A square without the lantern art sends up the game's red and white trail rockets instead, 24 over 1.75 h) |
+| Evening, Grand only | From 15.75 h the trail rockets fly as well; from 19 h twenty fireworks burst over the square over 2.5 h, with the game's own firework sounds |
+| 22 h | The gathering ends and no more lanterns leave; the last ones rise on and fade. Colonists go about their night and sleep |
 | Next dawn | "The Lantern Festival is over. Everyone is festive. Tradition: 1". Everyone who did not reach the square gets festive spirit now. Tradition-locked decorations of level 1 unlock in the toolbar. Work resumes |
-| Aftermath | Festive spirit (+4 well-being, +5 after a Grand Festival if the catalogue adds the Grand need) fades over about 20 days. The panel: "The next festival can be called in cycle 3." |
+| Aftermath | Festive spirit (+4 well-being, +5 after a Grand Festival) fades over about 25 days (the needs' `daily_delta` -0.04 since the balance pass of 2026-11-25; data only, no number of it is in code). The panel: "The next festival can be called in cycle 3." |
 
 Pressure points a player hits, and what happens:
 
@@ -53,11 +61,14 @@ Pressure points a player hits, and what happens:
 * **A drought starts tomorrow.** Manual calls are allowed in any weather (the pumps keep their crews, so drinking water
   keeps coming; one day without food work cannot starve a fed colony, whose Hunger takes 1.25 days to reach zero and 5 to
   kill). The auto-call never fires during a drought or badtide, nor the day before one.
-* **Two districts.** The festival is the whole village's: everyone takes the day off and everyone ends festive. Colonists
-  go to the square of their own district; a district without a square simply has a day off. The goods come from the
-  district of the square that was used to call it.
-* **Game speed 3 or 7.** Everything is on the game clock (behaviour decisions, launch times computed from the hour), so
-  speed changes nothing but how fast it passes.
+* **Two districts.** A festival belongs to the district of the square that called it (ruling of 2026-11-25): that
+  district's colonists take the day off, gather at that square and end festive; its stores paid for it. The other
+  districts work as usual and are not festive. The village still holds one festival a cycle and has one Tradition, so
+  a second district cannot double it; the turn can pass from district to district, cycle by cycle (the auto-call asks
+  the last host last). A colony with one district sees "the whole village", as before. Details in section 2.
+* **Game speed 2 or 3.** Everything is on the game clock (behaviour decisions, launch times computed from the hour), so
+  speed changes nothing but how fast it passes. The lanterns in the air follow the game's own rule for particles:
+  they move at the square root of the speed (section 2, The show).
 
 ## 2. Lantern Festival: how it works
 
@@ -99,7 +110,9 @@ Stranded, *[Ringtail rest]*, *[FestivalGoer]*, Worker, Needer, Wander. So a colo
 answers critical needs (Hunger or Thirst at 0, Sleep at its minimum, injury) and leaves an unreachable district before
 the festival can claim it. On the festival day:
 
-1. a worker at a `KeepWorkingTemplates` workplace releases to the Worker root and works its normal hours;
+1. a worker at a `KeepWorkingTemplates` workplace releases to the Worker root during its working hours and works;
+   after them it joins the festival like everyone else (2026-11-25; before, it spent its evening on community
+   service);
 2. by day, the game's `NeederRootBehavior` decides first (eat, drink, attractions, decorations, sleep near dawn);
 3. otherwise, and first of all during the show (`ShowStartHours`..`ShowEndHours`), go to the district's square: onto
    one of its own 20 dance slots (the Dance Hall basis' `Dancing` slots in rings round the pole; entered with the game's
@@ -111,11 +124,20 @@ the festival can claim it. On the festival day:
 4. with no square in the district: needs, then the game's wander behaviour.
 
 **What keeps running** (so a festival never strands a colony): critical needs (above us), all eating and drinking from
-stock (off-duty colonists do nothing else), pump and lift crews (`KeepWorkingTemplates`: Water Pump, Large Water Pump,
-Mechanical and Compact Mechanical Pump, Aquifer Drill, Treadwheel Lift, Scoop Wheel, Dew Collector), every bot and
-Wooden Ox (no goer spec; they ignore working hours), and every building that runs without workers (water wheels, wind
-and kite mills, flumes, decorations, growth). What stops for one day: building, hauling, farming, cutting, cooking and
-worker-turned power wheels (so a powered pump on a power wheel stalls; one fed by water or wind does not).
+stock (off-duty colonists do nothing else), the crews of the `KeepWorkingTemplates` workplaces, every bot and Wooden Ox
+(no goer spec; they ignore working hours), and every building that runs without workers (water wheels, wind and kite
+mills, the Scoop Wheel, the Dew Collector, mechanical pumps, flumes, decorations, growth). What stops for one day in
+the festival's district: building, hauling, farming, cutting, cooking and worker-turned power wheels (so a powered pump
+on a power wheel stalls; one fed by water or wind does not).
+
+**Which workplaces are in the list** (checked against the generated build on 2026-11-25: the water buildings that have
+a `WorkplaceSpec`). Staffed, and in the list: `WaterPump.Inkpaws`, `LargeWaterPump.Inkpaws`,
+`PandabornTreadwheelLift.Inkpaws`. Staffed and **missing from the list: `PandabornCisternTap.Inkpaws`** (it keeps its
+worker, because the vanilla flow limiter needs the workshop: without it the tap closes for the festival day, in a
+drought too) and `BadwaterPump.Inkpaws` (industry, not drinking water: may stay out). In the list but unstaffed, so the
+entry does nothing: `MechanicalPump`, `CompactMechanicalPump`, `AquiferDrill`, `PandabornScoopWheel`,
+`PandabornDewCollector`. The corrected list is in section 8 (a request to the catalogue lane; the module reads
+whatever the data says).
 
 **Ringtails.** Both the Ringtails' day rest and the festival insert above `WorkerRootBehavior`. The rest inserts in
 `InitializeEntity`, the festival in `PostInitializeEntity` (which the game runs after every component's
@@ -128,36 +150,100 @@ The insertion uses one private field, `BehaviorManager._rootBehaviors` (the Ring
 is gone, nobody takes the day off; the festival keeps its show, festive spirit and Tradition, and the panel's rule line
 says so. Nothing of the behaviour is saved (a reload restarts the current walk).
 
+### One district
+
+Decided and built on 2026-11-25 (`FestivalService.FestivalDistrict`, `IsHolidayFor`, `Hosts`); **not run in game**.
+
+* **Whose festival.** The square that calls it names the district (`DistrictBuilding.District`). The store entry keeps
+  the district centre's and the square's entity ids. On the festival day `FestivalGoer` asks
+  `IsHolidayFor(Citizen.AssignedDistrict)`: a colonist of another district is released at once and works as usual.
+  A colonist that migrates during the day follows its new district at its next decision.
+* **Where.** The district's colonists go to the calling square, or to the district's first finished square if that one
+  is gone. Only the district's squares light up, drum and send up lanterns and fireworks.
+* **Rewards.** Festive spirit at the square on arrival and, at the end, for every colonist of the district. Tradition
+  is the village's: one counter, +1 per festival.
+* **One a cycle, in the whole village.** Not one per district: with a counter per district, Tradition would rise once
+  per district per cycle, and two festivals could run at once (two sets of state, two shows). A village with several
+  districts chooses each cycle where the festival is held. The auto-call asks the squares of the district that held
+  the last festival last, so with stock in both the turn passes on.
+* **Old saves.** A save written before this rule has no district on record: its called or running festival is
+  village-wide, exactly as it was. A festival whose district centre is demolished meanwhile has nobody on holiday and
+  no host; it still ends at its dawn and Tradition rises (the goods were spent).
+* **Texts.** With one finished district centre the module uses the existing keys, which say "the whole village" and
+  "everyone" and are true. With several it uses district variants that name the district. They are new keys in a new
+  file, `src/code/Pandaborn.Festival/mod/Localizations/enUS_PandabornFestivalDistricts.csv`, first-draft text **for the
+  text lane to review** (fold them into `enUS_PandabornEvents.csv` when convenient; the module only needs the keys):
+
+  | Key | Used | Arguments | Replaces, with several districts |
+  |---|---|---|---|
+  | `Pandaborn.Festival.RuleDistrict` | the rule line on the square's panel | - | `Pandaborn.Festival.Rule` |
+  | `Pandaborn.Festival.RuleNoDayOffDistrict` | the same when the day off is unavailable | - | `...RuleNoDayOff` |
+  | `Pandaborn.Festival.Status.CalledElsewhere` | status on a square of another district while a festival is called | {0} district name, {1} hours | `...Status.Called` |
+  | `Pandaborn.Festival.Status.RunningElsewhere` | status on a square of another district on the festival day | {0} district name | `...Status.Running` |
+  | `Pandaborn.Festival.Message.StartedDistrict` | notification at dawn | {0} district name | `...Message.Started` |
+  | `Pandaborn.Festival.Message.StartedGrandDistrict` | notification at dawn, Grand | {0} district name | `...Message.StartedGrand` |
+  | `Pandaborn.Festival.Message.EndedDistrict` | notification at the next dawn | {0} district name, {1} Tradition | `...Message.Ended` |
+
+  Unchanged in both cases: `Message.Called`, `Message.CalledGrand` (they claim nothing about who celebrates),
+  `Status.NextCycle`, the stock lines ("the district's stores" was already right). The Core `Messenger` files every
+  notification under the first district centre in the notification log; for a festival in another district that is
+  the wrong heading (a note for the Core lane, section 13).
+
 ### The show
 
-The game 1.1 has real fireworks: firework entities (`Fireworks/*` blueprints, Common collection) with trail and burst
-particles and sounds, spawned by the Firework Launcher. `FestivalFireworks` spawns the same entities from any point:
-`EntityService.Instantiate(FireworkSpec.Blueprint)` then the component's `Launch(position, rotation, distance)`. The
-component class `Timberborn.FireworkSystem.Firework` is internal, so `Launch` (public) is called by reflection; fallback:
-no fireworks, everything else runs. Lanterns use the trail-only rockets `Firework.CometRed`/`CometWhite` (gentle pitch,
-short flight) until the art lane provides lantern particles; bursts use `KamuroOrange`, `PalmGold`, `KamuroRed`, `Willow`,
-`PeonyYellowGreen`. Launch times are computed from the clock each tick (`ShowStartHours + 0.25 + i × 1.75 / LanternRises`,
-`FireworksStartHours + i × 2.5 / Bursts`), so a reload mid-show launches only what is still due and nothing twice; the
-flying fireworks themselves are saved by the game.
+**The lantern sky** (2026-11-25; the first version is what run `events-sky-1` saw). A Festival Square whose blueprint has
+the `LanternRise` attachment (`{AttachmentId "LanternRise", Prefab "Effects/Pandaborn/LanternRise", Parent
+"#LanternRise", CreateInstantly false}`; prefab in `pandabornattachments`, one `ParticleSystem` that emits nothing by
+itself) gets, from `ShowStartHours` to `ShowEndHours`:
 
-Hooks for the art lane on the square's model (section 9): `#FestivalLights` is shown from the call to the end of the
-festival and hidden otherwise; `#FireworkMount` is the launch point. Each lantern first asks the square's
-`TemplateAttachments.GetOrCreateAttachment("LanternRise")` (a blueprint attachment `{AttachmentId "LanternRise", Prefab,
-Parent "#LanternRise", CreateInstantly false}`) and plays its `ParticleSystem`; no attachment (`KeyNotFoundException`,
-caught) means a `ParticleSystem` under a `#LanternRise` node, and neither means the comet. Every missing node or particle
-system degrades to nothing.
+| What | How | Number, and why |
+|---|---|---|
+| Lanterns leaving the square all evening | the module sets the looping system's emission rate | 0.65 a second (`FestivalService.SkyLanternsPerSecond`): with the prefab's 25–40 s life that is about 21 aloft at once (15–30 was asked; `events-sky-1` at 0.85 held 20–24 and peaked at 45 with the release) and a new one every 1.5 s |
+| The dense release | `ParticleSystem.Emit(1)` per lantern, from the clock | `LanternRises` (24) over 0.3 game hours from 15.75 h: 5.8 s at speed 1. `Play()` was the bug of run `lanterns-1`: it does nothing while earlier lanterns are aloft |
+| The sound | `Environment.Pandaborn.LanternRise` (2.2 s, three variants) at the square | at lanterns 0, 8 and 16 of the release only; the steady sky is silent |
+| Drift | velocity over lifetime x/z, written when the wind changes | the game's wind direction × (0.10 + 0.20 × strength) m/s, each lantern ±0.16 m/s of its own (±0.08 in `events-sky-1` gave one thin stream downwind) |
+| The end | rate 0 and `Stop(StopEmitting)` | the lanterns aloft rise on and fade (the prefab's last 12 % of life) |
+| A sky that starts late | `Simulate` fast-forward by the time since the show began, at most 40 s | after a load in the middle of the show the sky starts filled instead of refilling for half a minute; lanterns themselves are not saved |
 
-Sounds: `pandabornsounds` clips `Environment.Pandaborn.FestivalDrum` (looped on a child emitter of the square during
-the show; the square's own emitter already loops the visitors' sound, and one emitter loops one sound) and
-`Environment.Pandaborn.Firecrackers` (2D at the start of the festival day, 3D at the square when the show starts). A clip
-the game does not know (`AudioClipService.GetAudioClipNames`) is skipped silently.
+**Time: the game's nonlinear particle clock, deliberately.** The system runs on scaled game time and its
+`simulationSpeed` is `NonlinearAnimationManager.SpeedMultiplier` (√scale / scale), which is exactly what the game does
+for its own smoke and sparks (`NonLinearParticlesSpeedMultiplier`). So lantern time passes at the square root of the
+game speed: ×1 at speed 1, ×1.7 at speed 2 (scale 3), ×2.6 at speed 3 (scale 7); a pause freezes the sky; rate and life
+are both in lantern time, so **the number aloft is the same at every speed**. The show lasts 125 real seconds at speed
+1, 42 at speed 2, 18 at speed 3 (72 and 47 lantern-seconds: more than one lantern life, so the sky still fills).
+Rejected: unscaled real time (lanterns rising through a pause, and an 18-second show with 30-second lanterns that
+outlive it by far), and plain scaled time (lanterns at seven times their speed read as rockets).
+
+**Comets and bursts** are the game's 1.1 firework entities (`Fireworks/*` blueprints, Common collection), spawned as the
+Firework Launcher does: `EntityService.Instantiate(FireworkSpec.Blueprint)` then the component's
+`Launch(position, rotation, distance)`. The component class `Timberborn.FireworkSystem.Firework` is internal, so `Launch`
+(public) is called by reflection; fallback: no comets or bursts, everything else runs. The trail-only rockets
+`Firework.CometRed`/`CometWhite` (gentle pitch, short flight; `LanternRises` of them over 1.75 h from 15.75 h) fly
+**only in a Grand Festival, or as the lanterns' stand-in at a square without the lantern art**. The bursts
+(`KamuroOrange`, `PalmGold`, `KamuroRed`, `Willow`, `PeonyYellowGreen`; `Bursts` over 2.5 h from `FireworksStartHours`)
+fly only in a Grand Festival. All launch times come from the clock each tick (`FestivalRules.Due`, tested without the
+game), so a reload launches only what is still due and nothing twice; the flying fireworks themselves are saved by the
+game.
+
+Hooks on the square's model (section 9): `#FestivalLights` is shown from the call to the end of the festival at a
+hosting square and hidden otherwise; `#FireworkMount` is the launch point of comets and bursts; `#LanternRise` is the
+attachment's parent. No attachment (`KeyNotFoundException`, caught) means a `ParticleSystem` under a `#LanternRise`
+node, and neither means the comets. Every missing node, particle system or clip degrades to nothing, silently; a
+failure while driving the particle system switches that square to the comets and is logged once.
+
+Sounds: `pandabornsounds` clips `Environment.Pandaborn.FestivalDrum` (looped on a child emitter of each hosting square
+during the show; the square's own emitter already loops the visitors' sound, and one emitter loops one sound),
+`Environment.Pandaborn.Firecrackers` (2D at the start of the festival day, 3D at the square when the show starts) and
+`Environment.Pandaborn.LanternRise` (above). A clip the game does not know (`AudioClipService.GetAudioClipNames`) is
+skipped silently.
 
 ### Festive spirit and Tradition
 
-* Festive spirit is the catalogue need `PandabornFestive` (+4, decays 0.05 a day: about 20 days; balance Q7). The module
-  raises it to its maximum through the need system (`NeedManager.ApplyEffect(InstantEffect)`), as an attraction would,
-  when a colonist first reaches the square and, at the end, for every colonist that has not. It is the game's own need
-  state: with the module off it simply fades. A Grand Festival also fills `GrandNeedId` if the catalogue adds that need.
+* Festive spirit is the catalogue need `PandabornFestive` (+4, decays 0.04 a day since 2026-11-25: about 25 days). The
+  module raises it to its maximum through the need system (`NeedManager.ApplyEffect(InstantEffect)`), as an attraction
+  would, when a colonist first reaches the square and, at the end, for every colonist of the festival's district that
+  has not. It is the game's own need state: with the module off it simply fades, and the code holds none of its
+  numbers. A Grand Festival also fills `GrandNeedId` (`PandabornFestiveGrand`, +1).
 * Tradition is a counter in the store (+1 per festival). It gates decorations through the game's own toolbar lock: an
   `IToolLocker`, as science and plant groups use (`ToolUnlockingService`). A decoration with `PandabornTraditionSpec`
   `{ Level }` is locked until Tradition reaches it; clicking it explains ("String Lanterns is earned with Tradition 1. Each
@@ -168,7 +254,14 @@ the game does not know (`AudioClipService.GetAudioClipNames`) is skipped silentl
 
 ### Saved state
 
-Store entry `Festival` v1: `phase`, `day`, `grand`, `last` (cycle of the last festival), `tradition`, `auto`, `count`.
+Store entry `Festival` v1: `phase`, `day`, `grand`, `last` (cycle of the last festival), `tradition`, `auto`, `count`,
+and since 2026-11-25 `district` and `square` (entity ids; empty or absent: village-wide). Additive: the version stays 1,
+an older module ignores the two keys, a newer one reads their absence as the old rule.
+
+The festival's day is booked to its cycle when the game posts `CycleDayStartedEvent`, not on `DaytimeStartEvent`:
+`GameCycleService` moves the cycle on in its own handler of `DaytimeStartEvent`, and whether that ran before ours was
+only load order. Had ours run first, a festival held on the first day of a cycle was booked to the cycle before and a
+second one could be called in the same cycle.
 
 ## 3. Great Flowering: what the player experiences
 
@@ -201,10 +294,20 @@ and room for seed. The forecast says exactly that, a full cycle ahead.
   duration, which the game deliberately hides until it starts.
 * **Buds**: while announced, plants whose spec says `BudsUseDetail` get the material's detail map switched on for their
   grown model (`_EnableDetail`, as vanilla shows ripe fruit). Off until the plant lane paints buds there.
-* **The Flowering** (`FloweringService.Flower`): for every plant of the species: grown and alive → deleted and its twin
-  (`InFlowerTemplate`) spawned on the same tile (`NaturalResourceFactory.SpawnIgnoringConstraints`, then grown with
-  `Growable.IncreaseGrowthProgress(1)`); young → `LivingNaturalResource.Die()`; a harvested crop whose pile still lies there
-  is left alone. The twin's harvest is its cut yield, `PandabornBambooSeed` × 3, in the same resource group as the bamboo
+* **The Flowering** (`FloweringService.Flower`, `ConvertSome`): for every plant of the species: grown and alive → deleted
+  and its twin (`InFlowerTemplate`) spawned on the same tile (`NaturalResourceFactory.SpawnIgnoringConstraints`, then
+  grown with `Growable.IncreaseGrowthProgress(1)`); young → `LivingNaturalResource.Die()`; a harvested crop whose pile
+  still lies there is left alone. **Since 2026-11-25 this is spread over game ticks**: `Flower` only sets the state; in
+  the first tick after it the young plants die and the grown ones queue up, sorted across the map; each tick then turns
+  plants until about 5 ms have gone (never fewer than 8), so a farm of a few dozen flowers within a few ticks and a map
+  of thousands comes into flower as a wave over the first hours of day 1 (768 ticks a day). The "in flower" notice with
+  the counts comes when the last plant has turned. Why: each replacement deletes one entity and creates another, and
+  `EntityRegistry.RemoveEntity` alone is a linear search of every entity in the game per deletion; thousands in one
+  tick, inside the cycle-start event, would stall the game (estimated from the code, never measured: no test had more
+  than 56 plants). The progress is saved (`converting`: 2 not begun, 1 grown plants still turning, 0 done), so a save
+  made in the middle goes on after the load. And no entity is touched in PostLoad or an event handler any more: by the
+  game's code a twin placed before the event bus is ready (a Flowering that fell due at a load) had its planting mark
+  cleared again afterwards, when the queued `BlockObjectSetEvent` reached `PlantingCoordinatesUnsetter`. The twin's harvest is its cut yield, `PandabornBambooSeed` × 3, in the same resource group as the bamboo
   (Farmhouse / Cuttable), so the farmhouse's and lumberjack's inventories accept seed (`YieldRemovingBuilding` allows the
   yields of every template of its group) and their workers harvest and carry it with the vanilla behaviours.
 * **Dying**: twins die over the last day of `SeedDays` (each at a time hashed from its tile). Dead crops lose their seed (the
@@ -216,6 +319,14 @@ and room for seed. The forecast says exactly that, a full cycle ahead.
   for growth, so this uses the private field `Growable._timeTrigger` (an `ITimeTrigger`, a public interface with
   `Pause`/`Resume`). Fallback: no rest (young bamboo regrows at once: the event is shorter, never harsher). The holds are
   not saved; the game saves growth progress and the module holds the plants again after a load.
+* **A hold is re-read, never trusted.** The timer is taken from the plant at every call, and every resting plant is held
+  again after a load, every in-game hour, when the Flowering begins and when a plant is planted. The game itself
+  resumes a plant that stops dying; and another mod may replace the timer object: TimberCommons' `GrowthRateModifier`
+  does when one of its growth modifiers registers, and resumes the new one (compatibility audit of 2026-11-25, m6).
+  Either way the plant grows for at most one in-game hour before it is held again (a 3-day crop gains about 1.4 %).
+  The first hourly check that finds resting plants growing writes one log line; `FloweringService.HeldAgain` counts
+  them. This was already how the module worked; on 2026-11-25 the counter, the log line and the handling of a timer
+  that throws were added. Not seen in game with TimberCommons (section 14).
 * **Setting** without any other mod: per save, normal / rare / off, in a game dialog opened from the top-bar line or from
   any bamboo's panel. Switching off cancels an announced Flowering (with a notice). A Mod Settings integration would be a
   separate optional module that loads late (the Reskin's `.bin` pattern) and calls `FloweringService.SetSetting`; not
@@ -241,11 +352,12 @@ drought, a 7-day drought starting on cycle day 13 or 17, 10 random seeds each; `
 | 15 | 13 | 6 days (the forecast followed) | 60 | 0 |
 | 15 | 17 | 11 days | 60 | 0 |
 
-**Choice: `DormantDays` 9** (a 12-day gap for shoot bamboo, 14 days for timber bamboo, which grows in 5). A colony that
+**Choice: `DormantDays` 9** (a 12-day gap for shoot bamboo; 16 days for timber bamboo, which grows in 7 since the
+ruling of 2026-11-25, was 5 and 14). A colony that
 follows the forecast is never at risk at either length; at 15 days, one that keeps a thin two-day pantry and ignores the
 forecast loses a third to two-thirds of its colonists when the cycle's drought follows, at 12 days it loses none. The
 event still costs real food: 0.35 × 2.67 × 12 ≈ **11 food per panda** without the stock (what the tooltip asks for), and
-about 5 poles per panda for timber (0.35 a day × 14). The seed windfall (3 a plant; a 40-colonist colony grows about 56
+about 6 poles per panda for timber (0.35 a day × 16; it was "about 5" at 14 days: the tooltip no longer gives a number). The seed windfall (3 a plant; a 40-colonist colony grows about 56
 shoot tiles, so about 168 seed, 670 seed cakes) refills the pantry once a Kitchen and rice flour exist.
 
 **Warning for the coordinator:** the balance sheet's "until the next temperate season" and "reserve 14 food a colonist"
@@ -257,14 +369,17 @@ the Flowering. A future Hard tuning could shorten `DormantDays` per game mode; n
 
 | Case | Festival | Flowering |
 |---|---|---|
-| Save and reload mid-event | Phase, day and grand are in the store; colonists re-enter the festival at their next decision; the show resumes from the clock without repeats | Phase, species and day are in the store; twins are ordinary saved plants; young plants are held again at load |
+| Save and reload mid-event | Phase, day, grand, district and square are in the store; colonists re-enter the festival at their next decision; the show resumes from the clock without repeats; the lantern sky starts filled | Phase, species and day are in the store; twins are ordinary saved plants; young plants are held again at load; a change into flower that was under way goes on with the grown plants that are left |
 | Called at hour 23 | Begins at dawn, an hour later | — |
-| Two districts | Everyone off; each district's square hosts its own; goods from the calling square's district; festive for all | Flowers on the whole map, every district |
+| Two districts | The calling square's district only: its colonists off and festive, its stores, its square; the others work. One festival a cycle in the village, one Tradition | Flowers on the whole map, every district |
 | Drought or badtide | Manual call allowed (pump crews keep working); auto-call never, nor the day before | Impossible by construction: day 1 of a cycle is temperate; the seed days end before any hazard |
-| Game speed 3 / 7 | Clock-driven; nothing depends on frames | Hourly ticks on the game clock |
+| Game speed 2 / 3 | Clock-driven; nothing depends on frames. Lanterns in the air on the game's nonlinear particle clock: same number aloft at every speed | Hourly ticks on the game clock; the change into flower takes the same number of ticks at every speed |
 | Module forced off in a save mid-event | Everyone works as usual; goods already spent; store entry kept. Back on: a festival whose day passed ends at load with its rewards; one called for today starts | No new Flowering; twins stay plants that bear seed and never die by themselves; young bamboo grows; store entry kept. Back on: picks up (an overdue announced Flowering moves to the next cycle start) |
 | Game update removes a private member | No day off (show, festive, Tradition kept); or no fireworks | No rest after a Flowering (milder) |
-| The square is demolished while called | The festival still runs; colonists of that district have a day off without a square | — |
+| The square is demolished while called | The festival still runs; the district's colonists go to another square of the district, or have a day off without one | — |
+| The district centre is demolished while called | Nobody is on holiday and no square hosts; the festival ends at its dawn and Tradition rises | — |
+| A colonist moves to another district on the day | It follows its new district at its next decision | — |
+| Another mod swaps a plant's growth timer | — | Held again within an in-game hour |
 | A colonist is starving on festival day | Critical needs come before the festival | — |
 | Setting changed to off while announced | — | Cancelled with a notice |
 
@@ -282,14 +397,46 @@ the Flowering. A future Hard tuning could shorten `DormantDays` per game mode; n
 | The Flowering's rest is 9 days, not "until the next temperate season" | Section 5: at 15 days a thin-pantry colony that ignores the forecast is wiped out by the cycle's drought; at 12 nobody starves; the forecast's ask drops from 14 to 11 food a panda |
 | The seed is the flowering plant's harvest (a twin plant whose yield is seed), not goods dropped on the ground | The game's recovered-goods spawner is internal; a dropped pile is only fetched by builders, slowly, and rots in 15 days; a harvest is taken by the farmers and lumberjacks who already work those plants, and farmhouses accept the good only if it is a yield of their group |
 | The countdown names the cycle, not a number of days | The cycle's length includes the coming hazard's duration, which the game hides until the hazard starts |
+| 2026-11-25: a festival is the calling square's district's, not the whole village's (it was: everyone off and festive, each district at its own square) | The coordinator's ruling. One festival a cycle and one Tradition stay village-wide, so districts take turns |
+| 2026-11-25: pump crews join the festival after their working hours | They were released to the game's worker behaviour all day and night, so they hauled in the evening while everyone else danced |
+| 2026-11-25: the bamboo comes into flower over the first hours of the cycle's first day on a large map, not in one instant | Spread over ticks so that thousands of plants do not stall the game. Still always day 1 of a cycle; the seed days count from the start |
+| 2026-11-25: comet rockets only in a Grand Festival (or without the lantern art) | With real lanterns the rockets are a firework, and fireworks are what makes a festival Grand |
 
 ## 8. Requests to the catalogue lane
 
-**Status (phase 2):** the catalogue has applied all of these behind `rules.toml [modules] Festival` / `Flowering`
+**Status (2026-11-25):** the catalogue has applied all of the numbered requests below, and both module switches are on
 (square on `DanceHall.Folktails`, the three module specs on the characters, `PandabornFestiveGrand`, Tradition levels, the
-twins on the plant lane's flowering models, `BudsUseDetail = true` on shoot bamboo and `false` on timber bamboo). Still
-open: the square's `LanternRise` attachment and its own lantern particle (section 9). The dev
-copies generate exactly this data, with the switches flipped in a scratch copy of the catalogue.
+twins on the plant lane's flowering models, `BudsUseDetail = true` on shoot bamboo and `false` on timber bamboo). The dev
+copies generate exactly this data from a scratch copy of the catalogue. **Still open, two requests:**
+
+**A. The square's `LanternRise` attachment: ADOPT AFTER THE BUNDLE IS REBUILT** (section 14, steps 1 to 3; until then
+the installed bundle carries the old prefab, 0.5 m lanterns that live 10 to 16 s and nine built-in bursts; the module
+would drive it without error, but the sky would be thin and fast). On `PandabornFestivalSquare` in `buildings.toml`,
+appended to the basis' `TemplateAttachmentsSpec.Attachments` (the Dance Hall basis already has the spec; the entry is
+the one `proto/events/variants/sky` merges in, proven to load and play in `events-sky-1`):
+
+```json
+"TemplateAttachmentsSpec": { "Attachments#append": [ {
+    "AttachmentId": "LanternRise", "Prefab": "Effects/Pandaborn/LanternRise", "Parent": "#LanternRise",
+    "Position": { "X": 0.0, "Y": 0.0, "Z": 0.0 }, "Rotation": { "X": 0.0, "Y": 0.0, "Z": 0.0 },
+    "Scale": { "X": 1.0, "Y": 1.0, "Z": 1.0 }, "CreateInstantly": false } ] }
+```
+
+It must sit behind the Festival switch like the square itself, and it makes `pandabornattachments_win|_mac` a bundle
+the square needs: `Prefab` is an asset reference, and a blueprint that names a prefab no bundle carries stops every
+game at load (`events-final-1` was exactly that crash, with a character attachment). The adopted model already has
+the `#LanternRise` node (`art/models/FestivalSquare/build.py`).
+
+**B. `KeepWorkingTemplates`** (`faction.toml`, `PandabornFestivalSpec`): add `PandabornCisternTap.Inkpaws`, which is
+staffed and closes without its worker; the unstaffed entries can go. Proposed list: `["WaterPump.Inkpaws",
+"LargeWaterPump.Inkpaws", "PandabornTreadwheelLift.Inkpaws", "PandabornCisternTap.Inkpaws"]` (section 2, "Which
+workplaces are in the list"; add `BadwaterPump.Inkpaws` only if a badwater process must not pause for a day).
+
+Done by other lanes meanwhile, nothing to do: the festive needs' `daily_delta` is -0.04 (no code reads it); the
+Lantern Workshop costs 100 science and the Festival Square 200 (only Tradition decorations must cost 0); the six plant
+text keys of the twins left `enUS_PandabornEvents.csv` and live in `catalogue/text/plants.json`.
+
+The original requests, as they were made:
 
 All ids below are new and must be locked (`generate -Lock`). Custom specs go only on Inkpaws-only templates.
 
@@ -323,15 +470,16 @@ All ids below are new and must be locked (`generate -Lock`). Custom specs go onl
    `PandabornStringLanterns` and `PandabornGoldfishBowl` level 1, `PandabornHangingLantern` level 2,
    `PandabornGardenMoonGate` level 3: `add = { PandabornTraditionSpec = { Level = 1 } }`, `science = 0`. Their
    descriptions should end "Earned with Tradition N (Lantern Festivals)."
-5. **The two bamboos** (`plants.toml`): `add = { PandabornFloweringPlantSpec = { InFlowerTemplate = "PandabornShootBambooInFlower.Inkpaws", BudsUseDetail = false } }`
-   on `PandabornShootBamboo`, and `InFlowerTemplate = "PandabornTimberBambooInFlower.Inkpaws"` on `PandabornTimberBamboo`
-   (`BudsUseDetail = true` once the plant lane paints buds).
+5. **The two bamboos** (`plants.toml`): `PandabornFloweringPlantSpec = { InFlowerTemplate = "PandabornShootBambooInFlower.Inkpaws", BudsUseDetail = true }`
+   on `PandabornShootBamboo` (the plant lane painted its buds in the detail map), and `InFlowerTemplate =
+   "PandabornTimberBambooInFlower.Inkpaws", BudsUseDetail = false` on `PandabornTimberBamboo` (its detail map is the
+   bamboo fungus: section 10). This is what the catalogue carries.
 6. **The two twins** (`plants.toml`, new items in `NaturalResources.Inkpaws`): copies of each bamboo with the same model
    (until the plant lane's flowering models exist), `cut_yield = { PandabornBambooSeed = 3 }` in the same resource group,
    **no** `PlantableSpec`/`PlantablePreviewModelSpec` (no planting tool), no `ReproducibleSpec`, no `GatherableSpec`
    (timber), and `add = { PandabornInFlowerSpec = { Species = "PandabornShootBamboo.Inkpaws" } }` (resp. timber).
-   `proto/events/tools/derive.py` is the reference implementation. Names "Flowering Shoot Bamboo" / "Flowering Timber
-   Bamboo"; the loc keys used by the prototype are in `enUS_PandabornEvents.csv` and can move to `text/plants.json`.
+   `proto/events/tools/derive.py` was the reference implementation. Names "Flowering Shoot Bamboo" / "Flowering Timber
+   Bamboo": in `catalogue/text/plants.json` (the copies in `enUS_PandabornEvents.csv` were removed on 2026-11-25).
 7. **Balance note** (`docs/tech/balance.md` Q7 is the balance lane's): "blocked until the next temperate season" →
    "9 days of rest after the Flowering"; reserve 14 → 11 food a colonist (section 5).
 
@@ -343,8 +491,8 @@ plaster, a tall central lantern pole or small stage, red only on the lanterns. N
 | Node | Kind | Driven by the module |
 |---|---|---|
 | `#FestivalLights` | static lantern strings and lit stall lanterns (emissive or `WindowsAtlas` lit regions) | shown from the call to the end of the festival, hidden otherwise (with the module off they always show) |
-| `#LanternRise` | a `ParticleSystem` attachment: one paper lantern rising slowly and drifting, warm glow, 8–12 s life | played once per lantern at dusk, in place of the comet rocket |
-| `#FireworkMount` | an empty transform at the launch point (pole top) | launch origin of lanterns and fireworks |
+| `#LanternRise` | an empty on the dais near the centre: the parent of the `LanternRise` attachment (the lantern particle prefab, section 2) | the module sets the particle system's rate, releases, drift and speed; lanterns leave from a 3.8 m box round this node at hand height |
+| `#FireworkMount` | an empty transform at the launch point (pole top) | launch origin of comets and bursts |
 
 Keep the dance-hall slot nodes so the 20 visible dance slots work. Lantern particles need the art lane's own bundle (the
 module never ships materials).
@@ -379,6 +527,8 @@ probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
 | `events-final-2` | copy `pbevents3`: the square's `LanternRise` attachment (`Fireworks/Content/Sparks_Trail` on `#Finished`, until the model lane's node exists), crowd nearer, the panel layout fix, `BudsUseDetail` | **PASS, 0 own errors.** The farmhouse crew of 3 kept working; the 10 others all attended and spent the day at or walking to the square. **LanternRise:** the attachment played for each of the 24 lanterns (no comets in the sky); it shows as small pink sparks halfway up the pole (`ev_f_d1_h16_dusk_c.png`, `ev_f_d1_h17_dusk_d.png`). **Panel:** the bamboo line and its setting button no longer overlap (`ev_f_d0_inflower_panel.png`, `ev_f_d0_buds_plant.png`). **Buds:** not visible (`ev_f_d0_buds_plant.png`); see `events-buds-1` |
 | `events-buds-1` | copy `pbevents3`, short: a grown shoot-bamboo field, announcement, close-ups before and after; the probe lists each renderer under `Mature` with its material, `_EnableDetail` and detail textures | **PASS, 0 own errors. The switch works, the buds do not read.** Before the announcement the grown model's material (`PandabornShootBamboo - Uncolored21 (Instance)`, VegetationURP, re-created by the game's optimizer) has `_DetailMap PandabornPlants_Detail` and `_EnableDetail 0`; from the announcement on, `_EnableDetail 1` on every renderer under `Mature` (as the game's `GatherableModel` does). On screen the field looks the same before and after (`ev_b_before.png`, `ev_b_after.png`, `ev_b_after_field.png`): the bud clusters are too small and too close to the leaf green to see from the game camera. Art request to the plant lane: larger, paler (cream to white) clusters at the spray tips, or a pale tint over the upper sprays in the detail map. No code change is needed (why the plant lab's `buds` rule changed nothing is not known; the switch itself works) |
 | `events-crowd-1` | copy `pbevents4` (variant `crews`, no LanternRise attachment, so comets): 13 starting colonists plus 14 spawned adults (27), festival called; festival-goers onto the square's dance slots | **PASS, 0 own errors.** The square's 20 dance slots were full (20/20) for most of the festival day and from the show's start to its end at h22; the overflow (3–4) stood at the square's edges, the farmhouse crew (3) worked. 24 of 27 attended. From the normal camera the square is a full ring of dancing pandas round the lantern pole: dusk with the comets rising (`ev_cr_d1_h16_dusk_b.png`), night (`ev_cr_d1_h20_night.png`, `ev_cr_d1_h21_night_b.png`), day (`ev_cr_d1_h11_day.png`), the panel (`ev_cr_d1_h17_dusk_panel.png`). Both peoples' bodies carry the `Dancing` animation (adult and young, Inkpaw and Ringtail meshes) |
+| `lanterns-1` (2026-11-14, ended 18:20) | copy `pblanterns` (built 17:14–17:18 by `proto/events/build.ps1 -Variant proto\ringtail-body\variants\lanterns -NoProbe`), queued by the characters lane. **Code: the committed module of that hour** (5f2a933: `FestivalSquare.Launch` called `ParticleSystem.Play()` once per lantern). **Bundle: the first lantern prefab** (bc43759, built 17:25: 0.44–0.58 m quads, 1.0–1.5 m/s, 10–16 s life, a non-looping 9 s schedule of nine single bursts) | **PASS, 0 own errors; the prefab renders and glows the right colour, the show does not work.** The probe counted 24 launches by 18 h, but a `Play()` on a system that still has lanterns aloft does nothing and one on an idle system starts a flight of nine: the shot at 16.8 h shows one flight of about nine small lanterns (`ev_l_d1_h1610.png`), others show two far from the square or none (`ev_l_d1_h1590_first.png` … `ev_l_d1_h1710.png`). 13 of 20 slots danced on. This run is why the lanterns were reworked |
+| `events-sky-1` (2026-11-14, 19:05–19:09) | copy `pbsky` (`-Variant proto\events\variants\crews,proto\events\variants\sky`), scenario `events-sky`, game speed 1, 27 colonists. **Code: the rework as it stood that evening, uncommitted** (kept as `wip/pause-2026-11-14`, ca45aaf): the module sets the rate (0.85 a second then), emits the release of 24 over 0.3 h, wind drift, the nonlinear clock. **Bundle: a Windows-only `pandabornattachments_win` built that evening from the then uncommitted builder** (0.7–0.9 m quads, 0.5–0.9 m/s, 25–40 s life, 160 particles, no bursts; the old sprite); the copy's `_mac` bundle was the old one | **PASS, 0 own errors.** Lanterns aloft (`skyLanterns`, the particle count): 2 at 15.62 h, 24 at 15.91, 33 at 16.12, 38 at 16.5, 45 at 17.0, 36 at 17.5, then 20–24 from 18 h to 22 h, 17 at 22.31 h (emission stopped, fading), 10 at 23 h. 24 lanterns released, 6 sounds, the square's 20 slots full from 15 h to 22 h. From the normal camera at dusk the near lanterns read as glowing paper lanterns (`ev_s_h1700_dusk.png`); the wide shot at 18 h shows about seventeen in one stream rising downwind of the square (`ev_s_h1800_wide.png`); night `ev_s_h1950_night.png`, after the end `ev_s_h2230_after.png`. **Not what is committed now:** since then the rate is 0.65, each lantern's own drift is doubled (to break up the single stream), the sprite is repainted, the fades changed, comets fly only in a Grand Festival, and the district rule and the load fast-forward were added; none of that has run (section 14). `events-sky-2` (speed 3) was queued at 19:11 and never ran: the project was paused |
 
 ### Phase 1
 
@@ -401,25 +551,155 @@ probe writes `events.json` (and `reload\events_reload.json`), shots `ev_*.png`.
 
 ### The look of the festival (honest)
 
-The square now looks like a festival: at dusk and at night its lantern strings glow red-orange over the pale paving and
+The square looks like a festival: at dusk and at night its lantern strings glow red-orange over the pale paving and
 twenty pandas dance in rings round the lantern pole, with the overflow close in at its edges
 (`events-crowd-1\ev_cr_d1_h20_night.png`; before the dance slots, `events-final-2\ev_f_d1_h16_dusk_b.png` showed three
-pandas on it and the rest scattered). The sky is the weak part. The vanilla comets read as rockets, gone in seconds; the
-`Sparks_Trail` stand-in tried on the attachment was a small pink sparkle at the pole, invisible from the normal camera,
-so until the lantern prefab exists the festival uses the comets from `#FireworkMount`. **Rising lanterns need their own art**: a small bundle prefab with one `ParticleSystem`
-(a warm, softly glowing paper-lantern quad, emission rate 0, played once per lantern; rises 1–1.5 m/s with a slow
-sideways drift and a gentle sway; 10–16 s life; fades in over 0.5 s and out over the last 3 s; additive or emissive
-warm orange, about 0.3 m), referenced by the square blueprint's `LanternRise` attachment on `#LanternRise`. Burst
-fireworks (Grand only) are the game's own and look right.
+pandas on it and the rest scattered).
+
+The sky was the weak part and is now most of the way there. The vanilla comets read as rockets, gone in seconds; the
+`Sparks_Trail` stand-in was a small pink sparkle at the pole; the first lantern prefab driven by `Play()` gave a
+flight of nine now and then (`lanterns-1`). With the module feeding the particle system (`events-sky-1`) the evening has
+twenty-odd paper lanterns in the air from dusk to 22 h and a visible release at 15.75 h, and from the normal camera
+the near ones are plainly lanterns. What that run still showed, and what was changed for it without a new run: the
+lanterns left in one narrow stream downwind (each lantern's own drift doubled, the wind's share lowered a little); the
+old sprite was soft, mostly halo (repainted: the paper fills 74 % of the quad's height with a dark crisp silhouette,
+preview `E:\PandabornDev\build\toolcheck\skylantern\sky_lantern_preview.png`); the count overshot to 45 after the
+release (rate 0.85 → 0.65). Whether the sky now reads as "above and around the square" is for the proof run to show
+(section 14). Burst fireworks (Grand only) are the game's own and look right.
 
 ## Unproven
 
+* **Everything changed on 2026-11-25** (section 13): compiled, unit-tested where it is arithmetic, read against the
+  game's code, not run. Section 14 lists the runs.
 * **Visible buds**: the switch is proven (`events-buds-1`), but the buds need stronger art before anyone can see them.
 * **A real pump crew**: keep-working is proven with the Efficient Farmhouse and the lumberjack as stand-ins (the same
-  template check); no pump or lift stood in a test district.
+  template check); no pump, lift or tap stood in a test district.
 * **The festival with Ringtails on, through their morning rest**: in `events-main-3` the 3 Ringtails did not work on the
   festival day and all 16 were at the square at h19, but no sample caught a Ringtail asleep in its rest window on that
-  day (the order rest-then-festival is read from code).
-* **Sounds by ear**: the probe counts 3 plays (drum loop start, firecrackers 2D and 3D) and the clips exist in
-  `pandabornsounds`; nobody listened.
-* Two districts, game speed 7 with many colonists over many cycles: defined above, not run.
+  day (the order rest-then-festival is read from code: section 13, Ringtails).
+* **Sounds by ear**: the probe counts plays (drum loop start, firecrackers 2D and 3D, the lantern-rise sound) and the
+  clips exist in `pandabornsounds`; nobody listened.
+* **Two districts**: built on 2026-11-25, never run; no scenario can build a second district yet.
+* **A large map**: no run had more than 56 bamboo plants or 27 colonists; the cost of one plant's change into flower
+  was never measured (the 5 ms budget per tick is a guess that bounds the hitch whatever the cost).
+* Game speed 3 with the lantern sky; many cycles in one game.
+
+## 13. Review of 2026-11-25
+
+Both modules were read end to end against the decompiled game (event order, load and post-load, entity deletion,
+districts, the behaviour system) with no game available. Findings by severity; "fixed" names the commit.
+
+### Fixed
+
+| | Finding | Where | Fix |
+|---|---|---|---|
+| Major | **A behaviour's exception ends the session.** `BehaviorManager.Tick` does not catch what a root behaviour's `Decide` throws, and `FestivalGoer.Decide` ran unguarded through walking, entering, effects and district lookups for every colonist on the festival day | `FestivalGoer.Decide` | wrapped: logged once, the colonist is released to its ordinary day (8038a53) |
+| Major | **The lantern show did not work**: `Play()` per lantern (run `lanterns-1`) | `FestivalSquare.Launch` | the lantern sky (section 2): rate from code, `Emit` for the release, stop and fade (8038a53, ef00de2) |
+| Major | **The once-a-cycle rule depended on handler order.** Dawn was taken from `DaytimeStartEvent`, the same event on which `GameCycleService` moves the cycle on; had our handler run first, a festival on day 1 of a cycle was booked to the cycle before and a second could be called in that cycle | `FestivalService.OnDaytimeStart` | dawn from `CycleDayStartedEvent`, which the game posts after the cycle is current (8038a53) |
+| Major | **The Flowering replaced every plant in one tick**, inside the cycle-start event: one entity deleted and one created per plant, each deletion a linear search of all entities, plus a linear `List.Remove` of our own per plant | `FloweringService.Flower` | spread over ticks with a time budget, saved progress, sets instead of lists (b628c63) |
+| Major | **A Flowering that fell due at a load lost its planting marks** (by the code: twins were placed in `PostLoad`, before the event bus delivers the queued `BlockObjectSetEvent`; `PlantingCoordinatesUnsetter` then cleared the mark we had just put back). Reached when the module was off at the cycle start and on again that day | `FloweringService.PostLoad` → `Flower` | no entity is touched outside a tick (b628c63) |
+| Major | **Districts**: everyone took the day off, but the goods came from one district and the show ran at every square; the rule had to be decided | `FestivalService`, `FestivalGoer` | the one-district rule (section 2) (8038a53) |
+| Minor | One odd entity (no worker and no needer behaviour) set the static "day off unavailable" for every colonist created after it, for the rest of the session, including the next game, and never reached the feature report | `FestivalGoer.Insert`, `Fail` | only a missing private member is global; it is reported with `ReportDegraded` whenever found; statics reset at each game's Load (8038a53) |
+| Minor | A click on a Tradition-locked decoration could throw (label spec missing, dialog changed) inside the game's tool-unlock call | `TraditionToolLocker.TryToUnlock` | contained; a lock that cannot explain itself opens (8038a53) |
+| Minor | Entity callbacks (`PostInitializeEntity`, finished-state, delete), the `Changed` listeners, the cut event and `GrowthHold.Hold/Release` could let an exception into the game's entity loop | both modules | wrapped (8038a53, b628c63) |
+| Minor | The drum was started per show, not per square: a square finished or reconnected during the show stayed silent, and one removed kept the flag | `FestivalService.UpdateShowSounds` | kept per square (8038a53) |
+| Minor | Pump crews never joined the festival | `FestivalGoer.KeepsWorking` | after their working hours they do (8038a53) |
+| Minor | `Persist` once per dying twin, per hour | `FloweringService.Advance` | once per pass (b628c63) |
+| Minor | A seed time under a day put the twins' deaths before the Flowering | `Advance` | `FloweringSchedule.DieAt` spreads over the time there is (b628c63) |
+| Minor | The dishes taken were chosen after an unstable sort (ties could differ from the panel) | `FestivalStock.Take` | `FestivalRules.PickDishes`, stable and tested (a602675) |
+| Minor | An unknown enum number in a hand-edited save became a phase | both `ReadState` | `Enum.IsDefined` (8038a53, b628c63) |
+| Minor | The square's panel kept reading a square demolished while it was open | `FestivalSquareFragment.Refresh` | checked (8038a53) |
+
+### Left, and why
+
+| | Finding | Why left |
+|---|---|---|
+| Major (data) | `KeepWorkingTemplates` lacks the staffed `PandabornCisternTap.Inkpaws` | catalogue lane's file: request B in section 8 |
+| Major (art) | The lantern prefab and sprite are changed in source only | no Unity today: section 14 |
+| Minor | **Wild bamboo never comes back after a Flowering.** Twins do not reproduce and only marked tiles are replanted, so each wild grove flowers once and is gone; after two Flowerings the map has only planted bamboo | a design question (should a dying wild twin leave a seedling?), not a bug in what was specified. For the coordinator |
+| Minor | A Ringtail whose rest window reaches past 15.5 h (a 16-hour working day) misses the first half hour of the show, the release included: the rest behaviour sits above the festival | Ringtails lane owns the rest; the festival could only override it by going above it, which would wake Ringtails at dawn on festival day |
+| Minor | The festive need is filled again for a colonist that re-enters the square after a load (the attended set is not saved) | harmless: it is already at its maximum |
+| Minor | Buds use `renderer.material` (one material instance per renderer of every announced plant for a cycle) | it is exactly what the game's `GatherableModel` does for every berry bush; revisit only if a large map shows it |
+| Minor | During the show nobody runs the need loop (critical needs only), 6.5 h | by design: Hunger and Thirst take far longer to matter and the square pays Campfire points; the critical behaviour is above us |
+| Minor | The stock counted and taken includes input stores of workshops and consumers (every public inventory of the district), e.g. fireworks waiting in a Firework Launcher | it is "what the district has in store"; changing it needs a rule for which stores count |
+| Minor | The overflow crowd asks for five random district spots and up to two paths per decision | 0.3–0.8 h between decisions; of the order of what working colonists cost. To measure at 300 colonists (section 14) |
+| Minor | `FestivalFireworks` warns in the log in every game, also Folktails', when the game's firework class changes | one line; the module is otherwise inert outside Inkpaws games |
+
+### For other lanes
+
+* **Catalogue**: requests A (after the bundle) and B in section 8.
+* **Text**: the seven district keys (table in section 2), first drafts in `enUS_PandabornFestivalDistricts.csv`.
+  `Message.Started*` says "Only the pump crews work today": with the tap in the list it is pumps, lifts and taps.
+* **Core**: `Messenger.Post` files every notification under the first district centre; a `Post(text, districtCenter)`
+  would let a district's festival show under its own district. Once the per-game `ReportDegradedInGame` (in the
+  Core lane's working tree on 2026-11-25) is committed, the two modules should use it for what is true of one game
+  only (a plant that could not be replaced; the day-off check, which is now made again in every game).
+* **Ringtails**: the static `RingtailRestRootBehavior.InsertionError` is set for the session by one failing entity,
+  as ours was (the lane's working tree already guards `Decide`).
+* **Docs**: `docs/tech/ringtail-body.md` 8.7 describes the first lantern prefab (nine bursts, 10–16 s, `Play()` per
+  lantern) and a `lanterns-1` "queued"; this page now holds the prefab's contract and both runs.
+* **Bundles / release**: once request A is adopted the Festival Square needs `pandabornattachments_win|_mac` at
+  load; `assemble` should refuse a build whose square names the prefab without the bundle (as it does for models).
+
+### Checked and found right (by code)
+
+* **Load order**: singletons `Load`, then every entity is loaded, initialised and post-initialised, then singletons
+  `PostLoad`, then entities' `PostLoadEntity`. So at our `PostLoad` the colonists, squares and plants are registered
+  (a festival that ended while the code was off is settled there, as `events-backon-2` saw), and nothing in `PostLoad`
+  needs an `Enterer`'s restored state.
+* **Saved behaviours**: the game saves the running behaviour by component name and drops one it cannot find, so a
+  save made in the middle of a festival walk loads cleanly with the module off; walking to and standing on the
+  square's slots is reserved and released by the game's own `Enterer` and `WalkInsideExecutor`, also on death.
+* **Non-Inkpaws games**: no spec, so neither service registers for events or ticks beyond one null check; the
+  decorators exist only on Inkpaws templates; the tool locker answers "no" for every tool. **Map editor**: the
+  configurators are `Game` context only; the spec records deserialise from the always-loaded Specs assembly.
+* **Module off then on, older and newer saves**: all new store keys are additive under version 1 and read tolerantly.
+* **Design fidelity** (`FloweringSchedule`, tested over 400 cycles per setting and seed): never before cycle 6 (9 when
+  rare), always day 1 of a cycle, announced exactly one cycle ahead in an unbroken game and never less after a load
+  or a setting change, intervals within the data's range, species alternating; the seed is the twin's harvest; the
+  rest keeps the planting marks. Festival: once per cycle, the auto-call only in fair weather (`IsHazardousWeather`
+  and `NextDayIsHazardousWeather`), everyone of the district ends festive, Tradition unlocks through the game's lock.
+* **Ringtails** (read from `Pandaborn.Ringtails`, not edited): the rest inserts at the index of `WorkerRootBehavior`
+  (`NeederRootBehavior` for kits) in `InitializeEntity`; the festival inserts at the same index in
+  `PostInitializeEntity`, which the game runs after every `InitializeEntity`, so the list reads ..., rest, festival,
+  worker. Inside the rest window the rest decides (sleep, needs, wander) and the festival is not asked; outside it
+  the festival takes the Ringtail to the square instead of its night post, all night. Their worker type ignores
+  working hours, so a Ringtail at a keep-working workplace would work on. With the Ringtails module off the saved
+  Ringtails are Inkpaws and nothing differs.
+* **Balance of 2026-11-25**: no code reads the festive needs' decay or well-being, the science costs, or a growth
+  time; the texts no longer give the 20 days.
+
+Tests without the game: `dotnet run -c Release --project src\code\tests\Events` (28,427 checks: the calendar, the
+deaths, the once-a-cycle rule, the dishes, the launch times across ticks, jumps and loads, the sky's steady count).
+
+## 14. Needs a game run
+
+Nothing of 2026-11-25 has run. In order; each step needs the one before. Runs go through `tools\run_game_test.ps1`
+(hidden desktop, the test mutex), map Plains, `-OnlyMods JigglyPanda.PandabornFactionsDev`, with
+`-ExtraMods <copy>,E:\PandabornDev\build\proto\events-probe`.
+
+**Builds**
+
+1. `powershell -ExecutionPolicy Bypass -File src\unity\PandabornAttachments\build.ps1` (Unity batch mode: paints the new
+   sprite, builds the prefab and `pandabornattachments_win` into `E:\PandabornDev\build\characters\attachments`), then
+   the same with `-Mac`. Check with UnityPy, as before: the prefab has `_EMISSION`, rate 0, no bursts, max 160.
+2. `proto\events\build.ps1 -Name pbsky -Variant proto\events\variants\crews,proto\events\variants\sky -AttachmentBundles E:\PandabornDev\build\characters\attachments`
+   (also builds the probe against the new modules).
+
+**Runs**
+
+| # | Run | Command (after the common part) | What must be seen |
+|---|---|---|---|
+| 3 | the lantern sky, speed 1 | `-RequestJson tests\scenarios\events\events-sky.request.json -ExtraMods ...\pbsky,...` | 0 own errors. `skyLanterns` 15–30 from about 16 h to 22 h (a short peak after the release is fine), falling to 0 within an hour after 22 h; `lanterns` 24, `comets` 0, `bursts` 0. Shots: lanterns above and around the square at every height, not one stream; the near ones lantern-shaped (`s_h1750_dusk_close`); the wide shots show the square as the source. Listen once: the rise sound only at 15.75 h |
+| 4 | the same at speed 3 | `events-sky-speed3.request.json` | the same counts; the lanterns do not read as rockets |
+| 5 | adopt request A in the catalogue, full build | `tools\pandaborn.ps1 all` (the gate runs the grid) | the gate passes with the attachment on the installed square |
+| 6 | the old proofs again on the new code | `events-main` with `-SaveAndReload` on a fresh `pbevents` (`-Variant proto\events\variants\test,proto\events\variants\sky` until the catalogue carries the attachment) | as `events-main-3`: auto-call, Grand day (now `comets` 24 and `bursts` 20 beside the sky), nobody working but the crew, 16/16 festive, Tradition, the drought call; **after the mid-show reload `skyLanterns` is above 10 at the first sample** (the fast-forward) and only the launches still due happen; the Flowering: `converting` true then false within the hour, the "in flower" notice with the right counts, seed harvested, tiles replanted (marks kept), the rest held |
+| 7 | fallbacks | `events-fallback` (`pbevents-fb`, its dev switch) and `events-backon` (`pbevents-on`) | as before; with `Festival.Fireworks` simulated missing the lantern sky still runs |
+| 8 | crews | `events-crews` (`pbevents2 -Variant proto\events\variants\crews`) | the crew works its hours and **is at the square in the evening** (new); replanting after the rest |
+| 9 | a real water crew | a new request: a Water Pump, a Treadwheel Lift and a Cistern Tap staffed in the district (after request B) | all three crews at work on the festival day in their hours |
+| 10 | two districts | **no scenario yet** (the probe cannot build a second district centre): by hand or a new probe action. District A with a square calls; B has colonists and a square | A: day off, show, festive; B: everyone works, square dark and silent, its panel says "A festival begins at dawn in A ..."; the notices name A; next cycle the auto-call picks B when both are stocked; nobody in B is festive at the end |
+| 11 | a large colony | a late save or a probe run with 300+ colonists and a festival; 2,000+ shoot bamboo and `flowerNow` | no frame stall at dawn, at 15.5 h or at the Flowering; how many ticks the change into flower takes (`convertQueue` per sample), FPS during it; the overflow crowd's cost |
+| 12 | TimberCommons (audit m6, run 6 of the compatibility list) | ours + TimberCommons, a building with its growth range effect beside resting shoot bamboo (no Inkpaws building has one today, so this needs a TimberCommons-using mod or a test fragment), a Flowering, a few days | `held` stays the number of young plants, `heldAgain` rises when the modifier registers, young bamboo's growth stays within about 1.4 % per swap; the log line "were growing again and are held again" appears; no error |
+| 13 | Ringtails through the festival | `events-ringtails-off` first launch, sampled hourly | a Ringtail asleep in its rest window on the festival morning, at the square after it, no night post staffed that night |
+
+After 3 and 4, write the counts and the shots into Results and close "The look of the festival".
