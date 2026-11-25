@@ -127,7 +127,7 @@ before it bore a shoot, and one drought would end food and construction together
 * **Shoot bamboo is a field crop.** The Farmstead plants and harvests it like carrots. It is edible raw, ready
   in about three days, and is the starter crop. A vanilla player's first reflex — farmhouse and the first
   crop on the list — is exactly right.
-* **Timber bamboo is a fast tree.** The forester plants it and woodcutters cut it for **poles**.
+* **Timber bamboo is a fast tree** (seven days). The forester plants it and woodcutters cut it for **poles**.
 * **Poles are the Inkpaws' planks.** Cut bamboo is already a pole: no mill, no power. Poles are light, so
   builders carry more per trip.
 * **A Pole Mill splits logs into poles**, as a lumber mill makes planks (a worker and power). It supplies the
@@ -179,7 +179,10 @@ length of their own night shift, exactly as Inkpaws are by the length of their d
    message that states the rule, and the night posts, unlocked free. Before that the posts sit behind a
    science cost and nothing about Ringtails is on screen.
 3. Every Ringtail building sits in one toolbar group marked with a moon. Nothing needs configuring.
-4. A player who never builds a Moon Loft has a complete colony. Nothing else depends on Ringtails.
+4. A player who never builds a Moon Loft has a complete colony. Only the Star Tower depends on Ringtails,
+   and it adds science the inventors would also make, more slowly.
+5. Ringtails cannot be lost for good: when a district with a Moon Loft has no living Ringtail, a new family
+   answers the lantern after a few days.
 
 ### What the Ringtails are
 
@@ -280,7 +283,7 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 
 | When | What the player does | The new idea |
 |---|---|---|
-| First minutes | Water pump, forager, woodcutter, Farmstead with shoot bamboo | None: the vanilla reflexes work |
+| First minutes | Woodcutter, water pump, forager, Farmstead with shoot bamboo; then a cistern before the first drought | None: the vanilla reflexes work |
 | Day 1–2 | Pole Mill on a power wheel; forester with timber bamboo; dens from logs | None yet: the mill is a lumber mill |
 | Days 3–5 | First shoots. Steamer cooks shoots. A Hammock for the afternoon nap | Dishes; afternoon rituals |
 | Around day 5 | The game suggests a shorter day | The afternoon bell |
@@ -411,3 +414,9 @@ Every step ends in a mod that could be released.
 | 2026-11-25 | Flumes cost no science, the gate 40 and the scoop wheel 60; tea and the Teahouse move to the second cycle in the first-hours plan | With two inventors the water beat landed on day fifteen instead of days five to eight, and no tea can exist before day twelve |
 | 2026-11-25 | Wellbeing trimmed (play, ink painting, watching the young, tea one point each; Memorial Arch 6, Great Sitting Panda 14; rice balls above steamed rice), the Wooden Ox costs more, pickles match bread | The model: a ceiling of 94 against the Folktails' 84 and a mid-game lead of 7 to 14; an ox that out-hauled a fully boosted bot with no upkeep |
 | 2026-11-25 | The Star Tower ships as a Ringtail night post that makes science; the Opera Stage ships as an ordinary attraction with no claim about who runs it | Both were hidden behind venue code nobody had planned, which left the last 38,000 science to inventors alone |
+| 2026-11-25 | The tutorial teaches the woodcutter first, then water and food, poles, dens, a cistern, the inventor, the Steamer, the bell, flumes, and tea last | Second audit: a colony starts with no logs, so a newcomer who followed the old order placed a pump that was never built; the Steamer step showed a locked button; nothing taught storing water; tea stood in front of flumes |
+| 2026-11-25 | The Star Tower keeps its own science cost (the Moon Loft does not unlock it) and is the one thing that depends on Ringtails; inventors alone still research everything | Unlocked free by a 200-science loft, four Ringtails would out-research every inventor from the second cycle |
+| 2026-11-25 | When a district with a Moon Loft has no living Ringtail, a new family answers the lantern after a few days | Second audit: the family arrived once per save, so Ringtails could die out for good |
+| 2026-11-25 | Timber bamboo grows in seven days, not five | Poles from bamboo cost a third of poles from birch and a mill per tile and day; about half is the intent: the better source, never a free one |
+| 2026-11-25 | Bamboo seed can be steamed into seed cakes with no mill (two per seed); the Kitchen recipe with rice flour stays the better one | Without a Kitchen and a Trip-Hammer Mill the Great Flowering's seed had no use, so the event only took |
+| 2026-11-25 | A Dew Collector is tuned so four keep a landlocked outpost of about six in water outside droughts; pine resin leaves the build until something uses it; the Goldfish Bowl and Moon Gate are priced like other decorations of their worth | Second audit: a collector made 2 water a day against a pump worker's 48; a gathered good with no recipe; +2 wellbeing for twelve logs |
