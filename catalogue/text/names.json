@@ -30,16 +30,16 @@
       "Left out on purpose: syllables that sound like bodily functions, insults, death or animals used as insults when doubled (for example Pi Pi, Pu Pu, Shi Shi, Niao Niao, Si Si, Ben Ben, Dai Dai, Sha Sha, Zhu Zhu, Gou Gou, Gua Gua, Que Que), doubled forms that are family words (Ba Ba, Ma Ma, Ge Ge, Ye Ye, Nai Nai, Shu Shu), and names that read badly in English (for example Dong Dong, Bang Bang, Du Du, Mu Mu, Die Die, You You).",
       "No religious names. No names tied to the zodiac."
     ],
-    "why_the_inkpaw_pool_has_two_patterns": "The task asked for at least 120 doubled names. Once well-known pandas and unfortunate syllables are removed, the writer could find only 99 doubled names in toneless pinyin that it was willing to stand behind, and 43 of those are marked 'medium' or 'low'. Rather than pad the list with doubtful names, the pool is completed with 29 'Xiao' names, which are the other common way real pandas and real pets are named. The owner can ship the doubled names alone (99) or both (128).",
+    "why_the_inkpaw_pool_has_two_patterns": "The task asked for at least 120 doubled names. Once well-known pandas and unfortunate syllables are removed, the writer could find only 99 doubled names in toneless pinyin that it was willing to stand behind, and 43 of those are marked 'medium' or 'low'. Rather than pad the list with doubtful names, the pool is completed with 27 'Xiao' names, which are the other common way real pandas and real pets are named. The owner can ship the doubled names alone (99) or both (126).",
     "recurring_characters": "Four names from these pools are reserved for the small cast that future flavor text may quote (see STYLE.md): Nuo Nuo, Song Song, Dou Dou (Inkpaws) and Hua Jiao (Ringtail). If the checker rejects any of them, change the cast as well.",
     "counts": {
-      "inkpaws_total": 128,
+      "inkpaws_total": 126,
       "inkpaws_doubled": 99,
-      "inkpaws_xiao": 29,
+      "inkpaws_xiao": 27,
       "ringtails_total": 127,
       "ringtails_doubled": 8,
       "sure_inkpaws": {
-        "high": 78,
+        "high": 76,
         "medium": 49,
         "low": 1
       },
@@ -48,6 +48,12 @@
         "medium": 20,
         "low": 0
       }
+    },
+    "text_pass_2026_11_25": {
+      "removed": "Xiao Hei (Little black) and Xiao Bai (Little white): innocent pet names for a black-and-white animal, but the English glosses on a colonist's name tag can be read badly out of context, and the pool does not need them. The owner may restore them.",
+      "glosses_tidied": "Qiao Qiao (Quietly -> Quiet), Chan Juan (The fair moon -> Fair moon): English form only, same meaning.",
+      "flag_for_a_native_reader_first": "Every entry marked medium or low, and in particular: Man Man, Can Can, Cha Cha (English readings); Han Han, Chun Chun, Rou Rou, Teng Teng, Yu Yu, Qin Qin, Cai Cai (homophones noted on the entry); Luo Luo (marked low); Lang Lang and Li Ming (names of well-known living people); the Ringtail condiment names Dou Ban, Pao Jiao, Hong You, Zha Cai, Guo Ba and Ma La (natural as pet names, or only as dishes?).",
+      "checked": "No pinyin and no gloss is used twice, within or across the pools. Every display string is pinyin plus gloss."
     }
   },
   "inkpaws": [
@@ -528,8 +534,8 @@
     {
       "pinyin": "Qiao Qiao",
       "characters": "悄悄",
-      "gloss": "Quietly",
-      "display": "Qiao Qiao (Quietly)",
+      "gloss": "Quiet",
+      "display": "Qiao Qiao (Quiet)",
       "sure": "medium",
       "note": "A real word used as a nickname; 巧巧 (\"deft\") is the commoner name with this spelling.",
       "pattern": "doubled"
@@ -880,15 +886,6 @@
       "pattern": "xiao"
     },
     {
-      "pinyin": "Xiao Bai",
-      "characters": "小白",
-      "gloss": "Little white",
-      "display": "Xiao Bai (Little white)",
-      "sure": "high",
-      "note": "Also slang for \"beginner\".",
-      "pattern": "xiao"
-    },
-    {
       "pinyin": "Xiao Bing",
       "characters": "小饼",
       "gloss": "Little cake",
@@ -934,14 +931,6 @@
       "characters": "小禾",
       "gloss": "Rice seedling",
       "display": "Xiao He (Rice seedling)",
-      "sure": "high",
-      "pattern": "xiao"
-    },
-    {
-      "pinyin": "Xiao Hei",
-      "characters": "小黑",
-      "gloss": "Little black",
-      "display": "Xiao Hei (Little black)",
       "sure": "high",
       "pattern": "xiao"
     },
@@ -1989,8 +1978,8 @@
     {
       "pinyin": "Chan Juan",
       "characters": "婵娟",
-      "gloss": "The fair moon",
-      "display": "Chan Juan (The fair moon)",
+      "gloss": "Fair moon",
+      "display": "Chan Juan (Fair moon)",
       "sure": "high",
       "note": "A classical word for the moon.",
       "pattern": "two-syllable"
