@@ -38,7 +38,8 @@ Last reconciled by hand: 2026-11-25 (draft 3; draft 2 was written 2026-11-14 bef
    renamed and re-iconed for Inkpaws only by a faction blueprint modifier (decided 2026-11-14, proven in game:
    `docs/tech/stage0.md`). Nothing is recosted, and other mods' buildings work unchanged.
 4. **Vanilla goods are reused wherever the thing is the same.** New goods are only for new things.
-5. **A colony with no Ringtails is complete.** Nothing it needs is made only by Ringtails.
+5. **A colony with no Ringtails is complete.** Nothing it needs is made only by Ringtails. Only the Star Tower
+   depends on them, and it adds science the inventors would also make, more slowly.
 6. **One real place.** Sichuan. No writing on textures, nothing Japanese-coded, no red-and-gold palace style,
    no religious imagery.
 7. **Nothing in the toolbar lies** (DESIGN.md, quality bar). A building, good, need or recipe that waits for a code
@@ -65,7 +66,7 @@ Last reconciled by hand: 2026-11-25 (draft 3; draft 2 was written 2026-11-14 bef
 | Persimmons | Raw food | Persimmon trees | Snack; sweet rice balls |
 | Bamboo mushrooms | Raw food | Foraged in standing timber groves | Delicacy; hot pot |
 | Bamboo seed | Rare crop | The harvest of a bamboo in a Great Flowering | Seed cakes |
-| Bamboo seed cakes | Food | Kitchen | The best food in the mod |
+| Bamboo seed cakes | Food | Kitchen (seed and rice flour: the better recipe); or the Steamer, two per seed, with no mill (2026-11-25) | The best food in the mod |
 | Paper lanterns | Festival good | Lantern Workshop | Festival; lantern decorations; the wonder |
 
 Logs, gears, paper, scrap metal, metal blocks, water, berries, badwater, explosives, fireworks, dirt and
@@ -84,7 +85,7 @@ charcoal, persimmon cakes, lotus root, ox parts and ox upkeep goods, scrolls.
 | Plant | Zone | Planted by | Harvest | Notes |
 |---|---|---|---|---|
 | Shoot bamboo | Moist | Farmhouse | Shoots | Field crop, like carrots; edible raw; about three days; survives a short drought (5 dry days) |
-| Timber bamboo | Moist | Forester | Poles; mushrooms foraged while standing | Fast tree; lasts ten dry days |
+| Timber bamboo | Moist | Forester | Poles; mushrooms foraged while standing | Fast tree: seven days (2026-11-25; it was five); lasts ten dry days |
 | Cabbage | Moist | Farmhouse | Cabbage | Edible raw; the hardier staple (7 dry days) |
 | Rice | Flooded, shallow | Paddy House | Rice | Staple of the second cycle onward |
 | Tea bush | Dry (brown ground) | Forester; picked by gatherers | Tea leaves, repeatedly | Wet roots stop its growth; it dies after about three wet days |
@@ -113,7 +114,7 @@ Birch, pine, oak and blueberries remain. In a Great Flowering each grown bamboo 
 | Den | 0 | Starter home |
 | Courtyard House | 2 | Larger home in the Sichuan farmstead style |
 | Terrace House | 3 | Stackable hillside home |
-| Moon Loft | 1–2 | A snug home on stilts above a path. The first one invites the Ringtails; lofts raise their kits |
+| Moon Loft | 1–2 | A snug home on stilts above a path. The first one invites the Ringtails; lofts raise their kits. If a district with a loft loses its last Ringtail, a new family comes after a few days (2026-11-25) |
 
 Any home takes anyone, with one rule: Moon Lofts belong to Ringtails (an Inkpaw lodger gives way when a Ringtail or
 a kit needs the bed).
@@ -124,7 +125,7 @@ a kit needs the bed).
 |---|---|---|---|
 | Gatherer Flag | I | 0 | Berries, persimmons, mushrooms; picks tea and pepper |
 | Farmhouse | I | 0 | Shoot bamboo, cabbage |
-| Steamer | I | 1 | Steamed shoots, then steamed rice |
+| Steamer | I | 1 | Steamed shoots, then steamed rice; after a Flowering, seed cakes |
 | Pickle Yard | I | 1 | Pickles |
 | Paddy House | I | 2 | Rice |
 | Tea Roastery | I | 2 | Tea |
@@ -137,7 +138,7 @@ a kit needs the bed).
 | Building | Who | When | Role |
 |---|---|---|---|
 | Lumberjack Flag | I | 0 | Cuts trees and timber bamboo |
-| Forester | I | 0 | Plants timber bamboo, trees, tea and pepper |
+| Forester | I | 0 | Plants timber bamboo, trees, tea and pepper; replants dead trees by default |
 | Pole Mill | I | 0 | The vanilla lumber mill: splits logs into poles. Supplies the first days and is the fallback when a drought kills the groves |
 | Gear Workshop | I | 1 | Gears |
 | Paper Mill | I | 2 | Paper from poles |
@@ -160,7 +161,7 @@ Scavenger Flag, Smelter, Mine: re-themed, `I`.
 | Scoop Wheel | — | 1 | Lifts water using the current. Logs and poles, no gears; cheap in science, like the flumes (free) and the gate, so the first flume is reachable in days 6 to 10 |
 | Paddy Spout | — | 2 | Holds a field at a shallow depth |
 | Cistern Tap | I | 2 | A worker pours stored water into a flume or basin |
-| Dew Collector | — | 2 | A little water, less in drought |
+| Dew Collector | — | 2 | A little water, less in drought: four keep a landlocked outpost of about six in water (2026-11-25) |
 | Treadwheel Lift | I | 2 | Lifts water where there is no current |
 | Large Water Pump, Mechanical Pumps, Aquifer Drill | I / — | 3–4 | Deep and powered pumping |
 | Badwater Pump, Discharge, Centrifuge, Dome, Rig | I | 3–4 | Badwater |
@@ -187,7 +188,7 @@ No fuel engines.
 | Building | Who | When | Role |
 |---|---|---|---|
 | Inventor | I | 0 | Science |
-| Star Tower | R | 3 | A Ringtail night post that makes science from the night sky (decided 2026-11-25) |
+| Star Tower | R | 3 | A Ringtail night post that makes science from the night sky (decided 2026-11-25). It keeps its own science cost: the Moon Loft does not unlock it |
 | Ox Workshop | I | 4 | Builds Wooden Oxen: tireless, strong (lift 30), lasting ninety days, able to do what vanilla bots do; priced above a vanilla bot (2026-11-25) |
 
 ### Storage
@@ -216,8 +217,8 @@ rope.
 
 ### Ringtail workplaces
 
-All in one toolbar group, the Night Watch. The posts are locked behind a science cost until the first Moon Loft
-brings the Ringtails, which unlocks them free.
+All in one toolbar group, the Night Watch. The three posts are locked behind a science cost until the first Moon
+Loft brings the Ringtails, which unlocks them free; the Star Tower keeps its cost.
 
 | Building | When | Role |
 |---|---|---|
@@ -276,21 +277,23 @@ Lotus and lotus root, tofu, a second kitchen tier, more monuments, rope-way vari
 
 ## Where DESIGN.md and the data still disagree
 
-Found on 2026-11-25, after the balance decisions of that day (which settled the tea-and-thirst clause, the Star
-Tower and the Opera Stage; the catalogue, text and code lanes are applying them, and part 2 shows how far they have
-got). DESIGN.md wins on intent, the catalogue is what ships. Each row needs a ruling, not an edit here.
+Checked on 2026-11-25 at 05:00, after the balance decisions and the rulings on the second audit of that day. Those
+settled the tea-and-thirst clause, the Star Tower, the Opera Stage, the tutorial order, timber bamboo, steamed seed
+cakes and the Dew Collector; the catalogue, text and code lanes are still applying them, and part 2 shows how far
+the catalogue has got. DESIGN.md wins on intent, the catalogue is what ships. Each row needs a ruling or a lane,
+not an edit here.
 
-| # | DESIGN.md says | The catalogue and code have | Who decides |
+| # | DESIGN.md says | The catalogue and code have | Who |
 |---|---|---|---|
-| 1 | Pillar 2 (line 120) and change log: "Foresters replant dead trees by default" | Nothing: the Forester is the plain vanilla re-theme, and no code sets the default | Coordinator (no lane owns it) |
+| 1 | Pillar 2 (line 120) and change log: "Foresters replant dead trees by default" | Nothing found in the catalogue or in `src/code` at the time of checking. The coordinator lists it as new code of 2026-11-25; its proof is run N21 of `docs/tech/needs-game-run.md` | Whichever lane was given it |
 | 2 | Art direction: "conical hats on paddy farmers only" | Every farmer wears it (the Farmhouse and the Paddy House share the `Farmer` outfit) | Characters / catalogue |
-| 3 | The text calls the farm "Farmstead" (lines 119, 127, 283); the change log says it keeps its vanilla name | The vanilla name is kept, and for this building (`EfficientFarmHouse`) it reads "Efficient Farmhouse", while our plant texts say "the Farmhouse" | Text |
-| 4 | Pillar 1: the Dew Collector gives "a little drinking water each dawn" | A recipe: 1 water every 12 hours, round the clock | Water / text |
+| 3 | The text calls the farm "Farmstead" (pillar 2 twice, first two hours); the change log says it keeps its vanilla name | The vanilla name is kept, and for this building (`EfficientFarmHouse`) it reads "Efficient Farmhouse", while our own texts say "the Farmhouse" | Text |
+| 4 | Pillar 1: the Dew Collector gives "a little drinking water each dawn" | A recipe that runs round the clock | Text (DESIGN wording) |
 | 5 | Pillar 6: Wooden Oxen are "tireless, strong and slow" | Lift 30 and ninety days are set; the ox walks at the vanilla bot's speed (balance.md: 2.7 tiles a second) | Balance |
 | 6 | Pillar 6: bamboo scaffolding and rope bridges "make tall building cheap and light" | Platforms, stairs and bridges are re-themes at vanilla cost | Balance |
 | 7 | Interface: a sun or a moon on every workplace "in the toolbar"; art direction: "lanterns light in a wave at the bell" | Panel marks exist; no toolbar mark; no lantern wave | Coordinator (no lane owns either) |
 | 8 | Sound: "panda bleats" | `sound_id = "Common"` (beaver calls) until the owner has listened to the panda calls | Owner |
-| 9 | Pillar 4's table still lists the Opera Stage among the Ringtails' buildings and calls them the village's artists; the change log of 2026-11-25 ships it "with no claim about who runs it" | The Opera Stage sits in the Night Watch toolbar group (`tool_group = "PandabornNightWatch"`) | Coordinator, then catalogue |
+| 9 | Pillar 4's table of "what the Ringtails are" still lists the Opera Stage, and calls them the village's artists | The Opera Stage is an ordinary attraction in the Wellbeing group, as the change log of 2026-11-25 decided | Coordinator (DESIGN's own text) |
 
 # Part 2: catalogue tables
 
@@ -396,7 +399,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Flume Corner | `PandabornFlumeCorner` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeCorner` | Water | own | 3 Poles | 0 |  |
 | Flume Drop | `PandabornFlumeDrop` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeDrop` | Water | own | 3 Poles | 0 |  |
 | Flume Bridge | `PandabornFlumeBridge` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeBridge` | Water | own | 4 Poles, 1 Log | 120 |  |
-| Flume Bridge Span | `PandabornFlumeBridgeSpan` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeBridgeSpan` | Water | **basis's vanilla icon** | 4 Poles, 1 Log | 120 |  |
+| Flume Bridge Span | `PandabornFlumeBridgeSpan` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeBridgeSpan` | Water | own | 4 Poles, 1 Log | 120 |  |
 | Flume Gate | `PandabornFlumeGate` | `ThrottlingValve.Folktails` | Water | own: `art/models/FlumeGate` | Water | own | 6 Log, 6 Poles | 40 |  |
 | Scoop Wheel | `PandabornScoopWheel` | `WaterWheel.Folktails` | Water | own: `art/models/ScoopWheel` | Water | own | 20 Log, 30 Poles | 60 |  |
 | Paddy Spout | `PandabornPaddySpout` | `FillValve.Folktails` | Water | own: `art/models/PaddySpout` | Water | own | 6 Poles | 150 |  |
