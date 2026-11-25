@@ -70,28 +70,28 @@ never a harsher one. The first time an hourly check finds resting plants growing
 
 * type `Bindito.Core.Configurator`
   * method `.ctor()`
-  * method `Bind<1>()`
-  * method `MultiBind<1>()`
+  * method `Bind<1>()`: `Bindito.Core.ISingleBindingBuilder`1<!!0>`
+  * method `MultiBind<1>()`: `Bindito.Core.IMultiBindingBuilder`1<!!0>`
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
-  * method `ToProvider(System.Func`1<!0>)`
-  * method `ToProvider<1>()`
+  * method `ToProvider(System.Func`1<!0>)`: `Bindito.Core.IScopeAssignee`
+  * method `ToProvider<1>()`: `Bindito.Core.IScopeAssignee`
 * type `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.IMultiBindingBuilder`1`
 * type `Bindito.Core.IProvider`1`
 * type `Bindito.Core.IScopeAssignee`
-  * method `AsSingleton()`
-  * method `AsTransient()`
+  * method `AsSingleton()`: `Bindito.Core.IExportAssignee`
+  * method `AsTransient()`: `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.ISingleBindingBuilder`1`
 
 **Timberborn.BaseComponentSystem**
 
 * type `Timberborn.BaseComponentSystem.BaseComponent`
   * method `.ctor()`
-  * method `GetComponent<1>()`
-  * method `get_GameObject()`
-  * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`
+  * method `GetComponent<1>()`: `!!0`
+  * method `get_GameObject()`: `UnityEngine.GameObject`
+  * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`: `System.Boolean`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
 **Timberborn.Beavers**
@@ -101,37 +101,37 @@ never a harsher one. The first time an hourly check finds resting plants growing
 **Timberborn.BlockSystem**
 
 * type `Timberborn.BlockSystem.BlockObject`
-  * method `get_Coordinates()`
+  * method `get_Coordinates()`: `UnityEngine.Vector3Int`
 
 **Timberborn.BlueprintSystem**
 
 * type `Timberborn.BlueprintSystem.Blueprint`
-  * method `GetSpec<1>()`
+  * method `GetSpec<1>()`: `!!0`
 * type `Timberborn.BlueprintSystem.ComponentSpec`
-  * method `GetSpec<1>()`
-  * method `get_Blueprint()`
+  * method `GetSpec<1>()`: `!!0`
+  * method `get_Blueprint()`: `Timberborn.BlueprintSystem.Blueprint`
 
 **Timberborn.CoreUI**
 
 * type `Timberborn.CoreUI.DialogBox`
 * type `Timberborn.CoreUI.DialogBoxShower`
-  * method `Create()`
+  * method `Create()`: `Timberborn.CoreUI.DialogBoxShower+Builder`
 * type `Timberborn.CoreUI.DialogBoxShower+Builder`
-  * method `AddContent(UnityEngine.UIElements.VisualElement)`
-  * method `SetConfirmButton(System.Action)`
-  * method `Show()`
+  * method `AddContent(UnityEngine.UIElements.VisualElement)`: `Timberborn.CoreUI.DialogBoxShower+Builder`
+  * method `SetConfirmButton(System.Action)`: `Timberborn.CoreUI.DialogBoxShower+Builder`
+  * method `Show()`: `Timberborn.CoreUI.DialogBox`
 * type `Timberborn.CoreUI.VisualElementExtensions`
   * method `ToggleDisplayStyle(UnityEngine.UIElements.VisualElement, System.Boolean)`
 * type `Timberborn.CoreUI.VisualElementLoader`
-  * method `LoadVisualElement(System.String)`
+  * method `LoadVisualElement(System.String)`: `UnityEngine.UIElements.VisualElement`
 
 **Timberborn.Cutting**
 
 * type `Timberborn.Cutting.Cuttable`
   * method `add_WasCut(System.EventHandler)`
-  * method `get_RemoveOnCut()`
-  * method `get_Yielder()`
-  * method `get_YielderSpec()`
+  * method `get_RemoveOnCut()`: `System.Boolean`
+  * method `get_Yielder()`: `Timberborn.Yielding.Yielder`
+  * method `get_YielderSpec()`: `Timberborn.Yielding.YielderSpec`
   * method `remove_WasCut(System.EventHandler)`
 
 **Timberborn.EntityPanelSystem**
@@ -140,7 +140,7 @@ never a harsher one. The first time an hourly check finds resting plants growing
 * type `Timberborn.EntityPanelSystem.EntityPanelModule+Builder`
   * method `.ctor()`
   * method `AddMiddleFragment(Timberborn.EntityPanelSystem.IEntityPanelFragment, System.Int32)`
-  * method `Build()`
+  * method `Build()`: `Timberborn.EntityPanelSystem.EntityPanelModule`
 * type `Timberborn.EntityPanelSystem.IEntityPanelFragment`
 
 **Timberborn.EntitySystem**
@@ -150,71 +150,71 @@ never a harsher one. The first time an hourly check finds resting plants growing
 * type `Timberborn.EntitySystem.IDeletableEntity`
 * type `Timberborn.EntitySystem.IPostInitializableEntity`
 * type `Timberborn.EntitySystem.LabeledEntitySpec`
-  * method `get_DisplayNameLocKey()`
-  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`
+  * method `get_DisplayNameLocKey()`: `System.String`
+  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`: `System.Boolean`
 
 **Timberborn.FactionSystem**
 
 * type `Timberborn.FactionSystem.FactionSpec`
-  * method `get_Id()`
+  * method `get_Id()`: `System.String`
 
 **Timberborn.Forestry**
 
 * type `Timberborn.Forestry.TreeComponentSpec`
-  * method `op_Inequality(Timberborn.Forestry.TreeComponentSpec, Timberborn.Forestry.TreeComponentSpec)`
+  * method `op_Inequality(Timberborn.Forestry.TreeComponentSpec, Timberborn.Forestry.TreeComponentSpec)`: `System.Boolean`
 
 **Timberborn.GameCycleSystem**
 
 * type `Timberborn.GameCycleSystem.CycleStartedEvent`
-  * method `get_Cycle()`
+  * method `get_Cycle()`: `System.Int32`
 * type `Timberborn.GameCycleSystem.GameCycleService`
-  * method `get_Cycle()`
-  * method `get_CycleDay()`
+  * method `get_Cycle()`: `System.Int32`
+  * method `get_CycleDay()`: `System.Int32`
 
 **Timberborn.GameFactionSystem**
 
 * type `Timberborn.GameFactionSystem.FactionService`
-  * method `get_Current()`
+  * method `get_Current()`: `Timberborn.FactionSystem.FactionSpec`
 
 **Timberborn.Goods**
 
 * type `Timberborn.Goods.GoodAmount`
-  * method `get_Amount()`
+  * method `get_Amount()`: `System.Int32`
 * type `Timberborn.Goods.GoodAmountSpec`
-  * method `get_Amount()`
+  * method `get_Amount()`: `System.Int32`
 
 **Timberborn.Growing**
 
 * type `Timberborn.Growing.Growable`
   * method `IncreaseGrowthProgress(System.Single)`
-  * method `get_IsGrown()`
+  * method `get_IsGrown()`: `System.Boolean`
 
 **Timberborn.Localization**
 
 * type `Timberborn.Localization.ILoc`
-  * method `T(System.String)`
-  * method `T<1>(System.String, !!0)`
-  * method `T<2>(System.String, !!0, !!1)`
-  * method `T<3>(System.String, !!0, !!1, !!2)`
+  * method `T(System.String)`: `System.String`
+  * method `T<1>(System.String, !!0)`: `System.String`
+  * method `T<2>(System.String, !!0, !!1)`: `System.String`
+  * method `T<3>(System.String, !!0, !!1, !!2)`: `System.String`
 
 **Timberborn.NaturalResources**
 
 * type `Timberborn.NaturalResources.NaturalResource`
 * type `Timberborn.NaturalResources.NaturalResourceFactory`
-  * method `SpawnIgnoringConstraints(System.String, UnityEngine.Vector3Int)`
+  * method `SpawnIgnoringConstraints(System.String, UnityEngine.Vector3Int)`: `Timberborn.NaturalResources.NaturalResource`
 
 **Timberborn.NaturalResourcesLifecycle**
 
 * type `Timberborn.NaturalResourcesLifecycle.DyingNaturalResource`
-  * method `get_IsDying()`
+  * method `get_IsDying()`: `System.Boolean`
 * type `Timberborn.NaturalResourcesLifecycle.LivingNaturalResource`
   * method `Die()`
-  * method `get_IsDead()`
+  * method `get_IsDead()`: `System.Boolean`
 
 **Timberborn.Planting**
 
 * type `Timberborn.Planting.PlantingService`
-  * method `GetResourceAt(UnityEngine.Vector3Int)`
+  * method `GetResourceAt(UnityEngine.Vector3Int)`: `System.String`
   * method `SetPlantingCoordinates(UnityEngine.Vector3Int, System.String)`
 
 **Timberborn.SingletonSystem**
@@ -233,16 +233,16 @@ never a harsher one. The first time an hourly check finds resting plants growing
 * type `Timberborn.TemplateInstantiation.TemplateModule+Builder`
   * method `.ctor()`
   * method `AddDecorator<2>()`
-  * method `Build()`
+  * method `Build()`: `Timberborn.TemplateInstantiation.TemplateModule`
 
 **Timberborn.TemplateSystem**
 
 * type `Timberborn.TemplateSystem.TemplateNameMapper`
-  * method `TryGetTemplate(System.String, Timberborn.TemplateSystem.TemplateSpec&)`
+  * method `TryGetTemplate(System.String, Timberborn.TemplateSystem.TemplateSpec&)`: `System.Boolean`
 * type `Timberborn.TemplateSystem.TemplateService`
-  * method `GetAll<1>()`
+  * method `GetAll<1>()`: `System.Collections.Generic.IEnumerable`1<!!0>`
 * type `Timberborn.TemplateSystem.TemplateSpec`
-  * method `get_TemplateName()`
+  * method `get_TemplateName()`: `System.String`
 
 **Timberborn.TickSystem**
 
@@ -251,12 +251,12 @@ never a harsher one. The first time an hourly check finds resting plants growing
 **Timberborn.TimeSystem**
 
 * type `Timberborn.TimeSystem.IDayNightCycle`
-  * method `get_HoursPassedToday()`
-  * method `get_PartialDayNumber()`
+  * method `get_HoursPassedToday()`: `System.Single`
+  * method `get_PartialDayNumber()`: `System.Single`
 * type `Timberborn.TimeSystem.ITimeTrigger`
   * method `Pause()`
   * method `Resume()`
-  * method `get_InProgress()`
+  * method `get_InProgress()`: `System.Boolean`
 
 **Timberborn.TooltipSystem**
 
@@ -272,38 +272,38 @@ never a harsher one. The first time an hourly check finds resting plants growing
 **Timberborn.Yielding**
 
 * type `Timberborn.Yielding.Yielder`
-  * method `get_IsYieldRemoved()`
-  * method `get_Yield()`
+  * method `get_IsYieldRemoved()`: `System.Boolean`
+  * method `get_Yield()`: `Timberborn.Goods.GoodAmount`
 * type `Timberborn.Yielding.YielderSpec`
-  * method `get_Yield()`
+  * method `get_Yield()`: `Timberborn.Goods.GoodAmountSpec`
 
 **UnityEngine.CoreModule**
 
 * type `UnityEngine.Component`
-  * method `GetComponentsInChildren<1>(System.Boolean)`
+  * method `GetComponentsInChildren<1>(System.Boolean)`: `!!0[]`
 * type `UnityEngine.Debug`
   * method `Log(System.Object)`
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
 * type `UnityEngine.GameObject`
-  * method `GetComponentsInChildren<1>(System.Boolean)`
+  * method `GetComponentsInChildren<1>(System.Boolean)`: `!!0[]`
 * type `UnityEngine.Material`
   * method `SetFloat(System.String, System.Single)`
 * type `UnityEngine.Mathf`
-  * method `CeilToInt(System.Single)`
-  * method `Max(System.Single, System.Single)`
+  * method `CeilToInt(System.Single)`: `System.Int32`
+  * method `Max(System.Single, System.Single)`: `System.Single`
 * type `UnityEngine.Object`
-  * method `get_name()`
+  * method `get_name()`: `System.String`
 * type `UnityEngine.Renderer`
-  * method `get_material()`
+  * method `get_material()`: `UnityEngine.Material`
 * type `UnityEngine.Time`
-  * method `get_unscaledTime()`
+  * method `get_unscaledTime()`: `System.Single`
 * type `UnityEngine.Transform`
 * type `UnityEngine.Vector3Int`
-  * method `get_x()`
-  * method `get_y()`
-  * method `get_z()`
-  * method `get_zero()`
+  * method `get_x()`: `System.Int32`
+  * method `get_y()`: `System.Int32`
+  * method `get_z()`: `System.Int32`
+  * method `get_zero()`: `UnityEngine.Vector3Int`
 
 **UnityEngine.UIElementsModule**
 
@@ -322,18 +322,32 @@ never a harsher one. The first time an hourly check finds resting plants growing
 * type `UnityEngine.UIElements.Label`
   * method `.ctor()`
 * type `UnityEngine.UIElements.StyleEnum`1`
-  * method `op_Implicit(!0)`
+  * method `op_Implicit(!0)`: `UnityEngine.UIElements.StyleEnum`1<!0>`
 * type `UnityEngine.UIElements.TextElement`
   * method `set_text(System.String)`
 * type `UnityEngine.UIElements.TrickleDown`
 * type `UnityEngine.UIElements.UQueryExtensions`
-  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`
+  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`: `!!0`
 * type `UnityEngine.UIElements.VisualElement`
   * method `.ctor()`
   * method `Add(UnityEngine.UIElements.VisualElement)`
   * method `AddToClassList(System.String)`
-  * method `get_style()`
+  * method `get_style()`: `UnityEngine.UIElements.IStyle`
   * method `set_name(System.String)`
 * type `UnityEngine.UIElements.WhiteSpace`
+
+**Game classes derived from and interfaces implemented** (with the abstract members each had at build time; a new one keeps the module from loading)
+
+* class `Bindito.Core.Configurator`: `Configure`
+* interface `Bindito.Core.IProvider`1`: `Get`
+* class `Timberborn.BaseComponentSystem.BaseComponent`
+* interface `Timberborn.BaseComponentSystem.IAwakableComponent`: `Awake`
+* interface `Timberborn.EntityPanelSystem.IEntityPanelFragment`: `ClearFragment`, `InitializeFragment`, `ShowFragment`, `UpdateFragment`
+* interface `Timberborn.EntitySystem.IDeletableEntity`: `DeleteEntity`
+* interface `Timberborn.EntitySystem.IPostInitializableEntity`: `PostInitializeEntity`
+* interface `Timberborn.SingletonSystem.ILoadableSingleton`: `Load`
+* interface `Timberborn.SingletonSystem.IPostLoadableSingleton`: `PostLoad`
+* interface `Timberborn.SingletonSystem.IUpdatableSingleton`: `UpdateSingleton`
+* interface `Timberborn.TickSystem.ITickableSingleton`: `Tick`
 
 <!-- api:end -->
