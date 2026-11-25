@@ -356,6 +356,7 @@ def main(argv=None):
     check_models(c)
     check_template_names(c)
     check_building_sounds(c)
+    check_own_spec_sounds(c)
     check_spec_dependencies(c)
     check_no_vanilla_side_effects(c)
     check_global_specs(c)
@@ -366,6 +367,7 @@ def main(argv=None):
         check_faction_goods(c, fid, fspec)
         check_material_coverage(c, fid, fspec)
         check_economy(c, fid, fspec)
+        check_renamed_goods(c, fid, fspec)
     check_localization(a, c)
     check_bundles(c)
     check_modules(c)
@@ -616,9 +618,32 @@ BUNDLE_LIST = r"""
 import sys, UnityPy
 for path in sys.argv[1:]:
     env = UnityPy.load(path)
+    print("@" + path)
     for name in env.container.keys():
         print(name)
 """
+
+
+def bundle_containers(paths):
+    """{bundle path: set of container paths (lower case)} read with UnityPy from the art venv; None when unreadable."""
+    if not paths:
+        return {}
+    if not os.path.isfile(BUNDLE_PY):
+        return None
+    try:
+        r = subprocess.run([BUNDLE_PY, "-I", "-c", BUNDLE_LIST] + list(paths), capture_output=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0:
+        return None
+    out, cur = {}, None
+    for line in r.stdout.decode("utf-8", "replace").splitlines():
+        line = line.strip()
+        if line.startswith("@"):
+            cur = out.setdefault(line[1:], set())
+        elif line and cur is not None:
+            cur.add(line.lower())
+    return out
 
 
 def mod_bundle_assets(c):
@@ -640,22 +665,16 @@ def mod_bundle_sounds(c):
     bundles = [c.files[r] for r in c.files if r.lower().startswith("assetbundles/") and r.lower().endswith("_win")]
     if not bundles:
         return c.bundle_sounds
-    if not os.path.isfile(BUNDLE_PY):
+    listed = bundle_containers(bundles)
+    c.win_containers = listed
+    if listed is None:
         c.bundle_sounds = None
         c.bundle_assets = None
+        if c.args.release:
+            R.error("the mod's asset bundles cannot be read (UnityPy in %s): a release must prove that every sound, "
+                    "prefab and material it names is inside a shipped bundle" % BUNDLE_PY)
         return None
-    try:
-        r = subprocess.run([BUNDLE_PY, "-I", "-c", BUNDLE_LIST] + bundles, capture_output=True, timeout=300)
-    except (OSError, subprocess.TimeoutExpired):
-        c.bundle_sounds = None
-        c.bundle_assets = None
-        return None
-    if r.returncode != 0:
-        c.bundle_sounds = None
-        c.bundle_assets = None
-        return None
-    for line in r.stdout.decode("utf-8", "replace").splitlines():
-        low = line.strip().lower()
+    for low in sorted(x for names in listed.values() for x in names):
         if "/resources/" in low:
             c.bundle_assets.add(low.split("/resources/", 1)[1].rsplit(".", 1)[0])
         if "/resources/sounds/" in low and low.endswith(".wav"):
@@ -677,6 +696,8 @@ def check_sound(c, name, where):
         return
     if c.res is None or (own is None and "pandaborn" in name.lower()):
         R.unchecked.add("%s -> %s" % (where, name))
+        if c.args.release and c.res is not None:
+            R.error("%s: %s cannot be checked against the mod's bundles; a release must prove the clip ships" % (where, name))
     elif not sound_known(c.sound_names, name):
         R.error("%s: no built-in sound or sound in the mod's bundles named %s (or %s_NN variants)" % (where, name, name))
 
@@ -709,6 +730,34 @@ def check_building_sounds(c):
             v = bs.get(field) or ""
             if v.lower().startswith("pandaborn"):
                 check_sound(c, prefix + v, "%s BuildingSpec.%s" % (rel, field))
+
+
+SOUND_FIELD_RE = re.compile(r"Sound(Id|Name)?s?$")
+
+
+def check_own_spec_sounds(c):
+    """Sound ids in the mod's own specs (the bell's shift bells, any module spec field named ...SoundId / ...SoundName):
+    the clip must be in the game or in one of the staged bundles, or our code plays nothing (or throws)."""
+    if not c.schema:
+        return
+    origin = c.schema["_origin"]
+
+    def walk(o, where):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if SOUND_FIELD_RE.search(k):
+                    for name in (v if isinstance(v, list) else [v]):
+                        if isinstance(name, str) and name:
+                            check_sound(c, name, "%s.%s" % (where, k))
+                else:
+                    walk(v, where + "." + k)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x, where)
+    for key, bp in sorted(c.mod_bp.items()):
+        for spec, body in bp.items():
+            if origin.get(split_op(spec)[0], "game") != "game":
+                walk(body, "%s %s" % (c.keys[key][0], spec))
 
 
 def check_template_names(c):
@@ -1293,6 +1342,9 @@ def check_asset_refs(c):
             inside = mod_bundle_assets(c)
             if inside is None:
                 R.unchecked.add("%s -> %s (%s, may be in one of the mod's asset bundles)" % (where, value, asset))
+                if c.args.release:
+                    R.error("%s: %s (%s) cannot be checked against the mod's bundles; a release must prove it ships"
+                            % (where, value, asset))
             elif k not in inside:
                 R.error("%s: %s (%s) is in none of the mod's asset bundles (%s): ship the bundle that holds it"
                         % (where, value, asset, ", ".join(sorted(r.rsplit("/", 1)[-1] for r in c.files
@@ -1537,6 +1589,36 @@ def check_bundles(c):
                     R.warn(msg + " (allowed for a dev build; the package stage refuses it)")
                 else:
                     R.error(msg)
+    if c.args.release:
+        check_mac_parity(c, bundles)
+
+
+def check_mac_parity(c, bundles):
+    """Release only: each _mac bundle must hold exactly the assets of its _win twin. A Mac bundle built before the last
+    prefab, clip or material was added loads fine on the author's PC and throws on a Mac the first time it is used."""
+    pairs = []
+    by_name = {r.rsplit("/", 1)[-1]: c.files[r] for r in c.files if r.lower().startswith("assetbundles/")}
+    for base, plats in sorted(bundles.items()):
+        if {"win", "mac"} <= plats:
+            pairs.append((base, by_name[base + "_win"], by_name[base + "_mac"]))
+    if not pairs:
+        return
+    win = getattr(c, "win_containers", None)
+    if win is None or any(w not in win for _, w, _ in pairs):
+        win = bundle_containers([w for _, w, _ in pairs])
+    mac = bundle_containers([m for _, _, m in pairs])
+    if win is None or mac is None:
+        R.error("the _win/_mac bundle pairs cannot be compared (UnityPy in %s); a release needs that check" % BUNDLE_PY)
+        return
+    for base, w, m in pairs:
+        only_win = sorted(win.get(w, set()) - mac.get(m, set()))
+        only_mac = sorted(mac.get(m, set()) - win.get(w, set()))
+        if only_win or only_mac:
+            R.error("asset bundle %s: the _mac build does not hold the same assets as the _win build (only in _win: %s; "
+                    "only in _mac: %s): rebuild the Mac bundle (docs/tech/mac.md)"
+                    % (base, ", ".join(only_win[:5]) or "none", ", ".join(only_mac[:5]) or "none"))
+        else:
+            R.info("asset bundle %s: _win and _mac hold the same %d assets" % (base, len(win.get(w, set()))))
 
 
 def produced_ids(c):
@@ -1719,6 +1801,13 @@ def check_models(c):
                 for n in sorted(wanted - nodes - child_names):
                     R.error("%s: a spec looks up node %s, which the model's meshes lack (\"Child not found\" crashes the "
                             "game): add the node to the model or drop the spec with removeSpecs" % (where, n))
+                # an attachment whose parent is missing is not an error in game: it hangs from the building's origin
+                # (the festival's rising lanterns would leave from a corner of the square)
+                for at in (bp.get("TemplateAttachmentsSpec") or {}).get("Attachments", []):
+                    par = at.get("Parent")
+                    if par and par not in nodes and par not in child_names:
+                        gate(c, "%s: attachment %s hangs from %s, which is neither a node of the model nor a child of "
+                                "the blueprint (it would sit at the building's origin)" % (where, at.get("AttachmentId"), par))
                 # controllers that take the model's IAnimator (GetComponentInChildren<IAnimator>) throw without an
                 # animated node (Smoke Kiln, 2026-11-14); a wonder gets its animation controller from WonderSpec
                 needs_animator = [k for k in ANIMATOR_SPECS if k in bp]
@@ -1751,7 +1840,8 @@ def check_models(c):
 MODULE_DATA = {"Bell": ("spec", "PandabornBellSpec"), "Names": ("spec", "PandabornNamePoolSpec"),
                "Look": ("bundle", "pandabornlook"), "Water": ("spec", "PandabornFlumeSegmentSpec"),
                "Ringtails": ("spec", "PandabornRingtailsSpec"), "RingtailsFallback": ("spec", "PandabornNightPostSpec"),
-               "Festival": ("spec", "PandabornFestivalSpec"), "Flowering": ("spec", "PandabornFloweringSpec")}
+               "Festival": ("spec", "PandabornFestivalSpec"), "Flowering": ("spec", "PandabornFloweringSpec"),
+               "Tutorial": ("spec", "PandabornGoodAmountStepSpec")}
 SELF_CONTAINED_MODULES = {"Words"}   # ship their own data with the code
 DWELLING_NEEDS = ("Sleep", "Shelter")
 TUTORIAL_TEMPLATE_FIELDS = ("TemplateName", "TemplateNames", "HighlightableBuildingIds")
@@ -1946,6 +2036,67 @@ def check_economy(c, fid, bp):
     check_tutorial(c, fid, bp, w)
 
 
+def faction_modifiers(c, fs):
+    """{original blueprint key: merged modifier data} from FactionSpec.BlueprintModifiers (Inkpaws-only changes)."""
+    out = {}
+    for m in fs.get("BlueprintModifiers") or []:
+        ok, mk = ref_key(m.get("Original") or ""), ref_key(m.get("Modifier") or "")
+        mod = c.optional_bp.get(mk, c.mod_bp.get(mk))
+        if mod is not None:
+            out[ok] = merge_json(out.get(ok, {}), mod)
+    return out
+
+
+def check_renamed_goods(c, fid, bp):
+    """A good the faction renames or re-icons through a blueprint modifier (planks are poles for Inkpaws) must be renamed
+    everywhere a player reads it: no recipe a building of the faction offers may still show the old icon or name (the
+    Pole Mill's "Planks" recipe, the Smoke Kiln's treated-plank icon)."""
+    fs = bp["FactionSpec"]
+    mods = faction_modifiers(c, fs)
+    renamed = {}
+    for ok, data in mods.items():
+        base = get_bp(c, ok)
+        if base is None or "GoodSpec" not in base or "GoodSpec" not in data:
+            continue
+        old, new = base["GoodSpec"], merge_json(base["GoodSpec"], data["GoodSpec"])
+        if any(old.get(f) != new.get(f) for f in ("Icon", "DisplayNameLocKey", "PluralDisplayNameLocKey")):
+            renamed[old.get("Id")] = (old, new)
+    if not renamed:
+        return
+    recipes = {}
+    for key in c.vbp:
+        b = vanilla_bp(c, key)
+        if "RecipeSpec" in b:
+            r = b["RecipeSpec"]
+            if key in mods and "RecipeSpec" in mods[key]:
+                r = merge_json(r, mods[key]["RecipeSpec"])
+            recipes[r.get("Id")] = (key, r)
+    for key, b in c.mod_bp.items():
+        if "RecipeSpec" in b:
+            r = b["RecipeSpec"]
+            if key in mods and "RecipeSpec" in mods[key]:
+                r = merge_json(r, mods[key]["RecipeSpec"])
+            recipes[r.get("Id")] = (c.keys[key][0], r)
+    used = {}
+    for path, t in faction_templates(c, fs):
+        sp = specs_of(t)
+        for rid in (sp.get("ManufactorySpec") or {}).get("ProductionRecipeIds") or []:
+            used.setdefault(rid, (sp.get("TemplateSpec") or {}).get("TemplateName", path))
+    for rid, tname in sorted(used.items()):
+        if rid not in recipes:
+            continue
+        src, r = recipes[rid]
+        for gid, (old, new) in sorted(renamed.items()):
+            if old.get("Icon") != new.get("Icon") and r.get("Icon") == old.get("Icon"):
+                R.error("Faction %s: recipe %s (%s, offered by %s) still shows %s, the icon of %s before the faction "
+                        "renamed it; give the recipe the new icon %s (a faction modifier for a vanilla recipe)"
+                        % (fid, rid, src, tname, old.get("Icon"), gid, new.get("Icon")))
+            for f in ("DisplayNameLocKey", "PluralDisplayNameLocKey"):
+                if old.get(f) != new.get(f) and r.get("DisplayLocKey") == old.get(f):
+                    R.error("Faction %s: recipe %s (%s, offered by %s) is still named by %s, the name of %s before the "
+                            "faction renamed it; use %s" % (fid, rid, src, tname, old.get(f), gid, new.get(f)))
+
+
 def check_tutorial(c, fid, bp, w):
     if "StartingFactionSpec" not in bp:
         return
@@ -1971,6 +2122,9 @@ def check_tutorial(c, fid, bp, w):
                             if isinstance(n, str) and n and n not in names:
                                 R.error("%s %s: tutorial step names %s, which faction %s does not have: "
                                         "TutorialService.Load throws at the start of every game" % (rel, path, n, fid))
+                    elif k == "GoodId" and isinstance(v, str) and v and v not in w.goods:
+                        R.error("%s %s: tutorial step asks for good %s, which faction %s does not have: the step "
+                                "could never be completed" % (rel, path, v, fid))
                     else:
                         walk(v, path + "." + k)
             elif isinstance(o, list):

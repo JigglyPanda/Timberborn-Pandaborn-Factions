@@ -210,6 +210,57 @@ def main(argv=None):
                            "adds to vanilla need collection Folktails"],
          fx, args=["--template-suffix", SUFFIX])
 
+    # "nothing in the toolbar lies" (release rules): a need nothing satisfies, a good of ours nothing uses, two buildings
+    # on one toolbar slot; and a renamed good whose recipe still shows the old icon and name
+    def faction_case(buildings, goods, needs, modifiers=None, extra=None):
+        f = copy.deepcopy(faction)
+        f["FactionSpec"]["BlueprintModifiers"] = modifiers or []
+        f["FactionSpec"]["MaterialCollectionIds"] = ["Folktails"]
+        files = {"Factions/Pandaborn/Faction.PandabornFixture.blueprint.json": f,
+                 "TemplateCollections/Pandaborn/TemplateCollection.PandabornFixture.Buildings.blueprint.json":
+                     {"TemplateCollectionSpec": {"CollectionId": "PandabornFixture.Buildings",
+                                                 "Blueprints": [r[:-len(".json")] for r in buildings]}},
+                 "GoodCollections/Pandaborn/GoodCollection.PandabornFixture.blueprint.json":
+                     {"GoodCollectionSpec": {"CollectionId": "PandabornFixture.Goods", "Goods": goods}},
+                 "NeedCollections/Pandaborn/NeedCollection.PandabornFixture.blueprint.json":
+                     {"NeedCollectionSpec": {"CollectionId": "PandabornFixture.Needs", "Needs": needs}}}
+        files.update(buildings)
+        files.update(extra or {})
+        return files
+
+    need_rel = "Needs/Pandaborn/Need.PandabornFixtureNeed.blueprint.json"
+    case("economy_need_unmet", ["need PandabornFixtureNeed is in the faction's collections but nothing the faction has "
+                                "can satisfy it"],
+         faction_case({bench_rel: bench}, ["Log", "Plank"], ["PandabornFixtureNeed"], extra={need_rel: n1}),
+         args=["--release"])
+    case("economy_good_unused", ["good PandabornFixtureGood has no use"],
+         faction_case({bench_rel: bench}, ["Log", "Plank", "PandabornFixtureGood"], [], extra={good_rel: plank}),
+         args=["--release"])
+    bench2 = copy.deepcopy(bench)
+    bench2["TemplateSpec"]["TemplateName"] = "Bench2" + SUFFIX
+    bench2_rel = "Buildings/Pandaborn/Fixture/Bench2" + SUFFIX + ".blueprint.json"
+    case("economy_tool_clash", ["share tool group"],
+         faction_case({bench_rel: bench, bench2_rel: bench2}, ["Log", "Plank"], []), args=["--release"])
+    mill = copy.deepcopy(bench)
+    mill["ManufactorySpec"] = {"ProductionRecipeIds": ["Plank"]}
+    icon = {"Sprites/Pandaborn/Fixture/PoleIcon.png": PNG_1x1,
+            "Sprites/Pandaborn/Fixture/PoleIcon.png.meta.json": {"isSprite": True},
+            "Modifiers/Pandaborn/Good.Plank.optional.blueprint.json":
+                {"GoodSpec": {"Icon": "Sprites/Pandaborn/Fixture/PoleIcon"}}}
+    case("renamed_good_recipe", ["recipe Plank", "still shows Sprites/Goods/PlankIcon"],
+         faction_case({bench_rel: mill}, ["Log", "Plank"], [],
+                      modifiers=[{"Original": "Goods/Good.Plank.blueprint",
+                                  "Modifier": "Modifiers/Pandaborn/Good.Plank.optional.blueprint"}], extra=icon))
+    # a prefab only a bundle can hold, and no staged bundle holds it (a dev copy without its bundle crashed at load)
+    att = copy.deepcopy(bench)
+    att["TemplateAttachmentsSpec"] = {"Attachments": [{
+        "AttachmentId": "Fixture", "Prefab": "Effects/Pandaborn/NoSuchPrefab", "Parent": "#Finished",
+        "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Rotation": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+        "Scale": {"X": 1.0, "Y": 1.0, "Z": 1.0}, "CreateInstantly": False}]}
+    case("bundle_asset_missing", ["Effects/Pandaborn/NoSuchPrefab", "is in none of the mod's asset bundles"],
+         {bench_rel: att, "AssetBundles/pandabornfactionsfixture_win": b"not a real bundle",
+          "AssetBundles/pandabornfactionsfixture_mac": b"not a real bundle"})
+
     # an adopted model whose blueprint keeps a spec that looks up a node the model lacks ("Child ... not found" crashed
     # every Inkpaws game on 2026-11-14): our own Hammock model from the art build area, if it is built
     mesh_dir = os.path.join(a.models, "Hammock")
