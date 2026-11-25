@@ -1,223 +1,246 @@
 # Tooling review: the test runner, the hold scripts, the build and the install gate
 
-2026-11-25. A reading review of `tools/run_game_test.ps1`, `tools/play_timberborn.ps1`, `tools/game_test_hold.ps1`,
-`tools/pandaborn.ps1`, `tools/build.ps1` and `proto/foundation/build.ps1`. Nothing was launched: no game, no test run,
-no hold script, no install, no gate. The Mods folder, the registry and `E:\PandabornDev\build\test` were not touched.
-What was run: the PowerShell parser on the edited scripts, and four helper functions pulled out of
-`run_game_test.ps1` and exercised in a scratch folder (queue tickets, the UTF-8 read, the process filters, the
-`-DuringHold` lock probe on a scratch mutex).
+2026-11-25, two rounds. A reading review of `tools/run_game_test.ps1`, `tools/play_timberborn.ps1`,
+`tools/game_test_hold.ps1`, `tools/pandaborn.ps1`, `tools/build.ps1` and `proto/foundation/build.ps1`, then fixes.
 
-Line numbers are those after the fixes (commit `467b7f5`). "Sure" means sure from reading; anything that needs the
-game is in the last section.
+**Nothing here has been through the game.** No game, test run, hold script, play script, install or gate was started
+in either round; the Mods folder, the registry and `E:\PandabornDev\build\test` were not touched. What was run:
+the PowerShell parser on every edited script, and `tools/tests/game_lock.trial.ps1` (120 checks, all passing) in a
+scratch folder with a scratch mutex. That trial exercises the shared helpers directly, the functions of
+`run_game_test.ps1` and `pandaborn.ps1` pulled out of the files by the parser, and `proto/foundation/build.ps1
+-Staged` for real with `-ProtoRoot` in the scratch folder. The parts that write the registry (flag restore, window
+prefs) and everything that needs a game are in the last section, in the order to run them.
 
-## Fixed in 467b7f5
+Commits: `467b7f5` (round 1), `77c22e6` (round 2), and the commit that carries this text (the code lanes' asks,
+below). Both game-free test commands were run once to check them: Events passes (28,518 checks); Foundation runs
+and failed only its last check, because `E:\PandabornDev\build\code\PandabornFactions` held no build at that moment.
 
-| # | File, line | What went wrong | Sure? |
-|---|---|---|---|
-| F1 | `run_game_test.ps1` 162-175 | On the hidden desktop, until the first launch had returned a pid, "the test's processes" meant every Timberborn started since the run began (minus 3 s). The clean-up after an early failure (bad `-RequestJson`, registry error, `CreateProcess` failure) and the junction clean-up at the very end would then wait for and kill a game the owner started in those seconds. Now the start-time rule is `-Visible` only; hidden runs go by their own pids and nothing else. | Sure. Tested on the extracted functions. |
-| F2 | `run_game_test.ps1` 172-175, 348-349, 878-881 | The "no Timberborn open" check happened once, when the lock was taken. Then came the harness build (10-60 s), the junctions and the flag changes. If the owner started the game in that gap (Steam also restarts the game once at launch, leaving a few seconds with no process), the run changed the mod flags under the owner's starting game and launched a second game; the owner was noticed only 2 s after launch. Same gap between the two launches of `-SaveAndReload`. Now: a check just before any flag changes (exit 2, nothing changed), and a check before every launch. Before a launch, any Timberborn that is not ours counts as the owner's, so the wait-and-restore-again path also runs when our own game never started. | Sure. |
-| F3 | `run_game_test.ps1` 931 | The request file sits at the harness's default path (`E:\PandabornDev\build\test\request.json`, `src/devharness/Harness.cs` line 36 and 101), which the harness reads when a game has no `-pbTestRequest` argument. On the owner-abort path the run killed its game, then waited (for as long as the owner played, when flags had been changed) and only then deleted the request. If the test game had not consumed the request yet (the first seconds after launch), the owner's game, with the harness junction still in Mods, would pick it up and run the test in the owner's window. Now the request is deleted first. | Sure of the order; the window is a few seconds. |
-| F4 | `run_game_test.ps1` 724, 729, 934 (and 338) | `modstate.json` is written as UTF-8 without a BOM and was read back with Windows PowerShell's default (ANSI). `ConvertTo-Json` does not escape non-ASCII. A mod whose folder name or manifest Id has a non-ASCII character would get a mangled value name on restore: the real flag stays off, a junk value is created, and the check compares the junk with itself and reports "restored and verified", deleting the pending file. Now read as UTF-8. | Sure (shown in scratch). Only bites with a non-ASCII Local mod folder or Id; Workshop folders are numbers. |
-| F5 | `run_game_test.ps1` 696-714 | `-DuringHold` skips the lock on the strength of the `HOLD` file alone. That file stays behind when a hold script's window is closed or the process is killed (see L3), and it is written before the hold script has the lock. So with a stale file, or while the hold still waited behind a test that was between two launches, a `-DuringHold` run started with no lock next to a real run: two games, two sets of flag changes, one pending file. Now it also needs the lock to be taken and the holder file to name a live `HOLD` process. `play_timberborn.ps1`'s own call (restore under its hold) still passes. | Sure. Probe tested on a scratch mutex (free, held by another process, abandoned). |
-| F6 | `run_game_test.ps1` 598-600 | A waiter deleted any queue ticket it could not parse, including one another waiter was writing at that instant. The loser then never finds its own ticket and counts every other waiter as ahead of it. Unreadable tickets younger than 30 s are now left alone. | Sure; rare. Tested. |
-| F7 | `run_game_test.ps1` 999-1000 | `HiddenDesktop.Close()` was never called. With `-File` the process exit closes the handle; called with `&` from a session (as CLAUDE.md says for `-Checks`) the handle on the empty desktop stayed until that session closed. | Sure; harmless but a leak. |
-| F8 | `pandaborn.ps1` 424-430 | CLAUDE.md: "run `install` only when no Timberborn process runs". The stage did not look. A running game holds the mod's bundles open, so the mirror stops half way with part of the tree new and part old; a test game loading the folder during the mirror reads a mix. Now install refuses while any Timberborn process is open. This does not replace taking the lock (see G3). | Sure. |
-| F9 | `pandaborn.ps1` 446 | The override log had the time and the reason only. It now also has the stage hash and the user, so a line can be matched to what was installed. | Sure. |
-| F10 | `play_timberborn.ps1` 63-67 | When a test had left mod flags changed and the restore could not be confirmed, the script printed the red warning, then "your mod settings are as you left them" in green, and started the game through Steam with the test's mod settings. Now it stops there. | Sure. |
-| F11 | `pandaborn.ps1` 38 | Help said `all` has no gate; it has. | Sure. |
+## How it works now
 
-## Left as they are
+Shared helpers live in `tools/game_lock.ps1` (dot-sourced by the four scripts; functions only, every folder and
+name a parameter). Files in `E:\PandabornDev\build\test`:
 
-Ranked. None is small, local and certain at once; each says why.
+| File | What |
+|---|---|
+| `gametest.lock.json` | who owns the test lock: pid, start time, what |
+| `HOLD.<pid>.json` | one per holder (`game_test_hold.ps1`: kind `hold`; `play_timberborn.ps1`: kind `play`), with pid and start time. A hold is in force while any of these names a live process. A file whose process is gone is stale: ignored and removed by whoever sees it. A file plainly named `HOLD` is the old format and is ignored |
+| `run.pending.json` | what the run in progress has changed on the machine; written before the first change, removed on a clean exit |
+| `modstate.pending.json` | unchanged: the prior mod flags, until their restore is verified |
+| `<run>\request.in.json` | the test request of a hidden run (was `request.json` in the test root, the harness's default path) |
 
-### 1. The owner's machine left changed
+**A pid never decides anything alone.** `Test-SameProcess` (pid, start time, and the process name where it matters)
+is behind every kill and every takeover: the run's own games, the record's games, queue tickets, hold files, the
+holder file.
 
-**L1. A killed runner leaves everything behind, and nothing records the junctions.** `run_game_test.ps1`, whole main
-block. All clean-up is in `finally`. Ctrl-C runs it; closing the console window, `Stop-Process`, a tool timeout that
-kills the process, a reboot or a power cut do not. An agent's foreground shell call is killed after at most ten
-minutes, while a run can wait 30 minutes and a gate run 3 hours plus 70 minutes of game: any runner not started in the
-background ends this way. What stays:
-* the test game, alive on the hidden desktop, with no window anywhere (not after a reboot). It usually quits by
-  itself when the harness finishes. If it hangs, every later run takes over the abandoned lock, sees a Timberborn
-  process and waits its full `-WaitForGameSeconds`, then exits 2; the owner cannot see the game and has to end it in
-  Task Manager. `play_timberborn.ps1` does kill it (line 57-58);
-* the mod flags, changed. `modstate.pending.json` blocks later runs and `play_timberborn.ps1` restores it, but a game
-  the owner starts from Steam directly runs with the test's mod set (with `-OnlyMods`: every other mod off; in a gate
-  run: the installed faction off and a dev copy on);
-* the junctions: `PandabornDevHarness` and every `-ExtraMods` junction. `play_timberborn.ps1` removes the harness one
-  only. An extra junction is then permanent: the next run that uses the same folder finds it "existing" and never
-  adds it to its removal list (line 781), and no other run looks at it. When no flag had to change, there is not even
-  a pending file to say that a run died. A proto copy left enabled next to the installed faction is the
-  "second enabled copy" case of CLAUDE.md;
-* `request.json` if the game had not consumed it (valid for `-TimeoutSeconds` + 120 s; over an hour for gate runs),
-  the `PB_AutoTest_<run>` save, the holder file, the queue ticket (the last two are harmless and are cleaned by the
-  next run), and the window size prefs if the orphan game exits normally (the owner's next game opens 1280x720
-  windowed).
-Sure from reading. Proposal: write one `run.pending.json` at the start with the game pid and start time, the junctions
-created and the settlement name, next to the flag state; let the next lock holder and `play_timberborn.ps1` clean from
-it (kill that pid if it is still the same process, remove those junctions, delete that save). Put the request in the
-run folder instead of the default path (the path is passed on the command line anyway). This is a restructure, so it
-was not done.
+**The pending-run record** (`run.pending.json`): runner pid and start time; each test game's pid and start time as
+it is launched; each junction the run makes in Mods, with its target, written before the junction exists; the save
+folder; the request files; the window prefs before the first launch and the test's window size; the path of the
+flag state. Not recorded, so never cleaned: what is meant to stay (`-KeepSave`'s save, `-KeepInstalled`'s harness
+junction). On exit the runner removes the record unless a test game is still alive, the flags are not verified, a
+junction could not be removed or the clean-up itself threw; then it stays.
 
-**L2. The owner starts Timberborn during a run that changed flags.** `run_game_test.ps1` 402-406, 932-943. The run
-kills its game within 2 s, restores the flags, waits for the owner's game to close and restores again. Whether the
-owner's game already read the test's flags depends on when Unity loads PlayerPrefs; if it did, the owner sees the
-test's mod set in that session (the mod manager shows it), and anything the owner changes in the mod manager for a
-recorded mod is overwritten by the second restore. Cannot be decided by reading. Using `play_timberborn.ps1` avoids
-it; starting from Steam does not.
+**Cleaning from it.** Whoever gets the lock next (a run, `-Recover`, or `play_timberborn.ps1` through `-Recover
+-DuringHold`) finds a record whose runner is dead and, in this order: stops the recorded game only if pid, start
+time and name still match (this step also runs while waiting for "no Timberborn open", so an orphan game no longer
+blocks the queue); refuses to go on if any other Timberborn is open (flags cannot be restored under a running
+game); restores the flags through `Restore-ModState` from the pending file of that run id; removes the recorded
+junctions (a link directly in Mods that is a junction and still points at the recorded target; the link only);
+deletes the recorded save (a real folder directly in Saves named `PB_AutoTest_*`) and requests (inside the test
+root, named `request.json` or `request.in.json`); puts the window prefs back, only if the registry still holds the
+test's own window size. The record goes when all of that succeeded. A record whose runner is alive means a run in
+progress (possible only under `-DuringHold`): a second run refuses to start next to it.
 
-**L3. The `HOLD` file is left behind.** `play_timberborn.ps1` line 11 says closing the window early is safe; the
-`finally` that deletes `HOLD` does not run when a console window is closed. `game_test_hold.ps1` never deletes `HOLD`
-itself, so Ctrl-C or a kill leaves it. Effects of a stale file: waiters behind a running test no longer time out
-(line 648 keeps pushing the deadline), and before F5 `-DuringHold` was open to anyone. Tests still start (the lock is
-free), which is why F5 could not simply make waiters obey the file. Proposal: put the holder's pid and start time in
-`HOLD` and treat a file whose holder is gone as absent. Sure.
+## Findings and their state
 
-**L4. `-KeepInstalled` also keeps the `-ExtraMods` junctions** (line 781), enabled, in the owner's Mods. CLAUDE.md
-describes it for the harness only ("inert without a request"); an extra mod is not inert. Sure.
+| # | Finding | State |
+|---|---|---|
+| F1 | Hidden runs counted any Timberborn started since the run began as their own until a pid was known: the owner's game could be killed | Fixed (467b7f5); now pid and start time (77c22e6) |
+| F2 | "No Timberborn open" was checked once, long before the flags changed and the game launched | Fixed (467b7f5): checked again before any flag changes and before every launch |
+| F3 | An unconsumed request at the harness's default path could run the test in the owner's game | Fixed twice: deleted first on abort (467b7f5); hidden runs no longer use the default path at all (77c22e6). The harness needed no change: `FindRequestPath` already takes `-pbTestRequest` and `PANDABORN_TEST_REQUEST`. Only `-Visible` still writes the default path (a Steam bounce loses both) |
+| F4 | `modstate.json` read back as ANSI: a non-ASCII mod folder or Id restored the wrong value and "verified" it | Fixed (467b7f5) |
+| F5 | `-DuringHold` trusted the `HOLD` file | Fixed (467b7f5), now `Test-HoldOwnsLock`: a live hold (pid and start time) must own the lock, by the mutex and by the holder file (77c22e6) |
+| F6 | A waiter deleted a half-written queue ticket | Fixed (467b7f5) |
+| F7 | Hidden-desktop handle never closed in a session that used `&` | Fixed (467b7f5) |
+| F8, G3 | Install did not follow the install discipline | Fixed: refuses while Timberborn runs (467b7f5); takes the test lock for validation, mirror and link, without waiting, and names the holder when it is taken; `-CallerHoldsLock` takes nothing and checks that a live hold owns the lock (77c22e6) |
+| F9, G4 | Override log | Hash and user (467b7f5); written only after validation has passed, with the game version and the reason the gate did not count; the help says an override never applies in a run that has the gate stage (77c22e6) |
+| F10 | `play_timberborn.ps1` started the game after a restore it could not confirm | Fixed (467b7f5); now also for an unfinished clean-up of a dead run (77c22e6) |
+| L1 | A killed runner left game, flags, junctions, save, request and prefs behind, with no record of the junctions | Fixed (77c22e6): the record and the clean-up above |
+| L3, R2 | Stale `HOLD`; two holders shared one file and ended each other | Fixed (77c22e6): one file per holder, stale ones ignored and removed. `game_test_hold.ps1` removes its own file however it ends, and has `-Release` (ends every hold of kind `hold`, never the owner's play session). The play script's header now says what closing its window does |
+| R1 | A queued run could beat a hold to the lock | Fixed (77c22e6): while a live hold exists, a queued run does not try for the lock |
+| R4 | `play_timberborn.ps1` killed every Timberborn without a window | Fixed (77c22e6): `Get-HiddenGames` is gone. S stops the game in the record (pid, start time, name) and nothing else; leftovers go through the dead-run clean-up. A trial on a scratch lock with the real test root acts on nothing |
+| R5 | Hold time drifted against the deadline | Fixed (77c22e6): the real time since the last look is added |
+| L4 | `-KeepInstalled` kept `-ExtraMods` junctions | Fixed (77c22e6): harness only. Flags of an extra mod were already always restored |
+| L6 | Pids compared without start times | Fixed (77c22e6), see above |
+| L7 | Mirror and clear targets unguarded | Fixed (77c22e6): `Sync-Tree` refuses a target that is not inside `E:\PandabornDev\build`; the foundation build refuses an empty, rooted or path-like `-Name`, a target not directly in the proto root, and a source that is the target |
+| G1 | The gate tested a fresh build of `src/code` with every module, DevCarrier, fragments and a probe, not the staged code | Fixed (77c22e6), below |
+| G2 | Gate file had hash, run and time only | Fixed (77c22e6), below |
+| L5 | Gate copies pile up | `gate -Prune` added (77c22e6); nothing deleted. Listing below |
 
-**L5. Gate copies pile up.** `pandaborn.ps1` 376: one full copy per staging hash in `E:\PandabornDev\build\proto`.
-Today six `pbgate-<hash>` folders, about 500 MB each, plus the older `pbgate`. Nothing deletes them. Whether the game
-also leaves one `ModEnabled.Local.pbgate-<hash>...` registry value per copy needs a look after a gate run. Sure of
-the folders.
+### The gate now (G1, G2)
 
-**L6. Pid reuse.** `run_game_test.ps1` 165, 174: pids are compared without start times. If the test game exits and a
-game the owner starts in the same run gets the same pid, it is taken for the test game and killed at the end. Very
-unlikely. Sure of the logic.
+`pandaborn.ps1 gate` calls `proto/foundation/build.ps1 -Name pbgate-<hash8> -Source <StageDir> -Staged`. In that
+mode nothing is built and nothing is added: every staged file is copied as it is, `Scripts`, `Modules` (with the
+staged, filtered `modules.txt`) and `AssetBundles` included. **One file is replaced: `manifest.json`** (Id
+`JigglyPanda.PandabornFactionsDev` and a dev-copy name), because a second copy cannot carry the installed mod's Id.
+The grid request and the two water scenarios need neither DevCarrier nor the foundation probe (the "probe" they
+mention is a step of the harness's own water lab), so neither is in the copy. One side effect, named in the gate
+file: with an Id that is not the released one the bootstrap would read `pandaborn.dev.txt`; a staged build has none.
+The build writes `E:\PandabornDev\build\proto\<name>.devcopy.json` next to the copy: the substitutions, the code
+files, their hash, and it fails if the copy differs from the source in anything but the substituted files.
 
-**L7. Mirror targets are not guarded.** `pandaborn.ps1` `Sync-Tree` (132-146) makes the target an exact mirror and
-deletes everything else in it; `-InstallDir`, `-StageDir`, `-PackageDir` and `build.ps1 -BuildDir` take any path.
-`proto/foundation/build.ps1` 33-40 deletes `E:\PandabornDev\build\proto\<Name>`; `-Name ''` or `-Name ..\x` clears the
-whole proto folder or a folder outside it. Operator error only, but one typo. Proposal: refuse a target outside
-`E:\PandabornDev\build`, and a `-Name` that is not `[A-Za-z0-9._-]+`. (The second file is outside what this review
-could edit.) Sure.
+The gate then checks for itself that the copy's code files hash like the staged ones and that the rest (all but
+`manifest.json`) hashes like the stage, hashes the grid request, reads the game version, runs, and afterwards
+refuses to pass if the stage, the copy, the grid request or the game changed meanwhile. The gate file:
 
-### 2. Races
+```
+hash, run, passedUtc, stage            as before
+gameVersion, steamBuild                Timberborn_Data\StreamingAssets\VersionNumbers.json, Steam's appmanifest
+gameVersionReported                    what the game itself said in the grid run's result.json
+codeHash, codeFiles                    Scripts\, Modules\, AssetBundles\ as run
+devCopy { name, mode, manifestId, substitutions[] }
+grid { path, sha256 }
+modsLoaded                             ids of every mod the grid run loaded
+```
 
-**R1. A queued run can beat a hold to the lock.** `run_game_test.ps1` 621-623 tries for the mutex whatever `HOLD`
-says; the file only stops the clock. The hold scripts sit in a blocking wait almost all the time, so they nearly
-always win when the run in progress ends; a poller wins only if it polls in the instant between two of their waits.
-Then a second test starts while the owner waits "for the test in progress". Rare. See L3 for why the simple fix is
-wrong today.
+Install refuses a gate whose `gameVersion` is missing or is not the installed game's (so every gate file written
+before 77c22e6 is refused: one gate run is needed before the next install). A different Steam build with the same
+version is a warning.
 
-**R2. Two holders share one file.** `play_timberborn.ps1` and `game_test_hold.ps1` both write and both end on the
-same `HOLD`. Agent holds, owner runs the play script: the owner waits (pressing S does nothing) until the agent
-deletes `HOLD`. Owner plays, agent starts a hold meanwhile: when the owner's game closes the play script deletes
-`HOLD`, and the agent's hold ends with "Hold released before it started" (line 25); the agent believes the queue is
-held. Sure.
+### Gate copies on disk (L5)
 
-**R3. Two gates on the same staging content share a copy.** `pandaborn.ps1` 376-377 with
-`proto/foundation/build.ps1` 36-40: the name comes from the hash, and the build starts by deleting the folder. A
-second `gate` on unchanged content while the first is in the game deletes the first's files under the running game
-(until it hits a locked bundle and stops). Both gates then fail or the first crashes. It cannot produce a wrong pass.
-Sure.
+`E:\PandabornDev\build\proto`, measured in round 1:
 
-**R4. `play_timberborn.ps1` line 57-58 kills every Timberborn without a window** once it has the lock. A game of the
-owner's that is still starting has no window yet. Only if the owner started the game and the script within seconds
-of each other. With `-MutexName` set for testing the kill is skipped, but the script still writes the real `HOLD`,
-restores the real pending file and removes the real harness junction (line 68-72), which breaks a test that is
-between "junction made" and "game launched". Sure.
+| Folder | Size |
+|---|---|
+| `pbgate-3DA8DAA3` | 503 MB |
+| `pbgate-BFE176F4` | 502 MB |
+| `pbgate-C1D0B56C` | 459 MB |
+| `pbgate-C27F882E` | 502 MB |
+| `pbgate-CC92404E` | 501 MB |
+| `pbgate-F3718EAD` | 502 MB |
 
-**R5. The deadline drifts during a hold.** Line 648 adds 5 s per loop; a loop takes 5 s plus the queue scan, so
-"held time does not count" loses some tenths of a second per loop: minutes over a three-hour hold. Sure; minor.
+About 3 GB; there is also an older `pbgate` (not a hash name, never pruned). `pandaborn.ps1 gate -Prune -DryRun`
+lists what would go; `gate -Prune` removes every `pbgate-<8 hex>` folder that is not the current stage's, is not
+junctioned into Mods and is older than 12 hours, with its `.devcopy.json`. With `-Prune` the gate itself does not
+run.
 
-### 3. Not what CLAUDE.md says
+## Asked by the code lanes (third commit)
 
-* **`-DryRun` "prints the plan without changing anything."** It launches nothing, but before printing it queues for
-  the lock (up to 30 minutes), rebuilds the harness, makes a run folder, and creates and removes the harness and
-  extra-mod junctions in Mods (line 868, after 769-783). It was not run in this review for that reason.
-* **"`gate` builds the copy (`-Name pbgate -Source <StageDir>`)."** The name is `pbgate-<hash8>`, and the copy is not
-  the staging folder (G1).
-* **"Take the test mutex for install."** The stage does not; F8 only refuses while a game is open (G3).
-* **"`-KeepInstalled` keeps it"**: also the extra mods (L4). **"Removes the junctions it created on every exit
-  path"**: not when killed, and never one it found already there (L1).
-* **`bundles`, "planned: `E:\PandabornDev\build\characters\attachments`."** It is already in the default
-  `-BundleDirs` (`pandaborn.ps1` 67-68).
-* **Paired change, look.** `assemble` refuses a look bundle older than the last *commit* of `sheet_regions.json`
-  (303-314). It does not see an uncommitted edit of that file, has no slack (a bundle built just before the commit
-  that it belongs to is refused; plants get an hour), and does not check the other half: old meshes with a new bundle
-  ("pale lanterns") pass, unless the `models` stage ran. Plants check both halves.
-* **`tools/build.ps1`** header lists five stages; it runs seven (code and bundles too). It has no gate stage, so its
-  install passes only when a gate file for exactly this content already exists.
+* **`package` refuses a dev switch file.** Any `pandaborn.dev.txt` anywhere in the staging folder stops the stage,
+  before validation.
+* **`gate` fails when a shipped module is not on.** The harness already records the bootstrap's boot report:
+  `result.json` `pandabornBoot`, a list of `{ id, status, reason }` taken from the AppDomain value
+  `Pandaborn.Boot.Report` (`src/devharness/MaterialProbe.cs`, `PostLoad`). For every run of the gate (the grid run
+  and the water runs) each id in the staged `Modules\modules.txt` must be there with status `on`, and `Core` must
+  not be `off`; a result without a boot report fails too. The gate file lists the modules as `modulesOn`.
+  **One thing for the scenarios lane:** the report is written inside the material probe's `try`, after the probe has
+  read its materials. If that read throws, the result has no `pandabornBoot` and the gate now fails with "no boot
+  report", which is safe but misleading. The harness should record `pandabornBoot` on its own, before any probe (for
+  example where it writes `gameVersion`, or first thing in the game scene), and in the reload launch as well.
+* **`code` runs the game-free tests** after the build and the module trim, and fails on a failure:
+  `dotnet run --project src\code\tests\Foundation -c Release -- --mod <codeOut>` and
+  `dotnet run -c Release --project src\code\tests\Events`.
+* **`assemble`, the lantern sky pairing.** When any generated blueprint names `Effects/Pandaborn/LanternRise`,
+  `pandabornattachments_win` and `_mac` must both be among the bundles and not older than the last git change of
+  `src/unity/PandabornAttachments/Editor/PandabornAttachmentsBuilder.cs` (an hour of slack, as for the plants). No
+  blueprint names it today, so the rule is silent until the catalogue adds the attachment.
+* **Header and help of `pandaborn.ps1`**: the stage list, `all` with the gate, the three bundle folders.
 
-### 4. The install gate
+## Still open
 
-**G1. The gate does not test the code that gets installed.** `pandaborn.ps1` 375-377 hashes the staging folder,
-then `proto/foundation/build.ps1` builds the copy: it leaves out everything the code build contributes
-(`Scripts\`, `Modules\`, the look bundle, line 58) and puts in a fresh build of `src/code` from the working tree at
-that moment (45-51, 66), with the unfiltered `modules.txt` (Water, Festival, Flowering load in the gate although the
-staged mod leaves them out), the DevCarrier module, the fragments of `proto/foundation/mod` merged into the faction
-and character blueprints, a dev tutorial, a probe DLL, and the sound bundle taken again from the sound lane's folder
-(79-80). The gate file then vouches for the staging hash. So:
-* the staged DLLs are never loaded by the gate. The `code` stage and the gate build are minutes apart in `all`, and
-  other lanes edit `src/code` all day: staged code and gated code differ whenever a commit or an unsaved edit lands
-  in between;
-* a crash that only the filtered module list has (a shipped module that needs a left-out one) cannot show;
-* blueprints, models, plants and their bundles are the same files, so the gate does what it was made for (adopted
-  models that crash once built).
-Sure. Proposal: an option on the foundation build that takes the staged `Scripts`, `Modules` and bundles as they are
-and changes only the manifest Id; or at least compare the fresh build's files with the staged ones and fail the gate
-on a difference.
+1. **L2, the owner starts Timberborn from Steam during a run that changed flags.** The run stops its game within
+   2 s and restores, but whether the owner's game had already read the test's flags depends on when Unity loads
+   PlayerPrefs. Game run 6 below answers it. `play_timberborn.ps1` avoids it.
+2. **R3, two gates on the same staging content** still share `pbgate-<hash>`; the second build clears the folder
+   under the first's game. It cannot give a wrong pass (the gate now re-hashes the copy after the run and fails).
+3. **Between gate and install** the lock is free for a moment. If a queued test takes it, install refuses and has to
+   be run again; nothing is installed half way. Install does not compare the installed folder with the gated hash
+   after the mirror.
+4. **Scripts already running keep the old rules** until they are restarted: a waiter queued before 77c22e6 does not
+   wait behind `HOLD.<pid>.json`, writes no record and still uses the default request path; an old hold script
+   writes `HOLD`, which new runs ignore (its mutex still holds). Stop and requeue them.
+5. **A junction left by a run that died before 77c22e6** has no record. A later run that uses the same folder finds
+   it "existing" and leaves it. Look once at `Documents\Timberborn\Mods` for `pbgate-*` and other proto links.
+6. **Two `-DuringHold` runs started in the same instant** can both pass the "no record" check. One hold session
+   should start one at a time.
+7. **`-Visible`** still goes by start time and cannot tell the owner's game from the test's; unchanged, and still
+   never to be used while the owner is at the PC.
+8. **`-DryRun`** still queues for the lock, rebuilds the harness and makes and removes the junctions (and now the
+   record). It launches nothing.
+9. **The look pairing check** (commit time, no slack, old meshes with a new bundle pass) and the `build.ps1`
+   header are as in round 1; not part of this round.
+10. **A hung clean-up.** If the recorded game cannot be stopped, or another Timberborn is open, the clean-up stops
+    before the flags and the record stays; runs refuse to start until it succeeds. That is intended, and it means a
+    dead run plus an owner who plays for hours holds the queue (with a message naming the pid).
 
-**G2. What the hash covers.** Every file of the staging folder (relative path lowercased, SHA-256), except
-`AssetBundles.parked`. Checked before the run and again after it (417), and again by install (434-438): a stale
-gate file cannot let changed content in. Not covered: the game version (a pass from before a game update still
-counts; `pin` catches it only when it is among the stages), the grid request (read from `<gen>.grid.json`, which a
-later `generate` may have changed or emptied), and the other mods that were on during the run.
+## CLAUDE.md lines these changes make untrue
 
-**G3. Between the gate and the mirror.** The gate's run releases the lock; install starts without it. The next queued
-test needs 5 s to notice and then builds its harness, so install usually finishes its hash first, but the mirror can
-overlap that test's game loading the installed folder. F8 catches a game already open, not one that opens during the
-mirror. Install also hashes, then builds its file list, then copies: a second lane assembling in those seconds gets
-partly installed under the old gate. Proposal: install takes `Global\PandabornGameTest` for the mirror (and accepts
-a hold that the caller owns, by the holder file), and compares the hash of the installed folder with the gated one
-afterwards. Not done: the present way to "take the mutex for install" is a hold from another process, and a plain
-wait on the mutex inside install would deadlock with it.
-
-**G4. Override.** Logged before validation, so a line can stand for an install that validation then refused. With
-`all` an override never applies (a failed gate stops the run before install); it only works when `gate` is not among
-the stages. No override without a reason is possible. Sure.
-
-## Checked and found sound
-
-* Flag changes: prior values on disk (run folder and pending file) before the first write; only recorded values are
-  written; restore deletes values that did not exist; restore runs after our game is gone; the pending file goes only
-  after a verified restore; a non-DWORD value is refused before anything changes.
-* Junction removal checks type and target and removes the link only (`Directory.Delete`, non-recursive).
-* Save deletion: only the folder named exactly `PB_AutoTest_<run id>`. No scenario file in the repo overrides
-  `settlementName`.
-* Abandoned lock: taken over in all three scripts; `exit` inside `try` runs the `finally` blocks; the mutex is used
-  from one thread (Windows PowerShell runs STA).
-* `Sync-Tree` for install never follows the Mods junction; the junction code refuses a real folder.
-* `break` and `continue` inside the stage `switch` end the stage as intended; a failed stage stops the run (501).
+* Install discipline: install now takes the test lock itself (no wait; refuses and names the holder) and refuses
+  while Timberborn runs; with the queue held by the caller, pass `-CallerHoldsLock`.
+* The gate: the copy is `proto/foundation/build.ps1 -Name pbgate-<hash8> -Source <StageDir> -Staged` (the staged
+  files as they are, only `manifest.json` replaced); the gate file also has the code hash, the game version, the grid
+  hash and the loaded mods; install refuses a gate from another game version; an override is logged after
+  validation; `gate -Prune`.
+* Holding the queue: the file is `E:\PandabornDev\build\test\HOLD.<pid>.json`, one per holder; release with
+  `tools\game_test_hold.ps1 -Release` (or delete that file); while a hold is in force queued runs do not try for
+  the lock.
+* The request: a hidden run writes `<run>\request.in.json`; `E:\PandabornDev\build\test\request.json` is used by
+  `-Visible` only.
+* `-KeepInstalled` keeps the harness junction only.
+* New: `run.pending.json`, `-Recover`, `tools/game_lock.ps1`, `tools/tests/game_lock.trial.ps1`.
 
 ## Needs a game run
 
-None of these was run. All take the real lock; run them when the owner is away, in the background, not from a shell
-call with a timeout.
+In this order; each step assumes the ones before it passed. Background processes, owner away, never from a shell
+call with a timeout. Step 0 needs no game.
 
-1. The fixes did not break a plain run (pid tracking, the new checks, the desktop handle):
+0. No game needed. The trials, again, on the machine as it is; then the code stage with its tests (it rebuilds
+   `E:\PandabornDev\build\code\PandabornFactions`, so not while another lane is assembling):
+   `powershell -ExecutionPolicy Bypass -File tools\tests\game_lock.trial.ps1 -Scratch $env:TEMP\pbtrial`
+   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 code`
+1. A plain hidden run (the record is written and removed, the request is found in the run folder, pid and start
+   time tracking, the desktop handle). Afterwards `E:\PandabornDev\build\test` has no `run.pending.json` and no
+   `request.json`, and `<run>\request.json` (the harness's copy) exists:
    `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Folktails -RunSeconds 30`
-2. Flags, an extra mod and two launches; afterwards `modstate.restore.json` must show every value matching, no
-   `modstate.pending.json`, no `Mods\pbfoundation`, no `Saves\PB_AutoTest_*`:
+2. Flags, an extra mod, two launches, window prefs. Afterwards: every value in `<run>\modstate.restore.json`
+   matches, no `modstate.pending.json`, no `run.pending.json`, no `Mods\pbfoundation`, no `Saves\PB_AutoTest_*`:
    `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -DisableMods JigglyPanda.PandabornFactions -ExtraMods E:\PandabornDev\build\proto\pbfoundation -SaveAndReload -RunSeconds 30`
-3. `-DuringHold` with a real hold. Window 1: `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1`;
-   window 2, once it says "Holding":
+3. **The killed runner** (the registry half of the clean-up, which no trial covers). Start step 2's command with
+   `-RunSeconds 300` in its own console; when it prints "hidden desktop ... pid", end the runner:
+   `Stop-Process -Id <runner pid> -Force`. Check that `run.pending.json` lists the game, both junctions, the save
+   and the flag file. Then:
+   `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Recover`
+   Expect: the test game stopped, flags "restored and verified", both junctions removed, the save deleted, window
+   prefs put back, "Nothing of a dead run is left", and neither pending file afterwards.
+4. Holds. Window 1: `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1`. Window 2, once window 1
+   says "Holding": `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Folktails -RunSeconds 30`
+   (must print "The queue is held" and wait). Window 3:
    `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Folktails -RunSeconds 30 -DuringHold`
-   (must run); then `Remove-Item E:\PandabornDev\build\test\HOLD`. Then create a `HOLD` file by hand with no hold
-   script running and repeat the second command: it must refuse; delete the file.
-4. The owner starts the game during a run (needs the owner; L2, F2, F3). Start
+   (must run). Then `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1 -Release`: window 1 ends,
+   window 2 runs. Last, close a holding window with its X instead of releasing: a queued run must start (the stale
+   `HOLD.<pid>.json` disappears), and `-DuringHold` must refuse.
+5. The owner's launcher (needs the owner): with a test queued,
+   `powershell -ExecutionPolicy Bypass -File tools\play_timberborn.ps1 -NoLaunch`; start and close the game; the
+   queued test starts only afterwards. Once more while a test is in the game, pressing S: only that test's game
+   ends, and the test reports "could not test".
+6. The owner starts the game from Steam during a run (needs the owner; open item 1). Start
    `powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -OnlyMods JigglyPanda.PandabornFactions -RunSeconds 300`,
    start Timberborn from Steam about 10 s after "hidden desktop ... pid", look at the mod manager (are the owner's
-   mods shown on?), close the game. Expect exit 2, two restores in the log, no `request.json`, and no test starting
-   in the owner's window.
-5. The owner's launcher end to end (needs the owner): `powershell -ExecutionPolicy Bypass -File tools\play_timberborn.ps1 -NoLaunch`
-   while a test is queued; start and close the game; the queued test must start only afterwards.
-6. Ctrl-C in a console during run 2: the game must die, the flags come back, the junctions go. A second Ctrl-C
-   during the clean-up is expected to cut it short (then: `-RestoreModState`).
-7. Registry litter (L5): `reg query HKCU\Software\Mechanistry\Timberborn /f pbgate` before and after
-   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 gate`.
-8. Gate then install with the new refusal, queue held by the caller:
-   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 gate`, then
-   `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1` in a second window, then
-   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 install`, then delete `HOLD`.
+   mods shown on?), close the game. Expect exit 2, two restores in the log, no test in the owner's window.
+7. Ctrl-C in the console during step 2's command: the game dies, the flags come back, the junctions and the record
+   go. (A second Ctrl-C during the clean-up cuts it short; then step 3's `-Recover`.)
+8. **The gate on the staged code** (does a copy with the dev Id and the staged, filtered modules load and pass?).
+   Needs a current stage (`pandaborn.ps1 pin,models,generate,code,bundles,assemble,validate`):
+   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 gate`
+   Then read `E:\PandabornDev\build\stage\PandabornFactions.gate.json`: `devCopy.substitutions` has `manifest.json`
+   only, `gameVersion` is 1.1.2.8 and equals `gameVersionReported` up to the game's own suffix, `modsLoaded` has the
+   dev copy and not `JigglyPanda.PandabornFactions`, `modulesOn` is the staged module list. A gate that fails with
+   "<module> is off" is the boot-report rule doing its work: read the reason it prints.
+9. Install with the lock, both ways. Free lock: `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 install`.
+   Held by the caller: `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1` in a second window, then
+   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 install` (must refuse and name the hold), then
+   `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 install -CallerHoldsLock` (must install), then
+   `powershell -ExecutionPolicy Bypass -File tools\game_test_hold.ps1 -Release`.
+10. Old copies: `powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 gate -Prune -DryRun` (lists; removes
+    nothing). Whether each copy also left a registry value:
+    `reg query HKCU\Software\Mechanistry\Timberborn /f pbgate`.

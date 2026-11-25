@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-  One command for the Pandaborn - Factions build: pin, generate, validate, code, bundles, assemble, install, test,
-  package, all.
+  One command for the Pandaborn - Factions build: pin, models, generate, code, bundles, assemble, validate, gate,
+  install, test, package, combos, all (= everything up to install, the gate included).
 
 .DESCRIPTION
   powershell -ExecutionPolicy Bypass -File tools\pandaborn.ps1 <stage> [options]
@@ -15,10 +15,14 @@
             art venv into E:\PandabornDev\build\models\<Id>. The meshes never enter git; assemble copies the
             ones the catalogue adopts (model = "<Id>") into the mod, from <GenDir>.models.json.
   code      Builds src/code (Bootstrap, Specs, Core, every module; the Look module brings the pandabornlook bundle)
-            into E:\PandabornDev\build\code, and dumps the mod's own spec classes for the validator. On by default;
+            into E:\PandabornDev\build\code, and dumps the mod's own spec classes for the validator. Then runs the
+            game-free tests (src\code\tests\Foundation against the built mod, src\code\tests\Events) and fails when
+            one fails. On by default;
             -NoCode builds the data-only fallback (the mod must still be playable, with the Folktails look).
   bundles   Copies every built Pandaborn asset bundle (pandaborn*_win / _mac, never renamed) from -BundleDirs into the
-            staging folder: today the plants (E:\PandabornDev\build\plants\AssetBundles, tools/build_plants.ps1).
+            staging folder: the plants (E:\PandabornDev\build\plants\AssetBundles, tools/build_plants.ps1), the sounds
+            (E:\PandabornDev\build\sound\AssetBundles, tools/build_sound.ps1) and the character attachments
+            (E:\PandabornDev\build\characters\attachments: hats, baskets, the LanternRise effect).
             The look bundle comes with the code. Fails when an adopted model needs a bundle that is not built.
   assemble  Mirrors mod/PandabornFactions (hand-written files), the generated data, the two panda body meshes (not in
             git) and the code/bundle outputs into the staging folder E:\PandabornDev\build\stage\PandabornFactions.
@@ -35,6 +39,9 @@
             gate -Prune does not run the gate: it removes the pbgate-<hash> copies in E:\PandabornDev\build\proto that
             are not the current stage's (not one a run has junctioned into Mods, not one younger than 12 hours);
             with -DryRun it only lists them with their sizes.
+            The gate also fails when the bootstrap's boot report of a run (result.json pandabornBoot) does not show
+            every shipped module (the staged Modules\modules.txt) as "on": a module the API check switched off would
+            otherwise pass with its feature missing.
   install   Mirrors the validated staging folder into E:\PandabornDev\build\PandabornFactions (the folder the game's Mods
             junction points at) and makes the junction, exactly as tools/build.ps1 always did. Refuses if validation
             failed in this run. Never touches any other Mods entry and never replaces a real folder.
@@ -252,6 +259,48 @@ function Get-GameVersion([string]$gameDir) {
     return [ordered]@{ version = $version; steamBuild = $build }
 }
 
+# The bootstrap's boot report of one run (the harness writes it to result.json as pandabornBoot: id, status, reason)
+# against the modules the build ships (first column of Modules\modules.txt). Returns the problems; none = every
+# shipped module is "on" and Core is not off.
+function Get-BootProblems([string]$resultFile, [string]$modulesFile) {
+    $problems = @()
+    $shipped = @()
+    if (Test-Path -LiteralPath $modulesFile) {
+        $shipped = @(Get-Content -LiteralPath $modulesFile | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') } | ForEach-Object { ($_.Trim() -split '\s+')[0] })
+    }
+    if ($shipped.Count -eq 0) { return $problems }   # a data-only build ships no module
+    $res = $null
+    try { $res = Get-Content -LiteralPath $resultFile -Raw -Encoding UTF8 | ConvertFrom-Json } catch { }
+    if ($null -eq $res) { return @("cannot read $resultFile") }
+    $boot = @($res.pandabornBoot | Where-Object { $_ })
+    if ($boot.Count -eq 0) { return @("no boot report in $resultFile (pandabornBoot is missing or empty): the bootstrap did not run, or the harness did not record it") }
+    foreach ($b in $boot) { if ([string]$b.id -eq 'Core' -and [string]$b.status -ne 'on') { $problems += "Core is $($b.status): $($b.reason)" } }
+    foreach ($id in $shipped) {
+        $b = @($boot | Where-Object { [string]$_.id -eq $id }) | Select-Object -First 1
+        if ($null -eq $b) { $problems += "$id is shipped but not in the boot report" }
+        elseif ([string]$b.status -ne 'on') { $problems += "$id is $($b.status): $($b.reason)" }
+    }
+    return $problems
+}
+
+# PAIRED CHANGE, the lantern sky: a blueprint that names the Effects/Pandaborn/LanternRise prefab needs the
+# pandabornattachments bundle (win and mac) that holds it, built after the last change of the builder that makes it.
+# Returns the problems; none when no generated blueprint names the prefab.
+function Get-LanternRiseProblems([string]$genDir, [string]$bundleDir, $builderTime) {
+    $users = @(Get-ChildItem -LiteralPath $genDir -Recurse -File -Filter '*.blueprint.json' -ErrorAction SilentlyContinue |
+               Select-String -SimpleMatch -List -Pattern 'Effects/Pandaborn/LanternRise' | ForEach-Object { Split-Path $_.Path -Leaf })
+    $problems = @()
+    if ($users.Count -eq 0) { return $problems }
+    foreach ($b in 'pandabornattachments_win', 'pandabornattachments_mac') {
+        $f = Join-Path $bundleDir $b
+        if (-not (Test-Path -LiteralPath $f)) { $problems += "$($users -join ', ') names Effects/Pandaborn/LanternRise, but $b is not among the bundles (src/unity/PandabornAttachments; then the bundles stage)" }
+        elseif ($builderTime -and (Get-Item -LiteralPath $f).LastWriteTime -lt $builderTime) {
+            $problems += "$b ($((Get-Item -LiteralPath $f).LastWriteTime)) is older than the last change of PandabornAttachmentsBuilder.cs in git ($builderTime): rebuild it, then the bundles stage"
+        }
+    }
+    return $problems
+}
+
 # Gate copies (pbgate-<8 hex>) in $protoDir that are not $keepName, with their sizes. Never one that may be in use: a
 # copy junctioned into Mods (a run has it loaded) or younger than $minAgeHours (a gate may be queued with it).
 function Get-PrunableGateCopies([string]$protoDir, [string]$keepName, [string]$modsDir, [double]$minAgeHours = 12) {
@@ -347,6 +396,21 @@ foreach ($s in $stages) {
             if ((Invoke-Py @((Join-Path $repo 'tools\check_api_lists.py'), '--repo', $repo, '--warn-only')) -ne 0) {
                 Say 'code: tools/check_api_lists.py could not run' 'DarkYellow'
             }
+            # the game-free tests: the foundation (with the required-API lists of the mod just built against the game's
+            # assemblies) and the events. A failure fails the stage: the build must not go on to the gate with it.
+            $tests = @(
+                @{ name = 'Foundation'; args = @('run', '--project', (Join-Path $repo 'src\code\tests\Foundation'), '-c', 'Release', '--', '--mod', $codeOut) },
+                @{ name = 'Events'; args = @('run', '-c', 'Release', '--project', (Join-Path $repo 'src\code\tests\Events')) })
+            foreach ($t in $tests) {
+                $testArgs = $t.args
+                $log = & dotnet @testArgs 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    $log | Select-Object -Last 40 | ForEach-Object { Say "  $_" 'Red' }
+                    Say "code: the $($t.name) tests failed (dotnet $($testArgs -join ' '))" 'Red'
+                    $failed += $s
+                } else { Say "code: $($t.name) tests passed$(($log | Where-Object { $_ -match '\d+ (checks|passed|tests)' } | Select-Object -Last 1 | ForEach-Object { ' (' + ([string]$_).Trim() + ')' }))" }
+            }
+            if ($failed -contains $s) { break }
         }
         'bundles' {
             if (Test-Path $bundleOut) { Remove-Item -Recurse -Force $bundleOut }
@@ -437,6 +501,11 @@ foreach ($s in $stages) {
                     }
                 }
             }
+            # PAIRED CHANGE: the Festival Square's lantern sky (the Effects/Pandaborn/LanternRise prefab) lives in the
+            # pandabornattachments bundle; an hour of slack as for the plants (build, look, then commit)
+            $builderAt = & git -C $repo log -1 --format=%ct -- 'src/unity/PandabornAttachments/Editor/PandabornAttachmentsBuilder.cs' 2>$null
+            $builderTime = $null; if ($builderAt) { $builderTime = [DateTimeOffset]::FromUnixTimeSeconds([long]$builderAt).LocalDateTime.AddHours(-1) }
+            foreach ($problem in @(Get-LanternRiseProblems $GenDir (Join-Path $bundleOut 'AssetBundles') $builderTime)) { Say "assemble: $problem" 'Red'; $failed += $s }
             if ($failed -contains $s) { break }
             $allMeshes = [ordered]@{}; foreach ($k in $meshes.Keys) { $allMeshes[$k] = $meshes[$k] }
             if (Test-Path -LiteralPath (Join-Path $GenDir 'Characters\Pandaborn\RingtailAdult.Inkpaws.blueprint.json')) {
@@ -590,6 +659,16 @@ foreach ($s in $stages) {
             if ((Get-FileHash -LiteralPath $grid -Algorithm SHA256).Hash -ne $gridHash) { Say 'gate: the grid request changed during the run; run the gate again' 'Red'; $failed += $s; break }
             $gameAfter = Get-GameVersion $GameDir
             if ($gameAfter.version -ne $game.version -or $gameAfter.steamBuild -ne $game.steamBuild) { Say 'gate: the game was updated during the run; run the gate again' 'Red'; $failed += $s; break }
+            # every shipped module must have come up "on" in every run: a module the bootstrap's API check switched off
+            # (it got stricter: return types, visibility, interfaces) would otherwise pass the gate with its feature gone
+            $bootProblems = @()
+            foreach ($one in $runs) {
+                foreach ($problem in @(Get-BootProblems (Join-Path (Join-Path $TestRoot $one) 'result.json') (Join-Path $StageDir 'Modules\modules.txt'))) { $bootProblems += "run $($one): $problem" }
+            }
+            if ($bootProblems.Count -gt 0) {
+                $bootProblems | ForEach-Object { Say "gate: $_" 'Red' }
+                Say 'gate: FAILED, a shipped module is not on: this staging folder must not be installed' 'Red'; $failed += $s; break
+            }
             # the mods that were loaded, and the version the game reported, from the grid run's own result
             $loaded = @(); $reported = $null
             try {
@@ -603,6 +682,7 @@ foreach ($s in $stages) {
                 codeHash = $codeHash; codeFiles = @($devcopy.codeFiles)
                 devCopy = [ordered]@{ name = $copy; mode = $devcopy.mode; manifestId = $devcopy.manifestId; substitutions = @($devcopy.substitutions) }
                 grid = [ordered]@{ path = $grid; sha256 = $gridHash }
+                modulesOn = @(if (Test-Path -LiteralPath (Join-Path $StageDir 'Modules\modules.txt')) { Get-Content -LiteralPath (Join-Path $StageDir 'Modules\modules.txt') | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') } | ForEach-Object { ($_.Trim() -split '\s+')[0] } })
                 modsLoaded = $loaded
             }
             [IO.File]::WriteAllText("$StageDir.gate.json", ($gate | ConvertTo-Json -Depth 6))
@@ -697,6 +777,12 @@ foreach ($s in $stages) {
             if ($LASTEXITCODE -ne 0) { $failed += $s }
         }
         'package' {
+            # pandaborn.dev.txt is the dev switch file (probes write it into dev copies). The released bootstrap ignores
+            # it, but it must never ship, wherever in the mod it sits.
+            $devFiles = @(Get-ChildItem -LiteralPath $StageDir -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -ieq 'pandaborn.dev.txt' })
+            if ($devFiles.Count -gt 0) {
+                Say "package: refused, the staging folder holds a dev switch file: $(($devFiles | ForEach-Object { $_.FullName }) -join ', ')" 'Red'; $failed += $s; break
+            }
             # release rules: a missing _mac bundle twin is an error here (dev stages only warn)
             $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet', '--release')
             if (Test-Path -LiteralPath "$GenDir.report.json") { $a += @('--left-out', "$GenDir.report.json") }

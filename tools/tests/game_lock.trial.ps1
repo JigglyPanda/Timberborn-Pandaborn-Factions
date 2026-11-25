@@ -330,6 +330,40 @@ Write-LockInfo '$root' 'HOLD (trial)'
     $gone = @(Remove-GateCopies ($old + [pscustomobject]@{ Path = "$proto\pbfoundation" } + [pscustomobject]@{ Path = $outside }) $proto)
     Check 'prune removes those two and their .devcopy.json, nothing else' ($gone.Count -eq 2 -and -not (Test-Path "$proto\pbgate-BBBB0002") -and -not (Test-Path "$proto\pbgate-BBBB0002.devcopy.json") -and (Test-Path "$proto\pbfoundation\f.bin") -and (Test-Path "$outside\precious.txt") -and @(Get-ChildItem $proto -Directory).Count -eq 6)
     [IO.Directory]::Delete("$fakeMods\pbgate-CCCC0003", $false)
+    # the boot report of a gate run against the shipped modules
+    foreach ($fn in 'Get-BootProblems', 'Get-LanternRiseProblems') { . ([scriptblock]::Create((Get-Fn 'tools\pandaborn.ps1' $fn))) }
+    $mt = Join-Path $work 'modules.txt'; $rf = Join-Path $work 'result.json'
+    [IO.File]::WriteAllText($mt, "# Id  File  Description`n`nBell   Pandaborn.Bell.bin  The bell`nWater  Pandaborn.Water.bin  Water`n", $utf8)
+    function Set-Boot($rows) { Write-JsonFile $rf ([ordered]@{ status = 'completed'; pandabornBoot = @($rows) }) }
+    Set-Boot @(@{ id = 'Core'; status = 'on'; reason = '' }, @{ id = 'Bell'; status = 'on'; reason = '' }, @{ id = 'Water'; status = 'on'; reason = '' }, @{ id = 'Extra'; status = 'off'; reason = 'not shipped' })
+    Check 'boot report: every shipped module on (an unshipped one off does not matter)' (@(Get-BootProblems $rf $mt).Count -eq 0) (@(Get-BootProblems $rf $mt) -join '; ')
+    Set-Boot @(@{ id = 'Bell'; status = 'on'; reason = '' }, @{ id = 'Water'; status = 'off'; reason = 'M Timberborn.WaterSystem now returns System.Single' })
+    $bp = @(Get-BootProblems $rf $mt)
+    Check 'boot report: a shipped module switched off by the API check fails, with the reason' ($bp.Count -eq 1 -and $bp[0] -match '^Water is off: M Timberborn') ($bp -join '; ')
+    Set-Boot @(@{ id = 'Bell'; status = 'forced-off'; reason = 'dev switch' }, @{ id = 'Water'; status = 'on'; reason = '' })
+    Check 'boot report: forced-off fails too' (@(Get-BootProblems $rf $mt).Count -eq 1)
+    Set-Boot @(@{ id = 'Bell'; status = 'on'; reason = '' })
+    Check 'boot report: a shipped module missing from the report fails' ((@(Get-BootProblems $rf $mt) -join ';') -match 'Water is shipped but not in the boot report')
+    Set-Boot @(@{ id = 'Core'; status = 'off'; reason = 'Pandaborn.Specs is not loaded' }, @{ id = 'Bell'; status = 'on'; reason = '' }, @{ id = 'Water'; status = 'on'; reason = '' })
+    Check 'boot report: Core off fails' ((@(Get-BootProblems $rf $mt) -join ';') -match '^Core is off')
+    Write-JsonFile $rf ([ordered]@{ status = 'completed' })
+    Check 'boot report: a result without one fails (it must not pass silently)' ((@(Get-BootProblems $rf $mt) -join ';') -match 'no boot report')
+    Check 'boot report: no result file fails' ((@(Get-BootProblems (Join-Path $work 'nope.json') $mt) -join ';') -match 'cannot read')
+    Check 'boot report: a data-only build (no modules.txt) asks for nothing' (@(Get-BootProblems $rf (Join-Path $work 'no-modules.txt')).Count -eq 0)
+    # the lantern sky pairing
+    $gen = Join-Path $work 'gen'; $bdl = Join-Path $work 'bundles\AssetBundles'; New-Item -ItemType Directory -Force "$gen\Buildings\Pandaborn", $bdl | Out-Null
+    [IO.File]::WriteAllText("$gen\Buildings\Pandaborn\PandabornFestivalSquare.Inkpaws.blueprint.json", '{ "PandabornFestivalSquareSpec": {} }', $utf8)
+    $builderTime = (Get-Date).AddHours(-2)
+    Check 'lantern sky: no blueprint names the prefab, no bundle needed' (@(Get-LanternRiseProblems $gen $bdl $builderTime).Count -eq 0)
+    [IO.File]::WriteAllText("$gen\Buildings\Pandaborn\PandabornFestivalSquare.Inkpaws.blueprint.json", '{ "Attachments": [ { "Prefab": "Effects/Pandaborn/LanternRise" } ] }', $utf8)
+    $lp = @(Get-LanternRiseProblems $gen $bdl $builderTime)
+    Check 'lantern sky: the Festival Square names it and both bundles are absent: two refusals naming the blueprint' ($lp.Count -eq 2 -and $lp[0] -match 'PandabornFestivalSquare' -and $lp[1] -match '_mac') ($lp -join '; ')
+    [IO.File]::WriteAllText("$bdl\pandabornattachments_win", 'b', $utf8); [IO.File]::WriteAllText("$bdl\pandabornattachments_mac", 'b', $utf8)
+    Check 'lantern sky: both bundles built after the builder changed: fine' (@(Get-LanternRiseProblems $gen $bdl $builderTime).Count -eq 0)
+    (Get-Item "$bdl\pandabornattachments_mac").LastWriteTime = (Get-Date).AddDays(-1)
+    $lp = @(Get-LanternRiseProblems $gen $bdl $builderTime)
+    Check 'lantern sky: a bundle older than the builder is refused' ($lp.Count -eq 1 -and $lp[0] -match 'pandabornattachments_mac .* is older') ($lp -join '; ')
+    Check 'lantern sky: no git time for the builder: only presence is checked' (@(Get-LanternRiseProblems $gen $bdl $null).Count -eq 0)
 
     # ------------------------------------------------------------ proto\foundation\build.ps1, run for real in the scratch folder
     Write-Host 'proto\foundation\build.ps1'
