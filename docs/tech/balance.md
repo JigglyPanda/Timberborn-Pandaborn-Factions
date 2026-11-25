@@ -620,6 +620,59 @@ Nothing breaks that the design has not planned for. No Hard-only number change i
 
 Files are under `catalogue/`. "Run" is the game run that would confirm it; none has been made.
 
+### Applied on 2026-11-25 (catalogue lane; `tools/balance/run.py all` on the regenerated build)
+
+The coordinator approved the list below (DESIGN.md change log, 2026-11-25). The tables that follow keep the "Now"
+column as it stood when the proposals were written; this is what the catalogue holds today. No game run has been
+made on any of it.
+
+| # | Applied | Where | In the build now |
+|---|---|---|---|
+| M1 | yes | `rules.toml [shelves] no_ingredient_hours = 16` (generator rule: recipes with no ingredients, never below vanilla) | Water Pump holds 49 (was 146), Large Water Pump 240 (was 720), Badwater Pump 49; `BadwaterExtracted` and `Dirt` are back on their vanilla shelves (16 hours is less) |
+| M2 | no (code) | the Bell and Ringtails code lanes | A Ringtail builder is still 0.62 to 0.73 of an Inkpaw at 12/12 as shipped; 0.83 to 0.97 with the bonus by their own night (the model's row, Q4) |
+| M3 | yes | `building_stats.toml` | Flume, Flume Corner, Flume Drop: 0 science |
+| M4 | yes | `building_stats.toml` | Flume Gate 40 |
+| M5 | yes | `building_stats.toml` | Scoop Wheel 60 |
+| M6 | half | `buildings.toml` | **Opera Stage ships** as an ordinary attraction (Well-being group, its own model, no workers, no Ringtail claim in data). **Star Tower stays hidden**: its data is ready (the vanilla Observatory without its power need, `PandabornNightPostSpec`, 4 workers, 1,000 science), but `RingtailService.UnlockNightPosts` unlocks every night post for free when the first Moon Loft is finished, so a 200-science loft would waive the tower's 1,000 and four Ringtails would out-research every inventor from cycle 2. It needs one field on `PandabornNightPostSpec` (say `UnlockOnArrival`, default true) that the unlock respects. Until then the last 38,000 science is still inventors' work |
+| M7 | text lane | `catalogue/text/**`, DESIGN.md | DESIGN.md is changed; the need tooltip of Opera still says "while the Ringtail performers are at work" (`text/needs.json`, Performance) |
+| W1 | yes | `rules.toml [shelves] recipe_hours` (`FlowingWater = 0`, `FlowingBadwater = 0`: the vanilla shelf) | Cistern Tap and Discharge hold 15 water (was 144) |
+| W2 | yes | `faction.toml`, adult `PandabornBellSpec` both curves: 12 h +0.33, 13 h +0.228, 14 h +0.14, 15 h +0.064, 16 h 0 | Workshop, builder and carrier output 1.00 at 12, 13, 14, 15 and 16 hours at every wellbeing level (was 1.01 to 1.02 at 13 to 15). `BellMovementSpeedCap` stays 2.66: 2.0 x 1.33 is exactly the cap |
+| W3 | yes | `needs.toml` | Steamed Rice 2, Sweet Rice Balls 3 |
+| W4 | yes | `needs.toml` | Play 2, Ink painting 2, Watching the young 3, Tea 4 |
+| W5 | yes | `needs.toml` | Memorial Arch 6, Great Sitting Panda 14 |
+| W6 | yes | `recipes.toml` | Wooden Ox: 20 cured poles, 20 gears, 4 metal blocks, 96 h |
+| W7 | yes | `needs.toml` | Festive spirit and Grand festival fade at 0.04 a day (25 days) |
+| W8 | yes | `building_stats.toml` | Lantern Workshop 100, Festival Square 200 |
+| W9 | yes | `recipes.toml` | Pickles: 2 cabbage to 5, 1.7 h (1.50 food a tile-day, was 1.80; the Pickle Yard holds 29 cycles) |
+| W10 | yes | `rules.toml [shelves] recipe_hours` (`Plank = 24`) | Pole Mill holds 20 logs (was 39) |
+| W11 | **no** | models lane | The Ink Studio's model is one cell with one `#Slot#Spot`; four seats need a model with four slots (a 2 x 2 studio). Capacity stays 1 |
+| W12 | yes | `recipes.toml` | Bamboo seed cakes: 6 a seed (a 40-colonist Flowering: 486 cakes, 4.7 days of all food; was 324 and 3.2) |
+| W13 | later | | Left as it is |
+
+Two more data fixes went in with them, both making the build match what was already decided: the **Flume Bridge
+Span** had no entry in `building_stats.toml` and so cost what its shell does (a Throttling Valve: 5 cured poles, 5 metal
+blocks, 500 science); it now costs 4 poles, 1 log and 120 science, as the Flume Bridge. The **Smoke Kiln** still asked
+for the Wood Workshop's 250 hp although the first sheet says "log smoke instead of resin and 250 hp"; it needs no power
+now.
+
+What the model says after them:
+
+* **Wellbeing ceiling 95** against the Folktails' 84 (basic 5, nutrition 19, social 9, fun 15, aesthetics 12, awe 30,
+  boosts 5). The trims took 4 off (94 to 90) and the Opera Stage, now shipped, put 5 back. Without festivals 90; the
+  ceiling is not lower than before the trims, it is one higher. Mid game (wellbeing a colony can hold at equal science,
+  the Q1 table): Inkpaws 17 / 20 / 21 / 25 / 28 / 34 / 41 / 44 / 47 at 200 / 400 / 700 / 1,000 / 1,500 / 2,500 / 4,000 /
+  6,000 / 10,000 science against the Folktails' 16 / 18 / 20 / 26 / 28 / 31 / 32 / 34 / 39: level up to 1,500 science,
+  3 to 10 ahead after it (was 2 to 14 ahead throughout).
+* **The water beat** (Flume Gate 40 + Scoop Wheel 60; flumes free) costs 100 science, was 290. In the design's new
+  order (Steamer, then water; tea in cycle 2) the running total is 140: day 13.7 with one inventor, **day 9.1 with two,
+  7.8 with two at wellbeing 10 or more, 6.1 with four** (the same formula as Q10, 15.3 science an inventor-day from day
+  4.5). The Q10 table in `tools/balance/out/q10.md` still lists the Teahouse before the water beat (its beat order is
+  written in `questions.py`), so its own row reads day 22 with two inventors: the order there needs the same move.
+* **First festival** (Lantern Workshop 100, Festival Square 200, plus paper): 650 science for the beat, was 850.
+* **First drought**: one pump holds 1.8 days of water for 13 colonists (was 5.3; Folktails 0.55).
+* **Whole tree** 123,220 science (was 122,910: the Opera Stage's 1,200 is in, the water set's 890 is out).
+* **Ringtail parity** is unchanged by data and is the code lane's (M2).
+
 ### Must change, or must be decided
 
 | # | File | Key | Now | Proposed | Why | Confidence | Run to confirm |

@@ -307,8 +307,8 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Flowering | yes | on | visible | 2 goods; 1 need; 1 recipe; 2 plants |
 | Look | yes | on | visible | nothing |
 | Names | yes | on | visible | nothing |
-| RingtailVenues | **no** | **off** | **hidden** | 2 buildings; 1 need |
-| Ringtails | yes | on | visible | 4 buildings; 2 characters |
+| RingtailVenues | **no** | **off** | **hidden** | 1 building |
+| Ringtails | yes | on | visible | 5 buildings; 2 characters |
 | RingtailsFallback | yes | on | visible | nothing |
 | Tutorial | yes | on | visible | nothing |
 | Water | yes | on | visible | 13 buildings; 3 goods; 2 needs; 3 recipes |
@@ -316,7 +316,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 
 ### Buildings
 
-171 entries in `catalogue/buildings.toml`: 111 re-themed vanilla buildings, 58 of our own (`Pandaborn…`: 56 on their own model, 2 on a vanilla stand-in model) and 2 vanilla dev buildings. 2 are hidden today (their module is off or not shipped); 169 are generated.
+171 entries in `catalogue/buildings.toml`: 111 re-themed vanilla buildings, 58 of our own (`Pandaborn…`: 57 on their own model, 1 on a vanilla stand-in model) and 2 vanilla dev buildings. 1 are hidden today (their module is off or not shipped); 170 are generated.
 
 *Basis* is the vanilla blueprint the generator copies (template name; `—` for our own id on the same vanilla name). *Toolbar* is the bottom-bar group. *Model*: `own` = adopted from the building kit; `vanilla, re-themed` = the vanilla model in the Inkpaws' materials; **stand-in** = one of our own buildings still on a vanilla model. *Waits for* names the code module; bold = hidden today. *Icon*: `own` = a sprite under `mod/PandabornFactions/Sprites/Pandaborn/Buildings`.
 
@@ -446,7 +446,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 |---|---|---|---|---|---|---|---|---|---|
 | Inventor | `Inventor` | re-theme | Science | vanilla, re-themed |  | vanilla | 12 Log | 0 |  |
 | Ox Workshop | `PandabornOxWorkshop` | `BotAssembler.Folktails` | Science | own: `art/models/OxWorkshop` |  | own | 100 Poles, 50 Gear, 40 Metal Block | 1000 | `PandabornWoodenOx` |
-| Star Tower | `PandabornStarTower` | `Observatory.Folktails` | PandabornNightWatch | own: `art/models/StarTower` | **RingtailVenues off (hidden)** | own | 60 Poles, 30 Gear, 10 Paper | 1000 |  |
+| Star Tower | `PandabornStarTower` | `Observatory.Folktails` | PandabornNightWatch | own: `art/models/StarTower` | **Ringtails, RingtailVenues off (hidden)** | own | 60 Poles, 30 Gear, 10 Paper | 1000 |  |
 
 #### Storage
 
@@ -500,7 +500,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Kindergarten | `PandabornKindergarten` | `Campfire.Folktails` | Wellbeing | own: `art/models/Kindergarten` |  | own | 60 Log, 40 Poles | 400 |  |
 | Ink Studio | `PandabornInkStudio` | `ContemplationSpot.Folktails` | Wellbeing | own: `art/models/InkStudio` |  | own | 10 Log, 10 Paper | 200 |  |
 | Hot Spring Bath | `PandabornHotSpringBath` | `MudPit.Folktails` | Wellbeing | own: `art/models/HotSpringBath` |  | own | 80 Log, 30 Cured poles | 1500 |  |
-| Opera Stage | `PandabornOperaStage` | `DanceHall.Folktails` | PandabornNightWatch | **stand-in**: the basis's vanilla model (a kit model `art/models/OperaStage` exists, not adopted) | **RingtailVenues off (hidden)** | own | 100 Log, 40 Cured poles, 20 Metal Block | 1200 |  |
+| Opera Stage | `PandabornOperaStage` | `DanceHall.Folktails` | Wellbeing | own: `art/models/OperaStage` |  | own | 100 Log, 40 Cured poles, 20 Metal Block | 1200 |  |
 | Teeth Grindstone | `TeethGrindstone` | re-theme | Wellbeing | vanilla, re-themed |  | vanilla | 5 Log | 0 |  |
 | Medical Bed | `MedicalBed` | re-theme | Wellbeing | vanilla, re-themed |  | vanilla | 5 Log, 1 Poles | 80 |  |
 | Herbalist | `Herbalist` | re-theme | Wellbeing | vanilla, re-themed |  | vanilla | 10 Poles, 20 Gear | 300 |  |
@@ -609,7 +609,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Watching the young | `PandabornCubWatching` | SocialLife | -0.2 | 3 | Kindergarten |  |
 | Soak | `PandabornSoak` | Fun | -0.2 | 3 | Hot Spring Bath |  |
 | Ink painting | `PandabornContemplation` | Fun | -0.12 | 2 | Ink Studio |  |
-| Opera | `PandabornPerformance` | Fun | -0.12 | 5 | Opera Stage | **RingtailVenues off (hidden)** |
+| Opera | `PandabornPerformance` | Fun | -0.12 | 5 | Opera Stage |  |
 | Cabbages | `PandabornCabbage` | Nutrition | -0.05 | 1 | eating cabbages |  |
 | Persimmons | `PandabornPersimmons` | Nutrition | -0.05 | 1 | eating persimmons |  |
 | Bamboo mushrooms | `PandabornBambooMushrooms` | Nutrition | -0.05 | 1 | eating bamboo mushrooms |  |
@@ -628,7 +628,7 @@ A catalogue item with `waits_for = "<Module>"` is generated only when that modul
 | Goldfish Bowl | `PandabornGoldfishBowl` | as `BeaverStatue` | as basis | as basis | Goldfish Bowl |  |
 | Garden Moon Gate | `PandabornGardenMoonGate` | as `BeaverStatue` | as basis | as basis | Garden Moon Gate |  |
 | String Lanterns | `PandabornStringLanterns` | as `Lantern` | as basis | as basis | String Lanterns |  |
-| Grand festival | `PandabornFestiveGrand` | Boosts | -0.04 | 1 | a Grand Festival | Festival |
+| Grand Festival | `PandabornFestiveGrand` | Boosts | -0.04 | 1 | a Grand Festival | Festival |
 
 ### Recipes
 
