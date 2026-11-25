@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Pandaborn.Core;
 using Pandaborn.Specs;
 using Timberborn.BaseComponentSystem;
 using Timberborn.BehaviorSystem;
@@ -53,11 +55,38 @@ namespace Pandaborn.Ringtails
         private const float NearlyRested = 0.75f;
         private int _dawnSleepDay = -1;
 
-        public RingtailRestRootBehavior(IDayNightCycle dayNightCycle, RingtailWorkday workday, RingtailService ringtailService)
+        private readonly IGatheringClock[] _gatherings;
+
+        public RingtailRestRootBehavior(IDayNightCycle dayNightCycle, RingtailWorkday workday, RingtailService ringtailService,
+                                        IEnumerable<IGatheringClock> gatherings)
         {
             _dayNightCycle = dayNightCycle;
             _workday = workday;
             _ringtailService = ringtailService;
+            _gatherings = gatherings != null ? gatherings.ToArray() : new IGatheringClock[0];
+        }
+
+        /// <summary>Forgets what an earlier game of this session found (RingtailService.Load).</summary>
+        internal static void NewGame()
+        {
+            InsertionError = null;
+            _insertionErrorLogged = false;
+        }
+
+        /// <summary>True while a gathering goes before the rest (Core's IGatheringClock: the Lantern Festival's evening at
+        /// the square, in this Ringtail's district). The rest then steps aside, and the behaviour below it, the gathering's
+        /// own, takes the Ringtail there. This module does not know which module that is.</summary>
+        public bool GathersNow
+        {
+            get
+            {
+                for (int i = 0; i < _gatherings.Length; i++)
+                {
+                    try { if (_gatherings[i] != null && _gatherings[i].GathersNow(this)) return true; }
+                    catch (Exception) { }
+                }
+                return false;
+            }
         }
 
         public void Awake()
@@ -144,7 +173,8 @@ namespace Pandaborn.Ringtails
 
         private Decision DecideRest(BehaviorAgent agent)
         {
-            if (!InRestWindow) return Decision.ReleaseNow();
+            if (!InRestWindow || GathersNow) return Decision.ReleaseNow();
+
 
             if (_sleepNeedBehavior != null && _needManager.HasNeed(SleepNeedId))
             {

@@ -126,6 +126,8 @@ namespace Pandaborn.Ringtails
         {
             Current = this;
             Returns = 0;
+            RingtailRestRootBehavior.NewGame();
+
             try { Spec = _templateService.GetSingle<AdultSpec>().GetSpec<PandabornRingtailsSpec>(); }
             catch (Exception) { Spec = null; }
             if (!IsRingtailsGame)

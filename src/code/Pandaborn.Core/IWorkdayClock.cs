@@ -49,4 +49,25 @@ namespace Pandaborn.Core
         public float NightShiftHours => 0f;
     }
 
+    /// <summary>
+    /// A gathering that goes before a colonist's own routine (the Lantern Festival's evening at the square). A module
+    /// that keeps colonists to a routine of its own above the worker behaviour (the Ringtails' day rest) takes
+    /// IEnumerable&lt;IGatheringClock&gt; in its per-colonist component and steps aside while any clock says the colonist
+    /// gathers now; the module that runs the gathering registers the clock and takes the colonist from there with its own
+    /// behaviour. With no such module only the inactive NoGatheringClock is there.
+    /// </summary>
+    public interface IGatheringClock
+    {
+        /// <summary>True while this colonist should be at the gathering now (its district's festival, in the hours of the
+        /// show). Called from the colonist's behaviour: must be cheap and must not throw.</summary>
+        bool GathersNow(Timberborn.BaseComponentSystem.BaseComponent colonist);
+    }
+
+    /// <summary>Always registered by Core: no gathering.</summary>
+    public sealed class NoGatheringClock : IGatheringClock
+    {
+        public bool GathersNow(Timberborn.BaseComponentSystem.BaseComponent colonist) => false;
+    }
+
+
 }

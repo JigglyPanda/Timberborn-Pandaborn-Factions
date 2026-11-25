@@ -19,6 +19,8 @@ namespace Pandaborn.Core
             Bind<PandabornEntityState>().AsTransient();
             MultiBind<IWorkdayClock>().To<NoWorkdayClock>().AsSingleton();
             MultiBind<INightShiftClock>().To<NoNightShiftClock>().AsSingleton();
+            MultiBind<IGatheringClock>().To<NoGatheringClock>().AsSingleton();
+
 
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
         }
