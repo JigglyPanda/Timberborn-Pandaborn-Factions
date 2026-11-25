@@ -62,9 +62,19 @@ namespace Pandaborn.Tutorial
             _loc = loc;
             _goodId = goodId ?? "";
             _amount = amount;
-            var good = goodService.GetGoodOrNull(_goodId);
-            _known = good != null;
-            _goodName = good?.PluralDisplayName?.Value ?? _goodId;
+            // built while TutorialService loads every stage: an exception here would fail the load of the game
+            try
+            {
+                var good = _goodId.Length > 0 ? goodService.GetGoodOrNull(_goodId) : null;
+                _known = good != null;
+                _goodName = good?.PluralDisplayName?.Value ?? _goodId;
+            }
+            catch (Exception e)
+            {
+                _known = false;
+                _goodName = _goodId;
+                Debug.LogWarning("[Pandaborn.Tutorial] reading the good of a tutorial step failed: " + e.Message);
+            }
             if (!_known) Debug.LogWarning("[Pandaborn.Tutorial] tutorial step names a good this faction does not have: " + _goodId);
         }
 
