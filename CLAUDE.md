@@ -24,8 +24,7 @@ Game design lives in [docs/DESIGN.md](docs/DESIGN.md). Read it before adding con
 | `mod/PandabornFactions/` | Hand-written files only: manifest, sprites, coat textures, hand-authored loc. Never put generated or copied blueprints here |
 | `src/gen/` | The generator (catalogue -> mod data, deterministic, with provenance) and the stat-sheet importer |
 | `schema/` | Every game spec class, field, type and enum per game version, from `tools/schema` (the validator's reference) |
-| `src/code/` | Runtime C#: `Pandaborn.Bootstrap` (the only DLL), `Specs`, `Core`, one module per feature (`Bell`, `Names`). Read its README before adding code |
-| `src/scripts/` | Water prototype code (flume, dew), to move into `src/code/Pandaborn.Water` |
+| `src/code/` | Runtime C#: `Pandaborn.Bootstrap` (the only DLL), `Specs`, `Core`, one module per feature (`Bell`, `Names`, `Look`, `Words`, `Water`, `Ringtails`, `RingtailsFallback`, `Tutorial`, `Festival`, `Flowering`). Read its README before adding code |
 | `proto/stage0/` | Stage-0 prototype: faction modifiers, plank tree, tutorial, the code modules, an in-game probe. Results in `docs/tech/stage0.md` |
 | `src/devharness/` | Dev-only automated test mod. Never shipped |
 | `src/unity/` | Sources for Unity asset bundles (materials, shaders, sounds) |
@@ -235,13 +234,13 @@ Taken from the decompiled game and installed mods. Items marked *untested* still
     `E:\PandabornDev\build\code\PandabornFactions`; the Look module brings the `pandabornlook` bundle; the stage also
     dumps the mod's own spec classes (`code-schema.json`) for the validator and runs `tools/check_api_lists.py`
     (game-API lists, a warning here, a failure for `package`). **A module ships only when its data is switched on**
-    in `catalogue/rules.toml [modules]` (today Bell, Names, Look, Words, Ringtails, RingtailsFallback; Water, Festival,
-    Flowering are left out of `Modules/modules.txt`). `-NoCode` builds the data-only fallback (no custom specs,
+    in `catalogue/rules.toml [modules]` (that file is the truth; on 2026-11-25 all ten modules are on and only the
+    `RingtailVenues` switch, which has no module, is off. The build installed on 2026-11-14 still lacks Water,
+    Festival and Flowering until a gate passes). `-NoCode` builds the data-only fallback (no custom specs,
     vanilla names, Folktails look). Do not also load `E:\PandabornDev\build\PandabornCodeDev` (`-ExtraMods`) with the
     installed faction: the code would be there twice.
-  * `bundles`: copies built `pandaborn*_win|_mac` bundles, never renamed, from `-BundleDirs` (today
-    `E:\PandabornDev\build\plants\AssetBundles` and `E:\PandabornDev\build\sound\AssetBundles`; planned:
-    `E:\PandabornDev\build\characters\attachments` once real hats and baskets exist) into `AssetBundles/`; fails if
+  * `bundles`: copies built `pandaborn*_win|_mac` bundles, never renamed, from `-BundleDirs` (defaults in
+    `tools/pandaborn.ps1`: the plants, sound and `E:\PandabornDev\build\characters\attachments` folders) into `AssetBundles/`; fails if
     an adopted model needs a bundle that is not built. A missing `_mac` twin is a warning in dev stages and an error
     for `package` (`validate.py --release`); Mac builds: docs/tech/mac.md. Never enable `proto/sound` with the
     faction (the same bundle twice crashes). A folder `AssetBundles.parked` (left by a second enabled copy) is never
@@ -349,7 +348,8 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   `test\modstate.pending.json` before changing anything, change only those values, and restore them in a `finally`
   (also on timeout, crash and Ctrl-C) after the game has exited (Unity rewrites prefs on exit), then re-read and
   compare (`modstate.restore.json`). While `modstate.pending.json` exists the script refuses to start; undo with
-  `-RestoreModState`. `-DryRun` prints the plan without changing anything. `result.json` `mods` proves what loaded.
+  `-RestoreModState`. `-DryRun` launches no game and changes no mod flag, but it still queues for the lock, rebuilds the harness, makes a
+  run folder and creates and removes junctions in `Mods`. `result.json` `mods` proves what loaded.
 * `-ExtraMods <folder>[,<folder>]` junctions each folder (it needs a `manifest.json`) into `Mods\<folder name>` for the
   run, refusing to replace a real folder, and removes the junctions it created on every exit path; if a stale flag
   had the mod switched off it is switched on for the run (same record/restore). Prototypes live in `proto/<name>/`,
@@ -368,8 +368,8 @@ powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -RestoreModStat
   validates that, then mirrors it into `E:\PandabornDev\build\PandabornFactions` and junctions
   `Documents\Timberborn\Mods\PandabornFactions` to it (the game loads mods through the junction; verified). It never
   touches any other `Mods` entry and refuses to replace a real folder; a build that fails validation is not installed.
-* Since 2026-11-14 the Inkpaws own their building list (`Buildings.Inkpaws`, 152 visible buildings; 15 more wait
-  for the Water, Festival and Ringtail-venue modules), goods
+* Since 2026-11-14 the Inkpaws own their building list (`Buildings.Inkpaws`, about 170 buildings; the count and what is
+  hidden are in `<gen>.report.json` and `docs/CONTENT.md`, generated), goods
   (`Goods.Inkpaws`), needs (`Needs.Inkpaws`) and plants (`NaturalResources.Inkpaws`); an Inkpaws game no longer
   offers `*.Folktails` templates. Re-themed vanilla buildings are `<Name>.Inkpaws` copies; new buildings are
   `Pandaborn<Name>.Inkpaws`, on the art lanes' models where adopted and on vanilla stand-in models otherwise
