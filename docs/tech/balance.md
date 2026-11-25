@@ -1,4 +1,714 @@
-# Balance: the colony model and the first-pass numbers
+# Balance
+
+Status: second pass, 2026-11-25, against the build generated that day (catalogue at `804fff1`). Lane: balance.
+This page proposes; the coordinator decides; the catalogue lane applies. Nothing here has been changed in
+`catalogue/`.
+
+The second pass is the part above the line "First pass". It reads the numbers the game reads
+([`tools/balance`](../../tools/balance/README.md): vanilla blueprints plus the generated Inkpaws build) and is
+calibrated against the scripted playtests. The first pass (2026-11-14, `tools/sim`) is kept below, because other
+pages cite its question numbers; where the two disagree, the second pass is right and
+[Corrections to the first pass](#corrections-to-the-first-pass) says why.
+
+No game was run for this pass. Every table is in `tools/balance/out/*.md` and is rebuilt by
+`E:\PandabornDev\tools\venv\Scripts\python.exe -I tools\balance\run.py all`.
+
+## Summary
+
+1. **On Normal, cycles 1 to 3 cannot go wrong for an Inkpaws village, and one cause is an accident.** The same
+   scripted "careless" colony (no water storage, one crop, three homes) lost 10 of 39 Folktails to thirst and hunger
+   over three runs and no Inkpaw over two. The accident is the shelf rule: it turns the Water Pump into a
+   146-water tank (vanilla 15), five days of drinking for the starting thirteen, for 12 logs. The rest is design
+   (crops that sit out a short drought) and is fine.
+2. **The bell is fair but 12 hours is not its sweet spot.** Work is flat from 12 to 16 hours with a 2% bulge at 13
+   to 15, at every wellbeing level; the walking cap is never reached. All rituals fit in any day of 15 hours or less;
+   a 16-hour day loses only the nap. Twelve hours becomes the best day only when Ringtails are there to use the
+   night. A flat curve removes the bulge.
+3. **Ringtails are not the equals the design says they are.** They get no rested bonus, so at twelve and twelve a
+   Ringtail builder does 0.75 of an Inkpaw's work and a courier 0.75 to 0.87, while eating the same. The first pass
+   assumed they shared the bonus. This needs a decision (three options below).
+4. **Shelves do not starve construction.** A worker without haulers fetches one load at a time whatever the shelf
+   size (game code), so nothing is hoarded before a Hauling Post or Courier Post exists; after that the one-time
+   extra is about 37 logs early and 80 logs and 55 poles in a full mid-game town. Keep 48 hours for workshops; take
+   pumps and taps out of the rule.
+5. **The first-two-hours table has two beats the numbers do not allow.** A scoop wheel and flume by day 5 to 8
+   needs 290 science and lands on day 14 to 15 with two inventors; tea at the Teahouse by day 3 to 5 is impossible
+   before day 12 (bushes) and realistically day 19 (science), and the Teahouse is stocked only by haulers.
+6. **Mid game, Inkpaws hold 7 to 14 more wellbeing than Folktails at equal science** (45 against 32 at 4,000
+   science), and the ceiling is 94 against 84. Four one-point trims bring that to 3 to 10 and 90.
+7. **Late science is three times as dear in labour**: the Star Tower is hidden until its module exists, so the last
+   38,000 science is 826 inventor-days against 275 Folktails Observatory worker-days.
+8. **The festival pays until about wellbeing 50** (return 2.0 at wellbeing 10, 1.0 at 50, 0.45 at 60) and its first
+   three calls unlock +5 wellbeing of decorations. After that it is a pleasure that costs most of a working day a
+   cycle.
+9. **The Wooden Ox outclasses a fully boosted Folktails bot** at hauling (517 poles a day against 465) with no
+   upkeep and a cheaper build. Its recipe should cost about twice what it does.
+10. **Hard breaks where vanilla Hard breaks: water in the first week.** Both scripted Hard colonies died of thirst,
+    the Inkpaws one drought later. Nothing Inkpaw-specific fails on Hard that the design does not already name.
+
+## How far to trust this
+
+| Mark | Meaning |
+|---|---|
+| **measured** | Read from a finished game run (run named) |
+| **data** | Arithmetic on blueprint values, no behaviour assumed |
+| **model** | Arithmetic that also assumes behaviour (distances, time off duty, a player's choices) |
+| **thin** | A judgement with little behind it; a run is named that would settle it |
+
+### What the runs can and cannot tell us
+
+The playtest lane was stopped before it reported. Its runs are in `E:\PandabornDev\build\test\pt-*`.
+
+| Runs | Verdict | Good for | Not good for |
+|---|---|---|---|
+| `pt-ft-base-m2`, `-m3`, `-m4`; `pt-ink-std-m1`, `-m3` (Meander, Normal, 41 days) | Trustworthy as far as they go | The first six days hour by hour; consumption; pump, inventor and lumberjack rates; first-crop days; stores before a drought; wellbeing of a small village; whether a drought hurts | Growth, the mid game, building pace after day 6: the driver ran out of trees it could mark (logs fell from 33 a day to 0 to 8), homes stalled, nobody was born. "13 to 18 colonists in 41 days" is the driver, not the faction |
+| `pt-ft-care-m1..3`, `pt-ink-care-m1`, `-m3` (careless, 31 days) | Trustworthy for the question they ask | Does a careless start survive the first drought | Anything after it |
+| `pt-ft-hard-m1`, `pt-ink-hard-m1`, `-m2` (Hard) | Trustworthy as worst cases | Where an unprepared Hard start dies and of what; plant deaths in a five-day drought | Whether a prepared player survives (the plan does not stock up) |
+| `pt-ft-base-m1` | Discard | | Three colonists died homeless; the mill step never ran |
+| `pt-ft-base-1`, `-2`, `pt-ftb-dev1..5` (Plains) | Discard | | 0 adults by day 8 to 11: driver development |
+| `pt-ft-base-m5`, `pt-ink-std-1`, `-m2`, `-m4`, `pt-ink-care-m2` | Discard | | No telemetry |
+| `rt2-shelvesA/B/C`, `rt2-soak`, `rt3_breed3` | Trustworthy, small | Couriers and shelf size, Ringtail loads (2 logs a trip), the kit valve | Any rate per 100 colonists: one small layout each |
+| `water-*` | Trustworthy, measured by the water lane | Flow, moisture reach, tap and wheel rates (docs/tech/water.md) | A drought with a colony drinking |
+| `events-*` | Mechanism only | That the festival and Flowering run | Their balance: no colony economy in them |
+
+Two more limits on the faction-against-faction runs. The driver cannot lay power shafts, so the Folktails colonies
+never made a plank and built nothing that needs one, while the Inkpaws cut poles from bamboo (244 piled up unused
+by day 35, with logs at zero): the comparison is fair for water, food and the first drought, and unfair for
+anything built after the first week. And every colony stayed on a 16-hour day, so the bell was never exercised.
+The playtest lane's own charts of the careless and Hard pairs are in `docs/tech/playtest/`.
+
+No run had a Teahouse with tea in it, a 12-hour day with a real economy, a festival's effect on output, an ox, or
+a colony above 20. Everything said about those is **model**.
+
+## Calibration
+
+| Quantity | Measured in game | Model |
+|---|---|---|
+| Logs a lumberjack a day (pine, wellbeing under 5) | 16.9 | 16.2 |
+| Water a pump worker makes a day | 40.2 | 39.4 (the recipe says 46; pumps run at 85%) |
+| Science an inventor makes a day | 16.3 | 15.3 |
+| Food a colonist eats a day | 2.57 | 2.57 (set from this; the rule of thumb says 2.67) |
+| Water a colonist drinks a day | 2.10 | 2.11 (set from this) |
+| Shoot bamboo alive after a five-day drought | 45% (52 of 116 plants, two runs) | 50% |
+| Crop tiles one farmer keeps harvested | 35 (three farmers saturated on 105 tiles) | 29.5 |
+| First crop | Shoots day 5 to 6, carrots day 6 to 7 | One day apart (growth 3 against 4) |
+
+A Folktails colony in the model reproduces the vanilla pace to within 6% on every rate we could measure. The model
+was **not** calibrated on walking distances, on time off duty, or on anything in the mid game.
+
+## Q1. Is the faction too easy in cycles 1 to 3?
+
+**Yes on Normal, and the size of it is measured.** Same script, same map:
+
+| Scenario | Colonists | Water at the first drought | Food at the first drought | Thirsty colonist-days | Died of thirst or hunger |
+|---|---|---|---|---|---|
+| Folktails standard (3 runs) | 13 to 11-12 | 41 to 51 | 99 to 106 | 4 to 29 | 0 |
+| Inkpaws standard (2 runs) | 13 to 7-18 | 191 to 193 | 159 to 160 | 0 | 0 |
+| Folktails careless (3 runs) | 13 to 0-9 | 0 | 38 to 92 | 37 to 102 | 9, 1, 0 |
+| Inkpaws careless (2 runs) | 13 to 8-9 | 114 to 120 | 106 | 0 | 0 |
+
+Four causes, largest first.
+
+**1. The pump is a tank (data, measured).** `rules.toml [shelves] workshop_hours = 48` sizes a recipe's store as 48
+hours of work. The Water recipe has no input, so the rule only inflates its output: 146 water in one pump (vanilla
+15), 720 in a Large Water Pump (vanilla 60). In `pt-ink-std-m3` the pump held 108 of the village's 148 water. A
+Small Cistern (40 water, 15 logs) is pointless beside it, and the first drought's lesson, "build a cistern", is
+never taught. In vanilla the 15-unit pump is also the careless player's trap: the Folktails careless colonies were
+thirsty from day 5 in fair weather, because thirteen beavers drink 27 in an evening. A one-day store (49) keeps
+Inkpaws out of that trap and still leaves a three-day drought to prepare for.
+
+**2. Staples that sit out a drought, at high yield, with no infrastructure (data).**
+
+| Food | Dish wellbeing | Food per tile-day | Work hours per food | Science | Needs | Dry days |
+|---|---|---|---|---|---|---|
+| Folktails carrot | 1 | 0.75 | 0.58 | 0 | - | 2 |
+| Folktails grilled potato | 2 | 0.67 | 0.57 | 0 | fuel | 1 |
+| Folktails bread | 2 | 1.50 | 0.42 | 340 | fuel, power | 0.5 |
+| Bamboo shoots | 0 | 0.67 | 0.77 | 0 | - | 5 |
+| Cabbage | 1 | 0.60 | 0.58 | 0 | - | 7 |
+| Steamed shoots | 2 | 1.33 | 0.64 | 40 | fuel | 5 |
+| Pickles | 2 | 1.80 | 0.53 | 120 | - | 7 |
+| Steamed rice | 3 | 1.50 | 0.40 | 190 | fuel | 1 |
+| Sweet rice balls | 2 | 1.07 | 0.51 | 650 | fuel | 1 |
+| Hot pot | 4 | 1.71 | 0.39 | 800 | fuel | 7 |
+
+The review's figures hold: 1.33 and 1.8 against 0.75 and 1.5. But the edge is land, timing and drought, **not
+labour**: an Inkpaw food costs 0.4 to 0.8 work hours, a Folktails one 0.4 to 0.6. Land was not the limit in any
+run (60 shoot and 45 cabbage tiles filled every store; farmers, not tiles, were saturated). So cutting yields would
+change little in cycles 1 to 3. Share of unwatered plants alive after the n-th drought (model, calibrated above):
+
+| Mode | Drought | Days | Carrot (2) | Shoot bamboo (5) | Cabbage (7) | Timber bamboo (10) |
+|---|---|---|---|---|---|---|
+| Normal | 1 | 2-3 | 20% | 100% | 100% | 100% |
+| Normal | 2 | 3-5 | 0% | 99% | 100% | 100% |
+| Normal | 3 | 3-6 | 0% | 74% | 100% | 100% |
+| Normal | 4 | 4-7 | 0% | 41% | 96% | 100% |
+| Normal | 5 | 4-8 | 0% | 18% | 75% | 100% |
+| Normal | 6+ | 5-9 | 0% | 6% | 50% | 100% |
+
+Food stops being free in cycle 3 (shoots) and cycle 5 (cabbage). That is the design's choice ("the first drought
+was the likeliest place for a new player to quit") and it tapers at a sensible pace. Leave the dry days alone:
+cabbage at 6 would cost the Hard start more than it adds to Normal (Hard first drought 92% instead of 100%, second
+50% instead of 75%). Timber bamboo never dies of drought on Normal, where no drought exceeds 9 days.
+
+**3. Bigger harvest stores (data, measured).** A farmhouse holds 96 (vanilla 50), a flag 32 (20). Measured food at
+the first drought: 106 to 160 against 38 to 106. This is `harvest_hours = 16`, the day's harvest the night couriers
+clear, and it is what the rule is for. Leave it.
+
+**4. Poles and lift (data, model).** A pole from bamboo costs 0.41 of a plank's labour and bamboo yields 0.4 poles
+a tile-day against pine's 0.17 logs. With lift 18 an Inkpaw builder moves 1.40 times a Folktails builder's units.
+Neither showed in the runs, which were log-bound from day 2 (33 logs a day from two flags, both factions). Logs
+cost Inkpaws what they cost beavers; that is the brake, and it holds.
+
+**Early wellbeing is not out of line.** At no science an Inkpaws village can hold 13 and a Folktails one 12; at
+1,000 science 27 against 26. The 4-log Hammock (+3) is the cheapest wellbeing in the game and the measured villages
+sat at 9 to 10 against 5 to 6 on day 30, but the working-speed step from that is one tier. Leave the nap at 3.
+
+**Recommendation.** Fix the pump (must). Leave yields, growth, cook times and dry days. Optionally bring pickles
+to bread's yield (2 cabbage to 5 pickles: 1.5 a tile-day), since pickles are today the best food in the game on
+land, science, fuel and drought at once (thin: static sums only).
+
+## Q2. The bell
+
+**Work (data, verified in game by the Bell lane at wellbeing 80).** Against the same Inkpaw on a 16-hour day:
+
+| Day | Rested | Work, building, carrying | With a flat curve |
+|---|---|---|---|
+| 8 h | +33% | 0.66 | 0.66 |
+| 10 h | +33% | 0.83 | 0.83 |
+| 12 h | +33% | 1.00 | 1.00 |
+| 13 h | +25% | 1.01 | 1.00 |
+| 14 h | +16% | 1.02 | 1.00 |
+| 15 h | +8% | 1.02 | 1.00 |
+| 16 h | 0 | 1.00 | 1.00 |
+
+Identical at wellbeing 0, 20, 50 and 80: the bonus multiplies, and the fastest possible Inkpaw walks at 2.39
+against a cap of 2.66. There is **no short-day optimum** (10 hours loses 17%) and no way to keep the bonus on a
+long day (the day is locked at dawn).
+
+**Rituals (model; the time off duty is assumed, see `tools/balance/day.py`).** A colonist has 24 minus the day
+minus 3.9 hours reserved for bed minus about 1.2 hours of meals. The Inkpaws' full set of rituals needs 3.8 hours
+a day (nap 60 minutes, tea 40, the rest 12 to 20 each, plus walking); the Folktails' full set needs 2.6.
+
+| Day | Leisure hours | Inkpaw rituals kept (of 23 wellbeing) | Lapses | Folktails kept (of 22) |
+|---|---|---|---|---|
+| 12 h | 6.9 | 23 | - | 22 |
+| 14 h | 4.9 | 23 | - | 22 |
+| 15 h | 3.9 | 23 | - | 22 |
+| 16 h | 2.9 | 20 | Nap | 22 |
+| 17 h | 1.9 | 15 | Tea, Nap | 19 |
+| 18 h | 0.9 | 9 | Play, Soak, Tea, Nap | 14 |
+
+The measured villages kept the nap on a 16-hour day with nothing else to visit, so "16 hours loses the nap" is
+true only once the other attractions are built. The first pass's "16 hours keeps 2 of 8 and costs 17% of output"
+was too harsh: the same budget lets Folktails keep all eleven of their attractions at 16 hours, as they do in the
+real game.
+
+**So where is the sweet spot?** Colony work per colonist with every ritual built, against Folktails on 16 hours:
+12 h 1.01, 13 h 1.03, 14 h 1.03 to 1.04, 15 h 1.03, 16 h 0.97 to 0.99. Without Ringtails the best day is 13 to 15
+hours by a hair, and 12 leaves three hours a day with nothing to do. With Ringtails every hour the Inkpaws give up
+costs them nothing and is an hour of night work: at 30% Ringtails 12 hours is the best day (44.9 against 44.6 at
+13 and 40.2 at 16).
+
+**Degenerate optimum.** One small one: 14 hours beats 12 by 2% and keeps every ritual, because the bonus falls in
+a straight line while the hours grow. A curve of `16 / hours - 1` (points at 13, 14 and 15) is flat, so the
+suggestion "work a short day" is never wrong by a number. Nothing else: 16 hours with rituals ignored equals 12
+hours in work and is 8 wellbeing poorer (nap 3, tea 5).
+
+**Recommendation.** Flat curve (would improve). Tell the truth in the suggestion text: a short day costs nothing
+and leaves time for tea; do not promise it is faster.
+
+## Q3. Nap and tea
+
+Colonists one building serves (model: seats x awake off-duty hours x 0.75, the share measured on hammocks):
+
+| Building | Seats | Wellbeing | Minutes a colonist-day | 12-hour day | 14 | 16 |
+|---|---|---|---|---|---|---|
+| Hammock | 1 | 3 | 60 | 6 | 5 | 3 |
+| Nap Platform | 5 | 3 (+1 rooftop) | 60 | 30 | 23 | 15 |
+| Teahouse | 5 | 5 | 40 | 46 | 34 | 23 |
+| Slide and Swing | 7 | 3 | 20 | 128 | 96 | 65 |
+| Kindergarten | 5 | 4 | 20 | 91 | 69 | 46 |
+| Ink Studio | 1 | 3 | 12 | 30 | 23 | 15 |
+| Hot Spring Bath | 8 | 3 | 20 | 146 | 110 | 74 |
+
+* **Measured:** four hammocks kept the nap of 13 to 15 colonists (three or four of them cubs with the whole day
+  free) on a 16-hour day: 3 to 4 colonists a hammock, as the table says.
+* "One Teahouse serves about 25" is right on a 16-hour day and modest on a 12-hour one (46). Leave the five seats.
+* The Nap Platform has five seats (its catalogue note said eight; the catalogue lane is correcting the note).
+  Five is enough.
+* The Ink Studio has one seat: a hundred colonists need four. That is a wall of studios for a +3; give it four
+  seats if its model allows (thin: not measured).
+
+**The tea chain for 100 colonists (model, 12-hour day).** A Teahouse uses 1 tea and 0.5 water for every hour it
+has anyone inside, whatever the number of guests (game code: `GoodConsumingAttraction`). Three Teahouses, 22 to 34
+tea and 11 to 17 water a day, 11 to 17 tea bushes, and half to three-quarters of a worker to pick, roast and
+carry. The water is 5 to 8% of what the village drinks. Against that, +5 wellbeing is worth 11% more work at
+wellbeing 20, 7% at 40, 3% at 60: seven to eleven workers' worth in a hundred through the mid game. Tea is worth
+its wellbeing about ten times over, so its real costs are the wait and the logistics:
+
+* a bush bears its first leaves 9 days after planting (grow 6, then 3), so no tea before day 12;
+* Roastery and Teahouse are 400 science;
+* **only haulers or night couriers stock a Teahouse** (it is a good-consuming building, like the vanilla Domed
+  Garden). A village with neither has a closed Teahouse. The same goes for the Hot Spring Bath's water. The
+  tutorial's tea stage should say so.
+
+`DESIGN.md` says a cup "also takes the edge off thirst". The build does not do that (the Teahouse's only effect
+is Tea), and it uses water. Either is fine for balance; the sentence should go.
+
+## Q4. Ringtails
+
+**One Ringtail against one Inkpaw, per shift (data plus distances; wellbeing 30):**
+
+| Bell | Ringtail | Builder, logs | Builder, poles | Courier, logs | Courier, water or food | Builder against a Folktails builder |
+|---|---|---|---|---|---|---|
+| 12 | as shipped: lift 14, no rested bonus | 0.75 | 0.75 | 0.75 | 0.87 | 1.08 |
+| 12 | lift 16 | 0.75 | 0.90 | 0.94 | 1.00 | 1.14 |
+| 12 | lift 18 | 1.07 | 1.04 | 1.12 | 1.12 | 1.52 |
+| 12 | lift 14 and the rested bonus by their own night | 1.00 | 1.00 | 1.00 | 1.17 | 1.44 |
+| 14 | as shipped | 0.61 | 0.61 | 0.61 | 0.71 | 0.89 |
+| 16 | as shipped | 0.49 | 0.49 | 0.49 | 0.58 | 0.71 |
+
+`DESIGN.md` (change log, lift 18 and 14): "this makes a night builder exactly as good as a day builder at twelve
+and twelve". That row is the fourth one. The first pass's stat sheet gave Ringtails "the same curve, by the
+Ringtail shift"; the shipped Ringtail template carries no `PandabornBellSpec` (two-peoples.md 18.1: "the rested
+bonus is an Inkpaw thing"). So today a Ringtail is a quarter weaker than an Inkpaw in the only jobs it may hold,
+and eats the same. Measured support for the load side: night builders carried 36 goods in 18 trips (`rt2-soak`).
+
+Three ways to make the design's sentence true:
+
+| Option | Change | Result at 12/12 | Cost |
+|---|---|---|---|
+| A (recommended) | Ringtails get the rested bonus by the length of their night | 1.00 / 1.00 / 1.00 / 1.17 | Code: Bell and Ringtails lanes. One rule for both peoples: "a twelve-hour shift is a rested shift" |
+| B | Data only: Ringtail `BaseWalkingSpeed` and `BaseSlowedSpeed` 2.7 to 3.6 | 1.00 in carrying jobs, 0.75 in the building work itself (a small share) | Reverses the 2026-11-14 decision that Ringtails walk at Inkpaw speed; animation scale to retune |
+| C | Data only: Ringtail lift 14 to 16 | 0.75 on logs, 0.90 to 1.00 on the rest | "Inkpaws lift more" stays true, parity does not quite arrive |
+
+**Is a 12/12 village with Ringtails clearly better, without being mandatory?**
+
+* **Not mandatory:** yes. Nothing a one-people village needs is a Ringtail job, and day haulers do what couriers do.
+* **Clearly better early:** yes, because of how fast they come, not how well they work. The first Moon Loft adds
+  two adults at once to a village of ten or twelve, and each loft raises a kit a day while night jobs are open: a
+  set of three posts (4 + 6 + 2 jobs) can be filled within about ten days, against Inkpaw births that need homes
+  and luck. The valve works (`rt3_breed3`: never more Ringtails than night jobs, no kits while anyone is hungry).
+* **Clearly better late:** no, as shipped. Per mouth an Inkpaw hauler beats a Ringtail courier by 15 to 33%.
+  With option A the two are equal and the night is free working time, which is the design.
+
+**What couriers buy (model, and it matches the one measurement):** a workshop worker alone is at its bench 62 to
+90% of the day (smelter 35%); supplied, all of it. The measured pair was Paper Mill and Pickle Yard: model 83% for
+both, so +20% when supplied; measured +18% producing hours with couriers (`rt2-shelvesB` against `C`). A courier
+hour frees 1.1 to 1.6 Inkpaw hours except at the Hot Pot Hall (0.8: three inputs).
+
+**How many.** A hundred Inkpaws with about forty workshop workers need 80 to 120 courier hours a night (7 to 10
+couriers), 3 to 5 more for flags, farms and pumps, 4 to 8 builders, 2 foragers: **about 20 Ringtails per 100
+Inkpaws (15 to 25)**, which is two Courier Posts, one or two Builders' Posts and a Foragers' Post. Past that they
+idle; the valve stops there by itself. Thin: the per-night courier hours are model only.
+
+Posts and loft: Moon Loft 200 science (10 logs, 10 poles), Builders' Post 50, Courier Post 150, Foragers' Post
+100, all free once the family arrives. Fine as they are.
+
+## Q5. Shelves
+
+**Does a 48-hour shelf make workshops hoard logs and poles in the first days? No (game code).** A workshop worker
+produces if it can, else carries output out, else fetches **one load** of its emptiest input
+(`WorkshopsTemplateModuleProvider`: Produce, EmptyOutput, FillInput). It never tops up a shelf. Only haulers do
+(`FillInputHaulBehaviorProvider`, weight = one minus the fill). So before a Hauling Post or Courier Post stands,
+shelf size changes nothing; `rt2-shelvesC` measured the same thing ("without Ringtails the bigger shelves are
+harmless").
+
+Once haulers exist, what the shelves can hold back (data):
+
+| Workshop | Cycles held | Vanilla | Held at 48 h |
+|---|---|---|---|
+| Pole Mill | 39 | 13 | 39 logs |
+| Steamer (shoots) | 96 | 30 | 16 logs of fuel |
+| Hot Pot Hall, Kitchen | 32, 48 | 15, 20 | 11 and 12 logs of fuel |
+| Smelter | 24 | 13 | 24 logs of fuel, 48 scrap |
+| Gear Workshop | 16 | 10 | 16 poles |
+| Paper Mill | 31 | 10 | 31 poles |
+| Lantern Workshop | 32 | 10 | 32 poles, 64 paper |
+| Smoke Kiln | 16 | 10 | 16 poles |
+| **Water Pump** | **146** | 15 | output only: 146 water |
+| **Cistern Tap, Discharge** | **48** | 5 | **144 water** |
+
+One of each, kept full: 134 logs and 95 poles, against 56 and 40 under the vanilla sizes. In the first cycle (Pole
+Mill and Steamer) it is 55 logs against 18: **37 logs once**, a day of two lumberjacks or three dens delayed by a
+day. Not a starvation.
+
+And 48 hours is not as long as it sounds: it is hours of work at speed 1. At wellbeing 30 on a 12-hour day a
+worker goes through a 48-hour shelf in 1.4 days, so 24 hours would leave the day crew fetching again by early
+afternoon and undo the measured gain (46% more produced with three-day shelves than with one-day ones).
+
+**Recommendation.** Keep `workshop_hours = 48` for every workshop with inputs, early buildings included. Take the
+two kinds the rule was never meant for out of it:
+
+* recipes with no input (pumps, the Badwater Pump, the excavator): one day, like flags and farms;
+* water poured away (Cistern Tap, Discharge): the vanilla size. A tap with a 144-water input lets haulers move 144
+  water (68 colonist-days of drinking) out of the cisterns into a store nobody can drink from, the moment it is
+  built.
+
+Optional: the Pole Mill at 24 hours (20 logs), since logs are the one early good everything waits for (thin).
+Input and output cannot be split in data: one `CyclesCapacity` sizes both.
+
+## Q6. Water
+
+**Drinking water for a drought (data):**
+
+| Colonists | Dry days | Water | Small (40) | Medium (300) | Large (1200) |
+|---|---|---|---|---|---|
+| 20 | 3 / 6 / 9 | 127 / 253 / 380 | 3.2 / 6.3 / 9.5 | 0.4 / 0.8 / 1.3 | 0.1 / 0.2 / 0.3 |
+| 50 | 3 / 6 / 9 | 316 / 633 / 950 | 7.9 / 15.8 / 23.7 | 1.1 / 2.1 / 3.2 | 0.3 / 0.5 / 0.8 |
+| 100 | 3 / 6 / 9 | 633 / 1266 / 1899 | 15.8 / 31.6 / 47.5 | 2.1 / 4.2 / 6.3 | 0.5 / 1.1 / 1.6 |
+
+Cisterns cost less than vanilla tanks and come sooner: Medium 20 logs and 30 poles at 100 science (vanilla: 30
+planks and 20 gears, 120); Large 80 poles, 40 gears, 20 metal at 500 (80, 60, 30 at 600). That is what "cisterns
+carry the village" needs, and it is why the pump must stop being a better cistern than the cisterns.
+
+**Irrigation (measured rates, docs/tech/water.md: 0.21 m3 a day per flume tile, a band 13 tiles wide, 0.2 m3 per
+Water):**
+
+| Source | m3 a day | Flume tiles kept wet | Farm tiles kept moist |
+|---|---|---|---|
+| Scoop Wheel at a current of 0.30 (0.10 m3/s) | 46 | 219 | 2,850 |
+| Flume Gate at its default (0.36 m3/s) | 166 | 790 | 10,300 |
+| Cistern Tap, one worker (3 Water an hour of work) | 9.6 | 46 | 594 |
+
+* **The tap's rule of thumb is right:** 100 Water for six days keeps 206 farm tiles moist (the text says about
+  200). A Medium Cistern through a tap keeps 620 tiles for six days or 410 for nine; a Large one keeps 495 tiles
+  through a thirty-day Hard drought. Thin in one respect: the 0.21 was measured on one strip in fair weather.
+* **One Scoop Wheel waters any village** (20 logs, 30 poles, 150 science, no workers, no power; a vanilla
+  Mechanical Pump lifts 2.5 times as much for 2,000 science and 500 hp). It is the faction's first pillar and it
+  only works in a current, so it stops when it would matter most. Leave its rate. Its science is in Q10.
+* **An unpaused tap pours 36 to 48 Water a day in any weather**, the drinking of about twenty pandas. Its text
+  says it keeps a strip alive in a drought; nothing stops it in the wet. A "pour only in a drought" switch would
+  be worth the code. Not a number.
+* **Dew Collector:** 2 Water a day, 0.7 in a drought, for 15 poles, 4 paper and 300 science. One colonist's water
+  takes 1.1 collectors in fair weather and 3.0 in a drought. Weak enough that spam is not worth it against
+  cisterns (a Large Cistern covers a thirty-day drought for eight times less material). **Its text says collectors
+  close together share the dew; the code has no such rule** (`DewLimiter` reads the weather only). Drop the
+  sentence or write the rule.
+
+## Q7. The Great Flowering
+
+**The reserve depends on how much of the food is shoots (data):**
+
+| Shoots' share of the food | Food to store per panda for the 12 days | ...if the fields are re-marked with cabbage |
+|---|---|---|
+| 20% | 6 | 3 |
+| 35% (what the tooltip assumes) | 11 | 5 |
+| 50% | 15 | 7 |
+| 75% | 23 | 11 |
+| 100% | 31 | 14 |
+
+"About 11 food per panda" is right for a varied village and a third of what a shoots-only village needs. The
+announcement comes a full cycle ahead, so the fix is advice, not numbers: "store about 11 food each, more if you
+live on shoots, or sow cabbage". With that it is not a death sentence on Normal: the rest ends on day 9 and
+shoots are back on day 12, before the cycle's drought (day 14 to 18).
+
+**The windfall (data).** Forty colonists with a third of their food from steamed shoots grow about 27 shoot tiles:
+81 seed, 324 seed cakes, three days of everyone's food or a month of the +3 dish. The food lost in the gap is
+about 430. So in food the Flowering is roughly even only for villages that eat shoots raw (twice the tiles, twice
+the seed); what it really pays is +3 wellbeing for four to nine weeks, and only to a village that already has
+rice flour and a Kitchen (750 science of chain). Worth preparing for; not much of a windfall. Six cakes a seed
+instead of four would make it one (thin).
+
+**Timber year:** 14 days without bamboo poles. One Pole Mill worker makes 27 poles a day from logs at wellbeing 30,
+supplied, so "about 5 poles per panda" plus a mill is safe. Thin: no run measured how many poles a village uses.
+
+**Hard:** the temperate season is 5 to 8 days, so the nine-day rest always ends inside the cycle's drought, and
+the sixth Hard drought lasts 8 to 16 days. But unwatered shoot bamboo is dead in every Hard drought from the
+third on anyway (5% alive), so on Hard the Flowering takes away a crop the weather already took. Irrigated shoots
+lose the 12 days as on Normal. No change needed.
+
+## Q8. The Lantern Festival
+
+A Small Festival burns 40 lanterns (40 paper, 40 poles, 61 work hours at speed 1) and 60 dishes, and costs one
+working day. Festive +4 lasts 20 days; a Normal cycle lasts 15 to 26 (model):
+
+| Colony wellbeing | Work speed from +4 | Days of work gained | Days spent (40 colonists) | Return |
+|---|---|---|---|---|
+| 10 | +10.7% | 2.1 | 1.1 | 2.0 |
+| 20 | +8.4% | 1.7 | 1.1 | 1.6 |
+| 30 | +7.0% | 1.4 | 1.1 | 1.3 |
+| 40 | +5.9% | 1.2 | 1.1 | 1.1 |
+| 50 | +5.2% | 1.0 | 1.1 | 1.0 |
+| 60 | +2.4% | 0.5 | 1.1 | 0.45 |
+| 80 | +1.1% | 0.2 | 1.1 | 0.2 |
+
+**Worth calling every cycle until the village is past wellbeing 50**, and the first three calls are worth it at
+any wellbeing: Tradition 1 unlocks the Goldfish Bowl (+2) and String Lanterns (+1), Tradition 3 the Garden Moon
+Gate (+2). After that it costs about half a working day a cycle net, because the game's wellbeing tiers flatten
+above 60 and no wellbeing reward can change that. That is acceptable for a festival: it should be a pleasure by
+then, not an order. Two small things:
+
+* Festive lasts 20 days and a cycle up to 26, so a village that calls it every cycle is still without it for up
+  to six days. A decay of 0.04 (25 days) closes the gap (would improve).
+* A Grand Festival's extra +1 costs 20 fireworks, which need an Explosives Factory (400 science, 30 metal). Fine.
+
+## Q9. Late game
+
+**Materials (model; worker-days per unit at wellbeing 30, made and carried 12 tiles):**
+
+| Material | Folktails | Inkpaws | Ratio |
+|---|---|---|---|
+| Log | 0.04 | 0.04 | 1.00 |
+| Plank / pole | 0.11 | 0.04 | 0.41 |
+| Gear | 0.21 | 0.14 | 0.66 |
+| Paper | 0.06 | 0.05 | 0.83 |
+| Treated plank / cured pole | 0.26 | 0.16 | 0.62 |
+| Metal block | 0.32 | 0.32 | 1.00 |
+
+**Monuments and the wonder:**
+
+| Faction | Monument | Awe | Radius | Science | Worker-days of materials |
+|---|---|---|---|---|---|
+| Folktails | Farmer Monument | 2 | 7 | 1,000 | 7 |
+| Folktails | Brazier of Bonding | 4 | 10 | 3,000 | 43 |
+| Folktails | Fountain of Joy | 6 | 20 | 9,000 | 95 |
+| Folktails | Hall of Abundance | 8 | 30 | 15,000 | 315 |
+| Folktails | Earth Recultivator | 10 | 40 | 20,000 | 1,433 + 90 to fill |
+| Inkpaws | Memorial Arch | 8 | 10 | 3,000 | 45 |
+| Inkpaws | Great Sitting Panda | 12 | 30 | 15,000 | 385 |
+| Inkpaws | Sky Lantern | 10 | 40 | 20,000 | 1,335 + 76 to fill |
+
+* **The Sky Lantern is fair**: 7% less labour than the Earth Recultivator, same science, same 15,000 build hours.
+  (Scrap, resin and extract are rough figures here; the comparison is not better than 15%.)
+* **The Memorial Arch is a Brazier's price for a Hall's awe**: +8 for 3,000 science and 45 worker-days. Folktails
+  pay 4,000 science and 51 worker-days for +6. The first pass costed the Arch as "+6 = Farmer Monument plus
+  Brazier"; its awe was later raised to 8 to reach 30 with three monuments. Put the two points on the Great
+  Sitting Panda instead (Arch 6, Panda 14): the total stays 30 and each step matches its vanilla pair.
+* Awe 20 costs Inkpaws 18,000 science against 28,000. That is tolerable **only while the Star Tower is missing**
+  (Q10). When it ships, the Panda should cost 20,000.
+
+**Wooden Ox (data plus distances):**
+
+| Worker | Lift | Poles hauled a day | Units built | Workshop hours at speed 1 |
+|---|---|---|---|---|
+| Wooden Ox | 30 | 517 | 176 | 38 |
+| Folktails bot, fuel only | 20 | 336 | 117 | 38 |
+| Folktails bot, both boosts | 20 | 465 | 165 | 62 |
+| Inkpaw, wellbeing 50, 12 h | 18 | 238 | 95 | 46 |
+
+An ox costs about 6 worker-days, lasts 90 days and needs nothing; a bot costs about 8, lasts 70, needs a second
+factory, 1.9 biofuel a day, and two more chains to reach the third row. "Strong and slow" is true in workshops
+and false on the road: the ox out-hauls the best bot and is worth 2.2 Inkpaws at a Hauling Post. Keep the lift and
+the 90 days (they are the design's sentence) and double the price: 20 cured poles, 20 gears, 4 metal blocks, 96
+hours. Thin: the value of a bot's upkeep is the first pass's estimate, never measured.
+
+**Wellbeing a colonist can reach (data):**
+
+| Faction | Basic | Nutrition | Social | Fun | Aesthetics | Awe | Boosts | Total |
+|---|---|---|---|---|---|---|---|---|
+| Folktails | 5 | 15 | 13 | 12 | 9 | 30 | 0 | 84 |
+| Iron Teeth | 5 | 17 | 4 | 18 | 10 | 30 | 0 | 84 |
+| Inkpaws | 5 | 19 | 11 | 12 | 12 | 30 | 5 | 94 |
+
+The Inkpaws' 94 includes Festive 5 (needs a festival every cycle) and seed cakes 3 (a few weeks after a
+Flowering): 86 standing, 91 with festivals, 94 briefly. The Opera Stage will add 5 when its module ships. The
+2026-11-14 change that raised several needs by one "to at least match the Folktails'" counted a build in
+which the needs behind the Water, Festival and Flowering modules were hidden; with them on it overshoots by ten. More telling is the road there:
+
+| Science spent | Folktails | Iron Teeth | Inkpaws | Inkpaws, proposed trims |
+|---|---|---|---|---|
+| 0 | 12 | 11 | 13 | 13 |
+| 400 | 18 | 15 | 21 | 21 |
+| 1,000 | 26 | 17 | 27 | 26 |
+| 1,500 | 28 | 17 | 31 | 29 |
+| 2,500 | 31 | 17 | 38 | 35 |
+| 4,000 | 32 | 22 | 45 | 41 |
+| 6,000 | 34 | 22 | 48 | 44 |
+| 10,000 | 39 | 42 | 51 | 47 |
+
+(Model: the wellbeing a colony can hold if it buys the cheapest point first; monuments and festivals aside.)
+Thirteen points at 4,000 science is 2.8 against 2.2 in working speed, a quarter more work per colonist through
+cycles 4 to 8, from needs that cost poles and paper where the Folktails' cost metal and extract. The trims: Play
+3 to 2, Ink painting 3 to 2, Watching the young 4 to 3, Tea 5 to 4. Ceiling 90 (82 standing, 87 with festivals).
+Thin: a player does not buy in this order, and Inkpaws earn science more slowly late (Q10).
+
+**The dish ladder has one step out of order (data):** steamed rice (190 science, 1.5 food a tile-day) gives 3 and
+sweet rice balls (650 science, 1.07 a tile-day, a mill, a kitchen and a persimmon orchard) give 2. Swap them.
+
+## Q10. Science
+
+**The first two hours, in the design's order, on inventors alone (model; 15.3 science an inventor-day, the first
+staffed about day 4.5):**
+
+| Beat | The design says | Science | Running total | Day, 2 inventors | Day, 4 inventors at wellbeing 10 |
+|---|---|---|---|---|---|
+| Steamer | days 3-5 | 40 | 40 | 5.8 | 5.0 |
+| Teahouse with tea in it | days 3-5 | 400 | 440 | 18.9 | 9.6 (and not before day 12: bushes) |
+| Scoop wheel, gate and a flume | days 5-8 | 290 | 730 | 28.4 | 13.0 |
+| Medium Cistern | first drought | 100 | 830 | 31.6 | 14.2 |
+| First Moon Loft | end of cycle 1 | 200 | 1,030 | 38.2 | 16.5 |
+| Paddy spout, rice, pickles | cycle 2 | 420 | 1,450 | 51.9 | 21.4 |
+| Lanterns and the Small Festival | cycle 2 | 850 | 2,300 | 79.7 | 31.3 |
+| Trip-hammer mill, sweet rice balls | cycle 3 | 500 | 2,800 | 96.0 | 37.2 |
+
+A vanilla opening has one or two inventors. With two:
+
+* **Unreachable: "days 5 to 8, a scoop wheel and a short flume".** Even bought straight after the Steamer it is
+  330 science: day 15. The 2026-11-14 fix took the gears out of the wheel's cost; the science was the other half.
+  With Flume, Corner and Drop at 0, the Gate at 40 and the Scoop Wheel at 60 the beat costs 100 and lands on day
+  9 (day 8 with a third inventor).
+* **Unreachable: "days 3 to 5, Hammock and Teahouse".** The Hammock, yes. The Teahouse belongs in cycle 2: bushes
+  first bear on day 12, the chain is 400 science, and it wants haulers. Move it in the table (DESIGN.md is the
+  coordinator's).
+* **Reachable if the water beat is cut as above:** Steamer 40, water 100, Medium Cistern 100, Moon Loft 200 = 440
+  by day 19, the end of cycle 1.
+* **Cycle 2 is tight but fair**: tea 400, pickles 120, paddy 300, lanterns and the square 850 is 1,670; three
+  inventors at wellbeing 10 to 20 make that by day 40. The festival's own chain is the heavy part (Gear Workshop
+  100, Paper Mill 250, Lantern Workshop 200, Square 300). Lantern Workshop 100 and Square 200 would put the first
+  festival in cycle 2 for a two-inventor village too (thin).
+
+**The whole tree (data):** Folktails 136,470, Iron Teeth 138,890, Inkpaws 122,910. But Folktails earn the back
+half at an Observatory (12 science per four-hour cycle from four workers: 138 a worker-day at wellbeing 50) and
+Inkpaws at Inventors (46 a day). The Star Tower waits for the RingtailVenues module and is hidden, rightly. Until
+it ships, the Memorial Arch, Great Sitting Panda and Sky Lantern (38,000 science) take 826 inventor-days against
+275: nine extra full-time workers for a hundred days. Either ship a plain day-staffed science building in the
+meantime, or accept it and say so, or take 40% off those three costs until the tower exists. This is a decision
+for the coordinator; the number is solid.
+
+**Pointless next to an alternative:**
+
+* Small Cistern (40 water, 15 logs) next to a pump that holds 146 for 12 logs. Fixed by the pump.
+* Sweet rice balls next to steamed rice. Fixed by the swap.
+* Dew Collector: 2 water a day for 300 science. Flavour; harmless.
+* Nothing else. The Pole Mill is a bridge by design (poles from bamboo cost 0.41 of milled ones after day 8) and
+  earns its place in a timber Flowering and in Hard droughts.
+
+## Q11. Hard, long droughts and badtides
+
+**Measured (worst cases: the scripted colony does not stock up).** Folktails Hard: 26 water at the first drought
+(day 8, five days), all thirteen dead by day 18. Inkpaws Hard, twice: 56 to 57 water at the first drought, nobody
+dead in it, about half the shoot bamboo dead while the cabbage and timber bamboo came through; then all dead or dying
+of thirst in the second drought (day 18, six to eight days), which they entered with no water at all because the
+village drank everything the single pump made while recovering. **Water, not food, killed all three.** A pump
+makes 40 a day and thirteen colonists drink 27: one pump cannot fill a store in the five to eight days Hard gives.
+Two pump workers from day 2 can (about +50 a day).
+
+**Model:**
+
+| Hard drought | Days | Water per colonist to store | Shoot bamboo alive | Cabbage | Timber bamboo | Oak (15) |
+|---|---|---|---|---|---|---|
+| 1 | 3-6 | 13 | 67% | 100% | 100% | 100% |
+| 2 | 4-8 | 17 | 25% | 75% | 100% | 100% |
+| 3 | 5-10 | 21 | 5% | 40% | 95% | 100% |
+| 4 | 6-12 | 25 | 0% | 17% | 67% | 100% |
+| 6 | 8-16 | 34 | 0% | 0% | 25% | 86% |
+| 8 | 10-20 | 40 | 0% | 0% | 3% | 50% |
+| 13+ | 15-30 | 61 | 0% | 0% | 0% | 3% |
+
+Where the faction is under strain, in order:
+
+1. **Day 6 to 9, the first drought.** Water, as in vanilla. Today two pump shelves (292) are all the storage a
+   Hard start needs; after the pump fix it needs two Small Cisterns as well (30 logs). Vanilla needs five Small
+   Tanks (75 logs). Still easier than vanilla Hard.
+2. **The second and third droughts (4 to 10 days, from about day 15).** No unwatered staple survives the third.
+   The answer is a flume and a Cistern Tap, 640 science today (450 with M3 to M5) by about day 25: three or four inventors, not two. The
+   Hard tip names cabbage as the staple; it should name the tap as well.
+3. **From the fourth drought, timber bamboo dies** (67% alive, then 25%). The Pole Mill and oak carry building.
+   This is where the 2026-11-14 change from 7 to 10 dry days earns its keep.
+4. **Badtides (Hard: from cycle 4, 6 to 12 days at first).** A Flume Gate shuts on badwater, so every field on
+   that line is in a drought. The Cistern Tap pours clean water: it is the badtide answer too. Rice dies 1.5 days
+   after its paddy drains; a paddy costs a quarter of what a strip costs to keep wet (0.047 m3 a tile a day), so a
+   Medium Cistern holds 140 paddy tiles for nine days.
+5. **Late Hard (15 to 30 days).** A hundred colonists need about 6,100 water to drink (five Large Cisterns) and
+   one more Large Cistern through a tap for 500 tiles of crops. Vanilla Hard asks for the same order of storage.
+
+Nothing breaks that the design has not planned for. No Hard-only number change is proposed.
+
+## Proposed changes
+
+Files are under `catalogue/`. "Run" is the game run that would confirm it; none has been made.
+
+### Must change, or must be decided
+
+| # | File | Key | Now | Proposed | Why | Confidence | Run to confirm |
+|---|---|---|---|---|---|---|---|
+| M1 | `rules.toml` `[shelves]` (new key; generator) | hours for recipes with no ingredients (`Water`, `Water.Efficient`, `Badwater`, `BadwaterExtracted`, `Dirt`) | 48 (pump holds 146, large pump 720) | 16, never below vanilla (pump 49, large pump 240) | The pump is a better cistern than the cisterns; careless villages never meet thirst (Q1) | High (data, measured) | `inkpaws-careless` and `inkpaws-hard` again: water at the first drought near 50 plus cisterns; some thirst, no deaths on Normal |
+| M2 | `faction.toml` `[characters.ringtail_adult]` (and the Bell and Ringtails code), or data only | the Ringtails' rested bonus | none: a Ringtail is 0.75 to 0.87 of an Inkpaw at 12/12 | A: the bonus by the length of their night (code). B: `WalkerSpeedManagerSpec.BaseWalkingSpeed` and `BaseSlowedSpeed` 2.7 to 3.6. C: `GoodCarrierSpec.BaseLiftingCapacity` 14 to 16 | DESIGN.md says a night builder equals a day builder at twelve and twelve; the build says 0.75 (Q4) | High on the arithmetic; the choice is the coordinator's | `rt-throughput2` (queued, never ran) with day and night builders on the same queue of dens: goods carried per worker per shift |
+| M3 | `building_stats.toml` | `PandabornFlume`, `PandabornFlumeCorner`, `PandabornFlumeDrop` science | 60 each | 0 | The "days 5 to 8" water beat costs 290 science: day 15 with two inventors (Q10) | High (data); the day is model | An Inkpaws standard playtest with two inventors: day of the first flume |
+| M4 | `building_stats.toml` | `PandabornFlumeGate` science | 80 | 40 | Same | High | Same |
+| M5 | `building_stats.toml` | `PandabornScoopWheel` science | 150 | 60 | Same | High | Same |
+| M6 | decision (catalogue `buildings.toml` `PandabornStarTower`, or `building_stats.toml`) | late science | Star Tower hidden; 38,000 science of monuments on Inventors alone | Ship a day-staffed science building until RingtailVenues exists, or cut `PandabornMemorialArch`, `PandabornGreatSittingPanda`, `PandabornSkyLantern` science by 40% until it does, or accept | 826 inventor-days against 275 Observatory worker-days (Q10) | High (data) | None needed |
+| M7 | text lanes, not catalogue numbers | Dew Collector description; Teahouse tutorial stage; DESIGN.md first-two-hours table; DESIGN.md "a cup takes the edge off thirst" | "Collectors built close together share the same dew"; no word of haulers; Teahouse on days 3 to 5; thirst | Drop the dew sentence or write the rule; say the Teahouse and Hot Spring Bath are stocked by haulers or night couriers; move the Teahouse to cycle 2; drop the thirst clause | The toolbar must not lie (Q3, Q6, Q10) | High (code and data read) | None needed |
+
+### Would improve
+
+| # | File | Key | Now | Proposed | Why | Confidence | Run to confirm |
+|---|---|---|---|---|---|---|---|
+| W1 | `rules.toml` `[shelves]` (per-recipe exception; generator) | `FlowingWater`, `FlowingBadwater` (Cistern Tap, Discharge) | 48 cycles: 144 water held | vanilla 5 cycles: 15 water | Haulers move 144 water out of the cisterns into a store nobody can drink from (Q5) | Medium (data; no run) | Water lane's W3 drought with a Hauling Post: water left to drink |
+| W2 | `faction.toml` `[characters.adult]` `module_specs.Bell.PandabornBellSpec` | `WorkingSpeedCurve`, `MovementSpeedCurve` | 12 h +0.33, 16 h 0 | 12 h +0.33, 13 h +0.228, 14 h +0.14, 15 h +0.064, 16 h 0 | Flat from 12 to 16; today 14 hours beats 12 by 2% (Q2). (For exactly 16 hours' worth use 0.3333 at 12 and raise `modifiers.toml` `BellMovementSpeedCap` from 2.66 to 2.67, or the module reports the cap as too low) | High (data) | Bell probe at 13, 14, 15 hours: multipliers |
+| W3 | `needs.toml` | `PandabornSteamedRice` / `PandabornSweetRiceBalls` `favorable_wellbeing` | 3 / 2 | 2 / 3 | The harder dish gives less (Q9) | High (data) | None needed |
+| W4 | `needs.toml` | `PandabornPlay`, `PandabornContemplation`, `PandabornCubWatching`, `PandabornTea` `favorable_wellbeing` | 3, 3, 4, 5 | 2, 2, 3, 4 | Mid-game wellbeing 7 to 14 above Folktails at equal science; ceiling 94 against 84 (Q9) | Medium-low (model of a buying order) | Paired 60-day playtests with a driver that can grow: wellbeing and population by day |
+| W5 | `needs.toml` | `PandabornMemorialArch` / `PandabornGreatSittingPanda` `favorable_wellbeing` | 8 / 12 | 6 / 14 | A Brazier's price for a Hall's awe (Q9) | Medium (data) | None needed |
+| W6 | `recipes.toml` | `PandabornWoodenOx` `ingredients`, `cycle_hours` | 10 cured poles, 15 gears, 2 metal; 72 h | 20, 20, 4; 96 h | Out-hauls a fully boosted bot, no upkeep, cheaper (Q9) | Medium-low (bot upkeep never measured) | Grid run with one ox and one Inkpaw hauler on the same pile: goods moved per day |
+| W7 | `needs.toml` | `PandabornFestive`, `PandabornFestiveGrand` `daily_delta` | -0.05 (20 days) | -0.04 (25 days) | A cycle lasts up to 26 days (Q8) | Medium (data) | None needed |
+| W8 | `building_stats.toml` | `PandabornLanternWorkshop` / `PandabornFestivalSquare` science | 200 / 300 | 100 / 200 | First festival in cycle 2 for a two-inventor village (Q10) | Low (model) | Standard playtest: day of the first festival |
+| W9 | `recipes.toml` | `PandabornPickles` | 1 cabbage to 3 pickles, 1.0 h | 2 cabbage to 5 pickles, 1.7 h | Best food in the game on four counts at once; 1.5 a tile-day is bread's (Q1) | Low (static sums; land never bound in a run) | A land-limited map playtest |
+| W10 | `rules.toml` `[shelves]` (per-recipe exception) | `Plank` (Pole Mill) | 39 logs | 24 hours: 20 logs | The one early input everything waits for (Q5) | Low | `rt2-shelves` layout with a Pole Mill and queued dens |
+| W11 | `buildings.toml` | `PandabornInkStudio` `EnterableSpec.CapacityFinished` | 1 (vanilla) | 4, if the model has the slots | A hundred colonists need four studios (Q3) | Low (model) | None needed |
+| W12 | `recipes.toml` | `PandabornBambooSeedCakes` `products` | 4 | 6 | The Flowering's seed about repays the food it cost; "windfall" wants more (Q7) | Low | Events lane's flowering run with a Kitchen |
+| W13 | `building_stats.toml` | `PandabornGreatSittingPanda` science | 15,000 | 20,000, **only once the Star Tower ships** | Awe 20 for 18,000 against 28,000 (Q9) | Medium (data) | None needed |
+
+### Leave alone (checked, fine)
+
+| What | Value | Why it holds |
+|---|---|---|
+| Shoot bamboo growth, yield, dry days | 3 d, 2, 5 | One day ahead of carrots (measured); 0.67 a tile-day is under the carrot's 0.75; 0.77 work hours a shoot is the dearest raw food |
+| Cabbage, timber bamboo dry days | 7, 10 | Taper on Normal is cycle 3 then 5; Hard needs them |
+| Steamer ratio and science | 1 to 2, 40 | Day 5.8; labour 0.64 h a food, more than a carrot |
+| `harvest_hours` | 16 | A day's harvest; doubles the food buffer, by design |
+| `workshop_hours` for workshops with inputs | 48 | No hoarding without haulers (code); 1.4 working days at wellbeing 30 |
+| Inkpaw lift, pole weight | 18, 3 | +40% per builder, hidden behind logs in every run |
+| Bell peak and cap | +33% at 12 h, 2.66 | Equal work at every wellbeing; cap never reached |
+| Nap | -0.6 a day, wellbeing 3, Hammock 1 seat, Platform 5 | Fits a 15-hour day; 3 to 6 colonists a hammock (measured 3 to 4 at 16 h) |
+| Tea decay, seats, consumption | -0.4, 5 seats, 1 tea and 0.5 water an occupied hour | 23 to 46 colonists a Teahouse; under one worker per hundred |
+| Moon Loft and night posts | 200; 50, 150, 100; 4, 6, 2 workers | Reachable at the end of cycle 1; about 20 Ringtails per 100 |
+| Kit valve | one kit a loft a day while night jobs are open | Measured: never over the jobs, stops when anyone is hungry |
+| Cisterns | 40 / 300 / 1200; 0, 100, 500 science | Cheaper and earlier than vanilla on purpose |
+| Flume Bridge Span | 4 poles, 1 log, 120 science: the catalogue lane's pending entry, asked of this lane | Confirmed: it is the Flume Bridge's trestle. In the build read here it still costs its shell's 5 cured poles, 5 metal blocks and 500 science, which puts crossing two lines behind metal |
+| Scoop Wheel rate, tap rate, tap text | 0.10 m3/s; 3 Water an hour; "100 Water, 200 tiles, six days" | Measured by the water lane; the rule of thumb gives 206 |
+| Dew Collector rate | 2 a day, 0.7 in drought | Too weak to spam |
+| Flowering | first cycle 6, 9 days of rest, 3 seed | Not a death sentence with the advice fixed |
+| Festival cost and Festive +4 | 40 lanterns, 3 x 20 dishes | Pays to wellbeing 50, a pleasure after |
+| Sky Lantern | cost and fill | 7% under the Earth Recultivator in labour |
+| Ox lift and life | 30, 90 days | The design's sentence; fix the price instead |
+| Births, lifespan, hunger, thirst | vanilla | First pass Q6; nothing new |
+
+## Where the evidence is thin
+
+1. **Everything past day 20 and 20 colonists.** No run got there. The single most useful thing is a playtest
+   driver that keeps cutting trees, so a Folktails and an Inkpaws colony both reach 50. It would settle W4, W8, W9
+   and the pole reserve.
+2. **Time off duty.** The 3.9 hours for bed and 1.2 for meals are rules of thumb. One colonist's behaviour logged
+   every half hour for five days at 12 and 16 working hours (the telemetry already samples workplaces this way)
+   would settle Q2 and Q3.
+3. **Ringtails at scale.** Courier hours per night and "20 per 100" come from workshop arithmetic. `rt-throughput2`
+   never ran.
+4. **Tea in a living village.** No run has stocked a Teahouse.
+5. **Bots.** The Folktails bot's upkeep is an estimate; the ox has never been timed.
+6. **The scripted player.** It plays one build order. A careless human does different careless things.
+
+## Corrections to the first pass
+
+| First pass | Second pass | Why |
+|---|---|---|
+| Q5: "a Ringtail at lift 14 equals an Inkpaw builder at 12/12" | 0.75 as shipped | The first pass gave Ringtails the rested bonus by their own shift; the build does not |
+| Q2: "16 hours keeps 2 of 8 rituals: -10 wellbeing, -17% output" | 16 hours loses the nap: -3 | The first pass left 2.3 hours of leisure at 16 hours; the same budget would stop Folktails holding their own attractions, which they do. Tea has also moved to the Teahouse since |
+| Q2: "MovementSpeed is clamped at 2.0" | Cap 2.66, never reached | Fixed in the build on 2026-11-14 |
+| Q8: Memorial Arch "+6 = Farmer Monument + Brazier" | The build has +8 at that price | Raised later to reach 30 awe |
+| Q8: ox "a fair trade" | Out-hauls a boosted bot | The sheet's ox walked at 1.8 tiles a second; the build's walks at 2.7 like the bot it copies, with lift 30 |
+| Q3: tea "a cup, 0.27 hours, wellbeing 2" | One Tea need, 5, at the Teahouse; under one worker per hundred | Redesigned 2026-11-14 |
+| Q4: dew needs a crowding rule | Not implemented; not needed at 2 a day | The catalogue's recipe is 12 hours a unit, not the prototype's 4 |
+| Wellbeing ceiling 85 against 84 | 94 against 84 | Needs raised by one each while three modules were off |
+| Calibration: self-supplied lumber mill 52%, bakery 58% | 64%, 71% | The second pass does not charge a full output trip per input trip. Still unmeasured in game |
+
+---
+
+# First pass (2026-11-14): the colony model and the first stat sheet
+
+Kept as written, because other pages cite its question numbers. It describes the stat sheet of
+2026-11-14, not today's catalogue; the second pass above corrects it where they differ.
 
 Status: first pass, 2026-11-14, against design revision 4 (`docs/DESIGN.md`, `docs/CONTENT.md`). Every number here
 comes from the colony model in [`tools/sim/`](../../tools/sim/README.md), which follows
