@@ -2,21 +2,22 @@
 # Source for mod/Pandaborn/Words/words.enUS.txt (tools/candidates.py --build adds the vanilla-text hashes).
 # Format: KEY<TAB>replacement   (\n = new line). "# keep KEY reason" = reviewed and deliberately left vanilla.
 # Optional first column "@Feature" applies the line only while that Pandaborn feature is on (e.g. @Ringtails).
-# Policy: the player's colonists are "Inkpaws" (adult "Inkpaw", child "cub"); beaver folk in general lore become
-# "pandas", kits become "cubs". Texts about other factions, beaver lore figures' own monuments, main-menu, map and
+# Policy (catalogue/text/GLOSSARY.md): "panda" is any colonist of either people and replaces "beaver"; a line that can
+# show on a Ringtail never says "Inkpaw". "Inkpaw" stays only where the line is about the Inkpaws alone (worker type,
+# employment). Kits become "cubs" in lore. Texts about other factions, beaver lore figures' own monuments, main-menu, map and
 # vanilla-tutorial texts stay vanilla (the vanilla tutorial is switched off for Inkpaws).
 
-BatchControl.PopulationStatistics.BeaverEmployment	Inkpaw employment
-Beaver.Adult.TemplateName	Inkpaw adult
-Beaver.Child.TemplateName	Inkpaw cub
-Beaver.PluralDisplayName	Inkpaws
+BatchControl.PopulationStatistics.BeaverEmployment	Panda employment
+Beaver.Adult.TemplateName	Panda adult
+Beaver.Child.TemplateName	Young panda
+Beaver.PluralDisplayName	Pandas
 Beaver.Population.Children	Cubs
 Beaver.Population.ContaminatedChildren	Contaminated cubs
 Bot.BeaversPerished	Don’t even get me started on the pandas.\nThey had it all. Fresh air, clean water.\nNow they’re just a faint memory.
 Building.AdvancedBreedingPod.Description	Utilizes an advanced breeding process to produce adult pandas, eager to get to work.
 Building.AdvancedBreedingPod.FlavorDescription	The idea came up when a cub fell into a cauldron full of extract and had a giant growth spurt after drinking it all.
 Building.Agora.Description	A large gathering place where pandas can discuss bamboo-related topics.
-Building.Airlock.Description	Allows Inkpaws to pass through while blocking off water.
+Building.Airlock.Description	Allows pandas to pass through while blocking off water.
 Building.AquiferDrill.FlavorDescription	Unlike most dams, it's built to let water flow.
 # keep Building.BeaverBust.Description a beaver monument stays a beaver monument
 # keep Building.BeaverBust.DisplayName a beaver monument stays a beaver monument
@@ -26,7 +27,7 @@ Building.AquiferDrill.FlavorDescription	Unlike most dams, it's built to let wate
 # keep Building.BeaverStatue.DisplayName a beaver monument stays a beaver monument
 Building.Blockage.FlavorDescription	It's a wonder that nature creates something on par with panda engineering.
 Building.BreedingPod.FlavorDescription	"Cubs are our future. We need twelve more by next month." —Ol' Kazko
-Building.Campfire.Description	A place for pandas to relax and socialize in the evening.
+Building.Campfire.Description	A place for pandas to relax and keep each other company.
 Building.Carousel.Description	A wooden merry-go-round for pandas of all ages.
 Building.Carousel.FlavorDescription	"Where do you think you're going, cub? These bamboo shoots won't peel themselves." —Ma' Ngonel
 Building.ContemplationSpot.Description	A small spot where pandas can contemplate nature.
@@ -72,7 +73,7 @@ Building.OilPress.FlavorDescription	Curious cubs use it to squash anything from 
 Building.Path.FlavorDescription	"Country roads, take me home, to the lodge I belong." —Popular panda song
 Building.Platform.FlavorDescription	Impressive load carrying capacity of panda platforms makes them masterpieces of engineering.
 Building.PoleBanner.FlavorDescription	It was raised up to prevent cubs from vandalising the pictures.
-Building.PopulationCounter.Mode.TotalBeavers	Total Inkpaws
+Building.PopulationCounter.Mode.TotalBeavers	Total pandas
 Building.PowerWheel.Description	A panda-operated backup source of power.
 Building.PowerWheel.FlavorDescription	Pandas quickly realized they could borrow some techniques from hamsters.
 Building.PrintingPress.FlavorDescription	Pandas read slowly and reread often, so good literature is always in demand.
@@ -85,7 +86,7 @@ Building.Smelter.FlavorDescription	The new panda world is forged in sweat and sm
 Building.Stairs.FlavorDescription	With the invention of stairs, pandas ascended to the next level.
 # keep Building.SteamEngine.FlavorDescription about beaver nations other than Iron Teeth
 Building.StreamGauge.FlavorDescription	There is a tide in the affairs of pandas. Which, taken at the flood, leads on to fortune.
-Building.SuspensionBridge.Description	Allows Inkpaws to pass over gaps.
+Building.SuspensionBridge.Description	Allows pandas to pass over gaps.
 Building.TappersShack.FlavorDescription	Cubs are taught early that every droplet matters — be it water or resin.
 Building.TripleLodge.Description	Houses a lot of pandas.
 Building.Tubeway.Description	A fast, if cramped, means of panda transportation.
@@ -98,8 +99,8 @@ Building.WindTunnel.Description	A machine capable of lifting pandas off the grou
 Building.WoodFence.FlavorDescription	It's like a dam but for pandas.
 Building.ZiplinePylon.FlavorDescription	It's common courtesy to wave a paw when passing another panda.
 Buildings.Wonder	<YellowHighlight>Wonder:</YellowHighlight> The pinnacle of panda engineering.
-Dwelling.NoBeaverCanReach	No Inkpaw can reach this dwelling.
-Dwelling.NoUnemployedCanReach	No unemployed Inkpaw can reach this dwelling.
+Dwelling.NoBeaverCanReach	No panda can reach this dwelling.
+Dwelling.NoUnemployedCanReach	No unemployed panda can reach this dwelling.
 # keep Experimental.WelcomeText main menu, not shown in a game
 # keep Faction.Folktails.WonderCompletionFlavor the Folktails wonder
 # keep Faction.IronTeeth.WonderCompletionFlavor the Iron Teeth wonder
@@ -131,14 +132,14 @@ NaturalResource.Soybean.FlavorDescription	Hard and water-resistant, its seeds ar
 NaturalResource.Succulent.FlavorDescription	"To bite or not to bite." —A thirsty panda's dilemma
 NaturalResource.Sunflower.FlavorDescription	Pandas grow these to show they’re not afraid of the burning sun.
 NaturalResource.Wheat.FlavorDescription	"You'll forget the sun in the cloudless sky as we walk in fields of gold." —Panda ballad
-Needs.Beaver.DeathWarning	Inkpaw will die soon.
+Needs.Beaver.DeathWarning	Panda will die soon.
 # keep NewGameConfigurationPanel.EasyModeDescription new-game screen, before the faction is chosen
 Population.AllPerished	And though all the pandas perished, the river flowed on,\ntheir brief existence but a speck of bamboo dust.
-Status.BadwaterContamination.Incubation	This Inkpaw spent too much time in contaminated water. It's fine for now, but will get sick in a few days.
-Status.BadwaterContamination.Incubation.Short	Inkpaw is unwell
-Status.Beaver.DiedTragicallyShort	Inkpaw died tragically
-Status.Need.BadwaterContamination.Short	Inkpaw is contaminated
-Status.Need.Injury.Short	Inkpaw is injured
+Status.BadwaterContamination.Incubation	This panda spent too much time in contaminated water. It's fine for now, but will get sick in a few days.
+Status.BadwaterContamination.Incubation.Short	Panda is unwell
+Status.Beaver.DiedTragicallyShort	Panda died tragically
+Status.Need.BadwaterContamination.Short	Panda is contaminated
+Status.Need.Injury.Short	Panda is injured
 # keep Tutorial.Basics.ManageSpeed vanilla tutorial (off for Inkpaws)
 # keep Tutorial.Basics.ZoomCamera vanilla tutorial (off for Inkpaws)
 # keep Tutorial.Dams.BuildDam vanilla tutorial (off for Inkpaws)
@@ -162,15 +163,14 @@ Status.Need.Injury.Short	Inkpaw is injured
 # keep Tutorial.Wellbeing.WellbeingPanel vanilla tutorial (off for Inkpaws)
 # keep Tutorial.Wood.PlaceLumberjacks vanilla tutorial (off for Inkpaws)
 # keep Tutorial.WorkingHours.SetWorkingHours vanilla tutorial (off for Inkpaws)
-Wellbeing.HighscoreReached	Your Inkpaws are happier than ever!
-WonderCompletion.Statistic.BeaversBorn	Inkpaws born:
-WonderCompletion.Statistic.BeaversExploded	Inkpaws exploded:
+Wellbeing.HighscoreReached	Your village is happier than ever!
+WonderCompletion.Statistic.BeaversBorn	Pandas born:
+WonderCompletion.Statistic.BeaversExploded	Pandas exploded:
 Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace.
 
-# With Ringtails on, both peoples share the vanilla character label keys (the batch-control window groups by key and
-# throws on any other key), so the shared headers name both.
-@Ringtails	Beaver.Adult.TemplateName	Panda adult
-@Ringtails	Beaver.Child.TemplateName	Panda cub
-@Ringtails	Beaver.PluralDisplayName	Pandas
-@Ringtails	Building.PopulationCounter.Mode.TotalBeavers	Total pandas
-@Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace (not Ringtails).
+# Both peoples share the vanilla character label keys (the batch-control window groups by key and throws on any other
+# key), so the plain lines above already name both: "Panda adult", "Young panda" (cubs and kits), "Pandas". They no
+# longer need a Ringtails-only variant. Text pass 2026-11-25: the built table writes "@@Ringtails" (tools/candidates.py
+# adds a second @), which Words.cs reads as the feature "@Ringtails", so feature lines have never applied; the plain
+# lines must therefore be true with and without Ringtails.
+@Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace, not Ringtails or Wooden Oxen.
