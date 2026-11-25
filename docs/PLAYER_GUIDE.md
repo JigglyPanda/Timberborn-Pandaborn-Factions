@@ -30,7 +30,7 @@ them. See [RELEASE.md](RELEASE.md).
 
 1. [What is different from beavers](#1-what-is-different-from-beavers)
 2. [The afternoon bell](#2-the-afternoon-bell)
-3. [The first ten days](#3-the-first-ten-days)
+3. [The first ten days](#3-the-first-ten-days), and [the first drought](#the-first-drought)
 4. [Plants and the three kinds of land](#4-plants-and-the-three-kinds-of-land)
 5. [Flumes and paddies, step by step](#5-flumes-and-paddies-step-by-step)
 6. [Dry-ground crops: tea and pepper](#6-dry-ground-crops-tea-and-pepper)
@@ -115,7 +115,7 @@ The order the design and the tutorial lead you through, on Normal. It is a sound
 
 | When | Do | Why |
 |---|---|---|
-| First minutes | Water Pump, Gatherer Flag, and more Lumberjack Flags than you think, with trees marked | The first week is short of logs, not of builders |
+| First minutes | Lumberjack Flags first, more of them than you think, with trees marked. Then Water Pump and Gatherer Flag | A village starts with no logs, and nothing else can be built without them. The first week is short of logs, not of builders |
 | Day 1 | Farmhouse with shoot bamboo on green ground near water. Inventor | Shoot bamboo is first on the crop list and the fastest food |
 | Day 1–2 | Dens. A Hammock | Beds first. The Hammock is the cheapest afternoon place, and it counts as "settled" |
 | Day 2–3 | Power Wheel and Pole Mill. Forester with timber bamboo on green ground | The mill gives the first poles from logs. Bamboo needs days to grow, so plant it now |
@@ -153,6 +153,37 @@ What those cost today:
 <!-- /gen:first_days -->
 
 On Hard, plant cabbage early: it is the hardier staple.
+
+### The first drought
+
+The first drought is the likeliest place to lose a new village, and it is lost on drinking water, not on food.
+
+**Store water early.** A pump is not a store: it holds a little and stops. What carries the village is cisterns,
+filled before the river stops. Build the first one in the first days and a bigger one before the warning.
+
+<!-- gen:drought -->
+* A Water Pump holds about 16 hours of its own pumping and then stops. It is not a store.
+* Cisterns are the store: Small Cistern 40 water (15 logs; no science); Medium Cistern 300 water (20 logs, 30 poles; 100 science); Large Cistern 1,200 water (80 poles, 40 gears, 20 metal blocks; 500 science).
+* Dry days a plant survives: shoot bamboo 5, cabbage 7, timber bamboo 10, persimmon tree 10. Tea and pepper need no water at all.
+<!-- /gen:drought -->
+
+What a drought does, in order:
+
+1. **The river stops and the pumps with it.** From then on the village drinks from its cisterns.
+2. **A Scoop Wheel stops**, because it needs a current, and says so. Water already standing in a flume line
+   stays there and keeps the ground beside it wet for days.
+3. **Crops stop growing and turn brown** when their ground dries. They are not dead. Each plant has a count of
+   dry days it survives, and the count starts over the moment its ground is wet again. A first drought on Normal
+   is shorter than any of them.
+4. **The harvest pauses**, so the village eats from store. Steam shoots ahead of time: steaming makes more food
+   out of the same field.
+5. **Tea and pepper carry on.** They are the one harvest a drought cannot touch.
+
+What to have before it: a full cistern or two, a few days of food, and the Farmhouse's fields close to water so
+they recover fast. What you do not need yet: a Cistern Tap. The first drought does not ask for one. In longer
+droughts, later, the tap pours stored water into a flume and keeps one strip of fields alive.
+
+When the water comes back it runs down every flume again, and brown fields turn green without replanting.
 
 **Workshops hold a lot.**
 
@@ -332,6 +363,31 @@ Rice flour: 1 rice → 1 rice flour, 0.5 h, at the Trip-Hammer Mill.
 
 Pickles stretch land, not time. Food does not spoil in this game.
 
+### The rice chain
+
+Rice is the food of the second cycle onward, and everything after it hangs on it. One crop, three uses:
+
+<!-- gen:rice -->
+| Step | Where | Numbers |
+|---|---|---|
+| Grow | Paddy House (30 logs, 10 poles; 150 science), in a flooded field | 8 days to grow, 3 rice a plant |
+| Steam | Steamer | 1 rice → 4 steamed rice, 1 h, log fuel |
+| Mill | Trip-Hammer Mill (30 logs, 20 poles, 10 gears; 200 science), in a flume or a stream | 1 rice → 1 rice flour, 0.5 h |
+| Cook | Kitchen (15 logs, 15 poles, 10 gears; 300 science) | 1 rice flour, 1 persimmon → 5 sweet rice balls, 1 h, log fuel |
+| Cook | Kitchen (15 logs, 15 poles, 10 gears; 300 science) | 1 bamboo seed, 1 rice flour → 6 bamboo seed cakes, 1.5 h, log fuel |
+<!-- /gen:rice -->
+
+1. **A paddy first.** Rice grows only in shallow standing water: a walled field with a Paddy Spout **[Water]**, or
+   any basin you can keep shallow with levees and a floodgate.
+2. **Steamed rice** needs nothing new. The Steamer you built for shoots cooks it.
+3. **Rice flour** needs a Trip-Hammer Mill **[Water]** standing in moving water. Flour is an ingredient, never
+   eaten.
+4. **The Kitchen** turns flour into sweet rice balls, with persimmons from an orchard that takes a long time to
+   bear. Plant the persimmon trees when you dig the paddy, not when you build the Kitchen.
+5. The same flour makes the most of **bamboo seed** after a Great Flowering.
+
+Rice dies fast out of water. In a drought the paddy is the field to keep wet.
+
 **The afternoon.** Off-duty pandas need somewhere to be. Each of these is its own need.
 
 <!-- gen:afternoon -->
@@ -366,7 +422,10 @@ Build a **Moon Loft**. It is in the Night Watch group of the toolbar. When the f
 * The night posts unlock for free. Before that they sit behind a science cost.
 * A second row appears under the population panel: Ringtails, working, idle.
 
-This happens once per game. A second loft is a second home, not a second family.
+The family comes once. A second loft is a second home, not a second family.
+
+*Decided on 2026-11-25 and not yet in a build: if a district with a Moon Loft loses its last Ringtail, a new family
+answers the lantern after a few days. Until that is in, do not let the Ringtails die out.*
 
 ### The night posts
 
@@ -379,7 +438,7 @@ Moon Loft: 10 logs, 10 poles; 200 science.
 | Night Courier Post | Ringtail couriers refill workshops and clear their outputs and the flags overnight | 20 logs, 10 poles | up to 6 |
 | Night Gatherers' Post | Ringtail gatherers forage at night: whatever a Gatherer Flag would pick in its range | 10 poles | up to 2 |
 
-*The Star Tower, a night post where Ringtail stargazers make science, is decided and modelled. It was not in the build when this page was generated.*
+*The Star Tower, a night post where Ringtail stargazers make science, is decided and modelled. It keeps a science cost of its own. It was not in the build when this page was generated.*
 <!-- /gen:night_posts -->
 
 A post shows "Closed for the day. Ringtails start at the afternoon bell." by day. That is normal.
@@ -431,7 +490,8 @@ needs it. A Ringtail without a loft sleeps in any home.
 
 ### If you never build a Moon Loft
 
-Nothing is missing. No building a village needs is a Ringtail job.
+Nothing a village needs is missing. Only the Star Tower depends on Ringtails, and the science it makes is science
+your inventors would also make, more slowly.
 
 ### If the feature is off
 
@@ -545,10 +605,32 @@ The forecast's tooltip tells you how much to store for each panda. In short:
 A village that follows the forecast is not at risk. Switching the setting to off cancels a Flowering that has
 been announced. The setting is opened from the line under the top bar or from any bamboo's panel.
 
+### What the seed is for
+
+Bamboo seed is not eaten as it is and it is not for planting. Bamboo replants itself from the planting marks. The
+seed is cooked into **bamboo seed cakes**, a dish of its own with its own well-being, and one that counts toward
+a festival. A Flowering leaves a great deal of seed at once, and seed does not spoil, so it becomes many days of
+cakes.
+
+What cooks it in this build:
+
+<!-- gen:seed -->
+* 1 bamboo seed, 1 rice flour → 6 bamboo seed cakes, 1.5 h, log fuel, at the Kitchen.
+<!-- /gen:seed -->
+
+The Kitchen's recipe with rice flour gets the most out of each seed, and it needs the rice chain: a paddy, a
+Trip-Hammer Mill and a Kitchen. The Flowering never comes early in a game, which is time enough to have them. Seed
+you cannot cook yet waits in a warehouse.
+
+So the Flowering takes one harvest away for a while and gives another back. A village that stored food for the
+gap and has a Kitchen comes out of it better fed than it went in.
+
 ## 11. Late game: oxen, monuments, the Sky Lantern
 
 *In testing. Everything here is in the data and on its own model, and has been placed and finished in test runs.
 No test has reached it by playing a village that far.*
+
+### The numbers
 
 <!-- gen:late -->
 **Wooden Oxen.** The Ox Workshop (100 poles, 50 gears, 40 metal blocks; 1,000 science) builds one from 20 cured poles, 20 gears, 4 metal blocks in 96 hours of work. An ox lifts 30 against an Inkpaw's 18 and wears out after 90 days.
@@ -566,7 +648,26 @@ The Sky Lantern is released with 400 paper lanterns and 300 extract.
 Lantern decorations are built from paper lanterns: Standing Lantern 1, Hanging Lantern 1, String Lanterns 3.
 <!-- /gen:late -->
 
+### Wooden Oxen
+
+Wooden Oxen are the Inkpaws' bots. An ox needs no food, no water, no sleep and no home, and it works through the
+day and the night. It carries far more than a panda. It wears out after a fixed number of days and is then gone,
+so an ox is something you keep building, not something you own.
+
+* **Where they pay:** long hauls, big construction sites, anything that is mostly carrying.
+* **What they cost:** cured poles, gears and metal, and many hours at the Ox Workshop. That means a Smoke Kiln and
+  a metal supply first. They are a late-game answer, not a way out of an early labour shortage.
+* **What they do not change:** well-being. Oxen have none and add none.
+* **Where they do not work:** night posts belong to the Ringtails.
+
+### Power
+
 Power is bamboo water wheels, kite windmills and power wheels. There are no fuel engines.
+
+### After the wonder
+
+Releasing the Sky Lantern is the last goal the faction sets. There is nothing after it: no further tier, no
+second wonder. From there the game is a sandbox, as it is for Folktails and Iron Teeth. Build the valley you want.
 
 Paper lanterns never stop being useful: decorations are built from them, each festival uses them, and the wonder
 takes hundreds.

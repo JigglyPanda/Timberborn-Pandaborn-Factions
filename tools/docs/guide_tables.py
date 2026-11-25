@@ -342,6 +342,38 @@ def build():
     else:
         B["shelves"] = ["Workshops hold what they would in the plain game."]
 
+    # ------------------------------------------------------------------ the first drought
+    out = []
+    hold = sh.get("no_ingredient_hours")
+    if hold:
+        out.append("* A Water Pump holds about %s hours of its own pumping and then stops. It is not a store." % num(hold))
+    cis = [(b, c.stats.get(b, {}).get("capacity")) for b in ("PandabornCisternSmall", "PandabornCisternMedium", "PandabornCisternLarge")]
+    cis = [(b, n) for b, n in cis if n and c.has_building(b)]
+    if cis:
+        out.append("* Cisterns are the store: " + "; ".join("%s %s water (%s)" % (c.bname(b), num(n), c.price(b)) for b, n in cis) + ".")
+    dry = [(c.pname(pid), p["dry_days"]) for pid, p in c.plants.items()
+           if c.visible(p) and "PlantableSpec" not in p.get("delete", []) and "wet_days" not in p and not p.get("flood_min")]
+    if dry:
+        out.append("* Dry days a plant survives: " + ", ".join("%s %s" % (n.lower(), num(d)) for n, d in dry) + ". Tea and pepper need no water at all.")
+    B["drought"] = out
+
+    # ------------------------------------------------------------------ the rice chain
+    rice = c.plants.get("PandabornRice", {})
+    rows = []
+    if rice and c.has_building("PandabornPaddyHouse"):
+        rows.append(("Grow", "%s (%s), in a flooded field" % (c.bname("PandabornPaddyHouse"), c.price("PandabornPaddyHouse")),
+                     "%s days to grow, %s a plant" % (num(rice.get("growth_days", 0)), c.goods_list(rice.get("cut_yield", {})))))
+    if c.has_recipe("PandabornSteamedRice") and c.has_building("PandabornSteamer"):
+        rows.append(("Steam", c.bname("PandabornSteamer"), c.recipe_line("PandabornSteamedRice")))
+    if c.has_recipe("PandabornRiceFlour") and c.has_building("PandabornTripHammerMill"):
+        rows.append(("Mill", "%s (%s), in a flume or a stream" % (c.bname("PandabornTripHammerMill"), c.price("PandabornTripHammerMill")),
+                     c.recipe_line("PandabornRiceFlour")))
+    if c.has_building("PandabornKitchen"):
+        for rid in ("PandabornSweetRiceBalls", "PandabornBambooSeedCakes"):
+            if c.has_recipe(rid):
+                rows.append(("Cook", "%s (%s)" % (c.bname("PandabornKitchen"), c.price("PandabornKitchen")), c.recipe_line(rid)))
+    B["rice"] = table(["Step", "Where", "Numbers"], rows) if rows else ["*Rice is not in this build.*"]
+
     # ------------------------------------------------------------------ plants
     def planter(p):
         if p.get("planter"):
@@ -457,7 +489,7 @@ def build():
         out += table(["Post", "What it does", "Cost", "Workers"], rows)
         if not c.has_building("PandabornStarTower"):
             out += ["", "*The Star Tower, a night post where Ringtail stargazers make science, is decided and modelled. "
-                        "It was not in the build when this page was generated.*"]
+                        "It keeps a science cost of its own. It was not in the build when this page was generated.*"]
         B["night_posts"] = out
     else:
         B["night_posts"] = ["*The Ringtails are switched off in this build. A Moon Loft is a plain home.*"]
@@ -532,6 +564,15 @@ def build():
         B["flowering"] = out
     else:
         B["flowering"] = ["*The Great Flowering is switched off in this build. Bamboo never flowers.*"]
+
+    # ------------------------------------------------------------------ what cooks bamboo seed
+    out = []
+    for rid, r in c.recipes.items():
+        if "PandabornBambooSeed" in r.get("ingredients", {}) and c.has_recipe(rid):
+            where = [c.bname(b) for b, d in c.buildings.items() if rid in d.get("recipes", []) and c.has_building(b)]
+            if where:
+                out.append("* %s, at the %s." % (c.recipe_line(rid), " or the ".join(where)))
+    B["seed"] = out or ["*Nothing cooks bamboo seed in this build.*"]
 
     # ------------------------------------------------------------------ late game
     out = []

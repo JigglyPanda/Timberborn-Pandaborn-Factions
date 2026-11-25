@@ -57,7 +57,7 @@ in `catalogue/`; the full lists are in [docs/CONTENT.md](docs/CONTENT.md).
 | Feature | Notes |
 |---|---|
 | The Inkpaws as a faction | Own panda bodies for adults and cubs, five adult and three cub coats, portraits, banners and tail marks. Folktails and Iron Teeth keep their meshes, coats, buildings and text with the mod enabled |
-| The Inkpaws' look | Dark timber, pale plaster, grey clay tile, bamboo, lattice windows that glow at night. Applied in code to Inkpaws games only; tested with the author's 35 mods enabled |
+| The Inkpaws' look | Dark timber, pale plaster, grey clay tile, bamboo, lattice windows that glow at night. Applied in code to Inkpaws games only, so other mods that use Folktails materials keep working |
 | The afternoon bell | Rested Inkpaws work and walk faster on a shorter day. The bonus multiplies with well-being, is fixed each dawn, and shows on the working-hours panel. A bell rings at the end of the day and at dawn |
 | Bamboo twice, and poles | Shoot bamboo as a crop, timber bamboo as a tree that yields poles, the Pole Mill |
 | Seven plants on three kinds of land | Shoot bamboo, timber bamboo, cabbage, rice, tea, Sichuan pepper, persimmon. A test terrace of 346 plants stayed healthy with each on its own kind of ground |
@@ -115,24 +115,44 @@ Built, placed and finished in test runs, but not yet shown working the way a pla
 3. Enable **Pandaborn - Factions** in the game's mod manager.
 4. Start a new game and choose the Inkpaws.
 
-Use one copy only. If the Workshop copy and a local copy are both enabled, the mod runs the first, parks the second
-copy's asset bundles and tells you. Other mods may not cope with the duplicate (see below).
+**Use one copy only.** If the Workshop copy and a manual copy are both enabled, this mod runs the first and tells
+you. TimberUi does not cope: with it installed the game stops at start.
 
 Game version: Timberborn 1.1. Built and tested on 1.1.2.8.
 
-## Works with
+## Works with, and known issues
 
-| Mod | State |
+Read these four first:
+
+* **Use one copy only.** A Workshop copy plus a manual copy stops the game at start when TimberUi is installed,
+  and TImprove and Choo!Choo! both need TimberUi.
+* **Removing the mod breaks Inkpaws saves.** A game played as the Inkpaws needs the mod to load.
+* **After a Timberborn update, wait for this mod's update before loading an Inkpaws save.**
+* It changes nothing for Folktails or Iron Teeth, and adding it to an existing game is safe.
+
+The list below follows a compatibility audit that read the code of this mod, of the game and of the mods on the
+author's machine ([docs/reviews/2026-11-25-mod-compatibility.md](docs/reviews/2026-11-25-mod-compatibility.md)).
+It ran no game, so nothing here says "tested" unless a run is named.
+
+| Mod | What to expect |
 |---|---|
-| No other mods | Tested. This is the main test setup |
-| [Pandaborn - Panda Reskin](https://steamcommunity.com/sharedfiles/filedetails/?id=3838695858) 7.0.0 | Works, nothing breaks. The Reskin treats the Inkpaws as an unknown faction: it swaps their portraits for its Folktails ones and gives Ringtails fur in the giant panda's pattern. A small Reskin update that leaves the Inkpaws their own coats and portraits is written and tested, and goes out with this mod |
-| ChooChoo, KnatteAnka's Staircase and the other 33 mods on the author's machine | An Inkpaws game followed by a Folktails game ran clean with all 35 enabled |
-| TimberCommons | The flumes ran the same with it and without it |
-| TimberUi | Crashes if any mod is enabled twice (a local and a Workshop copy). That is true with or without this mod. Keep one copy |
-| Mod Settings | Not needed. This mod has no settings page |
-| Harmony | Not needed and not used |
+| No other mods | The main test setup. Every run in `docs/tech/` |
+| Harmony, Mod Settings | Not needed and not used |
+| [Pandaborn - Panda Reskin](https://steamcommunity.com/sharedfiles/filedetails/?id=3838695858) 7.0.0 | Works; run in game, nothing breaks. Until the Reskin's next update it shows its own portraits for the Inkpaws and gives Ringtails giant-panda fur. That update is written and tested and goes out with this mod |
+| Building packs: Staircase, Ladder, More Platforms, Path Extention, Water Extention, Extended Floodgates, Flywheels, Ferris Wheel, Food Stall, The Barkimedes Screw, 4-way District Center | They keep working for Folktails and Iron Teeth. Their buildings are not offered to the Inkpaws, because those mods list their buildings per faction. Their authors can add the Inkpaws with one small file: see "For mod authors" |
+| Choo!Choo! | Available to the Inkpaws. Its stations and wagons take on the Inkpaws' look |
+| Mods that change a vanilla building (more zipline connections, bigger storage) | They do not change the Inkpaws' own version of that building |
+| Ferris Wheel | Inkpaws show a "Ferris Wheel" need they cannot meet. It costs the last few points of well-being and nothing else |
+| MoreGroups, CustomTools | MoreGroups keeps Inkpaws buildings in the main toolbar groups. CustomTools' Levee+, Platform+ and Path+ are for Folktails and Iron Teeth only |
+| Automation, Simple Floodgate Triggers | Work on Inkpaws floodgates and pumps. They cannot control the Flume Gate |
+| TimberCommons | The flumes ran the same with it and without it (run W2 in `docs/tech/water.md`). Its discharge settings do not appear on the Inkpaws' Cistern Tap |
+| TImprove | Its all-day light removes the lantern glow at night |
+| **T3MP, Performance Plus** | **Not tested yet.** They rewrite parts of the game this mod's features run inside. If something looks wrong in an Inkpaws game, try without them first, and say what you saw |
+| **Other faction mods** | **Not tested yet.** Expected to live side by side: no id collides |
 
-A wider compatibility audit is in progress. Its results will be added here and to the store pages.
+An earlier build ran clean beside 35 other mods. That was before the Ringtails, the water toolkit, the festival
+and the flowering existed, so it is not counted here. The long form, with sources, is
+[catalogue/text/store/known_issues.md](catalogue/text/store/known_issues.md).
 
 ## Settings
 
@@ -141,16 +161,92 @@ A wider compatibility audit is in progress. Its results will be added here and t
   bamboo's panel.
 * **The festival** can call itself when the village is stocked. The switch is on the Festival Square's panel.
 
-There is nothing to configure outside the game.
+There is no settings page, and Mod Settings is not needed.
+
+### Turning one feature off
+
+Each feature with code can be kept from loading. This is the mod's own test switch. It is useful when you want
+to find out whether a problem comes from one feature, or from another mod meeting it.
+
+Set an environment variable named `PANDABORN_DEV` before the game starts. Its value names the features:
+
+```
+force-off: Water
+force-off: Festival, Flowering
+```
+
+On Windows, in a command prompt:
+
+```
+setx PANDABORN_DEV "force-off: Water"
+```
+
+Then close Steam completely and start it again, so the game sees the variable. To undo it, run
+`setx PANDABORN_DEV ""` and restart Steam again.
+
+| Name | Feature | With it off |
+|---|---|---|
+| `Bell` | The afternoon bell | Working hours behave as in the plain game. No rested bonus, no bell |
+| `Ringtails` | The Ringtails | Ringtails in a save load as Inkpaws with their names and homes. Night posts are ordinary workplaces. Moon Lofts are plain homes |
+| `Water` | Flumes and the water toolkit | Flume pieces are solid blocks that hold no water. The Paddy Spout is a plain fill valve |
+| `Festival` | The Lantern Festival | No festival. The square is a plain gathering place. Tradition decorations are simply buildable |
+| `Flowering` | The Great Flowering | Bamboo never flowers |
+| `Look` | The Inkpaws' building look | Buildings look like Folktails ones |
+| `Names` | Panda names | New colonists get the game's names. Existing names stay |
+| `Words` | Panda words in the interface | The interface says beaver and kit |
+| `Tutorial` | The "have this many goods" tutorial steps | Those steps are skipped |
+
+What to know:
+
+* The game tells you once per save which features are off, and the notification log lists them.
+* Saves keep loading. What a feature had saved waits in the save and comes back with the feature.
+* The buildings stay in the toolbar. A switched-off flume is a solid block with a flume's name.
+* A file named `pandaborn.dev.txt` next to the manifest does the same thing in development copies. **The released
+  mod ignores that file on purpose**, so that a test leftover can never switch features off for players. Use the
+  variable.
+* Each of these switches has been exercised by the mod's own tests, with the variable set for the game by the
+  test script. Setting it through `setx` is ordinary Windows and has not been tried here.
 
 ## Saves
 
 * Adding the mod to an existing game is safe. Nothing changes for Folktails or Iron Teeth.
 * **Removing the mod breaks Inkpaws saves.** A game played as the Inkpaws needs the mod to load.
+* **After a Timberborn update, wait for this mod's update before loading an Inkpaws save.** Most features switch
+  themselves off when the game changes under them. A few parts of the faction's data cannot, and then Inkpaws games
+  do not load until the mod is updated. Folktails and Iron Teeth games are not affected.
 * If one feature is switched off, by a game update or on purpose, the save still loads. Ringtails load as Inkpaws
   and keep their names, homes and needs. Flumes become solid blocks and flood nothing. Festival and Flowering state
   waits in the save and picks up when the feature is back.
 * Ids are frozen (`catalogue/ids.lock.json`). A later version does not rename what a save refers to.
+
+## For mod authors: offering your buildings to the Inkpaws
+
+The game shows a faction only the buildings in that faction's own lists. A building pack that lists its buildings
+for Folktails and Iron Teeth is therefore not offered to the Inkpaws until it says so. It takes one file, the same
+kind you already write for Folktails or for another modded faction. Your `.Folktails` templates work as they are.
+
+`TemplateCollections/TemplateCollection.YourMod.Buildings.Inkpaws.blueprint.json`:
+
+```json
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.Inkpaws",
+    "Blueprints#append": [
+      "Buildings/YourMod/YourBuilding/YourBuilding.Folktails.blueprint"
+    ]
+  }
+}
+```
+
+* Collections join by `CollectionId`, so give the file any name of your own.
+* Paths are relative to your mod's root and end in `.blueprint`, without `.json`.
+* The Inkpaws list the Folktails material collection, so Folktails models render, in the Inkpaws' look.
+* Costs in Log, Plank, Gear, Metal Block, Scrap Metal, Treated Plank and Explosives work. Planks show as Poles and
+  treated planks as Cured poles; they are the same goods.
+* The file does nothing when this mod is not installed.
+
+This is read from the game's code and from how packs already add other modded factions. It has not yet been run
+with a real pack. If you try it, a note on how it went is welcome.
 
 ## For modders
 

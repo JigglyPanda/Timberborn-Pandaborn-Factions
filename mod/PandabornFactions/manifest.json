@@ -3,7 +3,7 @@
   "Version": "0.0.1",
   "Id": "JigglyPanda.PandabornFactions",
   "MinimumGameVersion": "1.1.0.0",
-  "Description": "Early development build. Adds the Inkpaws, a playable giant panda faction with their own buildings, crops, dishes and afternoon rituals: bamboo poles, rice paddies, tea at the Teahouse, naps, and a rested bonus for a short working day. A Moon Loft invites the Ringtails, red pandas who work from the afternoon bell to dawn. Flumes and the Lantern Festival come in later versions. Art and code are AI-generated.",
+  "Description": "Adds the Inkpaws, a playable faction of giant pandas with their own buildings, crops and dishes. They lead water down bamboo flumes to rice paddies, grow tea on dry ground, and work a short day: rested pandas work and walk faster. A Moon Loft invites the Ringtails, red pandas who work from the afternoon bell to dawn. With the Lantern Festival and the Great Flowering. Early access. Needs no other mods. Folktails and Iron Teeth are not changed. Removing the mod breaks Inkpaws saves. Art, code, text and sounds are AI-generated.",
   "RequiredMods": [],
   "OptionalMods": []
 }

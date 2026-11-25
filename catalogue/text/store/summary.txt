@@ -1,0 +1,14 @@
+DRAFT NOTES (delete down to the line of dashes before use)
+- Written by an AI (Claude). State of 2026-11-25. Publish only after docs/RELEASE.md is green.
+- Line 1: the one-line summary (Steam "short description", lists, release title). 136 characters.
+- Line 2: mod.io's summary field, at most 250 characters. 240 characters.
+- Line 3: a proposal for "Description" in mod/PandabornFactions/manifest.json, which today still says "Early
+  development build" and "Flumes and the Lantern Festival come in later versions". The manifest belongs to the
+  build lane: this is text to hand over, not an edit.
+- Drop "flumes" from a line if the Water feature does not ship, and "red pandas" if the Ringtails do not.
+----------------------------------------------------------------------
+A playable panda faction: bamboo flumes, rice terraces, tea on dry ground, a short working day, and red pandas who work the night shift.
+
+The Inkpaws: giant pandas who lead water down bamboo flumes to rice terraces, grow tea on dry ground and stop at the afternoon bell. Then the red pandas of the Night Watch work until dawn. A full faction, no other mods needed. AI-generated.
+
+Adds the Inkpaws, a playable faction of giant pandas who lead water down bamboo flumes, work a short day, and share their village with the Ringtails, red pandas who work from the afternoon bell to dawn. Early access. Needs no other mods. Folktails and Iron Teeth are not changed. Removing the mod breaks Inkpaws saves. Art, code, text and sounds are AI-generated.
