@@ -90,9 +90,9 @@ namespace Pandaborn.Names
         {
             try
             {
-                if (string.IsNullOrEmpty(poolKey)) return _loc.T("Beaver.NamePool").Split('\n').Select(Clean).FirstOrDefault(n => n.Length > 0) ?? "Panda";
+                if (string.IsNullOrEmpty(poolKey)) return Vanilla();
                 var full = Pool(poolKey);
-                if (full.Count == 0) return "Panda";
+                if (full.Count == 0) return Vanilla();
                 if (!_remaining.TryGetValue(poolKey, out var left))
                 {
                     left = _saved.TryGetValue(poolKey, out var s)
@@ -111,6 +111,14 @@ namespace Pandaborn.Names
                 Debug.LogError("[Pandaborn.Names] drawing a name failed: " + e);
                 return "Panda";
             }
+        }
+
+        /// <summary>A random name from the game's own list, for a template whose pool is missing or empty: better a beaver
+        /// name than a village where everyone is called the same.</summary>
+        private string Vanilla()
+        {
+            var names = _loc.T("Beaver.NamePool").Split('\n').Select(Clean).Where(n => n.Length > 0).ToList();
+            return names.Count > 0 ? names[_random.Range(0, names.Count)] : "Panda";
         }
 
         private List<string> Pool(string key) => _loc.T(key).Split('\n').Select(Clean).Where(n => n.Length > 0 && !n.Contains(key)).Distinct().ToList();
