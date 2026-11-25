@@ -51,7 +51,8 @@ namespace Pandaborn.Flowering
 
         public void PostInitializeEntity()
         {
-            if (_floweringService.Active) _floweringService.AddPlant(this);
+            try { if (_floweringService.Active) _floweringService.AddPlant(this); }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Flowering] a bamboo could not register: " + e); }
         }
 
         public void DeleteEntity()
@@ -120,9 +121,13 @@ namespace Pandaborn.Flowering
 
         public void PostInitializeEntity()
         {
-            if (!_floweringService.Active) return;
-            _floweringService.AddInFlower(this);
-            if (Cuttable != null) Cuttable.WasCut += OnCut;
+            try
+            {
+                if (!_floweringService.Active) return;
+                _floweringService.AddInFlower(this);
+                if (Cuttable != null) Cuttable.WasCut += OnCut;
+            }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Flowering] a flowering bamboo could not register: " + e); }
         }
 
         public void DeleteEntity()
@@ -133,8 +138,9 @@ namespace Pandaborn.Flowering
 
         private void OnCut(object sender, EventArgs e)
         {
-            int amount = Cuttable.YielderSpec?.Yield.Amount ?? 0;
-            _floweringService.OnSeedCut(amount);
+            // a game event (the farmer's or lumberjack's cut): nothing may escape into it
+            try { _floweringService.OnSeedCut(Cuttable.YielderSpec?.Yield.Amount ?? 0); }
+            catch (Exception) { }
         }
     }
 }

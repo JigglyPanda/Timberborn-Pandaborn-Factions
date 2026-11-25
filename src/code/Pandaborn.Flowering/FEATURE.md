@@ -1,21 +1,27 @@
 # Pandaborn.Flowering - the Great Flowering
 
 DESIGN.md Pillar 5; full design, player timeline, the fairness arithmetic and test results in `docs/tech/events.md`.
-**Status: in `Pandaborn.Code.sln` and `modules.txt`; ships when `catalogue/rules.toml [modules] Flowering` is on** (the
-catalogue already carries its data behind that switch). Dev copies: `proto/events/build.ps1`.
+**Status: in `Pandaborn.Code.sln` and `modules.txt`; ships with `catalogue/rules.toml [modules] Flowering` (on since
+2026-11-14).** Dev copies with test timings: `proto/events/build.ps1`.
 
 **What it does.** One bamboo species flowers per Flowering, in the order of `PandabornFloweringSpec.Species`, alternating.
 
-* **Schedule**: never before `FirstCycle` (6; "rare" adds `RareDelayCycles`), then every `NormalMinCycles`..`NormalMaxCycles`
-  cycles (rare: `RareMinCycles`..`RareMaxCycles`); the chosen cycle is saved. A Flowering happens at the start of a cycle,
-  which is always temperate weather, so never in a drought or badtide.
+* **Schedule** (`FloweringSchedule`, no game types; tests in `src/code/tests/Events`): never before `FirstCycle` (6;
+  "rare" adds `RareDelayCycles`), then every `NormalMinCycles`..`NormalMaxCycles` cycles (rare:
+  `RareMinCycles`..`RareMaxCycles`); the chosen cycle is saved. A Flowering happens at the start of a cycle, which is
+  always temperate weather, so never in a drought or badtide.
 * **Announced a full cycle ahead**, at the start of the cycle before (if announced later, by a load or a setting change, it
   moves one cycle further): a notice, a line under the top bar with the advice in its tooltip, a line on every bamboo's
   panel, and buds on the plants where the plant's spec says they are painted in its detail map (`BudsUseDetail`).
 * **The Flowering**: every grown plant of the species, planted or wild, is replaced by its `InFlowerTemplate` twin (whose
-  harvest, its cut yield in data, is bamboo seed) at the same tile; young plants die. The twins die over the last day of
-  `SeedDays` (3). Farmers and lumberjacks take the seed with their ordinary harvest, because the seed is a yield of their
-  resource group; crops that die unharvested lose it (the game's rule), dead twin trees keep it until cut.
+  harvest, its cut yield in data, is bamboo seed) at the same tile, the planting mark put back under it; young plants
+  die. **The change is spread over game ticks** (about 5 ms of work in each, never fewer than 8 plants; in a wave
+  across the map): replacing a plant deletes an entity and creates one, and thousands in one tick would stall the game (an estimate from the game's code, never measured). A
+  farm of a few dozen flowers within a few ticks; the notice with the number of plants and seed comes when the last
+  one has turned. No entity is touched in Load, PostLoad or an event handler (by the game's code a twin placed before its
+  event bus is ready has its planting mark cleared again later; not seen in game). The twins die over the last day of `SeedDays` (3). Farmers and lumberjacks
+  take the seed with their ordinary harvest, because the seed is a yield of their resource group; crops that die
+  unharvested lose it (the game's rule), dead twin trees keep it until cut.
 * **The rest**: until `DormantDays` (9) after the Flowering, young plants of the species do not grow. The planting marks
   stay, so farms and foresters replant on their own; the seedlings start growing when the rest ends.
 * **Setting** per save: normal, rare or off, in a game dialog opened from the top-bar line or any bamboo's panel. No other
@@ -23,20 +29,37 @@ catalogue already carries its data behind that switch). Dev copies: `proto/event
 
 **Data it needs** (catalogue): `PandabornFloweringSpec` on the Inkpaw adult template; `PandabornFloweringPlantSpec` on the
 two bamboos; the two twins (`PandabornShootBambooInFlower.Inkpaws`, `PandabornTimberBambooInFlower.Inkpaws`) with
-`PandabornInFlowerSpec`, in `NaturalResources.Inkpaws`.
+`PandabornInFlowerSpec`, in `NaturalResources.Inkpaws`. No growth time or yield is in code.
 
 **Saved**: `PandabornStore` entry `Flowering` v1: `setting`, `phase` (Idle/Announced/Flowering/Resting), `next` (cycle),
-`nextSpecies`, `species`, `day` (when it flowered), `last` (cycle). The twins are ordinary saved plants. The growth holds
-are not saved: the game saves growth progress as always, and the service holds the plants again after a load.
+`nextSpecies`, `species`, `day` (when it flowered), `last` (cycle), `borne`, `lost` (seed), and since 2026-11-25 `twins`,
+`killed` and `converting` (0 done, 1 grown plants still turning, 2 not begun; an older module ignores them, a save
+without them is read as done). The twins are ordinary saved plants. A save made while the bamboo is still coming into
+flower goes on after the load with the grown plants that are left. The growth holds are not saved: the game saves
+growth progress as always, and the service holds the plants again after a load.
+
+**Growth holds and other mods.** A hold is the plant's own growth timer paused (`Growable._timeTrigger`, private). It
+is never set once and trusted: the timer is read from the plant at every call, and every resting plant is held again
+after a load, every in-game hour, when the Flowering begins and when a plant is planted. So when the game resumes a
+plant by itself (one that stops dying), or **another mod replaces the timer object** (TimberCommons'
+`GrowthRateModifier` does when one of its growth modifiers registers, and resumes the new one: compatibility audit
+2026-11-25, m6), the plant grows for at most one in-game hour before it is held again: a slightly milder Flowering,
+never a harsher one. The first time an hourly check finds resting plants growing, one line goes to the log
+(`HeldAgain` counts them). Not seen in game with TimberCommons (docs/tech/events.md, "Needs a game run").
 
 **Fails safely.**
 * Module off: no announcements and no Flowering. Twins already in a save stay ordinary plants whose harvest is seed and
-  never die by themselves; young bamboo grows at once. The store entry is carried unchanged; when the module is back it
-  picks up where the save left off (an announced Flowering whose date passed moves to the next cycle start).
-* `Growable._timeTrigger` (private) gone, or `simulate-missing-member: Flowering.GrowthHold`: young bamboo regrows at once
-  after a Flowering (milder, never harsher); reported through `FeatureRegistry.ReportDegraded("Flowering", ...)`.
+  never die by themselves; young bamboo grows at once; grown bamboo that had not turned yet stays ordinary bamboo. The
+  store entry is carried unchanged; when the module is back it picks up where the save left off (an announced
+  Flowering whose date passed moves to the next cycle start).
+* `Growable._timeTrigger` (private) gone, or `simulate-missing-member: Flowering.GrowthHold`, or the timer throwing:
+  young bamboo regrows at once after a Flowering (milder, never harsher); reported through
+  `FeatureRegistry.ReportDegraded("Flowering", ...)`.
+* A plant that cannot be replaced is skipped; after five failures the rest of the bamboo is left as it is (ordinary
+  plants) and the feature reports degraded.
 * A game of our faction without the data gets `FeatureRegistry.ReportNoData`.
-* Interface pieces sit behind `SafeUi`.
+* Nothing thrown by the module reaches the game (ticks, event handlers, entity callbacks, the cut event).
+  Interface pieces sit behind `SafeUi`.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->
@@ -233,6 +256,7 @@ are not saved: the game saves growth progress as always, and the service holds t
 * type `Timberborn.TimeSystem.ITimeTrigger`
   * method `Pause()`
   * method `Resume()`
+  * method `get_InProgress()`
 
 **Timberborn.TooltipSystem**
 
@@ -279,6 +303,7 @@ are not saved: the game saves growth progress as always, and the service holds t
   * method `get_x()`
   * method `get_y()`
   * method `get_z()`
+  * method `get_zero()`
 
 **UnityEngine.UIElementsModule**
 

@@ -14,6 +14,11 @@ namespace Pandaborn.Flowering
     /// timer, the private field Growable._timeTrigger (an ITimeTrigger, a public interface with Pause/Resume).
     /// Nothing is saved: the timer's progress is saved by the game as always; on load the game resumes it and the service
     /// holds it again.
+    /// The timer is read from the plant at every call, never kept: the game resumes it by itself when a plant stops
+    /// dying, and another mod may put a new timer object in the field (TimberCommons' GrowthRateModifier does when one of
+    /// its growth modifiers registers, and resumes it). FloweringService therefore holds every resting plant again each
+    /// in-game hour, after a load and when a plant is planted; such a plant grows for at most an hour in between (the
+    /// Flowering is a little milder, never harsher).
     /// Fallback (ENGINEERING.md, code rule 4): if the field is gone or has another type, or the dev switch says
     /// "simulate-missing-member: Flowering.GrowthHold", young bamboo grows at once after a Flowering (the event is shorter
     /// and milder) and one warning is logged.
@@ -45,24 +50,50 @@ namespace Pandaborn.Flowering
 
         public static string Unavailable => Available ? null : _failure;
 
-        /// <summary>Pauses the growth of a plant that is not grown yet. True when it is (now) held.</summary>
-        public static bool Hold(Growable growable)
+        /// <summary>Pauses the growth of a plant that is not grown yet. True when it is (now) held;
+        /// <paramref name="wasGrowing"/> when its timer was running until this call.</summary>
+        public static bool Hold(Growable growable, out bool wasGrowing)
         {
-            if (!Available || growable == null || growable.IsGrown) return false;
-            var trigger = Trigger(growable);
-            if (trigger == null) return false;
-            trigger.Pause();
-            return true;
+            wasGrowing = false;
+            if (!Available || growable == null) return false;
+            try
+            {
+                if (growable.IsGrown) return false;
+                var trigger = Trigger(growable);
+                if (trigger == null) return false;
+                wasGrowing = trigger.InProgress;
+                trigger.Pause();
+                return true;
+            }
+            catch (Exception e) { return Broken(e); }
         }
 
         /// <summary>Lets a held plant grow again, unless it is dead or dying (then the game resumes it when it recovers).</summary>
         public static void Release(Growable growable)
         {
-            if (!Available || growable == null || growable.IsGrown) return;
-            var living = growable.GetComponent<LivingNaturalResource>();
-            var dying = growable.GetComponent<DyingNaturalResource>();
-            if ((living != null && living.IsDead) || (dying != null && dying.IsDying)) return;
-            Trigger(growable)?.Resume();
+            if (!Available || growable == null) return;
+            try
+            {
+                if (growable.IsGrown) return;
+                var living = growable.GetComponent<LivingNaturalResource>();
+                var dying = growable.GetComponent<DyingNaturalResource>();
+                if ((living != null && living.IsDead) || (dying != null && dying.IsDying)) return;
+                Trigger(growable)?.Resume();
+            }
+            catch (Exception e) { Broken(e); }
+        }
+
+        /// <summary>The timer no longer behaves as it did (the game changed, or another mod's timer throws): no more holds
+        /// in this session, said once in the log and in the feature report.</summary>
+        private static bool Broken(Exception e)
+        {
+            if (_failure == null)
+            {
+                _failure = e.GetType().Name + ": " + e.Message;
+                Debug.LogError("[Pandaborn.Flowering] growth hold switched off: " + _failure);
+                FeatureRegistry.ReportDegraded("Flowering", "young bamboo regrows at once after a Flowering (" + _failure + ")");
+            }
+            return false;
         }
 
         private static ITimeTrigger Trigger(Growable growable)
@@ -70,8 +101,7 @@ namespace Pandaborn.Flowering
             try { return TimeTriggerField.GetValue(growable) as ITimeTrigger; }
             catch (Exception e)
             {
-                _failure = e.GetType().Name + ": " + e.Message;
-                Debug.LogError("[Pandaborn.Flowering] growth hold switched off: " + _failure);
+                Broken(e);
                 return null;
             }
         }
