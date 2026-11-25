@@ -1,9 +1,9 @@
 {
   "_meta": {
     "kind": "buildings",
-    "source": "docs/CONTENT.md draft 2, docs/DESIGN.md revision 4, docs/tech/balance.md stat sheet",
+    "source": "docs/DESIGN.md (with its change log to 2026-11-25), catalogue/*.toml, the module FEATURE.md files. Words: GLOSSARY.md beside this file.",
     "language": "enUS",
-    "status": "staging input for the catalogue importer; written by an AI, not yet reviewed by the owner",
+    "status": "read by the generator (matched by id); written by an AI; text pass of 2026-11-25 checked every claim against the catalogue and the module code",
     "keyed_by": "The building's English name. Where CONTENT.md lists a set on one line (for example 'Cistern (small, medium, large)') each building has its own entry and 'content_md' gives the CONTENT.md label.",
     "vanilla_loc_pattern": {
       "name": "Building.<Id>.DisplayName",
@@ -22,9 +22,10 @@
       "name": "A string is new text. null means: keep the vanilla key named in 'vanilla_id'.",
       "description": "A string is new text. null means: keep the vanilla description key. Vanilla text is already translated into every language the game ships, so null is preferred wherever the vanilla words are true and do not mention beavers.",
       "flavor": "Same rule as description. At most one short line.",
-      "reuse": "Optional. Names a vanilla loc key to point at instead of writing new text, when a new building does exactly what a vanilla one does.",
+      "reuse": "Optional. Names a vanilla loc key to point at instead of writing new text, when the vanilla words are true for this building. Vanilla keys are translated into every language the game ships.",
+      "length": "Vanilla descriptions: median 51 characters, nine in ten under 100, longest 154. Flavor: median 62, longest 124. Stay near the median.",
       "why": "For re-themed buildings: why the vanilla text was replaced.",
-      "status_and_tooltip_lines": "Live in messages.json. 'see' lists the message ids that belong on this building's panel."
+      "status_and_tooltip_lines": "Panel lines, statuses and notifications are written by the code modules and live in src/code/Pandaborn.*/mod/Localizations/enUS_*.csv."
     },
     "icons_in_text": "[sun] and [moon] stand for the day and night icons. The importer replaces them with the sprite tag the interface uses.",
     "highlight_tags": "<YellowHighlight>…</YellowHighlight> is the vanilla keyword tag and is used the same way here."
@@ -34,7 +35,8 @@
     "Village Hall": {
       "id": "PandabornVillageHall", "basis": "new", "vanilla_basis": "DistrictCenter", "who": "I",
       "name": "Village Hall",
-      "description": "The heart of a district, with its own population, goods and path network. Employs builders.",
+      "description": null,
+      "reuse": { "description": "Building.DistrictCenter.Description" },
       "flavor": "\"Work well, rest well.\" —Village motto",
       "note": "The flavor line is the motto, as on the vanilla District Center. It must match 'motto' in faction.json."
     },
@@ -59,37 +61,34 @@
     "Festival Square": {
       "id": "PandabornFestivalSquare", "basis": "new", "who": "-",
       "name": "Festival Square",
-      "description": "Calls the Lantern Festival and hosts it. Pandas gather here in the evening.",
-      "flavor": "Swept every morning, just in case.",
-      "see": ["festival.*", "tradition.*"]
+      "description": "Hosts the Lantern Festival. On ordinary days, a place to keep each other company.",
+      "flavor": "Swept every morning, just in case."
     },
 
     "Den": {
       "id": "PandabornDen", "basis": "new", "vanilla_basis": "Lodge", "who": "-",
       "name": "Den",
       "description": "A simple home for a small family.",
-      "flavor": "It smells of bamboo and of whoever napped there last.",
-      "see": ["young.den_rule"]
+      "flavor": "It smells of bamboo and of whoever napped there last."
     },
     "Courtyard House": {
       "id": "PandabornCourtyardHouse", "basis": "new", "vanilla_basis": "DoubleLodge", "who": "-",
       "name": "Courtyard House",
       "description": "A larger home built around a shared yard.",
-      "flavor": "The yard is for airing bedding, drying vegetables and long conversations."
+      "flavor": "The yard is for airing bedding and for long conversations."
     },
     "Terrace House": {
       "id": "PandabornTerraceHouse", "basis": "new", "vanilla_basis": "TripleLodge", "who": "-",
       "name": "Terrace House",
-      "description": "A large home for many families. Built to be stacked up a hillside.",
+      "description": "A large home for many families.",
       "flavor": "The higher the home, the better the view and the longer the walk to dinner."
     },
     "Moon Loft": {
       "id": "PandabornMoonLoft", "basis": "new", "who": "-",
       "name": "Moon Loft",
-      "description": "A home on stilts over a path. The first one invites a Ringtail family; kits are raised here while there is night work.",
+      "description": "A snug home on stilts, with room for a path beneath. The first one you build invites a Ringtail family.",
       "flavor": "A lantern in a high window is an old invitation.",
-      "see": ["ringtails.arrival", "ringtails.arrival_notification", "young.loft_raising", "young.loft_waiting"],
-      "note": "Any home takes anyone, so the description never says 'home for Ringtails'."
+      "note": "Lofts are Ringtail homes by a swap rule (two-peoples.md 0); an Inkpaw may use a spare bed. The kit rule is on the panel (enUS_PandabornRingtails.csv), not here."
     },
 
     "Gatherer Flag": {
@@ -98,12 +97,13 @@
       "flavor": "A full basket leaves the bushes. A slightly less full basket reaches the warehouse.",
       "why": "Vanilla flavor mentions beavers."
     },
-    "Farmstead": {
-      "id": "PandabornFarmstead", "basis": "new", "vanilla_basis": "EfficientFarmhouse", "who": "I",
+    "Farmhouse": {
+      "id": "PandabornFarmstead", "basis": "rethemed", "vanilla_basis": "EfficientFarmhouse", "who": "I",
       "name": null,
-      "description": "Employs farmers who plant and harvest shoot bamboo and cabbage on moist ground.",
+      "description": null,
+      "reuse": { "name": "Building.Farmhouse.DisplayName", "description": "Building.Farmhouse.Description" },
       "flavor": "A field is planted in the morning and admired in the afternoon.",
-      "note": "CONTENT.md marks it re-themed, but the name is new, so all three strings are new."
+      "note": "One name: Farmhouse. The template is the Folktails Efficient Farmhouse, whose own name key reads 'Efficient Farmhouse' and whose description names the Folktails; the Iron Teeth keys Building.Farmhouse.DisplayName ('Farmhouse') and .Description ('Employs farmers that plant and harvest crops.') are true here and already translated. Never write Farmstead or Efficient Farmhouse in player text."
     },
     "Steamer": {
       "id": "PandabornSteamer", "basis": "new", "vanilla_basis": "Grill", "who": "I",
@@ -114,28 +114,27 @@
     "Pickle Yard": {
       "id": "PandabornPickleYard", "basis": "new", "who": "I",
       "name": "Pickle Yard",
-      "description": "Pickles cabbage in clay jars. One cabbage fills several jars, so a small field feeds more villagers.",
+      "description": "Pickles cabbage in clay jars. One cabbage fills several.",
       "flavor": "Every jar belongs to somebody's grandmother, and she knows exactly how many there are."
     },
     "Paddy House": {
       "id": "PandabornPaddyHouse", "basis": "new", "vanilla_basis": "AquaticFarmhouse", "who": "I",
       "name": "Paddy House",
-      "description": "Employs paddy farmers who plant and harvest rice, an <YellowHighlight>Aquatic</YellowHighlight> crop that grows in shallow flooded fields.",
-      "flavor": "Paddy farmers are the only villagers who wear the wide hat, and they do not lend it.",
-      "note": "'Aquatic' is the vanilla keyword the game already shows on the plant (NaturalResources.Aquatic)."
+      "description": "Employs farmers who plant and harvest rice. Rice grows only in a flooded field: a Paddy Spout keeps one at the right depth.",
+      "flavor": "Everyone agrees that rice is worth wet feet. Paddy farmers agree a little less.",
+      "note": "This line and the Rice plant's description are all the teaching the rice chain gets (no tutorial stage), so they name the spout, the depth and what rice becomes. The game shows the vanilla Aquatic keyword on the plant by itself."
     },
     "Tea Roastery": {
       "id": "PandabornTeaRoastery", "basis": "new", "who": "I",
       "name": "Tea Roastery",
-      "description": "Roasts tea leaves. Roasted tea keeps in any warehouse.",
+      "description": "Roasts tea leaves into tea for the Teahouse.",
       "flavor": "The smell reaches the fields well before the bell does."
     },
     "Trip-Hammer Mill": {
       "id": "PandabornTripHammerMill", "basis": "new", "vanilla_basis": "Gristmill", "who": "I",
       "name": "Trip-Hammer Mill",
-      "description": "Pounds rice into rice flour. Its wheel is driven directly by flowing water: place it on a flume or a stream. Needs no power shafts.",
-      "flavor": "The water lifts the hammer and lets it fall. The miller mostly watches.",
-      "see": ["water.mill_no_current"]
+      "description": "Pounds rice into rice flour. Driven by its own wheel, which must stand in flowing water.",
+      "flavor": "The water lifts the hammer and lets it fall. The miller mostly watches."
     },
     "Kitchen": {
       "id": "PandabornKitchen", "basis": "new", "vanilla_basis": "Bakery", "who": "I",
@@ -146,7 +145,7 @@
     "Hot Pot Hall": {
       "id": "PandabornHotPotHall", "basis": "new", "who": "I",
       "name": "Hot Pot Hall",
-      "description": "Cooks hot pot from cabbage, Sichuan pepper and bamboo mushrooms. The best everyday meal in the village.",
+      "description": "Cooks hot pot from cabbage, Sichuan pepper and bamboo mushrooms.",
       "flavor": "Nobody admits to adding the extra pepper. Everybody reaches for the tea."
     },
 
@@ -160,7 +159,7 @@
     "Forester": {
       "id": "Forester", "basis": "rethemed", "vanilla_id": "Forester", "who": "I",
       "name": null,
-      "description": "Plants timber bamboo, trees and bushes, including tea and Sichuan pepper.",
+      "description": "Plants trees and bushes, among them timber bamboo, tea and Sichuan pepper.",
       "flavor": "Timber bamboo is ready before the forester has finished admiring it.",
       "why": "Names timber bamboo; vanilla flavor mentions beaver society."
     },
@@ -188,14 +187,15 @@
       "id": "PandabornPoleMill", "basis": "new", "vanilla_basis": "LumberMill", "who": "I",
       "name": "Pole Mill",
       "description": "Splits logs into poles.",
-      "flavor": "Bamboo grows back in a week. The mill keeps the builders busy until it does.",
-      "note": "DESIGN.md 2026-11-14: the vanilla lumber mill (LumberMill.Inkpaws) with its own name; poles are the renamed Plank."
+      "flavor": "Bamboo takes its time. The mill keeps the builders busy until it is ready.",
+      "note": "DESIGN.md 2026-11-14: the vanilla lumber mill (LumberMill.Inkpaws) with its own name; poles are the renamed Plank. It needs power, as the lumber mill does; the game shows that itself."
     },
     "Smoke Kiln": {
       "id": "PandabornSmokeKiln", "basis": "new", "vanilla_basis": "WoodWorkshop", "who": "I",
       "name": "Smoke Kiln",
-      "description": "Cures poles over slow log smoke. Cured poles are the strong material for late construction. Needs no power.",
-      "flavor": "A pole spends hours in the smoke. The kiln keeper smells of it for days."
+      "description": "Cures poles over slow log smoke. Needs no power.",
+      "flavor": "A pole spends hours in the smoke. The kiln keeper smells of it for days.",
+      "note": "'Needs no power' is true since catalogue commit f27cad7 (the mechanical node is deleted). If the kiln ever joins a power network again, cut the sentence."
     },
     "Explosives Factory": {
       "id": "ExplosivesFactory", "basis": "rethemed", "vanilla_id": "ExplosivesFactory", "who": "I",
@@ -252,20 +252,19 @@
     "Flume": {
       "id": "PandabornFlume", "basis": "new", "who": "-",
       "name": "Flume",
-      "description": "An open bamboo aqueduct. Water runs one way, along the arrow, level or downhill. It never climbs and never leaks.",
-      "flavor": "Each length knocks once as the water reaches it. Villagers count the knocks.",
-      "see": ["flume.keyword_moist", "flume.dry_intake", "flume.no_water_at_source", "flume.missing_corner", "flume.uphill", "flume.starved", "flume.open_end", "flume.blocks_path"]
+      "description": "An open bamboo aqueduct. Water runs one way, along the arrow, level or downhill. The ground beside it stays moist.",
+      "flavor": "It knocks once when the water arrives. Pandas nearby stop to listen."
     },
     "Flume Corner": {
       "id": "PandabornFlumeCorner", "basis": "new", "who": "-",
       "name": "Flume Corner",
-      "description": "Turns a flume to the left or to the right. Flumes do not bend on their own.",
+      "description": "Turns a flume. Flumes do not bend on their own.",
       "flavor": "Water does not like to turn. It was not asked."
     },
     "Flume Drop": {
       "id": "PandabornFlumeDrop", "basis": "new", "who": "-",
       "name": "Flume Drop",
-      "description": "Steps a flume down one level. Water falls here and cannot come back up.",
+      "description": "Steps a flume down one level. Water cannot come back up.",
       "flavor": "The one part of a flume that cubs are told not to sit under. They sit under it."
     },
     "Flume Bridge": {
@@ -284,42 +283,38 @@
       "id": "PandabornFlumeGate", "basis": "new", "vanilla_basis": "FillValve", "who": "-",
       "name": "Flume Gate",
       "description": "The intake of a flume. Sets how much water enters, and shuts itself when the water turns bad.",
-      "flavor": "It tastes the water so that the rice does not have to.",
-      "see": ["flume.gate_shut_badwater", "flume.gate_reopened", "flume.gate_flow", "flume.gate_open", "flume.gate_shut", "flume.dry_intake"]
+      "flavor": "It tastes the water so that the rice does not have to."
     },
     "Scoop Wheel": {
       "id": "PandabornScoopWheel", "basis": "new", "who": "-",
       "name": "Scoop Wheel",
-      "description": "Sits in a current and lifts water one level into a flume. Needs flowing water and no workers. It stops when the current stops.",
-      "flavor": "The river does the work. In a drought, the river takes time off too.",
-      "see": ["water.scoop_no_current", "water.scoop_no_outlet"]
+      "description": "Stands in a current and lifts water up the bank. Needs no workers. Stops when the current stops.",
+      "flavor": "The river does the work. In a drought, the river takes time off too."
     },
     "Paddy Spout": {
       "id": "PandabornPaddySpout", "basis": "new", "vanilla_basis": "FillValve", "who": "-",
       "name": "Paddy Spout",
-      "description": "Keeps the field in front of it flooded to a shallow set depth. Needs water at its back and walls around the field.",
-      "flavor": "Rice likes to stand in water. The spout decides how much.",
-      "see": ["water.spout_dry", "water.spout_depth", "water.spout_unwalled"]
+      "description": "Keeps the field in front of it flooded to a set shallow depth. Needs water behind it and levees around the field.",
+      "flavor": "Rice likes to stand in water. The spout decides how much."
     },
     "Cistern Tap": {
       "id": "PandabornCisternTap", "basis": "new", "vanilla_basis": "Discharge", "who": "-",
       "name": "Cistern Tap",
-      "description": "Pours stored water into a flume or a basin, slowly and with no workers of its own. Keeps one strip of ground alive through a drought.",
+      "description": "Employs a worker who pours stored water into a flume or a basin. Keeps a grove alive through a drought.",
       "flavor": "A trickle is not much, until it is the only water moving in the valley.",
-      "see": ["water.tap_empty"],
-      "note": "CONTENT.md marks it re-themed (vanilla Discharge), but it has a new name, so its strings are new."
+      "note": "It keeps the vanilla Discharge worker (a workerless tap crashed the game, docs/tech/water.md), so the text no longer says 'no workers'."
     },
     "Dew Collector": {
       "id": "PandabornDewCollector", "basis": "new", "who": "-",
       "name": "Dew Collector",
-      "description": "Collects a little drinking water each dawn, and less in a drought. Collectors built close together share the same dew.",
-      "flavor": "Not enough to live on. Enough for the first pot of tea.",
-      "see": ["water.dew_shared", "water.dew_drought"]
+      "description": "Collects drinking water with no workers. Collects less in a drought.",
+      "flavor": "The first pot of tea of the day is made with dew. Everyone agrees it tastes better.",
+      "note": "It makes water all day, not at dawn, and collectors do not share dew: neither claim is in the code (DewLimiter has a temperate and a drought rate only). Cut 2026-11-25."
     },
     "Treadwheel Lift": {
       "id": "PandabornTreadwheelLift", "basis": "new", "who": "I",
       "name": "Treadwheel Lift",
-      "description": "Lifts water one level where there is no current. Turned by a worker, so it runs only during the working day.",
+      "description": "Lifts water where there is no current. Turned by a worker, so it runs only during the working day.",
       "flavor": "A morning of walking, and nobody has gone anywhere. The water has gone up."
     },
     "Large Water Pump": {
@@ -438,7 +433,7 @@
     "Dry-Stone Wall": {
       "id": "PandabornDryStoneWall", "basis": "new", "vanilla_basis": "Levee", "who": "-",
       "name": "Dry-Stone Wall",
-      "description": "Stops moisture from spreading through the ground past it.",
+      "description": "Stops moisture from spreading through the ground past it, so tea can grow near wet fields.",
       "flavor": "No mortar and no hurry. Each stone was turned over twice before it was placed."
     },
 
@@ -503,16 +498,16 @@
     "Star Tower": {
       "id": "PandabornStarTower", "basis": "new", "vanilla_basis": "Observatory", "who": "R",
       "name": "Star Tower",
-      "description": "Ringtail stargazers study the night sky here and turn what they see into Science Points. Works from the afternoon bell to dawn and needs no power.",
-      "flavor": "Every star has a name. The Ringtails are still deciding on some of them.",
-      "see": ["ringtails.closed_for_the_day", "ringtails.keyword_night"]
+      "description": "Employs Ringtail stargazers who turn the night sky into Science Points, from the afternoon bell to dawn.",
+      "note": "DESIGN.md 2026-11-25: a Ringtail night post that makes science and keeps its own science cost. No text says it comes with the Moon Loft.",
+      "flavor": "Every star has a name. The Ringtails are still deciding on some of them."
     },
     "Ox Workshop": {
       "id": "PandabornOxWorkshop", "basis": "new", "vanilla_basis": "BotAssembler", "who": "I",
       "name": "Ox Workshop",
-      "description": "Builds Wooden Oxen: tireless, strong and slow workers that need no food, no water and no rest.",
+      "description": "Builds Wooden Oxen: strong, tireless workers that need no food, water or sleep.",
       "flavor": "The first Wooden Ox was built to carry rice. It is still carrying rice.",
-      "note": "CONTENT.md marks it re-themed (vanilla Bot Assembler), but it has a new name. The bot's name is in faction.json."
+      "note": "The bot's name is in faction.json. No numbers here (lift, lifespan, parts): the game shows them and the catalogue may change them. 'Slow' was cut: the data does not slow the ox."
     },
 
     "Small Warehouse": {
@@ -576,14 +571,14 @@
     "Overhang": {
       "id": "Overhang", "basis": "rethemed", "vanilla_id": "Overhang", "who": "-",
       "name": null, "description": null,
-      "flavor": "It sticks out over nothing and holds. Villagers test it with one paw first.",
+      "flavor": "It sticks out over nothing and holds. Pandas test it with one paw first.",
       "why": "Vanilla flavor is a quote from Pina, a beaver.",
       "note": "One flavor key is shared by every overhang size (vanilla Building.Overhang.FlavorDescription)."
     },
     "Suspension Bridge": {
       "id": "SuspensionBridge", "basis": "rethemed", "vanilla_id": "SuspensionBridge", "who": "-",
       "name": null,
-      "description": "Allows villagers to pass over gaps.",
+      "description": "Allows pandas to pass over gaps.",
       "flavor": null,
       "why": "Vanilla description says 'Allows beavers to pass over gaps.'",
       "note": "One description key is shared by every bridge size."
@@ -602,7 +597,7 @@
     "Airlock": {
       "id": "Airlock", "basis": "rethemed", "vanilla_id": "Airlock", "who": "-",
       "name": null,
-      "description": "Allows villagers to pass through while blocking off water.",
+      "description": "Allows pandas to pass through while blocking off water.",
       "flavor": null,
       "why": "Vanilla description says 'Allows beavers to pass through'."
     },
@@ -610,7 +605,7 @@
       "id": "ZiplineStation", "basis": "rethemed", "vanilla_id": "ZiplineStation", "who": "-",
       "content_md": "Paths, stairs, platforms, overhangs, bridges, gate, airlock and ziplines",
       "name": null, "description": null,
-      "flavor": "The fastest a villager will ever travel. Most keep their eyes closed.",
+      "flavor": "The fastest a panda will ever travel. Most keep their eyes closed.",
       "why": "Vanilla flavor: 'your tail must be this long'."
     },
     "Zipline Pylon": {
@@ -629,41 +624,42 @@
     "Campfire": {
       "id": "Campfire", "basis": "rethemed", "vanilla_id": "Campfire", "who": "-",
       "name": null,
-      "description": "A place for villagers to relax and keep each other company.",
+      "description": "A place for pandas to relax and keep each other company.",
       "flavor": null,
-      "why": "Vanilla says 'for beavers… in the evening'. Ringtails use it in the morning."
+      "why": "Vanilla says 'for beavers… in the evening'. Ringtails use it in the morning, so no time of day is named."
     },
     "Hammock": {
       "id": "PandabornHammock", "basis": "new", "vanilla_basis": "Hammock", "who": "-",
       "name": "Hammock",
-      "description": "A hammock for one. A nap here is part of every free afternoon.",
+      "description": "A hammock for one panda's daily nap.",
       "flavor": "An Inkpaw can fall asleep in one faster than you can read this.",
-      "note": "The name equals the vanilla one, but the building satisfies the Nap need, so it needs its own description. The name may point at Building.Hammock.DisplayName."
+      "note": "The name equals the vanilla one, but the building satisfies the Nap need, so it needs its own description."
     },
     "Nap Platform": {
       "id": "PandabornNapPlatform", "basis": "new", "vanilla_basis": "RooftopTerrace", "who": "-",
       "name": "Nap Platform",
-      "description": "A deck where several villagers nap at once, on the ground or on a roof.",
+      "description": "A deck where several pandas nap at once. Stands on the ground or on a roof.",
       "flavor": "There is room for several. Whoever arrives last naps on the stairs."
     },
     "Teahouse": {
       "id": "PandabornTeahouse", "basis": "new", "vanilla_basis": "DomedGarden", "who": "-",
       "name": "Teahouse",
-      "description": "Serves roasted tea and water to villagers off duty. Closed while it has none.",
-      "flavor": "Inkpaws fill it in the afternoon and Ringtails in the morning. The kettle never cools."
+      "description": "Serves tea to pandas off duty. Needs a stock of tea and water.",
+      "flavor": "The kettle has not been allowed to cool since the day it was first filled.",
+      "note": "No claim about thirst (DESIGN.md 2026-11-25). The old flavor named Ringtails, whom a player may not have met yet."
     },
     "Slide and Swing": {
       "id": "PandabornSlideAndSwing", "basis": "new", "vanilla_basis": "Lido", "who": "-",
       "name": "Slide and Swing",
-      "description": "A playground with a slide and a swing, for villagers of all ages.",
-      "flavor": "The slide is for the young. The queue is mostly adults."
+      "description": "A slide and a swing for pandas of all ages. Must stand in shallow water.",
+      "flavor": "The slide is for the young. The queue is mostly adults.",
+      "note": "Built on the vanilla Lido: it works only standing in shallow water (second audit, 2026-11-25), and it wets the fur."
     },
-    "Panda Kindergarten": {
+    "Kindergarten": {
       "id": "PandabornKindergarten", "basis": "new", "vanilla_basis": "Agora", "who": "-",
       "name": "Kindergarten",
-      "description": "A quiet place to watch the young. It does adults a great deal of good.",
-      "flavor": "Officially, the adults are here to supervise.",
-      "see": ["young.kindergarten_playing", "young.kindergarten_watching"]
+      "description": "A place to sit and watch the young grow up.",
+      "flavor": "Officially, the adults are here to supervise."
     },
     "Ink Studio": {
       "id": "PandabornInkStudio", "basis": "new", "vanilla_basis": "ContemplationSpot", "who": "-",
@@ -674,15 +670,15 @@
     "Hot Spring Bath": {
       "id": "PandabornHotSpringBath", "basis": "new", "vanilla_basis": "MudPit", "who": "-",
       "name": "Hot Spring Bath",
-      "description": "A warm pool for a long soak. Uses water, and wets the fur.",
+      "description": "A warm pool for a long soak. Uses up water and leaves the fur wet.",
       "flavor": "Getting in takes a moment. Getting out takes resolve."
     },
     "Opera Stage": {
-      "id": "PandabornOperaStage", "basis": "new", "vanilla_basis": "DanceHall", "who": "R",
+      "id": "PandabornOperaStage", "basis": "new", "vanilla_basis": "DanceHall", "who": "-",
       "name": "Opera Stage",
-      "description": "Ringtail performers stage face-changing opera for whoever is off duty. Open while the performers work, from the afternoon bell to dawn.",
-      "flavor": "A new face with every turn of the head. The Ringtails will not say how it is done.",
-      "see": ["ringtails.closed_for_the_day", "ringtails.keyword_night", "ringtails.opera_no_performers"]
+      "description": "A stage for face-changing opera, open to pandas off duty.",
+      "flavor": "A new face with every turn of the head. Nobody will say how it is done.",
+      "note": "DESIGN.md 2026-11-25: an ordinary attraction. No text says who performs."
     },
     "Teeth Grindstone": {
       "id": "TeethGrindstone", "basis": "rethemed", "vanilla_id": "TeethGrindstone", "who": "-",
@@ -692,14 +688,14 @@
     "Medical Bed": {
       "id": "MedicalBed", "basis": "rethemed", "vanilla_id": "MedicalBed", "who": "-",
       "name": null,
-      "description": "Injured villagers lie here to rest and heal.",
+      "description": "Injured pandas lie here to rest and heal.",
       "flavor": "The only bed in the village that anyone is in a hurry to leave.",
       "why": "Vanilla says 'Injured beavers'; flavor is a quote from Pina, a beaver."
     },
     "Herbalist": {
       "id": "Herbalist", "basis": "rethemed", "vanilla_id": "Herbalist", "who": "-",
       "name": null,
-      "description": "Creates antidote that cures contaminated villagers.",
+      "description": "Creates antidote that cures contaminated pandas.",
       "flavor": null,
       "why": "Vanilla says 'contaminated beavers'."
     },
@@ -712,22 +708,19 @@
       "id": "PandabornNightBuildersPost", "basis": "new", "vanilla_basis": "BuildersHut", "who": "R",
       "name": "Night Builders' Post",
       "description": "Employs Ringtail builders who stock and raise construction sites from the afternoon bell to dawn.",
-      "flavor": "The Inkpaws go to bed beside a building site and wake up beside a building.",
-      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]
+      "flavor": "The Inkpaws go to bed beside a building site and wake up beside a building."
     },
     "Night Courier Post": {
       "id": "PandabornNightCourierPost", "basis": "new", "vanilla_basis": "HaulingPost", "who": "R",
       "name": "Night Courier Post",
-      "description": "Employs Ringtail couriers who carry goods around the district from the afternoon bell to dawn. Ringtails run with their loads.",
-      "flavor": "A full back-basket does not slow a Ringtail down. Neither does an empty one.",
-      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night", "ringtails.courier_tip"]
+      "description": "Employs Ringtail couriers who carry goods around the district from the afternoon bell to dawn.",
+      "flavor": "A full load does not slow a Ringtail down. Neither does an empty one."
     },
-    "Night Forager's Post": {
+    "Night Gatherers' Post": {
       "id": "PandabornNightForagersPost", "basis": "new", "vanilla_basis": "GathererFlag", "who": "R",
       "name": "Night Gatherers' Post",
-      "description": "Employs Ringtail gatherers who forage from the afternoon bell to dawn.",
-      "flavor": "Bamboo mushrooms are easiest to find by lantern light, or so the foragers insist.",
-      "see": ["ringtails.closed_for_the_day", "ringtails.no_free_ringtails", "ringtails.keyword_night"]
+      "description": "Employs Ringtail gatherers, who work from the afternoon bell to dawn.",
+      "flavor": "Bamboo mushrooms are easiest to find by lantern light, or so the gatherers insist."
     },
 
     "Standing Lantern": {
@@ -735,14 +728,14 @@
       "content_md": "Standing, hanging and string lanterns",
       "name": "Standing Lantern",
       "description": "A decorative lantern on a post.",
-      "flavor": "Lit at the bell, one after another, by nobody in particular."
+      "flavor": "Lit at dusk, one after another, by nobody in particular."
     },
     "Hanging Lantern": {
       "id": "PandabornHangingLantern", "basis": "new", "who": "-",
       "content_md": "Standing, hanging and string lanterns",
       "name": "Hanging Lantern",
       "description": "A decorative lantern that hangs from a bracket.",
-      "flavor": "It swings a little whenever a Ringtail runs past."
+      "flavor": "It swings a little whenever somebody hurries past. This is rare."
     },
     "String Lanterns": {
       "id": "PandabornStringLanterns", "basis": "new", "who": "-",
@@ -796,7 +789,7 @@
       "id": "PoleBanner", "basis": "rethemed", "vanilla_id": "PoleBanner", "who": "-",
       "content_md": "banners",
       "name": null, "description": null,
-      "flavor": "Raised high so that everyone can see it and no cub or kit can reach it.",
+      "flavor": "Raised high so that everyone can see it and no cub can reach it.",
       "why": "Vanilla flavor blames 'kits' for vandalism. In this faction 'kits' means young Ringtails."
     },
     "Square Banner": {
@@ -814,7 +807,7 @@
       "id": "PandabornGardenMoonGate", "basis": "new", "who": "-",
       "name": "Garden Moon Gate",
       "description": "A round garden gateway.",
-      "flavor": "It leads from one side of the garden to the other side of the garden. Villagers walk through it anyway."
+      "flavor": "It leads from one side of the garden to the other. Pandas walk through it anyway."
     },
     "Roof": {
       "id": "Roof", "basis": "rethemed", "vanilla_id": "Roof", "who": "-",
@@ -826,23 +819,22 @@
     "Memorial Arch": {
       "id": "PandabornMemorialArch", "basis": "new", "vanilla_basis": "BrazierOfBonding", "who": "-",
       "name": "Memorial Arch",
-      "description": "A tall timber arch over the village road, raised for those who came before.",
+      "description": "A tall timber arch raised for those who came before.",
       "flavor": "It carries no names. Everyone knows whom it is for."
     },
     "Great Sitting Panda": {
       "id": "PandabornGreatSittingPanda", "basis": "new", "vanilla_basis": "HallOfAbundance", "who": "-",
       "name": "Great Sitting Panda",
-      "description": "A great cliff carving of a seated panda, with water running at its feet and a Ringtail on its shoulder.",
+      "description": "A great cliff carving of a seated panda.",
       "flavor": "It took generations to carve, and it has been sitting ever since.",
       "note": "Always 'cliff carving'. No religious words anywhere near this building."
     },
     "Sky Lantern": {
       "id": "PandabornSkyLantern", "basis": "new", "vanilla_basis": "EarthRecultivator", "who": "-",
       "name": "Sky Lantern",
-      "description": "A colossal sky lantern, launched with paper lanterns. Makes the villagers in the area extra happy.",
+      "description": "A colossal lantern that carries seeds over the wasteland. When launched, makes the pandas in the area extra happy.",
       "flavor": "It rises slowly, the way everything here does, and then it is gone over the hills.",
-      "see": ["wonder.release_button", "wonder.not_enough_goods", "wonder.not_enough_workers"],
-      "note": "The game adds the vanilla wonder keyword lines (Buildings.Wonder, Buildings.Wonder.Description) by itself. Buildings.Wonder says 'The pinnacle of beaver engineering'; see messages.json 'vanilla_lines_that_say_beaver'."
+      "note": "Same form as the vanilla wonder description. The button reads 'Launch' (vanilla Wonder.Activate), so the text says launch, never release. What it is launched with is shown by the game. The game adds the vanilla wonder keyword lines by itself; the Words table swaps 'beaver engineering'."
     },
 
     "Automation": {
@@ -850,7 +842,7 @@
       "content_md": "All nineteen vanilla automation buildings",
       "name": null, "description": null, "flavor": null,
       "members": ["Chronometer", "Contamination Sensor", "Depth Sensor", "Detonator", "Firework Launcher", "Flow Sensor", "HTTP Adapter", "HTTP Lever", "Indicator", "Lever", "Memory", "Population Counter", "Power Meter", "Relay", "Resource Counter", "Science Counter", "Speaker", "Timer", "Weather Station"],
-      "note": "All vanilla text is kept. None of it mentions beavers. The Population Counter modes 'Total beavers' and 'Bots' are vanilla keys shared by every faction and are listed in messages.json 'vanilla_lines_that_say_beaver'."
+      "note": "All vanilla text is kept. None of it mentions beavers. The Population Counter mode 'Total beavers' is swapped by the Words table in Inkpaws games."
     }
   }
 }
