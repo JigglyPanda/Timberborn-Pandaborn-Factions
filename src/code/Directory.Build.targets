@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <Target Name="PandabornPackage" AfterTargets="Build" Condition="'$(PandabornKind)' != ''">
-    <Exec Command="dotnet &quot;$(ApiScanDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PandabornApiOut)&quot; --feature &quot;$(MSBuildProjectDirectory)\FEATURE.md&quot; --title &quot;$(AssemblyName)&quot;" />
+    <Exec Command="dotnet &quot;$(ApiScanDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PandabornApiOut)&quot; --feature &quot;$(MSBuildProjectDirectory)\FEATURE.md&quot; --title &quot;$(AssemblyName)&quot; --ref &quot;$(GameManaged)&quot;" />
     <Copy Condition="'$(PandabornKind)' == 'Bootstrap'" SourceFiles="$(TargetPath)" DestinationFiles="$(PandabornDestDir)$(AssemblyName).dll" />
     <Copy Condition="'$(PandabornKind)' != 'Bootstrap'" SourceFiles="$(TargetPath)" DestinationFiles="$(PandabornDestDir)$(AssemblyName).bin" />
     <ItemGroup>

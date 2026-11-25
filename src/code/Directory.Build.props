@@ -6,7 +6,9 @@
     <BaseIntermediateOutputPath>E:\PandabornDev\build\obj\code\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <OutputPath>E:\PandabornDev\build\obj\code\$(MSBuildProjectName)\bin\</OutputPath>
     <CodeRoot>$(MSBuildThisFileDirectory)</CodeRoot>
-    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\PandabornFactions</ModOut>
+    <!-- The default is a scratch folder, never the installed mod (E:\PandabornDev\build\PandabornFactions, which the
+         game loads): only tools/pandaborn.ps1 install writes there, after the gate. -->
+    <ModOut Condition="'$(ModOut)' == ''">E:\PandabornDev\build\code\dev</ModOut>
     <GameManaged Condition="'$(GameManaged)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Timberborn\Timberborn_Data\Managed</GameManaged>
     <LangVersion>9</LangVersion>
     <Nullable>disable</Nullable>

@@ -14,4 +14,14 @@
   <Target Name="CopyModuleManifest" AfterTargets="PandabornPackage">
     <Copy SourceFiles="$(CodeRoot)modules.txt" DestinationFolder="$(ModOut)\Modules" />
   </Target>
+  <!-- The game version this build was made against (the pin the build refuses to run without), for the bootstrap's
+       "built for X, running Y" log line. -->
+  <Target Name="StampGameVersion" AfterTargets="PandabornPackage">
+    <PropertyGroup>
+      <PinFile>$(CodeRoot)../../catalogue/vanilla.pin.json</PinFile>
+      <BuiltForGame Condition="Exists('$(PinFile)')">$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(PinFile)')), 'gameVersion[^0-9]*([0-9][0-9A-Za-z.]*)').Groups[1].Value)</BuiltForGame>
+    </PropertyGroup>
+    <WriteLinesToFile Condition="'$(BuiltForGame)' != ''" File="$(ModOut)\Scripts\Pandaborn.built-for.txt" Lines="$(BuiltForGame)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <Message Importance="high" Text="Pandaborn.Bootstrap: built for game version '$(BuiltForGame)'" />
+  </Target>
 </Project>
