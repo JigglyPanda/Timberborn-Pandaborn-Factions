@@ -250,6 +250,11 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 * The festival runs from the next dawn to the dawn after. Everyone takes the day and the night off: dancing,
   rising lanterns at dusk, fireworks at a Grand Festival. Pump and lift crews stay at their posts, so a
   festival never costs the village its water. The cost is a day's work.
+* In a village of several districts the festival belongs to the district of the square that called it: its
+  pandas take the day off and end festive, its squares light. There is still one festival a cycle and one
+  Tradition for the whole village, and the turn passes to another district's square next time.
+* At dusk the sky fills with rising paper lanterns for the whole evening, with one dense release; fireworks
+  beside them are for a Grand Festival.
 * Rewards: everyone ends festive for about twenty days (a Grand Festival a little more), and one step of
   **Tradition**, which unlocks decorations at no science cost.
 
@@ -261,9 +266,10 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 * One of the two bamboos flowers across the map. Every grown plant becomes a flowering plant whose harvest is
   **bamboo seed**, gathered by the same farmers or woodcutters over three days before it dies. Young plants
   die at once, and that bamboo rests for nine days before it grows again; planting marks stay, so fields
-  replant themselves. Shoot bamboo means a food gap of about twelve days to bridge; timber bamboo means
+  replant themselves. Wild bamboo left standing reseeds its own tile when it dies; wild bamboo cut for its
+  seed is gone, like any wild tree that is cut. Shoot bamboo means a food gap of about twelve days to bridge; timber bamboo means
   building material to have stocked (the Pole Mill covers it).
-* Bamboo seed is a large one-time harvest and makes the best food in the mod. It is a windfall to prepare
+* Bamboo seed is a large one-time harvest and makes a food of its own (seed cakes: steamed, or better from a Kitchen). It is a windfall to prepare
   for, not only a loss.
 * A setting offers off, rare or normal.
 
@@ -421,4 +427,6 @@ Every step ends in a mod that could be released.
 | 2026-11-25 | Timber bamboo grows in seven days, not five | Poles from bamboo cost a third of poles from birch and a mill per tile and day; about half is the intent: the better source, never a free one |
 | 2026-11-25 | Bamboo seed can be steamed into seed cakes with no mill (two per seed); the Kitchen recipe with rice flour stays the better one | Without a Kitchen and a Trip-Hammer Mill the Great Flowering's seed had no use, so the event only took |
 | 2026-11-25 | The design is brought to what the build does: "Farmhouse" (the vanilla name, already translated), farmers of both kinds wear the conical hat, the dew has no dawn, the ox is not slow, scaffolding and rope bridges cost as vanilla, no sun or moon in the toolbar, no lantern wave at the bell | The docs review of 2026-11-25 listed nine places where this document promised what no lane had built; none is worth new code before release |
+| 2026-11-25 | A festival belongs to the district of its square (one festival a cycle and one Tradition for the whole village); the lantern sky lasts the whole evening and comets are kept for a Grand Festival | The events review: a village-wide day off from one square made no sense across districts, and the first lantern show was two points of light |
+| 2026-11-25 | Wild bamboo left standing through a Great Flowering reseeds its own tile; cut for seed, it is gone | The events review: only marked tiles were replanted, so every wild grove flowered once and vanished from the map |
 | 2026-11-25 | A Dew Collector is tuned so four keep a landlocked outpost of about six in water outside droughts; pine resin leaves the build until something uses it; the Goldfish Bowl and Moon Gate are priced like other decorations of their worth | Second audit: a collector made 2 water a day against a pump worker's 48; a gathered good with no recipe; +2 wellbeing for twelve logs |
