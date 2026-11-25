@@ -58,7 +58,7 @@ namespace Pandaborn.Festival
                 if (_festivalService.Tradition >= level) return false;
                 if (!_buildingUnlockingService.Unlocked(building)) return false;   // science locks it; never two lockers
                 Subscribe();
-                _locked.Add(tool);
+                if (!_locked.Contains(tool)) _locked.Add(tool);
                 LockedCount = _locked.Count;
                 return true;
             }
@@ -69,21 +69,36 @@ namespace Pandaborn.Festival
             }
         }
 
+        /// <summary>A click on a locked decoration: explain what earns it. If the explanation cannot be shown (the game's
+        /// dialog or the building's label changed), the decoration is unlocked instead: a lock nobody can explain or open
+        /// is worse than no lock (without the module there is none), and an exception here would end the session.</summary>
         public void TryToUnlock(ITool tool, Action successCallback, Action failCallback)
         {
-            if (_inputService.IsKeyHeld(InstantUnlockKey) || !TryGetLevel(tool, out int level, out var building) || _festivalService.Tradition >= level)
+            bool explained = false;
+            try
             {
-                _locked.Remove(tool);
-                LockedCount = _locked.Count;
-                successCallback();
-                return;
+                if (!_inputService.IsKeyHeld(InstantUnlockKey) && TryGetLevel(tool, out int level, out var building)
+                    && _festivalService.Tradition < level)
+                {
+                    var label = building.GetSpec<LabeledEntitySpec>();
+                    string name = label != null ? _loc.T(label.DisplayNameLocKey) : "";
+                    _dialogBoxShower.Create()
+                        .SetMessage(_loc.T("Pandaborn.Festival.Tradition.Locked", name, level.ToString(CultureInfo.InvariantCulture),
+                                           _festivalService.Tradition.ToString(CultureInfo.InvariantCulture)))
+                        .SetConfirmButton(failCallback)
+                        .Show();
+                    explained = true;
+                }
             }
-            string name = _loc.T(building.GetSpec<LabeledEntitySpec>().DisplayNameLocKey);
-            _dialogBoxShower.Create()
-                .SetMessage(_loc.T("Pandaborn.Festival.Tradition.Locked", name, level.ToString(CultureInfo.InvariantCulture),
-                                   _festivalService.Tradition.ToString(CultureInfo.InvariantCulture)))
-                .SetConfirmButton(failCallback)
-                .Show();
+            catch (Exception e)
+            {
+                Debug.LogError("[Pandaborn.Festival] the Tradition lock could not be explained; unlocking the decoration: " + e);
+                explained = false;
+            }
+            if (explained) return;
+            _locked.Remove(tool);
+            LockedCount = _locked.Count;
+            successCallback();
         }
 
         private void Subscribe()
@@ -99,7 +114,11 @@ namespace Pandaborn.Festival
             foreach (var tool in due)
             {
                 _locked.Remove(tool);
-                if (_toolUnlockingService.Value.IsLocked(tool)) _toolUnlockingService.Value.Unlock(tool);
+                try
+                {
+                    if (_toolUnlockingService.Value.IsLocked(tool)) _toolUnlockingService.Value.Unlock(tool);
+                }
+                catch (Exception e) { Debug.LogError("[Pandaborn.Festival] unlocking a Tradition decoration failed: " + e.Message); }
             }
             LockedCount = _locked.Count;
             if (due.Count > 0)

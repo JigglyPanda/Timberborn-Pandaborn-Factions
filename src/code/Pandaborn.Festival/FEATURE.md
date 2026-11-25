@@ -1,62 +1,101 @@
 # Pandaborn.Festival - the Lantern Festival
 
 DESIGN.md Pillar 5; full design, player timeline and test results in `docs/tech/events.md`. **Status: in
-`Pandaborn.Code.sln` and `modules.txt`; ships when `catalogue/rules.toml [modules] Festival` is on** (the catalogue already
-carries its data behind that switch). Dev copies with the data switched on: `proto/events/build.ps1`.
+`Pandaborn.Code.sln` and `modules.txt`; ships with `catalogue/rules.toml [modules] Festival` (on since 2026-11-14).** Dev
+copies with test timings: `proto/events/build.ps1`.
 
 **What it does.** A Festival Square's panel shows what its district has in its ordinary stores towards a festival
 (paper lanterns, the cooked dishes with 20 or more each, fireworks), a Call button, an auto-call toggle, the cycle of the
 next allowed festival and the village's Tradition. Calling takes the goods out of the district's stores at once
 (`Inventory.TakeConsumed`, unreserved stock only, the most plentiful dishes first) and the festival runs from the next
-dawn to the dawn after:
+dawn to the dawn after.
+
+**One district.** A festival belongs to the district of the square that called it (saved by the district centre's and
+the square's entity ids). Its colonists take the day off and end festive; its squares host the show and light up. Every
+other district works as usual and is not festive. The village holds at most one festival per cycle and Tradition is
+one village counter, so a second district cannot double it. With one district nothing differs from "the whole
+village", and the texts say "the whole village"; with several, the district variants of the texts name the district
+(`enUS_PandabornFestivalDistricts.csv`). A save written before this rule has no district on record: that festival is
+village-wide, as it was. If the festival's district centre is demolished meanwhile, nobody is on holiday and no square
+hosts; the festival still ends at its dawn with Tradition. The auto-call asks the squares of the district that held
+the last festival last, so the turn passes on.
 
 * `FestivalGoer`, a root behaviour on every colonist template with `PandabornFestivalGoerSpec`, sits just above
-  `WorkerRootBehavior` (above `NeederRootBehavior` for the young). On the festival day nobody works except crews of the
-  spec's `KeepWorkingTemplates` (pumps and lifts); by day the game's own need loop runs first, then colonists celebrate
-  at the district's square: on its own dance slots first (the Dance Hall basis' 20 `Dancing` slots, entered with the
-  game's `WalkInsideExecutor` as an attraction is, staying with `ApplyEffectExecutor` and the square's attraction
-  effects), and when the slots are full just outside its edge (a ring 3.2–3.8 m from its centre, else the nearest of a
-  few `GetRandomDestinationInDistrict` spots); from
-  `ShowStartHours` to `ShowEndHours` everyone goes to the square first. Carrying, critical needs, death and stranding
-  stay above it. A Ringtail's day rest (inserted in `InitializeEntity`) stays above it too, because the festival inserts
-  in `PostInitializeEntity`: Ringtails sleep through the morning, then join.
-* The show: rising lanterns at dusk and, for a Grand Festival (20 fireworks in store as well), bursts in the evening,
-  drawn with the game's own firework entities (`FestivalFireworks`), from each finished square. Computed from the clock,
-  so a reload never replays them. The square's model may carry `#FestivalLights` (shown from the call to the end),
-  `#LanternRise` (a particle system played instead of a comet) and `#FireworkMount` (launch point).
+  `WorkerRootBehavior` (above `NeederRootBehavior` for the young). On its district's festival day a colonist does not
+  work, except the crews of the spec's `KeepWorkingTemplates` (pumps, lifts, taps) during their working hours (after
+  them they join); by day the game's own need loop runs first, then colonists celebrate at the district's square: on
+  its own dance slots first (the Dance Hall basis' 20 `Dancing` slots, entered with the game's `WalkInsideExecutor` as
+  an attraction is, staying with `ApplyEffectExecutor` and the square's attraction effects), and when the slots are full
+  just outside its edge (a ring 3.2–3.8 m from its centre, else the nearest of a few `GetRandomDestinationInDistrict`
+  spots); from `ShowStartHours` to `ShowEndHours` everyone goes to the square first. Carrying, critical needs, death and
+  stranding stay above it. A Ringtail's day rest (inserted in `InitializeEntity`) stays above it too, because the
+  festival inserts in `PostInitializeEntity`: Ringtails sleep through the morning, then join.
+* **The rising lanterns** (`FestivalSquare.UpdateSky` / `Release`, `FestivalService.UpdateSky` / `RunShow`): a square
+  whose blueprint has the `LanternRise` attachment (prefab `Effects/Pandaborn/LanternRise` in `pandabornattachments`,
+  one `ParticleSystem`; a particle system under a `#LanternRise` node works too) gets a lantern sky for the whole show:
+  the module sets the system's emission rate (`SkyLanternsPerSecond` 0.65, about 21 aloft at once with the prefab's
+  25–40 s life, a new one every 1.5 s), `Emit`s the dense release (`LanternRises` 24 over 0.3 game hours from
+  `ShowStartHours` + 0.25 = 15.75 h, with `Environment.Pandaborn.LanternRise` three times across it and never
+  otherwise), adds the game's wind to the drift, and stops emitting at `ShowEndHours` so the last lanterns rise on and
+  fade. A sky switched on late (a load in the middle of the show) is fast-forwarded so it starts filled. **Time:**
+  the particles run on scaled game time times the game's `NonlinearAnimationManager.SpeedMultiplier`, i.e. at the
+  square root of the game speed, exactly as the game runs its own particles (`NonLinearParticlesSpeedMultiplier`):
+  they stand still in a pause, rise 1.7× / 2.6× as fast at speed 2 / 3, and the number aloft is the same at every
+  speed. Unscaled time was rejected (lanterns rising through a pause; at speed 3 the show lasts 18 real seconds, less
+  than one lantern's life).
+* **Comets and bursts** are the game's own firework entities (`FestivalFireworks`), from `#FireworkMount`: the
+  trail-only comets (`LanternFireworkIds`, `LanternRises` of them over 1.75 h from 15.75 h) fly only in a Grand
+  Festival, or as the lanterns' stand-in at a square without the lantern art; the bursts (`BurstFireworkIds`, `Bursts`
+  over 2.5 h from `FireworksStartHours`) only in a Grand Festival (20 fireworks in store as well). Everything is
+  computed from the clock (`FestivalRules.Due`), so nothing is launched twice and a reload launches only what is still
+  due. The square's `#FestivalLights` node is shown from the call to the end at a hosting square.
 * Sounds (the sound lane's `pandabornsounds`, docs/tech/sound.md 8): `Environment.Pandaborn.Firecrackers` once when the
-  festival begins and at each square as the gathering starts, `Environment.Pandaborn.FestivalDrum` looped at each square
-  through the gathering. A clip that is not loaded is silent (`FestivalSounds`).
+  festival begins and at each hosting square as the gathering starts, `Environment.Pandaborn.FestivalDrum` looped there
+  through the gathering, `Environment.Pandaborn.LanternRise` on the dense release. A clip that is not loaded is silent
+  (`FestivalSounds`).
 * Rewards: the festive need (`FestiveNeedId`) is set to its maximum for a colonist when it first reaches the square and
-  for everyone else when the festival ends; `GrandNeedId` too after a Grand Festival. Tradition rises by one.
+  for everyone else of the district when the festival ends; `GrandNeedId` too after a Grand Festival. Tradition rises
+  by one. No number of the need (its decay, its well-being) is in code.
 * `TraditionToolLocker` (an `IToolLocker`, the game's own toolbar lock) keeps decorations with
   `PandabornTraditionSpec { Level }` locked until Tradition reaches their level; clicking one explains it. It only locks
   tools science does not lock (the game allows one locker per tool), so such decorations need `ScienceCost` 0.
 
-**Rules.** At most one festival per cycle (the cycle of its day). Manual calls are allowed in any weather; the auto-call
+**Rules.** At most one festival per cycle in the village (the cycle of its day, read when the game posts
+`CycleDayStartedEvent`, i.e. after it has moved the cycle on). Manual calls are allowed in any weather; the auto-call
 never fires during a drought or badtide or on the day before one. Called at any hour, it begins at the next dawn.
+`FestivalRules` holds the arithmetic without game types (tests: `src/code/tests/Events`).
 
 **Data it needs** (catalogue): `PandabornFestivalSpec` (all numbers and lists) and `PandabornFestivalGoerSpec` on the Inkpaw
 adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail adult and child templates;
-`PandabornFestivalSquareSpec` on the Festival Square; `PandabornTraditionSpec` on the Tradition decorations.
+`PandabornFestivalSquareSpec` on the Festival Square, and for the lantern sky its `TemplateAttachmentsSpec` entry
+`LanternRise` (docs/tech/events.md 8); `PandabornTraditionSpec` on the Tradition decorations.
 
 **Saved**: `PandabornStore` entry `Festival` v1: `phase` (None/Called/Running), `day`, `grand`, `last` (cycle),
-`tradition`, `auto`, `count`. Nothing per entity: need points are the game's own (the festive need decays by itself).
+`tradition`, `auto`, `count`, and since 2026-11-25 `district` and `square` (entity ids, empty when none; an older module
+ignores them, a save without them is read as village-wide). Nothing per entity: need points are the game's own (the
+festive need decays by itself); lanterns in the air are not saved (the sky refills after a load).
 
 **Fails safely.**
 * Module off (or its game API changed): no panel, no festival, the square is its vanilla basis (a village square
   attraction), decorations are simply buildable, the store entry is carried unchanged. A save made mid-festival loads
-  with everyone working as usual; when the module is back, a festival whose day has passed ends at once on load with its
-  rewards (the goods were spent), one called for today starts.
+  with everyone working as usual (a colonist saved in the middle of its festival walk simply decides again: the game
+  drops a saved behaviour it cannot find); when the module is back, a festival whose day has passed ends at once on load
+  with its rewards (the goods were spent), one called for today starts.
 * `BehaviorManager._rootBehaviors` (private) gone, or `simulate-missing-member: Festival.RootBehaviors`: no day off;
-  the evening show, festive spirit and Tradition remain, and the panel says so.
+  the evening show, festive spirit and Tradition remain, and the panel says so. Found only with the first colonist
+  (after Load), it is reported then. One entity that is not built like a colonist only loses its own day off.
 * `Timberborn.FireworkSystem.Firework.Launch` (public method of an internal type, reached by reflection) gone, or
-  `simulate-missing-member: Festival.Fireworks`: no lanterns or fireworks in the sky; everything else runs.
+  `simulate-missing-member: Festival.Fireworks`: no comets or bursts; the lantern sky and everything else run.
 * Each fallback is reported once through `FeatureRegistry.ReportDegraded("Festival", ...)` (the feature report and one
   notice); a game of our faction without the data gets `ReportNoData`.
-* Missing art degrades to nothing: no `#FestivalLights`, `#LanternRise` or `#FireworkMount` node means no toggle, comets
-  instead of lantern particles, and the square's centre as the launch point.
-* Interface pieces sit behind `SafeUi`.
+* Missing art degrades to nothing: no `LanternRise` attachment (or no particle system in it, or a failure while driving
+  it) means the comets instead; no `#FestivalLights` or `#FireworkMount` node means no toggle and the square's centre as
+  the launch point. A missing sound clip is silent.
+* Nothing thrown by the module reaches the game: `FestivalGoer.Decide` (the game does not catch a behaviour's
+  exception) releases the colonist to its ordinary day and logs once; ticks, event handlers, entity callbacks and the
+  tool lock's click are wrapped; a lock that cannot explain itself opens. Interface pieces sit behind `SafeUi`.
+* Per-session statics are reset at each game's Load (`FestivalGoer.ResetForGame`), so one game's failure does not
+  switch the day off in the next.
 
 <!-- api:begin -->
 <!-- Generated from the compiled module by Pandaborn.ApiScan on every build. Do not edit by hand. -->
@@ -97,6 +136,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `GetComponent<1>()`
   * method `get_AllComponents()`
   * method `get_GameObject()`
+  * method `get_Name()`
   * method `get_Transform()`
   * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
@@ -158,6 +198,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `Timberborn.Common.ReadOnlyHashSet`1`
   * method `GetEnumerator()`
 * type `Timberborn.Common.ReadOnlyList`1`
+  * method `get_Count()`
 
 **Timberborn.CoreUI**
 
@@ -199,6 +240,9 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 **Timberborn.EntitySystem**
 
 * type `Timberborn.EntitySystem.EntityComponent`
+  * method `get_EntityId()`
+* type `Timberborn.EntitySystem.EntityRegistry`
+  * method `GetEntity(System.Guid)`
 * type `Timberborn.EntitySystem.EntityService`
   * method `Delete(Timberborn.BaseComponentSystem.BaseComponent)`
   * method `Instantiate(Timberborn.BlueprintSystem.Blueprint)`
@@ -206,6 +250,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 * type `Timberborn.EntitySystem.IPostInitializableEntity`
 * type `Timberborn.EntitySystem.LabeledEntitySpec`
   * method `get_DisplayNameLocKey()`
+  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`
 
 **Timberborn.FactionSystem**
 
@@ -224,6 +269,7 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 **Timberborn.GameCycleSystem**
 
+* type `Timberborn.GameCycleSystem.CycleDayStartedEvent`
 * type `Timberborn.GameCycleSystem.GameCycleService`
   * method `get_Cycle()`
 
@@ -235,6 +281,9 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `get_District()`
 * type `Timberborn.GameDistricts.DistrictCenter`
   * method `get_District()`
+  * method `get_DistrictName()`
+* type `Timberborn.GameDistricts.DistrictCenterRegistry`
+  * method `get_FinishedDistrictCenters()`
 
 **Timberborn.GameFactionSystem**
 
@@ -352,12 +401,14 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
 
 **Timberborn.TimeSystem**
 
-* type `Timberborn.TimeSystem.DaytimeStartEvent`
 * type `Timberborn.TimeSystem.IDayNightCycle`
   * method `DayNumberHoursFromNow(System.Single)`
+  * method `get_DayLengthInSeconds()`
   * method `get_DayNumber()`
   * method `get_HoursPassedToday()`
   * method `get_PartialDayNumber()`
+* type `Timberborn.TimeSystem.NonlinearAnimationManager`
+  * method `get_SpeedMultiplier()`
 
 **Timberborn.ToolSystem**
 
@@ -384,12 +435,20 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `NextDayIsHazardousWeather()`
   * method `get_IsHazardousWeather()`
 
+**Timberborn.WindSystem**
+
+* type `Timberborn.WindSystem.WindService`
+  * method `get_WindDirection()`
+  * method `get_WindStrength()`
+
 **Timberborn.WorkSystem**
 
 * type `Timberborn.WorkSystem.Worker`
   * method `get_Employed()`
   * method `get_Workplace()`
 * type `Timberborn.WorkSystem.WorkerRootBehavior`
+* type `Timberborn.WorkSystem.WorkerWorkingHours`
+  * method `get_AreWorkingHours()`
 * type `Timberborn.WorkSystem.Workplace`
 
 **UnityEngine.CoreModule**
@@ -408,8 +467,10 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `SetActive(System.Boolean)`
   * method `get_transform()`
 * type `UnityEngine.Mathf`
+  * method `Approximately(System.Single, System.Single)`
   * method `CeilToInt(System.Single)`
   * method `Clamp(System.Single, System.Single, System.Single)`
+  * method `Clamp01(System.Single)`
   * method `Cos(System.Single)`
   * method `Max(System.Single, System.Single)`
   * method `Sin(System.Single)`
@@ -424,18 +485,47 @@ adult template; `PandabornFestivalGoerSpec` on the Inkpaw child and the Ringtail
   * method `SetParent(UnityEngine.Transform, System.Boolean)`
   * method `get_position()`
   * method `set_position(UnityEngine.Vector3)`
+* type `UnityEngine.Vector2`
+  * field `x`
+  * field `y`
 * type `UnityEngine.Vector3`
+  * field `x`
+  * field `z`
   * method `.ctor(System.Single, System.Single, System.Single)`
   * method `get_sqrMagnitude()`
   * method `get_up()`
+  * method `get_zero()`
   * method `op_Addition(UnityEngine.Vector3, UnityEngine.Vector3)`
+  * method `op_Inequality(UnityEngine.Vector3, UnityEngine.Vector3)`
   * method `op_Multiply(UnityEngine.Vector3, System.Single)`
   * method `op_Subtraction(UnityEngine.Vector3, UnityEngine.Vector3)`
 
 **UnityEngine.ParticleSystemModule**
 
 * type `UnityEngine.ParticleSystem`
-  * method `Play()`
+  * method `Emit(System.Int32)`
+  * method `Play(System.Boolean)`
+  * method `Simulate(System.Single, System.Boolean, System.Boolean, System.Boolean)`
+  * method `Stop(System.Boolean, UnityEngine.ParticleSystemStopBehavior)`
+  * method `get_emission()`
+  * method `get_isPlaying()`
+  * method `get_main()`
+  * method `get_particleCount()`
+  * method `get_velocityOverLifetime()`
+* type `UnityEngine.ParticleSystem+EmissionModule`
+  * method `set_enabled(System.Boolean)`
+  * method `set_rateOverTime(UnityEngine.ParticleSystem+MinMaxCurve)`
+* type `UnityEngine.ParticleSystem+MainModule`
+  * method `set_loop(System.Boolean)`
+  * method `set_simulationSpeed(System.Single)`
+* type `UnityEngine.ParticleSystem+MinMaxCurve`
+  * method `.ctor(System.Single, System.Single)`
+  * method `op_Implicit(System.Single)`
+* type `UnityEngine.ParticleSystem+VelocityOverLifetimeModule`
+  * method `get_enabled()`
+  * method `set_x(UnityEngine.ParticleSystem+MinMaxCurve)`
+  * method `set_z(UnityEngine.ParticleSystem+MinMaxCurve)`
+* type `UnityEngine.ParticleSystemStopBehavior`
 
 **UnityEngine.UIElementsModule**
 

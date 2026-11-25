@@ -105,6 +105,7 @@ namespace Pandaborn.Festival
 
         private void Refresh()
         {
+            if (!_square) { _square = null; return; }   // demolished while its panel was open
             var spec = _festivalService.Spec;
             var stock = FestivalStock.Count(_square.District, spec);
             string why = _festivalService.WhyNot(_square, stock);
@@ -119,7 +120,11 @@ namespace Pandaborn.Festival
             _fireworks.text = _loc.T("Pandaborn.Festival.Fireworks", stock.Fireworks.ToString(CultureInfo.InvariantCulture),
                                      stock.FireworksNeeded.ToString(CultureInfo.InvariantCulture));
             _tradition.text = _loc.T("Pandaborn.Festival.TraditionLine", _festivalService.Tradition.ToString(CultureInfo.InvariantCulture));
-            _rule.text = _loc.T(FestivalGoer.InsertionError == null ? "Pandaborn.Festival.Rule" : "Pandaborn.Festival.RuleNoDayOff");
+            // with several districts the rule says whose festival it is (the district of the calling square)
+            bool dayOff = FestivalGoer.InsertionError == null;
+            _rule.text = _festivalService.ManyDistricts
+                ? _loc.T(dayOff ? "Pandaborn.Festival.RuleDistrict" : "Pandaborn.Festival.RuleNoDayOffDistrict")
+                : _loc.T(dayOff ? "Pandaborn.Festival.Rule" : "Pandaborn.Festival.RuleNoDayOff");
             _call.SetEnabled(why == null);
             _auto.SetValueWithoutNotify(_festivalService.AutoCall);
             ShownText = string.Join(" | ", new[] { _status.text, _lanterns.text, _dishes.text, _dishList.text, _fireworks.text, _tradition.text });

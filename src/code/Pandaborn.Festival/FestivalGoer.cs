@@ -24,8 +24,10 @@ namespace Pandaborn.Festival
     /// <summary>
     /// A colonist's festival day (decorates PandabornFestivalGoerSpec: Inkpaw adult and cub, Ringtail adult and kit). A
     /// root behaviour placed just above WorkerRootBehavior (above NeederRootBehavior for the young), so carrying, critical
-    /// needs, death and stranding still come first. Outside a festival day it does nothing. On the festival day:
-    ///   * a worker at a KeepWorkingTemplates workplace (pumps, lifts) works as usual;
+    /// needs, death and stranding still come first. Outside a festival day, and for a colonist of another district than
+    /// the festival's, it does nothing. On the festival day of its district:
+    ///   * a worker at a KeepWorkingTemplates workplace (pumps, lifts) works its working hours as usual and joins the
+    ///     festival after them;
     ///   * by day everyone else runs the game's own need loop first (eat, drink, leisure, sleep), and when it has nothing
     ///     to do goes to the district's Festival Square: onto a free dance slot (the square's enterable slots, entered as
     ///     the game's attractions are, with the square's attraction effects), or, when all are taken, to a spot just
@@ -46,9 +48,21 @@ namespace Pandaborn.Festival
         private static readonly FieldInfo RootBehaviorsField =
             typeof(BehaviorManager).GetField("_rootBehaviors", BindingFlags.Instance | BindingFlags.NonPublic);
         private static bool _errorLogged;
+        private static bool _decideErrorLogged;
+        private static int _oddEntities;
 
-        /// <summary>Why the day off is unavailable (the game changed), or null.</summary>
+        /// <summary>Why the day off is unavailable for everyone (the game changed), or null.</summary>
         public static string InsertionError { get; private set; }
+
+        /// <summary>A new game starts: forget what the last game of this session found (the private member is checked
+        /// again by CheckInsertion).</summary>
+        internal static void ResetForGame()
+        {
+            InsertionError = null;
+            _errorLogged = false;
+            _decideErrorLogged = false;
+            _oddEntities = 0;
+        }
 
         private readonly FestivalService _festivalService;
         private readonly IDistrictService _districtService;
@@ -56,6 +70,7 @@ namespace Pandaborn.Festival
 
         private BehaviorManager _behaviorManager;
         private Worker _worker;
+        private WorkerWorkingHours _workerWorkingHours;
         private Citizen _citizen;
         private NeedManager _needManager;
         private NeederRootBehavior _neederRootBehavior;
@@ -87,6 +102,7 @@ namespace Pandaborn.Festival
         {
             _behaviorManager = GetComponent<BehaviorManager>();
             _worker = GetComponent<Worker>();
+            _workerWorkingHours = GetComponent<WorkerWorkingHours>();
             _citizen = GetComponent<Citizen>();
             _needManager = GetComponent<NeedManager>();
             _neederRootBehavior = GetComponent<NeederRootBehavior>();
@@ -98,16 +114,24 @@ namespace Pandaborn.Festival
             _applyEffectExecutor = GetComponent<ApplyEffectExecutor>();
         }
 
+        /// <summary>The district this colonist belongs to (null while unassigned).</summary>
+        public DistrictCenter District => _citizen ? _citizen.AssignedDistrict : null;
+
         public void PostInitializeEntity()
         {
-            if (!_festivalService.Active) return;
-            _festivalService.AddGoer(this);
-            Inserted = Insert();
+            try
+            {
+                if (!_festivalService.Active) return;
+                _festivalService.AddGoer(this);
+                Inserted = Insert();
+            }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Festival] a colonist could not join the festival list: " + e); }
         }
 
         public void DeleteEntity()
         {
-            _festivalService.RemoveGoer(this);
+            try { _festivalService.RemoveGoer(this); }
+            catch (Exception e) { Debug.LogError("[Pandaborn.Festival] a colonist could not leave the festival list: " + e); }
         }
 
         /// <summary>Checks the private member once, before any colonist needs it; null when the day off is available.</summary>
@@ -124,13 +148,13 @@ namespace Pandaborn.Festival
         {
             try
             {
-                if (InsertionError != null) return Fail(InsertionError);
-                if (!(RootBehaviorsField.GetValue(_behaviorManager) is List<RootBehavior> roots))
+                if (InsertionError != null) return false;
+                if (_behaviorManager == null || !(RootBehaviorsField.GetValue(_behaviorManager) is List<RootBehavior> roots))
                     return Fail("BehaviorManager._rootBehaviors (List<RootBehavior>) not found");
                 if (roots.Contains(this)) return true;
                 int index = roots.FindIndex(r => r is WorkerRootBehavior);
                 if (index < 0) index = roots.FindIndex(r => r is NeederRootBehavior);
-                if (index < 0) return Fail("neither WorkerRootBehavior nor NeederRootBehavior is in the root behaviour list");
+                if (index < 0) return Odd("neither WorkerRootBehavior nor NeederRootBehavior is in its root behaviour list");
                 roots.Insert(index, this);
                 return true;
             }
@@ -140,6 +164,8 @@ namespace Pandaborn.Festival
             }
         }
 
+        /// <summary>The game changed under us: nobody takes the day off from here on, and the feature report says so
+        /// (also when it is only found after the game's Load, with the first colonist).</summary>
         private static bool Fail(string reason)
         {
             InsertionError = reason;
@@ -148,7 +174,17 @@ namespace Pandaborn.Festival
                 _errorLogged = true;
                 Debug.LogWarning("[Pandaborn.Festival] the festival day off is unavailable: " + reason
                                  + ". Festivals keep their evening show, festive spirit and Tradition; colonists keep working.");
+                FeatureRegistry.ReportDegraded("Festival", "no day off (" + reason + ")");
             }
+            return false;
+        }
+
+        /// <summary>One entity that is not built like a colonist (another mod's template carrying our spec): it alone has
+        /// no day off; the others are not affected.</summary>
+        private bool Odd(string reason)
+        {
+            if (_oddEntities++ == 0)
+                Debug.LogWarning("[Pandaborn.Festival] " + Name + " takes no festival day off: " + reason);
             return false;
         }
 
@@ -158,14 +194,34 @@ namespace Pandaborn.Festival
             get
             {
                 if (_worker == null || !_worker.Employed || !_worker.Workplace) return false;
+                // after its working hours a crew joins the festival like everyone else
+                if (_workerWorkingHours != null && !_workerWorkingHours.AreWorkingHours) return false;
                 var template = _worker.Workplace.GetComponent<TemplateSpec>();
                 return template != null && _festivalService.KeepsWorking(template.TemplateName);
             }
         }
 
+        /// <summary>Never lets an exception out: the game does not catch one thrown by a behaviour, it would end the
+        /// session. A failure is logged once and the colonist is released to its ordinary day (work).</summary>
         public override Decision Decide(BehaviorAgent agent)
         {
             if (!_festivalService.IsHoliday) return Decision.ReleaseNow();
+            try { return DecideOnHoliday(agent); }
+            catch (Exception e)
+            {
+                if (!_decideErrorLogged)
+                {
+                    _decideErrorLogged = true;
+                    Debug.LogError("[Pandaborn.Festival] a colonist's festival decision failed (it goes back to its ordinary day): " + e);
+                }
+                _walked = false;
+                return Decision.ReleaseNow();
+            }
+        }
+
+        private Decision DecideOnHoliday(BehaviorAgent agent)
+        {
+            if (!_festivalService.IsHolidayFor(District)) return Decision.ReleaseNow();
             if (KeepsWorking) { Doing = "working (keeps working)"; return Decision.ReleaseNow(); }
             bool show = _festivalService.IsShowTime;
             if (!show && _neederRootBehavior != null)
@@ -173,9 +229,9 @@ namespace Pandaborn.Festival
                 var need = _neederRootBehavior.Decide(agent);
                 if (!need.ShouldReleaseNow) { Doing = "needs"; return need; }
             }
-            var district = _citizen ? _citizen.AssignedDistrict : null;
+            var district = District;
             var square = _festivalService.SquareFor(district);
-            if (square == null || district.District == null) return DayOff(agent, show);
+            if (square == null || !district || district.District == null) return DayOff(agent, show);
             // first onto the square's own dance slots (the Dance Hall basis: 20 slots in rings round the pole), as the
             // game's attractions do; only the overflow gathers around its edges
             var dance = Dance(square, show);

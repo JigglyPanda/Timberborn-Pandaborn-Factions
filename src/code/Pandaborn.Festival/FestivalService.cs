@@ -4,17 +4,19 @@ using System.Globalization;
 using System.Linq;
 using Pandaborn.Core;
 using Pandaborn.Specs;
+using Timberborn.BaseComponentSystem;
 using Timberborn.Beavers;
+using Timberborn.EntitySystem;
 using Timberborn.GameCycleSystem;
 using Timberborn.GameDistricts;
 using Timberborn.GameFactionSystem;
-using Timberborn.Goods;
 using Timberborn.Localization;
 using Timberborn.SingletonSystem;
 using Timberborn.TemplateSystem;
 using Timberborn.TickSystem;
 using Timberborn.TimeSystem;
 using Timberborn.WeatherSystem;
+using Timberborn.WindSystem;
 using UnityEngine;
 
 namespace Pandaborn.Festival
@@ -31,19 +33,48 @@ namespace Pandaborn.Festival
     /// <summary>
     /// The Lantern Festival (DESIGN.md, Pillar 5; docs/tech/events.md). The player calls it from a Festival Square when the
     /// square's district has the lanterns and dishes in store (or lets it call itself); the goods are taken at once and the
-    /// festival runs from the next dawn to the dawn after: nobody works except the crews of the KeepWorkingTemplates
-    /// workplaces, everyone gathers at the square at dusk for the rising lanterns (and fireworks, if grand), and when it
-    /// ends every colonist has festive spirit and the village's Tradition rises by one. At most one festival per cycle.
+    /// festival runs from the next dawn to the dawn after.
+    ///
+    /// A festival belongs to ONE district, the district of the square that called it: its colonists take the day off
+    /// (except the crews of the KeepWorkingTemplates workplaces, in their working hours), gather at that square at dusk
+    /// for the rising lanterns (and fireworks, if grand), and end festive. Other districts work as usual and are not
+    /// festive. The village's Tradition rises by one, and there is at most one festival per cycle in the whole village
+    /// (one counter, so a second district cannot double Tradition). A colony with one district sees no difference from
+    /// "the whole village".
     ///
     /// The game is a festival game when the faction's adult template carries PandabornFestivalSpec (Inkpaws only).
     /// Saved state (store "Festival", version 1): phase, festival day, grand, last festival cycle, Tradition, auto-call,
-    /// count. Nothing else is saved: the day off is a root behaviour (FestivalGoer), the show is computed from the clock.
+    /// count, and (added 2026-11-25, optional) the festival's district and calling square by entity id. A save without a
+    /// district (written before the district rule) is a village-wide festival, as it was then. Nothing else is saved:
+    /// the day off is a root behaviour (FestivalGoer), the show is computed from the clock.
     /// </summary>
     public class FestivalService : ILoadableSingleton, IPostLoadableSingleton, ITickableSingleton
     {
         public const string StoreFeature = "Festival";
         private const int StoreVersion = 1;
         private const string Log = "[Pandaborn.Festival] ";
+
+        /// <summary>Lanterns leaving the square all evening, per second of the particles' own time: 0.65 with the prefab's
+        /// 25 to 40 s life keeps about 21 in the sky at once (FestivalRules.SteadySkyLanterns), a new one every 1.5 s.</summary>
+        public const float SkyLanternsPerSecond = 0.65f;
+
+        /// <summary>The prefab's longest lantern life in its own seconds (PandabornAttachmentsBuilder.MakeLanternRise):
+        /// how much of the evening a sky is filled with when it starts late (a load in the middle of the show).</summary>
+        public const float SkyLanternMaxLife = 40f;
+
+        /// <summary>The dense release starts this long after the gathering does (15.5 + 0.25 = 15.75 h).</summary>
+        public const float ReleaseDelayHours = 0.25f;
+
+        /// <summary>The dense release: Spec.LanternRises lanterns over this many game hours (0.3 h is 5.8 s at game
+        /// speed 1).</summary>
+        public const float ReleaseSpanHours = 0.3f;
+
+        /// <summary>The comet rockets (the lanterns' stand-in without the lantern art, and a Grand Festival's extra):
+        /// Spec.LanternRises of them over this many game hours.</summary>
+        public const float CometSpanHours = 1.75f;
+
+        /// <summary>The bursts of a Grand Festival: Spec.Bursts over this many game hours from FireworksStartHours.</summary>
+        public const float BurstSpanHours = 2.5f;
 
         private readonly TemplateService _templateService;
         private readonly PandabornStore _store;
@@ -56,18 +87,28 @@ namespace Pandaborn.Festival
         private readonly FestivalFireworks _fireworks;
         private readonly FestivalSounds _sounds;
         private readonly FactionService _factionService;
-        private bool _showSoundOn;
+        private readonly WindService _windService;
+        private readonly NonlinearAnimationManager _nonlinearAnimationManager;
+        private readonly EntityRegistry _entityRegistry;
+        private readonly DistrictCenterRegistry _districtCenterRegistry;
 
         private readonly List<FestivalSquare> _squares = new List<FestivalSquare>();
         private readonly List<FestivalGoer> _goers = new List<FestivalGoer>();
         private readonly HashSet<FestivalGoer> _attended = new HashSet<FestivalGoer>();
+        private readonly List<int> _due = new List<int>();
         private HashSet<string> _keepWorking = new HashSet<string>(StringComparer.Ordinal);
         private int _lastHour = -1;
         private float _showClock = -1f;
+        private bool _skyTail;
+        private Guid _districtId = Guid.Empty;
+        private Guid _squareId = Guid.Empty;
+        private DistrictCenter _district;
 
         public FestivalService(TemplateService templateService, PandabornStore store, Messenger messenger, ILoc loc, IDayNightCycle dayNightCycle,
                                GameCycleService gameCycleService, WeatherService weatherService, EventBus eventBus, FestivalFireworks fireworks,
-                               FestivalSounds sounds, FactionService factionService)
+                               FestivalSounds sounds, FactionService factionService, WindService windService,
+                               NonlinearAnimationManager nonlinearAnimationManager, EntityRegistry entityRegistry,
+                               DistrictCenterRegistry districtCenterRegistry)
         {
             _templateService = templateService;
             _store = store;
@@ -80,6 +121,10 @@ namespace Pandaborn.Festival
             _fireworks = fireworks;
             _sounds = sounds;
             _factionService = factionService;
+            _windService = windService;
+            _nonlinearAnimationManager = nonlinearAnimationManager;
+            _entityRegistry = entityRegistry;
+            _districtCenterRegistry = districtCenterRegistry;
         }
 
         /// <summary>The service of the running game (tests, other modules' optional integrations).</summary>
@@ -105,8 +150,11 @@ namespace Pandaborn.Festival
 
         public int Count { get; private set; }
 
-        /// <summary>Lanterns and bursts launched in this session (tests).</summary>
+        /// <summary>Lanterns (lantern particles, or their comet stand-ins), a Grand Festival's extra comets and its
+        /// bursts launched in this session (tests).</summary>
         public int LanternsLaunched { get; private set; }
+
+        public int CometsLaunched { get; private set; }
 
         public int BurstsLaunched { get; private set; }
 
@@ -122,7 +170,7 @@ namespace Pandaborn.Festival
         /// <summary>Raised with the new Tradition after a festival.</summary>
         public event Action<int> TraditionChanged;
 
-        /// <summary>Today is the festival day (dawn to the next dawn).</summary>
+        /// <summary>Today is the festival day (dawn to the next dawn) somewhere in the village.</summary>
         public bool IsHoliday => Active && Phase == FestivalPhase.Running && _dayNightCycle.DayNumber == FestivalDay;
 
         public float HoursToday => _dayNightCycle.HoursPassedToday;
@@ -133,9 +181,77 @@ namespace Pandaborn.Festival
         public int CurrentCycle => _gameCycleService.Cycle;
 
         /// <summary>The first cycle in which a festival may be called again.</summary>
-        public int NextAllowedCycle => LastCycle < 0 ? 0 : LastCycle + 1;
+        public int NextAllowedCycle => FestivalRules.NextAllowedCycle(LastCycle);
 
         public bool CycleAllows => CurrentCycle >= NextAllowedCycle;
+
+        // ------------------------------------------------------------------ the festival's district
+
+        /// <summary>The festival has no district on record (a save from before the district rule): everyone celebrates.</summary>
+        public bool VillageWide => _districtId == Guid.Empty;
+
+        /// <summary>The district of the called or running festival (after it, of the last one); null when village-wide or
+        /// when that district centre is gone (then nobody is on holiday and no square hosts).</summary>
+        public DistrictCenter FestivalDistrict
+        {
+            get
+            {
+                if (_districtId == Guid.Empty) return null;
+                if (!_district)
+                {
+                    _district = null;
+                    try
+                    {
+                        var entity = _entityRegistry.GetEntity(_districtId);
+                        if (entity) _district = entity.GetComponent<DistrictCenter>();
+                    }
+                    catch (Exception) { }
+                }
+                return _district;
+            }
+        }
+
+        /// <summary>Colonists of this district have the day off today.</summary>
+        public bool IsHolidayFor(DistrictCenter district)
+        {
+            if (!IsHoliday) return false;
+            if (VillageWide) return true;
+            return district && district == FestivalDistrict;
+        }
+
+        /// <summary>The called or running festival is held at this square: it is finished and in the festival's district.</summary>
+        public bool Hosts(FestivalSquare square)
+        {
+            if (!Active || Phase == FestivalPhase.None || !square || !square.IsFinished) return false;
+            if (VillageWide) return true;
+            var district = square.District;
+            return district && district == FestivalDistrict;
+        }
+
+        /// <summary>More than one district: the texts name the festival's district.</summary>
+        public bool ManyDistricts
+        {
+            get
+            {
+                try { return _districtCenterRegistry.FinishedDistrictCenters.Count > 1; }
+                catch (Exception) { return false; }
+            }
+        }
+
+        /// <summary>The festival district's name for texts ("" when village-wide or gone).</summary>
+        public string FestivalDistrictName
+        {
+            get
+            {
+                try { var d = FestivalDistrict; return d ? d.DistrictName : ""; }
+                catch (Exception) { return ""; }
+            }
+        }
+
+        /// <summary>The texts name the district: there are several, and the festival has one.</summary>
+        public bool NamesDistrict => !VillageWide && ManyDistricts && FestivalDistrictName.Length > 0;
+
+        // ------------------------------------------------------------------ lifecycle
 
         public void Load()
         {
@@ -158,8 +274,9 @@ namespace Pandaborn.Festival
                 return;
             }
             var degraded = new List<string>();
+            FestivalGoer.ResetForGame();
             if (FestivalGoer.CheckInsertion() != null) degraded.Add("no day off (" + FestivalGoer.InsertionError + ")");
-            if (!_fireworks.Available) degraded.Add("no lanterns or fireworks in the sky (" + _fireworks.Unavailable + ")");
+            if (!_fireworks.Available) degraded.Add("no fireworks in the sky (" + _fireworks.Unavailable + ")");
             if (degraded.Count > 0) FeatureRegistry.ReportDegraded("Festival", string.Join("; ", degraded));
             _keepWorking = new HashSet<string>(Spec.KeepWorkingTemplates.IsDefault ? Enumerable.Empty<string>() : Spec.KeepWorkingTemplates, StringComparer.Ordinal);
             ReadState();
@@ -169,19 +286,28 @@ namespace Pandaborn.Festival
         public void PostLoad()
         {
             if (!Active) return;
-            // A save made before a festival's day ended, loaded later (or with the module off in between): settle it now.
-            if (Phase == FestivalPhase.Running && _dayNightCycle.DayNumber > FestivalDay) End("loaded after its day");
-            else if (Phase == FestivalPhase.Called && _dayNightCycle.DayNumber > FestivalDay) End("its day passed while the festival code was off");
-            else if (Phase == FestivalPhase.Called && _dayNightCycle.DayNumber == FestivalDay) Start("loaded on its day");
+            try
+            {
+                // A save made before a festival's day ended, loaded later (or with the module off in between): settle it now.
+                if (Phase == FestivalPhase.Running && _dayNightCycle.DayNumber > FestivalDay) End("loaded after its day");
+                else if (Phase == FestivalPhase.Called && _dayNightCycle.DayNumber > FestivalDay) End("its day passed while the festival code was off");
+                else if (Phase == FestivalPhase.Called && _dayNightCycle.DayNumber == FestivalDay) Start("loaded on its day");
+            }
+            catch (Exception e) { Debug.LogError(Log + "settling the saved festival failed: " + e); }
             _showClock = HoursToday;   // a reload never replays lanterns already launched
             _lastHour = (int)HoursToday;
-            Debug.Log(Log + "active; phase " + Phase + ", festival day " + FestivalDay + ", last cycle " + LastCycle + ", Tradition "
-                      + Tradition + ", auto-call " + AutoCall + "; fireworks " + (_fireworks.Available ? "available" : "off (" + _fireworks.Unavailable + ")")
+            Debug.Log(Log + "active; phase " + Phase + ", festival day " + FestivalDay + ", district "
+                      + (VillageWide ? "(village-wide)" : FestivalDistrict ? FestivalDistrictName : "(gone)") + ", last cycle " + LastCycle
+                      + ", Tradition " + Tradition + ", auto-call " + AutoCall + "; fireworks "
+                      + (_fireworks.Available ? "available" : "off (" + _fireworks.Unavailable + ")")
                       + "; day off " + (FestivalGoer.InsertionError == null ? "ok" : "off (" + FestivalGoer.InsertionError + ")"));
         }
 
+        /// <summary>Dawn. Not DaytimeStartEvent: GameCycleService moves the cycle on in its own handler of that event, and
+        /// whether it runs before ours is only load order; it posts this one once the cycle and the cycle day are current,
+        /// so a festival held on the first day of a cycle is booked to that cycle (the once-a-cycle rule).</summary>
         [OnEvent]
-        public void OnDaytimeStart(DaytimeStartEvent e)
+        public void OnCycleDayStarted(CycleDayStartedEvent e)
         {
             try { Advance("dawn of day " + _dayNightCycle.DayNumber); }
             catch (Exception ex) { Debug.LogError(Log + "dawn update failed: " + ex); }
@@ -198,7 +324,7 @@ namespace Pandaborn.Festival
                     _lastHour = hour;
                     Advance("hour " + hour);
                     TryAutoCall();
-                    foreach (var square in _squares) square.UpdateLights();
+                    UpdateLights();
                 }
                 RunShow();
             }
@@ -210,12 +336,12 @@ namespace Pandaborn.Festival
         internal void AddSquare(FestivalSquare square)
         {
             if (!_squares.Contains(square)) _squares.Add(square);
-            Changed?.Invoke();
+            RaiseChanged();
         }
 
         internal void RemoveSquare(FestivalSquare square)
         {
-            if (_squares.Remove(square)) Changed?.Invoke();
+            if (_squares.Remove(square)) RaiseChanged();
         }
 
         internal void AddGoer(FestivalGoer goer)
@@ -229,13 +355,32 @@ namespace Pandaborn.Festival
             _attended.Remove(goer);
         }
 
-        /// <summary>The finished square a colonist of this district celebrates at, if any.</summary>
+        /// <summary>A listener's failure must never stop the festival, or a building being finished or removed.</summary>
+        private void RaiseChanged()
+        {
+            try { Changed?.Invoke(); }
+            catch (Exception e) { Debug.LogError(Log + "a festival listener failed: " + e); }
+        }
+
+        private void UpdateLights()
+        {
+            foreach (var square in _squares)
+                if (square) square.UpdateLights();
+        }
+
+        /// <summary>The finished square a colonist of this district celebrates at, if any: the square that called the
+        /// festival when it stands in that district, else the district's first.</summary>
         public FestivalSquare SquareFor(DistrictCenter district)
         {
             if (!district) return null;
+            FestivalSquare first = null;
             foreach (var s in _squares)
-                if (s && s.IsFinished && s.District == district) return s;
-            return null;
+            {
+                if (!s || !s.IsFinished || s.District != district) continue;
+                if (_squareId != Guid.Empty && s.EntityId == _squareId) return s;
+                if (first == null) first = s;
+            }
+            return first;
         }
 
         public bool KeepsWorking(string workplaceTemplate) => workplaceTemplate != null && _keepWorking.Contains(workplaceTemplate);
@@ -246,8 +391,15 @@ namespace Pandaborn.Festival
         public string WhyNot(FestivalSquare square, FestivalStock stock)
         {
             if (!Active) return _loc.T("Pandaborn.Festival.Off");
-            if (Phase == FestivalPhase.Called) return _loc.T("Pandaborn.Festival.Status.Called", Hours(HoursUntilStart));
-            if (Phase == FestivalPhase.Running) return _loc.T("Pandaborn.Festival.Status.Running");
+            // a festival called or held in another district: say where (one festival a cycle for the whole village)
+            bool elsewhere = Phase != FestivalPhase.None && !VillageWide && square != null && FestivalDistrictName.Length > 0
+                             && square.District != FestivalDistrict;
+            if (Phase == FestivalPhase.Called)
+                return elsewhere ? _loc.T("Pandaborn.Festival.Status.CalledElsewhere", FestivalDistrictName, Hours(HoursUntilStart))
+                                 : _loc.T("Pandaborn.Festival.Status.Called", Hours(HoursUntilStart));
+            if (Phase == FestivalPhase.Running)
+                return elsewhere ? _loc.T("Pandaborn.Festival.Status.RunningElsewhere", FestivalDistrictName)
+                                 : _loc.T("Pandaborn.Festival.Status.Running");
             if (!CycleAllows) return _loc.T("Pandaborn.Festival.Status.NextCycle", NextAllowedCycle.ToString(CultureInfo.InvariantCulture));
             if (square == null || !square.IsFinished) return _loc.T("Pandaborn.Festival.Status.Unfinished");
             if (!square.District) return _loc.T("Pandaborn.Festival.Status.NoDistrict");
@@ -257,22 +409,28 @@ namespace Pandaborn.Festival
 
         public float HoursUntilStart => Phase == FestivalPhase.Called ? Mathf.Max(0f, (FestivalDay - _dayNightCycle.PartialDayNumber) * 24f) : 0f;
 
-        /// <summary>Calls the festival from a square: takes the goods from its district, the festival begins at the next dawn.</summary>
+        /// <summary>Calls the festival from a square: takes the goods from its district, and the festival begins there at
+        /// the next dawn.</summary>
         public bool Call(FestivalSquare square, bool auto)
         {
             if (!Active || square == null) return false;
-            var stock = FestivalStock.Count(square.District, Spec);
+            var district = square.District;
+            var stock = FestivalStock.Count(district, Spec);
             if (WhyNot(square, stock) != null) return false;
             bool grand = stock.GrandReady;
-            var taken = FestivalStock.Take(square.District, Spec, stock, grand);
+            var taken = FestivalStock.Take(district, Spec, stock, grand);
             Phase = FestivalPhase.Called;
-            FestivalDay = _dayNightCycle.DayNumber + 1;
+            FestivalDay = FestivalRules.FestivalDayFor(_dayNightCycle.DayNumber);
             Grand = grand;
+            _district = district;
+            _districtId = IdOf(district);
+            _squareId = square.EntityId;
             Persist();
-            Debug.Log(Log + (auto ? "auto-" : "") + "called for day " + FestivalDay + (grand ? " (grand)" : "") + "; took "
-                      + string.Join(", ", taken.Select(t => t.GoodId + " " + t.Amount)));
+            Debug.Log(Log + (auto ? "auto-" : "") + "called for day " + FestivalDay + (grand ? " (grand)" : "") + " in district '"
+                      + FestivalDistrictName + "'; took " + string.Join(", ", taken.Select(t => t.GoodId + " " + t.Amount)));
             _messenger.Post(_loc.T(grand ? "Pandaborn.Festival.Message.CalledGrand" : "Pandaborn.Festival.Message.Called"));
-            Changed?.Invoke();
+            UpdateLights();
+            RaiseChanged();
             return true;
         }
 
@@ -281,7 +439,7 @@ namespace Pandaborn.Festival
             if (AutoCall == on) return;
             AutoCall = on;
             Persist();
-            Changed?.Invoke();
+            RaiseChanged();
             if (on) TryAutoCall();
         }
 
@@ -290,11 +448,18 @@ namespace Pandaborn.Festival
             if (!AutoCall || Phase != FestivalPhase.None || !CycleAllows) return;
             // never in bad weather, nor the day before it starts: the festival is a fair-weather holiday when no one chose it
             if (_weatherService.IsHazardousWeather || _weatherService.NextDayIsHazardousWeather()) return;
-            foreach (var square in _squares.ToList())
+            // with several districts the turn passes on: squares of the district that held the last festival are asked last
+            var last = FestivalDistrict;
+            for (int pass = 0; pass < 2; pass++)
             {
-                if (!square || !square.IsFinished) continue;
-                var stock = FestivalStock.Count(square.District, Spec);
-                if (stock.Ready && Call(square, auto: true)) return;
+                foreach (var square in _squares.ToList())
+                {
+                    if (!square || !square.IsFinished || !square.District) continue;
+                    bool lastHost = last && square.District == last;
+                    if (lastHost != (pass == 1)) continue;
+                    var stock = FestivalStock.Count(square.District, Spec);
+                    if (stock.Ready && Call(square, auto: true)) return;
+                }
             }
         }
 
@@ -316,33 +481,52 @@ namespace Pandaborn.Festival
             _showClock = HoursToday;
             Persist();
             Debug.Log(Log + "started (" + why + "), day " + FestivalDay + ", cycle " + LastCycle + (Grand ? ", grand" : ""));
-            _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrand" : "Pandaborn.Festival.Message.Started"));
+            if (NamesDistrict)
+                _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrandDistrict" : "Pandaborn.Festival.Message.StartedDistrict",
+                                       FestivalDistrictName));
+            else
+                _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrand" : "Pandaborn.Festival.Message.Started"));
             _sounds.Play2D(FestivalSounds.Firecrackers);
-            foreach (var square in _squares) square.UpdateLights();
-            Changed?.Invoke();
+            UpdateLights();
+            RaiseChanged();
         }
 
         private void End(string why)
         {
+            // everyone of the festival's district ends festive, whether or not they reached the square
             int granted = 0;
+            bool everyone = VillageWide;
+            var district = FestivalDistrict;
             foreach (var goer in _goers.ToList())
-                if (goer && GrantFestive(goer)) granted++;
+            {
+                try
+                {
+                    if (!goer || !(everyone || (district && goer.District == district))) continue;
+                    if (GrantFestive(goer)) granted++;
+                }
+                catch (Exception e) { Debug.LogError(Log + "festive spirit for one colonist failed: " + e.Message); }
+            }
+            bool named = NamesDistrict;
+            string districtName = FestivalDistrictName;
             _attended.Clear();
             Phase = FestivalPhase.None;
             Tradition++;
             Count++;
-            bool grand = Grand;
             Grand = false;
             Persist();
             Debug.Log(Log + "ended (" + why + "); festive spirit for " + granted + " colonists; Tradition " + Tradition);
-            _messenger.Post(_loc.T("Pandaborn.Festival.Message.Ended", Tradition.ToString(CultureInfo.InvariantCulture)));
-            foreach (var square in _squares) square.UpdateLights();
+            if (named)
+                _messenger.Post(_loc.T("Pandaborn.Festival.Message.EndedDistrict", districtName, Tradition.ToString(CultureInfo.InvariantCulture)));
+            else
+                _messenger.Post(_loc.T("Pandaborn.Festival.Message.Ended", Tradition.ToString(CultureInfo.InvariantCulture)));
+            UpdateLights();
             try { TraditionChanged?.Invoke(Tradition); }
             catch (Exception e) { Debug.LogError(Log + "Tradition update failed: " + e); }
-            Changed?.Invoke();
+            RaiseChanged();
         }
 
-        /// <summary>A colonist reached the square: festive spirit now (the end of the festival gives it to everyone else).</summary>
+        /// <summary>A colonist reached the square: festive spirit now (the end of the festival gives it to everyone else
+        /// of the district).</summary>
         internal void Attend(FestivalGoer goer)
         {
             if (_attended.Add(goer)) GrantFestive(goer);
@@ -357,25 +541,85 @@ namespace Pandaborn.Festival
             return any;
         }
 
+        private static Guid IdOf(BaseComponent component)
+        {
+            try
+            {
+                var entity = component ? component.GetComponent<EntityComponent>() : null;
+                return entity ? entity.EntityId : Guid.Empty;
+            }
+            catch (Exception) { return Guid.Empty; }
+        }
+
         // ------------------------------------------------------------------ the show
 
-        /// <summary>The drum at each square through the gathering, firecrackers as it starts.</summary>
+        /// <summary>The drum at each hosting square through the gathering, firecrackers as it starts. Kept per square, so
+        /// a square finished, removed or reconnected during the show is right at the next tick.</summary>
         private void UpdateShowSounds()
         {
-            bool on = IsShowTime;
-            if (on == _showSoundOn) return;
-            _showSoundOn = on;
+            bool show = IsShowTime;
             foreach (var square in _squares)
             {
-                if (!square || !square.IsFinished) continue;
+                if (!square) continue;
+                bool on = show && Hosts(square);
+                if (on == square.ShowSoundOn) continue;
+                square.ShowSoundOn = on;
                 if (on) _sounds.Play3D(square.SoundEmitter, FestivalSounds.Firecrackers);
                 _sounds.Loop(square.SoundEmitter, FestivalSounds.Drum, on);
             }
         }
 
+        /// <summary>
+        /// The lantern sky over every hosting square that has the lantern art: on through the show, a lantern leaving the
+        /// square every second or two; off after it, and the last ones fade. The particles run on the game's nonlinear
+        /// animation clock (the square root of the game speed, as the game runs its own smoke and sparks, see
+        /// NonLinearParticlesSpeedMultiplier): they rise 1.7 times as fast at speed 2 and 2.6 times at speed 3, stand
+        /// still when the game is paused, and the sky holds the same number at every speed (rate and life are both in
+        /// the particles' own seconds). Real, unscaled time was rejected: lanterns would keep rising through a pause,
+        /// and at speed 3 the whole show lasts 18 real seconds, less than one lantern's life.
+        /// </summary>
+        private void UpdateSky()
+        {
+            bool show = IsShowTime;
+            if (!show && !_skyTail) return;
+            float speed = 1f;
+            try { speed = _nonlinearAnimationManager.SpeedMultiplier; } catch (Exception) { }
+            if (speed <= 0f) speed = 1f;   // paused: the scaled clock stands still anyway
+            var drift = Vector3.zero;
+            try
+            {
+                var w = _windService.WindDirection;
+                float strength = 0.12f + 0.25f * Mathf.Clamp01(_windService.WindStrength);
+                drift = new Vector3(w.x, 0f, w.y) * strength;
+            }
+            catch (Exception) { }
+            // a sky that starts late (a load in the middle of the show, a square finished during it) starts filled
+            float prewarm = 0f;
+            if (show) prewarm = Mathf.Clamp((HoursToday - Spec.ShowStartHours) / 24f * _dayNightCycle.DayLengthInSeconds, 0f, SkyLanternMaxLife);
+            bool tail = false;
+            foreach (var square in _squares)
+            {
+                if (!square) continue;
+                bool on = show && Hosts(square);
+                if (!on && !square.SkyActive) continue;
+                square.UpdateSky(on, SkyLanternsPerSecond, drift, speed, prewarm);
+                tail |= square.SkyActive;
+            }
+            _skyTail = tail;
+        }
+
+        /// <summary>
+        /// The launches due since the last tick, from the clock (so nothing is launched twice and a reload launches only
+        /// what is still due):
+        ///   * a square with the lantern art: the dense release, LanternRises lanterns over ReleaseSpanHours from
+        ///     15.75 h, with the lantern-rise sound (three times across the release, never in the steady sky);
+        ///   * a square without it: one comet rocket per lantern over CometSpanHours instead (the fallback);
+        ///   * a Grand Festival: the comets at every square, and the bursts from FireworksStartHours.
+        /// </summary>
         private void RunShow()
         {
             UpdateShowSounds();
+            UpdateSky();
             if (!IsHoliday) { _showClock = -1f; return; }
             float now = HoursToday;
             if (_showClock < 0f) _showClock = now;
@@ -383,34 +627,48 @@ namespace Pandaborn.Festival
             _showClock = now;
             if (now <= from || _squares.Count == 0) return;
             int lanterns = Math.Max(0, Spec.LanternRises);
-            const float lanternSpan = 1.75f;
-            for (int i = 0; i < lanterns; i++)
-            {
-                float t = Spec.ShowStartHours + 0.25f + i * lanternSpan / lanterns;
-                if (t > from && t <= now) LaunchEverywhere(Spec.LanternFireworkIds, i, lantern: true);
-            }
-            if (!Grand) return;
-            int bursts = Math.Max(0, Spec.Bursts);
-            const float burstSpan = 2.5f;
-            for (int i = 0; i < bursts; i++)
-            {
-                float t = Spec.FireworksStartHours + i * burstSpan / bursts;
-                if (t > from && t <= now) LaunchEverywhere(Spec.BurstFireworkIds, i, lantern: false);
-            }
-        }
+            float start = Spec.ShowStartHours + ReleaseDelayHours;
 
-        private void LaunchEverywhere(System.Collections.Immutable.ImmutableArray<string> ids, int index, bool lantern)
-        {
-            if (ids.IsDefaultOrEmpty) return;
-            for (int s = 0; s < _squares.Count; s++)
+            FestivalRules.Due(start, ReleaseSpanHours, lanterns, from, now, _due);
+            foreach (int i in _due)
             {
-                var square = _squares[s];
-                if (!square || !square.IsFinished) continue;
-                string id = ids[(index + s) % ids.Length];
-                if (square.Launch(_fireworks, id, lantern))
+                foreach (var square in _squares)
                 {
-                    if (lantern) LanternsLaunched++;
-                    else BurstsLaunched++;
+                    if (!Hosts(square) || !square.HasLanternSky || !square.Release(1)) continue;
+                    LanternsLaunched++;
+                    if (i % 8 == 0) _sounds.Play3D(square.SoundEmitter, FestivalSounds.LanternRise);
+                }
+            }
+
+            if (!Spec.LanternFireworkIds.IsDefaultOrEmpty)
+            {
+                FestivalRules.Due(start, CometSpanHours, lanterns, from, now, _due);
+                foreach (int i in _due)
+                {
+                    for (int s = 0; s < _squares.Count; s++)
+                    {
+                        var square = _squares[s];
+                        if (!Hosts(square)) continue;
+                        bool standIn = !square.HasLanternSky;
+                        if (!standIn && !Grand) continue;
+                        string id = Spec.LanternFireworkIds[(i + s) % Spec.LanternFireworkIds.Length];
+                        if (!square.Launch(_fireworks, id, lantern: true)) continue;
+                        if (standIn) LanternsLaunched++;
+                        else CometsLaunched++;
+                    }
+                }
+            }
+
+            if (!Grand || Spec.BurstFireworkIds.IsDefaultOrEmpty) return;
+            FestivalRules.Due(Spec.FireworksStartHours, BurstSpanHours, Math.Max(0, Spec.Bursts), from, now, _due);
+            foreach (int i in _due)
+            {
+                for (int s = 0; s < _squares.Count; s++)
+                {
+                    var square = _squares[s];
+                    if (!Hosts(square)) continue;
+                    string id = Spec.BurstFireworkIds[(i + s) % Spec.BurstFireworkIds.Length];
+                    if (square.Launch(_fireworks, id, lantern: false)) BurstsLaunched++;
                 }
             }
         }
@@ -420,15 +678,21 @@ namespace Pandaborn.Festival
         private void ReadState()
         {
             Phase = FestivalPhase.None;
+            FestivalDay = -1;
+            _districtId = Guid.Empty;
+            _squareId = Guid.Empty;
+            _district = null;
             if (!_store.TryGet(StoreFeature, out int version, out string payload) || version != StoreVersion) return;
             var v = Payload.Parse(payload);
-            Phase = Enum.TryParse(Get(v, "phase"), out FestivalPhase p) ? p : FestivalPhase.None;
+            Phase = Enum.TryParse(Get(v, "phase"), out FestivalPhase p) && Enum.IsDefined(typeof(FestivalPhase), p) ? p : FestivalPhase.None;
             FestivalDay = Int(v, "day", -1);
             Grand = Get(v, "grand") == "1";
             LastCycle = Int(v, "last", -1);
             Tradition = Math.Max(0, Int(v, "tradition", 0));
             AutoCall = Get(v, "auto") == "1";
             Count = Math.Max(0, Int(v, "count", 0));
+            _districtId = Guid.TryParse(Get(v, "district"), out var d) ? d : Guid.Empty;
+            _squareId = Guid.TryParse(Get(v, "square"), out var q) ? q : Guid.Empty;
             if (Phase != FestivalPhase.None && FestivalDay < 0) Phase = FestivalPhase.None;
         }
 
@@ -442,7 +706,9 @@ namespace Pandaborn.Festival
                 new KeyValuePair<string, string>("last", LastCycle.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("tradition", Tradition.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("auto", AutoCall ? "1" : "0"),
-                new KeyValuePair<string, string>("count", Count.ToString(CultureInfo.InvariantCulture))
+                new KeyValuePair<string, string>("count", Count.ToString(CultureInfo.InvariantCulture)),
+                new KeyValuePair<string, string>("district", _districtId == Guid.Empty ? "" : _districtId.ToString("N")),
+                new KeyValuePair<string, string>("square", _squareId == Guid.Empty ? "" : _squareId.ToString("N"))
             }));
         }
 
@@ -460,8 +726,9 @@ namespace Pandaborn.Festival
         {
             Tradition = Math.Max(0, value);
             Persist();
-            TraditionChanged?.Invoke(Tradition);
-            Changed?.Invoke();
+            try { TraditionChanged?.Invoke(Tradition); }
+            catch (Exception e) { Debug.LogError(Log + "Tradition update failed: " + e); }
+            RaiseChanged();
         }
 
         /// <summary>Test hook: forgets the once-per-cycle rule.</summary>
@@ -469,7 +736,7 @@ namespace Pandaborn.Festival
         {
             LastCycle = -1;
             Persist();
-            Changed?.Invoke();
+            RaiseChanged();
         }
     }
 }
