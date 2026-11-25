@@ -111,30 +111,41 @@ namespace Pandaborn.Ringtails
 
         /// <summary>
         /// End of the rest window in hours after dawn: the bell (RingtailWorkday: Bell's locked day when Bell is on, else the
-        /// live slider) clamped to [RestMinEndHours, RestMaxEndHours]; or the fixed RestEndHours.
+        /// live slider) clamped to [RestMinEndHours, RestMaxEndHours] and to nightfall, so the rest ends exactly when the
+        /// night posts open (ShiftMath.ShiftStart, the same call as RingtailWorkday.ShiftStartHours); or the fixed RestEndHours.
         /// </summary>
         public float RestEndHours
         {
             get
             {
                 if (!_spec.RestEndsAtBell) return _spec.RestEndHours;
-                return Math.Min(Math.Max(_workday.WorkdayHours, _spec.RestMinEndHours), _spec.RestMaxEndHours);
+                return ShiftMath.ShiftStart(_workday.WorkdayHours, _spec.RestMinEndHours, _spec.RestMaxEndHours, _workday.Nightfall);
             }
         }
 
-        public bool InRestWindow
-        {
-            get
-            {
-                float h = HoursSinceDawn;
-                float start = _spec.RestStartHours, end = RestEndHours;
-                return start <= end ? h >= start && h < end : h >= start || h < end;
-            }
-        }
+        public bool InRestWindow => ShiftMath.InWindow(HoursSinceDawn, _spec.RestStartHours, RestEndHours);
+
 
         public override Decision Decide(BehaviorAgent agent)
         {
+            if (_broken) return Decision.ReleaseNow();
+            // the game calls this from the colonist's tick: an exception here is a crash. If the rest ever throws, this
+            // Ringtail goes back to the plain worker behaviour (it works around the clock and sleeps when exhausted).
+            try { return DecideRest(agent); }
+            catch (Exception e)
+            {
+                _broken = true;
+                Fail("the rest behaviour threw " + e.GetType().Name + ": " + e.Message);
+                return Decision.ReleaseNow();
+            }
+        }
+
+        private bool _broken;
+
+        private Decision DecideRest(BehaviorAgent agent)
+        {
             if (!InRestWindow) return Decision.ReleaseNow();
+
             if (_sleepNeedBehavior != null && _needManager.HasNeed(SleepNeedId))
             {
                 // first thing in the rest window: to bed unless nearly rested (a regular "sleep through the morning");

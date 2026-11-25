@@ -27,6 +27,12 @@ namespace Pandaborn.Specs
 
         [Serialize]
         public int ArrivalKits { get; init; } = 1;
+
+        /// <summary>A district that has a finished Moon Loft and no living Ringtail (old age took the last of them, or a
+        /// session with the module off turned them into Inkpaws) gets a new family after this many dawns in a row without
+        /// one, so the people can never die out for good and never refills at once. Less than 1 counts as 1.</summary>
+        [Serialize]
+        public int ReturnAfterDays { get; init; } = 3;
     }
 
     /// <summary>
@@ -78,7 +84,12 @@ namespace Pandaborn.Specs
     /// </summary>
     public record PandabornNightPostSpec : ComponentSpec
     {
+        /// <summary>The arrival of the Ringtails unlocks this post for free (default). False keeps its science cost: the
+        /// post is a Ringtail workplace like the others but the player still has to buy it (the Star Tower).</summary>
+        [Serialize]
+        public bool UnlockOnArrival { get; init; } = true;
     }
+
 
     /// <summary>
     /// Marks the Moon Loft. Without the feature it is an ordinary home (no ProcreationHouseSpec in data). With the feature:
