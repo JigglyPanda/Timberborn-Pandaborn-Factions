@@ -49,7 +49,10 @@ namespace Pandaborn.Festival
             if (!spec.Dishes.IsDefaultOrEmpty)
                 foreach (var dish in spec.Dishes.Distinct())
                     stock.Dishes.Add(new KeyValuePair<string, int>(dish, Amount(registry, dish)));
-            stock.Dishes.Sort((a, b) => b.Value.CompareTo(a.Value));
+            // most first for the panel; equal amounts keep the spec's order (the same order the festival takes them in)
+            var sorted = stock.Dishes.Select((d, i) => new { d, i }).OrderByDescending(x => x.d.Value).ThenBy(x => x.i).Select(x => x.d).ToList();
+            stock.Dishes.Clear();
+            stock.Dishes.AddRange(sorted);
             return stock;
         }
 
@@ -60,8 +63,8 @@ namespace Pandaborn.Festival
             var taken = new List<GoodAmount>();
             var registry = district.GetComponent<DistrictInventoryRegistry>();
             taken.Add(new GoodAmount(spec.LanternGoodId, Take(registry, spec.LanternGoodId, stock.LanternsNeeded)));
-            foreach (var dish in stock.Dishes.Where(d => d.Value >= stock.DishAmount).Take(stock.DishKinds))
-                taken.Add(new GoodAmount(dish.Key, Take(registry, dish.Key, stock.DishAmount)));
+            foreach (string dish in FestivalRules.PickDishes(stock.Dishes, stock.DishKinds, stock.DishAmount))
+                taken.Add(new GoodAmount(dish, Take(registry, dish, stock.DishAmount)));
             if (grand) taken.Add(new GoodAmount(spec.FireworksGoodId, Take(registry, spec.FireworksGoodId, stock.FireworksNeeded)));
             return taken;
         }

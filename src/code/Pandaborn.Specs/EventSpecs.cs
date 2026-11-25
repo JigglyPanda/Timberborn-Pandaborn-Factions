@@ -36,7 +36,8 @@ namespace Pandaborn.Specs
         [Serialize]
         public int Fireworks { get; init; } = 20;
 
-        /// <summary>Set to its maximum for every colonist by any festival (+4 wellbeing, decays over about 20 days).</summary>
+        /// <summary>Set to its maximum by any festival for every colonist of the festival's district. Its well-being and
+        /// how fast it fades are the need's own data (catalogue/needs.toml), never code.</summary>
         [Serialize]
         public string FestiveNeedId { get; init; } = "PandabornFestive";
 
@@ -44,8 +45,8 @@ namespace Pandaborn.Specs
         [Serialize]
         public string GrandNeedId { get; init; } = "";
 
-        /// <summary>Workplaces whose crews keep working through the festival (template names): the ones that keep water
-        /// reaching people and fields.</summary>
+        /// <summary>Workplaces whose crews keep working through the festival, in their working hours (template names):
+        /// the staffed ones that keep water reaching people and fields (pumps, the Treadwheel Lift, the Cistern Tap).</summary>
         [Serialize]
         public ImmutableArray<string> KeepWorkingTemplates { get; init; }
 
@@ -61,7 +62,8 @@ namespace Pandaborn.Specs
         [Serialize]
         public float FireworksStartHours { get; init; } = 19f;
 
-        /// <summary>Rising lanterns per square (drawn with the vanilla trail-only "comet" fireworks until the art exists).</summary>
+        /// <summary>Lanterns in the dense release at the start of the show, per square. Without the square's lantern art
+        /// (the LanternRise attachment), and in a Grand Festival, as many trail-only "comet" fireworks.</summary>
         [Serialize]
         public int LanternRises { get; init; } = 24;
 
