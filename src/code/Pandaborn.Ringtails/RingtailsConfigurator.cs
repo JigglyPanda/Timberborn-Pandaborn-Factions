@@ -18,6 +18,9 @@ namespace Pandaborn.Ringtails
             Bind<RingtailsBuildingFragment>().AsSingleton();
             Bind<RingtailClockArc>().AsSingleton();
             Bind<RingtailSounds>().AsSingleton();
+            Bind<RingtailVoice>().AsTransient();
+            // the night shift for whoever asks through Core (the Bell gives Ringtails their rested bonus by it)
+            MultiBind<Pandaborn.Core.INightShiftClock>().ToExisting<RingtailWorkday>();
             Bind<RingtailRestRootBehavior>().AsTransient();
             Bind<RingtailCoat>().AsTransient();
             Bind<RingtailGrowth>().AsTransient();
@@ -35,6 +38,8 @@ namespace Pandaborn.Ringtails
             builder.AddDecorator<PandabornRingtailSpec, RingtailCoat>();
             builder.AddDecorator<PandabornRingtailSpec, RingtailGrowth>();
             builder.AddDecorator<PandabornRingtailSpec, RingtailBadge>();
+            builder.AddDecorator<PandabornRingtailSpec, RingtailVoice>();
+
             builder.AddDecorator<PandabornNightPostSpec, NightPost>();
             builder.AddDecorator<PandabornMoonLoftSpec, MoonLoft>();
             return builder.Build();

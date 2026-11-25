@@ -22,7 +22,10 @@ namespace Pandaborn.Ringtails
         private static readonly Color MoonColor = new Color(0.78f, 0.86f, 1f, 1f);
         private readonly VisualElementLoader _visualElementLoader;
         private readonly RingtailService _ringtailService;
+        private readonly LoftNursery _nursery;
         private readonly ILoc _loc;
+        private readonly System.Action _update;   // one delegate for the per-frame call, not a new closure every frame
+        private float _nextLoftRefresh;
         private VisualElement _root;
         private VisualElement _icon;
         private Label _label;
@@ -31,11 +34,13 @@ namespace Pandaborn.Ringtails
         private MoonLoft _loft;
         private bool _night;
 
-        public RingtailsBuildingFragment(VisualElementLoader visualElementLoader, RingtailService ringtailService, ILoc loc)
+        public RingtailsBuildingFragment(VisualElementLoader visualElementLoader, RingtailService ringtailService, LoftNursery nursery, ILoc loc)
         {
             _visualElementLoader = visualElementLoader;
             _ringtailService = ringtailService;
+            _nursery = nursery;
             _loc = loc;
+            _update = UpdateCore;
         }
 
         public static string ShownText { get; private set; }
@@ -78,6 +83,8 @@ namespace Pandaborn.Ringtails
             _workplace = SafeUi.Get(Piece, () => entity.GetComponent<Workplace>(), null);
             _post = SafeUi.Get(Piece, () => entity.GetComponent<NightPost>(), null);
             _loft = SafeUi.Get(Piece, () => entity.GetComponent<MoonLoft>(), null);
+            _nextLoftRefresh = 0f;
+            if (_workplace == null && _post == null && _loft == null) Hide();
         }
 
         public void ClearFragment()
@@ -85,12 +92,26 @@ namespace Pandaborn.Ringtails
             _workplace = null;
             _post = null;
             _loft = null;
-            SafeUi.Run(Piece, () => _root.ToggleDisplayStyle(false));
+            Hide();
+        }
+
+        /// <summary>Not through SafeUi: a piece that failed while it was on screen must still disappear.</summary>
+        private void Hide()
+        {
+            try { if (_root != null) _root.style.display = DisplayStyle.None; }
+            catch (System.Exception) { }
+            ShownMark = "";
         }
 
         public void UpdateFragment()
         {
-            SafeUi.Run(Piece, () =>
+            if (_workplace == null && _post == null && _loft == null) return;   // hidden; nothing to do for other entities
+            SafeUi.Run(Piece, _update);
+            if (SafeUi.IsBroken(Piece)) Hide();
+        }
+
+        private void UpdateCore()
+        {
             {
                 string text = null;
                 bool icon = false, night = false;
@@ -107,8 +128,15 @@ namespace Pandaborn.Ringtails
                         text = _loc.T("Pandaborn.Ringtails.Panel.DayShift");
                         icon = true;
                     }
-                    else if (_loft != null)
+                    else if (_loft)
                     {
+                        // the nursery line is recounted about once a second while the loft is selected, so it is right
+                        // after a load and for a loft built since dawn
+                        if (Time.unscaledTime >= _nextLoftRefresh)
+                        {
+                            _nextLoftRefresh = Time.unscaledTime + 1f;
+                            _nursery.Refresh(_loft);
+                        }
                         text = _loc.T("Pandaborn.Ringtails.Panel.Loft") + (string.IsNullOrEmpty(_loft.KitState) ? "" : " " + _loc.T(_loft.KitState));
                     }
                 }
@@ -119,7 +147,7 @@ namespace Pandaborn.Ringtails
                     ShownMark = "";
                     return;
                 }
-                _label.text = text;
+                if (_label.text != text) _label.text = text;
                 ShownText = text;
                 if (_icon != null)
                 {
@@ -136,8 +164,9 @@ namespace Pandaborn.Ringtails
                     var b = _icon.worldBound;
                     ShownMarkBounds = Mathf.RoundToInt(b.x) + "," + Mathf.RoundToInt(b.y) + " " + Mathf.RoundToInt(b.width) + "x" + Mathf.RoundToInt(b.height);
                 }
-            });
+            }
         }
+
 
         private void DrawMark(MeshGenerationContext context)
         {

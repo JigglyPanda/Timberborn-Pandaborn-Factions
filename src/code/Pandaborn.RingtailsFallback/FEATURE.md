@@ -19,31 +19,31 @@ when the larger module does not. It keeps no state.
 
 * type `Bindito.Core.Configurator`
   * method `.ctor()`
-  * method `Bind<1>()`
-  * method `MultiBind<1>()`
+  * method `Bind<1>()`: `Bindito.Core.ISingleBindingBuilder`1<!!0>`
+  * method `MultiBind<1>()`: `Bindito.Core.IMultiBindingBuilder`1<!!0>`
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
-  * method `ToProvider(System.Func`1<!0>)`
+  * method `ToProvider(System.Func`1<!0>)`: `Bindito.Core.IScopeAssignee`
 * type `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.IMultiBindingBuilder`1`
 * type `Bindito.Core.IScopeAssignee`
-  * method `AsSingleton()`
-  * method `AsTransient()`
+  * method `AsSingleton()`: `Bindito.Core.IExportAssignee`
+  * method `AsTransient()`: `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.ISingleBindingBuilder`1`
 
 **Timberborn.BaseComponentSystem**
 
 * type `Timberborn.BaseComponentSystem.BaseComponent`
   * method `.ctor()`
-  * method `GetComponent<1>()`
-  * method `get_Name()`
+  * method `GetComponent<1>()`: `!!0`
+  * method `get_Name()`: `System.String`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
 **Timberborn.BlockSystem**
 
 * type `Timberborn.BlockSystem.BlockObject`
-  * method `get_IsFinished()`
+  * method `get_IsFinished()`: `System.Boolean`
 * type `Timberborn.BlockSystem.IFinishedStateListener`
 
 **Timberborn.EntitySystem**
@@ -56,17 +56,26 @@ when the larger module does not. It keeps no state.
 * type `Timberborn.TemplateInstantiation.TemplateModule+Builder`
   * method `.ctor()`
   * method `AddDecorator<2>()`
-  * method `Build()`
+  * method `Build()`: `Timberborn.TemplateInstantiation.TemplateModule`
 
 **Timberborn.WorkSystem**
 
 * type `Timberborn.WorkSystem.WorkplaceWorkerType`
   * method `SetWorkerType(System.String)`
-  * method `get_WorkerType()`
+  * method `get_WorkerType()`: `System.String`
 
 **UnityEngine.CoreModule**
 
 * type `UnityEngine.Debug`
   * method `Log(System.Object)`
+  * method `LogError(System.Object)`
+
+**Game classes derived from and interfaces implemented** (with the abstract members each had at build time; a new one keeps the module from loading)
+
+* class `Bindito.Core.Configurator`: `Configure`
+* class `Timberborn.BaseComponentSystem.BaseComponent`
+* interface `Timberborn.BaseComponentSystem.IAwakableComponent`: `Awake`
+* interface `Timberborn.BlockSystem.IFinishedStateListener`: `OnEnterFinishedState`, `OnExitFinishedState`
+* interface `Timberborn.EntitySystem.IPostInitializableEntity`: `PostInitializeEntity`
 
 <!-- api:end -->

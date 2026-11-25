@@ -132,6 +132,25 @@ namespace Pandaborn.Ringtails
             return (adults + kits, working, adults - working, kits);
         }
 
+        /// <summary>Open jobs in the districts' Ringtail posts (the vanilla workplace numbers above count only Beaver and Bot
+        /// jobs): worker slots the player asked for minus Ringtails assigned, over finished, unpaused night posts.</summary>
+        public static int Vacancies(System.Collections.Generic.IEnumerable<DistrictCenter> districts)
+        {
+            int vacancies = 0;
+            foreach (var d in districts)
+            {
+                var registry = d.GetComponent<DistrictBuildingRegistry>();
+                if (registry == null) continue;
+                foreach (var workplace in registry.GetEnabledBuildingsInstant<Workplace>())
+                {
+                    var post = workplace.GetComponent<NightPost>();
+                    if (post != null && post.IsRingtailTyped)
+                        vacancies += System.Math.Max(0, workplace.DesiredWorkers - workplace.NumberOfAssignedWorkers);
+                }
+            }
+            return vacancies;
+        }
+
         public void Load()
         {
             if (!_ringtailService.Enabled) return;
@@ -144,6 +163,7 @@ namespace Pandaborn.Ringtails
         public void UpdateSingleton()
         {
             if (!_primaryUiShown || !_ringtailService.Enabled || SafeUi.IsBroken(Piece)) return;
+            if (!_ringtailService.Arrived && !_added) return;   // nothing to build or count before the family comes
             if (!_added)
             {
                 _added = true;
@@ -165,10 +185,14 @@ namespace Pandaborn.Ringtails
                 _root.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
                 if (!show) return;
                 var selected = _districtContextService.SelectedDistrict;
-                var c = Count(selected ? new[] { selected } : _districtCenterRegistry.FinishedDistrictCenters.ToArray());
-                string text = _loc.T("Pandaborn.Ringtails.PopulationRow", c.Total, c.Working, c.Idle);
-                _text.text = text;
+                var districts = selected ? new[] { selected } : _districtCenterRegistry.FinishedDistrictCenters.ToArray();
+                var c = Count(districts);
+                // free night jobs: what the kits of the Moon Lofts wait for, and what the vanilla numbers leave out
+                string text = _loc.T("Pandaborn.Ringtails.PopulationRow", c.Total, c.Working, c.Idle)
+                              + "   " + _loc.T("Pandaborn.Ringtails.PopulationRow.Vacancies", Vacancies(districts));
+                if (_text.text != text) _text.text = text;
                 ShownText = text;
+
             });
         }
     }
