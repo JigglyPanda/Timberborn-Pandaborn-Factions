@@ -1,0 +1,17 @@
+DRAFT NOTES (delete down to the line of dashes before use)
+- Chinese (zhCN) store texts. AI-translated by Claude from summary.txt and the AI-disclosure line, 2026-11-25.
+  NOT yet checked by a native reader: have the reader of catalogue/text/NAMES_REVIEW.md read this file too.
+- Line 1: one-line summary. Line 2: mod.io summary (at most 250 characters). Line 3: short description.
+  Line 4: the AI-disclosure line. Line 5: the translation notice, to show wherever the Chinese text is shown.
+- 小熊猫 is the Chinese word for red panda and is used here on purpose; in the game the people are called 环尾.
+- Drop 竹渡槽 from a line if the Water feature does not ship, and the 小熊猫 clause if the Ringtails do not.
+----------------------------------------------------------------------
+可游玩的熊猫部族：竹渡槽、梯田水稻、干地上的茶树、不长的工作时间，还有上夜班的小熊猫。
+
+墨爪：一群大熊猫，用竹渡槽把水引向梯田，在干地上种茶，午后钟声一响就收工。之后由守夜的小熊猫“环尾”工作到黎明。完整的新部族，无需其他模组。内容由 AI 生成。
+
+新增可游玩的大熊猫部族“墨爪”：他们用竹渡槽引水，每天工作的时间不长，并与小熊猫“环尾”同住一村，环尾从午后钟声工作到黎明。抢先体验。无需其他模组。不改动神尾和铁牙。移除本模组会损坏墨爪存档。
+
+美术、代码、文本和音效均由 AI 生成。
+
+中文文本由 AI 翻译，尚未经母语读者审校。

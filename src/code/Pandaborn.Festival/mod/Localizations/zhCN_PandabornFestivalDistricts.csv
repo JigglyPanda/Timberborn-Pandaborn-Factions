@@ -1,0 +1,8 @@
+ID,Text,Comment
+Pandaborn.Festival.RuleDistrict,每个周期一次，一个地区放假一天一夜：也就是举办灯会的广场所在的地区。之后该地区的熊猫都会喜气洋洋，传统提升一级。传统可以解锁装饰。,
+Pandaborn.Festival.RuleNoDayOffDistrict,每个周期一次，一个地区在傍晚庆祝：也就是举办灯会的广场所在的地区。之后该地区的熊猫都会喜气洋洋，传统提升一级。传统可以解锁装饰。（此游戏版本无法放假。）,
+Pandaborn.Festival.Status.CalledElsewhere,灯会将于黎明在{0}开始（{1} 小时后）。全村每个周期只办一次灯会。,
+Pandaborn.Festival.Status.RunningElsewhere,今天{0}正在办灯会。全村每个周期只办一次灯会。,
+Pandaborn.Festival.Message.StartedDistrict,{0}的灯会开始了。今天那里只有泵工照常工作；其他地区一切照旧。,
+Pandaborn.Festival.Message.StartedGrandDistrict,{0}的盛大灯会开始了。今天那里只有泵工照常工作；其他地区一切照旧。,
+Pandaborn.Festival.Message.EndedDistrict,{0}的灯会结束了。那里的熊猫都喜气洋洋。传统：{1},

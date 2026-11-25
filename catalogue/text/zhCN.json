@@ -1,0 +1,1333 @@
+{
+  "_meta": {
+    "language": "zhCN",
+    "status": "AI-translated, not yet checked by a native reader. 由 AI 翻译，尚未经母语读者审校。",
+    "written": "Text lane, 2026-11-25, by an AI. Register and terms follow the game's own zhCN file (恶水, 干旱, 康乐度, 劳工, 地区, 物资, 科学点数); the faction's own terms are the zhCN column of GLOSSARY.md, one word per thing. Full-width punctuation, no plural forms (a good's two names are the same word).",
+    "format": "Flat, keyed by the generated loc key. \"text\" is the translation, \"en\" the English it was made from: when the English changes, the generator leaves the entry out as stale until it is retranslated. Name pools are not here: the generator builds the zhCN pools from the characters column of names.json. Vanilla keys the faction reuses are already translated by the game.",
+    "reader": "The hand-off for a native reader is NAMES_REVIEW.md: the names, then the terms the translator was least sure of."
+  },
+  "Bot.DisplayName.Inkpaws": {
+    "text": "木牛 {0}",
+    "en": "Wooden Ox {0}"
+  },
+  "Faction.Inkpaws.Description": {
+    "text": "墨爪不拦水，只引水：他们用竹渡槽把水引向竹林和层层梯田。他们每天工作的时间不长，却干得很好。午后钟声一响，环尾便接过村庄，直到黎明。\n座右铭：<i>好好干活，好好歇息。</i>",
+    "en": "The Inkpaws lead water rather than hold it back, down bamboo flumes to groves and rice terraces. They work a short day and work it well. At the afternoon bell, the Ringtails take over until dawn.\nTheir motto: <i>Work well, rest well.</i>"
+  },
+  "Faction.Inkpaws.DisplayName": {
+    "text": "墨爪",
+    "en": "Inkpaws"
+  },
+  "Faction.Inkpaws.GameOver.Flavor": {
+    "text": "钟还挂在广场上。已经没有谁来敲它了。",
+    "en": "The bell still hangs in the square. There is nobody left to ring it."
+  },
+  "Faction.Inkpaws.GameOver.Message": {
+    "text": "你的村庄归于沉寂，重蹈了人类城镇的覆辙。故事结束了。",
+    "en": "Your village has fallen silent, as the human towns did before it. This is the end."
+  },
+  "Faction.Inkpaws.WonderCompletionFlavor": {
+    "text": "黄昏时分，墨爪与环尾聚在一起，放飞了孔明灯。它升过梯田，飘向荒原。种子落下的地方，绿意将重新萌发。",
+    "en": "Both peoples gathered at dusk to let the Sky Lantern go. It rose over the terraces and drifted out across the wasteland. Wherever its seeds fall, something green will begin again."
+  },
+  "Faction.Inkpaws.WonderCompletionMessage": {
+    "text": "恭喜！你已经充分领悟了墨爪从容不迫的生活之道，并利用地图上的资源打造了该部族的奇观。",
+    "en": "Congratulations! You mastered the Inkpaws' unhurried ways and used this map's resources to build the faction's wonder."
+  },
+  "Pandaborn.Building.Airlock.Description": {
+    "text": "允许熊猫通过，同时还可以阻挡水流。",
+    "en": "Allows pandas to pass through while blocking off water."
+  },
+  "Pandaborn.Building.AquiferDrill.FlavorDescription": {
+    "text": "它把水往上引，而不是往下引。道理是一样的，动静可不一样。",
+    "en": "It leads water up instead of down. The principle is the same. The noise is not."
+  },
+  "Pandaborn.Building.BadwaterPump.FlavorDescription": {
+    "text": "泵工们吃午饭时，总是坐在上风处。",
+    "en": "Pump workers eat their lunch upwind."
+  },
+  "Pandaborn.Building.BambooFence.Description": {
+    "text": "用竹子制作的装饰性栅栏。",
+    "en": "A decorative fence made from bamboo."
+  },
+  "Pandaborn.Building.BambooFence.DisplayName": {
+    "text": "竹篱笆",
+    "en": "Bamboo Fence"
+  },
+  "Pandaborn.Building.BambooFence.FlavorDescription": {
+    "text": "它什么也拦不住，不过看上去很整齐。",
+    "en": "It keeps nothing in and nothing out, and looks tidy doing it."
+  },
+  "Pandaborn.Building.BambooPinwheel.Description": {
+    "text": "指示风向与风力的小风车。",
+    "en": "A small pinwheel that shows wind direction and strength."
+  },
+  "Pandaborn.Building.BambooPinwheel.DisplayName": {
+    "text": "竹风车",
+    "en": "Bamboo Pinwheel"
+  },
+  "Pandaborn.Building.BambooPinwheel.FlavorDescription": {
+    "text": "幼崽们对着它吹气，想让风大一点。风筝风车不受影响。",
+    "en": "Cubs blow on it to make the wind stronger. The kite windmills are not affected."
+  },
+  "Pandaborn.Building.BambooWaterWheel.DisplayName": {
+    "text": "竹水轮",
+    "en": "Bamboo Water Wheel"
+  },
+  "Pandaborn.Building.BambooWaterWheel.FlavorDescription": {
+    "text": "河水流多久，它就转多久，钟声响了也不停。",
+    "en": "It turns for as long as the river does, and it does not stop for the bell."
+  },
+  "Pandaborn.Building.BuildersHut.FlavorDescription": {
+    "text": "钟声一响，锤子就放下了。钉子可以等到明天早上。",
+    "en": "When the bell rings, the hammer goes down. The nail can wait until morning."
+  },
+  "Pandaborn.Building.Campfire.Description": {
+    "text": "供熊猫放松身心、相互作伴的场所。",
+    "en": "A place for pandas to relax and keep each other company."
+  },
+  "Pandaborn.Building.Centrifuge.FlavorDescription": {
+    "text": "它带着恶水一直转，直到有用的部分认输分离出来。",
+    "en": "It spins badwater until the useful part gives up and separates."
+  },
+  "Pandaborn.Building.CisternLarge.DisplayName": {
+    "text": "大型蓄水池",
+    "en": "Large Cistern"
+  },
+  "Pandaborn.Building.CisternLarge.FlavorDescription": {
+    "text": "蓄满水的时候，它是村里最让人安心的景象。",
+    "en": "When it is full, it is the calmest sight in the village."
+  },
+  "Pandaborn.Building.CisternMedium.DisplayName": {
+    "text": "中型蓄水池",
+    "en": "Medium Cistern"
+  },
+  "Pandaborn.Building.CisternMedium.FlavorDescription": {
+    "text": "经历过第一场干旱后，每个村庄都会比预想的多建一座。",
+    "en": "After its first drought, every village builds one more than it thinks it needs."
+  },
+  "Pandaborn.Building.CisternSmall.DisplayName": {
+    "text": "小型蓄水池",
+    "en": "Small Cistern"
+  },
+  "Pandaborn.Building.CisternSmall.FlavorDescription": {
+    "text": "干旱来临前最先建它，干旱期间最先看它。",
+    "en": "The first thing built before a drought and the first thing checked during one."
+  },
+  "Pandaborn.Building.CisternTap.Description": {
+    "text": "雇佣一名劳工，把储存的水放入渡槽或水池。能让一片竹林熬过干旱。",
+    "en": "Employs a worker who pours stored water into a flume or a basin. Keeps a grove alive through a drought."
+  },
+  "Pandaborn.Building.CisternTap.DisplayName": {
+    "text": "蓄水龙头",
+    "en": "Cistern Tap"
+  },
+  "Pandaborn.Building.CisternTap.FlavorDescription": {
+    "text": "涓涓细流算不了什么，除非它是山谷里唯一还在流动的水。",
+    "en": "A trickle is not much, until it is the only water moving in the valley."
+  },
+  "Pandaborn.Building.CourtyardHouse.Description": {
+    "text": "围着一个公共院子建成的较大住所。",
+    "en": "A larger home built around a shared yard."
+  },
+  "Pandaborn.Building.CourtyardHouse.DisplayName": {
+    "text": "合院",
+    "en": "Courtyard House"
+  },
+  "Pandaborn.Building.CourtyardHouse.FlavorDescription": {
+    "text": "院子是用来晒被子和聊长天的。",
+    "en": "The yard is for airing bedding and for long conversations."
+  },
+  "Pandaborn.Building.Den.Description": {
+    "text": "供一个小家庭居住的简单住所。",
+    "en": "A simple home for a small family."
+  },
+  "Pandaborn.Building.Den.DisplayName": {
+    "text": "小窝",
+    "en": "Den"
+  },
+  "Pandaborn.Building.Den.FlavorDescription": {
+    "text": "屋里有竹子的味道，还有上一位在这儿打盹的熊猫的味道。",
+    "en": "It smells of bamboo and of whoever napped there last."
+  },
+  "Pandaborn.Building.DewCollector.Description": {
+    "text": "无需劳工即可收集饮用水。干旱时收集得较少。",
+    "en": "Collects drinking water with no workers. Collects less in a drought."
+  },
+  "Pandaborn.Building.DewCollector.DisplayName": {
+    "text": "集露器",
+    "en": "Dew Collector"
+  },
+  "Pandaborn.Building.DewCollector.FlavorDescription": {
+    "text": "每天的第一壶茶是用露水泡的。大家都说这样更好喝。",
+    "en": "The first pot of tea of the day is made with dew. Everyone agrees it tastes better."
+  },
+  "Pandaborn.Building.Discharge.FlavorDescription": {
+    "text": "村庄不想要的东西都从这里倒掉，离茶远远的。",
+    "en": "Whatever the village does not want is poured out here, a long way from the tea."
+  },
+  "Pandaborn.Building.DistrictCrossing.FlavorDescription": {
+    "text": "物资每天从这里经过。消息传得更快。",
+    "en": "Goods cross here every day. News crosses faster."
+  },
+  "Pandaborn.Building.DryStoneWall.Description": {
+    "text": "阻止湿气穿过它在土壤中蔓延，这样就能在水田附近种茶。",
+    "en": "Stops moisture from spreading through the ground past it, so tea can grow near wet fields."
+  },
+  "Pandaborn.Building.DryStoneWall.DisplayName": {
+    "text": "干砌石墙",
+    "en": "Dry-Stone Wall"
+  },
+  "Pandaborn.Building.DryStoneWall.FlavorDescription": {
+    "text": "不用灰浆，也不着急。每块石头在放下之前都被翻看过两遍。",
+    "en": "No mortar and no hurry. Each stone was turned over twice before it was placed."
+  },
+  "Pandaborn.Building.Farmstead.FlavorDescription": {
+    "text": "上午种田，下午赏田。",
+    "en": "A field is planted in the morning and admired in the afternoon."
+  },
+  "Pandaborn.Building.FestivalSquare.Description": {
+    "text": "举办灯会的场地。平日里是大家相互作伴的场所。",
+    "en": "Hosts the Lantern Festival. On ordinary days, a place to keep each other company."
+  },
+  "Pandaborn.Building.FestivalSquare.DisplayName": {
+    "text": "灯会广场",
+    "en": "Festival Square"
+  },
+  "Pandaborn.Building.FestivalSquare.FlavorDescription": {
+    "text": "每天早上都要扫一遍，以防万一。",
+    "en": "Swept every morning, just in case."
+  },
+  "Pandaborn.Building.Floodgate.FlavorDescription": {
+    "text": "总得有谁来决定开多高。这比把它建起来还费时间。",
+    "en": "Somebody has to decide how high. This takes longer than building it."
+  },
+  "Pandaborn.Building.Flume.Description": {
+    "text": "一条敞口的竹制渡槽。水沿箭头单向流动，只能平流或下行。渡槽两旁的土壤会保持湿润。",
+    "en": "An open bamboo aqueduct. Water runs one way, along the arrow, level or downhill. The ground beside it stays moist."
+  },
+  "Pandaborn.Building.Flume.DisplayName": {
+    "text": "渡槽",
+    "en": "Flume"
+  },
+  "Pandaborn.Building.Flume.FlavorDescription": {
+    "text": "水流到的时候，它会“笃”地响一声。附近的熊猫都会停下来听。",
+    "en": "It knocks once when the water arrives. Pandas nearby stop to listen."
+  },
+  "Pandaborn.Building.FlumeBridge.Description": {
+    "text": "用竹架把渡槽托离地面，跨过洼地和沟壑。",
+    "en": "Carries a flume above the ground on bamboo trestles, across dips and gaps."
+  },
+  "Pandaborn.Building.FlumeBridge.DisplayName": {
+    "text": "高架渡槽",
+    "en": "Flume Bridge"
+  },
+  "Pandaborn.Building.FlumeBridge.FlavorDescription": {
+    "text": "路过的都会抬头看它一眼。它从没漏过一滴水。",
+    "en": "Everyone who passes looks up at it. It has never dripped."
+  },
+  "Pandaborn.Building.FlumeBridgeSpan.Description": {
+    "text": "让一条渡槽从另一条渡槽上方跨过。",
+    "en": "Carries a flume over another flume."
+  },
+  "Pandaborn.Building.FlumeBridgeSpan.DisplayName": {
+    "text": "跨槽渡槽",
+    "en": "Flume Bridge Span"
+  },
+  "Pandaborn.Building.FlumeBridgeSpan.FlavorDescription": {
+    "text": "两股水流，一上一下，谁也不着急。",
+    "en": "Two streams, one above the other, neither of them in a hurry."
+  },
+  "Pandaborn.Building.FlumeCorner.Description": {
+    "text": "让渡槽转弯。渡槽自己不会拐弯。",
+    "en": "Turns a flume. Flumes do not bend on their own."
+  },
+  "Pandaborn.Building.FlumeCorner.DisplayName": {
+    "text": "渡槽弯头",
+    "en": "Flume Corner"
+  },
+  "Pandaborn.Building.FlumeCorner.FlavorDescription": {
+    "text": "水不喜欢转弯。没有谁问过它的意见。",
+    "en": "Water does not like to turn. It was not asked."
+  },
+  "Pandaborn.Building.FlumeDrop.Description": {
+    "text": "让渡槽下降一层。水无法往回流。",
+    "en": "Steps a flume down one level. Water cannot come back up."
+  },
+  "Pandaborn.Building.FlumeDrop.DisplayName": {
+    "text": "渡槽跌水",
+    "en": "Flume Drop"
+  },
+  "Pandaborn.Building.FlumeDrop.FlavorDescription": {
+    "text": "渡槽上唯一不许幼崽坐在下面的地方。它们偏偏就坐在下面。",
+    "en": "The one part of a flume that cubs are told not to sit under. They sit under it."
+  },
+  "Pandaborn.Building.FlumeGate.Description": {
+    "text": "渡槽的进水口。可设定进水量，水质变差时会自行关闭。",
+    "en": "The intake of a flume. Sets how much water enters, and shuts itself when the water turns bad."
+  },
+  "Pandaborn.Building.FlumeGate.DisplayName": {
+    "text": "渡槽闸",
+    "en": "Flume Gate"
+  },
+  "Pandaborn.Building.FlumeGate.FlavorDescription": {
+    "text": "它替水稻先尝一尝水。",
+    "en": "It tastes the water so that the rice does not have to."
+  },
+  "Pandaborn.Building.Forester.Description": {
+    "text": "种植树木与灌木，包括材竹、茶树和花椒树。",
+    "en": "Plants trees and bushes, among them timber bamboo, tea and Sichuan pepper."
+  },
+  "Pandaborn.Building.Forester.FlavorDescription": {
+    "text": "林木工还没欣赏够，材竹就已经长成了。",
+    "en": "Timber bamboo is ready before the forester has finished admiring it."
+  },
+  "Pandaborn.Building.GardenMoonGate.Description": {
+    "text": "一座圆形的园门。",
+    "en": "A round garden gateway."
+  },
+  "Pandaborn.Building.GardenMoonGate.DisplayName": {
+    "text": "月洞门",
+    "en": "Garden Moon Gate"
+  },
+  "Pandaborn.Building.GardenMoonGate.FlavorDescription": {
+    "text": "它从花园的这一边通到另一边。熊猫们还是要从门里走。",
+    "en": "It leads from one side of the garden to the other. Pandas walk through it anyway."
+  },
+  "Pandaborn.Building.GathererFlag.FlavorDescription": {
+    "text": "离开灌木丛时是满满一篮。送到仓库时，稍微少了一点。",
+    "en": "A full basket leaves the bushes. A slightly less full basket reaches the warehouse."
+  },
+  "Pandaborn.Building.GearWorkshop.Description": {
+    "text": "用杆材制造齿轮。",
+    "en": "Manufactures gears from poles."
+  },
+  "Pandaborn.Building.GearWorkshop.FlavorDescription": {
+    "text": "竹齿轮又轻又便宜，响起来却出奇地大声。",
+    "en": "A bamboo gear is light, cheap and surprisingly loud."
+  },
+  "Pandaborn.Building.GoldfishBowl.Description": {
+    "text": "一口养着金鱼的装饰石缸。",
+    "en": "A decorative stone bowl with goldfish."
+  },
+  "Pandaborn.Building.GoldfishBowl.DisplayName": {
+    "text": "金鱼缸",
+    "en": "Goldfish Bowl"
+  },
+  "Pandaborn.Building.GoldfishBowl.FlavorDescription": {
+    "text": "每天都有谁来喂它们。没有谁知道是谁。",
+    "en": "Somebody feeds them every day. Nobody knows who."
+  },
+  "Pandaborn.Building.GreatSittingPanda.Description": {
+    "text": "一尊凿在山崖上的巨大熊猫坐像。",
+    "en": "A great cliff carving of a seated panda."
+  },
+  "Pandaborn.Building.GreatSittingPanda.DisplayName": {
+    "text": "熊猫大坐像",
+    "en": "Great Sitting Panda"
+  },
+  "Pandaborn.Building.GreatSittingPanda.FlavorDescription": {
+    "text": "凿了好几代才凿成，从那以后它就一直坐着。",
+    "en": "It took generations to carve, and it has been sitting ever since."
+  },
+  "Pandaborn.Building.Hammock.Description": {
+    "text": "供一只熊猫每日小憩的吊床。",
+    "en": "A hammock for one panda's daily nap."
+  },
+  "Pandaborn.Building.Hammock.DisplayName": {
+    "text": "吊床",
+    "en": "Hammock"
+  },
+  "Pandaborn.Building.Hammock.FlavorDescription": {
+    "text": "墨爪在吊床上入睡的速度，比你读完这句话还快。",
+    "en": "An Inkpaw can fall asleep in one faster than you can read this."
+  },
+  "Pandaborn.Building.HangingLantern.Description": {
+    "text": "挂在托架上的装饰灯笼。",
+    "en": "A decorative lantern that hangs from a bracket."
+  },
+  "Pandaborn.Building.HangingLantern.DisplayName": {
+    "text": "挂灯",
+    "en": "Hanging Lantern"
+  },
+  "Pandaborn.Building.HangingLantern.FlavorDescription": {
+    "text": "有谁匆匆走过时，它会轻轻晃一下。这种事很少见。",
+    "en": "It swings a little whenever somebody hurries past. This is rare."
+  },
+  "Pandaborn.Building.HaulingPost.FlavorDescription": {
+    "text": "墨爪搬运工每趟背得更多，也看不出有什么理由要赶路。",
+    "en": "An Inkpaw hauler carries more on every trip and sees no reason to hurry."
+  },
+  "Pandaborn.Building.Herbalist.Description": {
+    "text": "制造解毒剂，治愈被污染的熊猫。",
+    "en": "Creates antidote that cures contaminated pandas."
+  },
+  "Pandaborn.Building.HotPotHall.Description": {
+    "text": "用白菜、花椒和竹荪烹制火锅。",
+    "en": "Cooks hot pot from cabbage, Sichuan pepper and bamboo mushrooms."
+  },
+  "Pandaborn.Building.HotPotHall.DisplayName": {
+    "text": "火锅馆",
+    "en": "Hot Pot Hall"
+  },
+  "Pandaborn.Building.HotPotHall.FlavorDescription": {
+    "text": "没有谁承认多放了花椒。大家都伸手去拿茶。",
+    "en": "Nobody admits to adding the extra pepper. Everybody reaches for the tea."
+  },
+  "Pandaborn.Building.HotSpringBath.Description": {
+    "text": "可以久泡的温暖水池。会消耗水，并把毛发打湿。",
+    "en": "A warm pool for a long soak. Uses up water and leaves the fur wet."
+  },
+  "Pandaborn.Building.HotSpringBath.DisplayName": {
+    "text": "温泉浴池",
+    "en": "Hot Spring Bath"
+  },
+  "Pandaborn.Building.HotSpringBath.FlavorDescription": {
+    "text": "下水只要一会儿。出水需要决心。",
+    "en": "Getting in takes a moment. Getting out takes resolve."
+  },
+  "Pandaborn.Building.ImpermeableFloor.FlavorDescription": {
+    "text": "铺在水池下面，好让水留在水池里。",
+    "en": "Laid under a pool so that the water stays in the pool."
+  },
+  "Pandaborn.Building.ImpermeablePowerShaft.FlavorDescription": {
+    "text": "能量能通过。水不能。",
+    "en": "Power passes through. Water does not."
+  },
+  "Pandaborn.Building.InkStudio.Description": {
+    "text": "一间安静的屋子，用来画水墨画和想心事。",
+    "en": "A quiet room for ink painting and long thoughts."
+  },
+  "Pandaborn.Building.InkStudio.DisplayName": {
+    "text": "水墨画室",
+    "en": "Ink Studio"
+  },
+  "Pandaborn.Building.InkStudio.FlavorDescription": {
+    "text": "大多数画的是竹子。剩下的画的是雨中的竹子。",
+    "en": "Most of the paintings are of bamboo. The rest are of bamboo in the rain."
+  },
+  "Pandaborn.Building.Inventor.FlavorDescription": {
+    "text": "墨爪发明家躺着的时候想得最好，还有笔记为证。",
+    "en": "Inkpaw inventors do their best thinking lying down, and have the notes to prove it."
+  },
+  "Pandaborn.Building.Kindergarten.Description": {
+    "text": "一条树荫下的长凳，长辈们坐在这里看幼崽来来往往。",
+    "en": "A shaded bench where elders sit and watch the young go by."
+  },
+  "Pandaborn.Building.Kindergarten.DisplayName": {
+    "text": "幼儿园",
+    "en": "Kindergarten"
+  },
+  "Pandaborn.Building.Kindergarten.FlavorDescription": {
+    "text": "按规矩讲，长辈们是来照看的。",
+    "en": "Officially, the elders are here to supervise."
+  },
+  "Pandaborn.Building.Kitchen.Description": {
+    "text": "用大米粉制作汤圆和竹米糕。",
+    "en": "Cooks sweet rice balls and bamboo seed cakes from rice flour."
+  },
+  "Pandaborn.Building.Kitchen.DisplayName": {
+    "text": "灶房",
+    "en": "Kitchen"
+  },
+  "Pandaborn.Building.Kitchen.FlavorDescription": {
+    "text": "村里每个厨子都说配方是自己的。所有配方都一模一样。",
+    "en": "Every cook in the village claims the recipe. All the recipes are the same."
+  },
+  "Pandaborn.Building.KiteWindmill.DisplayName": {
+    "text": "风筝风车",
+    "en": "Kite Windmill"
+  },
+  "Pandaborn.Building.KiteWindmill.FlavorDescription": {
+    "text": "没风的日子，风筝一动不动，大家都假装没有抬头看。",
+    "en": "On a windless day the kites hang still, and everyone pretends not to look up."
+  },
+  "Pandaborn.Building.LanternWorkshop.Description": {
+    "text": "用纸和杆材制作纸灯笼。",
+    "en": "Makes paper lanterns from paper and poles."
+  },
+  "Pandaborn.Building.LanternWorkshop.DisplayName": {
+    "text": "灯笼坊",
+    "en": "Lantern Workshop"
+  },
+  "Pandaborn.Building.LanternWorkshop.FlavorDescription": {
+    "text": "每盏灯笼都要在黄昏时由做它的工匠亲自试点一次。这不算正式的工作内容。",
+    "en": "Every lantern is tested once, at dusk, by whoever made it. This is not officially part of the job."
+  },
+  "Pandaborn.Building.LargeKiteWindmill.DisplayName": {
+    "text": "大型风筝风车",
+    "en": "Large Kite Windmill"
+  },
+  "Pandaborn.Building.LargeKiteWindmill.FlavorDescription": {
+    "text": "风筝更多，线更多，能量也更多。还没有谁自愿去解那团线。",
+    "en": "More kites, more string, more power. Nobody has volunteered to untangle it."
+  },
+  "Pandaborn.Building.LargeWarehouse.FlavorDescription": {
+    "text": "最里面的某个角落，有一坛比村庄还老的泡菜。",
+    "en": "Somewhere at the back there is a jar of pickles older than the village."
+  },
+  "Pandaborn.Building.LargeWaterPump.Description": {
+    "text": "抽取并过滤大量供村庄饮用的水。恶水污染会降低其抽取速度。",
+    "en": "Pumps and filters large amounts of water for the village to drink. Badwater contamination slows down its pumping speed."
+  },
+  "Pandaborn.Building.LargeWaterPump.FlavorDescription": {
+    "text": "抽上来的水，全村一天也喝不完。剩下的叫做储备。",
+    "en": "More water than the village can drink in a day. The rest is called a reserve."
+  },
+  "Pandaborn.Building.Levee.FlavorDescription": {
+    "text": "渡槽告诉水该往哪儿去。防洪堤告诉水该在哪儿停。",
+    "en": "A flume tells water where to go. A levee tells it where to stop."
+  },
+  "Pandaborn.Building.LumberjackFlag.Description": {
+    "text": "雇佣一名伐木工，砍树获取原木，砍材竹获取杆材。",
+    "en": "Employs a lumberjack who cuts trees for logs and timber bamboo for poles."
+  },
+  "Pandaborn.Building.LumberjackFlag.FlavorDescription": {
+    "text": "你标记什么，伐木工就砍什么。他们只想说明一点：竹子轻一些。",
+    "en": "Lumberjacks cut whatever you mark. They would like it noted that bamboo is lighter."
+  },
+  "Pandaborn.Building.MedicalBed.Description": {
+    "text": "受伤的熊猫躺在这里休养，直至康复。",
+    "en": "Injured pandas lie here to rest and heal."
+  },
+  "Pandaborn.Building.MedicalBed.FlavorDescription": {
+    "text": "全村唯一一张大家都急着离开的床。",
+    "en": "The only bed in the village that anyone is in a hurry to leave."
+  },
+  "Pandaborn.Building.MemorialArch.Description": {
+    "text": "一座高大的木牌坊，为先辈而立。",
+    "en": "A tall timber arch raised for those who came before."
+  },
+  "Pandaborn.Building.MemorialArch.DisplayName": {
+    "text": "牌坊",
+    "en": "Memorial Arch"
+  },
+  "Pandaborn.Building.MemorialArch.FlavorDescription": {
+    "text": "上面没有刻名字。大家都知道它是为谁立的。",
+    "en": "It carries no names. Everyone knows whom it is for."
+  },
+  "Pandaborn.Building.MetalPlatform.FlavorDescription": {
+    "text": "难得用一回金属。村庄一致同意这很有必要，心里还是更喜欢竹子。",
+    "en": "Metal, for once. The village agreed it was necessary and still prefers bamboo."
+  },
+  "Pandaborn.Building.MoonLoft.Description": {
+    "text": "一座温馨的吊脚小楼，下方可以通行道路。你建成的第一座会邀来一户环尾。",
+    "en": "A snug home on stilts, with room for a path beneath. The first one you build invites a Ringtail family."
+  },
+  "Pandaborn.Building.MoonLoft.DisplayName": {
+    "text": "月阁",
+    "en": "Moon Loft"
+  },
+  "Pandaborn.Building.MoonLoft.FlavorDescription": {
+    "text": "高窗里的一盏灯笼，是一份古老的邀请。",
+    "en": "A lantern in a high window is an old invitation."
+  },
+  "Pandaborn.Building.NapPlatform.Description": {
+    "text": "可供数只熊猫同时小憩的平台。可建在地面或屋顶上。",
+    "en": "A deck where several pandas nap at once. Stands on the ground or on a roof."
+  },
+  "Pandaborn.Building.NapPlatform.DisplayName": {
+    "text": "午睡台",
+    "en": "Nap Platform"
+  },
+  "Pandaborn.Building.NapPlatform.FlavorDescription": {
+    "text": "这里躺得下好几位。最后到的那位睡在楼梯上。",
+    "en": "There is room for several. Whoever arrives last naps on the stairs."
+  },
+  "Pandaborn.Building.NightBuildersPost.Description": {
+    "text": "雇佣环尾建筑工，从午后钟声到黎明为工地运料并施工。",
+    "en": "Employs Ringtail builders who stock and raise construction sites from the afternoon bell to dawn."
+  },
+  "Pandaborn.Building.NightBuildersPost.DisplayName": {
+    "text": "夜间建筑岗",
+    "en": "Night Builders' Post"
+  },
+  "Pandaborn.Building.NightBuildersPost.FlavorDescription": {
+    "text": "墨爪们睡下时旁边还是一片工地，醒来时旁边已是一栋建筑。",
+    "en": "The Inkpaws go to bed beside a building site and wake up beside a building."
+  },
+  "Pandaborn.Building.NightCourierPost.Description": {
+    "text": "雇佣环尾搬运工，从午后钟声到黎明在地区内搬运物资。",
+    "en": "Employs Ringtail couriers who carry goods around the district from the afternoon bell to dawn."
+  },
+  "Pandaborn.Building.NightCourierPost.DisplayName": {
+    "text": "夜间搬运岗",
+    "en": "Night Courier Post"
+  },
+  "Pandaborn.Building.NightCourierPost.FlavorDescription": {
+    "text": "满载不会让环尾慢下来。空着手也不会。",
+    "en": "A full load does not slow a Ringtail down. Neither does an empty one."
+  },
+  "Pandaborn.Building.NightForagersPost.Description": {
+    "text": "雇佣环尾采集工，从午后钟声工作到黎明。",
+    "en": "Employs Ringtail gatherers, who work from the afternoon bell to dawn."
+  },
+  "Pandaborn.Building.NightForagersPost.DisplayName": {
+    "text": "夜间采集岗",
+    "en": "Night Gatherers' Post"
+  },
+  "Pandaborn.Building.NightForagersPost.FlavorDescription": {
+    "text": "提着灯笼最容易找到竹荪，至少采集工们坚持这么说。",
+    "en": "Bamboo mushrooms are easiest to find by lantern light, or so the gatherers insist."
+  },
+  "Pandaborn.Building.OperaStage.Description": {
+    "text": "上演川剧变脸的戏台，向下工的熊猫开放。",
+    "en": "A stage for face-changing opera, open to pandas off duty."
+  },
+  "Pandaborn.Building.OperaStage.DisplayName": {
+    "text": "戏台",
+    "en": "Opera Stage"
+  },
+  "Pandaborn.Building.OperaStage.FlavorDescription": {
+    "text": "头一转，脸就换了一张。没有谁肯说这是怎么做到的。",
+    "en": "A new face with every turn of the head. Nobody will say how it is done."
+  },
+  "Pandaborn.Building.Overhang.FlavorDescription": {
+    "text": "它悬在半空，居然稳稳当当。熊猫们会先伸一只爪子试一试。",
+    "en": "It sticks out over nothing and holds. Pandas test it with one paw first."
+  },
+  "Pandaborn.Building.OxWorkshop.Description": {
+    "text": "制造木牛：强壮、不知疲倦的劳工，不需要食物、水和睡眠。",
+    "en": "Builds Wooden Oxen: strong, tireless workers that need no food, water or sleep."
+  },
+  "Pandaborn.Building.OxWorkshop.DisplayName": {
+    "text": "木牛工坊",
+    "en": "Ox Workshop"
+  },
+  "Pandaborn.Building.OxWorkshop.FlavorDescription": {
+    "text": "第一头木牛是造来驮稻谷的。它现在还在驮稻谷。",
+    "en": "The first Wooden Ox was built to carry rice. It is still carrying rice."
+  },
+  "Pandaborn.Building.PaddyHouse.Description": {
+    "text": "雇佣种植并收割水稻的农民。水稻只能长在水田里：稻田水口会把水田保持在合适的深度。",
+    "en": "Employs farmers who plant and harvest rice. Rice grows only in a flooded field: a Paddy Spout keeps one at the right depth."
+  },
+  "Pandaborn.Building.PaddyHouse.DisplayName": {
+    "text": "稻田农屋",
+    "en": "Paddy House"
+  },
+  "Pandaborn.Building.PaddyHouse.FlavorDescription": {
+    "text": "大家都同意，为了稻米湿了脚也值得。稻农们同意得稍微勉强一点。",
+    "en": "Everyone agrees that rice is worth wet feet. Paddy farmers agree a little less."
+  },
+  "Pandaborn.Building.PaddySpout.Description": {
+    "text": "让它前方的田地保持设定的浅水深度。它后方需要有水，田地四周需要有防洪堤。",
+    "en": "Keeps the field in front of it flooded to a set shallow depth. Needs water behind it and levees around the field."
+  },
+  "Pandaborn.Building.PaddySpout.DisplayName": {
+    "text": "稻田水口",
+    "en": "Paddy Spout"
+  },
+  "Pandaborn.Building.PaddySpout.FlavorDescription": {
+    "text": "水稻喜欢站在水里。站多深，由水口说了算。",
+    "en": "Rice likes to stand in water. The spout decides how much."
+  },
+  "Pandaborn.Building.PandaStatue.Description": {
+    "text": "一尊精力充沛的熊猫像。",
+    "en": "A statue of a well-rested panda."
+  },
+  "Pandaborn.Building.PandaStatue.DisplayName": {
+    "text": "熊猫像",
+    "en": "Panda Statue"
+  },
+  "Pandaborn.Building.PandaStatue.FlavorDescription": {
+    "text": "雕的是坐姿，为了写实。",
+    "en": "Carved sitting down, for accuracy."
+  },
+  "Pandaborn.Building.PaperMill.Description": {
+    "text": "用杆材造纸的机械化作坊。",
+    "en": "A mechanized mill that makes paper from poles."
+  },
+  "Pandaborn.Building.PaperMill.FlavorDescription": {
+    "text": "纸先供灯笼，再供风筝，最后才轮到水墨画室。",
+    "en": "Paper goes to lanterns, kites and the Ink Studio, in that order."
+  },
+  "Pandaborn.Building.PickleYard.Description": {
+    "text": "用陶坛腌制白菜。一棵白菜能装好几坛。",
+    "en": "Pickles cabbage in clay jars. One cabbage fills several."
+  },
+  "Pandaborn.Building.PickleYard.DisplayName": {
+    "text": "泡菜坊",
+    "en": "Pickle Yard"
+  },
+  "Pandaborn.Building.PickleYard.FlavorDescription": {
+    "text": "每个坛子都是某位奶奶的，她清楚地知道一共有几个。",
+    "en": "Every jar belongs to somebody's grandmother, and she knows exactly how many there are."
+  },
+  "Pandaborn.Building.Platform.FlavorDescription": {
+    "text": "竹脚手架撑起了大半个村庄，还有全村晾晒的衣物。",
+    "en": "Bamboo scaffolding holds up most of the village and all of its laundry."
+  },
+  "Pandaborn.Building.PoleBanner.FlavorDescription": {
+    "text": "挂得高高的，让大家都看得见，也让幼崽够不着。",
+    "en": "Raised high so that everyone can see it and no cub can reach it."
+  },
+  "Pandaborn.Building.PoleMill.Description": {
+    "text": "把原木劈成杆材。",
+    "en": "Splits logs into poles."
+  },
+  "Pandaborn.Building.PoleMill.DisplayName": {
+    "text": "劈杆坊",
+    "en": "Pole Mill"
+  },
+  "Pandaborn.Building.PoleMill.FlavorDescription": {
+    "text": "竹子长起来要花些时日。在那之前，作坊让建筑工们有活可干。",
+    "en": "Bamboo takes its time. The mill keeps the builders busy until it is ready."
+  },
+  "Pandaborn.Building.PottedPine.Description": {
+    "text": "一棵栽在盆里、精心修剪的小松树。",
+    "en": "A small pine tree trained in a pot."
+  },
+  "Pandaborn.Building.PottedPine.DisplayName": {
+    "text": "盆景松",
+    "en": "Potted Pine"
+  },
+  "Pandaborn.Building.PottedPine.FlavorDescription": {
+    "text": "从大家记事起，它就是这么大。要的就是这个效果。",
+    "en": "It has been the same size for longer than anyone can remember. That is the idea."
+  },
+  "Pandaborn.Building.PowerWheel.Description": {
+    "text": "由一名劳工踩动的备用能量源。",
+    "en": "A backup source of power, turned by a worker."
+  },
+  "Pandaborn.Building.PowerWheel.FlavorDescription": {
+    "text": "有谁在里面走，它才转。钟声一响，它和大家一起停下。",
+    "en": "It turns only while somebody walks in it. At the bell, it stops with everybody else."
+  },
+  "Pandaborn.Building.ScoopWheel.Description": {
+    "text": "立在水流中，把水提到岸上。无需劳工。水流停止时它也停转。",
+    "en": "Stands in a current and lifts water up the bank. Needs no workers. Stops when the current stops."
+  },
+  "Pandaborn.Building.ScoopWheel.DisplayName": {
+    "text": "筒车",
+    "en": "Scoop Wheel"
+  },
+  "Pandaborn.Building.ScoopWheel.FlavorDescription": {
+    "text": "活儿是河水干的。到了干旱，河水也要放假。",
+    "en": "The river does the work. In a drought, the river takes time off too."
+  },
+  "Pandaborn.Building.SkyLantern.Description": {
+    "text": "一盏把种子带往荒原的巨大孔明灯。发射时，会让这里的熊猫格外开心。",
+    "en": "A colossal lantern that carries seeds over the wasteland. When launched, makes the pandas in the area extra happy."
+  },
+  "Pandaborn.Building.SkyLantern.DisplayName": {
+    "text": "孔明灯",
+    "en": "Sky Lantern"
+  },
+  "Pandaborn.Building.SkyLantern.FlavorDescription": {
+    "text": "它升得很慢，就像这里的一切一样，然后就飘过山头不见了。",
+    "en": "It rises slowly, the way everything here does, and then it is gone over the hills."
+  },
+  "Pandaborn.Building.SlideAndSwing.Description": {
+    "text": "供各个年龄的熊猫玩耍的滑梯和秋千。必须立在浅水中。",
+    "en": "A slide and a swing for pandas of all ages. Must stand in shallow water."
+  },
+  "Pandaborn.Building.SlideAndSwing.DisplayName": {
+    "text": "滑梯秋千",
+    "en": "Slide and Swing"
+  },
+  "Pandaborn.Building.SlideAndSwing.FlavorDescription": {
+    "text": "滑梯是给幼崽准备的。排队的大多是成年熊猫。",
+    "en": "The slide is for the young. The queue is mostly adults."
+  },
+  "Pandaborn.Building.SmallWarehouse.FlavorDescription": {
+    "text": "每样东西都有自己的架子。找到那个架子是另一门本事。",
+    "en": "Everything has a shelf. Finding the shelf is a separate skill."
+  },
+  "Pandaborn.Building.Smelter.FlavorDescription": {
+    "text": "全村最热的工作。头一杯茶归冶炼工，没有谁有意见。",
+    "en": "The hottest job in the village. Smelters get the first cup of tea, and nobody argues."
+  },
+  "Pandaborn.Building.SmokeKiln.Description": {
+    "text": "用原木的慢烟熏制杆材。不需要能量。",
+    "en": "Cures poles over slow log smoke. Needs no power."
+  },
+  "Pandaborn.Building.SmokeKiln.DisplayName": {
+    "text": "熏窑",
+    "en": "Smoke Kiln"
+  },
+  "Pandaborn.Building.SmokeKiln.FlavorDescription": {
+    "text": "杆材要在烟里待上几个小时。看窑的那位身上的烟味好几天都散不掉。",
+    "en": "A pole spends hours in the smoke. The kiln keeper smells of it for days."
+  },
+  "Pandaborn.Building.SpiralStairs.FlavorDescription": {
+    "text": "幼崽们上上下下是为了好玩。成年熊猫只上去一次。",
+    "en": "Cubs go up and down for fun. Adults go up once."
+  },
+  "Pandaborn.Building.Stairs.FlavorDescription": {
+    "text": "顶上的风景值得一爬。爬完之后，大家还要议论好一阵。",
+    "en": "The view from the top is worth the climb. The climb is still discussed afterwards."
+  },
+  "Pandaborn.Building.StandingLantern.Description": {
+    "text": "立在柱子上的装饰灯笼。",
+    "en": "A decorative lantern on a post."
+  },
+  "Pandaborn.Building.StandingLantern.DisplayName": {
+    "text": "立灯",
+    "en": "Standing Lantern"
+  },
+  "Pandaborn.Building.StandingLantern.FlavorDescription": {
+    "text": "黄昏时一盏接一盏地亮起来，说不清是谁点的。",
+    "en": "Lit at dusk, one after another, by nobody in particular."
+  },
+  "Pandaborn.Building.Steamer.Description": {
+    "text": "蒸制竹笋和米饭。",
+    "en": "Steams bamboo shoots and rice."
+  },
+  "Pandaborn.Building.Steamer.DisplayName": {
+    "text": "蒸笼",
+    "en": "Steamer"
+  },
+  "Pandaborn.Building.Steamer.FlavorDescription": {
+    "text": "提前掀盖子，是村里最常见的厨房过失。",
+    "en": "Lifting the lid early is the most common kitchen offense in the village."
+  },
+  "Pandaborn.Building.StringLanterns.Description": {
+    "text": "挂在两根柱子之间的一串小灯笼。",
+    "en": "A string of small lanterns between two posts."
+  },
+  "Pandaborn.Building.StringLanterns.DisplayName": {
+    "text": "灯串",
+    "en": "String Lanterns"
+  },
+  "Pandaborn.Building.StringLanterns.FlavorDescription": {
+    "text": "为一次灯会挂上去的，之后就再没摘下来。",
+    "en": "Put up for one festival and never taken down."
+  },
+  "Pandaborn.Building.SuspensionBridge.Description": {
+    "text": "帮助熊猫跨越沟壑。",
+    "en": "Allows pandas to pass over gaps."
+  },
+  "Pandaborn.Building.TeaRoastery.Description": {
+    "text": "把鲜茶叶炒制成供茶馆使用的茶叶。",
+    "en": "Roasts tea leaves into tea for the Teahouse."
+  },
+  "Pandaborn.Building.TeaRoastery.DisplayName": {
+    "text": "炒茶坊",
+    "en": "Tea Roastery"
+  },
+  "Pandaborn.Building.TeaRoastery.FlavorDescription": {
+    "text": "茶香总是比钟声早一步传到田里。",
+    "en": "The smell reaches the fields well before the bell does."
+  },
+  "Pandaborn.Building.Teahouse.Description": {
+    "text": "为下工的熊猫供茶。需要储备茶叶和水。",
+    "en": "Serves tea to pandas off duty. Needs a stock of tea and water."
+  },
+  "Pandaborn.Building.Teahouse.DisplayName": {
+    "text": "茶馆",
+    "en": "Teahouse"
+  },
+  "Pandaborn.Building.Teahouse.FlavorDescription": {
+    "text": "从第一次灌满水那天起，这把茶壶就没被允许凉过。",
+    "en": "The kettle has not been allowed to cool since the day it was first filled."
+  },
+  "Pandaborn.Building.TerraceHouse.Description": {
+    "text": "供许多家庭居住的大型住所。",
+    "en": "A large home for many families."
+  },
+  "Pandaborn.Building.TerraceHouse.DisplayName": {
+    "text": "大院",
+    "en": "Terrace House"
+  },
+  "Pandaborn.Building.TerraceHouse.FlavorDescription": {
+    "text": "住得越高，风景越好，去吃饭的路也越长。",
+    "en": "The higher the home, the better the view and the longer the walk to dinner."
+  },
+  "Pandaborn.Building.TreadwheelLift.Description": {
+    "text": "在没有水流的地方提水。由一名劳工踩动，所以只在工作时间内运转。",
+    "en": "Lifts water where there is no current. Turned by a worker, so it runs only during the working day."
+  },
+  "Pandaborn.Building.TreadwheelLift.DisplayName": {
+    "text": "踏车",
+    "en": "Treadwheel Lift"
+  },
+  "Pandaborn.Building.TreadwheelLift.FlavorDescription": {
+    "text": "走了一上午，谁也没挪地方。水倒是上去了。",
+    "en": "A morning of walking, and nobody has gone anywhere. The water has gone up."
+  },
+  "Pandaborn.Building.TripHammerMill.Description": {
+    "text": "把稻谷舂成大米粉。由自带的水轮驱动，水轮必须立在流水中。",
+    "en": "Pounds rice into rice flour. Driven by its own wheel, which must stand in flowing water."
+  },
+  "Pandaborn.Building.TripHammerMill.DisplayName": {
+    "text": "水碓",
+    "en": "Trip-Hammer Mill"
+  },
+  "Pandaborn.Building.TripHammerMill.FlavorDescription": {
+    "text": "水把碓锤抬起来，再让它落下去。碓工大多数时候只是看着。",
+    "en": "The water lifts the hammer and lets it fall. The miller mostly watches."
+  },
+  "Pandaborn.Building.TriplePlatform.FlavorDescription": {
+    "text": "严禁啃食脚手架。",
+    "en": "Eating the scaffolding is strictly prohibited."
+  },
+  "Pandaborn.Building.VillageHall.DisplayName": {
+    "text": "村公所",
+    "en": "Village Hall"
+  },
+  "Pandaborn.Building.VillageHall.FlavorDescription": {
+    "text": "“好好干活，好好歇息。”——村庄的座右铭",
+    "en": "\"Work well, rest well.\" —Village motto"
+  },
+  "Pandaborn.Building.WaterPump.Description": {
+    "text": "抽取并过滤供村庄饮用的水。恶水污染会降低其抽取速度。",
+    "en": "Pumps and filters water for the village to drink. Badwater contamination slows down its pumping speed."
+  },
+  "Pandaborn.Building.ZiplineBeam.FlavorDescription": {
+    "text": "它把缆索撑起来。这就是它的全部工作，它干得很好。",
+    "en": "It holds the cable up. That is the whole job, and it does it well."
+  },
+  "Pandaborn.Building.ZiplinePylon.FlavorDescription": {
+    "text": "擦肩而过的乘客会礼貌地挥挥爪子，同时紧紧抓牢。",
+    "en": "Riders who pass each other wave politely and hold on tightly."
+  },
+  "Pandaborn.Building.ZiplineStation.FlavorDescription": {
+    "text": "熊猫这辈子能达到的最快速度。大多数都闭着眼睛。",
+    "en": "The fastest a panda will ever travel. Most keep their eyes closed."
+  },
+  "Pandaborn.Good.BambooMushrooms.DisplayName": {
+    "text": "竹荪",
+    "en": "Bamboo mushroom"
+  },
+  "Pandaborn.Good.BambooMushrooms.PluralDisplayName": {
+    "text": "竹荪",
+    "en": "Bamboo mushrooms"
+  },
+  "Pandaborn.Good.BambooSeed.DisplayName": {
+    "text": "竹米",
+    "en": "Bamboo seed"
+  },
+  "Pandaborn.Good.BambooSeed.PluralDisplayName": {
+    "text": "竹米",
+    "en": "Bamboo seed"
+  },
+  "Pandaborn.Good.BambooSeedCakes.DisplayName": {
+    "text": "竹米糕",
+    "en": "Bamboo seed cake"
+  },
+  "Pandaborn.Good.BambooSeedCakes.PluralDisplayName": {
+    "text": "竹米糕",
+    "en": "Bamboo seed cakes"
+  },
+  "Pandaborn.Good.BambooShoots.DisplayName": {
+    "text": "竹笋",
+    "en": "Bamboo shoot"
+  },
+  "Pandaborn.Good.BambooShoots.PluralDisplayName": {
+    "text": "竹笋",
+    "en": "Bamboo shoots"
+  },
+  "Pandaborn.Good.Cabbage.DisplayName": {
+    "text": "白菜",
+    "en": "Cabbage"
+  },
+  "Pandaborn.Good.Cabbage.PluralDisplayName": {
+    "text": "白菜",
+    "en": "Cabbages"
+  },
+  "Pandaborn.Good.CuredPole.DisplayName": {
+    "text": "熏制杆材",
+    "en": "Cured pole"
+  },
+  "Pandaborn.Good.CuredPole.PluralDisplayName": {
+    "text": "熏制杆材",
+    "en": "Cured poles"
+  },
+  "Pandaborn.Good.HotPot.DisplayName": {
+    "text": "火锅",
+    "en": "Hot pot"
+  },
+  "Pandaborn.Good.HotPot.PluralDisplayName": {
+    "text": "火锅",
+    "en": "Hot pot"
+  },
+  "Pandaborn.Good.PaperLantern.DisplayName": {
+    "text": "纸灯笼",
+    "en": "Paper lantern"
+  },
+  "Pandaborn.Good.PaperLantern.PluralDisplayName": {
+    "text": "纸灯笼",
+    "en": "Paper lanterns"
+  },
+  "Pandaborn.Good.Persimmons.DisplayName": {
+    "text": "柿子",
+    "en": "Persimmon"
+  },
+  "Pandaborn.Good.Persimmons.PluralDisplayName": {
+    "text": "柿子",
+    "en": "Persimmons"
+  },
+  "Pandaborn.Good.Pickles.DisplayName": {
+    "text": "泡菜",
+    "en": "Pickles"
+  },
+  "Pandaborn.Good.Pickles.PluralDisplayName": {
+    "text": "泡菜",
+    "en": "Pickles"
+  },
+  "Pandaborn.Good.Pole.DisplayName": {
+    "text": "杆材",
+    "en": "Pole"
+  },
+  "Pandaborn.Good.Pole.PluralDisplayName": {
+    "text": "杆材",
+    "en": "Poles"
+  },
+  "Pandaborn.Good.Rice.DisplayName": {
+    "text": "稻谷",
+    "en": "Rice"
+  },
+  "Pandaborn.Good.Rice.PluralDisplayName": {
+    "text": "稻谷",
+    "en": "Rice"
+  },
+  "Pandaborn.Good.RiceFlour.DisplayName": {
+    "text": "大米粉",
+    "en": "Rice flour"
+  },
+  "Pandaborn.Good.RiceFlour.PluralDisplayName": {
+    "text": "大米粉",
+    "en": "Rice flour"
+  },
+  "Pandaborn.Good.SichuanPepper.DisplayName": {
+    "text": "花椒",
+    "en": "Sichuan pepper"
+  },
+  "Pandaborn.Good.SichuanPepper.PluralDisplayName": {
+    "text": "花椒",
+    "en": "Sichuan pepper"
+  },
+  "Pandaborn.Good.SteamedRice.DisplayName": {
+    "text": "米饭",
+    "en": "Steamed rice"
+  },
+  "Pandaborn.Good.SteamedRice.PluralDisplayName": {
+    "text": "米饭",
+    "en": "Steamed rice"
+  },
+  "Pandaborn.Good.SteamedShoots.DisplayName": {
+    "text": "蒸竹笋",
+    "en": "Steamed shoots"
+  },
+  "Pandaborn.Good.SteamedShoots.PluralDisplayName": {
+    "text": "蒸竹笋",
+    "en": "Steamed shoots"
+  },
+  "Pandaborn.Good.SweetRiceBalls.DisplayName": {
+    "text": "汤圆",
+    "en": "Sweet rice ball"
+  },
+  "Pandaborn.Good.SweetRiceBalls.PluralDisplayName": {
+    "text": "汤圆",
+    "en": "Sweet rice balls"
+  },
+  "Pandaborn.Good.Tea.DisplayName": {
+    "text": "茶叶",
+    "en": "Tea"
+  },
+  "Pandaborn.Good.Tea.PluralDisplayName": {
+    "text": "茶叶",
+    "en": "Tea"
+  },
+  "Pandaborn.Good.TeaLeaves.DisplayName": {
+    "text": "鲜茶叶",
+    "en": "Tea leaves"
+  },
+  "Pandaborn.Good.TeaLeaves.PluralDisplayName": {
+    "text": "鲜茶叶",
+    "en": "Tea leaves"
+  },
+  "Pandaborn.NaturalResource.Cabbage.Description": {
+    "text": "一种皮实的田间作物，可生吃或腌制。比笋竹更耐旱。",
+    "en": "A sturdy field crop, eaten raw or pickled. Lasts longer without water than shoot bamboo."
+  },
+  "Pandaborn.NaturalResource.Cabbage.DisplayName": {
+    "text": "白菜",
+    "en": "Cabbage"
+  },
+  "Pandaborn.NaturalResource.Cabbage.FlavorDescription": {
+    "text": "圆滚滚，有耐心，很难被惹恼。墨爪觉得它有几分亲切。",
+    "en": "Round, patient and difficult to upset. The Inkpaws feel a certain kinship."
+  },
+  "Pandaborn.NaturalResource.PersimmonTree.Description": {
+    "text": "一种果树。采集工可以反复采摘柿子，砍伐后还能得到原木。",
+    "en": "A fruit tree. Gatherers pick its persimmons again and again, and it gives logs when cut."
+  },
+  "Pandaborn.NaturalResource.PersimmonTree.DisplayName": {
+    "text": "柿子树",
+    "en": "Persimmon Tree"
+  },
+  "Pandaborn.NaturalResource.PersimmonTree.FlavorDescription": {
+    "text": "叶子落尽后果实才成熟，光秃秃的树上像是挂满了小灯笼。",
+    "en": "The fruit ripens after the leaves have fallen, so the bare tree seems hung with small lanterns."
+  },
+  "Pandaborn.NaturalResource.Rice.Description": {
+    "text": "由稻田农屋种植的谷物。必须立在不超过一格深的水中，田地一干很快就会死去。可以蒸成米饭，或舂成大米粉。",
+    "en": "A grain for the Paddy House. Must stand in water no deeper than one block, and dies quickly if the field dries. Steamed, or pounded into rice flour."
+  },
+  "Pandaborn.NaturalResource.Rice.DisplayName": {
+    "text": "水稻",
+    "en": "Rice"
+  },
+  "Pandaborn.NaturalResource.Rice.FlavorDescription": {
+    "text": "从山坡上看，稻田像一面面镜子。站在稻田里看，基本上全是泥。",
+    "en": "From the hillside, the paddies look like mirrors. From inside the paddies, it is mostly mud."
+  },
+  "Pandaborn.NaturalResource.ShootBamboo.Description": {
+    "text": "由农屋种植的速生田间作物。竹笋可以生吃。能熬过短暂的干旱。",
+    "en": "A fast field crop for the Farmhouse. Its shoots can be eaten raw. Survives a short drought."
+  },
+  "Pandaborn.NaturalResource.ShootBamboo.DisplayName": {
+    "text": "笋竹",
+    "en": "Shoot Bamboo"
+  },
+  "Pandaborn.NaturalResource.ShootBamboo.FlavorDescription": {
+    "text": "它长得快到可以看着它长，有好几只熊猫真的在看。",
+    "en": "It grows fast enough to watch, and several pandas do."
+  },
+  "Pandaborn.NaturalResource.ShootBambooInFlower.Description": {
+    "text": "结几天竹米，然后死去。",
+    "en": "Bears bamboo seed for a few days and then dies."
+  },
+  "Pandaborn.NaturalResource.ShootBambooInFlower.DisplayName": {
+    "text": "开花的笋竹",
+    "en": "Flowering Shoot Bamboo"
+  },
+  "Pandaborn.NaturalResource.ShootBambooInFlower.FlavorDescription": {
+    "text": "它许多年才开一次花。这片土地上的每一株都与它一同开花。",
+    "en": "It flowers once in many years. Every plant in the land flowers with it."
+  },
+  "Pandaborn.NaturalResource.SichuanPepper.Description": {
+    "text": "用于火锅的香料灌木，由林木工种植，由采集工采摘。只能长在干地上。",
+    "en": "A spice bush for hot pot, planted by the Forester and picked by gatherers. Dry ground only."
+  },
+  "Pandaborn.NaturalResource.SichuanPepper.DisplayName": {
+    "text": "花椒树",
+    "en": "Sichuan Pepper"
+  },
+  "Pandaborn.NaturalResource.SichuanPepper.FlavorDescription": {
+    "text": "它不会灼伤舌头。它只会让舌头忘了自己在哪儿。",
+    "en": "It does not burn the tongue. It makes the tongue forget where it is."
+  },
+  "Pandaborn.NaturalResource.TeaBush.Description": {
+    "text": "由林木工种植、由采集工采摘的灌木。只能长在干地上：根部受潮就会死去。",
+    "en": "A bush planted by the Forester and picked by gatherers. Dry ground only: wet roots kill it."
+  },
+  "Pandaborn.NaturalResource.TeaBush.DisplayName": {
+    "text": "茶树",
+    "en": "Tea Bush"
+  },
+  "Pandaborn.NaturalResource.TeaBush.FlavorDescription": {
+    "text": "最好的茶叶长在最干的山坡上。采茶工每爬一次坡都要提一遍这件事。",
+    "en": "The best leaves grow on the driest slope. The tea pickers mention this on every climb."
+  },
+  "Pandaborn.NaturalResource.TimberBamboo.Description": {
+    "text": "一种速生的树，砍伐后可得杆材。成片的竹林里会长出竹荪。能熬过短暂的干旱。",
+    "en": "A fast tree, cut for poles. Bamboo mushrooms grow in standing groves. Survives a short drought."
+  },
+  "Pandaborn.NaturalResource.TimberBamboo.DisplayName": {
+    "text": "材竹",
+    "en": "Timber Bamboo"
+  },
+  "Pandaborn.NaturalResource.TimberBamboo.FlavorDescription": {
+    "text": "又高又直，中间是空的。村庄是用它建的，大部分家具也是。",
+    "en": "Tall, straight and hollow. The village is built from it, and so is most of the furniture."
+  },
+  "Pandaborn.NaturalResource.TimberBambooInFlower.Description": {
+    "text": "结几天竹米，然后死去。",
+    "en": "Bears bamboo seed for a few days and then dies."
+  },
+  "Pandaborn.NaturalResource.TimberBambooInFlower.DisplayName": {
+    "text": "开花的材竹",
+    "en": "Flowering Timber Bamboo"
+  },
+  "Pandaborn.NaturalResource.TimberBambooInFlower.FlavorDescription": {
+    "text": "整片竹林同时开花，自古以来一直如此。",
+    "en": "The grove flowers all at once, as it has for longer than anyone remembers."
+  },
+  "Pandaborn.Need.Contemplation.DisplayName": {
+    "text": "水墨画",
+    "en": "Ink painting"
+  },
+  "Pandaborn.Need.CubWatching.DisplayName": {
+    "text": "看幼崽",
+    "en": "Watching the young"
+  },
+  "Pandaborn.Need.Festive.DisplayName": {
+    "text": "节日喜气",
+    "en": "Festive spirit"
+  },
+  "Pandaborn.Need.FestiveGrand.DisplayName": {
+    "text": "盛大节日喜气",
+    "en": "Grand festive spirit"
+  },
+  "Pandaborn.Need.Nap.DisplayName": {
+    "text": "小憩",
+    "en": "Nap"
+  },
+  "Pandaborn.Need.Performance.DisplayName": {
+    "text": "看戏",
+    "en": "Opera"
+  },
+  "Pandaborn.Need.Play.DisplayName": {
+    "text": "玩耍",
+    "en": "Play"
+  },
+  "Pandaborn.Need.Soak.DisplayName": {
+    "text": "泡温泉",
+    "en": "Soak"
+  },
+  "Pandaborn.Ringtails.PluralDisplayName": {
+    "text": "环尾",
+    "en": "Ringtails"
+  },
+  "Pandaborn.Ringtails.WorkerOnly": {
+    "text": "<YellowHighlight>夜岗：</YellowHighlight>只有环尾在此处工作，从午后钟声到黎明。",
+    "en": "<YellowHighlight>Night post:</YellowHighlight> Only Ringtails work here, from the afternoon bell to dawn."
+  },
+  "Pandaborn.ToolGroups.NightWatch": {
+    "text": "守夜",
+    "en": "Night Watch"
+  },
+  "Pandaborn.Tutorial.Bell": {
+    "text": "午后钟声宣告一天工作的结束。把钟声调早一些：精力充沛的墨爪干活和走路都更快，所以工作时间短一些也能完成同样多的活，下午还能空出来。",
+    "en": "The afternoon bell ends the working day. Ring it earlier: rested Inkpaws work and walk faster, so a shorter day gets as much done and the afternoon is free."
+  },
+  "Pandaborn.Tutorial.Cistern": {
+    "text": "河水迟早会断流。小型蓄水池能为干旱的日子存水：在第一场干旱到来前建一座吧。",
+    "en": "Sooner or later the river stops. A Small Cistern keeps water for the dry days: build one before the first drought."
+  },
+  "Pandaborn.Tutorial.Dens": {
+    "text": "小窝是一个小家庭的住所。有屋顶遮着，熊猫睡得更香，幼崽也在这里出生。",
+    "en": "A Den is a home for a small family. Pandas sleep better under a roof, and cubs are born there."
+  },
+  "Pandaborn.Tutorial.FestivalSquare": {
+    "text": "村庄需要有点盼头。建造一座灯会广场：它的面板会显示，举办灯会前地区的仓储里必须备齐哪些物资。",
+    "en": "A village needs something to look forward to. Build a Festival Square: its panel shows what the district must have in store before the Lantern Festival can be called."
+  },
+  "Pandaborn.Tutorial.FirstPoles": {
+    "text": "大多数建筑都需要杆材。让作坊先攒下一批吧。",
+    "en": "Most buildings need Poles. Let the mill build up a stock."
+  },
+  "Pandaborn.Tutorial.Flume": {
+    "text": "从筒车出发，把渡槽铺过干地。水会顺着箭头平流或下行，渡槽两旁的土壤会变绿。",
+    "en": "Run Flumes from the wheel across dry land. Water follows the arrows, level or downhill, and the ground beside a flume turns green."
+  },
+  "Pandaborn.Tutorial.Gatherer": {
+    "text": "在第一块田有收成之前，浆果能让村庄不挨饿。采集工旗帜会派劳工去采摘。",
+    "en": "Berries keep the village fed until the first field is ready. A Gatherer Flag sends someone to pick them."
+  },
+  "Pandaborn.Tutorial.Hammock": {
+    "text": "一天的工作结束后，熊猫们会找个地方歇一歇。一张吊床能让一只熊猫每天小憩一会儿。",
+    "en": "When the working day ends, pandas look for somewhere to rest. A Hammock gives one of them a daily nap."
+  },
+  "Pandaborn.Tutorial.Inventor": {
+    "text": "大多数建筑必须用科学点数解锁。发明工坊能产出科学点数，慢悠悠地，还是躺着产出的。",
+    "en": "Most buildings must be unlocked with Science Points. An Inventor produces them, slowly and lying down."
+  },
+  "Pandaborn.Tutorial.Lumberjack": {
+    "text": "每个村庄都是用原木建起来的。伐木工会砍伐你标记的树木。",
+    "en": "Every village is built from Logs. Lumberjacks cut the trees you mark."
+  },
+  "Pandaborn.Tutorial.MoonLoft": {
+    "text": "高窗里的一盏灯笼，是一份古老的邀请：你的第一座月阁会迎来一户环尾。墨爪从黎明工作到钟声响起。环尾从钟声响起工作到黎明。",
+    "en": "A lantern in a high window is an old invitation: your first Moon Loft brings a Ringtail family. Inkpaws work from dawn to the bell. Ringtails work from the bell to dawn."
+  },
+  "Pandaborn.Tutorial.Paddy": {
+    "text": "水稻只能长在水田里。用防洪堤把一块田围起来，在田边放置稻田水口，让水口后方有水，然后建造稻田农屋并种植水稻。",
+    "en": "Rice grows only in a flooded field. Close a field in with Levees, place a Paddy Spout on its edge with water behind it, then build a Paddy House and plant Rice."
+  },
+  "Pandaborn.Tutorial.PandabornAfternoon": {
+    "text": "午后",
+    "en": "The afternoon"
+  },
+  "Pandaborn.Tutorial.PandabornBasics": {
+    "text": "基础",
+    "en": "Basics"
+  },
+  "Pandaborn.Tutorial.PandabornCooking": {
+    "text": "烹饪",
+    "en": "Cooking"
+  },
+  "Pandaborn.Tutorial.PandabornFlumes": {
+    "text": "渡槽",
+    "en": "Flumes"
+  },
+  "Pandaborn.Tutorial.PandabornHomes": {
+    "text": "住房",
+    "en": "Homes"
+  },
+  "Pandaborn.Tutorial.PandabornLanternFestival": {
+    "text": "灯会",
+    "en": "The Lantern Festival"
+  },
+  "Pandaborn.Tutorial.PandabornPoles": {
+    "text": "杆材",
+    "en": "Poles"
+  },
+  "Pandaborn.Tutorial.PandabornRicePaddy": {
+    "text": "稻田",
+    "en": "Rice paddies"
+  },
+  "Pandaborn.Tutorial.PandabornRingtails": {
+    "text": "环尾",
+    "en": "The Ringtails"
+  },
+  "Pandaborn.Tutorial.PandabornScience": {
+    "text": "科学",
+    "en": "Science"
+  },
+  "Pandaborn.Tutorial.PandabornStorage": {
+    "text": "储水",
+    "en": "Storing water"
+  },
+  "Pandaborn.Tutorial.PandabornTea": {
+    "text": "茶",
+    "en": "Tea"
+  },
+  "Pandaborn.Tutorial.PandabornWaterAndFood": {
+    "text": "食物与水",
+    "en": "Water and food"
+  },
+  "Pandaborn.Tutorial.PoleMill": {
+    "text": "墨爪用杆材盖房子。眼下，劈杆坊可以把原木劈成杆材。它需要能量：在旁边放一个能量轮就行。",
+    "en": "Inkpaws build with Poles. For now, a Pole Mill splits Logs into Poles. It needs power: a Power Wheel beside it will do."
+  },
+  "Pandaborn.Tutorial.Roastery": {
+    "text": "炒茶坊把鲜茶叶炒制成茶叶。",
+    "en": "A Tea Roastery roasts the Tea Leaves into Tea."
+  },
+  "Pandaborn.Tutorial.ScoopWheel": {
+    "text": "墨爪宁愿引水，也不愿拦水。筒车立在水流中，无需劳工就能把水提到岸上。",
+    "en": "Inkpaws would rather lead water than hold it back. A Scoop Wheel stands in a current and lifts water up the bank, with no workers."
+  },
+  "Pandaborn.Tutorial.ShootBamboo": {
+    "text": "笋竹是第一种作物。农屋会把它种在绿色土壤上，过几天就能收获竹笋。",
+    "en": "Shoot Bamboo is the first crop. A Farmhouse plants it on green ground, and the shoots are ready in a few days."
+  },
+  "Pandaborn.Tutorial.Steamer": {
+    "text": "蒸笼能把一份生竹笋蒸成两份，而且一道熟菜本身就是一份小小的享受。",
+    "en": "A Steamer makes two helpings from every raw shoot, and a cooked dish is a small pleasure of its own."
+  },
+  "Pandaborn.Tutorial.Tea": {
+    "text": "茶叶可以存放在任何仓库里。开茶馆之前，先攒下一小批吧。",
+    "en": "Tea keeps in any warehouse. Build up a small stock before you open a Teahouse."
+  },
+  "Pandaborn.Tutorial.TeaGarden": {
+    "text": "茶树只能长在干燥的褐色土地上，要离水远远的。林木工负责种植，采集工负责采摘鲜茶叶。",
+    "en": "Tea Bushes grow only on dry, brown ground, well away from water. The Forester plants them and a Gatherer picks the leaves."
+  },
+  "Pandaborn.Tutorial.Teahouse": {
+    "text": "茶只在茶馆里喝，别处不喝。茶馆需要储备茶叶和水，为下工的熊猫供茶。",
+    "en": "Tea is drunk at the Teahouse and nowhere else. It needs a stock of Tea and Water, and serves pandas off duty."
+  },
+  "Pandaborn.Tutorial.TimberBamboo": {
+    "text": "很快，杆材就会自己长出来。林木工种下材竹，伐木工把它直接砍成杆材，不需要作坊。",
+    "en": "Soon the Poles will grow by themselves. A Forester plants Timber Bamboo, and lumberjacks cut it straight into Poles, with no mill."
+  },
+  "Pandaborn.Tutorial.Water": {
+    "text": "熊猫每天都需要水。水泵能保证饮用水源源不断。",
+    "en": "Pandas need water every day. A Water Pump keeps drinking water coming."
+  }
+}

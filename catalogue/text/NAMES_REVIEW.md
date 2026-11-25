@@ -1,4 +1,10 @@
-# Colonist names: the list for a native reader
+# For a native reader of Mandarin: names and Chinese terms
+
+This is the one hand-off. Part 1 is the colonist names. Part 2 is the Chinese (zhCN) translation of the mod, which was
+made by an AI and has not been read by a native speaker: twenty terms the translator was least sure of, and where
+the rest of the Chinese text is.
+
+## Part 1: colonist names
 
 The names in `names.json` were written by an AI and have not been read by a native speaker of Mandarin. In the game a
 colonist shows the pinyin and the English gloss only, for example "Mo Mo (Ink)"; the characters are here so that a reader
@@ -85,3 +91,48 @@ anything unwelcome to mind? Write your answer in the last column. An entry the r
 | Ringtail | Jian Zhi | 剪纸 | Paper cutting | medium | A real word; is it natural as a name? | |
 
 Decided by the owner on 2026-11-25 and not for review: Xiao Hei and Xiao Bai are removed; Lang Lang and Li Ming stay.
+
+## Part 2: the Chinese translation
+
+Everything Chinese in the mod was translated by an AI (Claude) on 2026-11-25 from the English, following the terms
+of the game's own Chinese file. It is marked "AI-translated, not yet checked by a native reader" in the files and
+on the store page until you have read it. The full term list is the "zhCN term base" in `GLOSSARY.md`.
+
+Where the Chinese text is:
+
+| File | What it holds |
+|---|---|
+| `catalogue/text/zhCN.json` | 331 lines: building, good, need and plant names, descriptions, flavor lines, the tutorial, the faction screen |
+| `src/code/Pandaborn.*/mod/Localizations/zhCN_*.csv` | 144 lines: panels, statuses and notifications |
+| `src/code/Pandaborn.Words/words.review.zhCN.txt` | 133 lines of the game's own Chinese text with 海狸 changed to 熊猫 |
+| `catalogue/text/store/summary.zhCN.txt` | The store summary and the AI notice |
+
+The humor is dry and told by observation ("上午种田，下午赏田。"). Where a flavor line falls flat in Chinese, a freer
+line in the same spirit is better than a faithful one. One rule matters above the others: 小熊猫 means red panda, so
+a young giant panda is never called 小熊猫.
+
+The twenty terms I doubted most. Please write a better word, or "ok", in the last column:
+
+| English | Chinese used | The doubt | Reader's answer |
+|---|---|---|---|
+| pole (the faction's plank: split from logs, or cut bamboo) | 杆材 | A forestry word. Does it read naturally in a game? 竹竿 would be wrong for poles split from logs | |
+| Pole Mill; cured pole | 劈杆坊; 熏制杆材 | Follow from 杆材 | |
+| shoot bamboo; timber bamboo (two plants) | 笋竹; 材竹 | Shortened from 笋用竹, 材用竹. Clear enough as plant names? | |
+| rice flour | 大米粉 | Chosen to avoid 米粉 (noodles). Is 米面 or 糯米粉 better for 汤圆? | |
+| tea leaves (fresh); tea (roasted) | 鲜茶叶; 茶叶 | Two goods need two words. Would 茶青 and 茶叶 be better? | |
+| flume (open bamboo aqueduct, one tile wide) | 渡槽 | 渡槽 suggests a large stone aqueduct. 竹笕 or 水槽? | |
+| Flume Drop; Flume Bridge; Flume Bridge Span; Flume Gate; Flume Corner | 渡槽跌水; 高架渡槽; 跨槽渡槽; 渡槽闸; 渡槽弯头 | Are the five told apart at a glance? | |
+| Paddy Spout (outlet that holds a rice field at a set depth) | 稻田水口 | Invented compound | |
+| Cistern Tap (a worker pours stored water out) | 蓄水龙头 | 龙头 may sound too modern | |
+| Treadwheel Lift (a worker walks a wheel to lift water) | 踏车 | Short for 脚踏水车. Understood without the longer form? | |
+| Rested (the bonus label, as in "Rested +33%") | 精力充沛 | Works as an adjective. As a label before a number? | |
+| night post; Night Watch (toolbar group) | 夜岗; 守夜 | 夜岗 is terse. 夜班岗位? | |
+| Den; Courtyard House; Terrace House (three sizes of home) | 小窝; 合院; 大院 | 大院 for "a large home for many families" | |
+| Moon Loft (a snug home on stilts with a lantern in its window) | 月阁 | Or 月楼, 吊脚月阁 | |
+| Village Hall (the district center) | 村公所 | Too modern or too official? | |
+| Kitchen; Steamer (both are buildings) | 灶房; 蒸笼 | 蒸笼 is the utensil. Is it odd as a building's name? | |
+| Watching the young (a need); Kindergarten (a bench where elders watch the young) | 看幼崽; 幼儿园 | 看幼崽 can also mean looking after them | |
+| festive; Festive spirit; Grand festive spirit (well-being rows) | 喜气洋洋; 节日喜气; 盛大节日喜气 | The third is heavy | |
+| Great Flowering (bamboo flowers, bears seed and dies); budding; resting | 竹子大开花, 大开花; 孕蕾; 休养 | 大开花 as an event name. The tone should be bittersweet, not comic | |
+| cub (young Inkpaw); kit (young Ringtail); Ma' Ngonel | 幼崽; 环尾幼崽; 熊猫祖母 | One word for both young. The game's 海狸祖母 became 熊猫祖母 | |
+
