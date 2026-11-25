@@ -5,7 +5,9 @@ English files (`enUS.csv`, 2,143 keys, game 1.1.2.8) next to `docs/DESIGN.md` re
 not yet reviewed by the owner.
 
 The text itself is in the JSON files beside this page: `buildings.json`, `goods.json`, `plants.json`,
-`needs.json`, `faction.json`, `messages.json`, `names.json`, and the store pages in `store/`.
+`needs.json`, `faction.json`, `tutorial.json`, `names.json`, and the store pages in `store/`. Panel lines, statuses and
+notifications are written with the code and live in `src/code/Pandaborn.*/mod/Localizations/enUS_*.csv`; the same
+rules apply there.
 
 ## Who reads it
 
@@ -25,7 +27,7 @@ key in a mod exists in English only. So:
 | Kind | Vanilla key | How vanilla writes it | Example |
 |---|---|---|---|
 | Building name | `Building.<Id>.DisplayName` | Title Case. One to three words. A plain noun for what it is. Sizes go in front: Small, Medium, Large, Double, Triple. Trades take a possessive | `Water Pump`, `Builders' Hut`, `Large Warehouse` |
-| Building description | `Building.<Id>.Description` | One sentence, sometimes two. 4 to 20 words. A verb with no subject for things that work ("Pumps…", "Employs…", "Stores…"), or a noun phrase for places ("A place to…"). States the one constraint a player must know. Ends with a full stop | `Blocks water up to an adjustable height.` |
+| Building description | `Building.<Id>.Description` | One sentence, sometimes two. 4 to 20 words (median 51 characters, nine in ten under 100, longest 154). A verb with no subject for things that work ("Pumps…", "Employs…", "Stores…"), or a noun phrase for places ("A place to…"). States the one constraint a player must know. Ends with a full stop | `Blocks water up to an adjustable height.` |
 | Building flavor | `Building.<Id>.FlavorDescription` | One line, rarely over 20 words. Dry. A deadpan fact about how the colonists behave, or a short quote with an em dash and a name and no space after the dash | `They used to be tied to trees, until a few too many tree cutting accidents.` |
 | Good | `Good.<Id>.DisplayName`, `.PluralDisplayName` | Sentence case: only the first word is capitalized. Singular and plural. Mass nouns repeat the word. No description | `Maple pastry` / `Maple pastries`, `Wheat flour` / `Wheat flour` |
 | Plant | `NaturalResource.<Id>.DisplayName`, `.FlavorDescription` | Title Case. Flavor only; the description field exists but vanilla leaves it empty. Soil rules are keyword lines | `Chestnut Tree` |
@@ -45,7 +47,8 @@ Other habits worth copying:
 * US spelling: center, color, flavor, neighbor. "Well-being" has a hyphen.
 * Parameters are `{0}`, `{1}`. A label with a value is `Label: {0}`.
 * Numbers that the game already prints (growth days, drought resistance, capacity, cost, recipe amounts) are
-  not repeated in prose.
+  not repeated in prose. Neither is any number the catalogue can change (hours, percentages, days of an effect): a
+  text with a parameter shows the live value, and a text without one uses words.
 * Exclamation marks appear almost only inside quotes and in "{0} was born!".
 
 ## Tone
@@ -63,48 +66,22 @@ it is told the same way: **by observation, not by adjectives.**
 ## Standards for this faction
 
 * **The two peoples are equals.** The Ringtails are the village's Night Watch, its stargazers and its artists.
-  Never write helpers, servants, serve, little ones, or "for the Inkpaws". Say "the village". Ringtail homes
+  Never write helpers, servants, serve, little ones, or "for the Inkpaws". Say "the village". Text a player can read
+  before building a Moon Loft does not mention Ringtails, apart from the faction description. Ringtail homes
   are "snug", never "tiny".
 * **One real place: Sichuan.** Nothing Japanese-coded. Never "oriental". No religious words: the Great Sitting
   Panda is a "cliff carving" of a seated panda and nothing else. No jokes about accents, kung fu or the zodiac.
 * **No Chinese characters in game text.** They appear only in the checking column of `names.json`.
 * **Every description is true to the mechanics.** If the stat sheet has no number, describe the effect without
-  one. If a line depends on a fact the prototype has not settled, mark it with `confirm` in `messages.json`.
+  one. If you cannot find the behaviour in the catalogue or the code, cut the sentence. Nothing in the toolbar lies.
 * **Vanilla functions keep vanilla names.** A player should never relearn a levee.
 
-## Glossary: one term per thing
+## Glossary
 
-| Use | For | Not |
-|---|---|---|
-| the afternoon bell; the bell | The end of the Inkpaws' working day, set on the working-hours control | gong, work bell, shift end |
-| rested | The speed bonus of a short working day | refreshed, well-rested, energized, weary (there is no penalty) |
-| Inkpaw, Inkpaws | The giant pandas | pandas, when Ringtails are also meant |
-| Ringtail, Ringtails | The red pandas | red pandas, helpers |
-| the Night Watch | The Ringtails at work, and their toolbar group | night shift, night crew |
-| villager, villagers | Any colonist of either people, where vanilla says "beaver" | beaver, colonist, citizen |
-| the village | The settlement | colony, settlement, town |
-| both peoples | Inkpaws and Ringtails together | both species, both races |
-| cub, cubs | Young Inkpaws | kits, children |
-| kit, kits | Young Ringtails | cubs, pups |
-| flume | The open bamboo aqueduct. "Bamboo aqueduct" is used once, in its description and in store text | pipe, channel, aqueduct |
-| Flume Gate | The intake of a flume | valve, sluice |
-| Paddy Spout; the spout | The outlet that holds a field at a set depth | bamboo spout, tap |
-| Scoop Wheel | The wheel that lifts water using the current | noria, water lift |
-| Cistern | Water storage | tank |
-| Moon Loft | The home on stilts whose first building invites the Ringtails | loft, tree house |
-| poles; cured poles | The Inkpaws' planks and treated planks | bamboo planks, canes |
-| shoot bamboo; timber bamboo | The field crop; the fast tree | river bamboo, cloud bamboo |
-| moist ground; dry ground; flooded field | The three kinds of land | wet soil, arid land, irrigated |
-| Lantern Festival; Small Festival; Grand Festival | The event and its two tiers | party, celebration |
-| festive spirit | The well-being that follows a festival | festival buff |
-| Tradition | The count that festivals raise and that unlocks decorations | culture, heritage points |
-| Great Flowering; the flowering | The event in which one bamboo flowers and dies | bloom, blight |
-| bamboo seed | What flowered bamboo drops | bamboo rice |
-| Wooden Ox, Wooden Oxen | The faction's bots | bamboobot, robot |
-| Sky Lantern; release | The wonder; what the player does to it | launch |
-| cliff carving | The Great Sitting Panda | statue, monument to, any religious word |
-| idle | An adult with no workplace, in the two-row population panel | unemployed (vanilla's word, kept where vanilla text is kept) |
-| badwater, drought, badtide, well-being, district | As vanilla | |
+One name per thing and one word per job: [GLOSSARY.md](GLOSSARY.md). It is also the brief for translators. The
+short of it: **Inkpaws** and **Ringtails** are the two peoples, **panda** is anyone of either people (never
+"villager"), **the afternoon bell** divides the day, a **night post** is a Ringtail workplace, the Inkpaws build with
+**poles**, and the farm is the **Farmhouse**.
 
 ## The cast
 
@@ -130,8 +107,8 @@ Sayings are attributed to the village ("—Village saying"), never to one people
 * Loc keys begin with `Pandaborn` (`docs/ENGINEERING.md`). Each JSON file records the vanilla key pattern its
   strings correspond to and a suggested mod key.
 * A mod key equal to a vanilla key replaces the vanilla text for **every** faction. Never write Inkpaw words to
-  a vanilla key. `messages.json` lists the shared vanilla lines that say "beaver" and what they would say if
-  the mod could show its own.
+  a vanilla key. The shared vanilla lines that say "beaver" are swapped for Inkpaws games only by the Words table
+  (`src/code/Pandaborn.Words/words.review.enUS.txt`).
 * The game's CSV validator rejects an empty line, a fourth column, and a quote next to a comma with a space
   between them. Paragraph breaks inside a text are fine; a blank line between rows is not.
 * `[sun]` and `[moon]` in a text stand for the day and night icons. A line must still read correctly without
