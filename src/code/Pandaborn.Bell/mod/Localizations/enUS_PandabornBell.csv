@@ -1,8 +1,8 @@
 ID,Text,Comment
-Pandaborn.Bell.PanelText,Rested +{0},Line under the working-hours panel; {0} = today's bonus
-Pandaborn.Bell.PanelTextTomorrow,"Rested +{0}; tomorrow +{1}",Line under the working-hours panel when the slider was moved today
-Pandaborn.Bell.Tooltip,"Rested Inkpaws: the shorter the working day, the faster they work and walk. Today's working day: {0} h, working speed +{1}, walking speed +{2} (on top of every other bonus).
-The day's length is set at dawn: moving the slider takes effect tomorrow.
-Long days leave little time for tea, naps and play: at 16 hours most daily rituals lapse.",Tooltip of the line under the working-hours panel
-Pandaborn.Bell.ColonistLine,"Rested ({0} h day): working +{1}, walking +{2}",Line on an Inkpaw's panel
-Pandaborn.Bell.Suggestion,"Inkpaws work a short day and work it well. Afternoons are for hammocks, tea and company.",One-time suggestion once the village is settled
+Pandaborn.Bell.PanelText,Rested +{0},Line under the working-hours panel; {0} = today's bonus with its percent sign
+Pandaborn.Bell.PanelTextTomorrow,"Rested +{0}; tomorrow +{1}",Line under the working-hours panel when the working hours were changed today
+Pandaborn.Bell.Tooltip,"Rested: on a shorter working day, pandas work and walk faster, and the village gets as much done. The bonus has a ceiling: a day shortened past it does cost work.
+Today: {0} h, working speed +{1}, walking speed +{2}.
+The day's length is fixed at dawn. Moving the bell takes effect tomorrow.",Tooltip of the line under the working-hours panel. 'The bell' is the afternoon bell: the end of the working day as set on the working-hours control
+Pandaborn.Bell.ColonistLine,"Rested: working +{1}, walking +{2}",Line on a colonist's panel; {1} and {2} are percentages
+Pandaborn.Bell.Suggestion,"Your village is settled. Inkpaws work a short day and work it well: shorten the working hours until the Rested bonus stops rising, and the afternoon is theirs.",One-time suggestion once the village is settled. 'Rested' is the word of Pandaborn.Bell.PanelText

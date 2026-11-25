@@ -1,21 +1,21 @@
 ID,Text,Comment
-Pandaborn.Core.FeatureOff,"Pandaborn - Factions: {0} is switched off because this game version changed something it relies on ({1}). Everything else works; a mod update will bring it back.",Notice when a code feature fails its pre-load check
-Pandaborn.Core.FeatureForcedOff,"Pandaborn - Factions: {0} is switched off by a developer setting.",Notice when a code feature is forced off for testing
+Pandaborn.Core.FeatureOff,"Pandaborn - Factions: {0} is switched off because this game version changed something it relies on ({1}). Everything else works as usual.",Notice when a part of the mod fails its check before loading; {0} = one of the Pandaborn.Feature names and {1} = the technical reason
+Pandaborn.Core.FeatureForcedOff,"Pandaborn - Factions: {0} is switched off by a developer setting.",Notice when a part of the mod is forced off for testing
 Pandaborn.Core.Duplicate,"Pandaborn - Factions is enabled twice (for example a local copy and the Workshop copy). Only the copy in {0} runs its code. Disable one of them in the mod manager.",Notice when two copies of the mod are enabled
-Pandaborn.Feature.Specs,"its data definitions",Feature name used in notices
-Pandaborn.Feature.Core,"its core services",Feature name used in notices
-Pandaborn.Feature.Bell,"The afternoon bell (rested Inkpaws)",Feature name used in notices
-Pandaborn.Feature.Names,"Inkpaw names",Feature name used in notices
-Pandaborn.Feature.Look,"The Inkpaws building look",Feature name used in notices
-Pandaborn.Core.FeatureDegraded,"Pandaborn - Factions: {0} runs in a reduced mode ({1}). Everything else works.",Notice when a feature runs in a fallback or reduced mode
-Pandaborn.Core.Report,Pandaborn - Factions features: {0},"Notification-log entry listing every code feature and its state, once per save"
-Pandaborn.Core.Report.On,on,Feature state in the feature report
-Pandaborn.Core.Report.ForcedOff,off (developer setting),Feature state in the feature report
-Pandaborn.Core.Report.Off,off ({0}),"Feature state in the feature report, with the reason"
-Pandaborn.Core.Report.Degraded,"on, reduced ({0})","Feature state in the feature report, with the reason"
-Pandaborn.Core.Report.Duplicate,mod enabled {0} more time(s),Shown in the feature report when the mod is enabled more than once
-Pandaborn.Feature.Words,Inkpaw words,Feature name used in notices
-Pandaborn.Feature.Ringtails,"The Ringtails (night workers)",Feature name used in notices
-Pandaborn.Feature.RingtailsFallback,"Night posts without Ringtails",Feature name used in notices
-Pandaborn.Core.Report.NoData,off (no data in this game: {0}),"Feature state in the feature report, with what is missing"
-Pandaborn.Feature.Tutorial,Tutorial steps,Feature name used in notices
+Pandaborn.Feature.Specs,"its game data",Name of a part of the mod; follows 'Pandaborn - Factions:' in a notice
+Pandaborn.Feature.Core,"its core",Name of a part of the mod; follows 'Pandaborn - Factions:' in a notice
+Pandaborn.Feature.Bell,"The afternoon bell",Name of a part of the mod in notices
+Pandaborn.Feature.Names,"Panda names",Name of a part of the mod in notices
+Pandaborn.Feature.Look,"The Inkpaw look of buildings",Name of a part of the mod in notices
+Pandaborn.Core.FeatureDegraded,"Pandaborn - Factions: {0} runs in a reduced form ({1}). Everything else works as usual.",Notice when a part of the mod runs in a fallback or reduced form
+Pandaborn.Core.Report,Pandaborn - Factions: {0},"Notification-log entry listing every part of the mod and its state, once per save"
+Pandaborn.Core.Report.On,on,State of a part of the mod in the report
+Pandaborn.Core.Report.ForcedOff,off (developer setting),State of a part of the mod in the report
+Pandaborn.Core.Report.Off,off ({0}),"State of a part of the mod in the report, with the reason"
+Pandaborn.Core.Report.Degraded,"on, reduced ({0})","State of a part of the mod in the report, with the reason"
+Pandaborn.Core.Report.Duplicate,mod enabled {0} more time(s),Shown in the report when the mod is enabled more than once
+Pandaborn.Feature.Words,Panda words,Name of a part of the mod in notices: the interface says panda where the game says beaver
+Pandaborn.Feature.Ringtails,"The Ringtails",Name of a part of the mod in notices
+Pandaborn.Feature.RingtailsFallback,"Night posts without Ringtails",Name of a part of the mod in notices
+Pandaborn.Core.Report.NoData,off (no data in this game: {0}),"State of a part of the mod in the report, with what is missing"
+Pandaborn.Feature.Tutorial,Tutorial steps,Name of a part of the mod in notices
