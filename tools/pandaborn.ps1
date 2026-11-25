@@ -53,7 +53,18 @@
   test      tools/run_game_test.ps1 -Faction Inkpaws with the generated grid request (every placeable template),
             on Plains with -OnlyMods JigglyPanda.PandabornFactions. -TestArgs passes more arguments.
   package   Copies the staging folder to E:\PandabornDev\build\package\PandabornFactions and zips it (mod.io).
-  all       pin, models, generate, code, bundles, assemble, validate, gate, install. (test and package only when named.)
+  combos    Every build a player can end up with, checked without the game: nine module combinations (all-on, no-code,
+            water-off, festival-off, flowering-off, water-events-off, ringtails-off, tutorial-off, bell-off) are each
+            generated (generate.py --modules / --no-code), given the code and bundles of the real build trimmed to
+            that combination's modules, assembled and validated with the release rules, in E:\PandabornDev\build\combos
+            (one scratch tree, reused). Needs a code build (the code stage). Nothing staged or installed is touched.
+            -Combo <names> runs only the named combinations. Run it before committing a catalogue or generator change.
+  all       pin, models, generate, code, bundles, assemble, validate, gate, install. (test, package and combos only
+            when named.)
+
+  -Release  validate with the release rules (errors instead of warnings: a missing _mac bundle twin, the economy
+            block); the package stage always does, and combos passes it to each combination.
+  -Combo    combos: only these combinations, by the names above (default: all nine).
 
   Exit code 0 when every requested stage passed.
 .EXAMPLE
