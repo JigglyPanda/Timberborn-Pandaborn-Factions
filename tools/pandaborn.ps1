@@ -24,14 +24,25 @@
             git) and the code/bundle outputs into the staging folder E:\PandabornDev\build\stage\PandabornFactions.
             A generated file landing on a hand-written one is an error. Nothing installed is touched.
   validate  tools/validate.py on the staging folder (schema, ids, lock, needs, assets...).
-  gate      THE INSTALL GATE: builds a dev copy of the staging folder (proto/foundation/build.ps1 -Name pbgate) and runs
+  gate      THE INSTALL GATE: builds a dev copy of the staging folder (proto/foundation/build.ps1 -Name pbgate-<hash>
+            -Staged: the staged files as they are, code included; only manifest.json is replaced) and runs
             the generated grid request on it with the installed faction switched off (every placeable template placed
             and finished, recipes on, a speed ladder, three in-game hours). On a pass it writes <StageDir>.gate.json
-            with the staging folder's content hash; install refuses a staging folder without a matching gate.
+            with the staging folder's content hash, the hash of the code files it ran, every file of the copy that
+            differed from the stage, the game version, the hash of the grid request and the mods that were loaded;
+            install refuses a staging folder without a matching gate, and a gate from another game version.
             Queues behind other game tests (-WaitForGameSeconds 10800).
+            gate -Prune does not run the gate: it removes the pbgate-<hash> copies in E:\PandabornDev\build\proto that
+            are not the current stage's (not one a run has junctioned into Mods, not one younger than 12 hours);
+            with -DryRun it only lists them with their sizes.
   install   Mirrors the validated staging folder into E:\PandabornDev\build\PandabornFactions (the folder the game's Mods
             junction points at) and makes the junction, exactly as tools/build.ps1 always did. Refuses if validation
             failed in this run. Never touches any other Mods entry and never replaces a real folder.
+            Takes the game-test lock for the mirror, without waiting: if a test (or a hold) has it, install refuses and
+            names the holder. -CallerHoldsLock: the caller holds the queue (tools\game_test_hold.ps1, still running);
+            install then takes nothing and checks that a live hold owns the lock. Refuses while Timberborn runs.
+            -GateOverride "<reason>" installs without a passing gate (logged once validation has passed). In a run
+            that has the gate stage (all) it never applies: a failed gate stops the run before install.
   test      tools/run_game_test.ps1 -Faction Inkpaws with the generated grid request (every placeable template),
             on Plains with -OnlyMods JigglyPanda.PandabornFactions. -TestArgs passes more arguments.
   package   Copies the staging folder to E:\PandabornDev\build\package\PandabornFactions and zips it (mod.io).
@@ -74,12 +85,23 @@ param(
     [string]$LinkName = 'PandabornFactions',
     [string[]]$TestArgs = @(),
     # install without a passing gate: only on the coordinator's word, with the reason (written to the gate log)
-    [string]$GateOverride = ''
+    [string]$GateOverride = '',
+    # install: the caller holds the test queue through a live hold (tools\game_test_hold.ps1); checked, not trusted
+    [switch]$CallerHoldsLock,
+    # gate: remove old pbgate-<hash> copies instead of running the gate (-DryRun: list them)
+    [switch]$Prune,
+    [string]$GameDir = 'C:\Program Files (x86)\Steam\steamapps\common\Timberborn',
+    [string]$TestRoot = 'E:\PandabornDev\build\test',
+    [string]$TestMutexName = 'Global\PandabornGameTest'   # only for trials on a scratch lock
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $source = Join-Path $repo 'mod\PandabornFactions'
 $env:PYTHONDONTWRITEBYTECODE = '1'
+. (Join-Path $PSScriptRoot 'game_lock.ps1')   # the test lock, holds, Test-PathUnder
+# every folder this script mirrors into (and so deletes from) must be inside the build root
+$buildRoot = 'E:\PandabornDev\build'
+$protoRoot = Join-Path $buildRoot 'proto'
 $stages = @($Stage | ForEach-Object { $_ -split ',' } | Where-Object { $_ } | ForEach-Object { $_.Trim().ToLowerInvariant() })
 if ($stages -contains 'all') { $stages = @('pin', 'models', 'generate', 'code', 'bundles', 'assemble', 'validate', 'gate', 'install') + @($stages | Where-Object { $_ -ne 'all' }) }
 $known = 'pin', 'models', 'generate', 'validate', 'code', 'bundles', 'assemble', 'gate', 'install', 'test', 'package', 'combos'
@@ -132,6 +154,9 @@ function Copy-IfChanged([string]$from, [string]$to) {
 
 # Makes $dest an exact mirror of the given (relative path -> source file) map. Returns counts.
 function Sync-Tree([string]$dest, $map) {
+    # an exact mirror deletes whatever else is in the target: never outside the build root (a mistyped -InstallDir,
+    # -StageDir or -PackageDir pointing at the Mods folder would empty it)
+    if (-not (Test-PathUnder $dest $buildRoot)) { throw "Sync-Tree: $dest is not inside $buildRoot; refusing to mirror into it" }
     if (-not (Test-Path $dest)) { New-Item -ItemType Directory -Force $dest | Out-Null }
     $dest = (Resolve-Path $dest).Path
     $copied = 0; $removed = 0
@@ -194,6 +219,66 @@ function Get-StageHash([string]$dir) {
     $bytes = [Text.Encoding]::UTF8.GetBytes(($lines -join "`n"))
     $sha = [Security.Cryptography.SHA256]::Create()
     return ([BitConverter]::ToString($sha.ComputeHash($bytes)) -replace '-', '')
+}
+
+# Like Get-StageHash, for a part of a tree: only files whose lowercased relative path starts with one of $only (when
+# given), without the files in $skip. Sorted by relative path, ordinal, so two copies of one tree in different folders
+# hash alike. (The same function is in proto/foundation/build.ps1.)
+function Get-TreeHash([string]$root, [string[]]$only = @(), [string[]]$skip = @()) {
+    $root = (Resolve-Path -LiteralPath $root).Path.TrimEnd('\')
+    $lines = @(foreach ($f in Get-ChildItem -LiteralPath $root -Recurse -File) {
+        $rel = $f.FullName.Substring($root.Length + 1)
+        if ($rel -match '(^|\\)AssetBundles\.parked(\\|$)') { continue }
+        $low = $rel.ToLowerInvariant()
+        if ($skip -contains $low) { continue }
+        if ($only.Count -gt 0 -and -not @($only | Where-Object { $low.StartsWith($_) })) { continue }
+        $low + ':' + (Get-FileHash -LiteralPath $f.FullName -Algorithm SHA256).Hash
+    })
+    $lines = [string[]]$lines
+    [Array]::Sort($lines, [StringComparer]::Ordinal)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    return ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($lines -join "`n")))) -replace '-', '')
+}
+$codeParts = @('scripts\', 'modules\', 'assetbundles\')   # what the code and bundle stages contribute to the mod
+
+# The installed game: version from its own file, build id from Steam's manifest (a hotfix can keep the version).
+function Get-GameVersion([string]$gameDir) {
+    $version = $null; $build = $null
+    try { $version = [string](Get-Content -LiteralPath (Join-Path $gameDir 'Timberborn_Data\StreamingAssets\VersionNumbers.json') -Raw | ConvertFrom-Json).CurrentVersion } catch { }
+    try {
+        $acf = Join-Path (Split-Path (Split-Path $gameDir -Parent) -Parent) 'appmanifest_1062090.acf'
+        if ((Get-Content -LiteralPath $acf -Raw) -match '"buildid"\s+"(\d+)"') { $build = $Matches[1] }
+    } catch { }
+    return [ordered]@{ version = $version; steamBuild = $build }
+}
+
+# Gate copies (pbgate-<8 hex>) in $protoDir that are not $keepName, with their sizes. Never one that may be in use: a
+# copy junctioned into Mods (a run has it loaded) or younger than $minAgeHours (a gate may be queued with it).
+function Get-PrunableGateCopies([string]$protoDir, [string]$keepName, [string]$modsDir, [double]$minAgeHours = 12) {
+    $list = @()
+    foreach ($d in @(Get-ChildItem -LiteralPath $protoDir -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^pbgate-[0-9A-Fa-f]{8}$' })) {
+        if ($d.Name -eq $keepName -or $d.LinkType) { continue }
+        if ($modsDir -and (Get-Item -LiteralPath (Join-Path $modsDir $d.Name) -Force -ErrorAction SilentlyContinue)) { continue }
+        if (((Get-Date) - $d.LastWriteTime).TotalHours -lt $minAgeHours) { continue }
+        $bytes = (Get-ChildItem -LiteralPath $d.FullName -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
+        $list += [pscustomobject]@{ Name = $d.Name; Path = $d.FullName; SizeMB = [math]::Round([double]$bytes / 1MB); Built = $d.LastWriteTime }
+    }
+    return $list
+}
+# Removes them: only a real pbgate-<hash> folder directly in $protoDir, and its .devcopy.json.
+function Remove-GateCopies($copies, [string]$protoDir) {
+    $removed = @()
+    $protoFull = [IO.Path]::GetFullPath($protoDir).TrimEnd('\')
+    foreach ($c in @($copies)) {
+        $full = [IO.Path]::GetFullPath([string]$c.Path)
+        if ((Split-Path $full -Parent).TrimEnd('\') -ne $protoFull -or (Split-Path $full -Leaf) -notmatch '^pbgate-[0-9A-Fa-f]{8}$') { continue }
+        $item = Get-Item -LiteralPath $full -Force -ErrorAction SilentlyContinue
+        if ($null -eq $item -or $item.LinkType) { continue }
+        Remove-Item -LiteralPath $full -Recurse -Force
+        Remove-Item -LiteralPath "$full.devcopy.json" -Force -ErrorAction SilentlyContinue
+        $removed += $full
+    }
+    return $removed
 }
 
 $failed = @()
@@ -434,9 +519,33 @@ foreach ($s in $stages) {
             if ($failed.Count -gt 0) { Say "gate: not run, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
             $hash = Get-StageHash $StageDir
             $copy = 'pbgate-' + $hash.Substring(0, 8)   # one copy per staging content: two gates never share a folder
-            & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'proto\foundation\build.ps1') -Name $copy -Source $StageDir | Out-Host
+            if ($Prune) {
+                # gate -Prune: old copies only, no gate run
+                $old = @(Get-PrunableGateCopies $protoRoot $copy $ModsDir)
+                foreach ($c in $old) { Say ("gate: old copy {0,-18} {1,6} MB  built {2}" -f $c.Name, $c.SizeMB, $c.Built) }
+                if ($old.Count -eq 0) { Say 'gate: no old gate copy to remove (the current one, copies in use and copies younger than 12 hours stay)' }
+                elseif ($DryRun) { Say ("gate: -DryRun, nothing removed; {0} copy(ies), {1} MB" -f $old.Count, ($old | Measure-Object SizeMB -Sum).Sum) }
+                else { $gone = @(Remove-GateCopies $old $protoRoot); Say "gate: removed $($gone.Count) old copy(ies)" }
+                continue
+            }
+            # the copy is the staging folder as it is (-Staged): the staged Scripts, Modules (with the staged, filtered
+            # modules.txt) and bundles, not a fresh build of src/code; the build lists every file it had to replace
+            & powershell -ExecutionPolicy Bypass -File (Join-Path $repo 'proto\foundation\build.ps1') -Name $copy -Source $StageDir -Staged | Out-Host
             if ($LASTEXITCODE -ne 0) { Say 'gate: the dev copy did not build' 'Red'; $failed += $s; break }
+            $copyDir = Join-Path $protoRoot $copy
+            $devcopy = $null
+            try { $devcopy = Get-Content -LiteralPath "$copyDir.devcopy.json" -Raw -Encoding UTF8 | ConvertFrom-Json } catch { }
+            if ($null -eq $devcopy -or $devcopy.mode -ne 'staged') { Say "gate: $copyDir.devcopy.json missing or not a staged copy" 'Red'; $failed += $s; break }
+            $substituted = @($devcopy.substitutions | ForEach-Object { ([string]$_.file).ToLowerInvariant() })
+            # the code the gate runs is the code install will copy: same files, same bytes
+            $codeHash = Get-TreeHash $StageDir $codeParts
+            if ($codeHash -ne (Get-TreeHash $copyDir $codeParts)) { Say 'gate: the copy''s Scripts, Modules or AssetBundles differ from the staged ones' 'Red'; $failed += $s; break }
+            $restHash = Get-TreeHash $StageDir @() $substituted
+            if ($restHash -ne (Get-TreeHash $copyDir @() $substituted)) { Say "gate: the copy differs from the staging folder in more than $($substituted -join ', ')" 'Red'; $failed += $s; break }
             $grid = "$GenDir.grid.json"
+            if (-not (Test-Path -LiteralPath $grid)) { Say "gate: $grid missing (run generate)" 'Red'; $failed += $s; break }
+            $gridHash = (Get-FileHash -LiteralPath $grid -Algorithm SHA256).Hash
+            $game = Get-GameVersion $GameDir
             # exit 2 = could not test (no verdict, e.g. the game was closed from outside): one more try, then it fails
             foreach ($try in 1, 2) {
                 $runId = 'gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
@@ -475,14 +584,41 @@ foreach ($s in $stages) {
             }
             if ($code -ne 0) { Say "gate: FAILED (run $xid, exit $code): this staging folder must not be installed" 'Red'; $failed += $s; break }
             if ((Get-StageHash $StageDir) -ne $hash) { Say 'gate: the staging folder changed during the run; run the gate again' 'Red'; $failed += $s; break }
+            # what ran must still be what was hashed: the copy (a run may park its bundles, never change a file), the
+            # grid request (read by each run when it launches, hours after the hash) and the game
+            if ((Get-TreeHash $copyDir @() $substituted) -ne $restHash) { Say 'gate: the dev copy changed during the run; run the gate again' 'Red'; $failed += $s; break }
+            if ((Get-FileHash -LiteralPath $grid -Algorithm SHA256).Hash -ne $gridHash) { Say 'gate: the grid request changed during the run; run the gate again' 'Red'; $failed += $s; break }
+            $gameAfter = Get-GameVersion $GameDir
+            if ($gameAfter.version -ne $game.version -or $gameAfter.steamBuild -ne $game.steamBuild) { Say 'gate: the game was updated during the run; run the gate again' 'Red'; $failed += $s; break }
+            # the mods that were loaded, and the version the game reported, from the grid run's own result
+            $loaded = @(); $reported = $null
+            try {
+                $res = Get-Content -LiteralPath (Join-Path (Join-Path $TestRoot $runs[0]) 'result.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+                $loaded = @($res.mods | ForEach-Object { [string]$_.id } | Sort-Object); $reported = [string]$res.gameVersion
+            } catch { Say "gate: could not read the grid run's result for the mod list: $_" 'DarkYellow' }
             $runId = $runs -join ', '
-            $gate = [ordered]@{ hash = $hash; run = $runId; passedUtc = (Get-Date).ToUniversalTime().ToString('o'); stage = $StageDir }
-            [IO.File]::WriteAllText("$StageDir.gate.json", ($gate | ConvertTo-Json))
+            $gate = [ordered]@{
+                hash = $hash; run = $runId; passedUtc = (Get-Date).ToUniversalTime().ToString('o'); stage = $StageDir
+                gameVersion = $game.version; steamBuild = $game.steamBuild; gameVersionReported = $reported
+                codeHash = $codeHash; codeFiles = @($devcopy.codeFiles)
+                devCopy = [ordered]@{ name = $copy; mode = $devcopy.mode; manifestId = $devcopy.manifestId; substitutions = @($devcopy.substitutions) }
+                grid = [ordered]@{ path = $grid; sha256 = $gridHash }
+                modsLoaded = $loaded
+            }
+            [IO.File]::WriteAllText("$StageDir.gate.json", ($gate | ConvertTo-Json -Depth 6))
             Say "gate: passed (run $runId); $StageDir may be installed"
         }
         'install' {
             if ($failed.Count -gt 0) { Say "install: refused, earlier stages failed: $($failed -join ', ')" 'Red'; $failed += $s; break }
-            # CLAUDE.md, install discipline: never while a Timberborn process runs (a game holds the mod's bundles open, so
+            # CLAUDE.md, install discipline: the test lock for the mirror, so no test game starts while the installed folder
+            # is being rewritten. No waiting: the lock is free right after the gate; if a test or a hold has it, say who.
+            $installLock = Enter-InstallLock $TestRoot $TestMutexName ([bool]$CallerHoldsLock) "install $StageDir"
+            if (-not $installLock.ok) {
+                Say "install: refused, $($installLock.why). Run the install stage again when the lock is free, or hold the queue (tools\game_test_hold.ps1) and pass -CallerHoldsLock." 'Red'
+                $failed += $s; break
+            }
+            try {   # (the body keeps its old indentation; the finally at the end of the stage releases the lock)
+            # never while a Timberborn process runs (a game holds the mod's bundles open, so
             # the mirror would stop half way; a test game loading the folder would read a mix of old and new files)
             $open = @(Get-Process Timberborn -ErrorAction SilentlyContinue)
             if ($open.Count -gt 0) {
@@ -492,18 +628,27 @@ foreach ($s in $stages) {
             $gateFile = "$StageDir.gate.json"
             $gateOk = $false
             $stageHash = Get-StageHash $StageDir
+            $gateWhy = 'this staging folder has not passed the gate'
+            $game = Get-GameVersion $GameDir
             if (Test-Path -LiteralPath $gateFile) {
                 $g = Get-Content -LiteralPath $gateFile -Raw | ConvertFrom-Json
                 $gateOk = ($g.hash -eq $stageHash)
+                # a pass is a pass for one game version: after an update the same files may crash
+                if ($gateOk -and (-not $g.gameVersion -or -not $game.version -or [string]$g.gameVersion -ne $game.version)) {
+                    $gateOk = $false
+                    $gateWhy = "its gate passed on game version '$($g.gameVersion)', the installed game is '$($game.version)'"
+                }
+                elseif ($gateOk -and $g.steamBuild -and $game.steamBuild -and [string]$g.steamBuild -ne $game.steamBuild) {
+                    Say "install: the gate passed on Steam build $($g.steamBuild), the game is now build $($game.steamBuild) (same version $($game.version))" 'Yellow'
+                }
             }
+            $overridden = $false
             if (-not $gateOk) {
                 if (-not $GateOverride) {
-                    Say 'install: refused, this staging folder has not passed the gate (pandaborn.ps1 gate: a dev copy loaded with every template placed, finished and working)' 'Red'
+                    Say "install: refused, $gateWhy (pandaborn.ps1 gate: a dev copy loaded with every template placed, finished and working)" 'Red'
                     $failed += $s; break
                 }
-                $log = "$StageDir.gate-overrides.log"
-                Add-Content -LiteralPath $log -Value ("{0} override: {1} [stage hash {2}; by {3}]" -f (Get-Date).ToString('o'), $GateOverride, $stageHash, $env:USERNAME)
-                Say "install: GATE OVERRIDDEN ($GateOverride), logged in $log" 'Yellow'
+                $overridden = $true   # logged below, once validation has passed: a line in the log is an install that happened
             }
             if (-not $validated) {
                 $a = @((Join-Path $repo 'tools\validate.py'), '--mod', $StageDir, '--quiet')
@@ -512,6 +657,11 @@ foreach ($s in $stages) {
                 if (-not $NoCode -and (Test-Path $modSchema)) { $a += @('--mod-schema', $modSchema) }
                 if ((Invoke-Py $a) -ne 0) { Say 'install: refused, the staging folder does not validate' 'Red'; $failed += $s; break }
                 $validated = $true
+            }
+            if ($overridden) {
+                $log = "$StageDir.gate-overrides.log"
+                Add-Content -LiteralPath $log -Value ("{0} override: {1} [stage hash {2}; game {3}; by {4}; {5}]" -f (Get-Date).ToString('o'), $GateOverride, $stageHash, $game.version, $env:USERNAME, $gateWhy)
+                Say "install: GATE OVERRIDDEN ($GateOverride), logged in $log" 'Yellow'
             }
             $map = [ordered]@{}; $origins = @{}
             Add-Tree $map $StageDir 'stage' $origins
@@ -535,6 +685,7 @@ foreach ($s in $stages) {
             }
             New-Item -ItemType Junction -Path $link -Target $InstallDirFull | Out-Null
             Say "link: $link -> $InstallDirFull (created)"
+            } finally { Exit-InstallLock $installLock $TestRoot }
         }
         'test' {
             $grid = "$GenDir.grid.json"
