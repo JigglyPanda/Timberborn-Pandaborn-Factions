@@ -114,7 +114,7 @@
     "Pickle Yard": {
       "id": "PandabornPickleYard", "basis": "new", "who": "I",
       "name": "Pickle Yard",
-      "description": "Pickles cabbage in clay jars. One cabbage fills several.",
+      "description": "Pickles cabbage in clay jars.",
       "flavor": "Every jar belongs to somebody's grandmother, and she knows exactly how many there are."
     },
     "Paddy House": {
@@ -735,7 +735,7 @@
       "id": "PandabornHangingLantern", "basis": "new", "who": "-",
       "content_md": "Standing, hanging and string lanterns",
       "name": "Hanging Lantern",
-      "description": "A decorative lantern that hangs from a bracket.",
+      "description": "A decorative lantern on a bracket. Lights a wider circle than a Standing Lantern.",
       "flavor": "It swings a little whenever somebody hurries past. This is rare."
     },
     "String Lanterns": {
@@ -801,13 +801,13 @@
     "Goldfish Bowl": {
       "id": "PandabornGoldfishBowl", "basis": "new", "who": "-",
       "name": "Goldfish Bowl",
-      "description": "A decorative stone bowl with goldfish.",
+      "description": "A decorative stone bowl with goldfish. Pleases pandas over a wider circle than a Shrub.",
       "flavor": "Somebody feeds them every day. Nobody knows who."
     },
     "Garden Moon Gate": {
       "id": "PandabornGardenMoonGate", "basis": "new", "who": "-",
       "name": "Garden Moon Gate",
-      "description": "A round garden gateway.",
+      "description": "A round garden gateway. Pleases pandas over a wider circle than a Shrub.",
       "flavor": "It leads from one side of the garden to the other. Pandas walk through it anyway."
     },
     "Roof": {

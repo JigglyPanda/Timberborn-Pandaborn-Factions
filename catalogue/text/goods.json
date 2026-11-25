@@ -85,7 +85,7 @@
       "id": "PandabornPickles",
       "singular": "Pickles", "plural": "Pickles",
       "eaten_raw": false,
-      "tooltip": "Cabbage pickled in the Pickle Yard. One cabbage makes several.",
+      "tooltip": "Cabbage pickled in the Pickle Yard.",
       "translator_comment": "Sichuan-style pickled cabbage kept in clay jars. Also the name of the need satisfied by eating it."
     },
     "Sweet rice balls": {

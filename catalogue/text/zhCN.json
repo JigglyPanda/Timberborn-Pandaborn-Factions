@@ -283,8 +283,8 @@
     "en": "Timber bamboo is ready before the forester has finished admiring it."
   },
   "Pandaborn.Building.GardenMoonGate.Description": {
-    "text": "一座圆形的园门。",
-    "en": "A round garden gateway."
+    "text": "一座圆形的园门。比树丛能取悦更大范围内的熊猫。",
+    "en": "A round garden gateway. Pleases pandas over a wider circle than a Shrub."
   },
   "Pandaborn.Building.GardenMoonGate.DisplayName": {
     "text": "月洞门",
@@ -307,8 +307,8 @@
     "en": "A bamboo gear is light, cheap and surprisingly loud."
   },
   "Pandaborn.Building.GoldfishBowl.Description": {
-    "text": "一口养着金鱼的装饰石缸。",
-    "en": "A decorative stone bowl with goldfish."
+    "text": "一口养着金鱼的装饰石缸。比树丛能取悦更大范围内的熊猫。",
+    "en": "A decorative stone bowl with goldfish. Pleases pandas over a wider circle than a Shrub."
   },
   "Pandaborn.Building.GoldfishBowl.DisplayName": {
     "text": "金鱼缸",
@@ -343,8 +343,8 @@
     "en": "An Inkpaw can fall asleep in one faster than you can read this."
   },
   "Pandaborn.Building.HangingLantern.Description": {
-    "text": "挂在托架上的装饰灯笼。",
-    "en": "A decorative lantern that hangs from a bracket."
+    "text": "挂在托架上的装饰灯笼。照亮的范围比立灯更大。",
+    "en": "A decorative lantern on a bracket. Lights a wider circle than a Standing Lantern."
   },
   "Pandaborn.Building.HangingLantern.DisplayName": {
     "text": "挂灯",
@@ -643,8 +643,8 @@
     "en": "Paper goes to lanterns, kites and the Ink Studio, in that order."
   },
   "Pandaborn.Building.PickleYard.Description": {
-    "text": "用陶坛腌制白菜。一棵白菜能装好几坛。",
-    "en": "Pickles cabbage in clay jars. One cabbage fills several."
+    "text": "用陶坛腌制白菜。",
+    "en": "Pickles cabbage in clay jars."
   },
   "Pandaborn.Building.PickleYard.DisplayName": {
     "text": "泡菜坊",
