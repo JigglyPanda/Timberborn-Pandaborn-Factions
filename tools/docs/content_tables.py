@@ -218,7 +218,10 @@ def build(vanilla_root):
     lines += ["### Code modules and what they hide", "",
               "A catalogue item with `waits_for = \"<Module>\"` is generated only when that module ships "
               "(`src/code/modules.txt`) and its switch in `catalogue/rules.toml [modules]` is on. Hidden items keep "
-              "their locked ids.", ""]
+              "their locked ids. That is the build's choice. A player can also switch a shipped module off for "
+              "themselves with a text file `PandabornFactions.txt` in the game's user data folder (the folder that "
+              "holds Saves and Mods), holding lines such as `off: Water, Festival`: the module is then not loaded and "
+              "its items behave as their vanilla shells (nothing is generated for this).", ""]
     waiting = {}
     for kind, items in (("building", buildings), ("good", goods.get("goods", {})), ("need", needs.get("needs", {})),
                         ("recipe", recipes), ("plant", plants.get("plants", {})),

@@ -299,7 +299,7 @@ listened". What is left, checked against the catalogue at 05:10 that day:
 
 ### Code modules and what they hide
 
-A catalogue item with `waits_for = "<Module>"` is generated only when that module ships (`src/code/modules.txt`) and its switch in `catalogue/rules.toml [modules]` is on. Hidden items keep their locked ids.
+A catalogue item with `waits_for = "<Module>"` is generated only when that module ships (`src/code/modules.txt`) and its switch in `catalogue/rules.toml [modules]` is on. Hidden items keep their locked ids. That is the build's choice. A player can also switch a shipped module off for themselves with a text file `PandabornFactions.txt` in the game's user data folder (the folder that holds Saves and Mods), holding lines such as `off: Water, Festival`: the module is then not loaded and its items behave as their vanilla shells (nothing is generated for this).
 
 | Module | In `modules.txt` | Switch | Its items are | Items that wait for it |
 |---|---|---|---|---|

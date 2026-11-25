@@ -359,6 +359,7 @@ def main(argv=None):
     check_models(c)
     check_template_names(c)
     check_building_sounds(c)
+    check_bell_on_ringtails(c)
     check_own_spec_sounds(c)
     check_spec_dependencies(c)
     check_no_vanilla_side_effects(c)
@@ -729,6 +730,17 @@ def check_spec_dependencies(c):
             if spec in bp:
                 R.error("%s: %s without WorkshopSpec: its component needs the building's Workshop and throws when the "
                         "building is finished" % (c.keys[key][0], spec))
+
+
+def check_bell_on_ringtails(c):
+    """PandabornBellSpec never sits on a Ringtail template: the rested bonus is a multiplying share of the speed bonus,
+    and a second spec on the same people would make two shares that count each other. Ringtails get their rested
+    bonus through the night-shift seam in code (Core's INightShiftClock)."""
+    for key, bp in sorted(c.mod_bp.items()):
+        if "PandabornBellSpec" in bp and "PandabornRingtailSpec" in bp:
+            R.error("%s: PandabornBellSpec on a Ringtail template (PandabornRingtailSpec): two multiplying shares "
+                    "would count each other; the Ringtails' rested bonus comes from the Bell module's night-shift "
+                    "seam, with the spec on the Inkpaw adult only" % c.keys[key][0])
 
 
 def check_building_sounds(c):
