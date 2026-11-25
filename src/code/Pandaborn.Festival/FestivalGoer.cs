@@ -174,7 +174,9 @@ namespace Pandaborn.Festival
                 _errorLogged = true;
                 Debug.LogWarning("[Pandaborn.Festival] the festival day off is unavailable: " + reason
                                  + ". Festivals keep their evening show, festive spirit and Tradition; colonists keep working.");
-                FeatureRegistry.ReportDegraded("Festival", "no day off (" + reason + ")");
+                // per game: the check is made again at every game's Load (ResetForGame)
+                var service = FestivalService.Current;
+                if (service != null && service.Active) service.Fault("no day off (" + reason + ")");
             }
             return false;
         }

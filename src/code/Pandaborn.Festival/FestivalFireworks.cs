@@ -73,7 +73,9 @@ namespace Pandaborn.Festival
         {
             if (_failure != null) return;
             _failure = reason;
-            Debug.LogError("[Pandaborn.Festival] fireworks switched off for this session: " + reason);
+            Debug.LogError("[Pandaborn.Festival] fireworks switched off for this game: " + reason);
+            var service = FestivalService.Current;
+            if (service != null && service.Active) service.Fault("no fireworks in the sky (" + reason + ")");
         }
     }
 }

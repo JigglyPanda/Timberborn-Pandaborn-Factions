@@ -29,7 +29,10 @@ the last festival last, so the turn passes on.
   just outside its edge (a ring 3.2–3.8 m from its centre, else the nearest of a few `GetRandomDestinationInDistrict`
   spots); from `ShowStartHours` to `ShowEndHours` everyone goes to the square first. Carrying, critical needs, death and
   stranding stay above it. A Ringtail's day rest (inserted in `InitializeEntity`) stays above it too, because the
-  festival inserts in `PostInitializeEntity`: Ringtails sleep through the morning, then join.
+  festival inserts in `PostInitializeEntity`: Ringtails sleep through the morning, then join. During the hours of the
+  show the rest steps aside for the festival: `FestivalGatheringClock` is the module's Core `IGatheringClock` (true for a
+  colonist of the festival's district that has the festival behaviour and is not on a crew in its hours; never outside
+  the show), so a Ringtail whose rest would run past 15.5 h does not miss the lanterns.
 * **The rising lanterns** (`FestivalSquare.UpdateSky` / `Release`, `FestivalService.UpdateSky` / `RunShow`): a square
   whose blueprint has the `LanternRise` attachment (prefab `Effects/Pandaborn/LanternRise` in `pandabornattachments`,
   one `ParticleSystem`; a particle system under a `#LanternRise` node works too) gets a lantern sky for the whole show:
@@ -86,8 +89,12 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
   (after Load), it is reported then. One entity that is not built like a colonist only loses its own day off.
 * `Timberborn.FireworkSystem.Firework.Launch` (public method of an internal type, reached by reflection) gone, or
   `simulate-missing-member: Festival.Fireworks`: no comets or bursts; the lantern sky and everything else run.
-* Each fallback is reported once through `FeatureRegistry.ReportDegraded("Festival", ...)` (the feature report and one
-  notice); a game of our faction without the data gets `ReportNoData`.
+* Every fault is reported through `FeatureRegistry.ReportDegradedInGame("Festival", ...)` (`FestivalService.Fault`:
+  all of the running game's faults in one line; forgotten when the next game starts, where Load checks again; fireworks
+  that fail in the middle of a game are reported then). A game of our faction without the data gets `ReportNoData`.
+* The festival's notices are posted with a subject (`Messenger.Post(text, subject)`): the square it is held at, else
+  its district's centre, so the notification log entry leads to the festival's own district, not to the first
+  district centre.
 * Missing art degrades to nothing: no `LanternRise` attachment (or no particle system in it, or a failure while driving
   it) means the comets instead; no `#FestivalLights` or `#FireworkMount` node means no toggle and the square's centre as
   the launch point. A missing sound clip is silent.
@@ -106,22 +113,22 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 
 * type `Bindito.Core.Configurator`
   * method `.ctor()`
-  * method `Bind<1>()`
-  * method `MultiBind<1>()`
+  * method `Bind<1>()`: `Bindito.Core.ISingleBindingBuilder`1<!!0>`
+  * method `MultiBind<1>()`: `Bindito.Core.IMultiBindingBuilder`1<!!0>`
 * type `Bindito.Core.ContextAttribute`
   * method `.ctor(System.String)`
 * type `Bindito.Core.IBindingBuilder`1`
-  * method `To<1>()`
-  * method `ToProvider(System.Func`1<!0>)`
-  * method `ToProvider<1>()`
+  * method `To<1>()`: `Bindito.Core.IScopeAssignee`
+  * method `ToProvider(System.Func`1<!0>)`: `Bindito.Core.IScopeAssignee`
+  * method `ToProvider<1>()`: `Bindito.Core.IScopeAssignee`
 * type `Bindito.Core.IContainer`
-  * method `GetInstance<1>()`
+  * method `GetInstance<1>()`: `!!0`
 * type `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.IMultiBindingBuilder`1`
 * type `Bindito.Core.IProvider`1`
 * type `Bindito.Core.IScopeAssignee`
-  * method `AsSingleton()`
-  * method `AsTransient()`
+  * method `AsSingleton()`: `Bindito.Core.IExportAssignee`
+  * method `AsTransient()`: `Bindito.Core.IExportAssignee`
 * type `Bindito.Core.ISingleBindingBuilder`1`
 
 **Timberborn.Attractions**
@@ -133,12 +140,12 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 
 * type `Timberborn.BaseComponentSystem.BaseComponent`
   * method `.ctor()`
-  * method `GetComponent<1>()`
-  * method `get_AllComponents()`
-  * method `get_GameObject()`
-  * method `get_Name()`
-  * method `get_Transform()`
-  * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`
+  * method `GetComponent<1>()`: `!!0`
+  * method `get_AllComponents()`: `Timberborn.Common.ReadOnlyList`1<System.Object>`
+  * method `get_GameObject()`: `UnityEngine.GameObject`
+  * method `get_Name()`: `System.String`
+  * method `get_Transform()`: `UnityEngine.Transform`
+  * method `op_Implicit(Timberborn.BaseComponentSystem.BaseComponent)`: `System.Boolean`
 * type `Timberborn.BaseComponentSystem.IAwakableComponent`
 
 **Timberborn.Beavers**
@@ -148,16 +155,16 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.BehaviorSystem**
 
 * type `Timberborn.BehaviorSystem.Behavior`
-  * method `Decide(Timberborn.BehaviorSystem.BehaviorAgent)`
+  * method `Decide(Timberborn.BehaviorSystem.BehaviorAgent)`: `Timberborn.BehaviorSystem.Decision`
 * type `Timberborn.BehaviorSystem.BehaviorAgent`
 * type `Timberborn.BehaviorSystem.BehaviorManager`
 * type `Timberborn.BehaviorSystem.Decision`
-  * method `ReleaseNextTick()`
-  * method `ReleaseNow()`
-  * method `ReleaseWhenFinished(Timberborn.BehaviorSystem.IExecutor)`
-  * method `ReturnWhenFinished(Timberborn.BehaviorSystem.IExecutor)`
-  * method `TransferNow(Timberborn.BehaviorSystem.Behavior, Timberborn.BehaviorSystem.Decision&)`
-  * method `get_ShouldReleaseNow()`
+  * method `ReleaseNextTick()`: `Timberborn.BehaviorSystem.Decision`
+  * method `ReleaseNow()`: `Timberborn.BehaviorSystem.Decision`
+  * method `ReleaseWhenFinished(Timberborn.BehaviorSystem.IExecutor)`: `Timberborn.BehaviorSystem.Decision`
+  * method `ReturnWhenFinished(Timberborn.BehaviorSystem.IExecutor)`: `Timberborn.BehaviorSystem.Decision`
+  * method `TransferNow(Timberborn.BehaviorSystem.Behavior, Timberborn.BehaviorSystem.Decision&)`: `Timberborn.BehaviorSystem.Decision`
+  * method `get_ShouldReleaseNow()`: `System.Boolean`
 * type `Timberborn.BehaviorSystem.ExecutorStatus`
 * type `Timberborn.BehaviorSystem.IExecutor`
 * type `Timberborn.BehaviorSystem.RootBehavior`
@@ -168,51 +175,51 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.BlockObjectTools**
 
 * type `Timberborn.BlockObjectTools.BlockObjectTool`
-  * method `get_Template()`
+  * method `get_Template()`: `Timberborn.BlockSystem.PlaceableBlockObjectSpec`
 
 **Timberborn.BlockSystem**
 
 * type `Timberborn.BlockSystem.BlockObjectCenter`
-  * method `get_WorldCenterGrounded()`
+  * method `get_WorldCenterGrounded()`: `UnityEngine.Vector3`
 * type `Timberborn.BlockSystem.IFinishedStateListener`
 * type `Timberborn.BlockSystem.PlaceableBlockObjectSpec`
-  * method `op_Equality(Timberborn.BlockSystem.PlaceableBlockObjectSpec, Timberborn.BlockSystem.PlaceableBlockObjectSpec)`
+  * method `op_Equality(Timberborn.BlockSystem.PlaceableBlockObjectSpec, Timberborn.BlockSystem.PlaceableBlockObjectSpec)`: `System.Boolean`
 
 **Timberborn.BlueprintSystem**
 
 * type `Timberborn.BlueprintSystem.Blueprint`
-  * method `GetSpec<1>()`
+  * method `GetSpec<1>()`: `!!0`
 * type `Timberborn.BlueprintSystem.ComponentSpec`
-  * method `GetSpec<1>()`
-  * method `get_Blueprint()`
+  * method `GetSpec<1>()`: `!!0`
+  * method `get_Blueprint()`: `Timberborn.BlueprintSystem.Blueprint`
 
 **Timberborn.Buildings**
 
 * type `Timberborn.Buildings.BuildingSpec`
-  * method `op_Equality(Timberborn.Buildings.BuildingSpec, Timberborn.Buildings.BuildingSpec)`
+  * method `op_Equality(Timberborn.Buildings.BuildingSpec, Timberborn.Buildings.BuildingSpec)`: `System.Boolean`
 
 **Timberborn.Common**
 
 * type `Timberborn.Common.IRandomNumberGenerator`
-  * method `Range(System.Single, System.Single)`
+  * method `Range(System.Single, System.Single)`: `System.Single`
 * type `Timberborn.Common.ReadOnlyHashSet`1`
-  * method `GetEnumerator()`
+  * method `GetEnumerator()`: `System.Collections.Generic.HashSet`1+Enumerator<!0>`
 * type `Timberborn.Common.ReadOnlyList`1`
-  * method `get_Count()`
+  * method `get_Count()`: `System.Int32`
 
 **Timberborn.CoreUI**
 
 * type `Timberborn.CoreUI.DialogBox`
 * type `Timberborn.CoreUI.DialogBoxShower`
-  * method `Create()`
+  * method `Create()`: `Timberborn.CoreUI.DialogBoxShower+Builder`
 * type `Timberborn.CoreUI.DialogBoxShower+Builder`
-  * method `SetConfirmButton(System.Action)`
-  * method `SetMessage(System.String)`
-  * method `Show()`
+  * method `SetConfirmButton(System.Action)`: `Timberborn.CoreUI.DialogBoxShower+Builder`
+  * method `SetMessage(System.String)`: `Timberborn.CoreUI.DialogBoxShower+Builder`
+  * method `Show()`: `Timberborn.CoreUI.DialogBox`
 * type `Timberborn.CoreUI.VisualElementExtensions`
   * method `ToggleDisplayStyle(UnityEngine.UIElements.VisualElement, System.Boolean)`
 * type `Timberborn.CoreUI.VisualElementLoader`
-  * method `LoadVisualElement(System.String)`
+  * method `LoadVisualElement(System.String)`: `UnityEngine.UIElements.VisualElement`
 
 **Timberborn.Effects**
 
@@ -223,10 +230,10 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.EnterableSystem**
 
 * type `Timberborn.EnterableSystem.Enterable`
-  * method `get_CanReserveSlot()`
+  * method `get_CanReserveSlot()`: `System.Boolean`
 * type `Timberborn.EnterableSystem.Enterer`
-  * method `get_CurrentBuilding()`
-  * method `get_IsInside()`
+  * method `get_CurrentBuilding()`: `Timberborn.EnterableSystem.Enterable`
+  * method `get_IsInside()`: `System.Boolean`
 
 **Timberborn.EntityPanelSystem**
 
@@ -234,105 +241,105 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 * type `Timberborn.EntityPanelSystem.EntityPanelModule+Builder`
   * method `.ctor()`
   * method `AddBottomFragment(Timberborn.EntityPanelSystem.IEntityPanelFragment, System.Int32)`
-  * method `Build()`
+  * method `Build()`: `Timberborn.EntityPanelSystem.EntityPanelModule`
 * type `Timberborn.EntityPanelSystem.IEntityPanelFragment`
 
 **Timberborn.EntitySystem**
 
 * type `Timberborn.EntitySystem.EntityComponent`
-  * method `get_EntityId()`
+  * method `get_EntityId()`: `System.Guid`
 * type `Timberborn.EntitySystem.EntityRegistry`
-  * method `GetEntity(System.Guid)`
+  * method `GetEntity(System.Guid)`: `Timberborn.EntitySystem.EntityComponent`
 * type `Timberborn.EntitySystem.EntityService`
   * method `Delete(Timberborn.BaseComponentSystem.BaseComponent)`
-  * method `Instantiate(Timberborn.BlueprintSystem.Blueprint)`
+  * method `Instantiate(Timberborn.BlueprintSystem.Blueprint)`: `Timberborn.EntitySystem.EntityComponent`
 * type `Timberborn.EntitySystem.IDeletableEntity`
 * type `Timberborn.EntitySystem.IPostInitializableEntity`
 * type `Timberborn.EntitySystem.LabeledEntitySpec`
-  * method `get_DisplayNameLocKey()`
-  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`
+  * method `get_DisplayNameLocKey()`: `System.String`
+  * method `op_Inequality(Timberborn.EntitySystem.LabeledEntitySpec, Timberborn.EntitySystem.LabeledEntitySpec)`: `System.Boolean`
 
 **Timberborn.FactionSystem**
 
 * type `Timberborn.FactionSystem.FactionSpec`
-  * method `get_Id()`
+  * method `get_Id()`: `System.String`
 
 **Timberborn.FireworkSystem**
 
 * type `Timberborn.FireworkSystem.FireworkLimits`
-  * field `MaxFlightDistance`
-  * field `MinFlightDistance`
+  * field `MaxFlightDistance`: `System.Int32`
+  * field `MinFlightDistance`: `System.Int32`
 * type `Timberborn.FireworkSystem.FireworkSpec`
 * type `Timberborn.FireworkSystem.FireworkSpecService`
-  * method `GetFireworkSpec(System.String)`
-  * method `HasSpec(System.String)`
+  * method `GetFireworkSpec(System.String)`: `Timberborn.FireworkSystem.FireworkSpec`
+  * method `HasSpec(System.String)`: `System.Boolean`
 
 **Timberborn.GameCycleSystem**
 
 * type `Timberborn.GameCycleSystem.CycleDayStartedEvent`
 * type `Timberborn.GameCycleSystem.GameCycleService`
-  * method `get_Cycle()`
+  * method `get_Cycle()`: `System.Int32`
 
 **Timberborn.GameDistricts**
 
 * type `Timberborn.GameDistricts.Citizen`
-  * method `get_AssignedDistrict()`
+  * method `get_AssignedDistrict()`: `Timberborn.GameDistricts.DistrictCenter`
 * type `Timberborn.GameDistricts.DistrictBuilding`
-  * method `get_District()`
+  * method `get_District()`: `Timberborn.GameDistricts.DistrictCenter`
 * type `Timberborn.GameDistricts.DistrictCenter`
-  * method `get_District()`
-  * method `get_DistrictName()`
+  * method `get_District()`: `Timberborn.Navigation.District`
+  * method `get_DistrictName()`: `System.String`
 * type `Timberborn.GameDistricts.DistrictCenterRegistry`
-  * method `get_FinishedDistrictCenters()`
+  * method `get_FinishedDistrictCenters()`: `Timberborn.Common.ReadOnlyList`1<Timberborn.GameDistricts.DistrictCenter>`
 
 **Timberborn.GameFactionSystem**
 
 * type `Timberborn.GameFactionSystem.FactionService`
-  * method `get_Current()`
+  * method `get_Current()`: `Timberborn.FactionSystem.FactionSpec`
 
 **Timberborn.Goods**
 
 * type `Timberborn.Goods.GoodAmount`
   * method `.ctor(System.String, System.Int32)`
-  * method `get_Amount()`
-  * method `get_GoodId()`
+  * method `get_Amount()`: `System.Int32`
+  * method `get_GoodId()`: `System.String`
 * type `Timberborn.Goods.GoodSpec`
-  * method `get_PluralDisplayName()`
-  * method `op_Inequality(Timberborn.Goods.GoodSpec, Timberborn.Goods.GoodSpec)`
+  * method `get_PluralDisplayName()`: `Timberborn.LocalizationSerialization.LocalizedText`
+  * method `op_Inequality(Timberborn.Goods.GoodSpec, Timberborn.Goods.GoodSpec)`: `System.Boolean`
 * type `Timberborn.Goods.IGoodService`
-  * method `GetGoodOrNull(System.String)`
+  * method `GetGoodOrNull(System.String)`: `Timberborn.Goods.GoodSpec`
 
 **Timberborn.InputSystem**
 
 * type `Timberborn.InputSystem.InputService`
-  * method `IsKeyHeld(System.String)`
+  * method `IsKeyHeld(System.String)`: `System.Boolean`
 
 **Timberborn.InventorySystem**
 
 * type `Timberborn.InventorySystem.DistrictInventoryRegistry`
-  * method `ActiveInventoriesWithStock(System.String)`
+  * method `ActiveInventoriesWithStock(System.String)`: `Timberborn.Common.ReadOnlyHashSet`1<Timberborn.InventorySystem.Inventory>`
 * type `Timberborn.InventorySystem.Inventory`
   * method `TakeConsumed(Timberborn.Goods.GoodAmount)`
-  * method `UnreservedAmountInStock(System.String)`
+  * method `UnreservedAmountInStock(System.String)`: `System.Int32`
 
 **Timberborn.Localization**
 
 * type `Timberborn.Localization.ILoc`
-  * method `T(System.String)`
-  * method `T<1>(System.String, !!0)`
-  * method `T<2>(System.String, !!0, !!1)`
-  * method `T<3>(System.String, !!0, !!1, !!2)`
+  * method `T(System.String)`: `System.String`
+  * method `T<1>(System.String, !!0)`: `System.String`
+  * method `T<2>(System.String, !!0, !!1)`: `System.String`
+  * method `T<3>(System.String, !!0, !!1, !!2)`: `System.String`
 
 **Timberborn.LocalizationSerialization**
 
 * type `Timberborn.LocalizationSerialization.LocalizedText`
-  * method `get_Value()`
+  * method `get_Value()`: `System.String`
 
 **Timberborn.Navigation**
 
 * type `Timberborn.Navigation.District`
 * type `Timberborn.Navigation.IDistrictService`
-  * method `GetRandomDestinationInDistrict(Timberborn.Navigation.District, UnityEngine.Vector3)`
+  * method `GetRandomDestinationInDistrict(Timberborn.Navigation.District, UnityEngine.Vector3)`: `UnityEngine.Vector3`
 
 **Timberborn.NeedBehaviorSystem**
 
@@ -344,14 +351,14 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 
 * type `Timberborn.NeedSystem.NeedManager`
   * method `ApplyEffect(Timberborn.Effects.InstantEffect&)`
-  * method `GetNeedPoints(System.String)`
-  * method `HasNeed(System.String)`
-  * method `NeedPointsToMax(System.String)`
+  * method `GetNeedPoints(System.String)`: `System.Single`
+  * method `HasNeed(System.String)`: `System.Boolean`
+  * method `NeedPointsToMax(System.String)`: `System.Single`
 
 **Timberborn.ScienceSystem**
 
 * type `Timberborn.ScienceSystem.BuildingUnlockingService`
-  * method `Unlocked(Timberborn.Buildings.BuildingSpec)`
+  * method `Unlocked(Timberborn.Buildings.BuildingSpec)`: `System.Boolean`
 
 **Timberborn.SingletonSystem**
 
@@ -365,7 +372,7 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.SoundSystem**
 
 * type `Timberborn.SoundSystem.AudioClipService`
-  * method `GetAudioClipNames(System.String)`
+  * method `GetAudioClipNames(System.String)`: `System.Collections.Generic.IEnumerable`1<System.String>`
 * type `Timberborn.SoundSystem.ISoundSystem`
   * method `LoopSingle3DSound(UnityEngine.GameObject, System.String, System.Int32)`
   * method `PlaySound2D(UnityEngine.GameObject, System.String, System.Int32)`
@@ -375,9 +382,9 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.TemplateAttachmentSystem**
 
 * type `Timberborn.TemplateAttachmentSystem.TemplateAttachment`
-  * method `get_GameObject()`
+  * method `get_GameObject()`: `UnityEngine.GameObject`
 * type `Timberborn.TemplateAttachmentSystem.TemplateAttachments`
-  * method `GetOrCreateAttachment(System.String)`
+  * method `GetOrCreateAttachment(System.String)`: `Timberborn.TemplateAttachmentSystem.TemplateAttachment`
 
 **Timberborn.TemplateInstantiation**
 
@@ -385,15 +392,15 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 * type `Timberborn.TemplateInstantiation.TemplateModule+Builder`
   * method `.ctor()`
   * method `AddDecorator<2>()`
-  * method `Build()`
+  * method `Build()`: `Timberborn.TemplateInstantiation.TemplateModule`
 
 **Timberborn.TemplateSystem**
 
 * type `Timberborn.TemplateSystem.TemplateService`
-  * method `GetAll<1>()`
+  * method `GetAll<1>()`: `System.Collections.Generic.IEnumerable`1<!!0>`
 * type `Timberborn.TemplateSystem.TemplateSpec`
-  * method `get_TemplateName()`
-  * method `op_Inequality(Timberborn.TemplateSystem.TemplateSpec, Timberborn.TemplateSystem.TemplateSpec)`
+  * method `get_TemplateName()`: `System.String`
+  * method `op_Inequality(Timberborn.TemplateSystem.TemplateSpec, Timberborn.TemplateSystem.TemplateSpec)`: `System.Boolean`
 
 **Timberborn.TickSystem**
 
@@ -402,28 +409,28 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.TimeSystem**
 
 * type `Timberborn.TimeSystem.IDayNightCycle`
-  * method `DayNumberHoursFromNow(System.Single)`
-  * method `get_DayLengthInSeconds()`
-  * method `get_DayNumber()`
-  * method `get_HoursPassedToday()`
-  * method `get_PartialDayNumber()`
+  * method `DayNumberHoursFromNow(System.Single)`: `System.Single`
+  * method `get_DayLengthInSeconds()`: `System.Single`
+  * method `get_DayNumber()`: `System.Int32`
+  * method `get_HoursPassedToday()`: `System.Single`
+  * method `get_PartialDayNumber()`: `System.Single`
 * type `Timberborn.TimeSystem.NonlinearAnimationManager`
-  * method `get_SpeedMultiplier()`
+  * method `get_SpeedMultiplier()`: `System.Single`
 
 **Timberborn.ToolSystem**
 
 * type `Timberborn.ToolSystem.ITool`
 * type `Timberborn.ToolSystem.IToolLocker`
 * type `Timberborn.ToolSystem.ToolUnlockingService`
-  * method `IsLocked(Timberborn.ToolSystem.ITool)`
+  * method `IsLocked(Timberborn.ToolSystem.ITool)`: `System.Boolean`
   * method `Unlock(Timberborn.ToolSystem.ITool)`
 
 **Timberborn.WalkingSystem**
 
 * type `Timberborn.WalkingSystem.WalkInsideExecutor`
-  * method `Launch(Timberborn.EnterableSystem.Enterable)`
+  * method `Launch(Timberborn.EnterableSystem.Enterable)`: `Timberborn.BehaviorSystem.ExecutorStatus`
 * type `Timberborn.WalkingSystem.WalkToPositionExecutor`
-  * method `Launch(UnityEngine.Vector3)`
+  * method `Launch(UnityEngine.Vector3)`: `Timberborn.BehaviorSystem.ExecutorStatus`
 
 **Timberborn.Wandering**
 
@@ -432,73 +439,73 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 **Timberborn.WeatherSystem**
 
 * type `Timberborn.WeatherSystem.WeatherService`
-  * method `NextDayIsHazardousWeather()`
-  * method `get_IsHazardousWeather()`
+  * method `NextDayIsHazardousWeather()`: `System.Boolean`
+  * method `get_IsHazardousWeather()`: `System.Boolean`
 
 **Timberborn.WindSystem**
 
 * type `Timberborn.WindSystem.WindService`
-  * method `get_WindDirection()`
-  * method `get_WindStrength()`
+  * method `get_WindDirection()`: `UnityEngine.Vector2`
+  * method `get_WindStrength()`: `System.Single`
 
 **Timberborn.WorkSystem**
 
 * type `Timberborn.WorkSystem.Worker`
-  * method `get_Employed()`
-  * method `get_Workplace()`
+  * method `get_Employed()`: `System.Boolean`
+  * method `get_Workplace()`: `Timberborn.WorkSystem.Workplace`
 * type `Timberborn.WorkSystem.WorkerRootBehavior`
 * type `Timberborn.WorkSystem.WorkerWorkingHours`
-  * method `get_AreWorkingHours()`
+  * method `get_AreWorkingHours()`: `System.Boolean`
 * type `Timberborn.WorkSystem.Workplace`
 
 **UnityEngine.CoreModule**
 
 * type `UnityEngine.Component`
-  * method `GetComponentInChildren<1>(System.Boolean)`
-  * method `get_gameObject()`
+  * method `GetComponentInChildren<1>(System.Boolean)`: `!!0`
+  * method `get_gameObject()`: `UnityEngine.GameObject`
 * type `UnityEngine.Debug`
   * method `Log(System.Object)`
   * method `LogError(System.Object)`
   * method `LogWarning(System.Object)`
 * type `UnityEngine.GameObject`
   * method `.ctor(System.String)`
-  * method `GetComponentInChildren<1>(System.Boolean)`
-  * method `GetComponentsInChildren<1>(System.Boolean)`
+  * method `GetComponentInChildren<1>(System.Boolean)`: `!!0`
+  * method `GetComponentsInChildren<1>(System.Boolean)`: `!!0[]`
   * method `SetActive(System.Boolean)`
-  * method `get_transform()`
+  * method `get_transform()`: `UnityEngine.Transform`
 * type `UnityEngine.Mathf`
-  * method `Approximately(System.Single, System.Single)`
-  * method `CeilToInt(System.Single)`
-  * method `Clamp(System.Single, System.Single, System.Single)`
-  * method `Clamp01(System.Single)`
-  * method `Cos(System.Single)`
-  * method `Max(System.Single, System.Single)`
-  * method `Sin(System.Single)`
+  * method `Approximately(System.Single, System.Single)`: `System.Boolean`
+  * method `CeilToInt(System.Single)`: `System.Int32`
+  * method `Clamp(System.Single, System.Single, System.Single)`: `System.Single`
+  * method `Clamp01(System.Single)`: `System.Single`
+  * method `Cos(System.Single)`: `System.Single`
+  * method `Max(System.Single, System.Single)`: `System.Single`
+  * method `Sin(System.Single)`: `System.Single`
 * type `UnityEngine.Object`
-  * method `get_name()`
-  * method `op_Implicit(UnityEngine.Object)`
+  * method `get_name()`: `System.String`
+  * method `op_Implicit(UnityEngine.Object)`: `System.Boolean`
 * type `UnityEngine.Quaternion`
-  * method `Euler(System.Single, System.Single, System.Single)`
+  * method `Euler(System.Single, System.Single, System.Single)`: `UnityEngine.Quaternion`
 * type `UnityEngine.Time`
-  * method `get_unscaledTime()`
+  * method `get_unscaledTime()`: `System.Single`
 * type `UnityEngine.Transform`
   * method `SetParent(UnityEngine.Transform, System.Boolean)`
-  * method `get_position()`
+  * method `get_position()`: `UnityEngine.Vector3`
   * method `set_position(UnityEngine.Vector3)`
 * type `UnityEngine.Vector2`
-  * field `x`
-  * field `y`
+  * field `x`: `System.Single`
+  * field `y`: `System.Single`
 * type `UnityEngine.Vector3`
-  * field `x`
-  * field `z`
+  * field `x`: `System.Single`
+  * field `z`: `System.Single`
   * method `.ctor(System.Single, System.Single, System.Single)`
-  * method `get_sqrMagnitude()`
-  * method `get_up()`
-  * method `get_zero()`
-  * method `op_Addition(UnityEngine.Vector3, UnityEngine.Vector3)`
-  * method `op_Inequality(UnityEngine.Vector3, UnityEngine.Vector3)`
-  * method `op_Multiply(UnityEngine.Vector3, System.Single)`
-  * method `op_Subtraction(UnityEngine.Vector3, UnityEngine.Vector3)`
+  * method `get_sqrMagnitude()`: `System.Single`
+  * method `get_up()`: `UnityEngine.Vector3`
+  * method `get_zero()`: `UnityEngine.Vector3`
+  * method `op_Addition(UnityEngine.Vector3, UnityEngine.Vector3)`: `UnityEngine.Vector3`
+  * method `op_Inequality(UnityEngine.Vector3, UnityEngine.Vector3)`: `System.Boolean`
+  * method `op_Multiply(UnityEngine.Vector3, System.Single)`: `UnityEngine.Vector3`
+  * method `op_Subtraction(UnityEngine.Vector3, UnityEngine.Vector3)`: `UnityEngine.Vector3`
 
 **UnityEngine.ParticleSystemModule**
 
@@ -507,11 +514,11 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
   * method `Play(System.Boolean)`
   * method `Simulate(System.Single, System.Boolean, System.Boolean, System.Boolean)`
   * method `Stop(System.Boolean, UnityEngine.ParticleSystemStopBehavior)`
-  * method `get_emission()`
-  * method `get_isPlaying()`
-  * method `get_main()`
-  * method `get_particleCount()`
-  * method `get_velocityOverLifetime()`
+  * method `get_emission()`: `UnityEngine.ParticleSystem+EmissionModule`
+  * method `get_isPlaying()`: `System.Boolean`
+  * method `get_main()`: `UnityEngine.ParticleSystem+MainModule`
+  * method `get_particleCount()`: `System.Int32`
+  * method `get_velocityOverLifetime()`: `UnityEngine.ParticleSystem+VelocityOverLifetimeModule`
 * type `UnityEngine.ParticleSystem+EmissionModule`
   * method `set_enabled(System.Boolean)`
   * method `set_rateOverTime(UnityEngine.ParticleSystem+MinMaxCurve)`
@@ -520,9 +527,9 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
   * method `set_simulationSpeed(System.Single)`
 * type `UnityEngine.ParticleSystem+MinMaxCurve`
   * method `.ctor(System.Single, System.Single)`
-  * method `op_Implicit(System.Single)`
+  * method `op_Implicit(System.Single)`: `UnityEngine.ParticleSystem+MinMaxCurve`
 * type `UnityEngine.ParticleSystem+VelocityOverLifetimeModule`
-  * method `get_enabled()`
+  * method `get_enabled()`: `System.Boolean`
   * method `set_x(UnityEngine.ParticleSystem+MinMaxCurve)`
   * method `set_z(UnityEngine.ParticleSystem+MinMaxCurve)`
 * type `UnityEngine.ParticleSystemStopBehavior`
@@ -534,32 +541,48 @@ festive need decays by itself); lanterns in the air are not saved (the sky refil
 * type `UnityEngine.UIElements.Button`
   * method `add_clicked(System.Action)`
 * type `UnityEngine.UIElements.ChangeEvent`1`
-  * method `get_newValue()`
+  * method `get_newValue()`: `!0`
 * type `UnityEngine.UIElements.EventCallback`1`
   * method `.ctor(System.Object, System.IntPtr)`
 * type `UnityEngine.UIElements.INotifyValueChangedExtensions`
-  * method `RegisterValueChangedCallback<1>(UnityEngine.UIElements.INotifyValueChanged`1<!!0>, UnityEngine.UIElements.EventCallback`1<UnityEngine.UIElements.ChangeEvent`1<!!0>>)`
+  * method `RegisterValueChangedCallback<1>(UnityEngine.UIElements.INotifyValueChanged`1<!!0>, UnityEngine.UIElements.EventCallback`1<UnityEngine.UIElements.ChangeEvent`1<!!0>>)`: `System.Boolean`
 * type `UnityEngine.UIElements.INotifyValueChanged`1`
 * type `UnityEngine.UIElements.IStyle`
   * method `set_whiteSpace(UnityEngine.UIElements.StyleEnum`1<UnityEngine.UIElements.WhiteSpace>)`
 * type `UnityEngine.UIElements.Label`
   * method `.ctor()`
 * type `UnityEngine.UIElements.StyleEnum`1`
-  * method `op_Implicit(!0)`
+  * method `op_Implicit(!0)`: `UnityEngine.UIElements.StyleEnum`1<!0>`
 * type `UnityEngine.UIElements.TextElement`
-  * method `get_text()`
+  * method `get_text()`: `System.String`
   * method `set_text(System.String)`
 * type `UnityEngine.UIElements.Toggle`
   * method `.ctor(System.String)`
 * type `UnityEngine.UIElements.UQueryExtensions`
-  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`
+  * method `Q<1>(UnityEngine.UIElements.VisualElement, System.String, System.String)`: `!!0`
 * type `UnityEngine.UIElements.VisualElement`
   * method `.ctor()`
   * method `Add(UnityEngine.UIElements.VisualElement)`
   * method `AddToClassList(System.String)`
   * method `SetEnabled(System.Boolean)`
-  * method `get_style()`
+  * method `get_style()`: `UnityEngine.UIElements.IStyle`
   * method `set_name(System.String)`
 * type `UnityEngine.UIElements.WhiteSpace`
+
+**Game classes derived from and interfaces implemented** (with the abstract members each had at build time; a new one keeps the module from loading)
+
+* class `Bindito.Core.Configurator`: `Configure`
+* interface `Bindito.Core.IProvider`1`: `Get`
+* class `Timberborn.BaseComponentSystem.BaseComponent`
+* interface `Timberborn.BaseComponentSystem.IAwakableComponent`: `Awake`
+* class `Timberborn.BehaviorSystem.RootBehavior`: `Decide`
+* interface `Timberborn.BlockSystem.IFinishedStateListener`: `OnEnterFinishedState`, `OnExitFinishedState`
+* interface `Timberborn.EntityPanelSystem.IEntityPanelFragment`: `ClearFragment`, `InitializeFragment`, `ShowFragment`, `UpdateFragment`
+* interface `Timberborn.EntitySystem.IDeletableEntity`: `DeleteEntity`
+* interface `Timberborn.EntitySystem.IPostInitializableEntity`: `PostInitializeEntity`
+* interface `Timberborn.SingletonSystem.ILoadableSingleton`: `Load`
+* interface `Timberborn.SingletonSystem.IPostLoadableSingleton`: `PostLoad`
+* interface `Timberborn.TickSystem.ITickableSingleton`: `Tick`
+* interface `Timberborn.ToolSystem.IToolLocker`: `ShouldLock`, `TryToUnlock`
 
 <!-- api:end -->

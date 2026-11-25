@@ -103,6 +103,7 @@ namespace Pandaborn.Festival
         private Guid _districtId = Guid.Empty;
         private Guid _squareId = Guid.Empty;
         private DistrictCenter _district;
+        private readonly List<string> _faults = new List<string>();
 
         public FestivalService(TemplateService templateService, PandabornStore store, Messenger messenger, ILoc loc, IDayNightCycle dayNightCycle,
                                GameCycleService gameCycleService, WeatherService weatherService, EventBus eventBus, FestivalFireworks fireworks,
@@ -273,11 +274,11 @@ namespace Pandaborn.Festival
                     FeatureRegistry.ReportNoData("Festival", "the faction's adult template has no PandabornFestivalSpec");
                 return;
             }
-            var degraded = new List<string>();
+            // every check is made again in each game, so each fault is this game's (forgotten when the next one starts)
+            _faults.Clear();
             FestivalGoer.ResetForGame();
-            if (FestivalGoer.CheckInsertion() != null) degraded.Add("no day off (" + FestivalGoer.InsertionError + ")");
-            if (!_fireworks.Available) degraded.Add("no fireworks in the sky (" + _fireworks.Unavailable + ")");
-            if (degraded.Count > 0) FeatureRegistry.ReportDegraded("Festival", string.Join("; ", degraded));
+            if (FestivalGoer.CheckInsertion() != null) Fault("no day off (" + FestivalGoer.InsertionError + ")");
+            if (!_fireworks.Available) Fault("no fireworks in the sky (" + _fireworks.Unavailable + ")");
             _keepWorking = new HashSet<string>(Spec.KeepWorkingTemplates.IsDefault ? Enumerable.Empty<string>() : Spec.KeepWorkingTemplates, StringComparer.Ordinal);
             ReadState();
             _eventBus.Register(this);
@@ -355,6 +356,36 @@ namespace Pandaborn.Festival
             _attended.Remove(goer);
         }
 
+        /// <summary>Something of the festival does not work in this game: said in the feature report, every fault of the
+        /// game in one line.</summary>
+        internal void Fault(string what)
+        {
+            if (!_faults.Contains(what)) _faults.Add(what);
+            FeatureRegistry.ReportDegradedInGame("Festival", string.Join("; ", _faults));
+        }
+
+        /// <summary>What a festival notice is about in the notification log: the square it is held at, else its district's
+        /// centre; null (the Core's default) only for a village-wide festival of an old save without a square.</summary>
+        private BaseComponent NoticeSubject
+        {
+            get
+            {
+                try
+                {
+                    var district = FestivalDistrict;
+                    if (district)
+                    {
+                        var square = SquareFor(district);
+                        return square ? (BaseComponent)square : district;
+                    }
+                    foreach (var s in _squares)
+                        if (s && s.IsFinished && (_squareId == Guid.Empty || s.EntityId == _squareId)) return s;
+                }
+                catch (Exception) { }
+                return null;
+            }
+        }
+
         /// <summary>A listener's failure must never stop the festival, or a building being finished or removed.</summary>
         private void RaiseChanged()
         {
@@ -428,7 +459,7 @@ namespace Pandaborn.Festival
             Persist();
             Debug.Log(Log + (auto ? "auto-" : "") + "called for day " + FestivalDay + (grand ? " (grand)" : "") + " in district '"
                       + FestivalDistrictName + "'; took " + string.Join(", ", taken.Select(t => t.GoodId + " " + t.Amount)));
-            _messenger.Post(_loc.T(grand ? "Pandaborn.Festival.Message.CalledGrand" : "Pandaborn.Festival.Message.Called"));
+            _messenger.Post(_loc.T(grand ? "Pandaborn.Festival.Message.CalledGrand" : "Pandaborn.Festival.Message.Called"), square);
             UpdateLights();
             RaiseChanged();
             return true;
@@ -483,9 +514,9 @@ namespace Pandaborn.Festival
             Debug.Log(Log + "started (" + why + "), day " + FestivalDay + ", cycle " + LastCycle + (Grand ? ", grand" : ""));
             if (NamesDistrict)
                 _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrandDistrict" : "Pandaborn.Festival.Message.StartedDistrict",
-                                       FestivalDistrictName));
+                                       FestivalDistrictName), NoticeSubject);
             else
-                _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrand" : "Pandaborn.Festival.Message.Started"));
+                _messenger.Post(_loc.T(Grand ? "Pandaborn.Festival.Message.StartedGrand" : "Pandaborn.Festival.Message.Started"), NoticeSubject);
             _sounds.Play2D(FestivalSounds.Firecrackers);
             UpdateLights();
             RaiseChanged();
@@ -508,6 +539,7 @@ namespace Pandaborn.Festival
             }
             bool named = NamesDistrict;
             string districtName = FestivalDistrictName;
+            var subject = NoticeSubject;
             _attended.Clear();
             Phase = FestivalPhase.None;
             Tradition++;
@@ -516,9 +548,9 @@ namespace Pandaborn.Festival
             Persist();
             Debug.Log(Log + "ended (" + why + "); festive spirit for " + granted + " colonists; Tradition " + Tradition);
             if (named)
-                _messenger.Post(_loc.T("Pandaborn.Festival.Message.EndedDistrict", districtName, Tradition.ToString(CultureInfo.InvariantCulture)));
+                _messenger.Post(_loc.T("Pandaborn.Festival.Message.EndedDistrict", districtName, Tradition.ToString(CultureInfo.InvariantCulture)), subject);
             else
-                _messenger.Post(_loc.T("Pandaborn.Festival.Message.Ended", Tradition.ToString(CultureInfo.InvariantCulture)));
+                _messenger.Post(_loc.T("Pandaborn.Festival.Message.Ended", Tradition.ToString(CultureInfo.InvariantCulture)), subject);
             UpdateLights();
             try { TraditionChanged?.Invoke(Tradition); }
             catch (Exception e) { Debug.LogError(Log + "Tradition update failed: " + e); }

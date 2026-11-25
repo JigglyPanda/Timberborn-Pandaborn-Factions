@@ -18,6 +18,8 @@ namespace Pandaborn.Festival
             Bind<FestivalSquare>().AsTransient();
             Bind<FestivalGoer>().AsTransient();
             MultiBind<IToolLocker>().To<TraditionToolLocker>().AsSingleton();
+            // the evening at the square goes before the Ringtails' day rest (Core's contract; inactive outside the show)
+            MultiBind<Pandaborn.Core.IGatheringClock>().To<FestivalGatheringClock>().AsSingleton();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
             MultiBind<EntityPanelModule>().ToProvider<PanelModuleProvider>().AsSingleton();
         }
