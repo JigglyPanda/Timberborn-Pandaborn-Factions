@@ -21,8 +21,8 @@ Pandaborn.Festival.Rule,"Once a cycle, the whole village takes a day and a night
 Pandaborn.Festival.RuleNoDayOff,"Once a cycle, the village celebrates in the evening. Afterwards everyone is festive, and Tradition rises by one step. Tradition unlocks decorations. (This game version does not allow the day off.)",Festival Square panel when the day off is unavailable
 Pandaborn.Festival.Message.Called,The Lantern Festival is called. It begins at dawn.,Notification
 Pandaborn.Festival.Message.CalledGrand,The Grand Festival is called. It begins at dawn.,Notification. A Grand Festival is a Lantern Festival with fireworks
-Pandaborn.Festival.Message.Started,The Lantern Festival has begun. Only the pump crews work today.,Notification
-Pandaborn.Festival.Message.StartedGrand,The Grand Festival has begun. Only the pump crews work today.,Notification
+Pandaborn.Festival.Message.Started,The Lantern Festival has begun. Only the water crews work today.,Notification
+Pandaborn.Festival.Message.StartedGrand,The Grand Festival has begun. Only the water crews work today.,Notification
 Pandaborn.Festival.Message.Ended,The Lantern Festival is over. Everyone is festive. Tradition: {0},Notification
 Pandaborn.Festival.Tradition.Locked,"{0} is unlocked by Tradition {1}. Each Lantern Festival raises Tradition by one step. Tradition now: {2}",Dialog when a locked decoration is clicked
 Pandaborn.Flowering.Setting.Title,"How often should the bamboo flower? Now: {0}. A Great Flowering is announced a full cycle ahead.",Setting dialog

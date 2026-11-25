@@ -173,4 +173,8 @@ Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are
 # longer need a Ringtails-only variant. Text pass 2026-11-25: the built table writes "@@Ringtails" (tools/candidates.py
 # adds a second @), which Words.cs reads as the feature "@Ringtails", so feature lines have never applied; the plain
 # lines must therefore be true with and without Ringtails.
+# Head count and beds include Ringtails, so "panda" is right there. Employed, vacancies and unemployed count Inkpaws
+# (and Wooden Oxen) only, so with Ringtails on the employment words say Inkpaw.
+@Ringtails	BatchControl.PopulationStatistics.BeaverEmployment	Inkpaw employment
+@Ringtails	Dwelling.NoUnemployedCanReach	No unemployed Inkpaw can reach this dwelling.
 @Ringtails	Work.BeaverOnly	<YellowHighlight>Inkpaw-only:</YellowHighlight> Only Inkpaws are allowed to work in this workplace, not Ringtails or Wooden Oxen.

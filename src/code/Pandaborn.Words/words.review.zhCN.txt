@@ -138,6 +138,9 @@ WonderCompletion.Statistic.BeaversBorn	熊猫诞生：
 WonderCompletion.Statistic.BeaversExploded	熊猫爆炸：
 WonderCompletion.Statistic.ChippedTeeth	受损牙齿：
 Work.BeaverOnly	<YellowHighlight>仅限墨爪：</YellowHighlight>只有墨爪可以在此处工作。
+# 人口与床位包含环尾，所以用“熊猫”；就业、空位与无业只统计墨爪（和木牛），所以有环尾时就业相关的文字写“墨爪”。
+@Ringtails	BatchControl.PopulationStatistics.BeaverEmployment	墨爪劳动
+@Ringtails	Dwelling.NoUnemployedCanReach	没有无业墨爪可以抵达此住处。
 @Ringtails	Work.BeaverOnly	<YellowHighlight>仅限墨爪：</YellowHighlight>只有墨爪可以在此处工作，环尾和木牛不行。
 
 # keep AnalyticsConsent.Info 游戏名称《海狸浮生记 Timberborn》或主菜单文字

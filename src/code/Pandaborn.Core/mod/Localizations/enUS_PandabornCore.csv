@@ -1,13 +1,9 @@
 ID,Text,Comment
-Pandaborn.Core.FeatureOff,"Pandaborn - Factions: {0} is switched off because this game version changed something it relies on ({1}). Everything else works as usual.",Notice when a part of the mod fails its check before loading; {0} = one of the Pandaborn.Feature names and {1} = the technical reason
-Pandaborn.Core.FeatureForcedOff,"Pandaborn - Factions: {0} is switched off by a developer setting.",Notice when a part of the mod is forced off for testing
-Pandaborn.Core.Duplicate,"Pandaborn - Factions is enabled twice (for example a local copy and the Workshop copy). Only the copy in {0} runs its code. Disable one of them in the mod manager.",Notice when two copies of the mod are enabled
 Pandaborn.Feature.Specs,"its game data",Name of a part of the mod; follows 'Pandaborn - Factions:' in a notice
 Pandaborn.Feature.Core,"its core",Name of a part of the mod; follows 'Pandaborn - Factions:' in a notice
 Pandaborn.Feature.Bell,"The afternoon bell",Name of a part of the mod in notices
 Pandaborn.Feature.Names,"Panda names",Name of a part of the mod in notices
 Pandaborn.Feature.Look,"The Inkpaw look of buildings",Name of a part of the mod in notices
-Pandaborn.Core.FeatureDegraded,"Pandaborn - Factions: {0} runs in a reduced form ({1}). Everything else works as usual.",Notice when a part of the mod runs in a fallback or reduced form
 Pandaborn.Core.Report,Pandaborn - Factions: {0},"Notification-log entry listing every part of the mod and its state, once per save"
 Pandaborn.Core.Report.On,on,State of a part of the mod in the report
 Pandaborn.Core.Report.ForcedOff,off (developer setting),State of a part of the mod in the report
