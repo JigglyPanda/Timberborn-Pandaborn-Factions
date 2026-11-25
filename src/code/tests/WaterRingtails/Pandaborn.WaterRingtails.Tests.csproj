@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tests of the Water and Ringtails modules' rules without the game: one status per flume fault and the run walk
+       (FlumeRules), the gate's badwater latch and flow setting, the water put back after a load; the Ringtails' shift
+       window, the kit valve and the return of a family (RingtailRules). Both files have no game types and are compiled
+       in here as they are. No test framework and no packages: a console program that exits 1 when a check fails.
+         dotnet run -c Release -p src\code\tests\WaterRingtails
+       Never shipped; not in Pandaborn.Code.sln (the solution builds into the mod folder). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Pandaborn.WaterRingtails.Tests</AssemblyName>
+    <RootNamespace>Pandaborn.WaterRingtails.Tests</RootNamespace>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\Pandaborn.Water\FlumeRules.cs" Link="FlumeRules.cs" />
+    <Compile Include="..\..\Pandaborn.Ringtails\RingtailRules.cs" Link="RingtailRules.cs" />
+  </ItemGroup>
+</Project>
