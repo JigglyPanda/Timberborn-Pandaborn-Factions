@@ -1,5 +1,8 @@
+using System;
 using Pandaborn.Specs;
 using Timberborn.BaseComponentSystem;
+using Timberborn.BlockSystem;
+using Timberborn.Buildings;
 using Timberborn.EntitySystem;
 using Timberborn.HazardousWeatherSystem;
 using Timberborn.Localization;
@@ -33,15 +36,30 @@ namespace Pandaborn.Water
 
         public bool InDrought => _weatherService.IsHazardousWeather && _hazardousWeatherService.CurrentCycleHazardousWeather is DroughtWeather;
 
-        public float ProductionEfficiency() => InDrought ? _spec.DroughtEfficiency : _spec.TemperateEfficiency;
+        public float ProductionEfficiency()
+        {
+            // the game calls this from the manufactory's tick: never throw, and answer "full rate" (the vanilla
+            // building) when the weather cannot be read
+            try { return InDrought ? _spec.DroughtEfficiency : _spec.TemperateEfficiency; }
+            catch (Exception e)
+            {
+                WaterGuard.Report("the Dew Collector's weather check", e);
+                return 1f;
+            }
+        }
 
         public float MaxProductionProgressChange(float expectedProductionProgressChange) => expectedProductionProgressChange;
     }
 
     /// <summary>
     /// Scoop Wheel / Water Trip-Hammer (PandabornCurrentDrivenSpec): reads the vanilla water-powered generator on the same
-    /// building and raises "the current here is too weak" (with what to do) when it turns nothing. The vanilla "needs
-    /// power" status still shows too: it is vanilla's and cannot be removed without patching.
+    /// building and raises "the current here is too weak" (with what to do) when it turns nothing.
+    /// The building is its own power source (one mechanical node that is generator and consumer), so while it is becalmed
+    /// vanilla's NoPowerStatus raises "Building needs power" as well: the same cause, said twice and the second time
+    /// wrongly (no shaft can help). Our status is therefore a priority status, the game's own way to let one status
+    /// stand for a building (as "Paused" does): while it is active the building shows only priority statuses, so the
+    /// vanilla line, its floating icon and its alert are hidden without touching vanilla code. A paused wheel shows
+    /// "Paused" only.
     /// </summary>
     public class CurrentDriven : TickableComponent, IAwakableComponent, IInitializableEntity
     {
@@ -50,6 +68,8 @@ namespace Pandaborn.Water
         private readonly CisternTapHint _hint;
         private WaterPoweredGenerator _generator;
         private MechanicalNode _node;
+        private BlockObject _blockObject;
+        private PausableBuilding _pausable;
         private StatusSubject _subject;
         private StatusToggle _weak, _weakWithHint;
         private bool _hadCurrent;
@@ -84,7 +104,9 @@ namespace Pandaborn.Water
         {
             _generator = GetComponent<WaterPoweredGenerator>();
             _node = GetComponent<MechanicalNode>();
-            _weak = StatusToggle.CreateNormalStatusWithFloatingIcon("NothingToDo", _loc.T("Pandaborn.Water.Status.WeakCurrent"));
+            _blockObject = GetComponent<BlockObject>();
+            _pausable = GetComponent<PausableBuilding>();
+            _weak = StatusToggle.CreatePriorityStatusWithFloatingIcon("NothingToDo", _loc.T("Pandaborn.Water.Status.WeakCurrent"));
         }
 
         public void InitializeEntity()
@@ -97,21 +119,31 @@ namespace Pandaborn.Water
         {
             if (--_countdown > 0) return;
             _countdown = Interval;
-            var blockObject = GetComponent<Timberborn.BlockSystem.BlockObject>();
-            bool still = blockObject != null && blockObject.IsFinished && _generator != null && Current <= 0f;
-            if (!still && Current > 0f) _hadCurrent = true;
-            // a wheel that turned before and stopped (its river dried up), or any wheel in a drought: stored water helps.
-            // A wheel built in still water is in the wrong place, and the plain status says so.
-            bool hinted = still && (_hadCurrent || _hint.InDrought) && _hint.Available && EnsureHinted();
-            _weak.Toggle(still && !hinted);
-            _weakWithHint?.Toggle(hinted);
+            try
+            {
+                bool finished = _blockObject != null && _blockObject.IsFinished && _generator != null;
+                bool paused = _pausable != null && _pausable.Paused;
+                bool still = finished && !paused && Current <= 0f;
+                if (finished && Current > 0f) _hadCurrent = true;
+                // a wheel that turned before and stopped (its river dried up), or any wheel in a drought: stored water helps.
+                // A wheel built in still water is in the wrong place, and the plain status says so.
+                bool hinted = still && (_hadCurrent || _hint.InDrought) && _hint.Available && EnsureHinted();
+                _weak.Toggle(still && !hinted);
+                _weakWithHint?.Toggle(hinted);
+            }
+            catch (Exception e)
+            {
+                WaterGuard.Report("a wheel's current check", e);
+                try { _weak.Deactivate(); _weakWithHint?.Deactivate(); } catch (Exception) { }
+                DisableComponent();
+            }
         }
 
         private bool EnsureHinted()
         {
             if (_weakWithHint != null) return true;
             if (_subject == null || _hint.Sentence == null) return false;
-            _weakWithHint = StatusToggle.CreateNormalStatusWithFloatingIcon("NothingToDo",
+            _weakWithHint = StatusToggle.CreatePriorityStatusWithFloatingIcon("NothingToDo",
                 _loc.T("Pandaborn.Water.Status.WeakCurrent") + " " + _hint.Sentence);
             _subject.RegisterStatus(_weakWithHint);
             return true;
