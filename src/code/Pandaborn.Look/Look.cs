@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bindito.Core;
+using Pandaborn.Core;
 using Timberborn.AssetSystem;
 using Timberborn.BlueprintSystem;
 using Timberborn.GameFactionSystem;
@@ -49,6 +50,9 @@ namespace Pandaborn.Look
         private const string MaterialFolder = "Materials/Pandaborn/Look";
         private static readonly List<(Material Target, Material Backup)> Swapped = new List<(Material, Material)>();
         private static bool _failed;
+        /// <summary>The game whose swap is in place. Its Unload restores; an older game's late Unload must not undo a
+        /// newer game's swap (the materials are shared by the whole session).</summary>
+        private static MaterialSwap _owner;
 
         private readonly FactionService _factionService;
         private readonly ISpecService _specService;
@@ -77,6 +81,7 @@ namespace Pandaborn.Look
 
         public void Unload()
         {
+            if (_owner != null && !ReferenceEquals(_owner, this)) return;
             Restore("on game unload");
         }
 
@@ -84,17 +89,33 @@ namespace Pandaborn.Look
         {
             // a previous game that ended without Unload (exception) must not leave its look behind
             Restore("before a new game");
-            if (_failed) return;
+            if (_failed)
+            {
+                ReportFailed();
+                return;
+            }
             try
             {
                 Swap();
+                if (Swapped.Count > 0) _owner = this;
             }
             catch (Exception e)
             {
                 _failed = true;
                 Debug.LogError(Tag + "re-theming failed; the vanilla look is kept for the rest of this session: " + e);
                 Restore("after a failed swap");
+                ReportFailed();
             }
+        }
+
+        private void ReportFailed()
+        {
+            try
+            {
+                if (_factionService.Current?.Id == FactionId)
+                    FeatureRegistry.ReportDegradedInGame("Look", "re-theming failed earlier in this session; buildings keep the Folktails look until the game is restarted");
+            }
+            catch (Exception) { }
         }
 
         private void Swap()
@@ -121,6 +142,7 @@ namespace Pandaborn.Look
             if (ours.Count == 0)
             {
                 Debug.Log(Tag + "no replacement materials under " + MaterialFolder + " (asset bundle missing?): vanilla look");
+                FeatureRegistry.ReportNoData("Look", "the pandabornlook asset bundle is not loaded; buildings keep the Folktails look");
                 return;
             }
 
@@ -142,7 +164,7 @@ namespace Pandaborn.Look
         /// <summary>Puts every re-themed material back as it was. Safe to call at any time.</summary>
         public static void Restore(string when)
         {
-            if (Swapped.Count == 0) return;
+            if (Swapped.Count == 0) { _owner = null; return; }
             int n = Swapped.Count, failed = 0;
             foreach (var (target, backup) in Swapped)
             {
@@ -157,6 +179,7 @@ namespace Pandaborn.Look
                 }
             }
             Swapped.Clear();
+            _owner = null;
             Debug.Log(Tag + "restored " + n + " materials " + when + (failed > 0 ? " (" + failed + " failed)" : ""));
         }
     }
