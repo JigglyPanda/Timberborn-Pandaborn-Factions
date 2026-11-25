@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tests of the two events' arithmetic without the game: the Great Flowering's calendar (FloweringSchedule) and the
+       Lantern Festival's rules (FestivalRules). Both files have no game types and are compiled in here as they are.
+       No test framework and no packages (nothing to restore): a console program that exits 1 when a check fails.
+         dotnet run -c Release -p src\code\tests\Events
+       Never shipped; not in Pandaborn.Code.sln (the solution builds into the mod folder). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Pandaborn.Events.Tests</AssemblyName>
+    <RootNamespace>Pandaborn.Events.Tests</RootNamespace>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\Pandaborn.Flowering\FloweringSchedule.cs" Link="FloweringSchedule.cs" />
+    <Compile Include="..\..\Pandaborn.Festival\FestivalRules.cs" Link="FestivalRules.cs" />
+  </ItemGroup>
+</Project>
