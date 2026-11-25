@@ -28,7 +28,32 @@ namespace Pandaborn.Ringtails
     ///   4. otherwise idles for a tick.
     /// The insertion is the one private-field dependency of the rest behaviour (BehaviorManager._rootBehaviors).
     /// </summary>
+    /// <summary>
+    /// Every gathering clock registered through Core (Core always registers the inactive NoGatheringClock, so the list is
+    /// never empty). A singleton, so the list is injected the way every other multi-bound list of the mod is.
+    /// </summary>
+    public class RingtailGatherings
+    {
+        private readonly IGatheringClock[] _clocks;
+
+        public RingtailGatherings(IEnumerable<IGatheringClock> clocks)
+        {
+            _clocks = clocks != null ? clocks.ToArray() : new IGatheringClock[0];
+        }
+
+        public bool GathersNow(BaseComponent colonist)
+        {
+            for (int i = 0; i < _clocks.Length; i++)
+            {
+                try { if (_clocks[i] != null && _clocks[i].GathersNow(colonist)) return true; }
+                catch (Exception) { }
+            }
+            return false;
+        }
+    }
+
     public class RingtailRestRootBehavior : RootBehavior, IAwakableComponent, IInitializableEntity
+
     {
         private const string SleepNeedId = "Sleep";
         private static readonly FieldInfo RootBehaviorsField =
@@ -55,15 +80,15 @@ namespace Pandaborn.Ringtails
         private const float NearlyRested = 0.75f;
         private int _dawnSleepDay = -1;
 
-        private readonly IGatheringClock[] _gatherings;
+        private readonly RingtailGatherings _gatherings;
 
         public RingtailRestRootBehavior(IDayNightCycle dayNightCycle, RingtailWorkday workday, RingtailService ringtailService,
-                                        IEnumerable<IGatheringClock> gatherings)
+                                        RingtailGatherings gatherings)
         {
             _dayNightCycle = dayNightCycle;
             _workday = workday;
             _ringtailService = ringtailService;
-            _gatherings = gatherings != null ? gatherings.ToArray() : new IGatheringClock[0];
+            _gatherings = gatherings;
         }
 
         /// <summary>Forgets what an earlier game of this session found (RingtailService.Load).</summary>
@@ -76,18 +101,7 @@ namespace Pandaborn.Ringtails
         /// <summary>True while a gathering goes before the rest (Core's IGatheringClock: the Lantern Festival's evening at
         /// the square, in this Ringtail's district). The rest then steps aside, and the behaviour below it, the gathering's
         /// own, takes the Ringtail there. This module does not know which module that is.</summary>
-        public bool GathersNow
-        {
-            get
-            {
-                for (int i = 0; i < _gatherings.Length; i++)
-                {
-                    try { if (_gatherings[i] != null && _gatherings[i].GathersNow(this)) return true; }
-                    catch (Exception) { }
-                }
-                return false;
-            }
-        }
+        public bool GathersNow => _gatherings.GathersNow(this);
 
         public void Awake()
         {

@@ -19,6 +19,8 @@ namespace Pandaborn.Ringtails
             Bind<RingtailClockArc>().AsSingleton();
             Bind<RingtailSounds>().AsSingleton();
             Bind<RingtailVoice>().AsTransient();
+            Bind<RingtailGatherings>().AsSingleton();
+
             // the night shift for whoever asks through Core (the Bell gives Ringtails their rested bonus by it)
             MultiBind<Pandaborn.Core.INightShiftClock>().ToExisting<RingtailWorkday>();
             Bind<RingtailRestRootBehavior>().AsTransient();

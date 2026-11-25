@@ -16,6 +16,8 @@ namespace Pandaborn.Bell
             Bind<BellColonistFragment>().AsSingleton();
             Bind<BellRestedBonus>().AsTransient();
             Bind<BellNightRestedBonus>().AsTransient();
+            Bind<BellNightClocks>().AsSingleton();
+
             Bind<BellSettledMarker>().AsTransient();
             MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
             MultiBind<EntityPanelModule>().ToProvider<PanelModuleProvider>().AsSingleton();

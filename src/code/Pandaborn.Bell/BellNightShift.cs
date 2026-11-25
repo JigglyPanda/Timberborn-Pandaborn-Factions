@@ -27,8 +27,8 @@ namespace Pandaborn.Bell
     /// It decorates PandabornRingtailSpec, a spec record of the always-loaded Pandaborn.Specs, which only the Ringtail
     /// templates of the Inkpaws faction carry: no other faction is touched. Kits get nothing, as Inkpaw cubs get nothing.
     ///
-    /// The night clock is taken here, in a per-colonist component, and not in BellService: the Ringtails' clock reads the
-    /// Bell's locked day (IWorkdayClock), so a singleton that took it in its constructor would close a circle.
+    /// The night clocks are held by a small singleton of their own (BellNightClocks) and not by BellService: the Ringtails'
+    /// clock reads the Bell's locked day (IWorkdayClock), so BellService taking it in its constructor would close a circle.
     /// The shift length changes only when the Bell locks a new day (dawn), so the factors are worked out then and not at
     /// every change of the colonist's other bonuses.
     ///
@@ -41,7 +41,7 @@ namespace Pandaborn.Bell
         private static int _loggedFailures;
 
         private readonly BellService _bellService;
-        private readonly INightShiftClock[] _clocks;
+        private readonly BellNightClocks _clocks;
         private readonly Share _working = new Share(BellRestedBonus.WorkingSpeedId);
         private readonly Share _movement = new Share(BellRestedBonus.MovementSpeedId);
         private BonusManager _bonusManager;
@@ -49,10 +49,10 @@ namespace Pandaborn.Bell
         private bool _registered;
         private bool _updating;
 
-        public BellNightRestedBonus(BellService bellService, IEnumerable<INightShiftClock> clocks)
+        public BellNightRestedBonus(BellService bellService, BellNightClocks clocks)
         {
             _bellService = bellService;
-            _clocks = clocks != null ? clocks.ToArray() : new INightShiftClock[0];
+            _clocks = clocks;
         }
 
         /// <summary>The night shift the bonus is based on, in hours (0 when there is none).</summary>
@@ -114,7 +114,7 @@ namespace Pandaborn.Bell
             if (!_registered) return;
             try
             {
-                float hours = NightHours(_clocks);
+                float hours = _clocks.Hours;
                 ShiftHours = hours;
                 var spec = _bellService.Spec;
                 bool on = hours > 0f && spec != null && _bellService.HasLockedDay;
@@ -129,22 +129,6 @@ namespace Pandaborn.Bell
             }
             Apply(_working, WorkingFactor);
             Apply(_movement, MovementFactor);
-        }
-
-        /// <summary>The length of the night shift from the first clock that has one; 0 when none does.</summary>
-        internal static float NightHours(IReadOnlyList<INightShiftClock> clocks)
-        {
-            for (int i = 0; i < clocks.Count; i++)
-            {
-                try
-                {
-                    if (clocks[i] == null || !clocks[i].HasNightShift) continue;
-                    float hours = clocks[i].NightShiftHours;
-                    return float.IsNaN(hours) || hours <= 0f ? 0f : Math.Min(hours, 24f);
-                }
-                catch (Exception) { }
-            }
-            return 0f;
         }
 
         private static float Clean(float bonus) => float.IsNaN(bonus) || float.IsInfinity(bonus) ? 0f : bonus;
@@ -205,4 +189,39 @@ namespace Pandaborn.Bell
             }
         }
     }
+
+    /// <summary>
+    /// Every night-shift clock registered through Core (Pandaborn.Ringtails registers one; Core always registers the
+    /// inactive NoNightShiftClock, so the list is never empty). A singleton, so the list is injected the way every other
+    /// multi-bound list of the mod is; nothing of the Bell's own takes it in a constructor except the per-colonist bonus.
+    /// </summary>
+    public class BellNightClocks
+    {
+        private readonly INightShiftClock[] _clocks;
+
+        public BellNightClocks(IEnumerable<INightShiftClock> clocks)
+        {
+            _clocks = clocks != null ? clocks.ToArray() : new INightShiftClock[0];
+        }
+
+        /// <summary>The length of the night shift from the first clock that has one; 0 when none does.</summary>
+        public float Hours
+        {
+            get
+            {
+                for (int i = 0; i < _clocks.Length; i++)
+                {
+                    try
+                    {
+                        if (_clocks[i] == null || !_clocks[i].HasNightShift) continue;
+                        float hours = _clocks[i].NightShiftHours;
+                        return float.IsNaN(hours) || hours <= 0f ? 0f : Math.Min(hours, 24f);
+                    }
+                    catch (Exception) { }
+                }
+                return 0f;
+            }
+        }
+    }
+
 }

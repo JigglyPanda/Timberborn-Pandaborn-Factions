@@ -63,8 +63,9 @@ slider during the day changes nothing until the next morning).
   multiplying share, the walking-speed cap and the panel line; the one thing it lacked was the other people's shift
   length, one number, which goes through Core. Neither module names the other: Bell off means the component does not
   exist and Ringtails work at plain speed; Ringtails off means no Ringtail exists and Core's `NoNightShiftClock` says
-  "no night shift". The clock is taken in the per-colonist component, not in `BellService`: the Ringtails' clock reads
-  the Bell's locked day, so a singleton taking it in its constructor would close a circle. Nothing is saved, and the
+  "no night shift". The clocks are held by a small singleton of their own (`BellNightClocks`), not by `BellService`:
+  the Ringtails' clock reads the Bell's locked day, so `BellService` taking it in its constructor would close a circle. Nothing is saved, and the
+
   share is taken out when the colonist is deleted (bonuses are rebuilt by the game on every load).
 
 

@@ -28,9 +28,9 @@ namespace Pandaborn.Core
     /// The night shift of a second people (Pandaborn.Ringtails registers one). Modules that reward a rested shift (the
     /// Bell's bonus for Ringtails) take IEnumerable&lt;INightShiftClock&gt; and use the first with HasNightShift; when no
     /// module provides one only the inactive NoNightShiftClock is there and nobody has a night shift.
-    /// The provider must not take the consumer's singletons in its constructor chain and the consumer must not take
-    /// this in a singleton's constructor if the provider reads IWorkdayClock (the Ringtails do, the Bell provides it):
-    /// the two would need each other. Inject it into per-entity components, which are created after every singleton.
+    /// The consumer must not take this in the constructor of a singleton that the provider's own constructor chain
+    /// reaches (the Ringtails' clock reads IWorkdayClock, which the Bell's service provides: that service taking this
+    /// would close a circle). Take it in a small singleton of its own, as the Bell does (BellNightClocks).
     /// </summary>
     public interface INightShiftClock
     {
@@ -52,7 +52,8 @@ namespace Pandaborn.Core
     /// <summary>
     /// A gathering that goes before a colonist's own routine (the Lantern Festival's evening at the square). A module
     /// that keeps colonists to a routine of its own above the worker behaviour (the Ringtails' day rest) takes
-    /// IEnumerable&lt;IGatheringClock&gt; in its per-colonist component and steps aside while any clock says the colonist
+    /// IEnumerable&lt;IGatheringClock&gt; in a singleton of its own and steps aside while any clock says the colonist
+
     /// gathers now; the module that runs the gathering registers the clock and takes the colonist from there with its own
     /// behaviour. With no such module only the inactive NoGatheringClock is there.
     /// </summary>

@@ -1038,9 +1038,11 @@ line; all it lacked was one number, the length of the other people's shift. That
 `INightShiftClock { HasNightShift, NightShiftHours }`, which `RingtailWorkday` implements as 24 h minus the shift
 start (the bell as locked at dawn, clamped to four hours after dawn and to nightfall). Neither module names the
 other: with the Bell off the component does not exist and Ringtails work at plain speed, as Inkpaws do; with the
-Ringtails off no Ringtail exists and Core's `NoNightShiftClock` answers. The clock is taken in the per-colonist
-component, not in `BellService`, because the Ringtails' clock reads the Bell's locked day: two singletons taking
-each other in their constructors would close a circle. The factors change only when the Bell locks a new day.
+Ringtails off no Ringtail exists and Core's `NoNightShiftClock` answers. The clocks are held by a small singleton of
+their own (`BellNightClocks`), not by `BellService`, because the Ringtails' clock reads the Bell's locked day: the two
+services taking each other in their constructors would close a circle. The factors change only when the Bell locks a
+new day.
+
 Kits get nothing (cubs get nothing). Nothing is saved; the share is taken out when the colonist is deleted.
 
 ### 20.3 The return
