@@ -81,7 +81,7 @@ add is a toolkit for shallow water at many heights.
 | Scoop Wheel | Sits in a current and lifts a steady trickle with no workers. Still water does not turn it |
 | Treadwheel Lift | Lifts water where there is no current, turned by a worker |
 | Trip-Hammer Mill | A mill driven straight from a flume or stream, with no shafts |
-| Dew Collector | A little drinking water each dawn, less in drought |
+| Dew Collector | A little drinking water with no worker, less in drought |
 | Cistern and Cistern Tap | Store water; pour it into a flume to keep one strip alive in a drought |
 
 Rules that keep it pleasant:
@@ -116,7 +116,7 @@ Rules that keep it pleasant:
 * Wet roots are a warning, not a sentence: a tea or pepper bush stops growing and says so, and dies only
   after about three wet days.
 * **Tea and pepper are bushes, handled like vanilla berries**: the Forester plants them and gatherers pick
-  them. They never appear in the Farmstead's crop list, so nobody plants tea in a wet field by reflex.
+  them. They never appear in the Farmhouse's crop list, so nobody plants tea in a wet field by reflex.
 * Foresters replant dead trees by default, so a grove that dies in a long drought comes back by itself.
 
 ### Bamboo, as two ordinary plants
@@ -124,7 +124,7 @@ Rules that keep it pleasant:
 Revision 3 put food and building material on one plant. In practice the woodcutter would cut every stalk
 before it bore a shoot, and one drought would end food and construction together. So:
 
-* **Shoot bamboo is a field crop.** The Farmstead plants and harvests it like carrots. It is edible raw, ready
+* **Shoot bamboo is a field crop.** The Farmhouse plants and harvests it like carrots. It is edible raw, ready
   in about three days, and is the starter crop. A vanilla player's first reflex — farmhouse and the first
   crop on the list — is exactly right.
 * **Timber bamboo is a fast tree** (seven days). The forester plants it and woodcutters cut it for **poles**.
@@ -193,8 +193,9 @@ The village's **Night Watch**, its stargazers and its artists. Not helpers.
 | Night Builders' Post | Sites are stocked and raised overnight. The first Ringtail workplace, because it is the one a player sees |
 | Night Courier Post | Restocks every workshop and clears every flag overnight, so Inkpaws spend the day working instead of carrying. Inkpaw workplaces hold about three working days of goods to make that possible; without couriers, workers fetch their own as in vanilla |
 | Night Gatherers' Post | Gathers bamboo mushrooms and wild food |
-| Star Tower | Science from the night sky |
-| Opera Stage | Face-changing opera for whoever is off duty |
+| Star Tower | Science from the night sky. It keeps its own science cost |
+
+The **Opera Stage** (face-changing opera) is an ordinary attraction for whoever is off duty, not a Ringtail post.
 
 ### How they differ
 
@@ -209,7 +210,7 @@ Each people takes its leisure while the other works: Ringtails fill the teahouse
 
 ### What the interface shows
 
-* A sun or a moon on every workplace, in the toolbar and on the panel.
+* A sun or a moon on every workplace's panel (not in the toolbar: the Night Watch group's moon does that job).
 * A moon arc on the working-hours clock.
 * The population panel in two rows: Inkpaws and Ringtails, each with idle workers.
 * "Closed for the day. Ringtails start at the afternoon bell" in place of the vanilla no-workers alert.
@@ -268,10 +269,10 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 
 ## Pillar 6 — Late game
 
-* **Wooden Oxen** are the faction's bots: tireless, strong and slow. An ox lifts 30 (an Inkpaw lifts 18) and
+* **Wooden Oxen** are the faction's bots: tireless and strong. An ox lifts 30 (an Inkpaw lifts 18) and
   lasts ninety days.
 * **Kite windmills** and **bamboo water wheels** replace fuel engines.
-* **Bamboo scaffolding and rope bridges** make tall building cheap and light.
+* **Bamboo scaffolding and rope bridges** are the Inkpaws' platforms and suspension bridges, at vanilla cost.
 * **The Great Sitting Panda**, a freestanding cliff carving with water at its feet and both peoples on it, is
   the top monument.
 * **The wonder** is a colossal sky lantern that carries seeds over the wasteland. It is launched with the
@@ -283,7 +284,7 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 
 | When | What the player does | The new idea |
 |---|---|---|
-| First minutes | Woodcutter, water pump, forager, Farmstead with shoot bamboo; then a cistern before the first drought | None: the vanilla reflexes work |
+| First minutes | Woodcutter, water pump, forager, Farmhouse with shoot bamboo; then a cistern before the first drought | None: the vanilla reflexes work |
 | Day 1–2 | Pole Mill on a power wheel; forester with timber bamboo; dens from logs | None yet: the mill is a lumber mill |
 | Days 3–5 | First shoots. Steamer cooks shoots. A Hammock for the afternoon nap | Dishes; afternoon rituals |
 | Around day 5 | The game suggests a shorter day | The afternoon bell |
@@ -301,11 +302,11 @@ Seven new ideas in two hours, never two at once.
 * **Buildings:** dark timber frames with white lime-plaster infill, grey clay roof tiles, fresh and cured
   bamboo, woven bamboo panels, rammed earth and river stone.
 * **Red is an accent:** lanterns, small trim, festival goods.
-* **Lattice windows** that glow at night. Lanterns light in a wave at the bell.
-* **Outfits:** conical hats on paddy farmers only; cloth head-wraps; back-baskets for couriers.
+* **Lattice windows** that glow at night, and lanterns lit at dusk.
+* **Outfits:** conical hats on farmers (field and paddy share one outfit); cloth head-wraps; back-baskets for couriers.
 * **Characters:** the Reskin's proportions and coats for Inkpaws. Ringtails start as a smaller red-coated body
   and get a true red panda body when the character pipeline allows.
-* **Sound:** panda bleats, a red panda's twitter, a bamboo "tok" as a flume fills, different bells for the two
+* **Sound:** panda bleats and a red panda's twitter (built; off until the owner has listened), a bamboo "tok" as a flume fills, different bells for the two
   shifts, the watchman's clapper.
 * **Names:** colonists get real doubled names with their meaning shown, such as "Le Le (Joy)"; Ringtails get
   star, fruit and spice names.
@@ -419,4 +420,5 @@ Every step ends in a mod that could be released.
 | 2026-11-25 | When a district with a Moon Loft has no living Ringtail, a new family answers the lantern after a few days | Second audit: the family arrived once per save, so Ringtails could die out for good |
 | 2026-11-25 | Timber bamboo grows in seven days, not five | Poles from bamboo cost a third of poles from birch and a mill per tile and day; about half is the intent: the better source, never a free one |
 | 2026-11-25 | Bamboo seed can be steamed into seed cakes with no mill (two per seed); the Kitchen recipe with rice flour stays the better one | Without a Kitchen and a Trip-Hammer Mill the Great Flowering's seed had no use, so the event only took |
+| 2026-11-25 | The design is brought to what the build does: "Farmhouse" (the vanilla name, already translated), farmers of both kinds wear the conical hat, the dew has no dawn, the ox is not slow, scaffolding and rope bridges cost as vanilla, no sun or moon in the toolbar, no lantern wave at the bell | The docs review of 2026-11-25 listed nine places where this document promised what no lane had built; none is worth new code before release |
 | 2026-11-25 | A Dew Collector is tuned so four keep a landlocked outpost of about six in water outside droughts; pine resin leaves the build until something uses it; the Goldfish Bowl and Moon Gate are priced like other decorations of their worth | Second audit: a collector made 2 water a day against a pump worker's 48; a gathered good with no recipe; +2 wellbeing for twelve logs |
