@@ -10,7 +10,7 @@ The in-game runs each step owes are listed once, in order, with commands, in
 repeat them.
 
 **Where it stands in one paragraph.** Nothing is published. The manifest says `0.0.1`. The catalogue has every
-feature switched on except the Star Tower. The build that was last installed (2026-11-14) is older: it has no
+feature switched on. The build that was last installed (2026-11-14) is older: it has no
 water toolkit, festival or flowering. No staged build with everything on has passed the install gate, and none of
 the release tests has been run on such a build. The balance numbers changed on 2026-11-25 with no run behind
 them. So the next step is step 2 below, and everything after it is open.
@@ -21,8 +21,8 @@ Legend: **done**, **partly**, **open**, **owner** (waits for a decision or for t
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| 1.1 | Module switches final in `catalogue/rules.toml [modules]` | **partly** | Bell, Names, Look, Words, Water, Ringtails, RingtailsFallback, Tutorial, Festival, Flowering on. `RingtailVenues` off, which hides the Star Tower |
-| 1.2 | Balance decisions of 2026-11-25 in the catalogue | **partly** | Shelves, water science, well-being trims, pickles, the ox, the bell's taper are in. Not yet: the Ringtails' rested bonus (needs code), the Star Tower as a night post, the returning Ringtail family, steamed seed cakes. `docs/DESIGN.md` change log is the list |
+| 1.1 | Module switches final in `catalogue/rules.toml [modules]` | **done** in the catalogue | Bell, Names, Look, Words, Water, Ringtails, RingtailsFallback, Tutorial, Festival, Flowering on. The Star Tower ships with the Ringtails since 2026-11-25 |
+| 1.2 | Decisions of 2026-11-25 in the catalogue and the code | **partly** | In: shelves, water science, well-being trims, pickles, the ox, the bell's taper, the Ringtails' rested bonus, the Star Tower as a night post, steamed seed cakes, the players' switch file. Not yet: the returning Ringtail family. None of it has a game run behind it. `docs/DESIGN.md` change log is the list |
 | 1.3 | Player-facing text final, and every description true of the data | **open** | A text pass is in progress in `catalogue/text/` (uncommitted on 2026-11-25). When it lands, read each description against the catalogue; `docs/tech/audit-2.md` lists the contradictions the second audit found |
 | 1.4 | Colonist names checked by a native speaker of Mandarin | **owner** | `catalogue/text/names.json` says so itself. Until then the store pages say the names are unchecked |
 | 1.5 | Documents regenerated: `tools/docs/guide_tables.py`, `tools/docs/content_tables.py`, `tools/docs/store_pages.py`, each with `--check` | **done** for today's catalogue | Rerun after any catalogue change |
@@ -59,7 +59,7 @@ build that will ship.
 | 3.5 | Grid session: every building placed and finished, every panel opened, every recipe run, every plant grown and killed in each soil state | **partly**: placing, finishing and recipes are the gate; plants in each state were shown; panels are not opened by the grid run | G1 |
 | 3.6 | Water probes: flume one-way and sealed, spout depth, lift with and without current, badwater gate | **partly**: all proven on the prototype's templates; the badwater gate and the dew limiter not re-run in the shipped module | N6, N7, N8, N9 |
 | 3.7 | Folktails and Iron Teeth with the mod on and off: templates, goods, needs, toolbar, character meshes | **partly**; not since ten modules ship. Iron Teeth once, on the first day | C1, C3 |
-| 3.8 | Each code module forced off: the game loads, saves load, the notice appears | **partly**: Look, Water, Ringtails, Festival, Flowering one at a time. Not Bell, Names, Words, Tutorial | C5 |
+| 3.8 | Each code module forced off: the game loads, saves load, the notice appears | **partly**: Look, Water, Ringtails, Festival, Flowering one at a time, through the test switch. Not Bell, Names, Words, Tutorial. The players' file `PandabornFactions.txt` has never been run | C5 |
 | 3.9 | New behaviour of 2026-11-25 | **open** | N1 to N5 |
 | 3.10 | Festival and Flowering on the build's own numbers: a real pump crew, Ringtails, the buds, timber bamboo | **open** | N10, N11, N12 |
 | 3.11 | The tutorial played through; the Wooden Ox at work; sounds from their natural triggers | **open** | N15, N16, N17 |

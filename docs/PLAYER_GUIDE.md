@@ -420,7 +420,8 @@ Build a **Moon Loft**. It is in the Night Watch group of the toolbar. When the f
 
 * Two Ringtail adults and a kit appear at its door and move in.
 * One message states the rule.
-* The night posts unlock for free. Before that they sit behind a science cost.
+* The night posts unlock for free. Before that they sit behind a science cost. The Star Tower is the exception:
+  it keeps a science cost of its own.
 * A second row appears under the population panel: Ringtails, working, idle.
 
 The family comes once. A second loft is a second home, not a second family.
@@ -457,12 +458,11 @@ moved more than four times as many goods as with day-sized ones, and the worksho
 | Rested bonus | From the length of the day | From the length of the night shift |
 | Young | Cubs, born in homes | Kits, raised in Moon Lofts |
 | Food, water, well-being, lifespan | The same | The same |
-
-*The Ringtails' rested bonus was decided on 2026-11-25. The catalogue did not carry it yet when this page was generated: until it does, only Inkpaws are rested.*
 <!-- /gen:peoples -->
 
-Running with a full basket is what makes a Ringtail a courier. At twelve and twelve a night builder is meant to be
-as good as a day builder.
+Running with a full basket is what makes a Ringtail a courier. Ringtails are rested by the length of their own
+night shift, as Inkpaws are by the length of their day, so at twelve and twelve a night builder is meant to be as
+good as a day builder. *That bonus is new code of 2026-11-25 and has not been run in a game yet.*
 
 ### Their day
 
@@ -680,6 +680,7 @@ takes hundreds.
 
 | You see | It means |
 |---|---|
+| "... is switched off in the file PandabornFactions.txt" | You, or someone, switched that part off. The README says how the file works |
 | "... is switched off until the mod is updated for this game version" | A part of the mod did not load after a game update. The game still plays; its buildings behave like plain ones until the mod is updated. The notification log entry "Pandaborn - Factions:" lists every part |
 | A notice that the mod is enabled twice | A local copy and a Workshop copy are both on. Switch one off |
 | A flume that stays dry | Select it. The piece names the problem |

@@ -90,6 +90,9 @@ Built, placed and finished in test runs, but not yet shown working the way a pla
 * The Trip-Hammer Mill, and with it rice flour, sweet rice balls and bamboo seed cakes.
 * The Treadwheel Lift (it still stands on a stand-in model).
 * The Opera Stage. For now it is an ordinary attraction on a stand-in model.
+* The Star Tower, a Ringtail night post that makes science from the night sky. Switched on 2026-11-25; no run yet.
+* Ringtails rested by the length of their own night shift. New code of 2026-11-25; no run yet.
+* Steamed bamboo seed cakes, the recipe that needs no mill. New on 2026-11-25; no run yet.
 * The Dry-Stone Wall keeping a tea slope dry.
 * The Inkpaws tutorial from start to finish.
 * The Ox Workshop, the Memorial Arch, the Great Sitting Panda and the Sky Lantern in a played game. Their models are in
@@ -99,10 +102,9 @@ Built, placed and finished in test runs, but not yet shown working the way a pla
 
 ### Not in this version
 
-* The Star Tower. It is decided and modelled: a Ringtail night post that makes science from the night sky. It stays
-  out of the toolbar until its data is ready.
 * Panda voices when you select a panda. They are made, and stay off until the owner has heard them.
-* Translations. The faction's own text is English only.
+* Checked translations. The mod's own text is English. A Simplified Chinese translation is in, made by AI and not
+  yet read by a native speaker. In other languages the mod's own names and texts show in English.
 
 ## Install
 
@@ -163,49 +165,55 @@ and the flowering existed, so it is not counted here. The long form, with source
 
 There is no settings page, and Mod Settings is not needed.
 
-### Turning one feature off
+### Switching one part of the mod off
 
-Each feature with code can be kept from loading. This is the mod's own test switch. It is useful when you want
-to find out whether a problem comes from one feature, or from another mod meeting it.
+For when another mod clashes with one part of this one, or you simply do not want a part. It needs no settings
+mod. *New on 2026-11-25 and not yet run in a game.*
 
-Set an environment variable named `PANDABORN_DEV` before the game starts. Its value names the features:
-
-```
-force-off: Water
-force-off: Festival, Flowering
-```
-
-On Windows, in a command prompt:
+Make a plain text file named `PandabornFactions.txt` in the game's own folder: the one that holds `Saves` and
+`Mods`. On Windows that is `Documents\Timberborn`. Write one line that names what to switch off:
 
 ```
-setx PANDABORN_DEV "force-off: Water"
+# lines that start with # are notes
+off: Flowering
 ```
 
-Then close Steam completely and start it again, so the game sees the variable. To undo it, run
-`setx PANDABORN_DEV ""` and restart Steam again.
+or several at once:
 
-| Name | Feature | With it off |
+```
+off: Water, Festival
+```
+
+Letter case does not matter. The file is read once, when the game starts, so restart the game after changing it.
+Delete the file, or the line, to switch everything back on.
+
+| Name | Part of the mod | With it switched off |
 |---|---|---|
-| `Bell` | The afternoon bell | Working hours behave as in the plain game. No rested bonus, no bell |
-| `Ringtails` | The Ringtails | Ringtails in a save load as Inkpaws with their names and homes. Night posts are ordinary workplaces. Moon Lofts are plain homes |
-| `Water` | Flumes and the water toolkit | Flume pieces are solid blocks that hold no water. The Paddy Spout is a plain fill valve |
-| `Festival` | The Lantern Festival | No festival. The square is a plain gathering place. Tradition decorations are simply buildable |
-| `Flowering` | The Great Flowering | Bamboo never flowers |
-| `Look` | The Inkpaws' building look | Buildings look like Folktails ones |
-| `Names` | Panda names | New pandas get the game's own names. Existing names stay |
-| `Words` | Panda words in the interface | The interface says beaver and kit |
-| `Tutorial` | The "have this many goods" tutorial steps | Those steps are skipped |
+| `Bell` | The afternoon bell | Pandas get no Rested bonus for a short working day, and no bell rings |
+| `Ringtails` | The Ringtails | No Ringtails arrive, and those you have work as Inkpaws. Night posts employ Inkpaws by day. Moon Lofts are plain homes |
+| `Water` | Flumes and water wheels | Flumes and Flume Gates are solid blocks that carry no water. Spouts, wheels and Dew Collectors work as plain buildings |
+| `Festival` | The Lantern Festival | No festival can be called. The Festival Square is a plain gathering place, and the decorations of Tradition can be built without it |
+| `Flowering` | The Great Flowering | Bamboo never flowers and never bears seed |
+| `Look` | The Inkpaw look of buildings | Buildings shared with the Folktails keep their Folktails look |
+| `Names` | Panda names | New pandas get the game's own names. Names already given stay |
+| `Words` | Panda words | The interface says beaver in places where it should say panda |
+| `Tutorial` | Tutorial steps | Tutorial steps that ask for an amount of a good are left out |
+| `RingtailsFallback` | Night posts without Ringtails | Leave this one on. It is what lets Inkpaws staff the night posts when the Ringtails are switched off; without it those posts stay closed |
 
 What to know:
 
-* The game tells you which parts are switched off, and one notification-log entry, "Pandaborn - Factions:", lists every part and its state.
-* Saves keep loading. What a feature had saved waits in the save and comes back with the feature.
+* In an Inkpaws game a notice names each part that is switched off in the file, and the notification-log entry
+  "Pandaborn - Factions:" lists every part and its state.
+* Saves keep loading. What a part had saved waits in the save and comes back when the part does.
 * The buildings stay in the toolbar. A switched-off flume is a solid block with a flume's name.
-* A file named `pandaborn.dev.txt` next to the manifest does the same thing in development copies. **The released
-  mod ignores that file on purpose**, so that a test leftover can never switch features off for players. Use the
-  variable.
-* Each of these switches has been exercised by the mod's own tests, with the variable set for the game by the
-  test script. Setting it through `setx` is ordinary Windows and has not been tried here.
+* A name the mod does not know is ignored, and the log says so.
+
+### Reporting a problem
+
+Send the game's log, `Player.log`. On Windows it is in `AppData\LocalLow\Mechanistry\Timberborn` under your user
+folder; on a Mac in `~/Library/Logs/Mechanistry/Timberborn`. At the least include the line that starts
+`[Pandaborn] built for game version`: it says which game version the mod was built for and which one is running.
+Say which other mods were enabled, and whether the problem goes away with one part switched off.
 
 ## Saves
 
@@ -317,6 +325,11 @@ never touches saves that are not its own.
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\run_game_test.ps1 -Faction Inkpaws -Map Plains -RunSeconds 60
 ```
+
+The test switches are separate from the players' file. An environment variable `PANDABORN_DEV` takes lines such
+as `force-off: Water`, `simulate-missing-api: Bell` and `simulate-missing-member: Words`, separated by `;`. A file
+`pandaborn.dev.txt` in the mod folder does the same in development copies; the released mod ignores that file, so
+a leftover from a test can never switch anything off for a player. See [src/code/README.md](src/code/README.md).
 
 ### No game files
 

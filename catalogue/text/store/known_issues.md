@@ -139,6 +139,19 @@ with the collection id `Buildings.Inkpaws`. Your `.Folktails` templates work as 
 * The file is harmless when this mod is absent: no faction then reads that collection.
 * Read from the game's code and from how other packs add Emberpelts. **Not yet run with a real pack.**
 
+## Switching one part of the mod off, and reporting a problem
+
+Source: `src/code/Pandaborn.Bootstrap/Bootstrap.cs` (`PlayerSwitch`), added 2026-11-25. **Not yet run in a game.**
+
+* A text file `PandabornFactions.txt` in the game's own folder (the one that holds `Saves` and `Mods`; on Windows
+  `Documents\Timberborn`) with a line such as `off: Flowering` or `off: Water, Festival`. `#` starts a note. Letter
+  case does not matter. Read once when the game starts.
+* Names: Bell, Names, Look, Words, Water, Ringtails, RingtailsFallback, Tutorial, Festival, Flowering. What each
+  one turns off is in the README, "Switching one part of the mod off".
+* In an Inkpaws game a notice names what is switched off in the file.
+* For a bug report, ask for `Player.log`, or at least the line that starts `[Pandaborn] built for game version`:
+  it names the game version the mod was built for and the one that is running.
+
 ## Other known issues
 
 | Issue | Source |
@@ -149,4 +162,4 @@ with the collection id `Buildings.Inkpaws`. Your `.Folktails` templates work as 
 | Ringtails use the giant pandas' voice when selected, and panda voices are off altogether until the owner has heard them | `docs/tech/sound.md` section 10 |
 | Coats change after loading a save. The game picks a coat again on every load, for every faction | `CLAUDE.md` |
 | With the panda-words feature off, the population tab says "Beaver adult" and "Beaver child" | `docs/tech/stage0.md` |
-| Text is English only | `catalogue/text/STYLE.md` |
+| The mod's own text is English, with a Simplified Chinese translation made by AI and not yet read by a native speaker. In other languages those texts show in English | commit `de8d249` |

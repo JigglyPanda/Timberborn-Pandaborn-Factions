@@ -9,7 +9,8 @@ The guide's prose states rules; every cost, rate and count a balance pass may ch
 `<!-- gen:NAME -->` ... `<!-- /gen:NAME -->` that this script fills. An item whose code module is off (or not in
 src/code/modules.txt) is left out, as the build leaves it out.
 
-Reads only catalogue/*.toml, catalogue/text/*.json and src/code/modules.txt. Writes only docs/PLAYER_GUIDE.md, and
+Reads only catalogue/*.toml, catalogue/text/*.json and src/code/modules.txt (and looks for one source file,
+src/code/Pandaborn.Bell/BellNightShift.cs, to know whether Ringtails are rested). Writes only docs/PLAYER_GUIDE.md, and
 only between markers. Output is deterministic: no dates, no absolute paths. Run it after any catalogue change.
 
 Works on Python 3.11+ (tomllib) and on 3.10 with the tomli that pip vendors.
@@ -290,7 +291,9 @@ def build():
     lift_o = bot.get("set", {}).get("GoodCarrierSpec.BaseLiftingCapacity")
     ox_days = bot.get("set", {}).get("DeteriorableSpec.DeteriorationInDays")
     B["lifts"] = ["A beaver lifts %s. An Inkpaw lifts %s." % (num(VANILLA_LIFT), num(lift_i))]
-    ring_rested = "Bell" in ring.get("module_specs", {}) and c.module_on("Bell")
+    # the Bell applies it to Ringtails in code (BellNightShift.cs), with no entry of its own in the catalogue
+    ring_rested = (c.module_on("Bell") and c.module_on("Ringtails")
+                   and os.path.isfile(os.path.join(REPO, "src", "code", "Pandaborn.Bell", "BellNightShift.cs")))
     rows = [("Hours", "Dawn to the bell", "The bell to dawn"),
             ("Lifts", num(lift_i), num(lift_r)),
             ("Walking with a load", "Slower, as in the game", "Full speed"),

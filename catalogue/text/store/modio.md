@@ -40,7 +40,7 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 * The Trip-Hammer Mill and the Treadwheel Lift have not yet been run with a worker in a game.
 * The Ox Workshop, the monuments and the Sky Lantern are built and placed in tests. No test has reached them by playing.
 * The festival's rising lanterns use the game's firework trails until their own art is finished.
-* The Star Tower, where Ringtails make science at night, is not in this version yet. The Opera Stage is a plain attraction on a stand-in model.
+* The Star Tower, where Ringtails make science at night, is new and has not been run in a game yet. The Opera Stage is a plain attraction on a stand-in model.
 * Mac: the files are built and checked on Windows. Nobody has run them on a Mac yet. If you do, please say how it went.
 * Nobody has listened to the sounds yet. They are made by code and checked by measurement.
 * The names have not been checked by a native speaker of Mandarin.
@@ -49,7 +49,7 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 * Adds one faction. Folktails and Iron Teeth keep their buildings, coats and text. No file of the game is replaced. Safe to add to any game.
 * **Removing the mod breaks Inkpaws saves.** Other saves are not affected. After a Timberborn update, wait for this mod's update before loading an Inkpaws save.
 * If a game update breaks one part of the mod, that part switches off, the game says so, and the save still loads.
-* English text, written plainly so machine translation reads well.
+* English text. A Simplified Chinese translation is included; it was made by AI and has not been checked by a native reader.
 
 ## Works with, and known issues
 * Uses no Harmony and needs no other mod. Mod Settings is not needed: the Great Flowering is set per save, in the game.
@@ -60,6 +60,8 @@ A whole new faction, unlocked from the start. Needs no other mods. Folktails and
 * Mods that change a vanilla building do not change the Inkpaws' own version of it.
 * Automation and Simple Floodgate Triggers work on Inkpaws floodgates and pumps. They cannot control the Flume Gate.
 * Performance mods (T3MP, Performance Plus) and other faction mods: not tested yet. If something looks wrong in an Inkpaws game, try without them first and tell us.
+* If one part of the mod clashes with another mod, you can switch that part off: put a text file named PandabornFactions.txt in Documents\Timberborn with a line such as "off: Flowering". The names are in the guide on GitHub. This switch is new and has not been run in a game yet.
+* In a bug report, include the line of the game's log that starts "[Pandaborn] built for game version".
 
 ## Credits and AI disclosure
 Made by JigglyPanda. This mod is AI-generated. Claude, by Anthropic, wrote the code and the art pipeline. The models, textures, icons and sounds are made by that code: meshes built by scripts, textures painted procedurally, sounds synthesized. Nothing is taken from the game or from another mod. The in-game text and the pandas' names were written by Claude too. Timberborn is © Mechanistry. This is an unofficial fan mod.

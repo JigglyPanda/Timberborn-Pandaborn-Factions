@@ -78,17 +78,23 @@ Balance decisions recorded in `docs/DESIGN.md` and `docs/tech/balance.md`:
 
 Decided the same day and not in the catalogue or the code when this was written:
 
+- A new Ringtail family answers the lantern if a district loses its last Ringtail.
+
+Added the same day, in the code or the catalogue, with no game run yet:
+
 - Ringtails rested by the length of their own night shift.
 - The Star Tower as a Ringtail night post that makes science.
-- A new Ringtail family answers the lantern if a district loses its last Ringtail.
 - Bamboo seed can be steamed into seed cakes without a mill.
+- A switch for players: a text file `PandabornFactions.txt` in the game's own folder turns named parts of the mod
+  off.
+- A log line `[Pandaborn] built for game version X, running Y`, for bug reports.
+- A Simplified Chinese translation, made by AI and not yet read by a native speaker.
 
 ### Not in this version
 
-- The Star Tower (hidden until its data ships).
 - Panda voices for selected colonists. Made, and off until the owner has heard them.
 - The festival's own rising-lantern art. The game's firework trails stand in.
-- Translations. The faction's own text is English only.
+- Checked translations. English, plus an unchecked AI translation into Simplified Chinese.
 
 ### Known issues
 
@@ -121,10 +127,10 @@ For 0.x, and deciding it:
 - **Nobody has played it.** Every proof is a scripted run. The owner has not seen the art by day and night,
   heard the sounds or read the text in game.
 - **Mac has never been run**, and the store pages promise Mac.
-- **Parts are missing or standing in:** the Star Tower, the rising-lantern art, two stand-in models, panda
+- **Parts are missing or standing in:** the rising-lantern art, two stand-in models, panda
   voices, a native speaker's check of the names.
 
 A 0.x number says the true thing: play it, and expect the numbers to move. `1.0.0` should mean that
-`docs/RELEASE.md` is green from top to bottom, the Star Tower is in, a Mac tester has reported, and one round of
+`docs/RELEASE.md` is green from top to bottom, a Mac tester has reported, and one round of
 players' reports has been answered. If the owner wants to signal "nearly there" instead, `0.9.0` says that; it
 would be fair only after the install gate and the release soak have passed.
