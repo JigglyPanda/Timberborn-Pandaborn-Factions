@@ -40,10 +40,27 @@ namespace Pandaborn.Ringtails
         {
             if (_grownUp || _child == null || _child.GrowthProgress < GrowUpAt || !_character.Alive) return;
             if (!_ringtailService.Enabled) return;   // feature off: vanilla growth makes an Inkpaw, which is the safe fallback
-            _grownUp = true;
+            _grownUp = true;   // one attempt only
             float lifeProgress = _lifeProgressor ? _lifeProgressor.LifeProgress : 0f;
-            GameObject.SetActive(false);
-            _ringtailService.CreateAdultFromChild(_character, lifeProgress);
+            // As vanilla Child.GrowUp: hide the kit, create the adult, whose Adult.InitializeEntity destroys the kit. If the
+            // adult cannot be created the kit must not stay hidden for ever: show it again and leave it to vanilla growth
+            // (an Inkpaw adult at 1.0), the same fallback as with the feature off.
+            Character adult = null;
+            try
+            {
+                GameObject.SetActive(false);
+                adult = _ringtailService.CreateAdultFromChild(_character, lifeProgress);
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError("[Pandaborn.Ringtails] a kit could not grow into a Ringtail; it will grow up as an Inkpaw: " + e);
+            }
+            if (!adult && this && _character.Alive)
+            {
+                try { GameObject.SetActive(true); }
+                catch (System.Exception) { }
+            }
         }
+
     }
 }

@@ -61,10 +61,20 @@ namespace Pandaborn.RingtailsFallback
 
         private void Release()
         {
-            if (RingtailsWorking || _workerType == null || _workerType.WorkerType != RingtailWorkerType) return;
-            _workerType.SetWorkerType(BeaverWorkerType);
-            Switched++;
-            Debug.Log("[Pandaborn.RingtailsFallback] night post " + Name + " switched to Inkpaw workers (Ringtails off)");
+            // called from the building's load and finished-state steps, where an exception fails the load: contain it (the
+            // post then keeps the Ringtail type and stands idle, which is what would have happened without this module)
+            try
+            {
+                if (RingtailsWorking || _workerType == null || _workerType.WorkerType != RingtailWorkerType) return;
+                _workerType.SetWorkerType(BeaverWorkerType);
+                Switched++;
+                Debug.Log("[Pandaborn.RingtailsFallback] night post " + Name + " switched to Inkpaw workers (Ringtails off)");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("[Pandaborn.RingtailsFallback] night post " + Name + " could not be switched to Inkpaw workers: " + e);
+            }
         }
+
     }
 }
