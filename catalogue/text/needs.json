@@ -98,7 +98,7 @@
     "Cub-watching": {
       "id": "PandabornCubWatching", "group": "SocialLife",
       "name": "Watching the young", "name_key": "own",
-      "tooltip": "Met by sitting at the Kindergarten.",
+      "tooltip": "Met by sitting on the Kindergarten's bench, watching the young go by.",
       "recommended_name": "Watching the young",
       "recommended_reason": "Cubs and kits share one kindergarten. 'Cub-watching' names only the Inkpaws' young.",
       "translator_comment": "The pleasure adults take in watching the young play. Cubs are young Inkpaws (giant pandas) and kits are young Ringtails (red pandas)."
@@ -145,6 +145,6 @@
       "translator_comment": "The good mood that follows the Lantern Festival. Shown as a row on the well-being panel.",
       "note": "The stat sheet places it in the vanilla group Boosts, whose vanilla name was written for bots. If that reads wrongly on a panda's panel, the vanilla group 'Temporary effects' (NeedGroup.Temporary.DisplayName) fits the words better."
     },
-    "Grand festival": { "id": "PandabornFestiveGrand", "group": "Boosts", "name": "Grand Festival", "name_key": "own", "tooltip": "Given to everyone by a Grand Festival (a Lantern Festival with fireworks), on top of the festive spirit.", "translator_comment": "A second row on the well-being panel after a Grand Festival, a Lantern Festival with fireworks. Same words as the Grand Festival elsewhere." }
+    "Grand festival": { "id": "PandabornFestiveGrand", "group": "Boosts", "name": "Grand festive spirit", "name_key": "own", "tooltip": "Given to everyone by a Grand Festival (a Lantern Festival with fireworks), on top of the festive spirit.", "translator_comment": "A second row on the well-being panel after a Grand Festival, a Lantern Festival with fireworks. It must read as the same mood as Festive spirit, larger: use the same words for festive spirit." }
   }
 }

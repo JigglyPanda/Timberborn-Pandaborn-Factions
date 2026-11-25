@@ -52,7 +52,7 @@
     "text_pass_2026_11_25": {
       "removed": "Xiao Hei (Little black) and Xiao Bai (Little white): innocent pet names for a black-and-white animal, but the English glosses on a colonist's name tag can be read badly out of context, and the pool does not need them. The owner may restore them.",
       "glosses_tidied": "Qiao Qiao (Quietly -> Quiet), Chan Juan (The fair moon -> Fair moon): English form only, same meaning.",
-      "flag_for_a_native_reader_first": "Every entry marked medium or low, and in particular: Man Man, Can Can, Cha Cha (English readings); Han Han, Chun Chun, Rou Rou, Teng Teng, Yu Yu, Qin Qin, Cai Cai (homophones noted on the entry); Luo Luo (marked low); Lang Lang and Li Ming (names of well-known living people); the Ringtail condiment names Dou Ban, Pao Jiao, Hong You, Zha Cai, Guo Ba and Ma La (natural as pet names, or only as dishes?).",
+      "flag_for_a_native_reader_first": "See NAMES_REVIEW.md beside this file: one table of every entry marked medium or low, the shared spellings and the Ringtail condiment names, with a column for the reader's answer. Lang Lang and Li Ming stay (owner, 2026-11-25).",
       "checked": "No pinyin and no gloss is used twice, within or across the pools. Every display string is pinyin plus gloss."
     }
   },

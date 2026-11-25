@@ -658,8 +658,9 @@
     "Kindergarten": {
       "id": "PandabornKindergarten", "basis": "new", "vanilla_basis": "Agora", "who": "-",
       "name": "Kindergarten",
-      "description": "A place to sit and watch the young grow up.",
-      "flavor": "Officially, the adults are here to supervise."
+      "description": "A shaded bench where elders sit and watch the young go by.",
+      "flavor": "Officially, the elders are here to supervise.",
+      "note": "Nothing in the build puts cubs or kits inside it: it is a place adults visit. The text never says the young are in it (ruling 2026-11-25)."
     },
     "Ink Studio": {
       "id": "PandabornInkStudio", "basis": "new", "vanilla_basis": "ContemplationSpot", "who": "-",

@@ -36,7 +36,7 @@ were the most common fault this pass removed.
 | off duty | Not at work, at whatever hour | Teahouse, Opera Stage | "in the evening" (Ringtails are off duty in the morning) |
 
 Never promise more work from a shorter day: within the bonus's range the day's output is the same, and the choice
-is about free time. Name no hours or percentages in prose; the panel shows them.
+is about free time. Never type an hour or a percentage into a text: a number appears only as a parameter the code prints from the data.
 
 ## Building with bamboo
 
@@ -78,7 +78,7 @@ is about free time. Name no hours or percentages in prose; the panel shows them.
 | tea leaves; tea | Picked leaves; the roasted good. Tea is drunk at the Teahouse and nowhere else | roasted tea (as a name). Never say tea quenches thirst |
 | Teahouse | Serves tea to pandas off duty; needs tea and water | tea house |
 | nap; Nap | The daily rest in a Hammock or on a Nap Platform. Not the night's Sleep | rest, siesta |
-| Kindergarten | Where adults watch the young | Panda Kindergarten |
+| Kindergarten | A bench where elders watch the young go by. No text places the young inside it | Panda Kindergarten |
 | Opera Stage; face-changing opera | An attraction. No text says who performs | |
 | cliff carving | The Great Sitting Panda | statue, monument to, any religious word |
 
@@ -88,7 +88,7 @@ is about free time. Name no hours or percentages in prose; the panel shows them.
 |---|---|---|
 | Lantern Festival; the festival | The event called from the Festival Square, once a cycle | party, celebration |
 | Grand Festival | A Lantern Festival with fireworks | Grand Lantern Festival |
-| festive; Festive spirit | How everyone feels afterwards; the name of that row on the well-being panel | festival buff |
+| festive; Festive spirit; Grand festive spirit | How everyone feels afterwards; the rows on the well-being panel after a festival and after a Grand Festival | festival buff |
 | Tradition | Rises by one step with each festival and unlocks decorations | culture, heritage points |
 | Great Flowering; then "the Flowering" | One kind of bamboo flowers, bears seed and dies | bloom, blight |
 | budding, in flower, bears seed, rests | The stages, in these words | dormant; "drops its seed" (the seed is harvested from the plant) |
