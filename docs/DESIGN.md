@@ -158,8 +158,8 @@ before it bore a shoot, and one drought would end food and construction together
 * **Decorate the workplace.** Decorations reach pandas at work. Each kind of decoration is its own small need,
   as in vanilla.
 * **Cooking is the ladder.** Each dish is a recognisable Sichuan food and a step up in wellbeing.
-* **Tea is drunk at the Teahouse, nowhere else.** There is one need called Tea and one place to meet it; a
-  cup also takes the edge off thirst. Roasted tea is a dry good and stores in a warehouse.
+* **Tea is drunk at the Teahouse, nowhere else.** There is one need called Tea and one place to meet it.
+  Roasted tea is a dry good and stores in a warehouse; haulers or night couriers keep the Teahouse stocked.
 * **Cubs are a joy.** Adults gain wellbeing from the Kindergarten.
 
 ## Pillar 4 — Two peoples, one village
@@ -168,7 +168,8 @@ before it bore a shoot, and one drought would end food and construction together
 
 **Inkpaws work from dawn to the bell. Ringtails work from the bell to dawn.**
 
-One slider, one clock. Twelve and twelve is the natural balance: both peoples are at their best.
+One slider, one clock. Twelve and twelve is the natural balance: both peoples are at their best. Ringtails are rested by the
+length of their own night shift, exactly as Inkpaws are by the length of their day.
 
 ### How it is learned
 
@@ -281,13 +282,13 @@ Harmony, and a Folktails game unchanged. The faction ships with two peoples. Wha
 |---|---|---|
 | First minutes | Water pump, forager, woodcutter, Farmstead with shoot bamboo | None: the vanilla reflexes work |
 | Day 1–2 | Pole Mill on a power wheel; forester with timber bamboo; dens from logs | None yet: the mill is a lumber mill |
-| Days 3–5 | First shoots. Steamer cooks shoots. Hammock and Teahouse | Dishes; afternoon rituals |
+| Days 3–5 | First shoots. Steamer cooks shoots. A Hammock for the afternoon nap | Dishes; afternoon rituals |
 | Around day 5 | The game suggests a shorter day | The afternoon bell |
-| Days 5–8 | The first bamboo is cut: poles with no mill. A scoop wheel (logs and poles, no gears) and a short flume water a second grove | Bamboo poles; leading water |
+| Days 6–10 | The first bamboo is cut: poles with no mill. A scoop wheel (logs and poles, no gears) and a short flume water a second grove | Bamboo poles; leading water |
 | First drought | Bamboo browns and survives; cisterns carry the village | Droughts are survivable |
 | End of cycle 1 | First Moon Loft: the Ringtails arrive, and building continues overnight | The one rule |
-| Cycle 2 | Paddy spout and rice; pickles; lanterns; the Small Festival | Flooded fields; the festival |
-| Cycle 3 | Tea on dry ground; trip-hammer mill; sweet rice balls | Dry land; water as power |
+| Cycle 2 | Paddy spout and rice; pickles; tea bushes on brown ground and the first Teahouse; lanterns; the Small Festival | Flooded fields; tea; the festival |
+| Cycle 3 | Sichuan pepper; trip-hammer mill; sweet rice balls | Water as power |
 | Later | Hot pot, Star Tower, Opera, Flowering forecast, Oxen, the cliff carving, the sky lantern | The long game |
 
 Seven new ideas in two hours, never two at once.
@@ -404,3 +405,9 @@ Every step ends in a mod that could be released.
 | 2026-11-14 | The Flowering's seed is the dying plant's own harvest, and the bamboo rests nine days (was "until the next temperate season") | Dropped goods rot and are slow to collect; the colony model had 19 to 40 of 60 starving after a fifteen-day gap and none after twelve |
 | 2026-11-14 | A Flume Bridge Span lets one flume line cross over another; a stopped wheel or a dry gate says that a Cistern Tap can pour stored water into the line; a flume is heard only where water runs | The water module's runs: without a span no two lines could ever cross; in the first drought the wheel stops and explains why, a backed-up line holds about nineteen cubic metres by itself, but nothing told the player the tap exists |
 | 2026-11-14 | With the water module switched off the flume pieces are solid blocks and nothing floods; gate settings and water in the flumes survive save and reload | Proven on a save made with the module on and loaded with it off |
+| 2026-11-25 | Ringtails get the rested bonus from the length of their own night shift | The balance model on the built data: without it a Ringtail builder did 0.75 of an Inkpaw's work at twelve and twelve, where the design promises parity |
+| 2026-11-25 | The rested bonus tapers hour by hour from twelve to sixteen hours, so output is the same at any day length in that range | The model found a 2% bulge at thirteen to fifteen hours; a flat line makes the choice about free time and the night shift, not arithmetic |
+| 2026-11-25 | Water pumps and taps keep vanilla-sized shelves (workshops with ingredients keep three days) | The shelf rule had turned the first water pump into a 146-water tank: a careless Inkpaws colony lost nobody in the first drought where the same script lost ten of thirty-nine Folktails |
+| 2026-11-25 | Flumes cost no science, the gate 40 and the scoop wheel 60; tea and the Teahouse move to the second cycle in the first-hours plan | With two inventors the water beat landed on day fifteen instead of days five to eight, and no tea can exist before day twelve |
+| 2026-11-25 | Wellbeing trimmed (play, ink painting, watching the young, tea one point each; Memorial Arch 6, Great Sitting Panda 14; rice balls above steamed rice), the Wooden Ox costs more, pickles match bread | The model: a ceiling of 94 against the Folktails' 84 and a mid-game lead of 7 to 14; an ox that out-hauled a fully boosted bot with no upkeep |
+| 2026-11-25 | The Star Tower ships as a Ringtail night post that makes science; the Opera Stage ships as an ordinary attraction with no claim about who runs it | Both were hidden behind venue code nobody had planned, which left the last 38,000 science to inventors alone |
